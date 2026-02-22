@@ -22,9 +22,53 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  function normalizePath(path) {
+    if (!path || path === "/") return "index.html";
+    var clean = path;
+    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
+      clean = clean.slice(0, -1);
+    }
+    var segments = clean.split("/").filter(Boolean);
+    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
+    if (segments.length === 0) return "index.html";
+    return segments.join("/");
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var path = window.location.pathname || "/";
+    var rel = normalizePath(path);
+    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
+    var isFrench = /^articles\/fr-/.test(rel);
+    var map = {
+      "index.html": "articles/fr-demarrage.html",
+      "articles/get-started.html": "articles/fr-demarrage.html",
+      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
+      "articles/study-citations.html": "articles/fr-citations-etudes.html",
+      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
+      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+      "articles/fr-demarrage.html": "articles/get-started.html",
+      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
+      "articles/fr-citations-etudes.html": "articles/study-citations.html",
+      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
+      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+    };
+    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
+    var label = isFrench ? "EN" : "FR";
+    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
+    if (!navbar) return;
+    var holder = document.createElement("div");
+    holder.className = "qesr-lang-switch-wrap";
+    var btn = document.createElement("a");
+    btn.className = "qesr-lang-switch";
+    btn.href = root + target;
+    btn.textContent = label;
+    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    holder.appendChild(btn);
+    navbar.appendChild(holder);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -43,16 +87,6 @@
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-fran-ais" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Français</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-fran-ais">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Données fusionnées</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations-etudes.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Analyse: souveraineté</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Analyse: statistiques descriptives</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">

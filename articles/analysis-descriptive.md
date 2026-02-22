@@ -16,13 +16,39 @@ master <- if (file.exists("qes_master.csv")) {
   get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
 }
 
+parse_turnout <- function(x) {
+  raw <- trimws(as.character(x))
+  norm <- tolower(iconv(raw, from = "", to = "ASCII//TRANSLIT"))
+  out <- rep(NA_real_, length(norm))
+
+  as_num <- suppressWarnings(as.numeric(raw))
+  is_num <- is.finite(as_num)
+  if (any(is_num)) {
+    uniq <- unique(as_num[is_num])
+    if (all(uniq %in% c(0, 1))) {
+      out[is_num] <- as_num[is_num]
+    }
+  }
+
+  no_hit <- grepl("^(0|2|non|no)$|n[' ]?a pas vot|did not vot|didn[' ]?t vot|annule|ne votera pas", norm, perl = TRUE)
+  yes_hit <- grepl("^(1|oui|yes)$|\\boui\\b|\\byes\\b|already voted|par anticipation|le jour meme|certain to vote", norm, perl = TRUE)
+
+  out[no_hit] <- 0
+  out[yes_hit & !no_hit] <- 1
+  out
+}
+
 master <- master %>%
   mutate(
     qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
     age_group = trimws(as.character(age_group)),
-    education = trimws(as.character(education)),
-    turnout = tolower(trimws(as.character(turnout)))
+    turnout_num = parse_turnout(turnout)
   )
+
+# qes_crop_2007_2010 is a pooled file without row-level year information.
+# Keep it in study-level tables, but exclude it from year-trend summaries.
+master_trend <- master %>%
+  filter(qes_code != "qes_crop_2007_2010")
 ```
 
 ## Table 1: sample sizes by study
@@ -44,7 +70,7 @@ knitr::kable(
 | 1998      | qes1998            | Quebec Elections 1998                 |  1483 |
 | 2007      | qes2007            | Quebec Election Study 2007            |  2175 |
 | 2007      | qes2007_panel      | Quebec Election Study 2007 Panel      |  2062 |
-| 2007-2010 | qes_crop_2007_2010 | CROP Quebec Opinion Polls (2007-2010) | 23930 |
+| 2007-2010 | qes_crop_2007_2010 | CROP Quebec Opinion Polls (2007-2010) | 24026 |
 | 2008      | qes2008            | Quebec Election Study 2008            |  1151 |
 | 2012      | qes2012            | Quebec Election Study 2012            |  1505 |
 | 2012      | qes2012_panel      | Quebec Election Study 2012 Panel      |   844 |
@@ -58,7 +84,7 @@ Sample sizes in the merged dataset
 ## Table 2: age-group composition
 
 ``` r
-age_table <- master %>%
+age_table <- master_trend %>%
   filter(!is.na(qes_year_num), !is.na(age_group), nzchar(age_group)) %>%
   group_by(qes_year_num, age_group) %>%
   summarise(n = n(), .groups = "drop_last") %>%
@@ -67,7 +93,7 @@ age_table <- master %>%
   arrange(qes_year_num, desc(pct))
 
 knitr::kable(
-  head(age_table, 24),
+  head(age_table, 28),
   digits = 1,
   caption = "Age-group distribution (top rows)"
 )
@@ -99,6 +125,10 @@ knitr::kable(
 |         2008 | 18-24                |  90 |  8.0 |
 |         2012 | 55+                  | 378 | 16.1 |
 |         2012 | 35-54                | 339 | 14.4 |
+|         2012 | 35-44                | 328 | 14.0 |
+|         2012 | 45-54                | 315 | 13.4 |
+|         2012 | 25-34                | 305 | 13.0 |
+|         2012 | 18-24                | 240 | 10.2 |
 
 Age-group distribution (top rows)
 
@@ -120,31 +150,59 @@ ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group, group = age_
 ![Line chart of age-group composition across study
 years.](analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 
-## Figure 2: turnout proxy by year
+## Table 3 and Figure 2: turnout by year
 
 ``` r
-turnout_year <- master %>%
-  filter(!is.na(qes_year_num)) %>%
-  mutate(turnout_bin = case_when(
-    turnout %in% c("1", "yes", "voted", "certain to vote", "i already voted") ~ 1,
-    turnout %in% c("0", "2", "no", "did not vote", "certain not to vote") ~ 0,
-    TRUE ~ NA_real_
-  )) %>%
-  filter(!is.na(turnout_bin)) %>%
-  group_by(qes_year_num) %>%
-  summarise(turnout_rate = mean(turnout_bin), n = n(), .groups = "drop")
+all_years <- data.frame(qes_year_num = sort(unique(master_trend$qes_year_num[!is.na(master_trend$qes_year_num)])))
 
+turnout_year <- master_trend %>%
+  filter(!is.na(qes_year_num)) %>%
+  group_by(qes_year_num) %>%
+  summarise(
+    respondents = n(),
+    n_with_turnout = sum(!is.na(turnout_num)),
+    turnout_rate = ifelse(n_with_turnout > 0, mean(turnout_num, na.rm = TRUE), NA_real_),
+    .groups = "drop"
+  )
+
+turnout_year <- merge(all_years, turnout_year, by = "qes_year_num", all.x = TRUE, sort = TRUE)
+
+knitr::kable(
+  turnout_year %>% mutate(turnout_pct = round(100 * turnout_rate, 1)),
+  col.names = c("Year", "Respondents", "N with turnout", "Turnout rate", "Turnout (%)"),
+  caption = "Turnout indicator by year"
+)
+```
+
+| Year | Respondents | N with turnout | Turnout rate | Turnout (%) |
+|-----:|------------:|---------------:|-------------:|------------:|
+| 1998 |        1483 |           1374 |    0.8704512 |        87.0 |
+| 2007 |        4237 |           3897 |    0.8894021 |        88.9 |
+| 2008 |        1151 |           1131 |    0.8717949 |        87.2 |
+| 2012 |        2349 |           2330 |    0.9214592 |        92.1 |
+| 2014 |        1517 |           1499 |    0.9019346 |        90.2 |
+| 2018 |        4322 |           1826 |    0.1527930 |        15.3 |
+| 2022 |        1521 |           1322 |    0.9803328 |        98.0 |
+
+Turnout indicator by year
+
+``` r
 ggplot(turnout_year, aes(x = qes_year_num, y = turnout_rate)) +
-  geom_line(linewidth = 1, color = "#0f4c5c") +
-  geom_point(size = 2.5, color = "#e36414") +
+  geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
+  geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
   labs(
-    title = "Turnout proxy across study years",
+    title = "Turnout indicator across study years",
     x = "Study year",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12)
 ```
 
-![Line chart of turnout proxy across study
-years.](analysis-descriptive_files/figure-html/unnamed-chunk-7-1.png)
+![Line chart of turnout indicator across study
+years.](analysis-descriptive_files/figure-html/unnamed-chunk-8-1.png)
+
+## Notes
+
+- `qes_crop_2007_2010` is excluded from year-trend tables/plots because
+  it does not contain a row-level year field.

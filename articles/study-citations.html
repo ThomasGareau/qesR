@@ -22,9 +22,53 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  function normalizePath(path) {
+    if (!path || path === "/") return "index.html";
+    var clean = path;
+    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
+      clean = clean.slice(0, -1);
+    }
+    var segments = clean.split("/").filter(Boolean);
+    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
+    if (segments.length === 0) return "index.html";
+    return segments.join("/");
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var path = window.location.pathname || "/";
+    var rel = normalizePath(path);
+    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
+    var isFrench = /^articles\/fr-/.test(rel);
+    var map = {
+      "index.html": "articles/fr-demarrage.html",
+      "articles/get-started.html": "articles/fr-demarrage.html",
+      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
+      "articles/study-citations.html": "articles/fr-citations-etudes.html",
+      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
+      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+      "articles/fr-demarrage.html": "articles/get-started.html",
+      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
+      "articles/fr-citations-etudes.html": "articles/study-citations.html",
+      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
+      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+    };
+    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
+    var label = isFrench ? "EN" : "FR";
+    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
+    if (!navbar) return;
+    var holder = document.createElement("div");
+    holder.className = "qesr-lang-switch-wrap";
+    var btn = document.createElement("a");
+    btn.className = "qesr-lang-switch";
+    btn.href = root + target;
+    btn.textContent = label;
+    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    holder.appendChild(btn);
+    navbar.appendChild(holder);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -43,16 +87,6 @@
 <li class="active nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-fran-ais" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Français</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-fran-ais">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Données fusionnées</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations-etudes.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Analyse: souveraineté</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Analyse: statistiques descriptives</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -78,42 +112,127 @@
 
     
     
-<p>These citations follow the exact repository citation strings.</p>
-<ol style="list-style-type: decimal">
-<li>Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell,
+<p>The table below lists the datasets used in <code>qesR</code> and in
+the merged file.</p>
+<table class="table">
+<colgroup>
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+<col width="20%">
+</colgroup>
+<thead><tr class="header">
+<th>Year</th>
+<th>Code</th>
+<th>Study</th>
+<th>Citation</th>
+<th>Documentation</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>2022</td>
+<td><code>qes2022</code></td>
+<td>2022 Quebec Election Study</td>
+<td>Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell,
 Allison, 2023, “2022 Quebec Election Study”, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>, Harvard Dataverse,
-V1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [fileUNF]</li>
-<li>Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust,
+V1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [fileUNF]</td>
+<td><a href="https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR" class="external-link uri">https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR</a></td>
+</tr>
+<tr class="even">
+<td>2018</td>
+<td><code>qes2018</code></td>
+<td>Étude électorale québécoise 2018</td>
+<td>Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust,
 Jean-François, 2023, “Étude électorale québécoise 2018”, <a href="https://doi.org/10.5683/SP3/NWTGWS" class="external-link uri">https://doi.org/10.5683/SP3/NWTGWS</a>, Borealis, V1,
-UNF:6:luhys2QSLNTONPOXO4LYpg== [fileUNF]</li>
-<li>Durand, Claire; Blais, André, 2023, “Sondage panel sur l’élection
+UNF:6:luhys2QSLNTONPOXO4LYpg== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NWTGWS" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NWTGWS</a></td>
+</tr>
+<tr class="odd">
+<td>2018</td>
+<td><code>qes2018_panel</code></td>
+<td>Sondage panel sur l’élection québécoise de 2018</td>
+<td>Durand, Claire; Blais, André, 2023, “Sondage panel sur l’élection
 québécoise de 2018”, <a href="https://doi.org/10.5683/SP3/XDDMMR" class="external-link uri">https://doi.org/10.5683/SP3/XDDMMR</a>, Borealis, V1,
-UNF:6:ECsYwSg8SlYcGPle+8FjWw== [fileUNF]</li>
-<li>Bélanger, Éric; Nadeau, Richard, 2023, “Étude électorale québécoise
+UNF:6:ECsYwSg8SlYcGPle+8FjWw== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/XDDMMR" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/XDDMMR</a></td>
+</tr>
+<tr class="even">
+<td>2014</td>
+<td><code>qes2014</code></td>
+<td>Étude électorale québécoise 2014</td>
+<td>Bélanger, Éric; Nadeau, Richard, 2023, “Étude électorale québécoise
 2014”, <a href="https://doi.org/10.5683/SP3/64F7WR" class="external-link uri">https://doi.org/10.5683/SP3/64F7WR</a>, Borealis, V1,
-UNF:6:OoiAJ3ShbycsxmWCefqrjw== [fileUNF]</li>
-<li>Bélanger, Éric; Nadeau, Richard; Henderson, Ailsa; Hepburn, Eve,
+UNF:6:OoiAJ3ShbycsxmWCefqrjw== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/64F7WR" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/64F7WR</a></td>
+</tr>
+<tr class="odd">
+<td>2012</td>
+<td><code>qes2012</code></td>
+<td>Étude électorale québécoise 2012</td>
+<td>Bélanger, Éric; Nadeau, Richard; Henderson, Ailsa; Hepburn, Eve,
 2023, “Étude électorale québécoise 2012”, <a href="https://doi.org/10.5683/SP2/WXUPXT" class="external-link uri">https://doi.org/10.5683/SP2/WXUPXT</a>, Borealis, V1,
-UNF:6:nG192rAWV0IlYSpRg4WBaQ== [fileUNF]</li>
-<li>Durand, Claire; Goyder, John, 2023, “Sondage panel sur l’élection
+UNF:6:nG192rAWV0IlYSpRg4WBaQ== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/WXUPXT" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/WXUPXT</a></td>
+</tr>
+<tr class="even">
+<td>2012</td>
+<td><code>qes2012_panel</code></td>
+<td>Sondage panel sur l’élection québécoise de 2012</td>
+<td>Durand, Claire; Goyder, John, 2023, “Sondage panel sur l’élection
 québécoise de 2012”, <a href="https://doi.org/10.5683/SP3/RKHPVL" class="external-link uri">https://doi.org/10.5683/SP3/RKHPVL</a>, Borealis, V1,
-UNF:6:/ACwE8qVPCB013O9cweCqQ== [fileUNF]</li>
-<li>Durand, Claire, 2023, “Sondages CROP sur les intentions de vote
+UNF:6:/ACwE8qVPCB013O9cweCqQ== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/RKHPVL" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/RKHPVL</a></td>
+</tr>
+<tr class="odd">
+<td>2007-2010</td>
+<td><code>qes_crop_2007_2010</code></td>
+<td>Sondages CROP sur les intentions de vote provinciales québécoises
+2007-2010</td>
+<td>Durand, Claire, 2023, “Sondages CROP sur les intentions de vote
 provinciales québécoises 2007-2010”, <a href="https://doi.org/10.5683/SP3/IRZ1PF" class="external-link uri">https://doi.org/10.5683/SP3/IRZ1PF</a>, Borealis, V1,
-UNF:6:Yaloq+G6EVBknLlAk44JoQ== [fileUNF]</li>
-<li>Bélanger, Éric; Nadeau, Richard, 2023, “Étude électorale québécoise
+UNF:6:Yaloq+G6EVBknLlAk44JoQ== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/IRZ1PF" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/IRZ1PF</a></td>
+</tr>
+<tr class="even">
+<td>2008</td>
+<td><code>qes2008</code></td>
+<td>Étude électorale québécoise 2008</td>
+<td>Bélanger, Éric; Nadeau, Richard, 2023, “Étude électorale québécoise
 2008”, <a href="https://doi.org/10.5683/SP2/8KEYU3" class="external-link uri">https://doi.org/10.5683/SP2/8KEYU3</a>, Borealis, V1,
-UNF:6:6wfopjsb0foTuDDWQPDfXg== [fileUNF]</li>
-<li>Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura;
+UNF:6:6wfopjsb0foTuDDWQPDfXg== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/8KEYU3" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/8KEYU3</a></td>
+</tr>
+<tr class="odd">
+<td>2007</td>
+<td><code>qes2007</code></td>
+<td>Étude électorale québécoise 2007</td>
+<td>Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura;
 Tanguay, Brian, 2023, “Étude électorale québécoise 2007”, <a href="https://doi.org/10.5683/SP2/6XGOKA" class="external-link uri">https://doi.org/10.5683/SP2/6XGOKA</a>, Borealis, V1,
-UNF:6:fNjQ+LF7dCVuIrjEyQuOyg== [fileUNF]</li>
-<li>Durand, Claire; Goyder, John, 2023, “Sondage panel sur l’élection
+UNF:6:fNjQ+LF7dCVuIrjEyQuOyg== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/6XGOKA" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/6XGOKA</a></td>
+</tr>
+<tr class="even">
+<td>2007</td>
+<td><code>qes2007_panel</code></td>
+<td>Sondage panel sur l’élection québécoise de 2007</td>
+<td>Durand, Claire; Goyder, John, 2023, “Sondage panel sur l’élection
 québécoise de 2007”, <a href="https://doi.org/10.5683/SP3/NDS6VT" class="external-link uri">https://doi.org/10.5683/SP3/NDS6VT</a>, Borealis, V1,
-UNF:6:ASjoqrxxkLm0vvSA6lc9Fw== [fileUNF]</li>
-<li>Durand, Claire, 2023, “Sondages électoraux sur les élections
+UNF:6:ASjoqrxxkLm0vvSA6lc9Fw== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NDS6VT" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NDS6VT</a></td>
+</tr>
+<tr class="odd">
+<td>1998</td>
+<td><code>qes1998</code></td>
+<td>Sondages électoraux sur les élections générales québécoises de
+1998</td>
+<td>Durand, Claire, 2023, “Sondages électoraux sur les élections
 générales québécoises de 1998”, <a href="https://doi.org/10.5683/SP2/QFUAWG" class="external-link uri">https://doi.org/10.5683/SP2/QFUAWG</a>, Borealis, V1,
-UNF:6:zeXNn+A0b1j0DtgUq2cYjg== [fileUNF]</li>
-</ol></main>
+UNF:6:zeXNn+A0b1j0DtgUq2cYjg== [fileUNF]</td>
+<td><a href="https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/QFUAWG" class="external-link uri">https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/QFUAWG</a></td>
+</tr>
+</tbody>
+</table></main>
 </div>
 
 

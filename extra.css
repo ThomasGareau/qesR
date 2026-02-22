@@ -1,20 +1,22 @@
 /* Brand styling for qesR pkgdown site. */
 
 :root {
-  --qesr-deep: #1b365d;
-  --qesr-accent: #d1495b;
-  --qesr-sand: #f4f0ea;
+  --qesr-deep: #12355b;
+  --qesr-accent: #b5651d;
+  --qesr-sand: #eef3f8;
+  --qesr-border: #cad6e5;
+  --qesr-table-stripe: #f7fafe;
 }
 
 body {
   background:
-    radial-gradient(circle at 16% 12%, rgba(209, 73, 91, 0.10), transparent 40%),
-    radial-gradient(circle at 84% 0%, rgba(27, 54, 93, 0.11), transparent 44%),
+    radial-gradient(circle at 14% 10%, rgba(181, 101, 29, 0.10), transparent 36%),
+    radial-gradient(circle at 86% 0%, rgba(18, 53, 91, 0.11), transparent 44%),
     var(--qesr-sand);
 }
 
 .navbar {
-  border-bottom: 2px solid rgba(27, 54, 93, 0.18);
+  border-bottom: 2px solid rgba(18, 53, 91, 0.24);
 }
 
 .navbar-brand {
@@ -32,6 +34,7 @@ h1, h2, h3 {
 }
 
 a {
+  color: #0d4070;
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
 }
@@ -39,4 +42,52 @@ a {
 img[alt="qesR logo"] {
   display: block;
   margin: 0 auto 1rem auto;
+}
+
+table,
+.table {
+  background: #ffffff;
+  border: 1px solid var(--qesr-border);
+  color: #1b2b3b;
+}
+
+table th,
+.table th {
+  background: var(--qesr-deep);
+  color: #ffffff;
+  border-color: var(--qesr-deep);
+}
+
+table td,
+.table td {
+  border-color: var(--qesr-border);
+}
+
+table tbody tr:nth-child(even),
+.table tbody tr:nth-child(even) {
+  background: var(--qesr-table-stripe);
+}
+
+.qesr-lang-switch-wrap {
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
+.qesr-lang-switch {
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  padding: 0.22rem 0.65rem;
+  font-weight: 700;
+  font-size: 0.78rem;
+  line-height: 1.3;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.qesr-lang-switch:hover,
+.qesr-lang-switch:focus {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  text-decoration: none;
 }

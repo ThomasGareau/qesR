@@ -22,9 +22,53 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  function normalizePath(path) {
+    if (!path || path === "/") return "index.html";
+    var clean = path;
+    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
+      clean = clean.slice(0, -1);
+    }
+    var segments = clean.split("/").filter(Boolean);
+    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
+    if (segments.length === 0) return "index.html";
+    return segments.join("/");
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var path = window.location.pathname || "/";
+    var rel = normalizePath(path);
+    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
+    var isFrench = /^articles\/fr-/.test(rel);
+    var map = {
+      "index.html": "articles/fr-demarrage.html",
+      "articles/get-started.html": "articles/fr-demarrage.html",
+      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
+      "articles/study-citations.html": "articles/fr-citations-etudes.html",
+      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
+      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+      "articles/fr-demarrage.html": "articles/get-started.html",
+      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
+      "articles/fr-citations-etudes.html": "articles/study-citations.html",
+      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
+      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+    };
+    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
+    var label = isFrench ? "EN" : "FR";
+    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
+    if (!navbar) return;
+    var holder = document.createElement("div");
+    holder.className = "qesr-lang-switch-wrap";
+    var btn = document.createElement("a");
+    btn.className = "qesr-lang-switch";
+    btn.href = root + target;
+    btn.textContent = label;
+    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    holder.appendChild(btn);
+    navbar.appendChild(holder);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -43,16 +87,6 @@
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-fran-ais" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Français</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-fran-ais">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Données fusionnées</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations-etudes.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Analyse: souveraineté</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Analyse: statistiques descriptives</a></li>
-  </ul>
-</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -83,6 +117,8 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span></code></pre></div>
+<p>Cette page présente l’évolution de l’appui à la souveraineté dans le
+fichier fusionné.</p>
 <div class="section level2">
 <h2 id="chargement">Chargement<a class="anchor" aria-label="anchor" href="#chargement"></a>
 </h2>
@@ -95,93 +131,160 @@
 <span></span>
 <span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    vote_choice <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    party_lean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">party_lean</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span>    annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Les vagues CROP sont exclues ici pour conserver une série basée sur les</span></span>
+<span><span class="co"># enquêtes électorales.</span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="op">(</span><span class="st">"sovereignty_support"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span> <span class="op">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="proxy-souverainiste">Proxy souverainiste<a class="anchor" aria-label="anchor" href="#proxy-souverainiste"></a>
+<h2 id="indicateur-dappui-à-la-souveraineté">Indicateur d’appui à la souveraineté<a class="anchor" aria-label="anchor" href="#indicateur-dappui-%C3%A0-la-souverainet%C3%A9"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">est_pref_souverainiste</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"parti quebecois|parti québécois|quebec solidaire|québec solidaire"</span>, <span class="va">x</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">normaliser</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">y</span>, from <span class="op">=</span> <span class="st">""</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"['`’]"</span>, <span class="st">""</span>, <span class="va">y</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"[^a-z0-9]+"</span>, <span class="st">" "</span>, <span class="va">y</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">est_pref_souverainiste</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">normaliser</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"\\bpq\\b|parti quebecois|quebec solidaire|\\bqs\\b|option nationale"</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">a_texte_parti</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fu">normaliser</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span>  <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"[a-z]"</span>, <span class="va">y</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">sov_item</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">sov_item</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">sov_item</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span></span>
+<span><span class="va">pref_oui</span> <span class="op">&lt;-</span> <span class="fu">est_pref_souverainiste</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">|</span> <span class="fu">est_pref_souverainiste</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">party_lean</span><span class="op">)</span></span>
+<span><span class="va">info_parti</span> <span class="op">&lt;-</span> <span class="fu">a_texte_parti</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">|</span> <span class="fu">a_texte_parti</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">party_lean</span><span class="op">)</span></span>
+<span><span class="va">sov_parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">info_parti</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">pref_oui</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    appui_souverainete_proxy <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span></span>
-<span>      <span class="fu">est_pref_souverainiste</span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">|</span> <span class="fu">est_pref_souverainiste</span><span class="op">(</span><span class="va">party_lean</span><span class="op">)</span>,</span>
-<span>      <span class="fl">1</span>, <span class="fl">0</span>, missing <span class="op">=</span> <span class="fl">0</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    appui_souverainete <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">sov_item</span><span class="op">)</span>, <span class="va">sov_item</span>, <span class="va">sov_parti</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">annees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">annee</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">annee</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>taux <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">appui_souverainete_proxy</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
+<span>    repondants <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    n_mesure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">appui_souverainete</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    taux <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_mesure</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">appui_souverainete</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">annees</span>, <span class="va">sov</span>, by <span class="op">=</span> <span class="st">"annee"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">sov</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>taux <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">taux</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Année"</span>, <span class="st">"Part appui souveraineté (%)"</span>, <span class="st">"N"</span><span class="op">)</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Évolution du proxy d'appui à la souveraineté"</span></span>
+<span>  <span class="va">sov</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>      appui_souverainete_pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">taux</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>    <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span></span>
+<span>      <span class="va">annee</span>,</span>
+<span>      <span class="va">repondants</span>,</span>
+<span>      <span class="va">n_mesure</span>,</span>
+<span>      <span class="va">appui_souverainete_pct</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Année"</span>, <span class="st">"Répondants"</span>, <span class="st">"N avec mesure"</span>, <span class="st">"Appui souveraineté (%)"</span><span class="op">)</span>,</span>
+<span>  caption <span class="op">=</span> <span class="st">"Appui à la souveraineté par année"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <table class="table">
-<caption>Évolution du proxy d’appui à la souveraineté</caption>
+<caption>Appui à la souveraineté par année</caption>
 <thead><tr class="header">
 <th align="right">Année</th>
-<th align="right">Part appui souveraineté (%)</th>
-<th align="right">N</th>
+<th align="right">Répondants</th>
+<th align="right">N avec mesure</th>
+<th align="right">Appui souveraineté (%)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1998</td>
-<td align="right">30.1</td>
 <td align="right">1483</td>
+<td align="right">1483</td>
+<td align="right">30.1</td>
 </tr>
 <tr class="even">
 <td align="right">2007</td>
-<td align="right">0.0</td>
-<td align="right">28167</td>
+<td align="right">4237</td>
+<td align="right">4206</td>
+<td align="right">40.6</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
-<td align="right">0.0</td>
 <td align="right">1151</td>
+<td align="right">1142</td>
+<td align="right">42.6</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
-<td align="right">0.0</td>
 <td align="right">2349</td>
+<td align="right">2349</td>
+<td align="right">41.1</td>
 </tr>
 <tr class="odd">
 <td align="right">2014</td>
-<td align="right">0.0</td>
 <td align="right">1517</td>
+<td align="right">1460</td>
+<td align="right">57.9</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
-<td align="right">4.5</td>
 <td align="right">4322</td>
+<td align="right">842</td>
+<td align="right">29.3</td>
 </tr>
 <tr class="odd">
 <td align="right">2022</td>
-<td align="right">30.4</td>
 <td align="right">1521</td>
+<td align="right">1506</td>
+<td align="right">35.6</td>
 </tr>
 </tbody>
 </table>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sov</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">annee</span>, y <span class="op">=</span> <span class="va">taux</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"#0f4c5c"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.5</span>, color <span class="op">=</span> <span class="st">"#e36414"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"#12355b"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span>, color <span class="op">=</span> <span class="st">"#b5651d"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, <span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Évolution du proxy de souveraineté"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Évolution de l'appui à la souveraineté"</span>,</span>
 <span>    x <span class="op">=</span> <span class="st">"Année d'étude"</span>,</span>
 <span>    y <span class="op">=</span> <span class="st">"Part des répondants"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p><img src="fr-analyse-souverainete_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Graphique de l'évolution du proxy de souveraineté par année." width="700"></p>
+<p><img src="fr-analyse-souverainete_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Graphique de l'évolution de l'appui à la souveraineté par année." width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
+</h2>
+<ul>
+<li>Les questions directes sur la souveraineté sont utilisées en
+priorité.</li>
+<li>Quand elles sont absentes, un indicateur basé sur la préférence
+partisane est utilisé.</li>
+<li>La colonne <code>N avec mesure</code> indique la couverture
+disponible selon l’année.</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

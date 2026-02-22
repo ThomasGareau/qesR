@@ -23,7 +23,8 @@ Le fichier fusionné inclut notamment :
 - variables sociodémographiques : `year_of_birth`, `age`, `age_group`,
   `gender`, `education`, `language`, `province_territory`
 - variables politiques : `turnout`, `vote_choice`, `vote_choice_text`,
-  `party_best`, `party_lean`, `ideology`, `political_interest`
+  `party_best`, `party_lean`, `ideology`, `political_interest`,
+  `sovereignty_support`
 - champs additionnels (si disponibles) : `citizenship`, `born_canada`,
   `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
