@@ -1,7 +1,5 @@
 # Analysis: Descriptive Statistics
 
-## Load merged data
-
 ## Table 1: sample sizes by study
 
 | Study year | Study code         | Sample size |
@@ -20,33 +18,19 @@
 
 Sample sizes by study
 
-## Table 2: age-group composition
+## Table 2: age-group composition by year (share %)
 
-| Study year | Age group (harmonized) | Share (%) |
-|-----------:|:-----------------------|----------:|
-|       1998 | 18-34                  |      25.3 |
-|       1998 | 35-54                  |      46.8 |
-|       1998 | 55+                    |      27.9 |
-|       2007 | 18-34                  |      23.9 |
-|       2007 | 35-54                  |      39.5 |
-|       2007 | 55+                    |      36.7 |
-|       2008 | 18-34                  |      23.2 |
-|       2008 | 35-54                  |      42.4 |
-|       2008 | 55+                    |      34.4 |
-|       2012 | 18-34                  |      28.6 |
-|       2012 | 35-54                  |      41.8 |
-|       2012 | 55+                    |      29.6 |
-|       2014 | 18-34                  |      26.2 |
-|       2014 | 35-54                  |      38.8 |
-|       2014 | 55+                    |      34.9 |
-|       2018 | 18-34                  |      26.4 |
-|       2018 | 35-54                  |      24.7 |
-|       2018 | 55+                    |      48.9 |
-|       2022 | 18-34                  |      25.3 |
-|       2022 | 35-54                  |      32.3 |
-|       2022 | 55+                    |      42.4 |
+| Study year | N with age group | 18-34 (%) | 35-54 (%) | 55+ (%) |
+|-----------:|-----------------:|----------:|----------:|--------:|
+|       1998 |             1482 |        NA |        NA |      NA |
+|       2007 |             4197 |        NA |        NA |      NA |
+|       2008 |             1125 |        NA |        NA |      NA |
+|       2012 |             2349 |        NA |        NA |      NA |
+|       2014 |             1517 |        NA |        NA |      NA |
+|       2018 |             4052 |        NA |        NA |      NA |
+|       2022 |             1521 |        NA |        NA |      NA |
 
-Age-group composition by year (18-34, 35-54, 55+)
+Age-group composition by year
 
 ## Figure 1: age-group profile over time
 
