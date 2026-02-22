@@ -144,31 +144,6 @@ head(qes_master)
 head(attr(qes_master, "source_map"))
 ```
 
-## Command-Line Scripts
-
-Build the master dataset from the terminal (writes CSV, RDS, and source map):
-
-```bash
-Rscript scripts/build_qes_master.R \
-  --out-dir . \
-  --out-prefix qes_master
-```
-
-Build for a subset of studies:
-
-```bash
-Rscript scripts/build_qes_master.R \
-  --surveys qes2022,qes2018,qes1998 \
-  --out-dir . \
-  --out-prefix qes_master_subset
-```
-
-Build the website locally:
-
-```bash
-Rscript scripts/build_pkgdown_site.R
-```
-
 ## Study Citations
 
 | Year | Code | Study | Citation | Documentation |

@@ -24,8 +24,6 @@ library(ggplot2)
 library(knitr)
 ```
 
-## Chargement des données fusionnées
-
 ```{r}
 master <- if (file.exists("qes_master.csv")) {
   read.csv("qes_master.csv", stringsAsFactors = FALSE)
@@ -103,6 +101,8 @@ knitr::kable(
 ## Répartition des groupes d'âge
 
 ```{r}
+ordre_age <- c("18-34", "35-54", "55+")
+
 age_dist <- master_tendance %>%
   mutate(age_group_3 = collapse_age_group3(age_group)) %>%
   filter(!is.na(annee), !is.na(age_group_3), nzchar(age_group_3)) %>%
@@ -112,20 +112,46 @@ age_dist <- master_tendance %>%
   ungroup() %>%
   arrange(annee, age_group_3)
 
+age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
+
+age_counts <- age_dist %>%
+  group_by(annee) %>%
+  summarise(n_avec_age = sum(n), .groups = "drop")
+
+age_dist_large <- reshape(
+  age_dist[, c("annee", "age_group_3", "pct")],
+  idvar = "annee",
+  timevar = "age_group_3",
+  direction = "wide"
+)
+
+names(age_dist_large) <- sub("^pct\\.", "", names(age_dist_large))
+
+for (grp in ordre_age) {
+  if (!(grp %in% names(age_dist_large))) {
+    age_dist_large[[grp]] <- NA_real_
+  }
+}
+
+age_dist_large <- age_dist_large %>%
+  merge(age_counts, by = "annee", all.x = TRUE, sort = TRUE) %>%
+  arrange(annee)
+
 knitr::kable(
-  age_dist %>%
+  age_dist_large %>%
     transmute(
       `Annee d'etude` = annee,
-      `Groupe d'age harmonise` = age_group_3,
-      `Part (%)` = round(pct, 1)
+      `N avec groupe d'age` = n_avec_age,
+      `18-34 (%)` = round(`18-34`, 1),
+      `35-54 (%)` = round(`35-54`, 1),
+      `55+ (%)` = round(`55+`, 1)
     ),
   digits = 1,
-  caption = "Répartition des groupes d'âge par année (18-34, 35-54, 55+)"
+  caption = "Répartition des groupes d'âge par année"
 )
 ```
 
 ```{r, fig.alt="Graphique en lignes de la répartition harmonisée des groupes d'âge selon l'année."}
-ordre_age <- c("18-34", "35-54", "55+")
 age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
 
 ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_3)) +

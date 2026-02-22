@@ -93,7 +93,7 @@ test_that(".build_qes_master_study supports qes1998 naming variants", {
   expect_true(identical(out$respondent_id, c(101, 102)))
   expect_true(identical(out$gender, c(1, 2)))
   expect_true(identical(out$survey_weight, c(1.2, 0.8)))
-  expect_true(identical(out$vote_choice, c(3, 4)))
+  expect_true(all(out$vote_choice == c(3, 4)))
   expect_true(identical(out$turnout, c(1, 1)))
   expect_true(identical(out$age, c(NA_real_, NA_real_)))
   expect_true(identical(out$age_group, c("25-34", "65+")))

@@ -21,7 +21,7 @@
     vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "q6", "rts_q2", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
     vote_choice_text = c("cps_votechoice1_8_TEXT", "q2_96_other", "votechoice_text"),
     party_best = c("cps_partybest", "partybest", "qpartybest", "Q8"),
-    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "q5a", "rv1b", "intvoteref", "voteref", "intref", "votelean", "partylean"),
+    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "q5a", "rv1b", "intvote", "intvoteprov", "votelean", "partylean"),
     sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "Q20", "q52", "q26", "q19", "souv_rec", "voteref", "intvoteref", "intref"),
     federal_pid = c("cps_fedpid", "fed_pid", "fpid"),
     provincial_pid = c("cps_provpid", "prov_pid", "ppid"),
@@ -345,6 +345,339 @@
   rec
 }
 
+.standardize_language_labels <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  french_hit <- grepl("\\b(francais|french|fr ca|frca|fr)\\b", norm, perl = TRUE)
+  english_hit <- grepl("\\b(anglais|english|en)\\b", norm, perl = TRUE)
+  other_hit <- grepl("\\b(autre|other)\\b", norm, perl = TRUE)
+  dk_hit <- grepl("nsp|refus|dont know|don t know|prefer not", norm, perl = TRUE)
+
+  rec[french_hit] <- "French"
+  rec[english_hit & !french_hit] <- "English"
+  rec[other_hit & !french_hit & !english_hit] <- "Other"
+  rec[dk_hit] <- NA_character_
+
+  numeric_code <- is.na(rec) & grepl("^[0-9]+$", norm)
+  rec[numeric_code] <- NA_character_
+
+  keep_original <- is.na(rec) & !is.na(out) & !numeric_code & !dk_hit
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.standardize_citizenship_labels <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  rec[grepl("canadian citizen|citoyen canad", norm, perl = TRUE)] <- "Canadian citizen"
+  rec[grepl("permanent resident|resident permanent", norm, perl = TRUE)] <- "Permanent resident"
+  rec[grepl("\\bother\\b|\\bautre\\b", norm, perl = TRUE)] <- "Other"
+
+  keep_original <- is.na(rec) & !is.na(out)
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.standardize_born_canada <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  yes_hit <- grepl("^(1|yes|oui)$|\\byes\\b|\\boui\\b", norm, perl = TRUE)
+  no_hit <- grepl("^(0|2|no|non)$|\\bno\\b|\\bnon\\b", norm, perl = TRUE)
+  dk_hit <- grepl("dont know|don t know|refus|prefer not", norm, perl = TRUE)
+
+  rec[yes_hit] <- "Yes"
+  rec[no_hit] <- "No"
+  rec[dk_hit] <- NA_character_
+
+  keep_original <- is.na(rec) & !is.na(out)
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.standardize_gender_labels <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  nonbinary_hit <- grepl("non binary|nonbinary", norm, perl = TRUE)
+  other_hit <- grepl("another gender|autre genre", norm, perl = TRUE)
+  woman_hit <- grepl("^(2)$|\\bwoman\\b|\\bfemale\\b|\\bfemme\\b|\\bfeminin\\b", norm, perl = TRUE)
+  man_hit <- grepl("^(1)$|\\bman\\b|\\bmale\\b|\\bhomme\\b|\\bmasculin\\b", norm, perl = TRUE)
+  dk_hit <- grepl("dont know|don t know|refus|prefer not", norm, perl = TRUE)
+
+  rec[man_hit] <- "Man"
+  rec[woman_hit & !man_hit] <- "Woman"
+  rec[nonbinary_hit] <- "Non-binary"
+  rec[other_hit] <- "Other"
+  rec[dk_hit] <- NA_character_
+
+  keep_original <- is.na(rec) & !is.na(out)
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.standardize_education_labels <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  # Explicit numeric coding used in some recent studies.
+  code_map <- c(
+    "0" = "Non-university",
+    "1" = "Primary or less",
+    "2" = "Primary or less",
+    "3" = "Primary or less",
+    "4" = "Secondary",
+    "5" = "Secondary",
+    "6" = "College/CEGEP/Technical",
+    "7" = "College/CEGEP/Technical",
+    "8" = "University",
+    "9" = "University",
+    "10" = "University",
+    "11" = "University",
+    "12" = "University",
+    "13" = "University",
+    "14" = "University",
+    "15" = "University"
+  )
+  rec <- unname(code_map[norm])
+
+  university_hit <- grepl(
+    "universit|university|undergraduate|bachelor|baccalaureat|master|maitrise|doctor|postgraduate|higher education|professional degree|16 annees ou plus|etudes uni",
+    norm,
+    perl = TRUE
+  )
+  college_hit <- grepl(
+    "cegep|college|technical|technique|certificate and diploma|post secondary|13 a 15 annees",
+    norm,
+    perl = TRUE
+  )
+  secondary_hit <- grepl(
+    "secondaire|secondary|high school|8 a 12 annees|cours secondaire",
+    norm,
+    perl = TRUE
+  )
+  primary_hit <- grepl(
+    "primaire|elementaire|elementary|no schooling|aucune scolarite|7 annees ou moins|cours primaire",
+    norm,
+    perl = TRUE
+  )
+  dk_hit <- grepl("refus|pas de reponse|dont know|don t know|prefer not|je prefere", norm, perl = TRUE) | norm %in% c("99", "-99")
+
+  rec[is.na(rec) & university_hit] <- "University"
+  rec[is.na(rec) & college_hit] <- "College/CEGEP/Technical"
+  rec[is.na(rec) & secondary_hit] <- "Secondary"
+  rec[is.na(rec) & primary_hit] <- "Primary or less"
+  rec[dk_hit] <- NA_character_
+
+  keep_original <- is.na(rec) & !is.na(out) & !dk_hit
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.standardize_province_territory <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  rec[grepl("alberta", norm, perl = TRUE)] <- "Alberta"
+  rec[grepl("british columbia|colombie britannique", norm, perl = TRUE)] <- "British Columbia"
+  rec[grepl("manitoba", norm, perl = TRUE)] <- "Manitoba"
+  rec[grepl("new brunswick|nouveau brunswick", norm, perl = TRUE)] <- "New Brunswick"
+  rec[grepl("newfoundland|labrador|terre neuve", norm, perl = TRUE)] <- "Newfoundland and Labrador"
+  rec[grepl("northwest territories|territoires du nord ouest", norm, perl = TRUE)] <- "Northwest Territories"
+  rec[grepl("nunavut", norm, perl = TRUE)] <- "Nunavut"
+  rec[grepl("ontario", norm, perl = TRUE)] <- "Ontario"
+  rec[grepl("prince edward island|ile du prince", norm, perl = TRUE)] <- "Prince Edward Island"
+  rec[grepl("saskatchewan", norm, perl = TRUE)] <- "Saskatchewan"
+  rec[grepl("yukon", norm, perl = TRUE)] <- "Yukon"
+
+  quebec_region_hit <- grepl(
+    "quebec|montreal|mtl rmr|qc rmr|mont er egie|monteregie|capitale nationale|chaudiere|laval|lanaudiere|estrie|laurentides|mauricie|outaouais|centre du quebec|saguenay|bas saint laurent|abitibi|cote nord|c ote nord|gaspesie|nord du quebec|rest of quebec|quebec cma|autres regions|reste du quebec",
+    norm,
+    perl = TRUE
+  )
+  rec[is.na(rec) & quebec_region_hit] <- "Quebec"
+
+  # Many files use 1..17 for Quebec administrative regions.
+  numeric_region <- is.na(rec) & grepl("^[0-9]+$", norm)
+  num <- suppressWarnings(as.integer(norm))
+  rec[numeric_region & !is.na(num) & num >= 1L & num <= 17L] <- "Quebec"
+
+  keep_original <- is.na(rec) & !is.na(out)
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.coerce_scale_0_10 <- function(x, kind = c("generic", "interest", "ideology")) {
+  kind <- match.arg(kind)
+  raw <- as.character(x)
+  norm <- .normalize_master_text(raw)
+  out <- rep(NA_real_, length(raw))
+
+  num <- suppressWarnings(as.numeric(raw))
+  valid_num <- is.finite(num) & num >= 0 & num <= 10
+  out[valid_num] <- num[valid_num]
+
+  if (kind == "interest") {
+    out[is.na(out) & grepl("beaucoup|very interested|a lot", norm, perl = TRUE)] <- 10
+    out[is.na(out) & grepl("assez|fairly|somewhat", norm, perl = TRUE)] <- 7
+    out[is.na(out) & grepl("^peu$|\\ba little\\b|little", norm, perl = TRUE)] <- 3
+    out[is.na(out) & grepl("pas du tout|not at all|none", norm, perl = TRUE)] <- 0
+  }
+
+  if (kind == "ideology") {
+    out[is.na(out) & grepl("0 most left|most left", norm, perl = TRUE)] <- 0
+    out[is.na(out) & grepl("10 most right|most right", norm, perl = TRUE)] <- 10
+  }
+
+  dk_hit <- grepl("dont know|don t know|refus|prefer not", norm, perl = TRUE) | norm %in% c("-99", "99")
+  out[dk_hit] <- NA_real_
+  out
+}
+
+.standardize_party_label <- function(x, domain = c("provincial", "federal")) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  domain <- match.arg(domain)
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  dk_hit <- grepl(
+    "nsp|refus|dont know|don t know|ne sais pas|ne sait pas|pas certain|prefer not|je prefere|pas de reponse|^[-+]?[0-9]+$",
+    norm,
+    perl = TRUE
+  )
+  none_hit <- grepl(
+    "n a pas vote|na pas vote|n a pas vot|na pas vot|ne votera pas|annul|a annule son vote|annulerait|aucun|none of these|non rejoint|did not vote",
+    norm,
+    perl = TRUE
+  )
+  other_hit <- grepl("autre parti|another party|other party|un autre parti|^other$|egalite", norm, perl = TRUE)
+
+  rec[dk_hit] <- "Don't know / Refused"
+  rec[none_hit] <- "Did not vote / None"
+  rec[other_hit] <- "Other party"
+
+  if (domain == "federal") {
+    rec[is.na(rec) & grepl("bloc quebec", norm, perl = TRUE)] <- "Bloc Quebecois"
+    rec[is.na(rec) & grepl("\\bliberal\\b", norm, perl = TRUE)] <- "Liberal"
+    rec[is.na(rec) & grepl("conserv", norm, perl = TRUE)] <- "Conservative"
+    rec[is.na(rec) & grepl("\\bndp\\b|new democratic", norm, perl = TRUE)] <- "NDP"
+    rec[is.na(rec) & grepl("\\bgreen\\b|parti vert", norm, perl = TRUE)] <- "Green"
+    rec[is.na(rec) & grepl("\\bppc\\b|peoples party", norm, perl = TRUE)] <- "PPC"
+  } else {
+    rec[is.na(rec) & grepl("coalition avenir quebec|\\bcaq\\b|caquiste|francois legault", norm, perl = TRUE)] <- "CAQ"
+    rec[is.na(rec) & grepl("parti liberal du quebec|quebec liberal party|\\bplq\\b|\\bliberal\\b", norm, perl = TRUE)] <- "PLQ"
+    rec[is.na(rec) & grepl("parti quebecois|\\bpq\\b|pequiste", norm, perl = TRUE)] <- "PQ"
+    rec[is.na(rec) & grepl("quebec solidaire|\\bqs\\b|\\bsolidaire\\b", norm, perl = TRUE)] <- "QS"
+    rec[is.na(rec) & grepl("action democratique|\\badq\\b|^ladq$|\\bl adq\\b", norm, perl = TRUE)] <- "ADQ"
+    rec[is.na(rec) & grepl("parti conservateur du quebec|\\bpcq\\b|\\bconservateur\\b", norm, perl = TRUE)] <- "PCQ"
+    rec[is.na(rec) & grepl("parti vert du quebec|\\bpv\\b|parti vert|green party", norm, perl = TRUE)] <- "PVQ"
+    rec[is.na(rec) & grepl("option nationale", norm, perl = TRUE)] <- "ON"
+  }
+
+  keep_original <- is.na(rec) & !is.na(out)
+  rec[keep_original] <- out[keep_original]
+  rec
+}
+
+.clean_vote_choice_text <- function(x) {
+  if (!(is.character(x) || is.factor(x))) {
+    return(x)
+  }
+
+  out <- as.character(x)
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+
+  code_like <- grepl("^[-+]?[0-9]+$", norm) | norm %in% c("-99", "95", "96", "97", "98", "99")
+  dk_like <- grepl("dont know|don t know|refus|prefer not", norm, perl = TRUE)
+  out[code_like | dk_like] <- NA_character_
+  out
+}
+
+.recode_party_fields_by_study <- function(master) {
+  if (!is.data.frame(master) || nrow(master) == 0L || !("qes_code" %in% names(master))) {
+    return(master)
+  }
+
+  code <- as.character(master$qes_code)
+  map_qes2018 <- c(
+    "1" = "PLQ",
+    "2" = "PQ",
+    "3" = "CAQ",
+    "4" = "QS",
+    "95" = "Did not vote / None",
+    "96" = "Other party",
+    "99" = "Don't know / Refused"
+  )
+
+  if ("vote_choice" %in% names(master)) {
+    idx <- code == "qes2018"
+    if (any(idx, na.rm = TRUE)) {
+      vote <- as.character(master$vote_choice)
+      rec <- unname(map_qes2018[trimws(vote)])
+      hit <- idx & !is.na(rec)
+      vote[hit] <- rec[hit]
+      master$vote_choice <- vote
+    }
+  }
+
+  if ("party_lean" %in% names(master)) {
+    idx <- code == "qes2018"
+    if (any(idx, na.rm = TRUE)) {
+      lean <- as.character(master$party_lean)
+      rec <- unname(map_qes2018[trimws(lean)])
+      hit <- idx & !is.na(rec)
+      lean[hit] <- rec[hit]
+      master$party_lean <- lean
+    }
+  }
+
+  master
+}
+
 .postprocess_master_dataset <- function(master) {
   if (!is.data.frame(master) || nrow(master) == 0L) {
     return(master)
@@ -411,6 +744,60 @@
       raw = sov_raw,
       qes_code = master$qes_code
     )
+  }
+
+  if ("language" %in% names(master)) {
+    master$language <- .standardize_language_labels(master$language)
+  }
+
+  if ("citizenship" %in% names(master)) {
+    master$citizenship <- .standardize_citizenship_labels(master$citizenship)
+  }
+
+  if ("born_canada" %in% names(master)) {
+    master$born_canada <- .standardize_born_canada(master$born_canada)
+  }
+
+  if ("gender" %in% names(master)) {
+    master$gender <- .standardize_gender_labels(master$gender)
+  }
+
+  if ("education" %in% names(master)) {
+    master$education <- .standardize_education_labels(master$education)
+  }
+
+  if ("province_territory" %in% names(master)) {
+    master$province_territory <- .standardize_province_territory(master$province_territory)
+  }
+
+  if ("political_interest" %in% names(master)) {
+    master$political_interest <- .coerce_scale_0_10(master$political_interest, kind = "interest")
+  }
+
+  if ("ideology" %in% names(master)) {
+    master$ideology <- .coerce_scale_0_10(master$ideology, kind = "ideology")
+  }
+
+  master <- .recode_party_fields_by_study(master)
+
+  if ("vote_choice" %in% names(master)) {
+    master$vote_choice <- .standardize_party_label(master$vote_choice, domain = "provincial")
+  }
+  if ("party_best" %in% names(master)) {
+    master$party_best <- .standardize_party_label(master$party_best, domain = "provincial")
+  }
+  if ("party_lean" %in% names(master)) {
+    master$party_lean <- .standardize_party_label(master$party_lean, domain = "provincial")
+  }
+  if ("provincial_pid" %in% names(master)) {
+    master$provincial_pid <- .standardize_party_label(master$provincial_pid, domain = "provincial")
+  }
+  if ("federal_pid" %in% names(master)) {
+    master$federal_pid <- .standardize_party_label(master$federal_pid, domain = "federal")
+  }
+
+  if ("vote_choice_text" %in% names(master)) {
+    master$vote_choice_text <- .clean_vote_choice_text(master$vote_choice_text)
   }
 
   master

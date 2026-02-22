@@ -24,8 +24,6 @@ library(ggplot2)
 library(knitr)
 ```
 
-## Load merged data
-
 ```{r}
 master <- if (file.exists("qes_master.csv")) {
   read.csv("qes_master.csv", stringsAsFactors = FALSE)
@@ -100,9 +98,11 @@ knitr::kable(
 )
 ```
 
-## Table 2: age-group composition
+## Table 2: age-group composition by year (share %)
 
 ```{r}
+age_order <- c("18-34", "35-54", "55+")
+
 age_table <- master_trend %>%
   mutate(age_group_3 = collapse_age_group3(age_group)) %>%
   filter(!is.na(qes_year_num), !is.na(age_group_3), nzchar(age_group_3)) %>%
@@ -112,22 +112,48 @@ age_table <- master_trend %>%
   ungroup() %>%
   arrange(qes_year_num, age_group_3)
 
+age_table$age_group_3 <- factor(age_table$age_group_3, levels = age_order)
+
+age_counts <- age_table %>%
+  group_by(qes_year_num) %>%
+  summarise(n_with_age_group = sum(n), .groups = "drop")
+
+age_table_wide <- reshape(
+  age_table[, c("qes_year_num", "age_group_3", "pct")],
+  idvar = "qes_year_num",
+  timevar = "age_group_3",
+  direction = "wide"
+)
+
+names(age_table_wide) <- sub("^pct\\.", "", names(age_table_wide))
+
+for (grp in age_order) {
+  if (!(grp %in% names(age_table_wide))) {
+    age_table_wide[[grp]] <- NA_real_
+  }
+}
+
+age_table_wide <- age_table_wide %>%
+  merge(age_counts, by = "qes_year_num", all.x = TRUE, sort = TRUE) %>%
+  arrange(qes_year_num)
+
 knitr::kable(
-  age_table %>%
+  age_table_wide %>%
     transmute(
       `Study year` = qes_year_num,
-      `Age group (harmonized)` = age_group_3,
-      `Share (%)` = round(pct, 1)
+      `N with age group` = n_with_age_group,
+      `18-34 (%)` = round(`18-34`, 1),
+      `35-54 (%)` = round(`35-54`, 1),
+      `55+ (%)` = round(`55+`, 1)
     ),
   digits = 1,
-  caption = "Age-group composition by year (18-34, 35-54, 55+)"
+  caption = "Age-group composition by year"
 )
 ```
 
 ## Figure 1: age-group profile over time
 
 ```{r, fig.alt="Line chart of harmonized age-group composition across study years."}
-age_order <- c("18-34", "35-54", "55+")
 age_table$age_group_3 <- factor(age_table$age_group_3, levels = age_order)
 
 ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group_3, group = age_group_3)) +

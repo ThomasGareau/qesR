@@ -176,7 +176,7 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice","intvoteprov"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice_text",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_lean","intvoteref"
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_lean","intvoteprov"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty_support",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federal_pid",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid",
