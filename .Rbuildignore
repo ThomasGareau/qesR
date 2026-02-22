@@ -1,0 +1,8 @@
+^.*\\.Rproj$
+^\\.Rproj\\.user$
+^\\.git$
+^\\.gitignore$
+^qesR\\.Rproj$
+^\\.{2}Rcheck$
+^qesR\\.Rcheck$
+^tmp$
