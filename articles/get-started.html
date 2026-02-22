@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Getting Started with qesR • qesR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
@@ -32,15 +37,15 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="active nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-analysis-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Analysis Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-analysis-examples">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting Started</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-master.html">Harmonized Master Analysis</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-codebook.html">Codebook Exploration</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-demography.html">Analysis: Demography</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-turnout-vote.html">Analysis: Turnout and Vote</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-master.html">Analysis: Cross-Year Patterns</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/ThomasGareau/qesR" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
@@ -56,8 +61,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-
-      <h1>Getting Started with qesR</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Getting Started with qesR</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/get-started.Rmd" class="external-link"><code>vignettes/get-started.Rmd</code></a></small>
@@ -67,7 +71,8 @@
     
     
 <p><code>qesR</code> helps you access Quebec Election Study data by
-survey code, plus metadata and codebooks.</p>
+survey code, plus metadata, codebooks, and a merged harmonized
+dataset.</p>
 <div class="section level2">
 <h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
@@ -75,6 +80,26 @@ survey code, plus metadata and codebooks.</p>
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
+</h2>
+<p>Core calls:</p>
+<ul>
+<li>
+<code>get_qes(srvy)</code> download a survey by code</li>
+<li>
+<code><a href="../reference/get_qescodes.html">get_qescodes()</a></code> list available codes</li>
+<li>
+<code>get_preview(srvy, obs)</code> preview observations</li>
+<li>
+<code>get_question(data, variable)</code> retrieve survey question
+text</li>
+<li>
+<code>get_codebook(srvy)</code> retrieve codebook</li>
+<li>
+<code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> build merged harmonized data</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="list-available-studies">List available studies<a class="anchor" aria-label="anchor" href="#list-available-studies"></a>
@@ -99,10 +124,11 @@ survey code, plus metadata and codebooks.</p>
 <span><span class="va">cb_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_codebook.html">get_codebook</a></span><span class="op">(</span><span class="st">"qes2022"</span>, layout <span class="op">=</span> <span class="st">"long"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="get-question-text-for-a-variable">Get question text for a variable<a class="anchor" aria-label="anchor" href="#get-question-text-for-a-variable"></a>
+<h2 id="get-a-preview-and-question-text">Get a preview and question text<a class="anchor" aria-label="anchor" href="#get-a-preview-and-question-text"></a>
 </h2>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_preview.html">get_preview</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -116,6 +142,18 @@ survey code, plus metadata and codebooks.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
+</h2>
+<ul>
+<li>Surveys are loaded in labelled form with available variable/value
+labels.</li>
+<li>Codebook metadata can be inspected in compact, wide, or long
+layout.</li>
+<li>Merged data includes harmonized variables, de-duplication, and
+source-map tracing.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="save-the-master-dataset">Save the master dataset<a class="anchor" aria-label="anchor" href="#save-the-master-dataset"></a>

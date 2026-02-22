@@ -1,0 +1,89 @@
+# Analysis: Evolution of Sovereignty Attitudes
+
+``` r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+```
+
+This analysis illustrates one workflow to track sovereignty attitudes
+across waves.
+
+## Strategy
+
+Sovereignty items are not named identically across studies, so we:
+
+1.  Search codebooks for labels/questions mentioning sovereignty.
+2.  Pull candidate variable(s) for each study.
+3.  Standardize response scales into a common orientation for trend
+    plots.
+
+## Detect sovereignty-related variables
+
+``` r
+study_codes <- c("qes2022", "qes2018", "qes2014", "qes2012", "qes2008", "qes2007", "qes1998")
+
+find_sovereignty_vars <- function(code) {
+  cb <- get_codebook(code, layout = "compact")
+  cb %>%
+    mutate(search_text = tolower(paste(label, question))) %>%
+    filter(grepl("souverain|sovereign|independ", search_text)) %>%
+    mutate(qes_code = code) %>%
+    select(qes_code, variable, label, question, n_value_labels)
+}
+
+sovereignty_vars <- bind_rows(lapply(study_codes, find_sovereignty_vars))
+sovereignty_vars
+```
+
+## Extract and standardize
+
+``` r
+extract_sovereignty <- function(code, var_name) {
+  d <- get_qes(code, assign_global = FALSE, with_codebook = TRUE, quiet = TRUE)
+  out <- data.frame(
+    qes_code = code,
+    response_raw = as.character(d[[var_name]]),
+    stringsAsFactors = FALSE
+  )
+  out
+}
+
+# Example: choose one sovereignty variable per study from sovereignty_vars
+# and stack results into a harmonized long table.
+```
+
+## Example trend: support share over time
+
+``` r
+# sovereignty_long is assumed to include:
+# qes_year, support_binary (1 = more pro-sovereignty, 0 = less)
+
+trend <- sovereignty_long %>%
+  filter(!is.na(support_binary), !is.na(qes_year)) %>%
+  group_by(qes_year) %>%
+  summarise(
+    support_share = mean(support_binary),
+    n = n(),
+    .groups = "drop"
+  )
+
+ggplot(trend, aes(x = qes_year, y = support_share)) +
+  geom_line(linewidth = 0.9, color = "#0f4c5c") +
+  geom_point(size = 2.2, color = "#e36414") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(
+    title = "Evolution of sovereignty attitudes across QES studies",
+    x = "Study year",
+    y = "Share expressing higher sovereignty support"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Reproducibility note
+
+Because wording and scales differ by study, always report:
+
+- which source variable was selected per year,
+- how responses were recoded,
+- sensitivity checks using alternate codings.

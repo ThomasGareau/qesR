@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>qesR • qesR</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" sizes="any" href="favicon.ico">
+<link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
@@ -16,6 +21,7 @@
 <meta property="og:title" content="qesR">
 <meta name="description" content="Access and harmonize Quebec Election Study datasets in R.">
 <meta property="og:description" content="Access and harmonize Quebec Election Study datasets in R.">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -34,15 +40,15 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="articles/get-started.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-analysis-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Analysis Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-analysis-examples">
-<li><a class="dropdown-item" href="articles/get-started.html">Getting Started</a></li>
-    <li><a class="dropdown-item" href="articles/analysis-master.html">Harmonized Master Analysis</a></li>
-    <li><a class="dropdown-item" href="articles/analysis-codebook.html">Codebook Exploration</a></li>
-  </ul>
-</li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/merged-dataset.html">Merged Dataset</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/study-citations.html">Study Citations</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/analysis-demography.html">Analysis: Demography</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/analysis-turnout-vote.html">Analysis: Turnout and Vote</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/analysis-master.html">Analysis: Cross-Year Patterns</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/ThomasGareau/qesR" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
@@ -53,64 +59,170 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><code>qesR</code> provides a single workflow to download, document, and harmonize Quebec Election Study datasets from Dataverse.</p>
+  <main id="main" class="col-md-9"><p>
+<img src="logo.png" alt="qesR logo" width="220"></p>
+<p>Access Quebec Election Study datasets in R.</p>
 <div class="section level2">
-<h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>Install the development version from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="core-workflows">Core Workflows<a class="anchor" aria-label="anchor" href="#core-workflows"></a>
+<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
 </h2>
-<div class="section level3">
-<h3 id="id_1-pull-a-study-with-labels-and-codebook">1. Pull a study with labels and codebook<a class="anchor" aria-label="anchor" href="#id_1-pull-a-study-with-labels-and-codebook"></a>
-</h3>
+<p>The package provides access to QES surveys through:</p>
+<ul>
+<li>
+<code>get_qes(srvy)</code>: download a survey by code</li>
+<li>
+<code><a href="reference/get_qescodes.html">get_qescodes()</a></code>: list survey codes and metadata</li>
+<li>
+<code>get_preview(srvy, obs)</code>: preview a survey</li>
+<li>
+<code>get_question(data, variable)</code>: retrieve question text</li>
+<li>
+<code>get_codebook(srvy)</code>: get survey codebook</li>
+<li>
+<code><a href="reference/get_qes_master.html">get_qes_master()</a></code>: build a harmonized merged dataset</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">qes2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2022"</span><span class="op">)</span></span>
-<span><span class="va">cb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_codebook.html">get_codebook</a></span><span class="op">(</span><span class="st">"qes2022"</span>, layout <span class="op">=</span> <span class="st">"compact"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cb</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="id_2-build-a-harmonized-master-dataset">2. Build a harmonized master dataset<a class="anchor" aria-label="anchor" href="#id_2-build-a-harmonized-master-dataset"></a>
-</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span></span>
-<span>  surveys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2007"</span>, <span class="st">"qes1998"</span><span class="op">)</span>,</span>
-<span>  strict <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
+<span><span class="co"># list survey call codes</span></span>
+<span><span class="fu"><a href="reference/get_qescodes.html">get_qescodes</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">master</span>, <span class="st">"source_map"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
+<span><span class="co"># load one survey</span></span>
+<span><span class="va">qes2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2022"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># preview observations</span></span>
+<span><span class="fu"><a href="reference/get_preview.html">get_preview</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># retrieve question text</span></span>
+<span><span class="fu"><a href="reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># build merged cross-study dataset</span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="analysis-examples">Analysis Examples<a class="anchor" aria-label="anchor" href="#analysis-examples"></a>
+<h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
 </h2>
-<p>Use the tutorials in the website navbar:</p>
 <ul>
-<li>
-<code>Getting Started</code>: installation and first queries</li>
-<li>
-<code>Harmonized Master Analysis</code>: cross-year examples (age, turnout, vote)</li>
-<li>
-<code>Codebook Exploration</code>: variable labels and value labels workflows</li>
+<li>downloaded survey files are read and returned in labelled form</li>
+<li>codebook metadata is attached and available through <code><a href="reference/get_codebook.html">get_codebook()</a></code>
+</li>
+<li>merged dataset creation includes harmonization, de-duplication, and filtering of empty rows</li>
+<li>source-variable provenance is available via <code>attr(master, "source_map")</code>
+</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
+<h2 id="merged-dataset">Merged dataset<a class="anchor" aria-label="anchor" href="#merged-dataset"></a>
 </h2>
-<p>The package includes command-line scripts:</p>
+<p><code>qesR</code> includes a merged harmonized dataset workflow:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.csv"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.rds"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>See: <a href="articles/merged-dataset.html">Merged Dataset</a></p>
+</div>
+<div class="section level2">
+<h2 id="survey-code-table">Survey code table<a class="anchor" aria-label="anchor" href="#survey-code-table"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>year</th>
+<th>code</th>
+<th>name</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>2022</td>
+<td><code>qes2022</code></td>
+<td>Quebec Election Study 2022</td>
+</tr>
+<tr class="even">
+<td>2018</td>
+<td><code>qes2018</code></td>
+<td>Quebec Election Study 2018</td>
+</tr>
+<tr class="odd">
+<td>2018</td>
+<td><code>qes2018_panel</code></td>
+<td>Quebec Election Study 2018 Panel</td>
+</tr>
+<tr class="even">
+<td>2014</td>
+<td><code>qes2014</code></td>
+<td>Quebec Election Study 2014</td>
+</tr>
+<tr class="odd">
+<td>2012</td>
+<td><code>qes2012</code></td>
+<td>Quebec Election Study 2012</td>
+</tr>
+<tr class="even">
+<td>2012</td>
+<td><code>qes2012_panel</code></td>
+<td>Quebec Election Study 2012 Panel</td>
+</tr>
+<tr class="odd">
+<td>2007-2010</td>
+<td><code>qes_crop_2007_2010</code></td>
+<td>CROP Quebec Opinion Polls (2007-2010)</td>
+</tr>
+<tr class="even">
+<td>2008</td>
+<td><code>qes2008</code></td>
+<td>Quebec Election Study 2008</td>
+</tr>
+<tr class="odd">
+<td>2007</td>
+<td><code>qes2007</code></td>
+<td>Quebec Election Study 2007</td>
+</tr>
+<tr class="even">
+<td>2007</td>
+<td><code>qes2007_panel</code></td>
+<td>Quebec Election Study 2007 Panel</td>
+</tr>
+<tr class="odd">
+<td>1998</td>
+<td><code>qes1998</code></td>
+<td>Quebec Elections 1998</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2">
+<h2 id="citations">Citations<a class="anchor" aria-label="anchor" href="#citations"></a>
+</h2>
+<p>Full citations for all studies are listed in:</p>
 <ul>
-<li>
-<code>scripts/build_qes_master.R</code>: export harmonized master data</li>
-<li>
-<code>scripts/build_pkgdown_site.R</code>: build website locally</li>
+<li><a href="articles/study-citations.html">Study Citations</a></li>
 </ul>
-<p>Deployment to GitHub Pages is handled by <code>.github/workflows/pkgdown.yml</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="analyses">Analyses<a class="anchor" aria-label="anchor" href="#analyses"></a>
+</h2>
+<p>Analyses available in separate tabs:</p>
+<ul>
+<li><a href="articles/analysis-sovereignty.html">Evolution of sovereignty attitudes</a></li>
+<li><a href="articles/analysis-demography.html">Demographic structure</a></li>
+<li><a href="articles/analysis-turnout-vote.html">Turnout and vote-choice patterns</a></li>
+<li><a href="articles/analysis-master.html">Cross-year merged trends</a></li>
+</ul>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
