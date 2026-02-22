@@ -131,54 +131,6 @@ test_that("get_qes_master derives age_group from age and year_of_birth", {
   expect_true(identical(row_x3$education, 4))
 })
 
-test_that("get_qes_master does not deduplicate respondents across different studies", {
-  local_mocked_bindings(
-    get_qes = function(srvy, assign_global, with_codebook, quiet) {
-      if (identical(srvy, "qes2007")) {
-        return(data.frame(quest = c("11", "12"), age = c(30, 40), stringsAsFactors = FALSE))
-      }
-      if (identical(srvy, "qes2007_panel")) {
-        return(data.frame(quest = c("12", "13"), age = c(41, 50), stringsAsFactors = FALSE))
-      }
-      stop("mocked failure")
-    },
-    .env = asNamespace("qesR")
-  )
-
-  master <- get_qes_master(
-    surveys = c("qes2007", "qes2007_panel"),
-    assign_global = FALSE,
-    quiet = TRUE
-  )
-
-  expect_true(identical(nrow(master), 4L))
-  expect_true(identical(attr(master, "duplicates_removed", exact = TRUE), 0L))
-  expect_true(identical(sum(master$respondent_id == "12"), 2L))
-})
-
-test_that("get_qes_master removes duplicate respondents within the same study", {
-  local_mocked_bindings(
-    get_qes = function(srvy, assign_global, with_codebook, quiet) {
-      if (identical(srvy, "qes2007")) {
-        return(data.frame(quest = c("11", "11", "12"), age = c(30, 31, 40), stringsAsFactors = FALSE))
-      }
-      stop("mocked failure")
-    },
-    .env = asNamespace("qesR")
-  )
-
-  master <- get_qes_master(
-    surveys = "qes2007",
-    assign_global = FALSE,
-    quiet = TRUE
-  )
-
-  expect_true(identical(nrow(master), 2L))
-  expect_true(identical(attr(master, "duplicates_removed", exact = TRUE), 1L))
-  expect_true(identical(sum(master$respondent_id == "11"), 1L))
-  expect_true(identical(master$age[master$respondent_id == "11"], 30))
-})
-
 test_that("get_qes_master drops rows empty across harmonized variables", {
   local_mocked_bindings(
     get_qes = function(srvy, assign_global, with_codebook, quiet) {

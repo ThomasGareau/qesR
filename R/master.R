@@ -17,12 +17,12 @@
     born_canada = c("cps_borncda", "born_canada"),
     political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest", "interet"),
     ideology = c("cps_ideoself_1", "lr", "ideology", "q70a"),
-    turnout = c("cps_turnout", "Q2", "q21", "q11", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
-    vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
+    turnout = c("cps_turnout", "Q2", "q21", "q11", "q5", "rts_q1", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
+    vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "q6", "rts_q2", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
     vote_choice_text = c("cps_votechoice1_8_TEXT", "q2_96_other", "votechoice_text"),
     party_best = c("cps_partybest", "partybest", "qpartybest", "Q8"),
-    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "intvoteref", "voteref", "intref", "votelean", "partylean"),
-    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "Q20", "q52", "q19", "souv_rec", "intvoteref", "intref"),
+    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "q5a", "rv1b", "intvoteref", "voteref", "intref", "votelean", "partylean"),
+    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "Q20", "q52", "q26", "q19", "souv_rec", "voteref", "intvoteref", "intref"),
     federal_pid = c("cps_fedpid", "fed_pid", "fpid"),
     provincial_pid = c("cps_provpid", "prov_pid", "ppid"),
     survey_weight = c("cps_wts", "poids", "pond", "pondx", "ponder2", "ponder3", "ponderc", "pondvote", "weight", "weights", "wgt", "pdspart", "pdspart2")
@@ -32,8 +32,8 @@
 .master_study_overrides <- function() {
   list(
     qes2022 = c(sovereignty_support = "cps_qc_referendum"),
-    qes2018 = c(turnout = "q1", vote_choice = "q2", sovereignty_support = NA_character_),
-    qes2018_panel = c(vote_choice = "vote", party_lean = "intvote", sovereignty_support = "independance"),
+    qes2018 = c(turnout = "q5", vote_choice = "q6", party_lean = "q5a", sovereignty_support = "q26"),
+    qes2018_panel = c(turnout = "rts_q1", vote_choice = "vote", party_lean = "rv1b", sovereignty_support = "independance"),
     qes2014 = c(turnout = "Q2", vote_choice = "Q3", party_lean = "Q5", sovereignty_support = "Q20"),
     qes2012 = c(turnout = "q21", vote_choice = "q25", sovereignty_support = "q52"),
     qes2012_panel = c(turnout = "participation", vote_choice = "voteprov", party_lean = "intvoteprov", sovereignty_support = "souv_rec"),
@@ -41,8 +41,73 @@
     qes2008 = c(turnout = "q11", vote_choice = "q12a", party_lean = "q12b", sovereignty_support = "q19"),
     qes2007 = c(turnout = "q11", vote_choice = "q12", party_lean = "q13", sovereignty_support = "q19"),
     qes2007_panel = c(turnout = "avote", vote_choice = "vote", party_lean = "intvote", sovereignty_support = "intref"),
-    qes1998 = c(turnout = "allervot", vote_choice = "intvote")
+    qes1998 = c(turnout = "allervot", vote_choice = "intvote", party_lean = NA_character_, sovereignty_support = "voteref")
   )
+}
+
+.recode_turnout_by_study <- function(out, raw, qes_code) {
+  if (length(out) == 0L) {
+    return(out)
+  }
+
+  code <- as.character(qes_code)
+  raw_chr <- .normalize_master_text(raw)
+  raw_num <- suppressWarnings(as.numeric(as.character(raw)))
+
+  # qes2018 Q5: 4 = voted, 1/2/3 = did not vote, 5 = not eligible.
+  idx_2018 <- code == "qes2018"
+  if (any(idx_2018, na.rm = TRUE)) {
+    out[idx_2018] <- NA_real_
+    out[idx_2018 & raw_num %in% c(4)] <- 1
+    out[idx_2018 & raw_num %in% c(1, 2, 3)] <- 0
+  }
+
+  # qes2018_panel RTS_Q1: 3 = voted, 1/2 = did not vote.
+  idx_2018_panel <- code == "qes2018_panel"
+  if (any(idx_2018_panel, na.rm = TRUE)) {
+    out[idx_2018_panel] <- NA_real_
+
+    no_hit <- idx_2018_panel & (
+      raw_num %in% c(1, 2) |
+      grepl("navez pas pu|decide de ne pas|ne pas aller voter", raw_chr, perl = TRUE)
+    )
+    yes_hit <- idx_2018_panel & (
+      raw_num %in% c(3) |
+      grepl("etes alle voter|est alle voter|alle voter", raw_chr, perl = TRUE)
+    )
+
+    out[no_hit] <- 0
+    out[yes_hit & !no_hit] <- 1
+  }
+
+  out
+}
+
+.recode_sovereignty_by_study <- function(out, raw, qes_code) {
+  if (length(out) == 0L) {
+    return(out)
+  }
+
+  code <- as.character(qes_code)
+  raw_num <- suppressWarnings(as.numeric(as.character(raw)))
+
+  # qes2018 Q26: 1 = Yes, 2 = No, 8/9 = DK/PNTS.
+  idx_2018 <- code == "qes2018"
+  if (any(idx_2018, na.rm = TRUE)) {
+    out[idx_2018] <- NA_real_
+    out[idx_2018 & raw_num %in% c(1)] <- 1
+    out[idx_2018 & raw_num %in% c(2)] <- 0
+  }
+
+  # qes1998 voteref: keep explicit Yes/No only.
+  idx_1998 <- code == "qes1998"
+  if (any(idx_1998, na.rm = TRUE)) {
+    out[idx_1998] <- NA_real_
+    out[idx_1998 & raw_num %in% c(1)] <- 1
+    out[idx_1998 & raw_num %in% c(2)] <- 0
+  }
+
+  out
 }
 
 .resolve_master_source_column <- function(data, srvy, target, candidates) {
@@ -247,11 +312,23 @@
   }
 
   if ("turnout" %in% names(master)) {
-    master$turnout <- .coerce_turnout_binary(master$turnout)
+    turnout_raw <- master$turnout
+    master$turnout <- .coerce_turnout_binary(turnout_raw)
+    master$turnout <- .recode_turnout_by_study(
+      out = master$turnout,
+      raw = turnout_raw,
+      qes_code = master$qes_code
+    )
   }
 
   if ("sovereignty_support" %in% names(master)) {
-    master$sovereignty_support <- .coerce_sovereignty_binary(master$sovereignty_support)
+    sov_raw <- master$sovereignty_support
+    master$sovereignty_support <- .coerce_sovereignty_binary(sov_raw)
+    master$sovereignty_support <- .recode_sovereignty_by_study(
+      out = master$sovereignty_support,
+      raw = sov_raw,
+      qes_code = master$qes_code
+    )
   }
 
   master

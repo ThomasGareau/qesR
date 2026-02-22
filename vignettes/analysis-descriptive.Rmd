@@ -11,6 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  echo = FALSE,
   warning = FALSE,
   message = FALSE
 )
@@ -101,15 +102,17 @@ knitr::kable(
 
 ## Figure 1: age-group profile over time
 
-```{r, fig.alt="Line chart of age-group composition across study years."}
-ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group, group = age_group)) +
-  geom_line(linewidth = 0.9) +
-  geom_point(size = 1.6) +
+```{r, fig.alt="Heatmap of age-group composition across study years."}
+age_order <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
+age_table$age_group <- factor(age_table$age_group, levels = age_order)
+
+ggplot(age_table, aes(x = qes_year_num, y = age_group, fill = pct)) +
+  geom_tile(color = "#ffffff", linewidth = 0.35) +
+  scale_fill_gradient(low = "#dfe8f2", high = "#12355b", name = "%") +
   labs(
     title = "Age-group composition across study years",
     x = "Study year",
-    y = "Percent of respondents",
-    color = "Age group"
+    y = "Age group"
   ) +
   theme_minimal(base_size = 12)
 ```
@@ -126,22 +129,49 @@ turnout_year <- master_trend %>%
     respondents = n(),
     n_with_turnout = sum(!is.na(turnout_num)),
     turnout_rate = ifelse(n_with_turnout > 0, mean(turnout_num, na.rm = TRUE), NA_real_),
+    se = ifelse(
+      n_with_turnout > 0,
+      sqrt(pmax(turnout_rate * (1 - turnout_rate), 0) / n_with_turnout),
+      NA_real_
+    ),
+    ci_low = ifelse(!is.na(se), pmax(0, turnout_rate - 1.96 * se), NA_real_),
+    ci_high = ifelse(!is.na(se), pmin(1, turnout_rate + 1.96 * se), NA_real_),
     .groups = "drop"
   )
 
 turnout_year <- merge(all_years, turnout_year, by = "qes_year_num", all.x = TRUE, sort = TRUE)
 
 knitr::kable(
-  turnout_year %>% mutate(turnout_pct = round(100 * turnout_rate, 1)),
-  col.names = c("Year", "Respondents", "N with turnout", "Turnout rate", "Turnout (%)"),
+  turnout_year %>%
+    mutate(
+      turnout_pct = round(100 * turnout_rate, 1),
+      ci_low_pct = round(100 * ci_low, 1),
+      ci_high_pct = round(100 * ci_high, 1)
+    ),
+  col.names = c("Year", "Respondents", "N with turnout", "Turnout rate", "SE", "CI low", "CI high", "Turnout (%)", "CI low (%)", "CI high (%)"),
   caption = "Turnout indicator by year"
 )
 ```
 
 ```{r, fig.alt="Line chart of turnout indicator across study years."}
-ggplot(turnout_year, aes(x = qes_year_num, y = turnout_rate)) +
+plot_turnout <- turnout_year %>%
+  filter(!is.na(turnout_rate), !is.na(ci_low), !is.na(ci_high))
+
+ggplot(plot_turnout, aes(x = qes_year_num, y = turnout_rate)) +
+  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
+  geom_smooth(
+    method = "loess",
+    se = TRUE,
+    span = 0.9,
+    color = "#12355b",
+    fill = "#c9d6e4",
+    alpha = 0.25,
+    linetype = "dashed",
+    linewidth = 0.8,
+    na.rm = TRUE
+  ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
   labs(
     title = "Turnout indicator across study years",

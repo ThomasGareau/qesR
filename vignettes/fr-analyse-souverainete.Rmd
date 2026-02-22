@@ -11,6 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  echo = FALSE,
   warning = FALSE,
   message = FALSE
 )
@@ -52,36 +53,12 @@ if (!("sovereignty_support" %in% names(master))) {
 ## Indicateur d'appui à la souveraineté
 
 ```{r}
-normaliser <- function(x) {
-  y <- trimws(as.character(x))
-  y <- iconv(y, from = "", to = "ASCII//TRANSLIT")
-  y <- tolower(y)
-  y <- gsub("['`’]", "", y, perl = TRUE)
-  y <- gsub("[^a-z0-9]+", " ", y, perl = TRUE)
-  trimws(y)
-}
-
-est_pref_souverainiste <- function(x) {
-  y <- normaliser(x)
-  !is.na(y) & grepl("\\bpq\\b|parti quebecois|quebec solidaire|\\bqs\\b|option nationale", y)
-}
-
-a_texte_parti <- function(x) {
-  y <- normaliser(x)
-  !is.na(y) & grepl("[a-z]", y)
-}
-
-sov_item <- suppressWarnings(as.numeric(master$sovereignty_support))
-sov_item[!(sov_item %in% c(0, 1))] <- NA_real_
-
-pref_oui <- est_pref_souverainiste(master$vote_choice) | est_pref_souverainiste(master$party_lean)
-info_parti <- a_texte_parti(master$vote_choice) | a_texte_parti(master$party_lean)
-sov_parti <- ifelse(info_parti, ifelse(pref_oui, 1, 0), NA_real_)
-
 master <- master %>%
   mutate(
-    appui_souverainete = ifelse(!is.na(sov_item), sov_item, sov_parti)
+    appui_souverainete = suppressWarnings(as.numeric(sovereignty_support))
   )
+
+master$appui_souverainete[!(master$appui_souverainete %in% c(0, 1))] <- NA_real_
 
 annees <- data.frame(
   annee = sort(unique(master$annee[!is.na(master$annee)]))
@@ -94,6 +71,13 @@ sov <- master %>%
     repondants = n(),
     n_mesure = sum(!is.na(appui_souverainete)),
     taux = ifelse(n_mesure > 0, mean(appui_souverainete, na.rm = TRUE), NA_real_),
+    se = ifelse(
+      n_mesure > 0,
+      sqrt(pmax(taux * (1 - taux), 0) / n_mesure),
+      NA_real_
+    ),
+    ci_bas = ifelse(!is.na(se), pmax(0, taux - 1.96 * se), NA_real_),
+    ci_haut = ifelse(!is.na(se), pmin(1, taux + 1.96 * se), NA_real_),
     .groups = "drop"
   )
 
@@ -104,23 +88,42 @@ sov <- merge(annees, sov, by = "annee", all.x = TRUE, sort = TRUE)
 knitr::kable(
   sov %>%
     mutate(
-      appui_souverainete_pct = round(100 * taux, 1)
+      appui_souverainete_pct = round(100 * taux, 1),
+      ci_bas_pct = round(100 * ci_bas, 1),
+      ci_haut_pct = round(100 * ci_haut, 1)
     ) %>%
     select(
       annee,
       repondants,
       n_mesure,
-      appui_souverainete_pct
+      appui_souverainete_pct,
+      ci_bas_pct,
+      ci_haut_pct
     ),
-  col.names = c("Année", "Répondants", "N avec mesure", "Appui souveraineté (%)"),
+  col.names = c("Année", "Répondants", "N avec mesure", "Appui souveraineté (%)", "IC95 bas (%)", "IC95 haut (%)"),
   caption = "Appui à la souveraineté par année"
 )
 ```
 
 ```{r, fig.alt="Graphique de l'évolution de l'appui à la souveraineté par année."}
-ggplot(sov, aes(x = annee, y = taux)) +
+plot_sov <- sov %>%
+  filter(!is.na(taux), !is.na(ci_bas), !is.na(ci_haut))
+
+ggplot(plot_sov, aes(x = annee, y = taux)) +
+  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
+  geom_smooth(
+    method = "loess",
+    se = TRUE,
+    span = 0.9,
+    color = "#12355b",
+    fill = "#c9d6e4",
+    alpha = 0.25,
+    linetype = "dashed",
+    linewidth = 0.8,
+    na.rm = TRUE
+  ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
   labs(
     title = "Évolution de l'appui à la souveraineté",
@@ -132,6 +135,6 @@ ggplot(sov, aes(x = annee, y = taux)) +
 
 ## Notes
 
-- Les questions directes sur la souveraineté sont utilisées en priorité.
-- Quand elles sont absentes, un indicateur basé sur la préférence partisane est utilisé.
+- L'analyse repose uniquement sur la variable directe d'appui à la souveraineté.
+- Les intervalles de confiance sont des IC95 binomiaux (approximation normale).
 - La colonne `N avec mesure` indique la couverture disponible selon l'année.

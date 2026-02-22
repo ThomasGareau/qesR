@@ -42,12 +42,12 @@
 "qes2018","2018","Quebec Election Study 2018","born_canada",
 "qes2018","2018","Quebec Election Study 2018","political_interest",
 "qes2018","2018","Quebec Election Study 2018","ideology",
-"qes2018","2018","Quebec Election Study 2018","turnout","q1"
-"qes2018","2018","Quebec Election Study 2018","vote_choice","q2"
+"qes2018","2018","Quebec Election Study 2018","turnout","q5"
+"qes2018","2018","Quebec Election Study 2018","vote_choice","q6"
 "qes2018","2018","Quebec Election Study 2018","vote_choice_text","q2_96_other"
 "qes2018","2018","Quebec Election Study 2018","party_best",
-"qes2018","2018","Quebec Election Study 2018","party_lean","q13"
-"qes2018","2018","Quebec Election Study 2018","sovereignty_support",
+"qes2018","2018","Quebec Election Study 2018","party_lean","q5a"
+"qes2018","2018","Quebec Election Study 2018","sovereignty_support","q26"
 "qes2018","2018","Quebec Election Study 2018","federal_pid",
 "qes2018","2018","Quebec Election Study 2018","provincial_pid",
 "qes2018","2018","Quebec Election Study 2018","survey_weight","pond"
@@ -68,11 +68,11 @@
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","born_canada",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","political_interest",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","ideology",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","turnout","q1"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","turnout","rts_q1"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice","vote"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice_text",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_lean",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_lean","rv1b"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","sovereignty_support","independance"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","federal_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid",
@@ -280,8 +280,8 @@
 "qes1998","1998","Quebec Elections 1998","vote_choice","intvote"
 "qes1998","1998","Quebec Elections 1998","vote_choice_text",
 "qes1998","1998","Quebec Elections 1998","party_best",
-"qes1998","1998","Quebec Elections 1998","party_lean","voteref"
-"qes1998","1998","Quebec Elections 1998","sovereignty_support",
+"qes1998","1998","Quebec Elections 1998","party_lean",
+"qes1998","1998","Quebec Elections 1998","sovereignty_support","voteref"
 "qes1998","1998","Quebec Elections 1998","federal_pid",
 "qes1998","1998","Quebec Elections 1998","provincial_pid",
 "qes1998","1998","Quebec Elections 1998","survey_weight","poids"

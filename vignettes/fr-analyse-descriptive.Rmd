@@ -11,6 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
+  echo = FALSE,
   warning = FALSE,
   message = FALSE
 )
@@ -95,15 +96,17 @@ knitr::kable(
 )
 ```
 
-```{r, fig.alt="Graphique de la répartition des groupes d'âge selon l'année."}
-ggplot(age_dist, aes(x = annee, y = pct, color = age_group, group = age_group)) +
-  geom_line(linewidth = 0.9) +
-  geom_point(size = 1.5) +
+```{r, fig.alt="Carte thermique de la répartition des groupes d'âge selon l'année."}
+ordre_age <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
+age_dist$age_group <- factor(age_dist$age_group, levels = ordre_age)
+
+ggplot(age_dist, aes(x = annee, y = age_group, fill = pct)) +
+  geom_tile(color = "#ffffff", linewidth = 0.35) +
+  scale_fill_gradient(low = "#dfe8f2", high = "#12355b", name = "%") +
   labs(
     title = "Répartition des groupes d'âge dans le temps",
     x = "Année d'étude",
-    y = "Pourcentage",
-    color = "Groupe d'âge"
+    y = "Groupe d'âge"
   ) +
   theme_minimal(base_size = 12)
 ```
@@ -120,22 +123,49 @@ turnout_annee <- master_tendance %>%
     repondants = n(),
     n_avec_turnout = sum(!is.na(turnout_num)),
     taux = ifelse(n_avec_turnout > 0, mean(turnout_num, na.rm = TRUE), NA_real_),
+    se = ifelse(
+      n_avec_turnout > 0,
+      sqrt(pmax(taux * (1 - taux), 0) / n_avec_turnout),
+      NA_real_
+    ),
+    ci_bas = ifelse(!is.na(se), pmax(0, taux - 1.96 * se), NA_real_),
+    ci_haut = ifelse(!is.na(se), pmin(1, taux + 1.96 * se), NA_real_),
     .groups = "drop"
   )
 
 turnout_annee <- merge(annees, turnout_annee, by = "annee", all.x = TRUE, sort = TRUE)
 
 knitr::kable(
-  turnout_annee %>% mutate(taux_pct = round(100 * taux, 1)),
-  col.names = c("Année", "Répondants", "N avec mesure", "Taux", "Taux (%)"),
+  turnout_annee %>%
+    mutate(
+      taux_pct = round(100 * taux, 1),
+      ci_bas_pct = round(100 * ci_bas, 1),
+      ci_haut_pct = round(100 * ci_haut, 1)
+    ),
+  col.names = c("Année", "Répondants", "N avec mesure", "Taux", "SE", "IC bas", "IC haut", "Taux (%)", "IC bas (%)", "IC haut (%)"),
   caption = "Indicateur de participation par année"
 )
 ```
 
 ```{r, fig.alt="Graphique de l'indicateur de participation électorale selon l'année."}
-ggplot(turnout_annee, aes(x = annee, y = taux)) +
+plot_turnout <- turnout_annee %>%
+  filter(!is.na(taux), !is.na(ci_bas), !is.na(ci_haut))
+
+ggplot(plot_turnout, aes(x = annee, y = taux)) +
+  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
+  geom_smooth(
+    method = "loess",
+    se = TRUE,
+    span = 0.9,
+    color = "#12355b",
+    fill = "#c9d6e4",
+    alpha = 0.25,
+    linetype = "dashed",
+    linewidth = 0.8,
+    na.rm = TRUE
+  ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
   labs(
     title = "Indicateur de participation électorale",
