@@ -65,6 +65,22 @@ get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```
 
+What it harmonizes:
+
+- study metadata: `qes_code`, `qes_year`, `qes_name_en`
+- respondent/interview info: `respondent_id`, `interview_start`,
+  `interview_end`, `interview_recorded`
+- demographics: `year_of_birth`, `age`, `age_group`, `gender`,
+  `education`, `language`, `province_territory`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`,
+  `party_best`, `party_lean`, `ideology`, `political_interest`
+- additional fields where available: `citizenship`, `born_canada`,
+  `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+
+Harmonization applies value normalization, derived age groups,
+within-study de-duplication, and removal of rows that are empty across
+harmonized variables.
+
 See: [Merged
 Dataset](https://thomasgareau.github.io/qesR/articles/merged-dataset.md)
 
@@ -97,12 +113,22 @@ Analyses available in separate tabs:
 
 - [Evolution of sovereignty
   attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)
-- [Demographic
-  structure](https://thomasgareau.github.io/qesR/articles/analysis-demography.md)
-- [Turnout and vote-choice
-  patterns](https://thomasgareau.github.io/qesR/articles/analysis-turnout-vote.md)
-- [Cross-year merged
-  trends](https://thomasgareau.github.io/qesR/articles/analysis-master.md)
+- [Descriptive statistics and
+  profiles](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md)
+
+## Version française
+
+Une version française complète est disponible :
+
+- [Démarrage](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)
+- [Données
+  fusionnées](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)
+- [Citations des
+  études](https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.md)
+- [Analyse :
+  souveraineté](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md)
+- [Analyse : statistiques
+  descriptives](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md)
 
 # Package index
 
@@ -160,11 +186,15 @@ Analyses available in separate tabs:
   Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md):
 - [Analysis: Evolution of Sovereignty
   Attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md):
-- [Analysis: Demographic Structure Across
-  Studies](https://thomasgareau.github.io/qesR/articles/analysis-demography.md):
-- [Analysis: Turnout and Vote Choice
-  Patterns](https://thomasgareau.github.io/qesR/articles/analysis-turnout-vote.md):
-- [Harmonized Master Dataset: Analysis
-  Examples](https://thomasgareau.github.io/qesR/articles/analysis-master.md):
-- [Codebook Exploration and Label
-  Pipelines](https://thomasgareau.github.io/qesR/articles/analysis-codebook.md):
+- [Analysis: Descriptive
+  Statistics](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md):
+- [Démarrage avec
+  qesR](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md):
+- [Données fusionnées
+  harmonisées](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
+- [Citations des
+  études](https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.md):
+- [Analyse : évolution des attitudes liées à la
+  souveraineté](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md):
+- [Analyse : statistiques
+  descriptives](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md):

@@ -1,6 +1,7 @@
-# Study Citations
+# Citations des études
 
-These citations follow the exact repository citation strings.
+Les citations ci-dessous correspondent aux jeux de données utilisés par
+`qesR`.
 
 1.  Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell,
     Allison, 2023, “2022 Quebec Election Study”,

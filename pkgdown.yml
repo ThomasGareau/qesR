@@ -2,15 +2,17 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  analysis-codebook: analysis-codebook.html
-  analysis-demography: analysis-demography.html
-  analysis-master: analysis-master.html
+  analysis-descriptive: analysis-descriptive.html
   analysis-sovereignty: analysis-sovereignty.html
-  analysis-turnout-vote: analysis-turnout-vote.html
+  fr-analyse-descriptive: fr-analyse-descriptive.html
+  fr-analyse-souverainete: fr-analyse-souverainete.html
+  fr-citations-etudes: fr-citations-etudes.html
+  fr-demarrage: fr-demarrage.html
+  fr-donnees-fusionnees: fr-donnees-fusionnees.html
   get-started: get-started.html
   merged-dataset: merged-dataset.html
   study-citations: study-citations.html
-last_built: 2026-02-22T19:30Z
+last_built: 2026-02-22T20:01Z
 urls:
   reference: https://thomasgareau.github.io/qesR/reference
   article: https://thomasgareau.github.io/qesR/articles

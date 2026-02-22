@@ -1,25 +1,30 @@
 /* Brand styling for qesR pkgdown site. */
 
 :root {
-  --qesr-deep: #0f4c5c;
-  --qesr-accent: #e36414;
-  --qesr-sand: #f6f1e9;
+  --qesr-deep: #1b365d;
+  --qesr-accent: #d1495b;
+  --qesr-sand: #f4f0ea;
 }
 
 body {
   background:
-    radial-gradient(circle at 15% 10%, rgba(227, 100, 20, 0.08), transparent 38%),
-    radial-gradient(circle at 85% 0%, rgba(15, 76, 92, 0.08), transparent 42%),
+    radial-gradient(circle at 16% 12%, rgba(209, 73, 91, 0.10), transparent 40%),
+    radial-gradient(circle at 84% 0%, rgba(27, 54, 93, 0.11), transparent 44%),
     var(--qesr-sand);
 }
 
 .navbar {
-  border-bottom: 2px solid rgba(15, 76, 92, 0.18);
+  border-bottom: 2px solid rgba(27, 54, 93, 0.18);
 }
 
 .navbar-brand {
   letter-spacing: 0.02em;
   font-weight: 700;
+}
+
+.navbar-brand img {
+  height: 42px;
+  width: auto;
 }
 
 h1, h2, h3 {
@@ -29,4 +34,9 @@ h1, h2, h3 {
 a {
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
+}
+
+img[alt="qesR logo"] {
+  display: block;
+  margin: 0 auto 1rem auto;
 }

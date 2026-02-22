@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Merged Dataset Workflow • qesR</title>
+<title>Données fusionnées harmonisées • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Merged Dataset Workflow">
+<meta property="og:title" content="Données fusionnées harmonisées">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -39,11 +39,11 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-fran-ais" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Français</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-fran-ais">
 <li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
@@ -69,19 +69,19 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Merged Dataset Workflow</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Données fusionnées harmonisées</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/merged-dataset.Rmd" class="external-link"><code>vignettes/merged-dataset.Rmd</code></a></small>
-      <div class="d-none name"><code>merged-dataset.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/fr-donnees-fusionnees.Rmd" class="external-link"><code>vignettes/fr-donnees-fusionnees.Rmd</code></a></small>
+      <div class="d-none name"><code>fr-donnees-fusionnees.Rmd</code></div>
     </div>
 
     
     
-<p><code>qesR</code> provides a merged harmonized dataset through
+<p><code>qesR</code> offre un fichier fusionné inter-études via
 <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code>.</p>
 <div class="section level2">
-<h2 id="build-merged-data">Build merged data<a class="anchor" aria-label="anchor" href="#build-merged-data"></a>
+<h2 id="construire-la-base-fusionnée">Construire la base fusionnée<a class="anchor" aria-label="anchor" href="#construire-la-base-fusionn%C3%A9e"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
@@ -91,64 +91,52 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="what-it-harmonizes">What it harmonizes<a class="anchor" aria-label="anchor" href="#what-it-harmonizes"></a>
+<h2 id="variables-harmonisées">Variables harmonisées<a class="anchor" aria-label="anchor" href="#variables-harmonis%C3%A9es"></a>
 </h2>
-<p>The merged data includes cross-study fields such as:</p>
+<p>Le fichier fusionné inclut notamment :</p>
 <ul>
-<li>study metadata: <code>qes_code</code>, <code>qes_year</code>,
+<li>métadonnées d’étude : <code>qes_code</code>, <code>qes_year</code>,
 <code>qes_name_en</code>
 </li>
-<li>respondent/interview fields: <code>respondent_id</code>,
+<li>champs répondant/entrevue : <code>respondent_id</code>,
 <code>interview_start</code>, <code>interview_end</code>,
 <code>interview_recorded</code>
 </li>
-<li>demographics: <code>year_of_birth</code>, <code>age</code>,
-<code>age_group</code>, <code>gender</code>, <code>education</code>,
-<code>language</code>, <code>province_territory</code>
+<li>variables sociodémographiques : <code>year_of_birth</code>,
+<code>age</code>, <code>age_group</code>, <code>gender</code>,
+<code>education</code>, <code>language</code>,
+<code>province_territory</code>
 </li>
-<li>political variables: <code>turnout</code>, <code>vote_choice</code>,
-<code>vote_choice_text</code>, <code>party_best</code>,
-<code>party_lean</code>, <code>ideology</code>,
+<li>variables politiques : <code>turnout</code>,
+<code>vote_choice</code>, <code>vote_choice_text</code>,
+<code>party_best</code>, <code>party_lean</code>, <code>ideology</code>,
 <code>political_interest</code>
 </li>
-<li>additional fields where available: <code>citizenship</code>,
+<li>champs additionnels (si disponibles) : <code>citizenship</code>,
 <code>born_canada</code>, <code>income</code>, <code>religion</code>,
 <code>federal_pid</code>, <code>provincial_pid</code>,
 <code>survey_weight</code>
 </li>
 </ul>
-<p><code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> also keeps the merge logic
-explicit:</p>
+<p>La fusion applique aussi :</p>
 <ul>
-<li>uses cross-study variable maps and value normalization for
-comparability</li>
-<li>derives <code>age_group</code> where age or year-of-birth is
-available</li>
-<li>retains panel and non-panel respondents as separate
-observations</li>
-<li>stores source-variable provenance in
+<li>une normalisation des valeurs pour rendre les réponses
+comparables</li>
+<li>la dérivation de <code>age_group</code> lorsque l’âge ou l’année de
+naissance est disponible</li>
+<li>la conservation des répondants panel et non-panel (pas de fusion
+entre études)</li>
+<li>le suivi de la provenance via
 <code>attr(master, "source_map")</code>
 </li>
 </ul>
-<p>It also records source-variable provenance:</p>
+<p>La déduplication s’applique uniquement à l’intérieur d’un même code
+d’étude (pas entre enquêtes panel et non-panel).</p>
+</div>
+<div class="section level2">
+<h2 id="exporter">Exporter<a class="anchor" aria-label="anchor" href="#exporter"></a>
+</h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">source_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">master</span>, <span class="st">"source_map"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">source_map</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="quality-controls-in-merge">Quality controls in merge<a class="anchor" aria-label="anchor" href="#quality-controls-in-merge"></a>
-</h2>
-<p><code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> applies:</p>
-<ul>
-<li>respondent de-duplication within the same survey code</li>
-<li>derived age groups where age or year-of-birth are available</li>
-<li>removal of rows empty across harmonized variables</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="save-merged-data">Save merged data<a class="anchor" aria-label="anchor" href="#save-merged-data"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.csv"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.rds"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
