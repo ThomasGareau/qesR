@@ -8,9 +8,23 @@ listed in the Quebec opinion portal:
 
 ## Installation
 
+Install from GitHub:
+
 ```r
-# from local source
-# install.packages("/path/to/qesR", repos = NULL, type = "source")
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+```
+
+Install from a local source tarball:
+
+```r
+install.packages("/path/to/qesR_0.4.2.tar.gz", repos = NULL, type = "source")
+```
+
+Install from a local package folder:
+
+```r
+install.packages("/path/to/qesR", repos = NULL, type = "source")
 ```
 
 ## Usage
