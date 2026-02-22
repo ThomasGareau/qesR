@@ -96,7 +96,7 @@ test_that(".build_qes_master_study supports qes1998 naming variants", {
   expect_true(identical(out$vote_choice, c(3, 4)))
   expect_true(identical(out$turnout, c(1, 1)))
   expect_true(identical(out$age, c(NA_real_, NA_real_)))
-  expect_true(identical(out$age_group, c("DE 25 A 34 ANS", "65 ANS ET PLUS")))
+  expect_true(identical(out$age_group, c("25-34", "65+")))
 })
 
 test_that("get_qes_master derives age_group from age and year_of_birth", {

@@ -50,7 +50,7 @@ if (!("sovereignty_support" %in% names(master))) {
 }
 ```
 
-## Build sovereignty indicator
+## Dedicated sovereignty question
 
 ```{r}
 master <- master %>%
@@ -94,13 +94,12 @@ knitr::kable(
       ci_low_pct = round(100 * ci_low, 1),
       ci_high_pct = round(100 * ci_high, 1)
     ) %>%
-    select(
-      year = qes_year_num,
-      respondents,
-      n_with_measure,
-      sovereignty_support_pct,
-      ci_low_pct,
-      ci_high_pct
+    transmute(
+      `Study year` = qes_year_num,
+      `N respondents` = respondents,
+      `N with sovereignty item` = n_with_measure,
+      `Sovereignty support (%)` = sovereignty_support_pct,
+      `95% CI (%)` = ifelse(is.na(ci_low_pct), NA_character_, sprintf("%.1f to %.1f", ci_low_pct, ci_high_pct))
     ),
   caption = "Sovereignty support by study year"
 )

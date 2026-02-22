@@ -99,7 +99,7 @@
 "qes2014","2014","Quebec Election Study 2014","vote_choice_text",
 "qes2014","2014","Quebec Election Study 2014","party_best","Q8"
 "qes2014","2014","Quebec Election Study 2014","party_lean","Q5"
-"qes2014","2014","Quebec Election Study 2014","sovereignty_support","Q20"
+"qes2014","2014","Quebec Election Study 2014","sovereignty_support","Q19"
 "qes2014","2014","Quebec Election Study 2014","federal_pid",
 "qes2014","2014","Quebec Election Study 2014","provincial_pid",
 "qes2014","2014","Quebec Election Study 2014","survey_weight",
@@ -162,8 +162,8 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","language","lmat"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","citizenship",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","year_of_birth","QAGE"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age","QAGE"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age_group",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age_group","QAGE"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gender",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","province_territory",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","education","scol"

@@ -55,6 +55,19 @@ parse_turnout <- function(x) {
   out
 }
 
+collapse_age_group3 <- function(x) {
+  raw <- trimws(as.character(x))
+  raw[!nzchar(raw)] <- NA_character_
+  norm <- tolower(iconv(raw, from = "", to = "ASCII//TRANSLIT"))
+  out <- rep(NA_character_, length(norm))
+
+  out[grepl("18\\s*[-toa ]\\s*24|25\\s*[-toa ]\\s*34|18\\s*[-toa ]\\s*34|de\\s*18\\s*a\\s*24|de\\s*25\\s*a\\s*34", norm, perl = TRUE)] <- "18-34"
+  out[grepl("35\\s*[-toa ]\\s*44|45\\s*[-toa ]\\s*54|35\\s*[-toa ]\\s*54|de\\s*35\\s*a\\s*44|de\\s*45\\s*a\\s*54", norm, perl = TRUE)] <- "35-54"
+  out[grepl("55\\s*[-toa ]\\s*64|65\\+|65\\s*ans\\s*et\\s*plus|55\\+|55\\s*ans\\s*et\\s*plus", norm, perl = TRUE)] <- "55+"
+
+  out
+}
+
 master <- master %>%
   mutate(
     qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
@@ -77,8 +90,13 @@ sample_sizes <- master %>%
   arrange(qes_year, qes_code)
 
 knitr::kable(
-  sample_sizes,
-  caption = "Sample sizes in the merged dataset"
+  sample_sizes %>%
+    transmute(
+      `Study year` = qes_year,
+      `Study code` = qes_code,
+      `Sample size` = n
+    ),
+  caption = "Sample sizes by study"
 )
 ```
 
@@ -86,35 +104,58 @@ knitr::kable(
 
 ```{r}
 age_table <- master_trend %>%
-  filter(!is.na(qes_year_num), !is.na(age_group), nzchar(age_group)) %>%
-  group_by(qes_year_num, age_group) %>%
+  mutate(age_group_3 = collapse_age_group3(age_group)) %>%
+  filter(!is.na(qes_year_num), !is.na(age_group_3), nzchar(age_group_3)) %>%
+  group_by(qes_year_num, age_group_3) %>%
   summarise(n = n(), .groups = "drop_last") %>%
   mutate(pct = 100 * n / sum(n)) %>%
   ungroup() %>%
-  arrange(qes_year_num, desc(pct))
+  arrange(qes_year_num, age_group_3)
 
 knitr::kable(
-  head(age_table, 28),
+  age_table %>%
+    transmute(
+      `Study year` = qes_year_num,
+      `Age group (harmonized)` = age_group_3,
+      `Share (%)` = round(pct, 1)
+    ),
   digits = 1,
-  caption = "Age-group distribution (top rows)"
+  caption = "Age-group composition by year (18-34, 35-54, 55+)"
 )
 ```
 
 ## Figure 1: age-group profile over time
 
-```{r, fig.alt="Heatmap of age-group composition across study years."}
-age_order <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
-age_table$age_group <- factor(age_table$age_group, levels = age_order)
+```{r, fig.alt="Line chart of harmonized age-group composition across study years."}
+age_order <- c("18-34", "35-54", "55+")
+age_table$age_group_3 <- factor(age_table$age_group_3, levels = age_order)
 
-ggplot(age_table, aes(x = qes_year_num, y = age_group, fill = pct)) +
-  geom_tile(color = "#ffffff", linewidth = 0.35) +
-  scale_fill_gradient(low = "#dfe8f2", high = "#12355b", name = "%") +
-  labs(
-    title = "Age-group composition across study years",
-    x = "Study year",
-    y = "Age group"
+ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group_3, group = age_group_3)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.2) +
+  geom_smooth(
+    method = "loess",
+    se = FALSE,
+    span = 0.9,
+    linewidth = 0.8,
+    linetype = "dashed"
   ) +
-  theme_minimal(base_size = 12)
+  scale_color_manual(
+    values = c(
+      "18-34" = "#2c7fb8",
+      "35-54" = "#12355b",
+      "55+" = "#b5651d"
+    ),
+    name = "Age group"
+  ) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, 100)) +
+  labs(
+    title = "Age-group composition across years",
+    x = "Study year",
+    y = "Share of respondents"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
 ```
 
 ## Table 3 and Figure 2: turnout by year
@@ -147,8 +188,14 @@ knitr::kable(
       turnout_pct = round(100 * turnout_rate, 1),
       ci_low_pct = round(100 * ci_low, 1),
       ci_high_pct = round(100 * ci_high, 1)
+    ) %>%
+    transmute(
+      `Study year` = qes_year_num,
+      `N respondents` = respondents,
+      `N with turnout item` = n_with_turnout,
+      `Turnout rate (%)` = turnout_pct,
+      `95% CI (%)` = ifelse(is.na(ci_low_pct), NA_character_, sprintf("%.1f to %.1f", ci_low_pct, ci_high_pct))
     ),
-  col.names = c("Year", "Respondents", "N with turnout", "Turnout rate", "SE", "CI low", "CI high", "Turnout (%)", "CI low (%)", "CI high (%)"),
   caption = "Turnout indicator by year"
 )
 ```
@@ -178,7 +225,8 @@ ggplot(plot_turnout, aes(x = qes_year_num, y = turnout_rate)) +
     x = "Study year",
     y = "Share of respondents"
   ) +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
 ```
 
 ## Notes

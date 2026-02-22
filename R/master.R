@@ -34,10 +34,10 @@
     qes2022 = c(sovereignty_support = "cps_qc_referendum"),
     qes2018 = c(turnout = "q5", vote_choice = "q6", party_lean = "q5a", sovereignty_support = "q26"),
     qes2018_panel = c(turnout = "rts_q1", vote_choice = "vote", party_lean = "rv1b", sovereignty_support = "independance"),
-    qes2014 = c(turnout = "Q2", vote_choice = "Q3", party_lean = "Q5", sovereignty_support = "Q20"),
+    qes2014 = c(turnout = "Q2", vote_choice = "Q3", party_lean = "Q5", sovereignty_support = "Q19"),
     qes2012 = c(turnout = "q21", vote_choice = "q25", sovereignty_support = "q52"),
     qes2012_panel = c(turnout = "participation", vote_choice = "voteprov", party_lean = "intvoteprov", sovereignty_support = "souv_rec"),
-    qes_crop_2007_2010 = c(age = "QAGE", sovereignty_support = NA_character_),
+    qes_crop_2007_2010 = c(age = NA_character_, age_group = "QAGE", sovereignty_support = NA_character_),
     qes2008 = c(turnout = "q11", vote_choice = "q12a", party_lean = "q12b", sovereignty_support = "q19"),
     qes2007 = c(turnout = "q11", vote_choice = "q12", party_lean = "q13", sovereignty_support = "q19"),
     qes2007_panel = c(turnout = "avote", vote_choice = "vote", party_lean = "intvote", sovereignty_support = "intref"),
@@ -268,6 +268,83 @@
   out
 }
 
+.recode_age_group_by_study <- function(age_group, qes_code) {
+  out <- as.character(age_group)
+  code <- as.character(qes_code)
+
+  # qes_crop_2007_2010 stores grouped ages as numeric category codes.
+  idx <- code == "qes_crop_2007_2010"
+  if (any(idx, na.rm = TRUE)) {
+    map <- c(
+      "1" = "18-24",
+      "2" = "25-34",
+      "3" = "35-44",
+      "4" = "45-54",
+      "5" = "55-64",
+      "6" = "65+"
+    )
+    vals <- trimws(out[idx])
+    rec <- unname(map[vals])
+    keep_old <- is.na(rec) | !nzchar(rec)
+    rec[keep_old] <- vals[keep_old]
+    out[idx] <- rec
+  }
+
+  out
+}
+
+.standardize_age_group_labels <- function(x) {
+  out <- as.character(x)
+  if (length(out) == 0L) {
+    return(out)
+  }
+
+  out[.master_missing_vector(out)] <- NA_character_
+  norm <- .normalize_master_text(out)
+  rec <- rep(NA_character_, length(out))
+
+  # Some files store age values in the age-group field.
+  num <- suppressWarnings(as.numeric(out))
+  valid_num_age <- is.finite(num) & num >= 13 & num <= 120
+  rec[valid_num_age] <- .age_to_group(num[valid_num_age])
+
+  exact_map <- list(
+    "<18" = c("<18", "under 18", "moins de 18", "moins de 18 ans"),
+    "18-24" = c("18 24", "18 to 24", "de 18 a 24 ans"),
+    "25-34" = c("25 34", "25 to 34", "de 25 a 34 ans"),
+    "35-44" = c("35 44", "35 to 44", "de 35 a 44 ans"),
+    "45-54" = c("45 54", "45 to 54", "de 45 a 54 ans"),
+    "55-64" = c("55 64", "55 to 64", "de 55 a 64 ans"),
+    "65+" = c("65 plus", "65 ans et plus", "65 and over"),
+    "18-34" = c("18 34", "18 34 ans", "de 18 a 34 ans"),
+    "35-54" = c("35 54", "35 54 ans", "de 35 a 54 ans"),
+    "55+" = c("55 plus", "55 ans et plus", "55 and over", "55")
+  )
+
+  for (label in names(exact_map)) {
+    vals <- exact_map[[label]]
+    hit <- is.na(rec) & !is.na(norm) & norm %in% vals
+    rec[hit] <- label
+  }
+
+  # Fallback regex in case labels vary slightly across files.
+  rec[is.na(rec) & grepl("\\b18\\b.*\\b24\\b", norm, perl = TRUE)] <- "18-24"
+  rec[is.na(rec) & grepl("\\b25\\b.*\\b34\\b", norm, perl = TRUE)] <- "25-34"
+  rec[is.na(rec) & grepl("\\b35\\b.*\\b44\\b", norm, perl = TRUE)] <- "35-44"
+  rec[is.na(rec) & grepl("\\b45\\b.*\\b54\\b", norm, perl = TRUE)] <- "45-54"
+  rec[is.na(rec) & grepl("\\b55\\b.*\\b64\\b", norm, perl = TRUE)] <- "55-64"
+  rec[is.na(rec) & grepl("\\b18\\b.*\\b34\\b", norm, perl = TRUE)] <- "18-34"
+  rec[is.na(rec) & grepl("\\b35\\b.*\\b54\\b", norm, perl = TRUE)] <- "35-54"
+  rec[is.na(rec) & grepl("\\b65\\b", norm, perl = TRUE)] <- "65+"
+  rec[is.na(rec) & grepl("\\b55\\b.*\\b(plus|et plus|and over)\\b", norm, perl = TRUE)] <- "55+"
+
+  # Keep unknown strings only if they are not obvious non-substantive values.
+  non_substantive <- is.na(rec) & grepl("refus|pas de reponse|dont know|don t know|refused|prefer not", norm, perl = TRUE)
+  rec[non_substantive] <- NA_character_
+
+  rec
+}
+
 .postprocess_master_dataset <- function(master) {
   if (!is.data.frame(master) || nrow(master) == 0L) {
     return(master)
@@ -300,6 +377,11 @@
   final_age_group <- derived_age_group
   use_existing <- is.na(final_age_group) & !is.na(existing_age_group)
   final_age_group[use_existing] <- existing_age_group[use_existing]
+  final_age_group <- .recode_age_group_by_study(
+    age_group = final_age_group,
+    qes_code = master$qes_code
+  )
+  final_age_group <- .standardize_age_group_labels(final_age_group)
   master$age_group <- final_age_group
 
   if ("survey_weight" %in% names(master)) {

@@ -50,7 +50,7 @@ if (!("sovereignty_support" %in% names(master))) {
 }
 ```
 
-## Indicateur d'appui à la souveraineté
+## Question directe sur la souveraineté
 
 ```{r}
 master <- master %>%
@@ -92,15 +92,13 @@ knitr::kable(
       ci_bas_pct = round(100 * ci_bas, 1),
       ci_haut_pct = round(100 * ci_haut, 1)
     ) %>%
-    select(
-      annee,
-      repondants,
-      n_mesure,
-      appui_souverainete_pct,
-      ci_bas_pct,
-      ci_haut_pct
+    transmute(
+      `Annee d'etude` = annee,
+      `N repondants` = repondants,
+      `N avec item souverainete` = n_mesure,
+      `Appui a la souverainete (%)` = appui_souverainete_pct,
+      `IC 95% (%)` = ifelse(is.na(ci_bas_pct), NA_character_, sprintf("%.1f a %.1f", ci_bas_pct, ci_haut_pct))
     ),
-  col.names = c("Année", "Répondants", "N avec mesure", "Appui souveraineté (%)", "IC95 bas (%)", "IC95 haut (%)"),
   caption = "Appui à la souveraineté par année"
 )
 ```

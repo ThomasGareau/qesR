@@ -55,6 +55,19 @@ parser_turnout <- function(x) {
   out
 }
 
+collapse_age_group3 <- function(x) {
+  brut <- trimws(as.character(x))
+  brut[!nzchar(brut)] <- NA_character_
+  norm <- tolower(iconv(brut, from = "", to = "ASCII//TRANSLIT"))
+  out <- rep(NA_character_, length(norm))
+
+  out[grepl("18\\s*[-toa ]\\s*24|25\\s*[-toa ]\\s*34|18\\s*[-toa ]\\s*34|de\\s*18\\s*a\\s*24|de\\s*25\\s*a\\s*34", norm, perl = TRUE)] <- "18-34"
+  out[grepl("35\\s*[-toa ]\\s*44|45\\s*[-toa ]\\s*54|35\\s*[-toa ]\\s*54|de\\s*35\\s*a\\s*44|de\\s*45\\s*a\\s*54", norm, perl = TRUE)] <- "35-54"
+  out[grepl("55\\s*[-toa ]\\s*64|65\\+|65\\s*ans\\s*et\\s*plus|55\\+|55\\s*ans\\s*et\\s*plus", norm, perl = TRUE)] <- "55+"
+
+  out
+}
+
 master <- master %>%
   mutate(
     annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
@@ -76,39 +89,71 @@ tailles <- master %>%
   summarise(n = n(), .groups = "drop") %>%
   arrange(qes_year, qes_code)
 
-knitr::kable(tailles, caption = "Taille d'échantillon par étude")
+knitr::kable(
+  tailles %>%
+    transmute(
+      `Annee d'etude` = qes_year,
+      `Code etude` = qes_code,
+      `Taille echantillon` = n
+    ),
+  caption = "Taille d'échantillon par étude"
+)
 ```
 
 ## Répartition des groupes d'âge
 
 ```{r}
 age_dist <- master_tendance %>%
-  filter(!is.na(annee), !is.na(age_group), nzchar(age_group)) %>%
-  group_by(annee, age_group) %>%
+  mutate(age_group_3 = collapse_age_group3(age_group)) %>%
+  filter(!is.na(annee), !is.na(age_group_3), nzchar(age_group_3)) %>%
+  group_by(annee, age_group_3) %>%
   summarise(n = n(), .groups = "drop_last") %>%
   mutate(pct = 100 * n / sum(n)) %>%
-  ungroup()
+  ungroup() %>%
+  arrange(annee, age_group_3)
 
 knitr::kable(
-  head(age_dist, 28),
+  age_dist %>%
+    transmute(
+      `Annee d'etude` = annee,
+      `Groupe d'age harmonise` = age_group_3,
+      `Part (%)` = round(pct, 1)
+    ),
   digits = 1,
-  caption = "Répartition des groupes d'âge (premières lignes)"
+  caption = "Répartition des groupes d'âge par année (18-34, 35-54, 55+)"
 )
 ```
 
-```{r, fig.alt="Carte thermique de la répartition des groupes d'âge selon l'année."}
-ordre_age <- c("<18", "18-24", "25-34", "35-44", "45-54", "55-64", "65+")
-age_dist$age_group <- factor(age_dist$age_group, levels = ordre_age)
+```{r, fig.alt="Graphique en lignes de la répartition harmonisée des groupes d'âge selon l'année."}
+ordre_age <- c("18-34", "35-54", "55+")
+age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
 
-ggplot(age_dist, aes(x = annee, y = age_group, fill = pct)) +
-  geom_tile(color = "#ffffff", linewidth = 0.35) +
-  scale_fill_gradient(low = "#dfe8f2", high = "#12355b", name = "%") +
+ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_3)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.2) +
+  geom_smooth(
+    method = "loess",
+    se = FALSE,
+    span = 0.9,
+    linewidth = 0.8,
+    linetype = "dashed"
+  ) +
+  scale_color_manual(
+    values = c(
+      "18-34" = "#2c7fb8",
+      "35-54" = "#12355b",
+      "55+" = "#b5651d"
+    ),
+    name = "Groupe d'age"
+  ) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, 100)) +
   labs(
     title = "Répartition des groupes d'âge dans le temps",
     x = "Année d'étude",
-    y = "Groupe d'âge"
+    y = "Part des répondants"
   ) +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
 ```
 
 ## Participation électorale par année
@@ -141,8 +186,14 @@ knitr::kable(
       taux_pct = round(100 * taux, 1),
       ci_bas_pct = round(100 * ci_bas, 1),
       ci_haut_pct = round(100 * ci_haut, 1)
+    ) %>%
+    transmute(
+      `Annee d'etude` = annee,
+      `N repondants` = repondants,
+      `N avec item participation` = n_avec_turnout,
+      `Taux de participation (%)` = taux_pct,
+      `IC 95% (%)` = ifelse(is.na(ci_bas_pct), NA_character_, sprintf("%.1f a %.1f", ci_bas_pct, ci_haut_pct))
     ),
-  col.names = c("Année", "Répondants", "N avec mesure", "Taux", "SE", "IC bas", "IC haut", "Taux (%)", "IC bas (%)", "IC haut (%)"),
   caption = "Indicateur de participation par année"
 )
 ```
@@ -172,7 +223,8 @@ ggplot(plot_turnout, aes(x = annee, y = taux)) +
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
 ```
 
 ## Notes
