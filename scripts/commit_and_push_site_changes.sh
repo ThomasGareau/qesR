@@ -16,7 +16,9 @@ git add \
   _pkgdown.yml \
   DESCRIPTION \
   NEWS.md \
+  R/master.R \
   README.md \
+  man/get_qes_master.Rd \
   man/figures/logo.png \
   pkgdown/favicon/apple-touch-icon.png \
   pkgdown/favicon/favicon-96x96.png \
@@ -27,17 +29,25 @@ git add \
   pkgdown/favicon/web-app-manifest-512x512.png \
   pkgdown/index.md \
   pkgdown/extra.css \
+  qes_master.csv \
+  qes_master.rds \
+  qes_master_source_map.csv \
   scripts/build_pkgdown_site.R \
   scripts/commit_and_push_master_changes.sh \
   scripts/commit_and_push_site_changes.sh \
-  vignettes/analysis-demography.Rmd \
-  vignettes/analysis-codebook.Rmd \
-  vignettes/analysis-master.Rmd \
+  tests/testthat/test-master.R \
+  vignettes/analysis-descriptive.Rmd \
   vignettes/analysis-sovereignty.Rmd \
-  vignettes/analysis-turnout-vote.Rmd \
+  vignettes/fr-analyse-descriptive.Rmd \
+  vignettes/fr-analyse-souverainete.Rmd \
+  vignettes/fr-citations-etudes.Rmd \
+  vignettes/fr-demarrage.Rmd \
+  vignettes/fr-donnees-fusionnees.Rmd \
   vignettes/get-started.Rmd \
   vignettes/merged-dataset.Rmd \
   vignettes/study-citations.Rmd
+
+git add -A vignettes
 
 if git diff --cached --quiet; then
   echo "No staged website changes to commit."

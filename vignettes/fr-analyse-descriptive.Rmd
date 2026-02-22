@@ -1,0 +1,95 @@
+---
+title: "Analyse : statistiques descriptives"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyse : statistiques descriptives}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r}
+library(qesR)
+library(dplyr)
+library(ggplot2)
+library(knitr)
+```
+
+## Chargement des données fusionnées
+
+```{r}
+master <- if (file.exists("qes_master.csv")) {
+  read.csv("qes_master.csv", stringsAsFactors = FALSE)
+} else {
+  get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
+}
+
+master <- master %>%
+  mutate(
+    annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
+    age_group = trimws(as.character(age_group)),
+    turnout = tolower(trimws(as.character(turnout)))
+  )
+```
+
+## Taille des échantillons
+
+```{r}
+tailles <- master %>%
+  group_by(qes_year, qes_code, qes_name_en) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  arrange(qes_year, qes_code)
+
+knitr::kable(tailles, caption = "Taille d'échantillon par étude")
+```
+
+## Répartition des groupes d'âge
+
+```{r, fig.alt="Graphique de la répartition des groupes d'âge selon l'année."}
+age_dist <- master %>%
+  filter(!is.na(annee), !is.na(age_group), nzchar(age_group)) %>%
+  group_by(annee, age_group) %>%
+  summarise(n = n(), .groups = "drop_last") %>%
+  mutate(pct = 100 * n / sum(n)) %>%
+  ungroup()
+
+ggplot(age_dist, aes(x = annee, y = pct, color = age_group, group = age_group)) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 1.5) +
+  labs(
+    title = "Répartition des groupes d'âge dans le temps",
+    x = "Année d'étude",
+    y = "Pourcentage",
+    color = "Groupe d'âge"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Participation électorale (proxy)
+
+```{r}
+turnout_annee <- master %>%
+  filter(!is.na(annee)) %>%
+  mutate(turnout_bin = case_when(
+    turnout %in% c("1", "yes", "voted", "certain to vote", "i already voted") ~ 1,
+    turnout %in% c("0", "2", "no", "did not vote", "certain not to vote") ~ 0,
+    TRUE ~ NA_real_
+  )) %>%
+  filter(!is.na(turnout_bin)) %>%
+  group_by(annee) %>%
+  summarise(taux = mean(turnout_bin), n = n(), .groups = "drop")
+
+knitr::kable(
+  turnout_annee %>% mutate(taux = round(100 * taux, 1)),
+  col.names = c("Année", "Taux de participation (%)", "N"),
+  caption = "Proxy de participation par année"
+)
+```

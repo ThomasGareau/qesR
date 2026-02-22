@@ -135,17 +135,19 @@
   master
 }
 
-.remove_master_year_duplicates <- function(master) {
-  if (!is.data.frame(master) || nrow(master) == 0L || !all(c("qes_year", "respondent_id") %in% names(master))) {
+.remove_master_study_duplicates <- function(master) {
+  if (!is.data.frame(master) || nrow(master) == 0L || !all(c("qes_code", "respondent_id") %in% names(master))) {
     return(list(data = master, removed = 0L))
   }
 
   ids <- trimws(as.character(master$respondent_id))
-  years <- as.character(master$qes_year)
+  codes <- as.character(master$qes_code)
   valid_id <- !is.na(ids) & nzchar(ids)
+  valid_code <- !is.na(codes) & nzchar(codes)
+  valid <- valid_id & valid_code
 
-  key <- paste0(years, "||", tolower(ids))
-  keep <- !valid_id | !duplicated(key)
+  key <- paste0(codes, "||", tolower(ids))
+  keep <- !valid | !duplicated(key)
 
   list(
     data = master[keep, , drop = FALSE],
@@ -358,7 +360,7 @@ get_qes_master <- function(
   rownames(master) <- NULL
   master <- .postprocess_master_dataset(master)
 
-  dedup <- .remove_master_year_duplicates(master)
+  dedup <- .remove_master_study_duplicates(master)
   master <- dedup$data
 
   no_empty <- .remove_empty_master_rows(master)
@@ -401,7 +403,7 @@ get_qes_master <- function(
       message(sprintf("Master dataset studies skipped: %s", length(failed)))
     }
     if (dedup$removed > 0L) {
-      message(sprintf("Master dataset duplicate respondents removed: %s", dedup$removed))
+      message(sprintf("Master dataset within-study duplicate respondents removed: %s", dedup$removed))
     }
     if (no_empty$removed > 0L) {
       message(sprintf("Master dataset all-empty rows removed: %s", no_empty$removed))

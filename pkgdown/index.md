@@ -66,6 +66,16 @@ get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```
 
+What it harmonizes:
+
+- study metadata: `qes_code`, `qes_year`, `qes_name_en`
+- respondent/interview info: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
+- demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`
+- additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+
+Harmonization applies value normalization, derived age groups, within-study de-duplication, and removal of rows that are empty across harmonized variables.
+
 See: [Merged Dataset](articles/merged-dataset.html)
 
 ## Survey code table
@@ -95,6 +105,14 @@ Full citations for all studies are listed in:
 Analyses available in separate tabs:
 
 - [Evolution of sovereignty attitudes](articles/analysis-sovereignty.html)
-- [Demographic structure](articles/analysis-demography.html)
-- [Turnout and vote-choice patterns](articles/analysis-turnout-vote.html)
-- [Cross-year merged trends](articles/analysis-master.html)
+- [Descriptive statistics and profiles](articles/analysis-descriptive.html)
+
+## Version française
+
+Une version française complète est disponible :
+
+- [Démarrage](articles/fr-demarrage.html)
+- [Données fusionnées](articles/fr-donnees-fusionnees.html)
+- [Citations des études](articles/fr-citations-etudes.html)
+- [Analyse : souveraineté](articles/fr-analyse-souverainete.html)
+- [Analyse : statistiques descriptives](articles/fr-analyse-descriptive.html)

@@ -4,7 +4,7 @@
 \description{
 Downloads multiple Quebec Election Study datasets, harmonizes shared variables,
 stacks all rows into one master data frame, de-duplicates respondents within
-the same study year, and drops rows that are empty across harmonized variables.
+the same survey code, and drops rows that are empty across harmonized variables.
 }
 \usage{
 get_qes_master(

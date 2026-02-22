@@ -4,8 +4,8 @@ template:
   bootstrap: 5
   logo: man/figures/logo.png
   bslib:
-    primary: "#0f4c5c"
-    secondary: "#e36414"
+    primary: "#1b365d"
+    secondary: "#d1495b"
     base_font:
       google: "Source Sans 3"
     heading_font:
@@ -17,7 +17,7 @@ home:
 
 navbar:
   structure:
-    left: [get_started, reference, news, merged, citations, analysis_sovereignty, analysis_demography, analysis_turnout, analysis_crossyear]
+    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, french, news]
     right: [github]
   components:
     get_started:
@@ -38,15 +38,22 @@ navbar:
     analysis_sovereignty:
       text: "Analysis: Sovereignty"
       href: articles/analysis-sovereignty.html
-    analysis_demography:
-      text: "Analysis: Demography"
-      href: articles/analysis-demography.html
-    analysis_turnout:
-      text: "Analysis: Turnout and Vote"
-      href: articles/analysis-turnout-vote.html
-    analysis_crossyear:
-      text: "Analysis: Cross-Year Patterns"
-      href: articles/analysis-master.html
+    analysis_descriptive:
+      text: "Analysis: Descriptive Statistics"
+      href: articles/analysis-descriptive.html
+    french:
+      text: Français
+      menu:
+      - text: Démarrage
+        href: articles/fr-demarrage.html
+      - text: Données fusionnées
+        href: articles/fr-donnees-fusionnees.html
+      - text: Citations des études
+        href: articles/fr-citations-etudes.html
+      - text: "Analyse: souveraineté"
+        href: articles/fr-analyse-souverainete.html
+      - text: "Analyse: statistiques descriptives"
+        href: articles/fr-analyse-descriptive.html
     github:
       icon: fa-github
       href: https://github.com/ThomasGareau/qesR
@@ -85,7 +92,9 @@ articles:
   - merged-dataset
   - study-citations
   - analysis-sovereignty
-  - analysis-demography
-  - analysis-turnout-vote
-  - analysis-master
-  - analysis-codebook
+  - analysis-descriptive
+  - fr-demarrage
+  - fr-donnees-fusionnees
+  - fr-citations-etudes
+  - fr-analyse-souverainete
+  - fr-analyse-descriptive

@@ -27,11 +27,18 @@ head(master)
 
 The merged data includes cross-study fields such as:
 
-- `respondent_id`
-- `age`, `age_group`, `year_of_birth`
-- `gender`, `education`, `language`
-- `turnout`, `vote_choice`, `party_lean`
-- `survey_weight`
+- study metadata: `qes_code`, `qes_year`, `qes_name_en`
+- respondent/interview fields: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
+- demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`
+- additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+
+`get_qes_master()` also keeps the merge logic explicit:
+
+- uses cross-study variable maps and value normalization for comparability
+- derives `age_group` where age or year-of-birth is available
+- retains panel and non-panel respondents as separate observations
+- stores source-variable provenance in `attr(master, "source_map")`
 
 It also records source-variable provenance:
 
@@ -44,7 +51,7 @@ head(source_map)
 
 `get_qes_master()` applies:
 
-- within-year respondent de-duplication for multi-study years
+- respondent de-duplication within the same survey code
 - derived age groups where age or year-of-birth are available
 - removal of rows empty across harmonized variables
 

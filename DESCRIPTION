@@ -2,10 +2,10 @@ Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
 Version: 0.4.4
-Author: qesR contributors [aut]
-Maintainer: qesR contributors <qesr@example.org>
+Author: Thomas Gareau-Paquette [aut, cre]
+Maintainer: Thomas Gareau-Paquette <qesr@example.org>
 Authors@R: c(
-    person(given = "qesR", family = "contributors", role = c("aut", "cre"), email = "qesr@example.org")
+    person(given = "Thomas", family = "Gareau-Paquette", role = c("aut", "cre"), email = "qesr@example.org")
     )
 Description: Download and load Quebec election study datasets from Dataverse
     archives through a simple survey-code API inspired by cesR.
