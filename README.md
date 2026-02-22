@@ -1,5 +1,9 @@
 # qesR
 
+<p align="center">
+  <img src="man/figures/logo.png" alt="qesR logo" width="220" />
+</p>
+
 Access Quebec Election Study datasets in R using simple survey-code calls.
 
 This package mirrors the core ergonomics of `cesR` while targeting studies
@@ -27,15 +31,34 @@ Install from a local package folder:
 install.packages("/path/to/qesR", repos = NULL, type = "source")
 ```
 
+## Merged Dataset
+
+`qesR` includes a harmonized merged file across studies through
+`get_qes_master()`.
+
+```r
+library(qesR)
+
+master <- get_qes_master(strict = FALSE)
+head(master)
+```
+
+The merged data can be saved directly:
+
+```r
+get_qes_master(save_path = "qes_master.csv", strict = FALSE)
+get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+```
+
 ## Website
 
 Project website (GitHub Pages): <https://thomasgareau.github.io/qesR/>
 
-The site includes:
+The site includes researcher-focused tabs for:
 
-- function reference pages
-- setup/getting-started guide
-- analysis examples using harmonized QES data
+- merged dataset workflow
+- study citations
+- analysis tabs by topic (including sovereignty attitudes over time)
 
 ## Usage
 
@@ -96,16 +119,10 @@ head(decon)
 # harmonized stacked master dataset across studies
 qes_master <- get_qes_master()
 head(qes_master)
-# includes derived age_group when age/year-of-birth are available
-# removes duplicate respondents within the same year (keeps first study)
-# drops rows empty across harmonized variables
+# includes derived age_group and harmonized education/turnout/vote fields
 
 # inspect which source variable fed each harmonized field
 head(attr(qes_master, "source_map"))
-
-# write master file to disk (CSV or RDS)
-get_qes_master(save_path = "qes_master.csv")
-get_qes_master(save_path = "qes_master.rds")
 ```
 
 ## Command-Line Scripts
@@ -133,34 +150,21 @@ Build the website locally:
 Rscript scripts/build_pkgdown_site.R
 ```
 
-Publish website updates from `main`:
+## Study Citations
 
-1. Commit and push to `main`.
-2. GitHub Actions workflow `.github/workflows/pkgdown.yml` builds/deploys the site.
-3. In GitHub repo settings, set Pages source to branch `gh-pages` (root).
+The following studies are used in `qesR` and in the merged dataset workflow.
+Each citation includes DOI and repository source.
 
-## Commit And Push
-
-Use the helper script to stage the package changes, commit, rebase on
-`origin/main`, and push:
-
-```bash
-bash scripts/commit_and_push_master_changes.sh \
-  "Add master dataset harmonization and 1998 mapping fixes"
-```
-
-## Included Quebec study codes
-
-- `qes2022`
-- `qes2018`
-- `qes2018_panel`
-- `qes2014`
-- `qes2012`
-- `qes2012_panel`
-- `qes_crop_2007_2010`
-- `qes2008`
-- `qes2007`
-- `qes2007_panel`
-- `qes1998`
-
-Each code maps to a Dataverse DOI and documentation page.
+| Year | Code | Study | Citation | Documentation |
+|---|---|---|---|---|
+| 2022 | `qes2022` | Quebec Election Study 2022 | Quebec Election Study 2022 (2022). Data set. Harvard Dataverse. <https://doi.org/10.7910/DVN/PAQBDR> | <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR> |
+| 2018 | `qes2018` | Quebec Election Study 2018 | Quebec Election Study 2018 (2018). Data set. Borealis. <https://doi.org/10.5683/SP3/NWTGWS> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NWTGWS> |
+| 2018 | `qes2018_panel` | Quebec Election Study 2018 Panel | Quebec Election Study 2018 Panel (2018). Data set. Borealis. <https://doi.org/10.5683/SP3/XDDMMR> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/XDDMMR> |
+| 2014 | `qes2014` | Quebec Election Study 2014 | Quebec Election Study 2014 (2014). Data set. Borealis. <https://doi.org/10.5683/SP3/64F7WR> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/64F7WR> |
+| 2012 | `qes2012` | Quebec Election Study 2012 | Quebec Election Study 2012 (2012). Data set. Borealis. <https://doi.org/10.5683/SP2/WXUPXT> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/WXUPXT> |
+| 2012 | `qes2012_panel` | Quebec Election Study 2012 Panel | Quebec Election Study 2012 Panel (2012). Data set. Borealis. <https://doi.org/10.5683/SP3/RKHPVL> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/RKHPVL> |
+| 2007-2010 | `qes_crop_2007_2010` | CROP Quebec Opinion Polls (2007-2010) | CROP Quebec Opinion Polls (2007-2010) (2007-2010). Data set. Borealis. <https://doi.org/10.5683/SP3/IRZ1PF> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/IRZ1PF> |
+| 2008 | `qes2008` | Quebec Election Study 2008 | Quebec Election Study 2008 (2008). Data set. Borealis. <https://doi.org/10.5683/SP2/8KEYU3> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/8KEYU3> |
+| 2007 | `qes2007` | Quebec Election Study 2007 | Quebec Election Study 2007 (2007). Data set. Borealis. <https://doi.org/10.5683/SP2/6XGOKA> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/6XGOKA> |
+| 2007 | `qes2007_panel` | Quebec Election Study 2007 Panel | Quebec Election Study 2007 Panel (2007). Data set. Borealis. <https://doi.org/10.5683/SP3/NDS6VT> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NDS6VT> |
+| 1998 | `qes1998` | Quebec Elections 1998 | Quebec Elections 1998 (1998). Data set. Borealis. <https://doi.org/10.5683/SP2/QFUAWG> | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/QFUAWG> |

@@ -2,6 +2,7 @@ url: https://thomasgareau.github.io/qesR/
 
 template:
   bootstrap: 5
+  logo: man/figures/logo.png
   bslib:
     primary: "#0f4c5c"
     secondary: "#e36414"
@@ -16,21 +17,36 @@ home:
 
 navbar:
   structure:
-    left: [home, reference, articles]
+    left: [get_started, reference, news, merged, citations, analysis_sovereignty, analysis_demography, analysis_turnout, analysis_crossyear]
     right: [github]
   components:
+    get_started:
+      text: Get started
+      href: articles/get-started.html
     reference:
       text: Reference
       href: reference/index.html
-    articles:
-      text: Analysis Examples
-      menu:
-      - text: Getting Started
-        href: articles/get-started.html
-      - text: Harmonized Master Analysis
-        href: articles/analysis-master.html
-      - text: Codebook Exploration
-        href: articles/analysis-codebook.html
+    news:
+      text: Changelog
+      href: news/index.html
+    merged:
+      text: Merged Dataset
+      href: articles/merged-dataset.html
+    citations:
+      text: Study Citations
+      href: articles/study-citations.html
+    analysis_sovereignty:
+      text: "Analysis: Sovereignty"
+      href: articles/analysis-sovereignty.html
+    analysis_demography:
+      text: "Analysis: Demography"
+      href: articles/analysis-demography.html
+    analysis_turnout:
+      text: "Analysis: Turnout and Vote"
+      href: articles/analysis-turnout-vote.html
+    analysis_crossyear:
+      text: "Analysis: Cross-Year Patterns"
+      href: articles/analysis-master.html
     github:
       icon: fa-github
       href: https://github.com/ThomasGareau/qesR
@@ -66,5 +82,10 @@ articles:
   navbar: Tutorials
   contents:
   - get-started
+  - merged-dataset
+  - study-citations
+  - analysis-sovereignty
+  - analysis-demography
+  - analysis-turnout-vote
   - analysis-master
   - analysis-codebook

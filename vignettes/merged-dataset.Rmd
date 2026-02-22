@@ -1,0 +1,56 @@
+---
+title: "Merged Dataset Workflow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Merged Dataset Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+`qesR` provides a merged harmonized dataset through `get_qes_master()`.
+
+## Build merged data
+
+```{r}
+library(qesR)
+
+master <- get_qes_master(strict = FALSE)
+dim(master)
+head(master)
+```
+
+## What it harmonizes
+
+The merged data includes cross-study fields such as:
+
+- `respondent_id`
+- `age`, `age_group`, `year_of_birth`
+- `gender`, `education`, `language`
+- `turnout`, `vote_choice`, `party_lean`
+- `survey_weight`
+
+It also records source-variable provenance:
+
+```{r}
+source_map <- attr(master, "source_map")
+head(source_map)
+```
+
+## Quality controls in merge
+
+`get_qes_master()` applies:
+
+- within-year respondent de-duplication for multi-study years
+- derived age groups where age or year-of-birth are available
+- removal of rows empty across harmonized variables
+
+## Save merged data
+
+```{r}
+get_qes_master(save_path = "qes_master.csv", strict = FALSE)
+get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+```

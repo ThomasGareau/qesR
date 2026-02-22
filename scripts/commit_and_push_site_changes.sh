@@ -15,15 +15,29 @@ git add \
   .github/workflows/pkgdown.yml \
   _pkgdown.yml \
   DESCRIPTION \
+  NEWS.md \
   README.md \
+  man/figures/logo.png \
+  pkgdown/favicon/apple-touch-icon.png \
+  pkgdown/favicon/favicon-96x96.png \
+  pkgdown/favicon/favicon.ico \
+  pkgdown/favicon/favicon.svg \
+  pkgdown/favicon/site.webmanifest \
+  pkgdown/favicon/web-app-manifest-192x192.png \
+  pkgdown/favicon/web-app-manifest-512x512.png \
   pkgdown/index.md \
   pkgdown/extra.css \
   scripts/build_pkgdown_site.R \
   scripts/commit_and_push_master_changes.sh \
   scripts/commit_and_push_site_changes.sh \
+  vignettes/analysis-demography.Rmd \
   vignettes/analysis-codebook.Rmd \
   vignettes/analysis-master.Rmd \
-  vignettes/get-started.Rmd
+  vignettes/analysis-sovereignty.Rmd \
+  vignettes/analysis-turnout-vote.Rmd \
+  vignettes/get-started.Rmd \
+  vignettes/merged-dataset.Rmd \
+  vignettes/study-citations.Rmd
 
 if git diff --cached --quiet; then
   echo "No staged website changes to commit."

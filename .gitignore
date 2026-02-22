@@ -10,3 +10,5 @@ docs/
 qes_master_test.csv
 qes_master_test.rds
 qes_master_test_source_map.csv
+.DS_Store
+Images/
