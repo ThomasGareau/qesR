@@ -1,31 +1,145 @@
 .master_harmonization_lookup <- function() {
   list(
-    respondent_id = c("ResponseId", "responseid", "respid", "quetr", "quest2_crop", "quest", "questpost", "questpst", "questbv", "questionnaire7701"),
-    interview_start = c("cps_StartDate", "sdat", "SDAT", "startdate"),
-    interview_end = c("cps_EndDate", "enddate"),
-    interview_recorded = c("cps_RecordedDate", "recordeddate", "date"),
-    language = c("cps_UserLanguage", "LANG", "lang", "qlang", "QLANG"),
+    respondent_id = c("ResponseId", "responseid", "respid", "quetr", "quest2_crop", "quest", "QUEST", "questpost", "questpst", "questbv", "questionnaire7701", "seq"),
+    interview_start = c("cps_StartDate", "sdat", "SDAT", "startdate", "StartDate"),
+    interview_end = c("cps_EndDate", "enddate", "EndDate"),
+    interview_recorded = c("cps_RecordedDate", "recordeddate", "RecordedDate", "date"),
+    language = c("cps_UserLanguage", "LANG", "lang", "qlang", "QLANG", "langu", "lmat"),
     citizenship = c("cps_citizen", "cps_citizenship", "citizenship"),
     year_of_birth = c("cps_yob", "QAGE", "qage", "agex", "ageyear_1", "yob", "q75", "Q75"),
     age = c("cps_age_in_years", "SMAGE", "smage", "age", "agecalc", "agenum", "QAGE", "qage", "q0age"),
     age_group = c("CLAGE", "clage", "age_3gr", "agegrp", "age3", "age45", "age"),
     gender = c("cps_genderid", "QSEXE", "qsexe", "sexe", "sexe_post", "gender"),
     province_territory = c("cps_province", "q0qc", "Q0QC", "QREGION", "qregion", "regio", "reg", "reg_3gr"),
-    education = c("cps_edu", "QSCOL", "qscol", "scol", "scolU", "scolu", "education", "educ", "edu"),
+    education = c("cps_edu", "QSCOL", "qscol", "scol", "scolU", "scolu", "education", "educ", "edu", "scolu"),
     income = c("cps_income", "income"),
     religion = c("cps_religion", "religion"),
     born_canada = c("cps_borncda", "born_canada"),
-    political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest"),
-    ideology = c("cps_ideoself_1", "lr", "ideology"),
-    turnout = c("cps_turnout", "allervot", "allervo2", "avote", "q1", "turnout"),
-    vote_choice = c("cps_votechoice1", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
+    political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest", "interet"),
+    ideology = c("cps_ideoself_1", "lr", "ideology", "q70a"),
+    turnout = c("cps_turnout", "Q2", "q21", "q11", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
+    vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
     vote_choice_text = c("cps_votechoice1_8_TEXT", "q2_96_other", "votechoice_text"),
-    party_best = c("cps_partybest", "partybest", "qpartybest"),
-    party_lean = c("cps_votelean", "voteref", "votelean", "partylean"),
+    party_best = c("cps_partybest", "partybest", "qpartybest", "Q8"),
+    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "intvoteref", "voteref", "intref", "votelean", "partylean"),
+    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "Q20", "q52", "q19", "souv_rec", "intvoteref", "intref"),
     federal_pid = c("cps_fedpid", "fed_pid", "fpid"),
     provincial_pid = c("cps_provpid", "prov_pid", "ppid"),
-    survey_weight = c("cps_wts", "poids", "ponder2", "ponder3", "ponderc", "pondvote", "weight", "weights", "wgt")
+    survey_weight = c("cps_wts", "poids", "pond", "pondx", "ponder2", "ponder3", "ponderc", "pondvote", "weight", "weights", "wgt", "pdspart", "pdspart2")
   )
+}
+
+.master_study_overrides <- function() {
+  list(
+    qes2022 = c(sovereignty_support = "cps_qc_referendum"),
+    qes2018 = c(turnout = "q1", vote_choice = "q2", sovereignty_support = NA_character_),
+    qes2018_panel = c(vote_choice = "vote", party_lean = "intvote", sovereignty_support = "independance"),
+    qes2014 = c(turnout = "Q2", vote_choice = "Q3", party_lean = "Q5", sovereignty_support = "Q20"),
+    qes2012 = c(turnout = "q21", vote_choice = "q25", sovereignty_support = "q52"),
+    qes2012_panel = c(turnout = "participation", vote_choice = "voteprov", party_lean = "intvoteprov", sovereignty_support = "souv_rec"),
+    qes_crop_2007_2010 = c(age = "QAGE", sovereignty_support = NA_character_),
+    qes2008 = c(turnout = "q11", vote_choice = "q12a", party_lean = "q12b", sovereignty_support = "q19"),
+    qes2007 = c(turnout = "q11", vote_choice = "q12", party_lean = "q13", sovereignty_support = "q19"),
+    qes2007_panel = c(turnout = "avote", vote_choice = "vote", party_lean = "intvote", sovereignty_support = "intref"),
+    qes1998 = c(turnout = "allervot", vote_choice = "intvote")
+  )
+}
+
+.resolve_master_source_column <- function(data, srvy, target, candidates) {
+  overrides <- .master_study_overrides()
+  study_map <- overrides[[srvy]]
+
+  if (!is.null(study_map) && target %in% names(study_map)) {
+    preferred <- unname(study_map[[target]])
+    if (length(preferred) == 1L && is.na(preferred)) {
+      return(NA_character_)
+    }
+    if (!is.na(preferred) && preferred %in% names(data)) {
+      return(preferred)
+    }
+  }
+
+  .pick_first_column(data, candidates)
+}
+
+.normalize_master_text <- function(x) {
+  out <- as.character(x)
+  out <- trimws(out)
+  out <- iconv(out, from = "", to = "ASCII//TRANSLIT")
+  out <- tolower(out)
+  out <- gsub("['`’]", "", out, perl = TRUE)
+  out <- gsub("[^a-z0-9]+", " ", out, perl = TRUE)
+  trimws(out)
+}
+
+.coerce_turnout_binary <- function(x) {
+  if (length(x) == 0L) {
+    return(x)
+  }
+
+  raw <- as.character(x)
+  norm <- .normalize_master_text(raw)
+  out <- rep(NA_real_, length(norm))
+
+  parsed_num <- suppressWarnings(as.numeric(raw))
+  finite_num <- is.finite(parsed_num)
+  if (any(finite_num)) {
+    uniq <- unique(parsed_num[finite_num])
+    if (all(uniq %in% c(0, 1))) {
+      out[finite_num] <- parsed_num[finite_num]
+    }
+  }
+
+  no_hit <- grepl(
+    "^(0|2|non|no)$|\\bnon\\b|\\bno\\b|n[' ]?a pas vot|did not vot|didn[' ]?t vot|ne votera pas|nvp|annule|not vote|not voted|certain not to vote",
+    norm,
+    perl = TRUE
+  )
+  yes_hit <- grepl(
+    "^(1|oui|yes)$|\\boui\\b|\\byes\\b|a vote|alle voter|already voted|par anticipation|le jour meme|certain to vote",
+    norm,
+    perl = TRUE
+  )
+
+  out[no_hit] <- 0
+  out[yes_hit & !no_hit] <- 1
+  out[.master_missing_vector(raw)] <- NA_real_
+  out
+}
+
+.coerce_sovereignty_binary <- function(x) {
+  if (length(x) == 0L) {
+    return(x)
+  }
+
+  raw <- as.character(x)
+  norm <- .normalize_master_text(raw)
+  out <- rep(NA_real_, length(norm))
+
+  parsed_num <- suppressWarnings(as.numeric(raw))
+  finite_num <- is.finite(parsed_num)
+  if (any(finite_num)) {
+    uniq <- unique(parsed_num[finite_num])
+    if (all(uniq %in% c(0, 1))) {
+      out[finite_num] <- parsed_num[finite_num]
+    }
+  }
+
+  no_hit <- grepl(
+    "^(0|2|non|no)$|\\bnon\\b|\\bno\\b|federalist|federaliste|signer la constitution|no change",
+    norm,
+    perl = TRUE
+  )
+  yes_hit <- grepl(
+    "^(1|oui|yes)$|\\boui\\b|\\byes\\b|independ|souverain",
+    norm,
+    perl = TRUE
+  )
+
+  out[no_hit] <- 0
+  out[yes_hit & !no_hit] <- 1
+  out[.master_missing_vector(raw)] <- NA_real_
+  out
 }
 
 .master_missing_vector <- function(x) {
@@ -132,6 +246,14 @@
     }
   }
 
+  if ("turnout" %in% names(master)) {
+    master$turnout <- .coerce_turnout_binary(master$turnout)
+  }
+
+  if ("sovereignty_support" %in% names(master)) {
+    master$sovereignty_support <- .coerce_sovereignty_binary(master$sovereignty_support)
+  }
+
   master
 }
 
@@ -161,6 +283,7 @@
   }
 
   harm_cols <- intersect(names(.master_harmonization_lookup()), names(master))
+  harm_cols <- setdiff(harm_cols, "respondent_id")
   if (length(harm_cols) == 0L) {
     return(list(data = master, removed = 0L))
   }
@@ -232,7 +355,7 @@
   )
 
   for (target in names(lookup)) {
-    source_col <- .pick_first_column(data, lookup[[target]])
+    source_col <- .resolve_master_source_column(data, srvy = srvy, target = target, candidates = lookup[[target]])
     source_map$source_variable[source_map$harmonized_variable == target] <- source_col
 
     if (is.na(source_col)) {
@@ -240,6 +363,22 @@
     } else {
       out[[target]] <- .coerce_master_value(data[[source_col]], target = target)
     }
+  }
+
+  # Some legacy files expose questionnaire identifiers (e.g., QUEST = 0) rather
+  # than respondent IDs. In those cases, generate stable row IDs to avoid
+  # collapsing almost all rows during within-study de-duplication.
+  rid <- trimws(as.character(out$respondent_id))
+  valid_rid <- !is.na(rid) & nzchar(rid)
+  uniq_ratio <- if (sum(valid_rid) > 0L) {
+    length(unique(tolower(rid[valid_rid]))) / sum(valid_rid)
+  } else {
+    0
+  }
+
+  if (sum(valid_rid) == 0L || uniq_ratio < 0.5) {
+    out$respondent_id <- sprintf("%s_%s", srvy, seq_len(n))
+    source_map$source_variable[source_map$harmonized_variable == "respondent_id"] <- "(synthetic_rowid)"
   }
 
   list(data = out, source_map = source_map)

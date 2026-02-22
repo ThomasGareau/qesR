@@ -23,8 +23,7 @@ library(ggplot2)
 library(knitr)
 ```
 
-This page shows a concrete trend output. It uses the merged file and builds a
-sovereignty proxy from party preference fields.
+This page uses the merged file to estimate sovereignty support over time.
 
 ## Load merged data
 
@@ -37,40 +36,68 @@ master <- if (file.exists("qes_master.csv")) {
 
 master <- master %>%
   mutate(
-    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
-    vote_choice = tolower(trimws(as.character(vote_choice))),
-    party_lean = tolower(trimws(as.character(party_lean)))
+    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)))
   )
+
+# CROP polling waves are useful for other questions, but the sovereignty trend
+# below is restricted to election-study files.
+master <- master %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+if (!("sovereignty_support" %in% names(master))) {
+  master$sovereignty_support <- NA_real_
+}
 ```
 
-## Sovereignty proxy
-
-Here we classify respondents as `sovereignty_proxy = 1` when party preference
-mentions a party typically associated with greater Quebec sovereignty
-(`parti québécois` or `québec solidaire`).
+## Build sovereignty indicator
 
 ```{r}
-is_sov_pref <- function(x) {
-  grepl("parti quebecois|parti québécois|quebec solidaire|québec solidaire", x)
+normalize_text <- function(x) {
+  y <- trimws(as.character(x))
+  y <- iconv(y, from = "", to = "ASCII//TRANSLIT")
+  y <- tolower(y)
+  y <- gsub("['`’]", "", y, perl = TRUE)
+  y <- gsub("[^a-z0-9]+", " ", y, perl = TRUE)
+  trimws(y)
 }
 
-sov <- master %>%
+is_sov_party <- function(x) {
+  y <- normalize_text(x)
+  !is.na(y) & grepl("\\bpq\\b|parti quebecois|quebec solidaire|\\bqs\\b|option nationale", y)
+}
+
+has_party_text <- function(x) {
+  y <- normalize_text(x)
+  !is.na(y) & grepl("[a-z]", y)
+}
+
+sov_item <- suppressWarnings(as.numeric(master$sovereignty_support))
+sov_item[!(sov_item %in% c(0, 1))] <- NA_real_
+
+party_yes <- is_sov_party(master$vote_choice) | is_sov_party(master$party_lean)
+party_info <- has_party_text(master$vote_choice) | has_party_text(master$party_lean)
+sov_party <- ifelse(party_info, ifelse(party_yes, 1, 0), NA_real_)
+
+master <- master %>%
   mutate(
-    sovereignty_proxy = dplyr::if_else(
-      is_sov_pref(vote_choice) | is_sov_pref(party_lean),
-      1,
-      0,
-      missing = 0
-    )
-  ) %>%
+    sovereignty_final = ifelse(!is.na(sov_item), sov_item, sov_party)
+  )
+
+all_years <- data.frame(
+  qes_year_num = sort(unique(master$qes_year_num[!is.na(master$qes_year_num)]))
+)
+
+sov <- master %>%
   filter(!is.na(qes_year_num)) %>%
   group_by(qes_year_num) %>%
   summarise(
-    support_share = mean(sovereignty_proxy, na.rm = TRUE),
-    n = n(),
+    respondents = n(),
+    n_with_measure = sum(!is.na(sovereignty_final)),
+    support_share = ifelse(n_with_measure > 0, mean(sovereignty_final, na.rm = TRUE), NA_real_),
     .groups = "drop"
-  ) %>%
-  arrange(qes_year_num)
+  )
+
+sov <- merge(all_years, sov, by = "qes_year_num", all.x = TRUE, sort = TRUE)
 ```
 
 ### Results table
@@ -79,27 +106,28 @@ sov <- master %>%
 knitr::kable(
   sov %>%
     mutate(
-      support_share = round(100 * support_share, 1)
+      sovereignty_support_pct = round(100 * support_share, 1)
     ) %>%
-    rename(
+    select(
       year = qes_year_num,
-      respondents = n,
-      sovereignty_support_pct = support_share
+      respondents,
+      n_with_measure,
+      sovereignty_support_pct
     ),
-  caption = "Sovereignty proxy by study year (percent of respondents)"
+  caption = "Sovereignty support by study year"
 )
 ```
 
 ### Trend plot
 
-```{r, fig.alt="Line chart of sovereignty proxy trend over study years."}
+```{r, fig.alt="Line chart of sovereignty support trend over study years."}
 ggplot(sov, aes(x = qes_year_num, y = support_share)) +
-  geom_line(linewidth = 1, color = "#0f4c5c") +
-  geom_point(size = 2.5, color = "#e36414") +
+  geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
+  geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
   scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
   labs(
-    title = "Evolution of sovereignty proxy across QES studies",
+    title = "Sovereignty support across QES studies",
     x = "Study year",
     y = "Share of respondents"
   ) +
@@ -108,5 +136,6 @@ ggplot(sov, aes(x = qes_year_num, y = support_share)) +
 
 ## Notes
 
-- This is a descriptive proxy based on party preference fields.
-- For publication-grade causal claims, build a study-specific sovereignty item harmonization.
+- Direct sovereignty items are used when available.
+- Party-based fallback is used when a direct item is missing.
+- `n_with_measure` in the table shows where coverage is thinner.

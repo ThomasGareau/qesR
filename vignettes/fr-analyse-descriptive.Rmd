@@ -32,12 +32,39 @@ master <- if (file.exists("qes_master.csv")) {
   get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
 }
 
+parser_turnout <- function(x) {
+  brut <- trimws(as.character(x))
+  norm <- tolower(iconv(brut, from = "", to = "ASCII//TRANSLIT"))
+  out <- rep(NA_real_, length(norm))
+
+  as_num <- suppressWarnings(as.numeric(brut))
+  is_num <- is.finite(as_num)
+  if (any(is_num)) {
+    uniq <- unique(as_num[is_num])
+    if (all(uniq %in% c(0, 1))) {
+      out[is_num] <- as_num[is_num]
+    }
+  }
+
+  non_hit <- grepl("^(0|2|non|no)$|n[' ]?a pas vot|did not vot|didn[' ]?t vot|annule|ne votera pas", norm, perl = TRUE)
+  oui_hit <- grepl("^(1|oui|yes)$|\\boui\\b|\\byes\\b|already voted|par anticipation|le jour meme|certain to vote", norm, perl = TRUE)
+
+  out[non_hit] <- 0
+  out[oui_hit & !non_hit] <- 1
+  out
+}
+
 master <- master %>%
   mutate(
     annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
     age_group = trimws(as.character(age_group)),
-    turnout = tolower(trimws(as.character(turnout)))
+    turnout_num = parser_turnout(turnout)
   )
+
+# qes_crop_2007_2010 est un fichier regroupé sans variable d'année par ligne.
+# On le garde dans les tableaux par étude, mais pas dans les tendances annuelles.
+master_tendance <- master %>%
+  filter(qes_code != "qes_crop_2007_2010")
 ```
 
 ## Taille des échantillons
@@ -53,14 +80,22 @@ knitr::kable(tailles, caption = "Taille d'échantillon par étude")
 
 ## Répartition des groupes d'âge
 
-```{r, fig.alt="Graphique de la répartition des groupes d'âge selon l'année."}
-age_dist <- master %>%
+```{r}
+age_dist <- master_tendance %>%
   filter(!is.na(annee), !is.na(age_group), nzchar(age_group)) %>%
   group_by(annee, age_group) %>%
   summarise(n = n(), .groups = "drop_last") %>%
   mutate(pct = 100 * n / sum(n)) %>%
   ungroup()
 
+knitr::kable(
+  head(age_dist, 28),
+  digits = 1,
+  caption = "Répartition des groupes d'âge (premières lignes)"
+)
+```
+
+```{r, fig.alt="Graphique de la répartition des groupes d'âge selon l'année."}
 ggplot(age_dist, aes(x = annee, y = pct, color = age_group, group = age_group)) +
   geom_line(linewidth = 0.9) +
   geom_point(size = 1.5) +
@@ -73,23 +108,44 @@ ggplot(age_dist, aes(x = annee, y = pct, color = age_group, group = age_group)) 
   theme_minimal(base_size = 12)
 ```
 
-## Participation électorale (proxy)
+## Participation électorale par année
 
 ```{r}
-turnout_annee <- master %>%
+annees <- data.frame(annee = sort(unique(master_tendance$annee[!is.na(master_tendance$annee)])))
+
+turnout_annee <- master_tendance %>%
   filter(!is.na(annee)) %>%
-  mutate(turnout_bin = case_when(
-    turnout %in% c("1", "yes", "voted", "certain to vote", "i already voted") ~ 1,
-    turnout %in% c("0", "2", "no", "did not vote", "certain not to vote") ~ 0,
-    TRUE ~ NA_real_
-  )) %>%
-  filter(!is.na(turnout_bin)) %>%
   group_by(annee) %>%
-  summarise(taux = mean(turnout_bin), n = n(), .groups = "drop")
+  summarise(
+    repondants = n(),
+    n_avec_turnout = sum(!is.na(turnout_num)),
+    taux = ifelse(n_avec_turnout > 0, mean(turnout_num, na.rm = TRUE), NA_real_),
+    .groups = "drop"
+  )
+
+turnout_annee <- merge(annees, turnout_annee, by = "annee", all.x = TRUE, sort = TRUE)
 
 knitr::kable(
-  turnout_annee %>% mutate(taux = round(100 * taux, 1)),
-  col.names = c("Année", "Taux de participation (%)", "N"),
-  caption = "Proxy de participation par année"
+  turnout_annee %>% mutate(taux_pct = round(100 * taux, 1)),
+  col.names = c("Année", "Répondants", "N avec mesure", "Taux", "Taux (%)"),
+  caption = "Indicateur de participation par année"
 )
 ```
+
+```{r, fig.alt="Graphique de l'indicateur de participation électorale selon l'année."}
+ggplot(turnout_annee, aes(x = annee, y = taux)) +
+  geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
+  geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
+  labs(
+    title = "Indicateur de participation électorale",
+    x = "Année d'étude",
+    y = "Part des répondants"
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Notes
+
+- `qes_crop_2007_2010` est exclu des tableaux et graphiques par année parce que
+  ce fichier ne contient pas d'année au niveau des répondants.

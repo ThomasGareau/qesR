@@ -55,7 +55,7 @@ What it harmonizes:
 - Study metadata: `qes_code`, `qes_year`, `qes_name_en`
 - Respondent and interview fields: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
 - Core demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`
+- Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`
 - Additional cross-study fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
 Harmonization rules include:
@@ -77,7 +77,7 @@ The site includes researcher-focused tabs for:
 - merged dataset workflow
 - study citations
 - 2 analysis tabs (sovereignty + descriptive statistics)
-- full French pages for all core sections
+- an `FR`/`EN` button in the top bar for page-by-page language switching
 
 ## Usage
 
@@ -171,16 +171,16 @@ Rscript scripts/build_pkgdown_site.R
 
 ## Study Citations
 
-The citations below follow the exact repository citation strings:
-
-1. Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", <https://doi.org/10.7910/DVN/PAQBDR>, Harvard Dataverse, V1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [fileUNF]
-2. Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust, Jean-François, 2023, "Étude électorale québécoise 2018", <https://doi.org/10.5683/SP3/NWTGWS>, Borealis, V1, UNF:6:luhys2QSLNTONPOXO4LYpg== [fileUNF]
-3. Durand, Claire; Blais, André, 2023, "Sondage panel sur l'élection québécoise de 2018", <https://doi.org/10.5683/SP3/XDDMMR>, Borealis, V1, UNF:6:ECsYwSg8SlYcGPle+8FjWw== [fileUNF]
-4. Bélanger, Éric; Nadeau, Richard, 2023, "Étude électorale québécoise 2014", <https://doi.org/10.5683/SP3/64F7WR>, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw== [fileUNF]
-5. Bélanger, Éric; Nadeau, Richard; Henderson, Ailsa; Hepburn, Eve, 2023, "Étude électorale québécoise 2012", <https://doi.org/10.5683/SP2/WXUPXT>, Borealis, V1, UNF:6:nG192rAWV0IlYSpRg4WBaQ== [fileUNF]
-6. Durand, Claire; Goyder, John, 2023, "Sondage panel sur l'élection québécoise de 2012", <https://doi.org/10.5683/SP3/RKHPVL>, Borealis, V1, UNF:6:/ACwE8qVPCB013O9cweCqQ== [fileUNF]
-7. Durand, Claire, 2023, "Sondages CROP sur les intentions de vote provinciales québécoises 2007-2010", <https://doi.org/10.5683/SP3/IRZ1PF>, Borealis, V1, UNF:6:Yaloq+G6EVBknLlAk44JoQ== [fileUNF]
-8. Bélanger, Éric; Nadeau, Richard, 2023, "Étude électorale québécoise 2008", <https://doi.org/10.5683/SP2/8KEYU3>, Borealis, V1, UNF:6:6wfopjsb0foTuDDWQPDfXg== [fileUNF]
-9. Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura; Tanguay, Brian, 2023, "Étude électorale québécoise 2007", <https://doi.org/10.5683/SP2/6XGOKA>, Borealis, V1, UNF:6:fNjQ+LF7dCVuIrjEyQuOyg== [fileUNF]
-10. Durand, Claire; Goyder, John, 2023, "Sondage panel sur l'élection québécoise de 2007", <https://doi.org/10.5683/SP3/NDS6VT>, Borealis, V1, UNF:6:ASjoqrxxkLm0vvSA6lc9Fw== [fileUNF]
-11. Durand, Claire, 2023, "Sondages électoraux sur les élections générales québécoises de 1998", <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== [fileUNF]
+| Year | Code | Study | Citation | Documentation |
+|---|---|---|---|---|
+| 2022 | `qes2022` | 2022 Quebec Election Study | Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", <https://doi.org/10.7910/DVN/PAQBDR>, Harvard Dataverse, V1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [fileUNF] | <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR> |
+| 2018 | `qes2018` | Étude électorale québécoise 2018 | Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust, Jean-François, 2023, "Étude électorale québécoise 2018", <https://doi.org/10.5683/SP3/NWTGWS>, Borealis, V1, UNF:6:luhys2QSLNTONPOXO4LYpg== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NWTGWS> |
+| 2018 | `qes2018_panel` | Sondage panel sur l'élection québécoise de 2018 | Durand, Claire; Blais, André, 2023, "Sondage panel sur l'élection québécoise de 2018", <https://doi.org/10.5683/SP3/XDDMMR>, Borealis, V1, UNF:6:ECsYwSg8SlYcGPle+8FjWw== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/XDDMMR> |
+| 2014 | `qes2014` | Étude électorale québécoise 2014 | Bélanger, Éric; Nadeau, Richard, 2023, "Étude électorale québécoise 2014", <https://doi.org/10.5683/SP3/64F7WR>, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/64F7WR> |
+| 2012 | `qes2012` | Étude électorale québécoise 2012 | Bélanger, Éric; Nadeau, Richard; Henderson, Ailsa; Hepburn, Eve, 2023, "Étude électorale québécoise 2012", <https://doi.org/10.5683/SP2/WXUPXT>, Borealis, V1, UNF:6:nG192rAWV0IlYSpRg4WBaQ== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/WXUPXT> |
+| 2012 | `qes2012_panel` | Sondage panel sur l'élection québécoise de 2012 | Durand, Claire; Goyder, John, 2023, "Sondage panel sur l'élection québécoise de 2012", <https://doi.org/10.5683/SP3/RKHPVL>, Borealis, V1, UNF:6:/ACwE8qVPCB013O9cweCqQ== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/RKHPVL> |
+| 2007-2010 | `qes_crop_2007_2010` | Sondages CROP sur les intentions de vote provinciales québécoises 2007-2010 | Durand, Claire, 2023, "Sondages CROP sur les intentions de vote provinciales québécoises 2007-2010", <https://doi.org/10.5683/SP3/IRZ1PF>, Borealis, V1, UNF:6:Yaloq+G6EVBknLlAk44JoQ== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/IRZ1PF> |
+| 2008 | `qes2008` | Étude électorale québécoise 2008 | Bélanger, Éric; Nadeau, Richard, 2023, "Étude électorale québécoise 2008", <https://doi.org/10.5683/SP2/8KEYU3>, Borealis, V1, UNF:6:6wfopjsb0foTuDDWQPDfXg== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/8KEYU3> |
+| 2007 | `qes2007` | Étude électorale québécoise 2007 | Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura; Tanguay, Brian, 2023, "Étude électorale québécoise 2007", <https://doi.org/10.5683/SP2/6XGOKA>, Borealis, V1, UNF:6:fNjQ+LF7dCVuIrjEyQuOyg== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/6XGOKA> |
+| 2007 | `qes2007_panel` | Sondage panel sur l'élection québécoise de 2007 | Durand, Claire; Goyder, John, 2023, "Sondage panel sur l'élection québécoise de 2007", <https://doi.org/10.5683/SP3/NDS6VT>, Borealis, V1, UNF:6:ASjoqrxxkLm0vvSA6lc9Fw== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/NDS6VT> |
+| 1998 | `qes1998` | Sondages électoraux sur les élections générales québécoises de 1998 | Durand, Claire, 2023, "Sondages électoraux sur les élections générales québécoises de 1998", <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== [fileUNF] | <https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP2/QFUAWG> |

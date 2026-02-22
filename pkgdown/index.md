@@ -71,7 +71,7 @@ What it harmonizes:
 - study metadata: `qes_code`, `qes_year`, `qes_name_en`
 - respondent/interview info: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
 - demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`
 - additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
 Harmonization applies value normalization, derived age groups, within-study de-duplication, and removal of rows that are empty across harmonized variables.
@@ -109,10 +109,4 @@ Analyses available in separate tabs:
 
 ## Version française
 
-Une version française complète est disponible :
-
-- [Démarrage](articles/fr-demarrage.html)
-- [Données fusionnées](articles/fr-donnees-fusionnees.html)
-- [Citations des études](articles/fr-citations-etudes.html)
-- [Analyse : souveraineté](articles/fr-analyse-souverainete.html)
-- [Analyse : statistiques descriptives](articles/fr-analyse-descriptive.html)
+Use the `FR` button in the top bar to switch any main page to its French version.

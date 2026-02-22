@@ -3,9 +3,58 @@ url: https://thomasgareau.github.io/qesR/
 template:
   bootstrap: 5
   logo: man/figures/logo.png
+  includes:
+    before_body: |
+      <script>
+      (function () {
+        function normalizePath(path) {
+          if (!path || path === "/") return "index.html";
+          var clean = path;
+          while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
+            clean = clean.slice(0, -1);
+          }
+          var segments = clean.split("/").filter(Boolean);
+          if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
+          if (segments.length === 0) return "index.html";
+          return segments.join("/");
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+          var path = window.location.pathname || "/";
+          var rel = normalizePath(path);
+          var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
+          var isFrench = /^articles\/fr-/.test(rel);
+          var map = {
+            "index.html": "articles/fr-demarrage.html",
+            "articles/get-started.html": "articles/fr-demarrage.html",
+            "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
+            "articles/study-citations.html": "articles/fr-citations-etudes.html",
+            "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
+            "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+            "articles/fr-demarrage.html": "articles/get-started.html",
+            "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
+            "articles/fr-citations-etudes.html": "articles/study-citations.html",
+            "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
+            "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+          };
+          var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
+          var label = isFrench ? "EN" : "FR";
+          var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
+          if (!navbar) return;
+          var holder = document.createElement("div");
+          holder.className = "qesr-lang-switch-wrap";
+          var btn = document.createElement("a");
+          btn.className = "qesr-lang-switch";
+          btn.href = root + target;
+          btn.textContent = label;
+          btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+          holder.appendChild(btn);
+          navbar.appendChild(holder);
+        });
+      })();
+      </script>
   bslib:
-    primary: "#1b365d"
-    secondary: "#d1495b"
+    primary: "#12355b"
+    secondary: "#b5651d"
     base_font:
       google: "Source Sans 3"
     heading_font:
@@ -17,7 +66,7 @@ home:
 
 navbar:
   structure:
-    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, french, news]
+    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, news]
     right: [github]
   components:
     get_started:
@@ -41,19 +90,6 @@ navbar:
     analysis_descriptive:
       text: "Analysis: Descriptive Statistics"
       href: articles/analysis-descriptive.html
-    french:
-      text: Français
-      menu:
-      - text: Démarrage
-        href: articles/fr-demarrage.html
-      - text: Données fusionnées
-        href: articles/fr-donnees-fusionnees.html
-      - text: Citations des études
-        href: articles/fr-citations-etudes.html
-      - text: "Analyse: souveraineté"
-        href: articles/fr-analyse-souverainete.html
-      - text: "Analyse: statistiques descriptives"
-        href: articles/fr-analyse-descriptive.html
     github:
       icon: fa-github
       href: https://github.com/ThomasGareau/qesR
