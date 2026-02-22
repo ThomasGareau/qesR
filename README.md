@@ -18,7 +18,7 @@ remotes::install_github("ThomasGareau/qesR")
 Install from a local source tarball:
 
 ```r
-install.packages("/path/to/qesR_0.4.2.tar.gz", repos = NULL, type = "source")
+install.packages("/path/to/qesR_0.4.4.tar.gz", repos = NULL, type = "source")
 ```
 
 Install from a local package folder:
@@ -82,6 +82,49 @@ get_question(qes2018, "some_variable", full = TRUE)
 # cesR-like prepared non-exhaustive dataset
 decon <- get_decon("qes2022")
 head(decon)
+
+# harmonized stacked master dataset across studies
+qes_master <- get_qes_master()
+head(qes_master)
+# includes derived age_group when age/year-of-birth are available
+# removes duplicate respondents within the same year (keeps first study)
+# drops rows empty across harmonized variables
+
+# inspect which source variable fed each harmonized field
+head(attr(qes_master, "source_map"))
+
+# write master file to disk (CSV or RDS)
+get_qes_master(save_path = "qes_master.csv")
+get_qes_master(save_path = "qes_master.rds")
+```
+
+## Command-Line Scripts
+
+Build the master dataset from the terminal (writes CSV, RDS, and source map):
+
+```bash
+Rscript scripts/build_qes_master.R \
+  --out-dir . \
+  --out-prefix qes_master
+```
+
+Build for a subset of studies:
+
+```bash
+Rscript scripts/build_qes_master.R \
+  --surveys qes2022,qes2018,qes1998 \
+  --out-dir . \
+  --out-prefix qes_master_subset
+```
+
+## Commit And Push
+
+Use the helper script to stage the package changes, commit, rebase on
+`origin/main`, and push:
+
+```bash
+bash scripts/commit_and_push_master_changes.sh \
+  "Add master dataset harmonization and 1998 mapping fixes"
 ```
 
 ## Included Quebec study codes

@@ -10,6 +10,19 @@
   gsub("\\s+", " ", trimws(x))
 }
 
+.unicode_char <- function(codepoint) {
+  intToUtf8(as.integer(codepoint), multiple = FALSE)
+}
+
+.normalize_curly_quotes <- function(x) {
+  if (length(x) == 0L) {
+    return(x)
+  }
+
+  x <- gsub(.unicode_char(0x2018L), "'", x, fixed = TRUE)
+  gsub(.unicode_char(0x2019L), "'", x, fixed = TRUE)
+}
+
 .assert_single_string <- function(x, arg_name) {
   if (!is.character(x) || length(x) != 1L || is.na(x) || !nzchar(x)) {
     stop(sprintf("`%s` must be a single non-empty character string.", arg_name), call. = FALSE)
@@ -207,12 +220,7 @@
     return(files_df[which(matches)[1], , drop = FALSE])
   }
 
-  non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
-  data_candidates <- files_df[!grepl(non_data_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
-
-  if (nrow(data_candidates) == 0L) {
-    data_candidates <- files_df
-  }
+  data_candidates <- .find_qes_data_files(files_df)
 
   .select_file_by_preference(data_candidates)
 }
@@ -220,6 +228,23 @@
 .find_qes_codebook_files <- function(files_df) {
   codebook_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|dictionary|metadata|ddi|\\.pdf$)"
   files_df[grepl(codebook_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
+}
+
+.find_qes_data_files <- function(files_df) {
+  non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
+  supported_extensions <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt", "rds", "zip")
+  data_candidates <- files_df[!grepl(non_data_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
+  data_candidates <- data_candidates[data_candidates$extension %in% supported_extensions, , drop = FALSE]
+
+  if (nrow(data_candidates) == 0L) {
+    data_candidates <- files_df[files_df$extension %in% supported_extensions, , drop = FALSE]
+  }
+
+  if (nrow(data_candidates) == 0L) {
+    data_candidates <- files_df
+  }
+
+  data_candidates
 }
 
 .download_qes_datafile <- function(study, file_id, filename, quiet = TRUE) {
@@ -308,7 +333,137 @@
     return(NA_character_)
   }
 
-  .squish_ws(paste(chunks, collapse = " "))
+  .clean_ddi_question_candidate(paste(chunks, collapse = " "))
+}
+
+.count_replacement_chars <- function(x) {
+  if (length(x) == 0L) {
+    return(0L)
+  }
+
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+  total <- 0L
+
+  for (txt in x) {
+    hits <- gregexpr("\uFFFD", txt, fixed = TRUE)[[1]]
+    if (!identical(hits[1], -1L)) {
+      total <- total + length(hits)
+    }
+  }
+
+  as.integer(total)
+}
+
+.is_noisy_question_text <- function(x) {
+  if (!is.character(x) || length(x) != 1L || is.na(x)) {
+    return(FALSE)
+  }
+
+  txt <- .squish_ws(x)
+  if (!nzchar(txt)) {
+    return(TRUE)
+  }
+
+  noisy_patterns <- c(
+    "storage mode\\b",
+    "values and labels\\b",
+    "valid and missing values\\b",
+    "measurement\\b",
+    "principal investigator\\b",
+    "co-?investigators?\\b",
+    "letter of information\\b",
+    "consent document\\b"
+  )
+
+  any(vapply(
+    noisy_patterns,
+    function(p) grepl(p, txt, ignore.case = TRUE, perl = TRUE),
+    logical(1)
+  ))
+}
+
+.clean_ddi_question_candidate <- function(x) {
+  x <- .squish_ws(x)
+  if (!nzchar(x)) {
+    return(NA_character_)
+  }
+
+  x <- sub("\\s*-{5,}.*$", "", x, perl = TRUE)
+  x <- sub(
+    "\\s+(Storage mode|Values and labels|Valid and missing values|Measurement)\\b.*$",
+    "",
+    x,
+    ignore.case = TRUE,
+    perl = TRUE
+  )
+  x <- .normalize_curly_quotes(x)
+  x <- gsub("^['\"]+|['\"]+$", "", x, perl = TRUE)
+  x <- .squish_ws(x)
+
+  if (!nzchar(x) || .is_noisy_question_text(x)) {
+    return(NA_character_)
+  }
+
+  x
+}
+
+.normalize_value_label_token <- function(x) {
+  x <- .squish_ws(as.character(x %||% ""))
+  x <- .normalize_curly_quotes(x)
+  x <- gsub("^['\"`]+|['\"`]+$", "", x, perl = TRUE)
+  tolower(x)
+}
+
+.is_trivial_value_label <- function(value, value_label) {
+  if (is.na(value) || is.na(value_label)) {
+    return(TRUE)
+  }
+
+  v <- .normalize_value_label_token(value)
+  l <- .normalize_value_label_token(value_label)
+
+  if (!nzchar(v) || !nzchar(l)) {
+    return(TRUE)
+  }
+
+  if (identical(v, l)) {
+    return(TRUE)
+  }
+
+  v_num <- suppressWarnings(as.numeric(v))
+  l_num <- suppressWarnings(as.numeric(l))
+  if (!is.na(v_num) && !is.na(l_num) && isTRUE(all.equal(v_num, l_num, tolerance = 1e-12))) {
+    return(TRUE)
+  }
+
+  FALSE
+}
+
+.is_open_text_value_map <- function(variable, value_labels) {
+  if (!is.character(variable) || length(variable) != 1L || is.na(variable)) {
+    return(FALSE)
+  }
+
+  if (length(value_labels) < 15L) {
+    return(FALSE)
+  }
+
+  if (!grepl("(other|open|specif|text|autre)", variable, ignore.case = TRUE, perl = TRUE)) {
+    return(FALSE)
+  }
+
+  labels <- as.character(unname(value_labels))
+  labels <- labels[!is.na(labels) & nzchar(.squish_ws(labels))]
+  if (length(labels) < 15L) {
+    return(FALSE)
+  }
+
+  label_lengths <- nchar(labels, type = "chars", allowNA = TRUE, keepNA = FALSE)
+  long_share <- mean(label_lengths >= 12L)
+  word_share <- mean(grepl("\\s", labels, perl = TRUE))
+
+  is.finite(long_share) && is.finite(word_share) && long_share >= 0.5 && word_share >= 0.3
 }
 
 .parse_qes_ddi <- function(ddi_xml) {
@@ -336,10 +491,14 @@
         value <- .ddi_text(cat_node, "./*[local-name()='catValu'][1]")
         value_label <- .ddi_text(cat_node, "./*[local-name()='labl'][1]")
 
-        if (!is.na(value) && !is.na(value_label)) {
+        if (!is.na(value) && !is.na(value_label) && !.is_trivial_value_label(value, value_label)) {
           value_labels[value] <- value_label
         }
       }
+    }
+
+    if (.is_open_text_value_map(variable %||% NA_character_, value_labels)) {
+      value_labels <- character(0)
     }
 
     list(
@@ -379,6 +538,78 @@
   )
 }
 
+.score_qes_ddi <- function(ddi_parsed, selected_file_id = NA_character_, candidate_file_id = NA_character_) {
+  if (is.null(ddi_parsed) || !is.list(ddi_parsed) || is.null(ddi_parsed$data)) {
+    return(list(score = -Inf))
+  }
+
+  data <- ddi_parsed$data
+  if (!is.data.frame(data) || nrow(data) == 0L) {
+    return(list(score = -Inf))
+  }
+
+  all_value_labels <- unlist(ddi_parsed$value_labels, use.names = FALSE)
+  replacement_chars <- .count_replacement_chars(c(data$label, data$question, all_value_labels))
+  non_empty_labels <- sum(!is.na(data$label) & nzchar(.squish_ws(data$label)))
+  non_empty_questions <- sum(!is.na(data$question) & nzchar(.squish_ws(data$question)))
+  nontrivial_value_labels <- sum(data$n_value_labels, na.rm = TRUE)
+  selected_bonus <- if (!is.na(selected_file_id) && !is.na(candidate_file_id) && identical(selected_file_id, candidate_file_id)) 5L else 0L
+
+  score <- as.numeric(
+    (1000L * nrow(data)) +
+      (10L * non_empty_labels) +
+      (5L * non_empty_questions) +
+      nontrivial_value_labels +
+      selected_bonus -
+      (50L * replacement_chars)
+  )
+
+  list(
+    score = score,
+    n_variables = nrow(data),
+    non_empty_labels = non_empty_labels,
+    non_empty_questions = non_empty_questions,
+    nontrivial_value_labels = nontrivial_value_labels,
+    replacement_chars = replacement_chars
+  )
+}
+
+.fetch_best_qes_ddi <- function(study, files_df, selected_file, quiet = TRUE) {
+  if (!is.data.frame(files_df) || nrow(files_df) == 0L) {
+    return(list(ddi_parsed = NULL, ddi_file_id = NA_character_))
+  }
+
+  data_candidates <- .find_qes_data_files(files_df)
+  if (nrow(data_candidates) == 0L) {
+    data_candidates <- files_df
+  }
+
+  selected_id <- as.character(selected_file$id[1])
+  candidate_ids <- unique(c(selected_id, as.character(data_candidates$id)))
+  candidate_ids <- candidate_ids[!is.na(candidate_ids) & nzchar(candidate_ids)]
+
+  best_parsed <- NULL
+  best_file_id <- NA_character_
+  best_score <- -Inf
+
+  for (file_id in candidate_ids) {
+    ddi <- .fetch_qes_ddi(study, file_id, quiet = quiet)
+    parsed <- .parse_qes_ddi(ddi)
+    metrics <- .score_qes_ddi(parsed, selected_file_id = selected_id, candidate_file_id = file_id)
+
+    if (is.finite(metrics$score) && metrics$score > best_score) {
+      best_score <- metrics$score
+      best_parsed <- parsed
+      best_file_id <- file_id
+    }
+  }
+
+  list(
+    ddi_parsed = best_parsed,
+    ddi_file_id = best_file_id
+  )
+}
+
 .has_pdf_text_extractor <- function() {
   nzchar(Sys.which("pdftotext")) || nzchar(Sys.which("gs"))
 }
@@ -410,9 +641,54 @@
 
   x <- sub("\\s*\\u25BC.*$", "", x)
   x <- sub("\\s+(If|Si)\\b.*$", "", x)
+  x <- sub("\\s+(Consent document|Letter of Information)\\b.*$", "", x, ignore.case = TRUE, perl = TRUE)
   x <- .squish_ws(x)
 
-  if (!nzchar(x)) NA_character_ else x
+  if (!nzchar(x) || .is_noisy_question_text(x)) {
+    return(NA_character_)
+  }
+
+  x
+}
+
+.looks_like_variable_token <- function(token) {
+  grepl("[_\\.]", token) || (nchar(token) >= 8L && grepl("[0-9]", token))
+}
+
+.truncate_candidate_at_embedded_variable <- function(candidate, variables, current_variable) {
+  if (!is.character(candidate) || length(candidate) != 1L || is.na(candidate)) {
+    return(candidate)
+  }
+
+  candidate <- .squish_ws(candidate)
+  if (!nzchar(candidate)) {
+    return(candidate)
+  }
+
+  vars <- unique(variables[!is.na(variables) & nzchar(variables)])
+  if (length(vars) == 0L) {
+    return(candidate)
+  }
+
+  other_vars <- setdiff(vars, current_variable)
+  if (length(other_vars) == 0L) {
+    return(candidate)
+  }
+
+  pos <- gregexpr("\\b[A-Za-z][A-Za-z0-9_\\.]+\\b", candidate, perl = TRUE)[[1]]
+  if (identical(pos[1], -1L)) {
+    return(candidate)
+  }
+
+  n_chars <- attr(pos, "match.length")
+  for (k in seq_along(pos)) {
+    token <- substr(candidate, pos[k], pos[k] + n_chars[k] - 1L)
+    if (token %in% other_vars && .looks_like_variable_token(token) && pos[k] > 1L) {
+      return(.squish_ws(substr(candidate, 1L, pos[k] - 1L)))
+    }
+  }
+
+  candidate
 }
 
 .extract_codebook_questions_from_lines <- function(lines, variables) {
@@ -460,7 +736,7 @@
         break
       }
 
-      if (grepl("^\\u25BC", next_line)) {
+      if (grepl(.unicode_char(0x25BCL), next_line, fixed = TRUE)) {
         break
       }
 
@@ -479,7 +755,9 @@
       j <- j + 1L
     }
 
-    candidate <- .clean_pdf_question_candidate(paste(chunks, collapse = " "))
+    candidate <- paste(chunks, collapse = " ")
+    candidate <- .truncate_candidate_at_embedded_variable(candidate, variables = variables, current_variable = var)
+    candidate <- .clean_pdf_question_candidate(candidate)
     if (!is.na(candidate) && nzchar(candidate)) {
       out[[var]] <- candidate
     }
@@ -573,19 +851,29 @@
       next
     }
 
-    current_question <- out$question[idx]
-    current_label <- out$label[idx]
+    current_question_raw <- out$question[idx]
+    current_label_raw <- out$label[idx]
+    current_question <- .squish_ws(as.character(current_question_raw))
+    current_label <- .squish_ws(as.character(current_label_raw))
 
-    should_replace_question <- is.na(current_question) ||
-      !nzchar(current_question) ||
-      .is_likely_truncated_question(current_question) ||
-      (nchar(candidate) > nchar(current_question) + 10L)
+    if (is.na(current_question)) {
+      current_question <- ""
+    }
+    if (is.na(current_label)) {
+      current_label <- ""
+    }
+
+    should_replace_question <- !nzchar(current_question) || .is_likely_truncated_question(current_question)
+    if (!should_replace_question && nzchar(current_label)) {
+      same_as_label <- identical(tolower(current_question), tolower(current_label))
+      should_replace_question <- same_as_label && .is_likely_truncated_question(current_label)
+    }
 
     if (should_replace_question) {
       out$question[idx] <- candidate
     }
 
-    should_replace_label <- is.na(current_label) ||
+    should_replace_label <- is.na(current_label_raw) ||
       !nzchar(current_label) ||
       .is_likely_truncated_question(current_label)
 
@@ -727,16 +1015,51 @@
 }
 
 .read_text_table <- function(path) {
-  tabular <- tryCatch(
-    utils::read.delim(path, stringsAsFactors = FALSE, check.names = FALSE),
-    error = function(e) NULL
-  )
+  read_delim <- function(quote_chars = "\"") {
+    warning_msg <- NULL
 
-  if (!is.null(tabular) && ncol(tabular) > 1L) {
-    return(tabular)
+    out <- withCallingHandlers(
+      tryCatch(
+        utils::read.delim(
+          path,
+          stringsAsFactors = FALSE,
+          check.names = FALSE,
+          quote = quote_chars,
+          fill = TRUE,
+          comment.char = ""
+        ),
+        error = function(e) NULL
+      ),
+      warning = function(w) {
+        warning_msg <<- conditionMessage(w)
+        invokeRestart("muffleWarning")
+      }
+    )
+
+    list(data = out, warning = warning_msg)
   }
 
-  utils::read.csv(path, stringsAsFactors = FALSE, check.names = FALSE)
+  first <- read_delim("\"")
+  has_eof_warning <- !is.null(first$warning) &&
+    grepl("EOF within quoted string", first$warning, ignore.case = TRUE)
+
+  if (!is.null(first$data) && ncol(first$data) > 1L && !has_eof_warning) {
+    return(first$data)
+  }
+
+  second <- read_delim("")
+  if (!is.null(second$data) && ncol(second$data) > 1L) {
+    return(second$data)
+  }
+
+  utils::read.csv(
+    path,
+    stringsAsFactors = FALSE,
+    check.names = FALSE,
+    quote = "",
+    fill = TRUE,
+    comment.char = ""
+  )
 }
 
 .read_qes_zip <- function(path) {
@@ -826,8 +1149,8 @@
   metadata <- .fetch_qes_metadata(study, quiet = quiet)
   files_df <- .extract_qes_files(metadata, srvy_code = study$qes_survey_code)
   selected <- .choose_remote_file(files_df, file = file)
-  ddi <- .fetch_qes_ddi(study, selected$id, quiet = quiet)
-  ddi_parsed <- .parse_qes_ddi(ddi)
+  ddi_choice <- .fetch_best_qes_ddi(study, files_df = files_df, selected_file = selected, quiet = quiet)
+  ddi_parsed <- ddi_choice$ddi_parsed
   codebook <- .build_qes_codebook(
     study,
     files_df,

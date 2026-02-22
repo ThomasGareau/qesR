@@ -1,7 +1,7 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.4.2
+Version: 0.4.4
 Author: qesR contributors [aut]
 Maintainer: qesR contributors <qesr@example.org>
 Authors@R: c(

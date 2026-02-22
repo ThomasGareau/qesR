@@ -56,15 +56,15 @@
     doi = c(
       "10.7910/DVN/PAQBDR",
       "10.5683/SP3/NWTGWS",
-      "10.5683/SP3/XP3XVW",
-      "10.5683/SP3/2SWEAF",
-      "10.5683/SP3/UMFEAI",
-      "10.5683/SP3/TMRQRE",
-      "10.5683/SP3/O2PI1F",
-      "10.5683/SP3/0GWQPY",
-      "10.5683/SP3/OCD8PY",
-      "10.5683/SP3/KNOAFD",
-      "10.5683/SP3/TGWQXJ"
+      "10.5683/SP3/XDDMMR",
+      "10.5683/SP3/64F7WR",
+      "10.5683/SP2/WXUPXT",
+      "10.5683/SP3/RKHPVL",
+      "10.5683/SP3/IRZ1PF",
+      "10.5683/SP2/8KEYU3",
+      "10.5683/SP2/6XGOKA",
+      "10.5683/SP3/NDS6VT",
+      "10.5683/SP2/QFUAWG"
     ),
     server = c(
       "https://dataverse.harvard.edu",

@@ -2,6 +2,7 @@ test_that("codebook API is exported", {
   exports <- getNamespaceExports("qesR")
   needed <- c(
     "get_decon",
+    "get_qes_master",
     "get_codebook",
     "format_codebook",
     "get_value_labels",
