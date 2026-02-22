@@ -1,0 +1,11 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  analysis-codebook: analysis-codebook.html
+  analysis-master: analysis-master.html
+  get-started: get-started.html
+last_built: 2026-02-22T19:11Z
+urls:
+  reference: https://thomasgareau.github.io/qesR/reference
+  article: https://thomasgareau.github.io/qesR/articles

@@ -1,0 +1,106 @@
+`qesR` provides a single workflow to download, document, and harmonize
+Quebec Election Study datasets from Dataverse.
+
+## Install
+
+``` r
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+```
+
+## Core Workflows
+
+### 1. Pull a study with labels and codebook
+
+``` r
+library(qesR)
+
+qes2022 <- get_qes("qes2022")
+cb <- get_codebook("qes2022", layout = "compact")
+head(cb)
+```
+
+### 2. Build a harmonized master dataset
+
+``` r
+master <- get_qes_master(
+  surveys = c("qes2022", "qes2018", "qes2014", "qes2007", "qes1998"),
+  strict = FALSE
+)
+
+head(master)
+head(attr(master, "source_map"))
+```
+
+## Analysis Examples
+
+Use the tutorials in the website navbar:
+
+- `Getting Started`: installation and first queries
+- `Harmonized Master Analysis`: cross-year examples (age, turnout, vote)
+- `Codebook Exploration`: variable labels and value labels workflows
+
+## Reproducibility
+
+The package includes command-line scripts:
+
+- `scripts/build_qes_master.R`: export harmonized master data
+- `scripts/build_pkgdown_site.R`: build website locally
+
+Deployment to GitHub Pages is handled by
+`.github/workflows/pkgdown.yml`.
+
+# Package index
+
+## Package
+
+- [`qesR-package`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+  : qesR: Access Quebec Election Study Datasets
+
+## Download Studies
+
+- [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
+  : List Quebec Election Study Survey Codes
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  : Download and Load a Quebec Election Study
+- [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
+  : Preview a Quebec Election Study
+
+## Codebook Tools
+
+- [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+  : Get a Quebec Election Study Codebook
+- [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_qes_codebook.md)
+  : Alias for get_codebook
+- [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  : Alias for get_codebook
+- [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
+  : Reformat a qesR Codebook
+- [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md)
+  : Get Value Labels from a Codebook
+- [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md)
+  : Get Survey Question Text
+- [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
+  : Get Codebook Files
+- [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_qes_codebook_files.md)
+  : Alias for get_codebook_files
+- [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
+  : Download Codebook Files
+
+## Harmonized Data
+
+- [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  : Create a Prepared Non-Exhaustive qesR Dataset
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  : Build a Harmonized Stacked Master QES Dataset
+
+# Articles
+
+### Tutorials
+
+- [Getting Started with
+  qesR](https://thomasgareau.github.io/qesR/articles/get-started.md):
+- [Harmonized Master Dataset: Analysis
+  Examples](https://thomasgareau.github.io/qesR/articles/analysis-master.md):
+- [Codebook Exploration and Label
+  Pipelines](https://thomasgareau.github.io/qesR/articles/analysis-codebook.md):

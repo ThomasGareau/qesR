@@ -1,0 +1,60 @@
+# Getting Started with qesR
+
+`qesR` helps you access Quebec Election Study data by survey code, plus
+metadata and codebooks.
+
+## Install
+
+``` r
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+library(qesR)
+```
+
+## List available studies
+
+``` r
+get_qescodes()
+get_qescodes(detailed = TRUE)
+```
+
+## Download one study
+
+``` r
+qes2022 <- get_qes("qes2022")
+names(qes2022)[1:20]
+```
+
+## Retrieve the codebook in different layouts
+
+``` r
+cb_compact <- get_codebook("qes2022", layout = "compact")
+cb_wide <- get_codebook("qes2022", layout = "wide")
+cb_long <- get_codebook("qes2022", layout = "long")
+```
+
+## Get question text for a variable
+
+``` r
+get_question(qes2022, "cps_age_in_years")
+get_question(qes2022, "cps_age_in_years", full = TRUE)
+```
+
+## Build a harmonized master dataset
+
+``` r
+master <- get_qes_master(
+  surveys = c("qes2022", "qes2018", "qes2014", "qes2007", "qes1998"),
+  strict = FALSE
+)
+
+dim(master)
+head(master)
+```
+
+## Save the master dataset
+
+``` r
+get_qes_master(save_path = "qes_master.csv", strict = FALSE)
+get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+```
