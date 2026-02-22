@@ -6,3 +6,7 @@
 ^\\.{2}Rcheck$
 ^qesR\\.Rcheck$
 ^tmp$
+^_pkgdown\\.yml$
+^pkgdown$
+^docs$
+^\\.github$

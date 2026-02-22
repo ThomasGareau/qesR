@@ -27,6 +27,16 @@ Install from a local package folder:
 install.packages("/path/to/qesR", repos = NULL, type = "source")
 ```
 
+## Website
+
+Project website (GitHub Pages): <https://thomasgareau.github.io/qesR/>
+
+The site includes:
+
+- function reference pages
+- setup/getting-started guide
+- analysis examples using harmonized QES data
+
 ## Usage
 
 ```r
@@ -116,6 +126,18 @@ Rscript scripts/build_qes_master.R \
   --out-dir . \
   --out-prefix qes_master_subset
 ```
+
+Build the website locally:
+
+```bash
+Rscript scripts/build_pkgdown_site.R
+```
+
+Publish website updates from `main`:
+
+1. Commit and push to `main`.
+2. GitHub Actions workflow `.github/workflows/pkgdown.yml` builds/deploys the site.
+3. In GitHub repo settings, set Pages source to branch `gh-pages` (root).
 
 ## Commit And Push
 

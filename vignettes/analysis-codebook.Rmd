@@ -1,0 +1,75 @@
+---
+title: "Codebook Exploration and Label Pipelines"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Codebook Exploration and Label Pipelines}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+This tutorial shows how to inspect labels/questions and keep metadata with your analysis.
+
+```{r}
+library(qesR)
+library(dplyr)
+```
+
+## Pull a compact codebook
+
+```{r}
+cb <- get_codebook("qes2022", layout = "compact")
+head(cb)
+```
+
+The compact view is designed for fast scanning:
+
+- `variable`
+- `label`
+- `question`
+- `n_value_labels`
+
+## Expand value labels when needed
+
+```{r}
+cb_wide <- get_codebook("qes2022", layout = "wide")
+str(cb_wide$value_labels[[which(cb_wide$variable == "cps_genderid")]])
+```
+
+```{r}
+cb_long <- get_codebook("qes2022", layout = "long")
+cb_long %>%
+  filter(variable == "cps_genderid")
+```
+
+## Recover question text
+
+```{r}
+qes2022 <- get_qes("qes2022")
+
+get_question(qes2022, "cps_age_in_years")
+get_question(qes2022, "cps_age_in_years", full = TRUE)
+```
+
+## Join labels into an analysis table
+
+```{r}
+data <- get_qes("qes2022")
+cb <- get_codebook("qes2022")
+
+label_lookup <- cb %>%
+  select(variable, question, label)
+
+label_lookup %>%
+  filter(variable %in% c("cps_age_in_years", "cps_genderid", "cps_votechoice1"))
+```
+
+## Download codebook files (questionnaires, PDFs, metadata)
+
+```{r}
+get_codebook_files(codebook = cb)
+download_codebook("qes2022", dest_dir = tempdir())
+```

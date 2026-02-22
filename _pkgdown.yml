@@ -1,0 +1,70 @@
+url: https://thomasgareau.github.io/qesR/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#0f4c5c"
+    secondary: "#e36414"
+    base_font:
+      google: "Source Sans 3"
+    heading_font:
+      google: "Space Grotesk"
+
+home:
+  title: qesR
+  description: Access and harmonize Quebec Election Study datasets in R.
+
+navbar:
+  structure:
+    left: [home, reference, articles]
+    right: [github]
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Analysis Examples
+      menu:
+      - text: Getting Started
+        href: articles/get-started.html
+      - text: Harmonized Master Analysis
+        href: articles/analysis-master.html
+      - text: Codebook Exploration
+        href: articles/analysis-codebook.html
+    github:
+      icon: fa-github
+      href: https://github.com/ThomasGareau/qesR
+      aria-label: GitHub repository
+
+reference:
+- title: Package
+  contents:
+  - qesR-package
+- title: Download Studies
+  contents:
+  - get_qescodes
+  - get_qes
+  - get_preview
+- title: Codebook Tools
+  contents:
+  - get_codebook
+  - get_qes_codebook
+  - qes_codebook
+  - format_codebook
+  - get_value_labels
+  - get_question
+  - get_codebook_files
+  - get_qes_codebook_files
+  - download_codebook
+- title: Harmonized Data
+  contents:
+  - get_decon
+  - get_qes_master
+
+articles:
+- title: Tutorials
+  navbar: Tutorials
+  contents:
+  - get-started
+  - analysis-master
+  - analysis-codebook
