@@ -1,69 +1,8 @@
 # Analysis: Descriptive Statistics
 
-``` r
-library(qesR)
-library(dplyr)
-library(ggplot2)
-library(knitr)
-```
-
 ## Load merged data
 
-``` r
-master <- if (file.exists("qes_master.csv")) {
-  read.csv("qes_master.csv", stringsAsFactors = FALSE)
-} else {
-  get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
-}
-
-parse_turnout <- function(x) {
-  raw <- trimws(as.character(x))
-  norm <- tolower(iconv(raw, from = "", to = "ASCII//TRANSLIT"))
-  out <- rep(NA_real_, length(norm))
-
-  as_num <- suppressWarnings(as.numeric(raw))
-  is_num <- is.finite(as_num)
-  if (any(is_num)) {
-    uniq <- unique(as_num[is_num])
-    if (all(uniq %in% c(0, 1))) {
-      out[is_num] <- as_num[is_num]
-    }
-  }
-
-  no_hit <- grepl("^(0|2|non|no)$|n[' ]?a pas vot|did not vot|didn[' ]?t vot|annule|ne votera pas", norm, perl = TRUE)
-  yes_hit <- grepl("^(1|oui|yes)$|\\boui\\b|\\byes\\b|already voted|par anticipation|le jour meme|certain to vote", norm, perl = TRUE)
-
-  out[no_hit] <- 0
-  out[yes_hit & !no_hit] <- 1
-  out
-}
-
-master <- master %>%
-  mutate(
-    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
-    age_group = trimws(as.character(age_group)),
-    turnout_num = parse_turnout(turnout)
-  )
-
-# qes_crop_2007_2010 is a pooled file without row-level year information.
-# Keep it in study-level tables, but exclude it from year-trend summaries.
-master_trend <- master %>%
-  filter(qes_code != "qes_crop_2007_2010")
-```
-
 ## Table 1: sample sizes by study
-
-``` r
-sample_sizes <- master %>%
-  group_by(qes_year, qes_code, qes_name_en) %>%
-  summarise(n = n(), .groups = "drop") %>%
-  arrange(qes_year, qes_code)
-
-knitr::kable(
-  sample_sizes,
-  caption = "Sample sizes in the merged dataset"
-)
-```
 
 | qes_year  | qes_code           | qes_name_en                           |     n |
 |:----------|:-------------------|:--------------------------------------|------:|
@@ -82,22 +21,6 @@ knitr::kable(
 Sample sizes in the merged dataset
 
 ## Table 2: age-group composition
-
-``` r
-age_table <- master_trend %>%
-  filter(!is.na(qes_year_num), !is.na(age_group), nzchar(age_group)) %>%
-  group_by(qes_year_num, age_group) %>%
-  summarise(n = n(), .groups = "drop_last") %>%
-  mutate(pct = 100 * n / sum(n)) %>%
-  ungroup() %>%
-  arrange(qes_year_num, desc(pct))
-
-knitr::kable(
-  head(age_table, 28),
-  digits = 1,
-  caption = "Age-group distribution (top rows)"
-)
-```
 
 | qes_year_num | age_group            |   n |  pct |
 |-------------:|:---------------------|----:|-----:|
@@ -134,70 +57,22 @@ Age-group distribution (top rows)
 
 ## Figure 1: age-group profile over time
 
-``` r
-ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group, group = age_group)) +
-  geom_line(linewidth = 0.9) +
-  geom_point(size = 1.6) +
-  labs(
-    title = "Age-group composition across study years",
-    x = "Study year",
-    y = "Percent of respondents",
-    color = "Age group"
-  ) +
-  theme_minimal(base_size = 12)
-```
-
-![Line chart of age-group composition across study
+![Heatmap of age-group composition across study
 years.](analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 
 ## Table 3 and Figure 2: turnout by year
 
-``` r
-all_years <- data.frame(qes_year_num = sort(unique(master_trend$qes_year_num[!is.na(master_trend$qes_year_num)])))
-
-turnout_year <- master_trend %>%
-  filter(!is.na(qes_year_num)) %>%
-  group_by(qes_year_num) %>%
-  summarise(
-    respondents = n(),
-    n_with_turnout = sum(!is.na(turnout_num)),
-    turnout_rate = ifelse(n_with_turnout > 0, mean(turnout_num, na.rm = TRUE), NA_real_),
-    .groups = "drop"
-  )
-
-turnout_year <- merge(all_years, turnout_year, by = "qes_year_num", all.x = TRUE, sort = TRUE)
-
-knitr::kable(
-  turnout_year %>% mutate(turnout_pct = round(100 * turnout_rate, 1)),
-  col.names = c("Year", "Respondents", "N with turnout", "Turnout rate", "Turnout (%)"),
-  caption = "Turnout indicator by year"
-)
-```
-
-| Year | Respondents | N with turnout | Turnout rate | Turnout (%) |
-|-----:|------------:|---------------:|-------------:|------------:|
-| 1998 |        1483 |           1374 |    0.8704512 |        87.0 |
-| 2007 |        4237 |           3897 |    0.8894021 |        88.9 |
-| 2008 |        1151 |           1131 |    0.8717949 |        87.2 |
-| 2012 |        2349 |           2330 |    0.9214592 |        92.1 |
-| 2014 |        1517 |           1499 |    0.9019346 |        90.2 |
-| 2018 |        4322 |           1826 |    0.1527930 |        15.3 |
-| 2022 |        1521 |           1322 |    0.9803328 |        98.0 |
+| Year | Respondents | N with turnout | Turnout rate |        SE |    CI low |   CI high | Turnout (%) | CI low (%) | CI high (%) |
+|-----:|------------:|---------------:|-------------:|----------:|----------:|----------:|------------:|-----------:|------------:|
+| 1998 |        1483 |           1374 |    0.8704512 | 0.0090593 | 0.8526950 | 0.8882075 |        87.0 |       85.3 |        88.8 |
+| 2007 |        4237 |           3897 |    0.8894021 | 0.0050241 | 0.8795549 | 0.8992493 |        88.9 |       88.0 |        89.9 |
+| 2008 |        1151 |           1131 |    0.8717949 | 0.0099410 | 0.8523106 | 0.8912792 |        87.2 |       85.2 |        89.1 |
+| 2012 |        2349 |           2330 |    0.9214592 | 0.0055732 | 0.9105357 | 0.9323828 |        92.1 |       91.1 |        93.2 |
+| 2014 |        1517 |           1499 |    0.9019346 | 0.0076815 | 0.8868789 | 0.9169903 |        90.2 |       88.7 |        91.7 |
+| 2018 |        4322 |           3481 |    0.8440103 | 0.0061499 | 0.8319565 | 0.8560642 |        84.4 |       83.2 |        85.6 |
+| 2022 |        1521 |           1322 |    0.9803328 | 0.0038189 | 0.9728477 | 0.9878179 |        98.0 |       97.3 |        98.8 |
 
 Turnout indicator by year
-
-``` r
-ggplot(turnout_year, aes(x = qes_year_num, y = turnout_rate)) +
-  geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
-  geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
-  labs(
-    title = "Turnout indicator across study years",
-    x = "Study year",
-    y = "Share of respondents"
-  ) +
-  theme_minimal(base_size = 12)
-```
 
 ![Line chart of turnout indicator across study
 years.](analysis-descriptive_files/figure-html/unnamed-chunk-8-1.png)

@@ -112,68 +112,13 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="load-merged-data">Load merged data<a class="anchor" aria-label="anchor" href="#load-merged-data"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">master</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">"qes_master.csv"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"qes_master.csv"</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>assign_global <span class="op">=</span> <span class="cn">FALSE</span>, strict <span class="op">=</span> <span class="cn">FALSE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">parse_turnout</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">norm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/chartr.html" class="external-link">tolower</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">raw</span>, from <span class="op">=</span> <span class="st">""</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA_real_</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">norm</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">as_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">raw</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">is_num</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">as_num</span><span class="op">)</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="va">is_num</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">uniq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">as_num</span><span class="op">[</span><span class="va">is_num</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">uniq</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">out</span><span class="op">[</span><span class="va">is_num</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">as_num</span><span class="op">[</span><span class="va">is_num</span><span class="op">]</span></span>
-<span>    <span class="op">}</span></span>
-<span>  <span class="op">}</span></span>
-<span></span>
-<span>  <span class="va">no_hit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^(0|2|non|no)$|n[' ]?a pas vot|did not vot|didn[' ]?t vot|annule|ne votera pas"</span>, <span class="va">norm</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>  <span class="va">yes_hit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^(1|oui|yes)$|\\boui\\b|\\byes\\b|already voted|par anticipation|le jour meme|certain to vote"</span>, <span class="va">norm</span>, perl <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">out</span><span class="op">[</span><span class="va">no_hit</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span>  <span class="va">out</span><span class="op">[</span><span class="va">yes_hit</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">no_hit</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span>  <span class="va">out</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    age_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">age_group</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    turnout_num <span class="op">=</span> <span class="fu">parse_turnout</span><span class="op">(</span><span class="va">turnout</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="co"># qes_crop_2007_2010 is a pooled file without row-level year information.</span></span>
-<span><span class="co"># Keep it in study-level tables, but exclude it from year-trend summaries.</span></span>
-<span><span class="va">master_trend</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="table-1-sample-sizes-by-study">Table 1: sample sizes by study<a class="anchor" aria-label="anchor" href="#table-1-sample-sizes-by-study"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sample_sizes</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">qes_year</span>, <span class="va">qes_code</span>, <span class="va">qes_name_en</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">qes_year</span>, <span class="va">qes_code</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">sample_sizes</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Sample sizes in the merged dataset"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <caption>Sample sizes in the merged dataset</caption>
 <colgroup>
@@ -261,20 +206,6 @@
 <div class="section level2">
 <h2 id="table-2-age-group-composition">Table 2: age-group composition<a class="anchor" aria-label="anchor" href="#table-2-age-group-composition"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">age_table</span> <span class="op">&lt;-</span> <span class="va">master_trend</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">qes_year_num</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">age_group</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">age_group</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">qes_year_num</span>, <span class="va">age_group</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop_last"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">n</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">qes_year_num</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">age_table</span>, <span class="fl">28</span><span class="op">)</span>,</span>
-<span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Age-group distribution (top rows)"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Age-group distribution (top rows)</caption>
 <thead><tr class="header">
@@ -458,50 +389,36 @@
 <div class="section level2">
 <h2 id="figure-1-age-group-profile-over-time">Figure 1: age-group profile over time<a class="anchor" aria-label="anchor" href="#figure-1-age-group-profile-over-time"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">age_table</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">qes_year_num</span>, y <span class="op">=</span> <span class="va">pct</span>, color <span class="op">=</span> <span class="va">age_group</span>, group <span class="op">=</span> <span class="va">age_group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.6</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Age-group composition across study years"</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"Study year"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Percent of respondents"</span>,</span>
-<span>    color <span class="op">=</span> <span class="st">"Age group"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Line chart of age-group composition across study years." width="700"></p>
+<p><img src="analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Heatmap of age-group composition across study years." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="table-3-and-figure-2-turnout-by-year">Table 3 and Figure 2: turnout by year<a class="anchor" aria-label="anchor" href="#table-3-and-figure-2-turnout-by-year"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">all_years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">master_trend</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">master_trend</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">turnout_year</span> <span class="op">&lt;-</span> <span class="va">master_trend</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">qes_year_num</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">qes_year_num</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    respondents <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    n_with_turnout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">turnout_num</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    turnout_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_with_turnout</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">turnout_num</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="va">turnout_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">all_years</span>, <span class="va">turnout_year</span>, by <span class="op">=</span> <span class="st">"qes_year_num"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">turnout_year</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>turnout_pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">turnout_rate</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Year"</span>, <span class="st">"Respondents"</span>, <span class="st">"N with turnout"</span>, <span class="st">"Turnout rate"</span>, <span class="st">"Turnout (%)"</span><span class="op">)</span>,</span>
-<span>  caption <span class="op">=</span> <span class="st">"Turnout indicator by year"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Turnout indicator by year</caption>
+<colgroup>
+<col width="4%">
+<col width="10%">
+<col width="13%">
+<col width="11%">
+<col width="9%">
+<col width="9%">
+<col width="9%">
+<col width="10%">
+<col width="10%">
+<col width="10%">
+</colgroup>
 <thead><tr class="header">
 <th align="right">Year</th>
 <th align="right">Respondents</th>
 <th align="right">N with turnout</th>
 <th align="right">Turnout rate</th>
+<th align="right">SE</th>
+<th align="right">CI low</th>
+<th align="right">CI high</th>
 <th align="right">Turnout (%)</th>
+<th align="right">CI low (%)</th>
+<th align="right">CI high (%)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -509,63 +426,87 @@
 <td align="right">1483</td>
 <td align="right">1374</td>
 <td align="right">0.8704512</td>
+<td align="right">0.0090593</td>
+<td align="right">0.8526950</td>
+<td align="right">0.8882075</td>
 <td align="right">87.0</td>
+<td align="right">85.3</td>
+<td align="right">88.8</td>
 </tr>
 <tr class="even">
 <td align="right">2007</td>
 <td align="right">4237</td>
 <td align="right">3897</td>
 <td align="right">0.8894021</td>
+<td align="right">0.0050241</td>
+<td align="right">0.8795549</td>
+<td align="right">0.8992493</td>
 <td align="right">88.9</td>
+<td align="right">88.0</td>
+<td align="right">89.9</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
 <td align="right">1151</td>
 <td align="right">1131</td>
 <td align="right">0.8717949</td>
+<td align="right">0.0099410</td>
+<td align="right">0.8523106</td>
+<td align="right">0.8912792</td>
 <td align="right">87.2</td>
+<td align="right">85.2</td>
+<td align="right">89.1</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
 <td align="right">2349</td>
 <td align="right">2330</td>
 <td align="right">0.9214592</td>
+<td align="right">0.0055732</td>
+<td align="right">0.9105357</td>
+<td align="right">0.9323828</td>
 <td align="right">92.1</td>
+<td align="right">91.1</td>
+<td align="right">93.2</td>
 </tr>
 <tr class="odd">
 <td align="right">2014</td>
 <td align="right">1517</td>
 <td align="right">1499</td>
 <td align="right">0.9019346</td>
+<td align="right">0.0076815</td>
+<td align="right">0.8868789</td>
+<td align="right">0.9169903</td>
 <td align="right">90.2</td>
+<td align="right">88.7</td>
+<td align="right">91.7</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
 <td align="right">4322</td>
-<td align="right">1826</td>
-<td align="right">0.1527930</td>
-<td align="right">15.3</td>
+<td align="right">3481</td>
+<td align="right">0.8440103</td>
+<td align="right">0.0061499</td>
+<td align="right">0.8319565</td>
+<td align="right">0.8560642</td>
+<td align="right">84.4</td>
+<td align="right">83.2</td>
+<td align="right">85.6</td>
 </tr>
 <tr class="odd">
 <td align="right">2022</td>
 <td align="right">1521</td>
 <td align="right">1322</td>
 <td align="right">0.9803328</td>
+<td align="right">0.0038189</td>
+<td align="right">0.9728477</td>
+<td align="right">0.9878179</td>
 <td align="right">98.0</td>
+<td align="right">97.3</td>
+<td align="right">98.8</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">turnout_year</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">qes_year_num</span>, y <span class="op">=</span> <span class="va">turnout_rate</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"#12355b"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span>, color <span class="op">=</span> <span class="st">"#b5651d"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, <span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
-<span>    title <span class="op">=</span> <span class="st">"Turnout indicator across study years"</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"Study year"</span>,</span>
-<span>    y <span class="op">=</span> <span class="st">"Share of respondents"</span></span>
-<span>  <span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
 <p><img src="analysis-descriptive_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="Line chart of turnout indicator across study years." width="700"></p>
 </div>
 <div class="section level2">
