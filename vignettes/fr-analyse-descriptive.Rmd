@@ -93,9 +93,9 @@ tailles <- master %>%
 knitr::kable(
   tailles %>%
     transmute(
-      `Annee d'etude` = qes_year,
-      `Code etude` = qes_code,
-      `Taille echantillon` = n
+      `Année d'étude` = qes_year,
+      `Code étude` = qes_code,
+      `Taille échantillon` = n
     ),
   caption = "Taille d'échantillon par étude"
 )
@@ -143,8 +143,8 @@ age_resume <- age_dist %>%
 knitr::kable(
   age_resume %>%
     transmute(
-      `Annee d'etude` = annee,
-      `N avec groupe d'age` = n_avec_age,
+      `Année d'étude` = annee,
+      `N avec groupe d'âge` = n_avec_age,
       `18-34 (%)` = round(pct_18_34, 1),
       `35-54 (%)` = round(pct_35_54, 1),
       `55+ (%)` = round(pct_55_plus, 1)
@@ -177,7 +177,7 @@ ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_
       "35-54" = "#12355b",
       "55+" = "#b5651d"
     ),
-    name = "Groupe d'age"
+    name = "Groupe d'âge"
   ) +
   scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, ymax_age)) +
   scale_x_continuous(breaks = sort(unique(age_dist$annee))) +
@@ -225,11 +225,11 @@ knitr::kable(
       ci_haut_pct = round(100 * ci_haut, 1)
     ) %>%
     transmute(
-      `Annee d'etude` = annee,
-      `N repondants` = repondants,
+      `Année d'étude` = annee,
+      `N répondants` = repondants,
       `N avec item participation` = n_avec_turnout,
       `Taux de participation (%)` = taux_pct,
-      `IC 95% (%)` = ifelse(is.na(ci_bas_pct), NA_character_, sprintf("%.1f a %.1f", ci_bas_pct, ci_haut_pct))
+      `IC 95 % (%)` = ifelse(is.na(ci_bas_pct), NA_character_, sprintf("%.1f à %.1f", ci_bas_pct, ci_haut_pct))
     ),
   caption = "Indicateur de participation par année"
 )

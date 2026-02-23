@@ -80,6 +80,16 @@ The site includes researcher-focused tabs for:
 - 2 use-case tabs (sovereignty, vote choice)
 - an `FR`/`EN` button in the top bar for page-by-page language switching
 
+## Version française
+
+La documentation française complète est disponible sur le site pkgdown :
+
+- Démarrage : <https://thomasgareau.github.io/qesR/articles/fr-demarrage.html>
+- Données fusionnées : <https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html>
+- Citations des études : <https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.html>
+- Exemple de cas d'usage (souveraineté) : <https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.html>
+- Exemple de cas d'usage (choix de vote) : <https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.html>
+
 ## Usage
 
 ```r

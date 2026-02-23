@@ -124,7 +124,7 @@ table_vote <- vote_parti %>%
   knitr::kable(
   table_vote %>%
     transmute(
-      `Annee d'etude` = annee,
+      `Année d'étude` = annee,
       `N avec item choix de vote` = n_avec_choix_vote,
       `CAQ/ADQ (%)` = round(caq_adq, 1),
       `PLQ (%)` = round(plq, 1),
@@ -149,7 +149,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 
 </details>
 
-## Tableau 1 : parts de choix de vote par annee
+## Tableau 1 : parts de choix de vote par année
 
 ```{r}
 vote_base <- master %>%
@@ -201,7 +201,7 @@ table_vote <- vote_parti %>%
 knitr::kable(
   table_vote %>%
     transmute(
-      `Annee d'etude` = annee,
+      `Année d'étude` = annee,
       `N avec item choix de vote` = n_avec_choix_vote,
       `CAQ/ADQ (%)` = round(caq_adq, 1),
       `PLQ (%)` = round(plq, 1),
@@ -210,13 +210,13 @@ knitr::kable(
       `PCQ (%)` = round(pcq, 1)
   ),
   digits = 1,
-  caption = "Parts de choix de vote des principaux partis par annee"
+  caption = "Parts de choix de vote des principaux partis par année"
 )
 ```
 
 ## Figure 1 : tendance du choix de vote
 
-```{r, fig.alt="Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ, QS et le PCQ selon l'annee."}
+```{r, fig.alt="Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ, QS et le PCQ selon l'année."}
 vote_parti$choix_vote_parti <- factor(vote_parti$choix_vote_parti, levels = partis_majeurs)
 ymax_vote <- suppressWarnings(max(vote_parti$ci_haut, vote_parti$part, na.rm = TRUE))
 ymax_vote <- if (is.finite(ymax_vote)) min(1, ymax_vote + 0.05) else 1

@@ -24,10 +24,10 @@ library(ggplot2)
 library(knitr)
 ```
 
-Cette page utilise le fichier fusionne pour estimer l'appui a la souverainete dans le temps.
+Cette page utilise le fichier fusionné pour estimer l'appui à la souveraineté dans le temps.
 
 <details>
-<summary>Afficher le code utilise dans cette page</summary>
+<summary>Afficher le code utilisé dans cette page</summary>
 
 ```r
 library(dplyr)
@@ -155,9 +155,9 @@ periodes <- sov$periode_etude
 sov$indice_periode <- seq_len(nrow(sov))
 ```
 
-Les estimations ci-dessous utilisent la question directe sur la souverainete harmonisee entre les periodes.
+Les estimations ci-dessous utilisent la question directe sur la souveraineté harmonisée entre les périodes.
 
-## Tableau 1 : appui a la souverainete par periode d'etude
+## Tableau 1 : appui à la souveraineté par période d'étude
 
 ```{r}
 knitr::kable(
@@ -168,19 +168,19 @@ knitr::kable(
       ic_haut_pct = round(100 * ic_haut, 1)
     ) %>%
     transmute(
-      `Periode d'etude` = periode_etude,
-      `N repondants` = repondants,
-      `N avec item souverainete` = n_avec_mesure,
-      `Appui a la souverainete (%)` = appui_pct,
-      `IC 95% (%)` = ifelse(is.na(ic_bas_pct), NA_character_, sprintf("%.1f a %.1f", ic_bas_pct, ic_haut_pct))
+      `Période d'étude` = periode_etude,
+      `N répondants` = repondants,
+      `N avec item souveraineté` = n_avec_mesure,
+      `Appui à la souveraineté (%)` = appui_pct,
+      `IC 95 % (%)` = ifelse(is.na(ic_bas_pct), NA_character_, sprintf("%.1f à %.1f", ic_bas_pct, ic_haut_pct))
     ),
-  caption = "Appui a la souverainete par periode d'etude"
+  caption = "Appui à la souveraineté par période d'étude"
 )
 ```
 
-## Figure 1 : tendance de l'appui a la souverainete
+## Figure 1 : tendance de l'appui à la souveraineté
 
-```{r, fig.alt="Graphique de l'evolution de l'appui a la souverainete par periode d'etude."}
+```{r, fig.alt="Graphique de l'évolution de l'appui à la souveraineté par période d'étude."}
 plot_sov <- sov %>%
   filter(!is.na(part_appui), !is.na(ic_bas), !is.na(ic_haut), !is.na(indice_periode))
 ymax_sov <- suppressWarnings(max(plot_sov$ic_haut, plot_sov$part_appui, na.rm = TRUE))
@@ -204,9 +204,9 @@ ggplot(plot_sov, aes(x = indice_periode, y = part_appui)) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
   scale_x_continuous(breaks = seq_along(periodes), labels = periodes) +
   labs(
-    title = "Evolution de l'appui a la souverainete dans les etudes QES",
-    x = "Periode d'etude",
-    y = "Part des repondants"
+    title = "Évolution de l'appui à la souveraineté dans les études QES",
+    x = "Période d'étude",
+    y = "Part des répondants"
   ) +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(size = 9))
@@ -214,7 +214,7 @@ ggplot(plot_sov, aes(x = indice_periode, y = part_appui)) +
 
 ## Notes
 
-- La tendance utilise la question directe sur la souverainete de chaque etude.
-- Le jeu `qes_crop_2007_2010` est ventile en 2007, 2008, 2009 et 2010 a partir de sa variable de date de collecte.
+- La tendance utilise la question directe sur la souveraineté de chaque étude.
+- Le jeu `qes_crop_2007_2010` est ventilé en 2007, 2008, 2009 et 2010 à partir de sa variable de date de collecte.
 - Les intervalles de confiance sont des IC95 binomiaux (approximation normale).
-- La colonne `N avec item souverainete` indique la couverture disponible selon la periode.
+- La colonne `N avec item souveraineté` indique la couverture disponible selon la période.
