@@ -26,6 +26,26 @@ library(knitr)
 
 This page uses the merged file to estimate sovereignty support over time.
 
+<details>
+<summary>Show code used in this page</summary>
+
+```r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
+master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
+
+# Summarize yearly support, confidence intervals, then plot.
+```
+
+</details>
+
 ## Load merged data
 
 ```{r}
@@ -127,13 +147,17 @@ ggplot(plot_sov, aes(x = qes_year_num, y = support_share)) +
     na.rm = TRUE
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
-  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
+  scale_x_continuous(
+    breaks = sort(unique(sov$qes_year_num)),
+    guide = guide_axis(n.dodge = 2)
+  ) +
   labs(
     title = "Sovereignty support across QES studies",
     x = "Study year",
     y = "Share of respondents"
   ) +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
 ## Notes

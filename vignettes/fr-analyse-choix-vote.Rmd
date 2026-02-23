@@ -34,38 +34,73 @@ master <- if (file.exists("qes_master.csv")) {
 master <- master %>%
   mutate(
     annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
-    vote_choice = trimws(as.character(vote_choice))
+    vote_choice_brut = trimws(as.character(vote_choice)),
+    choix_vote_parti = case_when(
+      vote_choice_brut %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
+      vote_choice_brut == "PLQ" ~ "PLQ",
+      vote_choice_brut == "PQ" ~ "PQ",
+      vote_choice_brut == "QS" ~ "QS",
+      vote_choice_brut == "PCQ" ~ "PCQ",
+      TRUE ~ NA_character_
+    )
   )
 
 # qes_crop_2007_2010 ne contient pas l'annee au niveau du repondant.
 master <- master %>%
   filter(qes_code != "qes_crop_2007_2010")
 
-partis_majeurs <- c("CAQ", "PLQ", "PQ", "QS")
+partis_majeurs <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
 ```
+
+<details>
+<summary>Afficher le code utilisé dans cette page</summary>
+
+```r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(
+    annee = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)),
+    vote_choice_brut = trimws(as.character(vote_choice)),
+    choix_vote_parti = dplyr::case_when(
+      vote_choice_brut %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
+      vote_choice_brut == "PLQ" ~ "PLQ",
+      vote_choice_brut == "PQ" ~ "PQ",
+      vote_choice_brut == "QS" ~ "QS",
+      vote_choice_brut == "PCQ" ~ "PCQ",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+# Calcul des parts annuelles et des intervalles de confiance, puis tracé.
+```
+
+</details>
 
 ## Tableau 1 : parts de choix de vote des principaux partis par annee
 
 ```{r}
 vote_base <- master %>%
-  filter(!is.na(annee), !is.na(vote_choice), nzchar(vote_choice))
+  filter(!is.na(annee), !is.na(choix_vote_parti), nzchar(choix_vote_parti))
 
 vote_den <- vote_base %>%
   group_by(annee) %>%
   summarise(n_avec_choix_vote = n(), .groups = "drop")
 
 vote_parti <- vote_base %>%
-  filter(vote_choice %in% partis_majeurs) %>%
-  group_by(annee, vote_choice) %>%
+  group_by(annee, choix_vote_parti) %>%
   summarise(n_parti = n(), .groups = "drop")
 
 grille <- expand.grid(
   annee = sort(unique(vote_den$annee)),
-  vote_choice = partis_majeurs,
+  choix_vote_parti = partis_majeurs,
   stringsAsFactors = FALSE
 )
 
-vote_parti <- merge(grille, vote_parti, by = c("annee", "vote_choice"), all.x = TRUE, sort = TRUE)
+vote_parti <- merge(grille, vote_parti, by = c("annee", "choix_vote_parti"), all.x = TRUE, sort = TRUE)
 vote_parti$n_parti[is.na(vote_parti$n_parti)] <- 0
 vote_parti <- merge(vote_parti, vote_den, by = "annee", all.x = TRUE, sort = TRUE)
 
@@ -85,10 +120,11 @@ table_vote <- vote_parti %>%
   group_by(annee) %>%
   summarise(
     n_avec_choix_vote = first(n_avec_choix_vote),
-    caq = 100 * part[vote_choice == "CAQ"],
-    plq = 100 * part[vote_choice == "PLQ"],
-    pq = 100 * part[vote_choice == "PQ"],
-    qs = 100 * part[vote_choice == "QS"],
+    caq_adq = 100 * part[choix_vote_parti == "CAQ/ADQ"],
+    plq = 100 * part[choix_vote_parti == "PLQ"],
+    pq = 100 * part[choix_vote_parti == "PQ"],
+    qs = 100 * part[choix_vote_parti == "QS"],
+    pcq = 100 * part[choix_vote_parti == "PCQ"],
     .groups = "drop"
   ) %>%
   arrange(annee)
@@ -98,23 +134,24 @@ knitr::kable(
     transmute(
       `Annee d'etude` = annee,
       `N avec item choix de vote` = n_avec_choix_vote,
-      `CAQ (%)` = round(caq, 1),
+      `CAQ/ADQ (%)` = round(caq_adq, 1),
       `PLQ (%)` = round(plq, 1),
       `PQ (%)` = round(pq, 1),
-      `QS (%)` = round(qs, 1)
+      `QS (%)` = round(qs, 1),
+      `PCQ (%)` = round(pcq, 1)
     ),
   digits = 1,
-  caption = "Parts de choix de vote des principaux partis par année"
+  caption = "Parts de choix de vote des principaux partis par annee (incluant le PCQ)"
 )
 ```
 
 ## Figure 1 : tendance du choix de vote des principaux partis
 
-```{r, fig.alt="Graphique des parts de choix de vote pour la CAQ, le PLQ, le PQ et QS selon l'année."}
-vote_parti$vote_choice <- factor(vote_parti$vote_choice, levels = partis_majeurs)
+```{r, fig.alt="Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ, QS et le PCQ selon l'annee."}
+vote_parti$choix_vote_parti <- factor(vote_parti$choix_vote_parti, levels = partis_majeurs)
 
-ggplot(vote_parti, aes(x = annee, y = part, color = vote_choice, group = vote_choice)) +
-  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut, fill = vote_choice), alpha = 0.15, linewidth = 0) +
+ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = choix_vote_parti)) +
+  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut, fill = choix_vote_parti), alpha = 0.15, linewidth = 0) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2.1) +
   geom_smooth(
@@ -126,35 +163,43 @@ ggplot(vote_parti, aes(x = annee, y = part, color = vote_choice, group = vote_ch
   ) +
   scale_color_manual(
     values = c(
-      "CAQ" = "#12355b",
+      "CAQ/ADQ" = "#12355b",
       "PLQ" = "#2c7fb8",
       "PQ" = "#b5651d",
-      "QS" = "#7a3e2d"
+      "QS" = "#7a3e2d",
+      "PCQ" = "#ba181b"
     ),
     name = "Parti"
   ) +
   scale_fill_manual(
     values = c(
-      "CAQ" = "#12355b",
+      "CAQ/ADQ" = "#12355b",
       "PLQ" = "#2c7fb8",
       "PQ" = "#b5651d",
-      "QS" = "#7a3e2d"
+      "QS" = "#7a3e2d",
+      "PCQ" = "#ba181b"
     ),
     guide = "none"
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, 1)) +
-  scale_x_continuous(breaks = sort(unique(vote_parti$annee))) +
+  scale_x_continuous(
+    breaks = sort(unique(vote_parti$annee)),
+    guide = guide_axis(n.dodge = 2)
+  ) +
   labs(
-    title = "Choix de vote des principaux partis dans le temps",
+    title = "Choix de vote des principaux partis dans le temps (incluant le PCQ)",
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
 ```
 
 ## Notes
 
 - Les parts utilisent les répondants avec une valeur non manquante de `vote_choice`.
 - Les intervalles de confiance sont des IC95 binomiaux (approximation normale).
-- La figure est limitée à la CAQ, au PLQ, au PQ et à QS.
+- La figure est limitée à la CAQ/ADQ, au PLQ, au PQ, à QS et au PCQ.

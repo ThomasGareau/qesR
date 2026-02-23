@@ -52,12 +52,9 @@ get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 
 What it harmonizes:
 
-- Study metadata: `qes_code`, `qes_year`, `qes_name_en`
-- Respondent and interview fields: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
-- Core demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
-- Additional cross-study fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
-- Additional harmonized columns for variables observed in at least two studies (for example `q23`, `q24`, `occup`, `satisf`, `voteprec`)
+Current harmonized columns in `qes_master`:
+
+`qes_code`, `qes_year`, `qes_name_en`, `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`, `language`, `citizenship`, `year_of_birth`, `age`, `age_group`, `gender`, `province_territory`, `education`, `income`, `religion`, `born_canada`, `political_interest`, `ideology`, `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `sovereignty_support`, `sovereignty`, `federal_pid`, `provincial_pid`, `survey_weight`, `definibin`, `ethn1`, `influperso`, `luentend`, `occup`, `patron`, `pondam1`, `q10`, `q16`, `q17`, `q18`, `q18a`, `q18b`, `q20`, `q20b`, `q22`, `q23`, `q24`, `q3`, `q31`, `q33`, `q35`, `q37`, `q38`, `q39`, `q4`, `q40`, `q41`, `q42`, `q43`, `q44`, `q45`, `q46`, `q47`, `q48`, `q49`, `q50`, `q51`, `q53`, `q54`, `q55`, `q56`, `q58`, `q59`, `q60`, `q61b`, `q61d`, `q62a`, `q62b`, `q64`, `q65`, `q66`, `q68`, `q7`, `q70`, `q72`, `q73`, `q74`, `q79`, `q8`, `q80`, `q81`, `q9`, `raison1`, `raison2`, `s_jse`, `satisf`, `sefie`, `sondbons`, `voteprec`
 
 Harmonization rules include:
 
@@ -78,7 +75,7 @@ The site includes researcher-focused tabs for:
 
 - merged dataset workflow
 - study citations
-- 3 use-case tabs (sovereignty, descriptive statistics, vote choice)
+- 2 use-case tabs (sovereignty, vote choice)
 - an `FR`/`EN` button in the top bar for page-by-page language switching
 
 ## Usage

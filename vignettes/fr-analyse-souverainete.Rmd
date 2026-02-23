@@ -1,8 +1,8 @@
 ---
-title: "Analyse : évolution des attitudes liées à la souveraineté"
+title: "Cas d'usage : évolution des attitudes liées à la souveraineté"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analyse : évolution des attitudes liées à la souveraineté}
+  %\VignetteIndexEntry{Cas d'usage : évolution des attitudes liées à la souveraineté}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,6 +25,26 @@ library(knitr)
 ```
 
 Cette page présente l'évolution de l'appui à la souveraineté dans le fichier fusionné.
+
+<details>
+<summary>Afficher le code utilisé dans cette page</summary>
+
+```r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(annee = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
+master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
+
+# Résumer l'appui annuel, calculer les IC95, puis tracer.
+```
+
+</details>
 
 ## Chargement
 
@@ -123,12 +143,17 @@ ggplot(plot_sov, aes(x = annee, y = taux)) +
     na.rm = TRUE
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
+  scale_x_continuous(
+    breaks = sort(unique(sov$annee)),
+    guide = guide_axis(n.dodge = 2)
+  ) +
   labs(
     title = "Évolution de l'appui à la souveraineté",
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
-  theme_minimal(base_size = 12)
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
 ## Notes

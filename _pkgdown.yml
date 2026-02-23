@@ -68,7 +68,7 @@ home:
 
 navbar:
   structure:
-    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, analysis_vote_choice, news]
+    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_vote_choice, news]
     right: [github]
   components:
     get_started:
@@ -89,9 +89,6 @@ navbar:
     analysis_sovereignty:
       text: "Use case: Sovereignty"
       href: articles/analysis-sovereignty.html
-    analysis_descriptive:
-      text: "Use case: Descriptive Statistics"
-      href: articles/analysis-descriptive.html
     analysis_vote_choice:
       text: "Use case: Vote Choice"
       href: articles/analysis-vote-choice.html

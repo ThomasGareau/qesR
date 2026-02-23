@@ -68,12 +68,9 @@ get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 
 What it harmonizes:
 
-- study metadata: `qes_code`, `qes_year`, `qes_name_en`
-- respondent/interview info: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
-- demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
-- additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
-- additional harmonized columns for variables observed in at least two studies (for example `q23`, `q24`, `occup`, `satisf`, `voteprec`)
+Current harmonized columns in `qes_master`:
+
+`qes_code`, `qes_year`, `qes_name_en`, `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`, `language`, `citizenship`, `year_of_birth`, `age`, `age_group`, `gender`, `province_territory`, `education`, `income`, `religion`, `born_canada`, `political_interest`, `ideology`, `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `sovereignty_support`, `sovereignty`, `federal_pid`, `provincial_pid`, `survey_weight`, `definibin`, `ethn1`, `influperso`, `luentend`, `occup`, `patron`, `pondam1`, `q10`, `q16`, `q17`, `q18`, `q18a`, `q18b`, `q20`, `q20b`, `q22`, `q23`, `q24`, `q3`, `q31`, `q33`, `q35`, `q37`, `q38`, `q39`, `q4`, `q40`, `q41`, `q42`, `q43`, `q44`, `q45`, `q46`, `q47`, `q48`, `q49`, `q50`, `q51`, `q53`, `q54`, `q55`, `q56`, `q58`, `q59`, `q60`, `q61b`, `q61d`, `q62a`, `q62b`, `q64`, `q65`, `q66`, `q68`, `q7`, `q70`, `q72`, `q73`, `q74`, `q79`, `q8`, `q80`, `q81`, `q9`, `raison1`, `raison2`, `s_jse`, `satisf`, `sefie`, `sondbons`, `voteprec`
 
 Harmonization applies value normalization, derived age groups, within-study de-duplication, and removal of rows that are empty across harmonized variables.
 
@@ -106,7 +103,6 @@ Full citations for all studies are listed in:
 Use cases available in separate tabs:
 
 - [Evolution of sovereignty attitudes](articles/analysis-sovereignty.html)
-- [Descriptive statistics and profiles](articles/analysis-descriptive.html)
 - [Vote-choice patterns over time](articles/analysis-vote-choice.html)
 
 ## Version française

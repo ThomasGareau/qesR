@@ -34,38 +34,73 @@ master <- if (file.exists("qes_master.csv")) {
 master <- master %>%
   mutate(
     qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
-    vote_choice = trimws(as.character(vote_choice))
+    vote_choice_raw = trimws(as.character(vote_choice)),
+    vote_choice_party = case_when(
+      vote_choice_raw %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
+      vote_choice_raw == "PLQ" ~ "PLQ",
+      vote_choice_raw == "PQ" ~ "PQ",
+      vote_choice_raw == "QS" ~ "QS",
+      vote_choice_raw == "PCQ" ~ "PCQ",
+      TRUE ~ NA_character_
+    )
   )
 
 # qes_crop_2007_2010 has no row-level year field.
 master <- master %>%
   filter(qes_code != "qes_crop_2007_2010")
 
-major_parties <- c("CAQ", "PLQ", "PQ", "QS")
+major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
 ```
+
+<details>
+<summary>Show code used in this page</summary>
+
+```r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(
+    qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)),
+    vote_choice_raw = trimws(as.character(vote_choice)),
+    vote_choice_party = dplyr::case_when(
+      vote_choice_raw %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
+      vote_choice_raw == "PLQ" ~ "PLQ",
+      vote_choice_raw == "PQ" ~ "PQ",
+      vote_choice_raw == "QS" ~ "QS",
+      vote_choice_raw == "PCQ" ~ "PCQ",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+# Compute yearly shares and confidence intervals, then plot.
+```
+
+</details>
 
 ## Table 1: major-party vote-choice shares by year
 
 ```{r}
 vote_base <- master %>%
-  filter(!is.na(qes_year_num), !is.na(vote_choice), nzchar(vote_choice))
+  filter(!is.na(qes_year_num), !is.na(vote_choice_party), nzchar(vote_choice_party))
 
 vote_den <- vote_base %>%
   group_by(qes_year_num) %>%
   summarise(n_with_vote_choice = n(), .groups = "drop")
 
 vote_party <- vote_base %>%
-  filter(vote_choice %in% major_parties) %>%
-  group_by(qes_year_num, vote_choice) %>%
+  group_by(qes_year_num, vote_choice_party) %>%
   summarise(n_party = n(), .groups = "drop")
 
 grid <- expand.grid(
   qes_year_num = sort(unique(vote_den$qes_year_num)),
-  vote_choice = major_parties,
+  vote_choice_party = major_parties,
   stringsAsFactors = FALSE
 )
 
-vote_party <- merge(grid, vote_party, by = c("qes_year_num", "vote_choice"), all.x = TRUE, sort = TRUE)
+vote_party <- merge(grid, vote_party, by = c("qes_year_num", "vote_choice_party"), all.x = TRUE, sort = TRUE)
 vote_party$n_party[is.na(vote_party$n_party)] <- 0
 vote_party <- merge(vote_party, vote_den, by = "qes_year_num", all.x = TRUE, sort = TRUE)
 
@@ -85,10 +120,11 @@ vote_table <- vote_party %>%
   group_by(qes_year_num) %>%
   summarise(
     n_with_vote_choice = first(n_with_vote_choice),
-    caq = 100 * share[vote_choice == "CAQ"],
-    plq = 100 * share[vote_choice == "PLQ"],
-    pq = 100 * share[vote_choice == "PQ"],
-    qs = 100 * share[vote_choice == "QS"],
+    caq_adq = 100 * share[vote_choice_party == "CAQ/ADQ"],
+    plq = 100 * share[vote_choice_party == "PLQ"],
+    pq = 100 * share[vote_choice_party == "PQ"],
+    qs = 100 * share[vote_choice_party == "QS"],
+    pcq = 100 * share[vote_choice_party == "PCQ"],
     .groups = "drop"
   ) %>%
   arrange(qes_year_num)
@@ -98,23 +134,24 @@ knitr::kable(
     transmute(
       `Study year` = qes_year_num,
       `N with vote-choice item` = n_with_vote_choice,
-      `CAQ (%)` = round(caq, 1),
+      `CAQ/ADQ (%)` = round(caq_adq, 1),
       `PLQ (%)` = round(plq, 1),
       `PQ (%)` = round(pq, 1),
-      `QS (%)` = round(qs, 1)
+      `QS (%)` = round(qs, 1),
+      `PCQ (%)` = round(pcq, 1)
     ),
   digits = 1,
-  caption = "Major-party vote-choice shares by year"
+  caption = "Major-party vote-choice shares by year (including PCQ)"
 )
 ```
 
 ## Figure 1: major-party vote-choice trend
 
-```{r, fig.alt="Line chart of vote-choice shares for CAQ, PLQ, PQ and QS across study years."}
-vote_party$vote_choice <- factor(vote_party$vote_choice, levels = major_parties)
+```{r, fig.alt="Line chart of vote-choice shares for CAQ/ADQ, PLQ, PQ, QS and PCQ across study years."}
+vote_party$vote_choice_party <- factor(vote_party$vote_choice_party, levels = major_parties)
 
-ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice, group = vote_choice)) +
-  geom_ribbon(aes(ymin = ci_low, ymax = ci_high, fill = vote_choice), alpha = 0.15, linewidth = 0) +
+ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice_party, group = vote_choice_party)) +
+  geom_ribbon(aes(ymin = ci_low, ymax = ci_high, fill = vote_choice_party), alpha = 0.15, linewidth = 0) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2.1) +
   geom_smooth(
@@ -126,35 +163,43 @@ ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice, group =
   ) +
   scale_color_manual(
     values = c(
-      "CAQ" = "#12355b",
+      "CAQ/ADQ" = "#12355b",
       "PLQ" = "#2c7fb8",
       "PQ" = "#b5651d",
-      "QS" = "#7a3e2d"
+      "QS" = "#7a3e2d",
+      "PCQ" = "#ba181b"
     ),
     name = "Party"
   ) +
   scale_fill_manual(
     values = c(
-      "CAQ" = "#12355b",
+      "CAQ/ADQ" = "#12355b",
       "PLQ" = "#2c7fb8",
       "PQ" = "#b5651d",
-      "QS" = "#7a3e2d"
+      "QS" = "#7a3e2d",
+      "PCQ" = "#ba181b"
     ),
     guide = "none"
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, 1)) +
-  scale_x_continuous(breaks = sort(unique(vote_party$qes_year_num))) +
+  scale_x_continuous(
+    breaks = sort(unique(vote_party$qes_year_num)),
+    guide = guide_axis(n.dodge = 2)
+  ) +
   labs(
-    title = "Major-party vote choice over time",
+    title = "Major-party vote choice over time (including PCQ)",
     x = "Study year",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(angle = 30, hjust = 1)
+  )
 ```
 
 ## Notes
 
 - Shares use respondents with a non-missing `vote_choice` value.
 - Confidence intervals are binomial 95% intervals (normal approximation).
-- The trend figure is restricted to CAQ, PLQ, PQ, and QS.
+- The trend figure is restricted to CAQ/ADQ, PLQ, PQ, QS, and PCQ.
