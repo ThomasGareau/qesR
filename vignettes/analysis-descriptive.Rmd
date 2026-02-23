@@ -1,8 +1,8 @@
 ---
-title: "Analysis: Descriptive Statistics"
+title: "Use case: Descriptive Statistics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analysis: Descriptive Statistics}
+  %\VignetteIndexEntry{Use case: Descriptive Statistics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -114,37 +114,37 @@ age_table <- master_trend %>%
 
 age_table$age_group_3 <- factor(age_table$age_group_3, levels = age_order)
 
-age_counts <- age_table %>%
+age_summary <- age_table %>%
   group_by(qes_year_num) %>%
-  summarise(n_with_age_group = sum(n), .groups = "drop")
-
-age_table_wide <- reshape(
-  age_table[, c("qes_year_num", "age_group_3", "pct")],
-  idvar = "qes_year_num",
-  timevar = "age_group_3",
-  direction = "wide"
-)
-
-names(age_table_wide) <- sub("^pct\\.", "", names(age_table_wide))
-
-for (grp in age_order) {
-  if (!(grp %in% names(age_table_wide))) {
-    age_table_wide[[grp]] <- NA_real_
-  }
-}
-
-age_table_wide <- age_table_wide %>%
-  merge(age_counts, by = "qes_year_num", all.x = TRUE, sort = TRUE) %>%
+  summarise(
+    n_with_age_group = sum(n),
+    pct_18_34 = ifelse(
+      n_with_age_group > 0,
+      100 * sum(n[age_group_3 == "18-34"], na.rm = TRUE) / n_with_age_group,
+      NA_real_
+    ),
+    pct_35_54 = ifelse(
+      n_with_age_group > 0,
+      100 * sum(n[age_group_3 == "35-54"], na.rm = TRUE) / n_with_age_group,
+      NA_real_
+    ),
+    pct_55_plus = ifelse(
+      n_with_age_group > 0,
+      100 * sum(n[age_group_3 == "55+"], na.rm = TRUE) / n_with_age_group,
+      NA_real_
+    ),
+    .groups = "drop"
+  ) %>%
   arrange(qes_year_num)
 
 knitr::kable(
-  age_table_wide %>%
+  age_summary %>%
     transmute(
       `Study year` = qes_year_num,
       `N with age group` = n_with_age_group,
-      `18-34 (%)` = round(`18-34`, 1),
-      `35-54 (%)` = round(`35-54`, 1),
-      `55+ (%)` = round(`55+`, 1)
+      `18-34 (%)` = round(pct_18_34, 1),
+      `35-54 (%)` = round(pct_35_54, 1),
+      `55+ (%)` = round(pct_55_plus, 1)
     ),
   digits = 1,
   caption = "Age-group composition by year"

@@ -57,12 +57,14 @@ What it harmonizes:
 - Core demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
 - Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
 - Additional cross-study fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+- Additional harmonized columns for variables observed in at least two studies (for example `q23`, `q24`, `occup`, `satisf`, `voteprec`)
 
 Harmonization rules include:
 
 - text normalization for common response fields (so values are comparable across studies)
 - derived `age_group` for respondents with valid age/year-of-birth information
 - source-variable tracking via `attr(master, "source_map")`
+- list of automatically added cross-study fields via `attr(master, "crossstudy_variables_added")`
 
 Deduplication in `get_qes_master()` is applied **within the same survey code**
 only (e.g., duplicate IDs inside one file). Respondents are not removed across
@@ -76,7 +78,7 @@ The site includes researcher-focused tabs for:
 
 - merged dataset workflow
 - study citations
-- 2 analysis tabs (sovereignty + descriptive statistics)
+- 3 use-case tabs (sovereignty, descriptive statistics, vote choice)
 - an `FR`/`EN` button in the top bar for page-by-page language switching
 
 ## Usage

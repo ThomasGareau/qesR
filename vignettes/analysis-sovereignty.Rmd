@@ -1,8 +1,8 @@
 ---
-title: "Analysis: Evolution of Sovereignty Attitudes"
+title: "Use case: Evolution of Sovereignty Attitudes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analysis: Evolution of Sovereignty Attitudes}
+  %\VignetteIndexEntry{Use case: Evolution of Sovereignty Attitudes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

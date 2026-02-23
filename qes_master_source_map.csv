@@ -26,6 +26,76 @@
 "qes2022","2022","Quebec Election Study 2022","federal_pid","cps_fedpid"
 "qes2022","2022","Quebec Election Study 2022","provincial_pid","cps_provpid"
 "qes2022","2022","Quebec Election Study 2022","survey_weight","cps_weight_general"
+"qes2022","2022","Quebec Election Study 2022","definibin",
+"qes2022","2022","Quebec Election Study 2022","ethn1",
+"qes2022","2022","Quebec Election Study 2022","influperso",
+"qes2022","2022","Quebec Election Study 2022","luentend",
+"qes2022","2022","Quebec Election Study 2022","occup",
+"qes2022","2022","Quebec Election Study 2022","patron",
+"qes2022","2022","Quebec Election Study 2022","pondam1",
+"qes2022","2022","Quebec Election Study 2022","q10",
+"qes2022","2022","Quebec Election Study 2022","q16",
+"qes2022","2022","Quebec Election Study 2022","q17",
+"qes2022","2022","Quebec Election Study 2022","q18",
+"qes2022","2022","Quebec Election Study 2022","q18a",
+"qes2022","2022","Quebec Election Study 2022","q18b",
+"qes2022","2022","Quebec Election Study 2022","q20",
+"qes2022","2022","Quebec Election Study 2022","q20b",
+"qes2022","2022","Quebec Election Study 2022","q22",
+"qes2022","2022","Quebec Election Study 2022","q23",
+"qes2022","2022","Quebec Election Study 2022","q24",
+"qes2022","2022","Quebec Election Study 2022","q3",
+"qes2022","2022","Quebec Election Study 2022","q31",
+"qes2022","2022","Quebec Election Study 2022","q33",
+"qes2022","2022","Quebec Election Study 2022","q35",
+"qes2022","2022","Quebec Election Study 2022","q37",
+"qes2022","2022","Quebec Election Study 2022","q38",
+"qes2022","2022","Quebec Election Study 2022","q39",
+"qes2022","2022","Quebec Election Study 2022","q4",
+"qes2022","2022","Quebec Election Study 2022","q40",
+"qes2022","2022","Quebec Election Study 2022","q41",
+"qes2022","2022","Quebec Election Study 2022","q42",
+"qes2022","2022","Quebec Election Study 2022","q43",
+"qes2022","2022","Quebec Election Study 2022","q44",
+"qes2022","2022","Quebec Election Study 2022","q45",
+"qes2022","2022","Quebec Election Study 2022","q46",
+"qes2022","2022","Quebec Election Study 2022","q47",
+"qes2022","2022","Quebec Election Study 2022","q48",
+"qes2022","2022","Quebec Election Study 2022","q49",
+"qes2022","2022","Quebec Election Study 2022","q50",
+"qes2022","2022","Quebec Election Study 2022","q51",
+"qes2022","2022","Quebec Election Study 2022","q53",
+"qes2022","2022","Quebec Election Study 2022","q54",
+"qes2022","2022","Quebec Election Study 2022","q55",
+"qes2022","2022","Quebec Election Study 2022","q56",
+"qes2022","2022","Quebec Election Study 2022","q58",
+"qes2022","2022","Quebec Election Study 2022","q59",
+"qes2022","2022","Quebec Election Study 2022","q60",
+"qes2022","2022","Quebec Election Study 2022","q61b",
+"qes2022","2022","Quebec Election Study 2022","q61d",
+"qes2022","2022","Quebec Election Study 2022","q62a",
+"qes2022","2022","Quebec Election Study 2022","q62b",
+"qes2022","2022","Quebec Election Study 2022","q64",
+"qes2022","2022","Quebec Election Study 2022","q65",
+"qes2022","2022","Quebec Election Study 2022","q66",
+"qes2022","2022","Quebec Election Study 2022","q68",
+"qes2022","2022","Quebec Election Study 2022","q7",
+"qes2022","2022","Quebec Election Study 2022","q70",
+"qes2022","2022","Quebec Election Study 2022","q72",
+"qes2022","2022","Quebec Election Study 2022","q73",
+"qes2022","2022","Quebec Election Study 2022","q74",
+"qes2022","2022","Quebec Election Study 2022","q79",
+"qes2022","2022","Quebec Election Study 2022","q8",
+"qes2022","2022","Quebec Election Study 2022","q80",
+"qes2022","2022","Quebec Election Study 2022","q81",
+"qes2022","2022","Quebec Election Study 2022","q9",
+"qes2022","2022","Quebec Election Study 2022","raison1",
+"qes2022","2022","Quebec Election Study 2022","raison2",
+"qes2022","2022","Quebec Election Study 2022","s_jse",
+"qes2022","2022","Quebec Election Study 2022","satisf",
+"qes2022","2022","Quebec Election Study 2022","sefie",
+"qes2022","2022","Quebec Election Study 2022","sondbons",
+"qes2022","2022","Quebec Election Study 2022","voteprec",
 "qes2018","2018","Quebec Election Study 2018","respondent_id","responseid"
 "qes2018","2018","Quebec Election Study 2018","interview_start",
 "qes2018","2018","Quebec Election Study 2018","interview_end",
@@ -53,6 +123,76 @@
 "qes2018","2018","Quebec Election Study 2018","federal_pid",
 "qes2018","2018","Quebec Election Study 2018","provincial_pid",
 "qes2018","2018","Quebec Election Study 2018","survey_weight","pond"
+"qes2018","2018","Quebec Election Study 2018","definibin",
+"qes2018","2018","Quebec Election Study 2018","ethn1",
+"qes2018","2018","Quebec Election Study 2018","influperso",
+"qes2018","2018","Quebec Election Study 2018","luentend",
+"qes2018","2018","Quebec Election Study 2018","occup",
+"qes2018","2018","Quebec Election Study 2018","patron",
+"qes2018","2018","Quebec Election Study 2018","pondam1",
+"qes2018","2018","Quebec Election Study 2018","q10","q10"
+"qes2018","2018","Quebec Election Study 2018","q16",
+"qes2018","2018","Quebec Election Study 2018","q17",
+"qes2018","2018","Quebec Election Study 2018","q18","q18"
+"qes2018","2018","Quebec Election Study 2018","q18a",
+"qes2018","2018","Quebec Election Study 2018","q18b",
+"qes2018","2018","Quebec Election Study 2018","q20",
+"qes2018","2018","Quebec Election Study 2018","q20b","q20b"
+"qes2018","2018","Quebec Election Study 2018","q22",
+"qes2018","2018","Quebec Election Study 2018","q23","q23"
+"qes2018","2018","Quebec Election Study 2018","q24","q24"
+"qes2018","2018","Quebec Election Study 2018","q3","q3"
+"qes2018","2018","Quebec Election Study 2018","q31",
+"qes2018","2018","Quebec Election Study 2018","q33",
+"qes2018","2018","Quebec Election Study 2018","q35",
+"qes2018","2018","Quebec Election Study 2018","q37",
+"qes2018","2018","Quebec Election Study 2018","q38",
+"qes2018","2018","Quebec Election Study 2018","q39",
+"qes2018","2018","Quebec Election Study 2018","q4","q4"
+"qes2018","2018","Quebec Election Study 2018","q40",
+"qes2018","2018","Quebec Election Study 2018","q41",
+"qes2018","2018","Quebec Election Study 2018","q42","q42"
+"qes2018","2018","Quebec Election Study 2018","q43","q43"
+"qes2018","2018","Quebec Election Study 2018","q44","q44"
+"qes2018","2018","Quebec Election Study 2018","q45","q45"
+"qes2018","2018","Quebec Election Study 2018","q46","q46"
+"qes2018","2018","Quebec Election Study 2018","q47",
+"qes2018","2018","Quebec Election Study 2018","q48","q48"
+"qes2018","2018","Quebec Election Study 2018","q49","q49"
+"qes2018","2018","Quebec Election Study 2018","q50",
+"qes2018","2018","Quebec Election Study 2018","q51",
+"qes2018","2018","Quebec Election Study 2018","q53","q53"
+"qes2018","2018","Quebec Election Study 2018","q54","q54"
+"qes2018","2018","Quebec Election Study 2018","q55",
+"qes2018","2018","Quebec Election Study 2018","q56","q56"
+"qes2018","2018","Quebec Election Study 2018","q58","q58"
+"qes2018","2018","Quebec Election Study 2018","q59",
+"qes2018","2018","Quebec Election Study 2018","q60","q60"
+"qes2018","2018","Quebec Election Study 2018","q61b",
+"qes2018","2018","Quebec Election Study 2018","q61d",
+"qes2018","2018","Quebec Election Study 2018","q62a","q62a"
+"qes2018","2018","Quebec Election Study 2018","q62b","q62b"
+"qes2018","2018","Quebec Election Study 2018","q64",
+"qes2018","2018","Quebec Election Study 2018","q65",
+"qes2018","2018","Quebec Election Study 2018","q66","q66"
+"qes2018","2018","Quebec Election Study 2018","q68","q68"
+"qes2018","2018","Quebec Election Study 2018","q7","q7"
+"qes2018","2018","Quebec Election Study 2018","q70","q70"
+"qes2018","2018","Quebec Election Study 2018","q72",
+"qes2018","2018","Quebec Election Study 2018","q73",
+"qes2018","2018","Quebec Election Study 2018","q74",
+"qes2018","2018","Quebec Election Study 2018","q79",
+"qes2018","2018","Quebec Election Study 2018","q8","q8"
+"qes2018","2018","Quebec Election Study 2018","q80",
+"qes2018","2018","Quebec Election Study 2018","q81",
+"qes2018","2018","Quebec Election Study 2018","q9","q9"
+"qes2018","2018","Quebec Election Study 2018","raison1",
+"qes2018","2018","Quebec Election Study 2018","raison2",
+"qes2018","2018","Quebec Election Study 2018","s_jse",
+"qes2018","2018","Quebec Election Study 2018","satisf",
+"qes2018","2018","Quebec Election Study 2018","sefie",
+"qes2018","2018","Quebec Election Study 2018","sondbons",
+"qes2018","2018","Quebec Election Study 2018","voteprec",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","respondent_id","(synthetic_rowid)"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_start",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_end",
@@ -80,6 +220,76 @@
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","federal_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","survey_weight","weight"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","definibin",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","ethn1",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","influperso",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","luentend",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","occup",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","patron","patron"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","pondam1",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q10",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q16",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q17",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18a",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q20",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q20b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q22",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q23",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q24",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q3",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q31",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q33",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q35",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q37",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q38",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q39",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q4",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q40",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q41",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q42",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q43",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q44",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q45",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q46",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q47",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q48",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q49",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q50",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q51",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q53",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q54",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q55",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q56",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q58",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q59",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q60",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q61b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q61d",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q62a",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q62b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q64",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q65",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q66",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q68",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q7",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q70",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q72",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q73",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q74",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q79",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q8",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q80",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q81",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","q9",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison1","raison1"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison2","raison2"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","s_jse",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","satisf",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","sefie",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","sondbons",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","voteprec",
 "qes2014","2014","Quebec Election Study 2014","respondent_id","(synthetic_rowid)"
 "qes2014","2014","Quebec Election Study 2014","interview_start","SDAT"
 "qes2014","2014","Quebec Election Study 2014","interview_end",
@@ -107,6 +317,76 @@
 "qes2014","2014","Quebec Election Study 2014","federal_pid",
 "qes2014","2014","Quebec Election Study 2014","provincial_pid",
 "qes2014","2014","Quebec Election Study 2014","survey_weight","POND"
+"qes2014","2014","Quebec Election Study 2014","definibin",
+"qes2014","2014","Quebec Election Study 2014","ethn1",
+"qes2014","2014","Quebec Election Study 2014","influperso",
+"qes2014","2014","Quebec Election Study 2014","luentend",
+"qes2014","2014","Quebec Election Study 2014","occup",
+"qes2014","2014","Quebec Election Study 2014","patron",
+"qes2014","2014","Quebec Election Study 2014","pondam1",
+"qes2014","2014","Quebec Election Study 2014","q10",
+"qes2014","2014","Quebec Election Study 2014","q16",
+"qes2014","2014","Quebec Election Study 2014","q17",
+"qes2014","2014","Quebec Election Study 2014","q18",
+"qes2014","2014","Quebec Election Study 2014","q18a",
+"qes2014","2014","Quebec Election Study 2014","q18b",
+"qes2014","2014","Quebec Election Study 2014","q20",
+"qes2014","2014","Quebec Election Study 2014","q20b",
+"qes2014","2014","Quebec Election Study 2014","q22",
+"qes2014","2014","Quebec Election Study 2014","q23",
+"qes2014","2014","Quebec Election Study 2014","q24",
+"qes2014","2014","Quebec Election Study 2014","q3",
+"qes2014","2014","Quebec Election Study 2014","q31",
+"qes2014","2014","Quebec Election Study 2014","q33",
+"qes2014","2014","Quebec Election Study 2014","q35",
+"qes2014","2014","Quebec Election Study 2014","q37",
+"qes2014","2014","Quebec Election Study 2014","q38",
+"qes2014","2014","Quebec Election Study 2014","q39",
+"qes2014","2014","Quebec Election Study 2014","q4",
+"qes2014","2014","Quebec Election Study 2014","q40",
+"qes2014","2014","Quebec Election Study 2014","q41",
+"qes2014","2014","Quebec Election Study 2014","q42",
+"qes2014","2014","Quebec Election Study 2014","q43",
+"qes2014","2014","Quebec Election Study 2014","q44",
+"qes2014","2014","Quebec Election Study 2014","q45",
+"qes2014","2014","Quebec Election Study 2014","q46",
+"qes2014","2014","Quebec Election Study 2014","q47",
+"qes2014","2014","Quebec Election Study 2014","q48",
+"qes2014","2014","Quebec Election Study 2014","q49",
+"qes2014","2014","Quebec Election Study 2014","q50",
+"qes2014","2014","Quebec Election Study 2014","q51",
+"qes2014","2014","Quebec Election Study 2014","q53",
+"qes2014","2014","Quebec Election Study 2014","q54",
+"qes2014","2014","Quebec Election Study 2014","q55",
+"qes2014","2014","Quebec Election Study 2014","q56",
+"qes2014","2014","Quebec Election Study 2014","q58",
+"qes2014","2014","Quebec Election Study 2014","q59",
+"qes2014","2014","Quebec Election Study 2014","q60",
+"qes2014","2014","Quebec Election Study 2014","q61b",
+"qes2014","2014","Quebec Election Study 2014","q61d",
+"qes2014","2014","Quebec Election Study 2014","q62a",
+"qes2014","2014","Quebec Election Study 2014","q62b",
+"qes2014","2014","Quebec Election Study 2014","q64",
+"qes2014","2014","Quebec Election Study 2014","q65",
+"qes2014","2014","Quebec Election Study 2014","q66",
+"qes2014","2014","Quebec Election Study 2014","q68",
+"qes2014","2014","Quebec Election Study 2014","q7",
+"qes2014","2014","Quebec Election Study 2014","q70",
+"qes2014","2014","Quebec Election Study 2014","q72",
+"qes2014","2014","Quebec Election Study 2014","q73",
+"qes2014","2014","Quebec Election Study 2014","q74",
+"qes2014","2014","Quebec Election Study 2014","q79",
+"qes2014","2014","Quebec Election Study 2014","q8",
+"qes2014","2014","Quebec Election Study 2014","q80",
+"qes2014","2014","Quebec Election Study 2014","q81",
+"qes2014","2014","Quebec Election Study 2014","q9",
+"qes2014","2014","Quebec Election Study 2014","raison1",
+"qes2014","2014","Quebec Election Study 2014","raison2",
+"qes2014","2014","Quebec Election Study 2014","s_jse",
+"qes2014","2014","Quebec Election Study 2014","satisf",
+"qes2014","2014","Quebec Election Study 2014","sefie",
+"qes2014","2014","Quebec Election Study 2014","sondbons",
+"qes2014","2014","Quebec Election Study 2014","voteprec",
 "qes2012","2012","Quebec Election Study 2012","respondent_id","quest"
 "qes2012","2012","Quebec Election Study 2012","interview_start",
 "qes2012","2012","Quebec Election Study 2012","interview_end",
@@ -134,6 +414,76 @@
 "qes2012","2012","Quebec Election Study 2012","federal_pid",
 "qes2012","2012","Quebec Election Study 2012","provincial_pid",
 "qes2012","2012","Quebec Election Study 2012","survey_weight","pond"
+"qes2012","2012","Quebec Election Study 2012","definibin",
+"qes2012","2012","Quebec Election Study 2012","ethn1",
+"qes2012","2012","Quebec Election Study 2012","influperso",
+"qes2012","2012","Quebec Election Study 2012","luentend",
+"qes2012","2012","Quebec Election Study 2012","occup","occup"
+"qes2012","2012","Quebec Election Study 2012","patron",
+"qes2012","2012","Quebec Election Study 2012","pondam1",
+"qes2012","2012","Quebec Election Study 2012","q10","q10"
+"qes2012","2012","Quebec Election Study 2012","q16","q16"
+"qes2012","2012","Quebec Election Study 2012","q17","q17"
+"qes2012","2012","Quebec Election Study 2012","q18","q18"
+"qes2012","2012","Quebec Election Study 2012","q18a",
+"qes2012","2012","Quebec Election Study 2012","q18b",
+"qes2012","2012","Quebec Election Study 2012","q20","q20"
+"qes2012","2012","Quebec Election Study 2012","q20b","q20b"
+"qes2012","2012","Quebec Election Study 2012","q22","q22"
+"qes2012","2012","Quebec Election Study 2012","q23","q23"
+"qes2012","2012","Quebec Election Study 2012","q24","q24"
+"qes2012","2012","Quebec Election Study 2012","q3","q3"
+"qes2012","2012","Quebec Election Study 2012","q31","q31"
+"qes2012","2012","Quebec Election Study 2012","q33",
+"qes2012","2012","Quebec Election Study 2012","q35","q35"
+"qes2012","2012","Quebec Election Study 2012","q37","q37"
+"qes2012","2012","Quebec Election Study 2012","q38","q38"
+"qes2012","2012","Quebec Election Study 2012","q39",
+"qes2012","2012","Quebec Election Study 2012","q4","q4"
+"qes2012","2012","Quebec Election Study 2012","q40",
+"qes2012","2012","Quebec Election Study 2012","q41","q41"
+"qes2012","2012","Quebec Election Study 2012","q42","q42"
+"qes2012","2012","Quebec Election Study 2012","q43","q43"
+"qes2012","2012","Quebec Election Study 2012","q44","q44"
+"qes2012","2012","Quebec Election Study 2012","q45","q45"
+"qes2012","2012","Quebec Election Study 2012","q46",
+"qes2012","2012","Quebec Election Study 2012","q47","q47"
+"qes2012","2012","Quebec Election Study 2012","q48","q48"
+"qes2012","2012","Quebec Election Study 2012","q49",
+"qes2012","2012","Quebec Election Study 2012","q50","q50"
+"qes2012","2012","Quebec Election Study 2012","q51","q51"
+"qes2012","2012","Quebec Election Study 2012","q53","q53"
+"qes2012","2012","Quebec Election Study 2012","q54","q54"
+"qes2012","2012","Quebec Election Study 2012","q55","q55"
+"qes2012","2012","Quebec Election Study 2012","q56","q56"
+"qes2012","2012","Quebec Election Study 2012","q58","q58"
+"qes2012","2012","Quebec Election Study 2012","q59","q59"
+"qes2012","2012","Quebec Election Study 2012","q60","q60"
+"qes2012","2012","Quebec Election Study 2012","q61b",
+"qes2012","2012","Quebec Election Study 2012","q61d",
+"qes2012","2012","Quebec Election Study 2012","q62a","q62a"
+"qes2012","2012","Quebec Election Study 2012","q62b","q62b"
+"qes2012","2012","Quebec Election Study 2012","q64","q64"
+"qes2012","2012","Quebec Election Study 2012","q65","q65"
+"qes2012","2012","Quebec Election Study 2012","q66","q66"
+"qes2012","2012","Quebec Election Study 2012","q68","q68"
+"qes2012","2012","Quebec Election Study 2012","q7","q7"
+"qes2012","2012","Quebec Election Study 2012","q70",
+"qes2012","2012","Quebec Election Study 2012","q72","q72"
+"qes2012","2012","Quebec Election Study 2012","q73",
+"qes2012","2012","Quebec Election Study 2012","q74","q74"
+"qes2012","2012","Quebec Election Study 2012","q79","q79"
+"qes2012","2012","Quebec Election Study 2012","q8","q8"
+"qes2012","2012","Quebec Election Study 2012","q80","q80"
+"qes2012","2012","Quebec Election Study 2012","q81","q81"
+"qes2012","2012","Quebec Election Study 2012","q9","q9"
+"qes2012","2012","Quebec Election Study 2012","raison1",
+"qes2012","2012","Quebec Election Study 2012","raison2",
+"qes2012","2012","Quebec Election Study 2012","s_jse",
+"qes2012","2012","Quebec Election Study 2012","satisf",
+"qes2012","2012","Quebec Election Study 2012","sefie",
+"qes2012","2012","Quebec Election Study 2012","sondbons",
+"qes2012","2012","Quebec Election Study 2012","voteprec",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","respondent_id","quest"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_start",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_end",
@@ -161,6 +511,76 @@
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","federal_pid",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","survey_weight","pond"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","definibin","definibin"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","ethn1",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","influperso","influperso"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","luentend","luentend"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","occup",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","patron","patron"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","pondam1","pondam1"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q10",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q16",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q17",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18a",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q20",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q20b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q22",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q23",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q24",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q3",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q31",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q33",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q35",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q37",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q38",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q39",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q4",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q40",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q41",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q42",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q43",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q44",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q45",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q46",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q47",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q48",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q49",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q50",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q51",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q53",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q54",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q55",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q56",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q58",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q59",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q60",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q61b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q61d",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q62a",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q62b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q64",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q65",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q66",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q68",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q7",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q70",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q72",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q73",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q74",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q79",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q8",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q80",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q81",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","q9",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison1",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison2",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","s_jse",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","satisf",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","sefie","sefie"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","sondbons","sondbons"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","voteprec",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","respondent_id","QUEST"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_start",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_end",
@@ -188,6 +608,76 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federal_pid",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","survey_weight","XPOND"
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","definibin",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","ethn1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","influperso",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","luentend",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","occup",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","patron",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pondam1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q10",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q16",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q17",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18a",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q20",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q20b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q22",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q23",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q24",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q3",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q31",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q33",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q35",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q37",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q38",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q39",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q4",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q40",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q41",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q42",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q43",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q44",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q45",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q46",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q47",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q48",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q49",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q50",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q51",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q53",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q54",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q55",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q56",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q58",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q59",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q60",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q61b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q61d",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q62a",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q62b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q64",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q65",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q66",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q68",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q7",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q70",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q72",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q73",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q74",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q79",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q8",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q80",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q81",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q9",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison2",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","s_jse",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","satisf",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sefie",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sondbons",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","voteprec","voteprec"
 "qes2008","2008","Quebec Election Study 2008","respondent_id","seq"
 "qes2008","2008","Quebec Election Study 2008","interview_start",
 "qes2008","2008","Quebec Election Study 2008","interview_end",
@@ -215,6 +705,76 @@
 "qes2008","2008","Quebec Election Study 2008","federal_pid",
 "qes2008","2008","Quebec Election Study 2008","provincial_pid",
 "qes2008","2008","Quebec Election Study 2008","survey_weight","pond"
+"qes2008","2008","Quebec Election Study 2008","definibin",
+"qes2008","2008","Quebec Election Study 2008","ethn1","ethn1"
+"qes2008","2008","Quebec Election Study 2008","influperso",
+"qes2008","2008","Quebec Election Study 2008","luentend",
+"qes2008","2008","Quebec Election Study 2008","occup",
+"qes2008","2008","Quebec Election Study 2008","patron",
+"qes2008","2008","Quebec Election Study 2008","pondam1",
+"qes2008","2008","Quebec Election Study 2008","q10",
+"qes2008","2008","Quebec Election Study 2008","q16",
+"qes2008","2008","Quebec Election Study 2008","q17",
+"qes2008","2008","Quebec Election Study 2008","q18",
+"qes2008","2008","Quebec Election Study 2008","q18a","q18a"
+"qes2008","2008","Quebec Election Study 2008","q18b","q18b"
+"qes2008","2008","Quebec Election Study 2008","q20","q20"
+"qes2008","2008","Quebec Election Study 2008","q20b",
+"qes2008","2008","Quebec Election Study 2008","q22","q22"
+"qes2008","2008","Quebec Election Study 2008","q23","q23"
+"qes2008","2008","Quebec Election Study 2008","q24","q24"
+"qes2008","2008","Quebec Election Study 2008","q3",
+"qes2008","2008","Quebec Election Study 2008","q31",
+"qes2008","2008","Quebec Election Study 2008","q33","q33"
+"qes2008","2008","Quebec Election Study 2008","q35",
+"qes2008","2008","Quebec Election Study 2008","q37",
+"qes2008","2008","Quebec Election Study 2008","q38",
+"qes2008","2008","Quebec Election Study 2008","q39","q39"
+"qes2008","2008","Quebec Election Study 2008","q4",
+"qes2008","2008","Quebec Election Study 2008","q40","q40"
+"qes2008","2008","Quebec Election Study 2008","q41","q41"
+"qes2008","2008","Quebec Election Study 2008","q42","q42"
+"qes2008","2008","Quebec Election Study 2008","q43","q43"
+"qes2008","2008","Quebec Election Study 2008","q44","q44"
+"qes2008","2008","Quebec Election Study 2008","q45","q45"
+"qes2008","2008","Quebec Election Study 2008","q46","q46"
+"qes2008","2008","Quebec Election Study 2008","q47","q47"
+"qes2008","2008","Quebec Election Study 2008","q48","q48"
+"qes2008","2008","Quebec Election Study 2008","q49","q49"
+"qes2008","2008","Quebec Election Study 2008","q50","q50"
+"qes2008","2008","Quebec Election Study 2008","q51","q51"
+"qes2008","2008","Quebec Election Study 2008","q53","q53"
+"qes2008","2008","Quebec Election Study 2008","q54",
+"qes2008","2008","Quebec Election Study 2008","q55","q55"
+"qes2008","2008","Quebec Election Study 2008","q56",
+"qes2008","2008","Quebec Election Study 2008","q58",
+"qes2008","2008","Quebec Election Study 2008","q59",
+"qes2008","2008","Quebec Election Study 2008","q60",
+"qes2008","2008","Quebec Election Study 2008","q61b","q61b"
+"qes2008","2008","Quebec Election Study 2008","q61d","q61d"
+"qes2008","2008","Quebec Election Study 2008","q62a",
+"qes2008","2008","Quebec Election Study 2008","q62b",
+"qes2008","2008","Quebec Election Study 2008","q64","q64"
+"qes2008","2008","Quebec Election Study 2008","q65","q65"
+"qes2008","2008","Quebec Election Study 2008","q66","q66"
+"qes2008","2008","Quebec Election Study 2008","q68","q68"
+"qes2008","2008","Quebec Election Study 2008","q7",
+"qes2008","2008","Quebec Election Study 2008","q70","q70"
+"qes2008","2008","Quebec Election Study 2008","q72","q72"
+"qes2008","2008","Quebec Election Study 2008","q73","q73"
+"qes2008","2008","Quebec Election Study 2008","q74","q74"
+"qes2008","2008","Quebec Election Study 2008","q79","q79"
+"qes2008","2008","Quebec Election Study 2008","q8",
+"qes2008","2008","Quebec Election Study 2008","q80","q80"
+"qes2008","2008","Quebec Election Study 2008","q81","q81"
+"qes2008","2008","Quebec Election Study 2008","q9",
+"qes2008","2008","Quebec Election Study 2008","raison1",
+"qes2008","2008","Quebec Election Study 2008","raison2",
+"qes2008","2008","Quebec Election Study 2008","s_jse",
+"qes2008","2008","Quebec Election Study 2008","satisf",
+"qes2008","2008","Quebec Election Study 2008","sefie",
+"qes2008","2008","Quebec Election Study 2008","sondbons",
+"qes2008","2008","Quebec Election Study 2008","voteprec",
 "qes2007","2007","Quebec Election Study 2007","respondent_id","quest"
 "qes2007","2007","Quebec Election Study 2007","interview_start",
 "qes2007","2007","Quebec Election Study 2007","interview_end",
@@ -242,6 +802,76 @@
 "qes2007","2007","Quebec Election Study 2007","federal_pid",
 "qes2007","2007","Quebec Election Study 2007","provincial_pid",
 "qes2007","2007","Quebec Election Study 2007","survey_weight","pond"
+"qes2007","2007","Quebec Election Study 2007","definibin",
+"qes2007","2007","Quebec Election Study 2007","ethn1","ethn1"
+"qes2007","2007","Quebec Election Study 2007","influperso",
+"qes2007","2007","Quebec Election Study 2007","luentend",
+"qes2007","2007","Quebec Election Study 2007","occup",
+"qes2007","2007","Quebec Election Study 2007","patron",
+"qes2007","2007","Quebec Election Study 2007","pondam1",
+"qes2007","2007","Quebec Election Study 2007","q10","q10"
+"qes2007","2007","Quebec Election Study 2007","q16","q16"
+"qes2007","2007","Quebec Election Study 2007","q17","q17"
+"qes2007","2007","Quebec Election Study 2007","q18",
+"qes2007","2007","Quebec Election Study 2007","q18a","q18a"
+"qes2007","2007","Quebec Election Study 2007","q18b","q18b"
+"qes2007","2007","Quebec Election Study 2007","q20","q20"
+"qes2007","2007","Quebec Election Study 2007","q20b",
+"qes2007","2007","Quebec Election Study 2007","q22","q22"
+"qes2007","2007","Quebec Election Study 2007","q23","q23"
+"qes2007","2007","Quebec Election Study 2007","q24","q24"
+"qes2007","2007","Quebec Election Study 2007","q3","q3"
+"qes2007","2007","Quebec Election Study 2007","q31","q31"
+"qes2007","2007","Quebec Election Study 2007","q33","q33"
+"qes2007","2007","Quebec Election Study 2007","q35","q35"
+"qes2007","2007","Quebec Election Study 2007","q37","q37"
+"qes2007","2007","Quebec Election Study 2007","q38","q38"
+"qes2007","2007","Quebec Election Study 2007","q39","q39"
+"qes2007","2007","Quebec Election Study 2007","q4","q4"
+"qes2007","2007","Quebec Election Study 2007","q40","q40"
+"qes2007","2007","Quebec Election Study 2007","q41","q41"
+"qes2007","2007","Quebec Election Study 2007","q42","q42"
+"qes2007","2007","Quebec Election Study 2007","q43","q43"
+"qes2007","2007","Quebec Election Study 2007","q44","q44"
+"qes2007","2007","Quebec Election Study 2007","q45","q45"
+"qes2007","2007","Quebec Election Study 2007","q46","q46"
+"qes2007","2007","Quebec Election Study 2007","q47","q47"
+"qes2007","2007","Quebec Election Study 2007","q48","q48"
+"qes2007","2007","Quebec Election Study 2007","q49","q49"
+"qes2007","2007","Quebec Election Study 2007","q50","q50"
+"qes2007","2007","Quebec Election Study 2007","q51","q51"
+"qes2007","2007","Quebec Election Study 2007","q53","q53"
+"qes2007","2007","Quebec Election Study 2007","q54","q54"
+"qes2007","2007","Quebec Election Study 2007","q55","q55"
+"qes2007","2007","Quebec Election Study 2007","q56","q56"
+"qes2007","2007","Quebec Election Study 2007","q58","q58"
+"qes2007","2007","Quebec Election Study 2007","q59","q59"
+"qes2007","2007","Quebec Election Study 2007","q60","q60"
+"qes2007","2007","Quebec Election Study 2007","q61b","q61b"
+"qes2007","2007","Quebec Election Study 2007","q61d","q61d"
+"qes2007","2007","Quebec Election Study 2007","q62a",
+"qes2007","2007","Quebec Election Study 2007","q62b",
+"qes2007","2007","Quebec Election Study 2007","q64","q64"
+"qes2007","2007","Quebec Election Study 2007","q65","q65"
+"qes2007","2007","Quebec Election Study 2007","q66","q66"
+"qes2007","2007","Quebec Election Study 2007","q68","q68"
+"qes2007","2007","Quebec Election Study 2007","q7","q7"
+"qes2007","2007","Quebec Election Study 2007","q70","q70"
+"qes2007","2007","Quebec Election Study 2007","q72","q72"
+"qes2007","2007","Quebec Election Study 2007","q73","q73"
+"qes2007","2007","Quebec Election Study 2007","q74","q74"
+"qes2007","2007","Quebec Election Study 2007","q79","q79"
+"qes2007","2007","Quebec Election Study 2007","q8","q8"
+"qes2007","2007","Quebec Election Study 2007","q80","q80"
+"qes2007","2007","Quebec Election Study 2007","q81","q81"
+"qes2007","2007","Quebec Election Study 2007","q9","q9"
+"qes2007","2007","Quebec Election Study 2007","raison1",
+"qes2007","2007","Quebec Election Study 2007","raison2",
+"qes2007","2007","Quebec Election Study 2007","s_jse",
+"qes2007","2007","Quebec Election Study 2007","satisf",
+"qes2007","2007","Quebec Election Study 2007","sefie",
+"qes2007","2007","Quebec Election Study 2007","sondbons",
+"qes2007","2007","Quebec Election Study 2007","voteprec",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","respondent_id","quest"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_start",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_end",
@@ -269,6 +899,76 @@
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","federal_pid",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","survey_weight","pond"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","definibin","definibin"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","ethn1",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","influperso","influperso"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","luentend","luentend"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","occup","occup"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","patron",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","pondam1","pondam1"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q10",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q16",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q17",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18a",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q20",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q20b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q22",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q23",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q24",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q3",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q31",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q33",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q35",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q37",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q38",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q39",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q4",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q40",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q41",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q42",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q43",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q44",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q45",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q46",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q47",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q48",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q49",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q50",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q51",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q53",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q54",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q55",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q56",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q58",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q59",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q60",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q61b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q61d",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q62a",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q62b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q64",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q65",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q66",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q68",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q7",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q70",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q72",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q73",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q74",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q79",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q8",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q80",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q81",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","q9",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison1",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison2",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","s_jse","s_jse"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","satisf","satisf"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","sefie","sefie"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","sondbons","sondbons"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","voteprec","voteprec"
 "qes1998","1998","Quebec Elections 1998","respondent_id","quetr"
 "qes1998","1998","Quebec Elections 1998","interview_start",
 "qes1998","1998","Quebec Elections 1998","interview_end",
@@ -296,3 +996,73 @@
 "qes1998","1998","Quebec Elections 1998","federal_pid",
 "qes1998","1998","Quebec Elections 1998","provincial_pid",
 "qes1998","1998","Quebec Elections 1998","survey_weight","ponderc"
+"qes1998","1998","Quebec Elections 1998","definibin",
+"qes1998","1998","Quebec Elections 1998","ethn1",
+"qes1998","1998","Quebec Elections 1998","influperso",
+"qes1998","1998","Quebec Elections 1998","luentend",
+"qes1998","1998","Quebec Elections 1998","occup","occup"
+"qes1998","1998","Quebec Elections 1998","patron",
+"qes1998","1998","Quebec Elections 1998","pondam1",
+"qes1998","1998","Quebec Elections 1998","q10",
+"qes1998","1998","Quebec Elections 1998","q16",
+"qes1998","1998","Quebec Elections 1998","q17",
+"qes1998","1998","Quebec Elections 1998","q18",
+"qes1998","1998","Quebec Elections 1998","q18a",
+"qes1998","1998","Quebec Elections 1998","q18b",
+"qes1998","1998","Quebec Elections 1998","q20",
+"qes1998","1998","Quebec Elections 1998","q20b",
+"qes1998","1998","Quebec Elections 1998","q22",
+"qes1998","1998","Quebec Elections 1998","q23",
+"qes1998","1998","Quebec Elections 1998","q24",
+"qes1998","1998","Quebec Elections 1998","q3",
+"qes1998","1998","Quebec Elections 1998","q31",
+"qes1998","1998","Quebec Elections 1998","q33",
+"qes1998","1998","Quebec Elections 1998","q35",
+"qes1998","1998","Quebec Elections 1998","q37",
+"qes1998","1998","Quebec Elections 1998","q38",
+"qes1998","1998","Quebec Elections 1998","q39",
+"qes1998","1998","Quebec Elections 1998","q4",
+"qes1998","1998","Quebec Elections 1998","q40",
+"qes1998","1998","Quebec Elections 1998","q41",
+"qes1998","1998","Quebec Elections 1998","q42",
+"qes1998","1998","Quebec Elections 1998","q43",
+"qes1998","1998","Quebec Elections 1998","q44",
+"qes1998","1998","Quebec Elections 1998","q45",
+"qes1998","1998","Quebec Elections 1998","q46",
+"qes1998","1998","Quebec Elections 1998","q47",
+"qes1998","1998","Quebec Elections 1998","q48",
+"qes1998","1998","Quebec Elections 1998","q49",
+"qes1998","1998","Quebec Elections 1998","q50",
+"qes1998","1998","Quebec Elections 1998","q51",
+"qes1998","1998","Quebec Elections 1998","q53",
+"qes1998","1998","Quebec Elections 1998","q54",
+"qes1998","1998","Quebec Elections 1998","q55",
+"qes1998","1998","Quebec Elections 1998","q56",
+"qes1998","1998","Quebec Elections 1998","q58",
+"qes1998","1998","Quebec Elections 1998","q59",
+"qes1998","1998","Quebec Elections 1998","q60",
+"qes1998","1998","Quebec Elections 1998","q61b",
+"qes1998","1998","Quebec Elections 1998","q61d",
+"qes1998","1998","Quebec Elections 1998","q62a",
+"qes1998","1998","Quebec Elections 1998","q62b",
+"qes1998","1998","Quebec Elections 1998","q64",
+"qes1998","1998","Quebec Elections 1998","q65",
+"qes1998","1998","Quebec Elections 1998","q66",
+"qes1998","1998","Quebec Elections 1998","q68",
+"qes1998","1998","Quebec Elections 1998","q7",
+"qes1998","1998","Quebec Elections 1998","q70",
+"qes1998","1998","Quebec Elections 1998","q72",
+"qes1998","1998","Quebec Elections 1998","q73",
+"qes1998","1998","Quebec Elections 1998","q74",
+"qes1998","1998","Quebec Elections 1998","q79",
+"qes1998","1998","Quebec Elections 1998","q8",
+"qes1998","1998","Quebec Elections 1998","q80",
+"qes1998","1998","Quebec Elections 1998","q81",
+"qes1998","1998","Quebec Elections 1998","q9",
+"qes1998","1998","Quebec Elections 1998","raison1","raison1"
+"qes1998","1998","Quebec Elections 1998","raison2","raison2"
+"qes1998","1998","Quebec Elections 1998","s_jse","s_jse"
+"qes1998","1998","Quebec Elections 1998","satisf","satisf"
+"qes1998","1998","Quebec Elections 1998","sefie",
+"qes1998","1998","Quebec Elections 1998","sondbons",
+"qes1998","1998","Quebec Elections 1998","voteprec",

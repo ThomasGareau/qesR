@@ -114,37 +114,37 @@ age_dist <- master_tendance %>%
 
 age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
 
-age_counts <- age_dist %>%
+age_resume <- age_dist %>%
   group_by(annee) %>%
-  summarise(n_avec_age = sum(n), .groups = "drop")
-
-age_dist_large <- reshape(
-  age_dist[, c("annee", "age_group_3", "pct")],
-  idvar = "annee",
-  timevar = "age_group_3",
-  direction = "wide"
-)
-
-names(age_dist_large) <- sub("^pct\\.", "", names(age_dist_large))
-
-for (grp in ordre_age) {
-  if (!(grp %in% names(age_dist_large))) {
-    age_dist_large[[grp]] <- NA_real_
-  }
-}
-
-age_dist_large <- age_dist_large %>%
-  merge(age_counts, by = "annee", all.x = TRUE, sort = TRUE) %>%
+  summarise(
+    n_avec_age = sum(n),
+    pct_18_34 = ifelse(
+      n_avec_age > 0,
+      100 * sum(n[age_group_3 == "18-34"], na.rm = TRUE) / n_avec_age,
+      NA_real_
+    ),
+    pct_35_54 = ifelse(
+      n_avec_age > 0,
+      100 * sum(n[age_group_3 == "35-54"], na.rm = TRUE) / n_avec_age,
+      NA_real_
+    ),
+    pct_55_plus = ifelse(
+      n_avec_age > 0,
+      100 * sum(n[age_group_3 == "55+"], na.rm = TRUE) / n_avec_age,
+      NA_real_
+    ),
+    .groups = "drop"
+  ) %>%
   arrange(annee)
 
 knitr::kable(
-  age_dist_large %>%
+  age_resume %>%
     transmute(
       `Annee d'etude` = annee,
       `N avec groupe d'age` = n_avec_age,
-      `18-34 (%)` = round(`18-34`, 1),
-      `35-54 (%)` = round(`35-54`, 1),
-      `55+ (%)` = round(`55+`, 1)
+      `18-34 (%)` = round(pct_18_34, 1),
+      `35-54 (%)` = round(pct_35_54, 1),
+      `55+ (%)` = round(pct_55_plus, 1)
     ),
   digits = 1,
   caption = "Répartition des groupes d'âge par année"

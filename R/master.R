@@ -1115,8 +1115,10 @@
     return(list(data = master, removed = 0L))
   }
 
-  harm_cols <- intersect(names(.master_harmonization_lookup()), names(master))
-  harm_cols <- setdiff(harm_cols, "respondent_id")
+  harm_cols <- setdiff(
+    names(master),
+    c("qes_code", "qes_year", "qes_name_en", "respondent_id")
+  )
   if (length(harm_cols) == 0L) {
     return(list(data = master, removed = 0L))
   }
@@ -1132,6 +1134,98 @@
   list(
     data = master[keep, , drop = FALSE],
     removed = as.integer(sum(all_missing))
+  )
+}
+
+.master_core_source_variables <- function() {
+  lookup <- .master_harmonization_lookup()
+  overrides <- .master_study_overrides()
+
+  from_lookup <- unlist(lookup, use.names = FALSE)
+  from_overrides <- unlist(overrides, use.names = FALSE)
+  out <- unique(c(from_lookup, from_overrides))
+  out <- as.character(out)
+  out <- out[!is.na(out) & nzchar(trimws(out))]
+  unique(out)
+}
+
+.discover_crossstudy_raw_variables <- function(raw_by_study, min_studies = 2L) {
+  if (!is.list(raw_by_study) || length(raw_by_study) == 0L) {
+    return(character(0))
+  }
+
+  var_lists <- lapply(raw_by_study, function(d) {
+    if (!is.data.frame(d)) {
+      return(character(0))
+    }
+    unique(names(d))
+  })
+
+  pool <- unlist(var_lists, use.names = FALSE)
+  if (length(pool) == 0L) {
+    return(character(0))
+  }
+
+  counts <- table(pool)
+  keep <- names(counts)[counts >= min_studies]
+
+  exclude <- unique(c(
+    names(.master_harmonization_lookup()),
+    .master_core_source_variables(),
+    "qes_code",
+    "qes_year",
+    "qes_name_en"
+  ))
+
+  keep <- setdiff(keep, exclude)
+  keep <- keep[nzchar(keep)]
+  sort(unique(keep))
+}
+
+.append_crossstudy_variables <- function(stacked, source_maps, raw_by_study, study_meta) {
+  extra_vars <- .discover_crossstudy_raw_variables(raw_by_study, min_studies = 2L)
+  if (length(extra_vars) == 0L) {
+    return(list(
+      stacked = stacked,
+      source_maps = source_maps,
+      extra_vars = character(0)
+    ))
+  }
+
+  for (srvy in names(stacked)) {
+    base <- stacked[[srvy]]
+    raw <- raw_by_study[[srvy]]
+    n <- nrow(base)
+
+    add <- data.frame(matrix(NA, nrow = n, ncol = length(extra_vars)), stringsAsFactors = FALSE)
+    names(add) <- extra_vars
+
+    if (is.data.frame(raw)) {
+      common <- intersect(extra_vars, names(raw))
+      for (v in common) {
+        add[[v]] <- .coerce_master_value(raw[[v]], target = v)
+      }
+    }
+
+    stacked[[srvy]] <- cbind(base, add, stringsAsFactors = FALSE)
+
+    meta <- study_meta[[srvy]]
+    src_rows <- data.frame(
+      qes_code = srvy,
+      qes_year = meta$year %||% NA_character_,
+      qes_name_en = meta$name_en %||% NA_character_,
+      harmonized_variable = extra_vars,
+      source_variable = if (is.data.frame(raw)) ifelse(extra_vars %in% names(raw), extra_vars, NA_character_) else NA_character_,
+      stringsAsFactors = FALSE
+    )
+
+    source_maps[[srvy]] <- rbind(source_maps[[srvy]], src_rows)
+  }
+
+  list(
+    stacked = stacked,
+    source_maps = source_maps,
+    extra_vars = extra_vars
   )
 }
 
@@ -1279,6 +1373,8 @@ get_qes_master <- function(
 
   stacked <- list()
   source_maps <- list()
+  raw_by_study <- list()
+  study_meta <- list()
   failed <- character(0)
 
   for (srvy in surveys) {
@@ -1311,6 +1407,11 @@ get_qes_master <- function(
 
     stacked[[srvy]] <- built$data
     source_maps[[srvy]] <- built$source_map
+    raw_by_study[[srvy]] <- dat
+    study_meta[[srvy]] <- list(
+      year = study$year,
+      name_en = study$name_en
+    )
 
     if (!quiet) {
       message(sprintf("[%s] rows loaded: %s", srvy, nrow(dat)))
@@ -1327,6 +1428,15 @@ get_qes_master <- function(
       call. = FALSE
     )
   }
+
+  extra <- .append_crossstudy_variables(
+    stacked = stacked,
+    source_maps = source_maps,
+    raw_by_study = raw_by_study,
+    study_meta = study_meta
+  )
+  stacked <- extra$stacked
+  source_maps <- extra$source_maps
 
   master <- do.call(rbind, stacked)
   rownames(master) <- NULL
@@ -1346,7 +1456,8 @@ get_qes_master <- function(
   attr(master, "failed_surveys") <- failed
   attr(master, "duplicates_removed") <- dedup$removed
   attr(master, "empty_rows_removed") <- no_empty$removed
-  attr(master, "harmonized_variables") <- names(.master_harmonization_lookup())
+  attr(master, "harmonized_variables") <- setdiff(names(master), c("qes_code", "qes_year", "qes_name_en"))
+  attr(master, "crossstudy_variables_added") <- extra$extra_vars
   attr(master, "saved_to") <- NULL
 
   if (isTRUE(assign_global)) {
@@ -1379,6 +1490,9 @@ get_qes_master <- function(
     }
     if (no_empty$removed > 0L) {
       message(sprintf("Master dataset all-empty rows removed: %s", no_empty$removed))
+    }
+    if (length(extra$extra_vars) > 0L) {
+      message(sprintf("Master dataset cross-study variables added: %s", length(extra$extra_vars)))
     }
     if (!is.null(save_path)) {
       message(sprintf("Master dataset saved to: %s", save_path))

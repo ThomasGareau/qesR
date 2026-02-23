@@ -30,11 +30,13 @@ template:
             "articles/study-citations.html": "articles/fr-citations-etudes.html",
             "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
             "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+            "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
             "articles/fr-demarrage.html": "articles/get-started.html",
             "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
             "articles/fr-citations-etudes.html": "articles/study-citations.html",
             "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-            "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+            "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
+            "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
           };
           var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
           var label = isFrench ? "EN" : "FR";
@@ -66,7 +68,7 @@ home:
 
 navbar:
   structure:
-    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, news]
+    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_descriptive, analysis_vote_choice, news]
     right: [github]
   components:
     get_started:
@@ -85,11 +87,14 @@ navbar:
       text: Study Citations
       href: articles/study-citations.html
     analysis_sovereignty:
-      text: "Analysis: Sovereignty"
+      text: "Use case: Sovereignty"
       href: articles/analysis-sovereignty.html
     analysis_descriptive:
-      text: "Analysis: Descriptive Statistics"
+      text: "Use case: Descriptive Statistics"
       href: articles/analysis-descriptive.html
+    analysis_vote_choice:
+      text: "Use case: Vote Choice"
+      href: articles/analysis-vote-choice.html
     github:
       icon: fa-github
       href: https://github.com/ThomasGareau/qesR
@@ -129,8 +134,10 @@ articles:
   - study-citations
   - analysis-sovereignty
   - analysis-descriptive
+  - analysis-vote-choice
   - fr-demarrage
   - fr-donnees-fusionnees
   - fr-citations-etudes
   - fr-analyse-souverainete
   - fr-analyse-descriptive
+  - fr-analyse-choix-vote
