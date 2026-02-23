@@ -40,7 +40,7 @@ master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors 
 master <- master %>%
   mutate(
     qes_year_chr = trimws(as.character(qes_year)),
-    qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr))
+    qes_year_num = as.integer(substr(qes_year_chr, 1, 4))
   )
 
 is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
@@ -98,7 +98,7 @@ master <- read.csv(master_path, stringsAsFactors = FALSE)
 master <- master %>%
   mutate(
     qes_year_chr = trimws(as.character(qes_year)),
-    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr)))
+    qes_year_num = suppressWarnings(as.integer(substr(qes_year_chr, 1, 4)))
   )
 
 is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)

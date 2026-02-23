@@ -68,7 +68,7 @@ collapse_age_group3 <- function(x) {
 
 master <- master %>%
   mutate(
-    annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
+    annee = suppressWarnings(as.integer(substr(as.character(qes_year), 1, 4))),
     age_group = trimws(as.character(age_group)),
     turnout_num = parser_turnout(turnout)
   )

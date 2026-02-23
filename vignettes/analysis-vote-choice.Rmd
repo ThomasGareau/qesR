@@ -34,7 +34,7 @@ master <- read.csv(master_path, stringsAsFactors = FALSE)
 
 master <- master %>%
   mutate(
-    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))),
+    qes_year_num = suppressWarnings(as.integer(substr(as.character(qes_year), 1, 4))),
     vote_choice_raw = trimws(as.character(vote_choice)),
     vote_choice_party = case_when(
       vote_choice_raw %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
@@ -44,8 +44,7 @@ master <- master %>%
       vote_choice_raw == "PCQ" ~ "PCQ",
       TRUE ~ NA_character_
     )
-  ) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+  )
 
 major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
 party_cols <- c(
@@ -70,7 +69,7 @@ master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors 
 
 master <- master %>%
   mutate(
-    qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)),
+    qes_year_num = as.integer(substr(as.character(qes_year), 1, 4)),
     vote_choice_raw = trimws(as.character(vote_choice)),
     vote_choice_party = dplyr::case_when(
       vote_choice_raw %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
@@ -80,8 +79,7 @@ master <- master %>%
       vote_choice_raw == "PCQ" ~ "PCQ",
       TRUE ~ NA_character_
     )
-  ) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+  )
 
 major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
 years <- sort(unique(master$qes_year_num[!is.na(master$qes_year_num)]))
@@ -234,5 +232,6 @@ ggplot(vote_party, aes(x = year_index, y = share, color = vote_choice_party, gro
 ## Notes
 
 - Shares use respondents with a non-missing `vote_choice` value.
+- Years 2009 and 2010 come from `qes_crop_2007_2010` after splitting by collection year.
 - Confidence intervals are binomial 95% intervals (normal approximation).
 - The trend figure is restricted to CAQ/ADQ, PLQ, PQ, QS, and PCQ.
