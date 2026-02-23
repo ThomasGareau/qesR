@@ -464,6 +464,40 @@
   is.na(x)
 }
 
+.derive_crop_collection_year <- function(x) {
+  n <- length(x)
+  if (n == 0L) {
+    return(character(0))
+  }
+
+  out <- rep(NA_character_, n)
+  x_num <- suppressWarnings(as.numeric(as.character(x)))
+
+  labs <- attr(x, "labels", exact = TRUE)
+  if (!is.null(labs) && length(labs) > 0L) {
+    lab_vals <- suppressWarnings(as.numeric(unname(labs)))
+    lab_txt <- names(labs)
+    lab_year <- sub(".*([12][0-9]{3}).*$", "\\1", lab_txt, perl = TRUE)
+    bad <- !grepl("^[12][0-9]{3}$", lab_year)
+    lab_year[bad] <- NA_character_
+
+    key <- as.character(lab_vals)
+    year_map <- setNames(lab_year, key)
+    hit <- as.character(x_num)
+    mapped <- unname(year_map[hit])
+    out[!is.na(mapped)] <- mapped[!is.na(mapped)]
+  }
+
+  # Defensive fallback if labels are missing or malformed.
+  idx <- is.na(out) & is.finite(x_num)
+  out[idx & x_num >= 1 & x_num <= 5] <- "2007"
+  out[idx & x_num >= 6 & x_num <= 15] <- "2008"
+  out[idx & x_num >= 16 & x_num <= 23] <- "2009"
+  out[idx & x_num == 24] <- "2010"
+
+  out
+}
+
 .parse_reference_year <- function(x) {
   if (is.na(x)) {
     return(NA_real_)
@@ -1636,6 +1670,12 @@
   if (sum(valid_rid) == 0L || uniq_ratio < 0.5) {
     out$respondent_id <- sprintf("%s_%s", srvy, seq_len(n))
     source_map$source_variable[source_map$harmonized_variable == "respondent_id"] <- "(synthetic_rowid)"
+  }
+
+  if (identical(srvy, "qes_crop_2007_2010") && ("projet" %in% names(data))) {
+    derived_year <- .derive_crop_collection_year(data$projet)
+    use_derived <- !is.na(derived_year) & nzchar(derived_year)
+    out$qes_year[use_derived] <- derived_year[use_derived]
   }
 
   list(data = out, source_map = source_map)

@@ -7,7 +7,7 @@
 "qes2022","2022","Quebec Election Study 2022","citizenship","cps_citizen"
 "qes2022","2022","Quebec Election Study 2022","year_of_birth","cps_yob"
 "qes2022","2022","Quebec Election Study 2022","age","cps_age_in_years"
-"qes2022","2022","Quebec Election Study 2022","age_group",""
+"qes2022","2022","Quebec Election Study 2022","age_group",
 "qes2022","2022","Quebec Election Study 2022","gender","cps_genderid"
 "qes2022","2022","Quebec Election Study 2022","province_territory","cps_province"
 "qes2022","2022","Quebec Election Study 2022","education","cps_edu"
@@ -26,82 +26,82 @@
 "qes2022","2022","Quebec Election Study 2022","federal_pid","cps_fedpid"
 "qes2022","2022","Quebec Election Study 2022","provincial_pid","cps_provpid"
 "qes2022","2022","Quebec Election Study 2022","survey_weight","cps_weight_general"
-"qes2022","2022","Quebec Election Study 2022","definibin",""
-"qes2022","2022","Quebec Election Study 2022","ethn1",""
-"qes2022","2022","Quebec Election Study 2022","influperso",""
-"qes2022","2022","Quebec Election Study 2022","luentend",""
-"qes2022","2022","Quebec Election Study 2022","occup",""
-"qes2022","2022","Quebec Election Study 2022","patron",""
-"qes2022","2022","Quebec Election Study 2022","pondam1",""
-"qes2022","2022","Quebec Election Study 2022","issue_family_support",""
-"qes2022","2022","Quebec Election Study 2022","info_source_primary",""
-"qes2022","2022","Quebec Election Study 2022","info_source_secondary",""
-"qes2022","2022","Quebec Election Study 2022","party_best_health",""
-"qes2022","2022","Quebec Election Study 2022","identity_self_1",""
-"qes2022","2022","Quebec Election Study 2022","identity_self_2",""
-"qes2022","2022","Quebec Election Study 2022","referendum_intent",""
-"qes2022","2022","Quebec Election Study 2022","party_best_anticorruption",""
-"qes2022","2022","Quebec Election Study 2022","elites_out_of_touch",""
-"qes2022","2022","Quebec Election Study 2022","trust_government",""
-"qes2022","2022","Quebec Election Study 2022","gov_tax_waste",""
-"qes2022","2022","Quebec Election Study 2022","issue_education",""
-"qes2022","2022","Quebec Election Study 2022","feeling_qs_0_100",""
-"qes2022","2022","Quebec Election Study 2022","election_timing_eval",""
-"qes2022","2022","Quebec Election Study 2022","pr_reform_support",""
-"qes2022","2022","Quebec Election Study 2022","democracy_needs_parties",""
-"qes2022","2022","Quebec Election Study 2022","parties_all_same",""
-"qes2022","2022","Quebec Election Study 2022","feeling_charest_0_100",""
-"qes2022","2022","Quebec Election Study 2022","qc_difference_view",""
-"qes2022","2022","Quebec Election Study 2022","feeling_boisclair_0_100",""
-"qes2022","2022","Quebec Election Study 2022","feeling_dumont_0_100",""
-"qes2022","2022","Quebec Election Study 2022","feeling_david_0_100",""
-"qes2022","2022","Quebec Election Study 2022","feeling_mckay_0_100",""
-"qes2022","2022","Quebec Election Study 2022","leader_most_competent",""
-"qes2022","2022","Quebec Election Study 2022","fed_gov_too_interventionist",""
-"qes2022","2022","Quebec Election Study 2022","leader_closest_people",""
-"qes2022","2022","Quebec Election Study 2022","qc_economy_change",""
-"qes2022","2022","Quebec Election Study 2022","federalist_sovereignist_self",""
-"qes2022","2022","Quebec Election Study 2022","future_outlook",""
-"qes2022","2022","Quebec Election Study 2022","privatize_hydro_support",""
-"qes2022","2022","Quebec Election Study 2022","private_healthcare_support",""
-"qes2022","2022","Quebec Election Study 2022","gov_role_environment",""
-"qes2022","2022","Quebec Election Study 2022","profits_help_poor",""
-"qes2022","2022","Quebec Election Study 2022","party_best_health_alt",""
-"qes2022","2022","Quebec Election Study 2022","powers_for_quebec",""
-"qes2022","2022","Quebec Election Study 2022","party_best_environment",""
-"qes2022","2022","Quebec Election Study 2022","party_best_poverty",""
-"qes2022","2022","Quebec Election Study 2022","qc_voice_federal",""
-"qes2022","2022","Quebec Election Study 2022","party_best_qc_identity",""
-"qes2022","2022","Quebec Election Study 2022","party_best_caisse_depot",""
-"qes2022","2022","Quebec Election Study 2022","decision_level_a",""
-"qes2022","2022","Quebec Election Study 2022","decision_level_b",""
-"qes2022","2022","Quebec Election Study 2022","feeling_unions_0_100",""
-"qes2022","2022","Quebec Election Study 2022","feeling_business_0_100",""
-"qes2022","2022","Quebec Election Study 2022","same_sex_marriage",""
-"qes2022","2022","Quebec Election Study 2022","family_values_priority",""
-"qes2022","2022","Quebec Election Study 2022","issue_tax_cuts",""
-"qes2022","2022","Quebec Election Study 2022","provincial_pid_item",""
-"qes2022","2022","Quebec Election Study 2022","provincial_party_lean",""
-"qes2022","2022","Quebec Election Study 2022","party_named",""
-"qes2022","2022","Quebec Election Study 2022","vote_federal_2006",""
-"qes2022","2022","Quebec Election Study 2022","employment_status",""
-"qes2022","2022","Quebec Election Study 2022","issue_qc_status",""
-"qes2022","2022","Quebec Election Study 2022","home_language",""
-"qes2022","2022","Quebec Election Study 2022","gov_role_jobs_income",""
-"qes2022","2022","Quebec Election Study 2022","issue_poverty",""
-"qes2022","2022","Quebec Election Study 2022","vote_reason_1",""
-"qes2022","2022","Quebec Election Study 2022","vote_reason_2",""
-"qes2022","2022","Quebec Election Study 2022","interview_weekday",""
-"qes2022","2022","Quebec Election Study 2022","gov_satisfaction",""
-"qes2022","2022","Quebec Election Study 2022","polling_trust",""
-"qes2022","2022","Quebec Election Study 2022","polls_eval",""
-"qes2022","2022","Quebec Election Study 2022","previous_vote_2003",""
+"qes2022","2022","Quebec Election Study 2022","definibin",
+"qes2022","2022","Quebec Election Study 2022","ethn1",
+"qes2022","2022","Quebec Election Study 2022","influperso",
+"qes2022","2022","Quebec Election Study 2022","luentend",
+"qes2022","2022","Quebec Election Study 2022","occup",
+"qes2022","2022","Quebec Election Study 2022","patron",
+"qes2022","2022","Quebec Election Study 2022","pondam1",
+"qes2022","2022","Quebec Election Study 2022","issue_family_support",
+"qes2022","2022","Quebec Election Study 2022","info_source_primary",
+"qes2022","2022","Quebec Election Study 2022","info_source_secondary",
+"qes2022","2022","Quebec Election Study 2022","party_best_health",
+"qes2022","2022","Quebec Election Study 2022","identity_self_1",
+"qes2022","2022","Quebec Election Study 2022","identity_self_2",
+"qes2022","2022","Quebec Election Study 2022","referendum_intent",
+"qes2022","2022","Quebec Election Study 2022","party_best_anticorruption",
+"qes2022","2022","Quebec Election Study 2022","elites_out_of_touch",
+"qes2022","2022","Quebec Election Study 2022","trust_government",
+"qes2022","2022","Quebec Election Study 2022","gov_tax_waste",
+"qes2022","2022","Quebec Election Study 2022","issue_education",
+"qes2022","2022","Quebec Election Study 2022","feeling_qs_0_100",
+"qes2022","2022","Quebec Election Study 2022","election_timing_eval",
+"qes2022","2022","Quebec Election Study 2022","pr_reform_support",
+"qes2022","2022","Quebec Election Study 2022","democracy_needs_parties",
+"qes2022","2022","Quebec Election Study 2022","parties_all_same",
+"qes2022","2022","Quebec Election Study 2022","feeling_charest_0_100",
+"qes2022","2022","Quebec Election Study 2022","qc_difference_view",
+"qes2022","2022","Quebec Election Study 2022","feeling_boisclair_0_100",
+"qes2022","2022","Quebec Election Study 2022","feeling_dumont_0_100",
+"qes2022","2022","Quebec Election Study 2022","feeling_david_0_100",
+"qes2022","2022","Quebec Election Study 2022","feeling_mckay_0_100",
+"qes2022","2022","Quebec Election Study 2022","leader_most_competent",
+"qes2022","2022","Quebec Election Study 2022","fed_gov_too_interventionist",
+"qes2022","2022","Quebec Election Study 2022","leader_closest_people",
+"qes2022","2022","Quebec Election Study 2022","qc_economy_change",
+"qes2022","2022","Quebec Election Study 2022","federalist_sovereignist_self",
+"qes2022","2022","Quebec Election Study 2022","future_outlook",
+"qes2022","2022","Quebec Election Study 2022","privatize_hydro_support",
+"qes2022","2022","Quebec Election Study 2022","private_healthcare_support",
+"qes2022","2022","Quebec Election Study 2022","gov_role_environment",
+"qes2022","2022","Quebec Election Study 2022","profits_help_poor",
+"qes2022","2022","Quebec Election Study 2022","party_best_health_alt",
+"qes2022","2022","Quebec Election Study 2022","powers_for_quebec",
+"qes2022","2022","Quebec Election Study 2022","party_best_environment",
+"qes2022","2022","Quebec Election Study 2022","party_best_poverty",
+"qes2022","2022","Quebec Election Study 2022","qc_voice_federal",
+"qes2022","2022","Quebec Election Study 2022","party_best_qc_identity",
+"qes2022","2022","Quebec Election Study 2022","party_best_caisse_depot",
+"qes2022","2022","Quebec Election Study 2022","decision_level_a",
+"qes2022","2022","Quebec Election Study 2022","decision_level_b",
+"qes2022","2022","Quebec Election Study 2022","feeling_unions_0_100",
+"qes2022","2022","Quebec Election Study 2022","feeling_business_0_100",
+"qes2022","2022","Quebec Election Study 2022","same_sex_marriage",
+"qes2022","2022","Quebec Election Study 2022","family_values_priority",
+"qes2022","2022","Quebec Election Study 2022","issue_tax_cuts",
+"qes2022","2022","Quebec Election Study 2022","provincial_pid_item",
+"qes2022","2022","Quebec Election Study 2022","provincial_party_lean",
+"qes2022","2022","Quebec Election Study 2022","party_named",
+"qes2022","2022","Quebec Election Study 2022","vote_federal_2006",
+"qes2022","2022","Quebec Election Study 2022","employment_status",
+"qes2022","2022","Quebec Election Study 2022","issue_qc_status",
+"qes2022","2022","Quebec Election Study 2022","home_language",
+"qes2022","2022","Quebec Election Study 2022","gov_role_jobs_income",
+"qes2022","2022","Quebec Election Study 2022","issue_poverty",
+"qes2022","2022","Quebec Election Study 2022","vote_reason_1",
+"qes2022","2022","Quebec Election Study 2022","vote_reason_2",
+"qes2022","2022","Quebec Election Study 2022","interview_weekday",
+"qes2022","2022","Quebec Election Study 2022","gov_satisfaction",
+"qes2022","2022","Quebec Election Study 2022","polling_trust",
+"qes2022","2022","Quebec Election Study 2022","polls_eval",
+"qes2022","2022","Quebec Election Study 2022","previous_vote_2003",
 "qes2018","2018","Quebec Election Study 2018","respondent_id","responseid"
-"qes2018","2018","Quebec Election Study 2018","interview_start",""
-"qes2018","2018","Quebec Election Study 2018","interview_end",""
-"qes2018","2018","Quebec Election Study 2018","interview_recorded",""
+"qes2018","2018","Quebec Election Study 2018","interview_start",
+"qes2018","2018","Quebec Election Study 2018","interview_end",
+"qes2018","2018","Quebec Election Study 2018","interview_recorded",
 "qes2018","2018","Quebec Election Study 2018","language","qlangue"
-"qes2018","2018","Quebec Election Study 2018","citizenship",""
+"qes2018","2018","Quebec Election Study 2018","citizenship",
 "qes2018","2018","Quebec Election Study 2018","year_of_birth","ageyear_1"
 "qes2018","2018","Quebec Election Study 2018","age","age"
 "qes2018","2018","Quebec Election Study 2018","age_group","age"
@@ -112,7 +112,7 @@
 "qes2018","2018","Quebec Election Study 2018","religion","q67"
 "qes2018","2018","Quebec Election Study 2018","born_canada","q69"
 "qes2018","2018","Quebec Election Study 2018","political_interest","q27"
-"qes2018","2018","Quebec Election Study 2018","ideology",""
+"qes2018","2018","Quebec Election Study 2018","ideology",
 "qes2018","2018","Quebec Election Study 2018","turnout","q5"
 "qes2018","2018","Quebec Election Study 2018","vote_choice","q6"
 "qes2018","2018","Quebec Election Study 2018","vote_choice_text","q2_96_other"
@@ -120,182 +120,182 @@
 "qes2018","2018","Quebec Election Study 2018","party_lean","q5a"
 "qes2018","2018","Quebec Election Study 2018","sovereignty_support","q26"
 "qes2018","2018","Quebec Election Study 2018","sovereignty","q26"
-"qes2018","2018","Quebec Election Study 2018","federal_pid",""
-"qes2018","2018","Quebec Election Study 2018","provincial_pid",""
+"qes2018","2018","Quebec Election Study 2018","federal_pid",
+"qes2018","2018","Quebec Election Study 2018","provincial_pid",
 "qes2018","2018","Quebec Election Study 2018","survey_weight","pond"
-"qes2018","2018","Quebec Election Study 2018","definibin",""
-"qes2018","2018","Quebec Election Study 2018","ethn1",""
-"qes2018","2018","Quebec Election Study 2018","influperso",""
-"qes2018","2018","Quebec Election Study 2018","luentend",""
-"qes2018","2018","Quebec Election Study 2018","occup",""
-"qes2018","2018","Quebec Election Study 2018","patron",""
-"qes2018","2018","Quebec Election Study 2018","pondam1",""
+"qes2018","2018","Quebec Election Study 2018","definibin",
+"qes2018","2018","Quebec Election Study 2018","ethn1",
+"qes2018","2018","Quebec Election Study 2018","influperso",
+"qes2018","2018","Quebec Election Study 2018","luentend",
+"qes2018","2018","Quebec Election Study 2018","occup",
+"qes2018","2018","Quebec Election Study 2018","patron",
+"qes2018","2018","Quebec Election Study 2018","pondam1",
 "qes2018","2018","Quebec Election Study 2018","issue_family_support","q10"
-"qes2018","2018","Quebec Election Study 2018","info_source_primary",""
-"qes2018","2018","Quebec Election Study 2018","info_source_secondary",""
+"qes2018","2018","Quebec Election Study 2018","info_source_primary",
+"qes2018","2018","Quebec Election Study 2018","info_source_secondary",
 "qes2018","2018","Quebec Election Study 2018","party_best_health","q18"
-"qes2018","2018","Quebec Election Study 2018","identity_self_1",""
-"qes2018","2018","Quebec Election Study 2018","identity_self_2",""
-"qes2018","2018","Quebec Election Study 2018","referendum_intent",""
+"qes2018","2018","Quebec Election Study 2018","identity_self_1",
+"qes2018","2018","Quebec Election Study 2018","identity_self_2",
+"qes2018","2018","Quebec Election Study 2018","referendum_intent",
 "qes2018","2018","Quebec Election Study 2018","party_best_anticorruption","q20b"
-"qes2018","2018","Quebec Election Study 2018","elites_out_of_touch",""
+"qes2018","2018","Quebec Election Study 2018","elites_out_of_touch",
 "qes2018","2018","Quebec Election Study 2018","trust_government","q23"
 "qes2018","2018","Quebec Election Study 2018","gov_tax_waste","q24"
 "qes2018","2018","Quebec Election Study 2018","issue_education","q3"
-"qes2018","2018","Quebec Election Study 2018","feeling_qs_0_100",""
-"qes2018","2018","Quebec Election Study 2018","election_timing_eval",""
-"qes2018","2018","Quebec Election Study 2018","pr_reform_support",""
-"qes2018","2018","Quebec Election Study 2018","democracy_needs_parties",""
-"qes2018","2018","Quebec Election Study 2018","parties_all_same",""
-"qes2018","2018","Quebec Election Study 2018","feeling_charest_0_100",""
+"qes2018","2018","Quebec Election Study 2018","feeling_qs_0_100",
+"qes2018","2018","Quebec Election Study 2018","election_timing_eval",
+"qes2018","2018","Quebec Election Study 2018","pr_reform_support",
+"qes2018","2018","Quebec Election Study 2018","democracy_needs_parties",
+"qes2018","2018","Quebec Election Study 2018","parties_all_same",
+"qes2018","2018","Quebec Election Study 2018","feeling_charest_0_100",
 "qes2018","2018","Quebec Election Study 2018","qc_difference_view","q4"
-"qes2018","2018","Quebec Election Study 2018","feeling_boisclair_0_100",""
-"qes2018","2018","Quebec Election Study 2018","feeling_dumont_0_100",""
+"qes2018","2018","Quebec Election Study 2018","feeling_boisclair_0_100",
+"qes2018","2018","Quebec Election Study 2018","feeling_dumont_0_100",
 "qes2018","2018","Quebec Election Study 2018","feeling_david_0_100","q42"
 "qes2018","2018","Quebec Election Study 2018","feeling_mckay_0_100","q43"
 "qes2018","2018","Quebec Election Study 2018","leader_most_competent","q44"
 "qes2018","2018","Quebec Election Study 2018","fed_gov_too_interventionist","q45"
 "qes2018","2018","Quebec Election Study 2018","leader_closest_people","q46"
-"qes2018","2018","Quebec Election Study 2018","qc_economy_change",""
+"qes2018","2018","Quebec Election Study 2018","qc_economy_change",
 "qes2018","2018","Quebec Election Study 2018","federalist_sovereignist_self","q48"
 "qes2018","2018","Quebec Election Study 2018","future_outlook","q49"
-"qes2018","2018","Quebec Election Study 2018","privatize_hydro_support",""
-"qes2018","2018","Quebec Election Study 2018","private_healthcare_support",""
+"qes2018","2018","Quebec Election Study 2018","privatize_hydro_support",
+"qes2018","2018","Quebec Election Study 2018","private_healthcare_support",
 "qes2018","2018","Quebec Election Study 2018","gov_role_environment","q53"
 "qes2018","2018","Quebec Election Study 2018","profits_help_poor","q54"
-"qes2018","2018","Quebec Election Study 2018","party_best_health_alt",""
+"qes2018","2018","Quebec Election Study 2018","party_best_health_alt",
 "qes2018","2018","Quebec Election Study 2018","powers_for_quebec","q56"
 "qes2018","2018","Quebec Election Study 2018","party_best_environment","q58"
-"qes2018","2018","Quebec Election Study 2018","party_best_poverty",""
+"qes2018","2018","Quebec Election Study 2018","party_best_poverty",
 "qes2018","2018","Quebec Election Study 2018","qc_voice_federal","q60"
-"qes2018","2018","Quebec Election Study 2018","party_best_qc_identity",""
-"qes2018","2018","Quebec Election Study 2018","party_best_caisse_depot",""
+"qes2018","2018","Quebec Election Study 2018","party_best_qc_identity",
+"qes2018","2018","Quebec Election Study 2018","party_best_caisse_depot",
 "qes2018","2018","Quebec Election Study 2018","decision_level_a","q62a"
 "qes2018","2018","Quebec Election Study 2018","decision_level_b","q62b"
-"qes2018","2018","Quebec Election Study 2018","feeling_unions_0_100",""
-"qes2018","2018","Quebec Election Study 2018","feeling_business_0_100",""
+"qes2018","2018","Quebec Election Study 2018","feeling_unions_0_100",
+"qes2018","2018","Quebec Election Study 2018","feeling_business_0_100",
 "qes2018","2018","Quebec Election Study 2018","same_sex_marriage","q66"
 "qes2018","2018","Quebec Election Study 2018","family_values_priority","q68"
 "qes2018","2018","Quebec Election Study 2018","issue_tax_cuts","q7"
 "qes2018","2018","Quebec Election Study 2018","provincial_pid_item","q70"
-"qes2018","2018","Quebec Election Study 2018","provincial_party_lean",""
-"qes2018","2018","Quebec Election Study 2018","party_named",""
-"qes2018","2018","Quebec Election Study 2018","vote_federal_2006",""
-"qes2018","2018","Quebec Election Study 2018","employment_status",""
+"qes2018","2018","Quebec Election Study 2018","provincial_party_lean",
+"qes2018","2018","Quebec Election Study 2018","party_named",
+"qes2018","2018","Quebec Election Study 2018","vote_federal_2006",
+"qes2018","2018","Quebec Election Study 2018","employment_status",
 "qes2018","2018","Quebec Election Study 2018","issue_qc_status","q8"
-"qes2018","2018","Quebec Election Study 2018","home_language",""
-"qes2018","2018","Quebec Election Study 2018","gov_role_jobs_income",""
+"qes2018","2018","Quebec Election Study 2018","home_language",
+"qes2018","2018","Quebec Election Study 2018","gov_role_jobs_income",
 "qes2018","2018","Quebec Election Study 2018","issue_poverty","q9"
-"qes2018","2018","Quebec Election Study 2018","vote_reason_1",""
-"qes2018","2018","Quebec Election Study 2018","vote_reason_2",""
-"qes2018","2018","Quebec Election Study 2018","interview_weekday",""
-"qes2018","2018","Quebec Election Study 2018","gov_satisfaction",""
-"qes2018","2018","Quebec Election Study 2018","polling_trust",""
-"qes2018","2018","Quebec Election Study 2018","polls_eval",""
-"qes2018","2018","Quebec Election Study 2018","previous_vote_2003",""
+"qes2018","2018","Quebec Election Study 2018","vote_reason_1",
+"qes2018","2018","Quebec Election Study 2018","vote_reason_2",
+"qes2018","2018","Quebec Election Study 2018","interview_weekday",
+"qes2018","2018","Quebec Election Study 2018","gov_satisfaction",
+"qes2018","2018","Quebec Election Study 2018","polling_trust",
+"qes2018","2018","Quebec Election Study 2018","polls_eval",
+"qes2018","2018","Quebec Election Study 2018","previous_vote_2003",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","respondent_id","(synthetic_rowid)"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_start",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_end",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_recorded",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_start",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_end",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_recorded",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","language","s1"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","citizenship",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","year_of_birth",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","citizenship",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","year_of_birth",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","age","age"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","age_group","age"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","gender","sexfix"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","province_territory","region"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","education","d3"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","income","d5"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","religion",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","born_canada",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","political_interest",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","religion",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","born_canada",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","political_interest",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","ideology","rts_q8"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","turnout","vote"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice","vote"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice_text",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice_text",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","party_lean","rv1b"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","sovereignty_support","independance"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","sovereignty","independance"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","federal_pid",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","federal_pid",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","survey_weight","weight"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","definibin",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","ethn1",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","influperso",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","luentend",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","occup",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","definibin",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","ethn1",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","influperso",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","luentend",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","occup",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","patron","patron"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","pondam1",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_family_support",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","info_source_primary",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","info_source_secondary",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_health",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","identity_self_1",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","identity_self_2",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","referendum_intent",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_anticorruption",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","elites_out_of_touch",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","trust_government",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_tax_waste",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_education",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_qs_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","election_timing_eval",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","pr_reform_support",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","democracy_needs_parties",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","parties_all_same",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_charest_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_difference_view",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_boisclair_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_dumont_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_david_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_mckay_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","leader_most_competent",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","fed_gov_too_interventionist",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","leader_closest_people",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_economy_change",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","federalist_sovereignist_self",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","future_outlook",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","privatize_hydro_support",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","private_healthcare_support",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_role_environment",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","profits_help_poor",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_health_alt",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","powers_for_quebec",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_environment",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_poverty",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_voice_federal",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_qc_identity",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_caisse_depot",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","decision_level_a",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","decision_level_b",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_unions_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_business_0_100",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","same_sex_marriage",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","family_values_priority",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_tax_cuts",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid_item",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_party_lean",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_named",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_federal_2006",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","employment_status",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_qc_status",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","home_language",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_role_jobs_income",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_poverty",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","pondam1",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_family_support",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","info_source_primary",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","info_source_secondary",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_health",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","identity_self_1",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","identity_self_2",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","referendum_intent",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_anticorruption",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","elites_out_of_touch",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","trust_government",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_tax_waste",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_education",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_qs_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","election_timing_eval",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","pr_reform_support",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","democracy_needs_parties",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parties_all_same",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_charest_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_difference_view",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_boisclair_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_dumont_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_david_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_mckay_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","leader_most_competent",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","fed_gov_too_interventionist",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","leader_closest_people",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_economy_change",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","federalist_sovereignist_self",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","future_outlook",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","privatize_hydro_support",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","private_healthcare_support",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_role_environment",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","profits_help_poor",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_health_alt",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","powers_for_quebec",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_environment",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_poverty",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","qc_voice_federal",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_qc_identity",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best_caisse_depot",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","decision_level_a",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","decision_level_b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_unions_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","feeling_business_0_100",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","same_sex_marriage",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","family_values_priority",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_tax_cuts",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid_item",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_party_lean",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","party_named",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_federal_2006",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","employment_status",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_qc_status",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","home_language",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_role_jobs_income",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","issue_poverty",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_reason_1","raison1"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_reason_2","raison2"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_weekday",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_satisfaction",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","polling_trust",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","polls_eval",""
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","previous_vote_2003",""
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_weekday",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gov_satisfaction",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","polling_trust",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","polls_eval",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","previous_vote_2003",
 "qes2014","2014","Quebec Election Study 2014","respondent_id","(synthetic_rowid)"
 "qes2014","2014","Quebec Election Study 2014","interview_start","SDAT"
-"qes2014","2014","Quebec Election Study 2014","interview_end",""
-"qes2014","2014","Quebec Election Study 2014","interview_recorded",""
+"qes2014","2014","Quebec Election Study 2014","interview_end",
+"qes2014","2014","Quebec Election Study 2014","interview_recorded",
 "qes2014","2014","Quebec Election Study 2014","language","LANG"
-"qes2014","2014","Quebec Election Study 2014","citizenship",""
+"qes2014","2014","Quebec Election Study 2014","citizenship",
 "qes2014","2014","Quebec Election Study 2014","year_of_birth","QAGE"
 "qes2014","2014","Quebec Election Study 2014","age","SMAGE"
 "qes2014","2014","Quebec Election Study 2014","age_group","CLAGE"
@@ -309,124 +309,124 @@
 "qes2014","2014","Quebec Election Study 2014","ideology","Q32"
 "qes2014","2014","Quebec Election Study 2014","turnout","Q2"
 "qes2014","2014","Quebec Election Study 2014","vote_choice","Q3"
-"qes2014","2014","Quebec Election Study 2014","vote_choice_text",""
+"qes2014","2014","Quebec Election Study 2014","vote_choice_text",
 "qes2014","2014","Quebec Election Study 2014","party_best","Q8"
 "qes2014","2014","Quebec Election Study 2014","party_lean","Q5"
 "qes2014","2014","Quebec Election Study 2014","sovereignty_support","Q19"
 "qes2014","2014","Quebec Election Study 2014","sovereignty","Q19"
-"qes2014","2014","Quebec Election Study 2014","federal_pid",""
-"qes2014","2014","Quebec Election Study 2014","provincial_pid",""
+"qes2014","2014","Quebec Election Study 2014","federal_pid",
+"qes2014","2014","Quebec Election Study 2014","provincial_pid",
 "qes2014","2014","Quebec Election Study 2014","survey_weight","POND"
-"qes2014","2014","Quebec Election Study 2014","definibin",""
-"qes2014","2014","Quebec Election Study 2014","ethn1",""
-"qes2014","2014","Quebec Election Study 2014","influperso",""
-"qes2014","2014","Quebec Election Study 2014","luentend",""
-"qes2014","2014","Quebec Election Study 2014","occup",""
-"qes2014","2014","Quebec Election Study 2014","patron",""
-"qes2014","2014","Quebec Election Study 2014","pondam1",""
-"qes2014","2014","Quebec Election Study 2014","issue_family_support",""
-"qes2014","2014","Quebec Election Study 2014","info_source_primary",""
-"qes2014","2014","Quebec Election Study 2014","info_source_secondary",""
-"qes2014","2014","Quebec Election Study 2014","party_best_health",""
-"qes2014","2014","Quebec Election Study 2014","identity_self_1",""
-"qes2014","2014","Quebec Election Study 2014","identity_self_2",""
-"qes2014","2014","Quebec Election Study 2014","referendum_intent",""
-"qes2014","2014","Quebec Election Study 2014","party_best_anticorruption",""
-"qes2014","2014","Quebec Election Study 2014","elites_out_of_touch",""
-"qes2014","2014","Quebec Election Study 2014","trust_government",""
-"qes2014","2014","Quebec Election Study 2014","gov_tax_waste",""
-"qes2014","2014","Quebec Election Study 2014","issue_education",""
-"qes2014","2014","Quebec Election Study 2014","feeling_qs_0_100",""
-"qes2014","2014","Quebec Election Study 2014","election_timing_eval",""
-"qes2014","2014","Quebec Election Study 2014","pr_reform_support",""
-"qes2014","2014","Quebec Election Study 2014","democracy_needs_parties",""
-"qes2014","2014","Quebec Election Study 2014","parties_all_same",""
-"qes2014","2014","Quebec Election Study 2014","feeling_charest_0_100",""
-"qes2014","2014","Quebec Election Study 2014","qc_difference_view",""
-"qes2014","2014","Quebec Election Study 2014","feeling_boisclair_0_100",""
-"qes2014","2014","Quebec Election Study 2014","feeling_dumont_0_100",""
-"qes2014","2014","Quebec Election Study 2014","feeling_david_0_100",""
-"qes2014","2014","Quebec Election Study 2014","feeling_mckay_0_100",""
-"qes2014","2014","Quebec Election Study 2014","leader_most_competent",""
-"qes2014","2014","Quebec Election Study 2014","fed_gov_too_interventionist",""
-"qes2014","2014","Quebec Election Study 2014","leader_closest_people",""
-"qes2014","2014","Quebec Election Study 2014","qc_economy_change",""
-"qes2014","2014","Quebec Election Study 2014","federalist_sovereignist_self",""
-"qes2014","2014","Quebec Election Study 2014","future_outlook",""
-"qes2014","2014","Quebec Election Study 2014","privatize_hydro_support",""
-"qes2014","2014","Quebec Election Study 2014","private_healthcare_support",""
-"qes2014","2014","Quebec Election Study 2014","gov_role_environment",""
-"qes2014","2014","Quebec Election Study 2014","profits_help_poor",""
-"qes2014","2014","Quebec Election Study 2014","party_best_health_alt",""
-"qes2014","2014","Quebec Election Study 2014","powers_for_quebec",""
-"qes2014","2014","Quebec Election Study 2014","party_best_environment",""
-"qes2014","2014","Quebec Election Study 2014","party_best_poverty",""
-"qes2014","2014","Quebec Election Study 2014","qc_voice_federal",""
-"qes2014","2014","Quebec Election Study 2014","party_best_qc_identity",""
-"qes2014","2014","Quebec Election Study 2014","party_best_caisse_depot",""
-"qes2014","2014","Quebec Election Study 2014","decision_level_a",""
-"qes2014","2014","Quebec Election Study 2014","decision_level_b",""
-"qes2014","2014","Quebec Election Study 2014","feeling_unions_0_100",""
-"qes2014","2014","Quebec Election Study 2014","feeling_business_0_100",""
-"qes2014","2014","Quebec Election Study 2014","same_sex_marriage",""
-"qes2014","2014","Quebec Election Study 2014","family_values_priority",""
-"qes2014","2014","Quebec Election Study 2014","issue_tax_cuts",""
-"qes2014","2014","Quebec Election Study 2014","provincial_pid_item",""
-"qes2014","2014","Quebec Election Study 2014","provincial_party_lean",""
-"qes2014","2014","Quebec Election Study 2014","party_named",""
-"qes2014","2014","Quebec Election Study 2014","vote_federal_2006",""
-"qes2014","2014","Quebec Election Study 2014","employment_status",""
-"qes2014","2014","Quebec Election Study 2014","issue_qc_status",""
-"qes2014","2014","Quebec Election Study 2014","home_language",""
-"qes2014","2014","Quebec Election Study 2014","gov_role_jobs_income",""
-"qes2014","2014","Quebec Election Study 2014","issue_poverty",""
-"qes2014","2014","Quebec Election Study 2014","vote_reason_1",""
-"qes2014","2014","Quebec Election Study 2014","vote_reason_2",""
-"qes2014","2014","Quebec Election Study 2014","interview_weekday",""
-"qes2014","2014","Quebec Election Study 2014","gov_satisfaction",""
-"qes2014","2014","Quebec Election Study 2014","polling_trust",""
-"qes2014","2014","Quebec Election Study 2014","polls_eval",""
-"qes2014","2014","Quebec Election Study 2014","previous_vote_2003",""
+"qes2014","2014","Quebec Election Study 2014","definibin",
+"qes2014","2014","Quebec Election Study 2014","ethn1",
+"qes2014","2014","Quebec Election Study 2014","influperso",
+"qes2014","2014","Quebec Election Study 2014","luentend",
+"qes2014","2014","Quebec Election Study 2014","occup",
+"qes2014","2014","Quebec Election Study 2014","patron",
+"qes2014","2014","Quebec Election Study 2014","pondam1",
+"qes2014","2014","Quebec Election Study 2014","issue_family_support",
+"qes2014","2014","Quebec Election Study 2014","info_source_primary",
+"qes2014","2014","Quebec Election Study 2014","info_source_secondary",
+"qes2014","2014","Quebec Election Study 2014","party_best_health",
+"qes2014","2014","Quebec Election Study 2014","identity_self_1",
+"qes2014","2014","Quebec Election Study 2014","identity_self_2",
+"qes2014","2014","Quebec Election Study 2014","referendum_intent",
+"qes2014","2014","Quebec Election Study 2014","party_best_anticorruption",
+"qes2014","2014","Quebec Election Study 2014","elites_out_of_touch",
+"qes2014","2014","Quebec Election Study 2014","trust_government",
+"qes2014","2014","Quebec Election Study 2014","gov_tax_waste",
+"qes2014","2014","Quebec Election Study 2014","issue_education",
+"qes2014","2014","Quebec Election Study 2014","feeling_qs_0_100",
+"qes2014","2014","Quebec Election Study 2014","election_timing_eval",
+"qes2014","2014","Quebec Election Study 2014","pr_reform_support",
+"qes2014","2014","Quebec Election Study 2014","democracy_needs_parties",
+"qes2014","2014","Quebec Election Study 2014","parties_all_same",
+"qes2014","2014","Quebec Election Study 2014","feeling_charest_0_100",
+"qes2014","2014","Quebec Election Study 2014","qc_difference_view",
+"qes2014","2014","Quebec Election Study 2014","feeling_boisclair_0_100",
+"qes2014","2014","Quebec Election Study 2014","feeling_dumont_0_100",
+"qes2014","2014","Quebec Election Study 2014","feeling_david_0_100",
+"qes2014","2014","Quebec Election Study 2014","feeling_mckay_0_100",
+"qes2014","2014","Quebec Election Study 2014","leader_most_competent",
+"qes2014","2014","Quebec Election Study 2014","fed_gov_too_interventionist",
+"qes2014","2014","Quebec Election Study 2014","leader_closest_people",
+"qes2014","2014","Quebec Election Study 2014","qc_economy_change",
+"qes2014","2014","Quebec Election Study 2014","federalist_sovereignist_self",
+"qes2014","2014","Quebec Election Study 2014","future_outlook",
+"qes2014","2014","Quebec Election Study 2014","privatize_hydro_support",
+"qes2014","2014","Quebec Election Study 2014","private_healthcare_support",
+"qes2014","2014","Quebec Election Study 2014","gov_role_environment",
+"qes2014","2014","Quebec Election Study 2014","profits_help_poor",
+"qes2014","2014","Quebec Election Study 2014","party_best_health_alt",
+"qes2014","2014","Quebec Election Study 2014","powers_for_quebec",
+"qes2014","2014","Quebec Election Study 2014","party_best_environment",
+"qes2014","2014","Quebec Election Study 2014","party_best_poverty",
+"qes2014","2014","Quebec Election Study 2014","qc_voice_federal",
+"qes2014","2014","Quebec Election Study 2014","party_best_qc_identity",
+"qes2014","2014","Quebec Election Study 2014","party_best_caisse_depot",
+"qes2014","2014","Quebec Election Study 2014","decision_level_a",
+"qes2014","2014","Quebec Election Study 2014","decision_level_b",
+"qes2014","2014","Quebec Election Study 2014","feeling_unions_0_100",
+"qes2014","2014","Quebec Election Study 2014","feeling_business_0_100",
+"qes2014","2014","Quebec Election Study 2014","same_sex_marriage",
+"qes2014","2014","Quebec Election Study 2014","family_values_priority",
+"qes2014","2014","Quebec Election Study 2014","issue_tax_cuts",
+"qes2014","2014","Quebec Election Study 2014","provincial_pid_item",
+"qes2014","2014","Quebec Election Study 2014","provincial_party_lean",
+"qes2014","2014","Quebec Election Study 2014","party_named",
+"qes2014","2014","Quebec Election Study 2014","vote_federal_2006",
+"qes2014","2014","Quebec Election Study 2014","employment_status",
+"qes2014","2014","Quebec Election Study 2014","issue_qc_status",
+"qes2014","2014","Quebec Election Study 2014","home_language",
+"qes2014","2014","Quebec Election Study 2014","gov_role_jobs_income",
+"qes2014","2014","Quebec Election Study 2014","issue_poverty",
+"qes2014","2014","Quebec Election Study 2014","vote_reason_1",
+"qes2014","2014","Quebec Election Study 2014","vote_reason_2",
+"qes2014","2014","Quebec Election Study 2014","interview_weekday",
+"qes2014","2014","Quebec Election Study 2014","gov_satisfaction",
+"qes2014","2014","Quebec Election Study 2014","polling_trust",
+"qes2014","2014","Quebec Election Study 2014","polls_eval",
+"qes2014","2014","Quebec Election Study 2014","previous_vote_2003",
 "qes2012","2012","Quebec Election Study 2012","respondent_id","quest"
-"qes2012","2012","Quebec Election Study 2012","interview_start",""
-"qes2012","2012","Quebec Election Study 2012","interview_end",""
-"qes2012","2012","Quebec Election Study 2012","interview_recorded",""
+"qes2012","2012","Quebec Election Study 2012","interview_start",
+"qes2012","2012","Quebec Election Study 2012","interview_end",
+"qes2012","2012","Quebec Election Study 2012","interview_recorded",
 "qes2012","2012","Quebec Election Study 2012","language","langu"
-"qes2012","2012","Quebec Election Study 2012","citizenship",""
+"qes2012","2012","Quebec Election Study 2012","citizenship",
 "qes2012","2012","Quebec Election Study 2012","year_of_birth","agex"
 "qes2012","2012","Quebec Election Study 2012","age","age"
 "qes2012","2012","Quebec Election Study 2012","age_group","age"
 "qes2012","2012","Quebec Election Study 2012","gender","sexe"
 "qes2012","2012","Quebec Election Study 2012","province_territory","q0qc"
 "qes2012","2012","Quebec Election Study 2012","education","scol"
-"qes2012","2012","Quebec Election Study 2012","income",""
+"qes2012","2012","Quebec Election Study 2012","income",
 "qes2012","2012","Quebec Election Study 2012","religion","q103"
 "qes2012","2012","Quebec Election Study 2012","born_canada","q105"
 "qes2012","2012","Quebec Election Study 2012","political_interest","q67"
 "qes2012","2012","Quebec Election Study 2012","ideology","q71"
 "qes2012","2012","Quebec Election Study 2012","turnout","q21"
 "qes2012","2012","Quebec Election Study 2012","vote_choice","q25"
-"qes2012","2012","Quebec Election Study 2012","vote_choice_text",""
+"qes2012","2012","Quebec Election Study 2012","vote_choice_text",
 "qes2012","2012","Quebec Election Study 2012","party_best","q8"
 "qes2012","2012","Quebec Election Study 2012","party_lean","q13"
 "qes2012","2012","Quebec Election Study 2012","sovereignty_support","q52"
 "qes2012","2012","Quebec Election Study 2012","sovereignty","q52"
-"qes2012","2012","Quebec Election Study 2012","federal_pid",""
-"qes2012","2012","Quebec Election Study 2012","provincial_pid",""
+"qes2012","2012","Quebec Election Study 2012","federal_pid",
+"qes2012","2012","Quebec Election Study 2012","provincial_pid",
 "qes2012","2012","Quebec Election Study 2012","survey_weight","pond"
-"qes2012","2012","Quebec Election Study 2012","definibin",""
-"qes2012","2012","Quebec Election Study 2012","ethn1",""
-"qes2012","2012","Quebec Election Study 2012","influperso",""
-"qes2012","2012","Quebec Election Study 2012","luentend",""
+"qes2012","2012","Quebec Election Study 2012","definibin",
+"qes2012","2012","Quebec Election Study 2012","ethn1",
+"qes2012","2012","Quebec Election Study 2012","influperso",
+"qes2012","2012","Quebec Election Study 2012","luentend",
 "qes2012","2012","Quebec Election Study 2012","occup","occup"
-"qes2012","2012","Quebec Election Study 2012","patron",""
-"qes2012","2012","Quebec Election Study 2012","pondam1",""
+"qes2012","2012","Quebec Election Study 2012","patron",
+"qes2012","2012","Quebec Election Study 2012","pondam1",
 "qes2012","2012","Quebec Election Study 2012","issue_family_support","q10"
 "qes2012","2012","Quebec Election Study 2012","info_source_primary","q16"
 "qes2012","2012","Quebec Election Study 2012","info_source_secondary","q17"
 "qes2012","2012","Quebec Election Study 2012","party_best_health","q18"
-"qes2012","2012","Quebec Election Study 2012","identity_self_1",""
-"qes2012","2012","Quebec Election Study 2012","identity_self_2",""
+"qes2012","2012","Quebec Election Study 2012","identity_self_1",
+"qes2012","2012","Quebec Election Study 2012","identity_self_2",
 "qes2012","2012","Quebec Election Study 2012","referendum_intent","q20"
 "qes2012","2012","Quebec Election Study 2012","party_best_anticorruption","q20b"
 "qes2012","2012","Quebec Election Study 2012","elites_out_of_touch","q22"
@@ -434,22 +434,22 @@
 "qes2012","2012","Quebec Election Study 2012","gov_tax_waste","q24"
 "qes2012","2012","Quebec Election Study 2012","issue_education","q3"
 "qes2012","2012","Quebec Election Study 2012","feeling_qs_0_100","q31"
-"qes2012","2012","Quebec Election Study 2012","election_timing_eval",""
+"qes2012","2012","Quebec Election Study 2012","election_timing_eval",
 "qes2012","2012","Quebec Election Study 2012","pr_reform_support","q35"
 "qes2012","2012","Quebec Election Study 2012","democracy_needs_parties","q37"
 "qes2012","2012","Quebec Election Study 2012","parties_all_same","q38"
-"qes2012","2012","Quebec Election Study 2012","feeling_charest_0_100",""
+"qes2012","2012","Quebec Election Study 2012","feeling_charest_0_100",
 "qes2012","2012","Quebec Election Study 2012","qc_difference_view","q4"
-"qes2012","2012","Quebec Election Study 2012","feeling_boisclair_0_100",""
+"qes2012","2012","Quebec Election Study 2012","feeling_boisclair_0_100",
 "qes2012","2012","Quebec Election Study 2012","feeling_dumont_0_100","q41"
 "qes2012","2012","Quebec Election Study 2012","feeling_david_0_100","q42"
 "qes2012","2012","Quebec Election Study 2012","feeling_mckay_0_100","q43"
 "qes2012","2012","Quebec Election Study 2012","leader_most_competent","q44"
 "qes2012","2012","Quebec Election Study 2012","fed_gov_too_interventionist","q45"
-"qes2012","2012","Quebec Election Study 2012","leader_closest_people",""
+"qes2012","2012","Quebec Election Study 2012","leader_closest_people",
 "qes2012","2012","Quebec Election Study 2012","qc_economy_change","q47"
 "qes2012","2012","Quebec Election Study 2012","federalist_sovereignist_self","q48"
-"qes2012","2012","Quebec Election Study 2012","future_outlook",""
+"qes2012","2012","Quebec Election Study 2012","future_outlook",
 "qes2012","2012","Quebec Election Study 2012","privatize_hydro_support","q50"
 "qes2012","2012","Quebec Election Study 2012","private_healthcare_support","q51"
 "qes2012","2012","Quebec Election Study 2012","gov_role_environment","q53"
@@ -459,8 +459,8 @@
 "qes2012","2012","Quebec Election Study 2012","party_best_environment","q58"
 "qes2012","2012","Quebec Election Study 2012","party_best_poverty","q59"
 "qes2012","2012","Quebec Election Study 2012","qc_voice_federal","q60"
-"qes2012","2012","Quebec Election Study 2012","party_best_qc_identity",""
-"qes2012","2012","Quebec Election Study 2012","party_best_caisse_depot",""
+"qes2012","2012","Quebec Election Study 2012","party_best_qc_identity",
+"qes2012","2012","Quebec Election Study 2012","party_best_caisse_depot",
 "qes2012","2012","Quebec Election Study 2012","decision_level_a","q62a"
 "qes2012","2012","Quebec Election Study 2012","decision_level_b","q62b"
 "qes2012","2012","Quebec Election Study 2012","feeling_unions_0_100","q64"
@@ -468,269 +468,269 @@
 "qes2012","2012","Quebec Election Study 2012","same_sex_marriage","q66"
 "qes2012","2012","Quebec Election Study 2012","family_values_priority","q68"
 "qes2012","2012","Quebec Election Study 2012","issue_tax_cuts","q7"
-"qes2012","2012","Quebec Election Study 2012","provincial_pid_item",""
+"qes2012","2012","Quebec Election Study 2012","provincial_pid_item",
 "qes2012","2012","Quebec Election Study 2012","provincial_party_lean","q72"
-"qes2012","2012","Quebec Election Study 2012","party_named",""
+"qes2012","2012","Quebec Election Study 2012","party_named",
 "qes2012","2012","Quebec Election Study 2012","vote_federal_2006","q74"
 "qes2012","2012","Quebec Election Study 2012","employment_status","q79"
 "qes2012","2012","Quebec Election Study 2012","issue_qc_status","q8"
 "qes2012","2012","Quebec Election Study 2012","home_language","q80"
 "qes2012","2012","Quebec Election Study 2012","gov_role_jobs_income","q81"
 "qes2012","2012","Quebec Election Study 2012","issue_poverty","q9"
-"qes2012","2012","Quebec Election Study 2012","vote_reason_1",""
-"qes2012","2012","Quebec Election Study 2012","vote_reason_2",""
-"qes2012","2012","Quebec Election Study 2012","interview_weekday",""
-"qes2012","2012","Quebec Election Study 2012","gov_satisfaction",""
-"qes2012","2012","Quebec Election Study 2012","polling_trust",""
-"qes2012","2012","Quebec Election Study 2012","polls_eval",""
-"qes2012","2012","Quebec Election Study 2012","previous_vote_2003",""
+"qes2012","2012","Quebec Election Study 2012","vote_reason_1",
+"qes2012","2012","Quebec Election Study 2012","vote_reason_2",
+"qes2012","2012","Quebec Election Study 2012","interview_weekday",
+"qes2012","2012","Quebec Election Study 2012","gov_satisfaction",
+"qes2012","2012","Quebec Election Study 2012","polling_trust",
+"qes2012","2012","Quebec Election Study 2012","polls_eval",
+"qes2012","2012","Quebec Election Study 2012","previous_vote_2003",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","respondent_id","quest"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_start",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_end",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_recorded",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_start",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_end",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_recorded",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","language","lmat"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","citizenship",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","year_of_birth",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","citizenship",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","year_of_birth",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","age","age"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","age_group","age_3gr"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","gender","sexe"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","province_territory","reg"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","education",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","income",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","religion",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","born_canada",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","education",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","income",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","religion",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","born_canada",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","political_interest","interetrec"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","ideology",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","ideology",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","turnout","participation"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_choice","voteprov"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_choice_text",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_choice_text",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","party_lean","intvoteprov"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","sovereignty_support","souv_rec"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","sovereignty","souv_rec"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","federal_pid",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","federal_pid",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","survey_weight","pond"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","definibin","definibin"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","ethn1",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","ethn1",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","influperso","influperso"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","luentend","luentend"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","occup",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","occup",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","patron","patron"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","pondam1","pondam1"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_family_support",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","info_source_primary",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","info_source_secondary",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_health",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","identity_self_1",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","identity_self_2",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","referendum_intent",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_anticorruption",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","elites_out_of_touch",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","trust_government",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_tax_waste",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_education",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_qs_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","election_timing_eval",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","pr_reform_support",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","democracy_needs_parties",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","parties_all_same",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_charest_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_difference_view",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_boisclair_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_dumont_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_david_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_mckay_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","leader_most_competent",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","fed_gov_too_interventionist",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","leader_closest_people",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_economy_change",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","federalist_sovereignist_self",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","future_outlook",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","privatize_hydro_support",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","private_healthcare_support",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_role_environment",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","profits_help_poor",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_health_alt",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","powers_for_quebec",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_environment",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_poverty",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_voice_federal",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_qc_identity",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_caisse_depot",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","decision_level_a",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","decision_level_b",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_unions_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_business_0_100",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","same_sex_marriage",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","family_values_priority",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_tax_cuts",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid_item",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_party_lean",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_named",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_federal_2006",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","employment_status",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_qc_status",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","home_language",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_role_jobs_income",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_poverty",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_reason_1",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_reason_2",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_weekday",""
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_satisfaction",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_family_support",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","info_source_primary",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","info_source_secondary",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_health",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","identity_self_1",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","identity_self_2",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","referendum_intent",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_anticorruption",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","elites_out_of_touch",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","trust_government",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_tax_waste",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_education",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_qs_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","election_timing_eval",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","pr_reform_support",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","democracy_needs_parties",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parties_all_same",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_charest_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_difference_view",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_boisclair_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_dumont_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_david_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_mckay_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","leader_most_competent",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","fed_gov_too_interventionist",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","leader_closest_people",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_economy_change",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","federalist_sovereignist_self",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","future_outlook",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","privatize_hydro_support",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","private_healthcare_support",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_role_environment",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","profits_help_poor",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_health_alt",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","powers_for_quebec",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_environment",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_poverty",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","qc_voice_federal",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_qc_identity",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best_caisse_depot",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","decision_level_a",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","decision_level_b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_unions_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","feeling_business_0_100",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","same_sex_marriage",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","family_values_priority",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_tax_cuts",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid_item",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_party_lean",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","party_named",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_federal_2006",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","employment_status",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_qc_status",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","home_language",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_role_jobs_income",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","issue_poverty",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_reason_1",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_reason_2",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_weekday",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gov_satisfaction",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","polling_trust","sefie"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","polls_eval","sondbons"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","previous_vote_2003",""
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","previous_vote_2003",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","respondent_id","QUEST"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_start",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_end",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_recorded",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_start",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_end",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_recorded",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","language","lmat"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","citizenship",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","citizenship",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","year_of_birth","QAGE"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age_group","QAGE"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gender","SEXE"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","province_territory","REG"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","education","scol"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","income","revenu"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","religion",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","born_canada",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","political_interest",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","ideology",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","turnout",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","religion",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","born_canada",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","political_interest",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","ideology",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","turnout",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice","intvoteprov"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice_text",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice_text",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_lean","intvoteprov"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty_support","intvoteref"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty","intvoteref"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federal_pid",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federal_pid",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","survey_weight","XPOND"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","definibin",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","ethn1",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","influperso",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","luentend",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","occup",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","patron",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pondam1",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_family_support",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","info_source_primary",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","info_source_secondary",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_health",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","identity_self_1",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","identity_self_2",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","referendum_intent",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_anticorruption",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","elites_out_of_touch",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","trust_government",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_tax_waste",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_education",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_qs_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","election_timing_eval",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pr_reform_support",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","democracy_needs_parties",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parties_all_same",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_charest_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_difference_view",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_boisclair_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_dumont_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_david_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_mckay_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","leader_most_competent",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","fed_gov_too_interventionist",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","leader_closest_people",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_economy_change",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federalist_sovereignist_self",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","future_outlook",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","privatize_hydro_support",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","private_healthcare_support",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_role_environment",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","profits_help_poor",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_health_alt",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","powers_for_quebec",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_environment",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_poverty",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_voice_federal",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_qc_identity",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_caisse_depot",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","decision_level_a",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","decision_level_b",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_unions_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_business_0_100",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","same_sex_marriage",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","family_values_priority",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_tax_cuts",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid_item",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_party_lean",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_named",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_federal_2006",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","employment_status",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_qc_status",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","home_language",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_role_jobs_income",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_poverty",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_reason_1",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_reason_2",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_weekday",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_satisfaction",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","polling_trust",""
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","polls_eval",""
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","definibin",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","ethn1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","influperso",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","luentend",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","occup",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","patron",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pondam1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_family_support",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","info_source_primary",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","info_source_secondary",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_health",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","identity_self_1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","identity_self_2",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","referendum_intent",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_anticorruption",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","elites_out_of_touch",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","trust_government",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_tax_waste",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_education",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_qs_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","election_timing_eval",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pr_reform_support",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","democracy_needs_parties",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parties_all_same",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_charest_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_difference_view",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_boisclair_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_dumont_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_david_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_mckay_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","leader_most_competent",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","fed_gov_too_interventionist",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","leader_closest_people",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_economy_change",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federalist_sovereignist_self",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","future_outlook",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","privatize_hydro_support",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","private_healthcare_support",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_role_environment",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","profits_help_poor",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_health_alt",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","powers_for_quebec",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_environment",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_poverty",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","qc_voice_federal",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_qc_identity",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best_caisse_depot",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","decision_level_a",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","decision_level_b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_unions_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","feeling_business_0_100",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","same_sex_marriage",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","family_values_priority",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_tax_cuts",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid_item",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_party_lean",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_named",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_federal_2006",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","employment_status",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_qc_status",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","home_language",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_role_jobs_income",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","issue_poverty",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_reason_1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_reason_2",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_weekday",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gov_satisfaction",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","polling_trust",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","polls_eval",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","previous_vote_2003","voteprec"
 "qes2008","2008","Quebec Election Study 2008","respondent_id","seq"
-"qes2008","2008","Quebec Election Study 2008","interview_start",""
-"qes2008","2008","Quebec Election Study 2008","interview_end",""
-"qes2008","2008","Quebec Election Study 2008","interview_recorded",""
+"qes2008","2008","Quebec Election Study 2008","interview_start",
+"qes2008","2008","Quebec Election Study 2008","interview_end",
+"qes2008","2008","Quebec Election Study 2008","interview_recorded",
 "qes2008","2008","Quebec Election Study 2008","language","langu"
-"qes2008","2008","Quebec Election Study 2008","citizenship",""
+"qes2008","2008","Quebec Election Study 2008","citizenship",
 "qes2008","2008","Quebec Election Study 2008","year_of_birth","q75"
 "qes2008","2008","Quebec Election Study 2008","age","q0age"
-"qes2008","2008","Quebec Election Study 2008","age_group",""
+"qes2008","2008","Quebec Election Study 2008","age_group",
 "qes2008","2008","Quebec Election Study 2008","gender","q76"
 "qes2008","2008","Quebec Election Study 2008","province_territory","regio"
 "qes2008","2008","Quebec Election Study 2008","education","q77"
 "qes2008","2008","Quebec Election Study 2008","income","q78"
-"qes2008","2008","Quebec Election Study 2008","religion",""
-"qes2008","2008","Quebec Election Study 2008","born_canada",""
+"qes2008","2008","Quebec Election Study 2008","religion",
+"qes2008","2008","Quebec Election Study 2008","born_canada",
 "qes2008","2008","Quebec Election Study 2008","political_interest","q14"
-"qes2008","2008","Quebec Election Study 2008","ideology",""
+"qes2008","2008","Quebec Election Study 2008","ideology",
 "qes2008","2008","Quebec Election Study 2008","turnout","q11"
 "qes2008","2008","Quebec Election Study 2008","vote_choice","q12a"
-"qes2008","2008","Quebec Election Study 2008","vote_choice_text",""
-"qes2008","2008","Quebec Election Study 2008","party_best",""
+"qes2008","2008","Quebec Election Study 2008","vote_choice_text",
+"qes2008","2008","Quebec Election Study 2008","party_best",
 "qes2008","2008","Quebec Election Study 2008","party_lean","q12b"
 "qes2008","2008","Quebec Election Study 2008","sovereignty_support","q19"
 "qes2008","2008","Quebec Election Study 2008","sovereignty","q19"
-"qes2008","2008","Quebec Election Study 2008","federal_pid",""
-"qes2008","2008","Quebec Election Study 2008","provincial_pid",""
+"qes2008","2008","Quebec Election Study 2008","federal_pid",
+"qes2008","2008","Quebec Election Study 2008","provincial_pid",
 "qes2008","2008","Quebec Election Study 2008","survey_weight","pond"
-"qes2008","2008","Quebec Election Study 2008","definibin",""
+"qes2008","2008","Quebec Election Study 2008","definibin",
 "qes2008","2008","Quebec Election Study 2008","ethn1","ethn1"
-"qes2008","2008","Quebec Election Study 2008","influperso",""
-"qes2008","2008","Quebec Election Study 2008","luentend",""
-"qes2008","2008","Quebec Election Study 2008","occup",""
-"qes2008","2008","Quebec Election Study 2008","patron",""
-"qes2008","2008","Quebec Election Study 2008","pondam1",""
-"qes2008","2008","Quebec Election Study 2008","issue_family_support",""
-"qes2008","2008","Quebec Election Study 2008","info_source_primary",""
-"qes2008","2008","Quebec Election Study 2008","info_source_secondary",""
-"qes2008","2008","Quebec Election Study 2008","party_best_health",""
+"qes2008","2008","Quebec Election Study 2008","influperso",
+"qes2008","2008","Quebec Election Study 2008","luentend",
+"qes2008","2008","Quebec Election Study 2008","occup",
+"qes2008","2008","Quebec Election Study 2008","patron",
+"qes2008","2008","Quebec Election Study 2008","pondam1",
+"qes2008","2008","Quebec Election Study 2008","issue_family_support",
+"qes2008","2008","Quebec Election Study 2008","info_source_primary",
+"qes2008","2008","Quebec Election Study 2008","info_source_secondary",
+"qes2008","2008","Quebec Election Study 2008","party_best_health",
 "qes2008","2008","Quebec Election Study 2008","identity_self_1","q18a"
 "qes2008","2008","Quebec Election Study 2008","identity_self_2","q18b"
 "qes2008","2008","Quebec Election Study 2008","referendum_intent","q20"
-"qes2008","2008","Quebec Election Study 2008","party_best_anticorruption",""
+"qes2008","2008","Quebec Election Study 2008","party_best_anticorruption",
 "qes2008","2008","Quebec Election Study 2008","elites_out_of_touch","q22"
 "qes2008","2008","Quebec Election Study 2008","trust_government","q23"
 "qes2008","2008","Quebec Election Study 2008","gov_tax_waste","q24"
-"qes2008","2008","Quebec Election Study 2008","issue_education",""
-"qes2008","2008","Quebec Election Study 2008","feeling_qs_0_100",""
+"qes2008","2008","Quebec Election Study 2008","issue_education",
+"qes2008","2008","Quebec Election Study 2008","feeling_qs_0_100",
 "qes2008","2008","Quebec Election Study 2008","election_timing_eval","q33"
-"qes2008","2008","Quebec Election Study 2008","pr_reform_support",""
-"qes2008","2008","Quebec Election Study 2008","democracy_needs_parties",""
-"qes2008","2008","Quebec Election Study 2008","parties_all_same",""
+"qes2008","2008","Quebec Election Study 2008","pr_reform_support",
+"qes2008","2008","Quebec Election Study 2008","democracy_needs_parties",
+"qes2008","2008","Quebec Election Study 2008","parties_all_same",
 "qes2008","2008","Quebec Election Study 2008","feeling_charest_0_100","q39"
-"qes2008","2008","Quebec Election Study 2008","qc_difference_view",""
+"qes2008","2008","Quebec Election Study 2008","qc_difference_view",
 "qes2008","2008","Quebec Election Study 2008","feeling_boisclair_0_100","q40"
 "qes2008","2008","Quebec Election Study 2008","feeling_dumont_0_100","q41"
 "qes2008","2008","Quebec Election Study 2008","feeling_david_0_100","q42"
@@ -744,79 +744,79 @@
 "qes2008","2008","Quebec Election Study 2008","privatize_hydro_support","q50"
 "qes2008","2008","Quebec Election Study 2008","private_healthcare_support","q51"
 "qes2008","2008","Quebec Election Study 2008","gov_role_environment","q53"
-"qes2008","2008","Quebec Election Study 2008","profits_help_poor",""
+"qes2008","2008","Quebec Election Study 2008","profits_help_poor",
 "qes2008","2008","Quebec Election Study 2008","party_best_health_alt","q55"
-"qes2008","2008","Quebec Election Study 2008","powers_for_quebec",""
-"qes2008","2008","Quebec Election Study 2008","party_best_environment",""
-"qes2008","2008","Quebec Election Study 2008","party_best_poverty",""
-"qes2008","2008","Quebec Election Study 2008","qc_voice_federal",""
+"qes2008","2008","Quebec Election Study 2008","powers_for_quebec",
+"qes2008","2008","Quebec Election Study 2008","party_best_environment",
+"qes2008","2008","Quebec Election Study 2008","party_best_poverty",
+"qes2008","2008","Quebec Election Study 2008","qc_voice_federal",
 "qes2008","2008","Quebec Election Study 2008","party_best_qc_identity","q61b"
 "qes2008","2008","Quebec Election Study 2008","party_best_caisse_depot","q61d"
-"qes2008","2008","Quebec Election Study 2008","decision_level_a",""
-"qes2008","2008","Quebec Election Study 2008","decision_level_b",""
+"qes2008","2008","Quebec Election Study 2008","decision_level_a",
+"qes2008","2008","Quebec Election Study 2008","decision_level_b",
 "qes2008","2008","Quebec Election Study 2008","feeling_unions_0_100","q64"
 "qes2008","2008","Quebec Election Study 2008","feeling_business_0_100","q65"
 "qes2008","2008","Quebec Election Study 2008","same_sex_marriage","q66"
 "qes2008","2008","Quebec Election Study 2008","family_values_priority","q68"
-"qes2008","2008","Quebec Election Study 2008","issue_tax_cuts",""
+"qes2008","2008","Quebec Election Study 2008","issue_tax_cuts",
 "qes2008","2008","Quebec Election Study 2008","provincial_pid_item","q70"
 "qes2008","2008","Quebec Election Study 2008","provincial_party_lean","q72"
 "qes2008","2008","Quebec Election Study 2008","party_named","q73"
 "qes2008","2008","Quebec Election Study 2008","vote_federal_2006","q74"
 "qes2008","2008","Quebec Election Study 2008","employment_status","q79"
-"qes2008","2008","Quebec Election Study 2008","issue_qc_status",""
+"qes2008","2008","Quebec Election Study 2008","issue_qc_status",
 "qes2008","2008","Quebec Election Study 2008","home_language","q80"
 "qes2008","2008","Quebec Election Study 2008","gov_role_jobs_income","q81"
-"qes2008","2008","Quebec Election Study 2008","issue_poverty",""
-"qes2008","2008","Quebec Election Study 2008","vote_reason_1",""
-"qes2008","2008","Quebec Election Study 2008","vote_reason_2",""
-"qes2008","2008","Quebec Election Study 2008","interview_weekday",""
-"qes2008","2008","Quebec Election Study 2008","gov_satisfaction",""
-"qes2008","2008","Quebec Election Study 2008","polling_trust",""
-"qes2008","2008","Quebec Election Study 2008","polls_eval",""
-"qes2008","2008","Quebec Election Study 2008","previous_vote_2003",""
+"qes2008","2008","Quebec Election Study 2008","issue_poverty",
+"qes2008","2008","Quebec Election Study 2008","vote_reason_1",
+"qes2008","2008","Quebec Election Study 2008","vote_reason_2",
+"qes2008","2008","Quebec Election Study 2008","interview_weekday",
+"qes2008","2008","Quebec Election Study 2008","gov_satisfaction",
+"qes2008","2008","Quebec Election Study 2008","polling_trust",
+"qes2008","2008","Quebec Election Study 2008","polls_eval",
+"qes2008","2008","Quebec Election Study 2008","previous_vote_2003",
 "qes2007","2007","Quebec Election Study 2007","respondent_id","quest"
-"qes2007","2007","Quebec Election Study 2007","interview_start",""
-"qes2007","2007","Quebec Election Study 2007","interview_end",""
-"qes2007","2007","Quebec Election Study 2007","interview_recorded",""
+"qes2007","2007","Quebec Election Study 2007","interview_start",
+"qes2007","2007","Quebec Election Study 2007","interview_end",
+"qes2007","2007","Quebec Election Study 2007","interview_recorded",
 "qes2007","2007","Quebec Election Study 2007","language","langu"
-"qes2007","2007","Quebec Election Study 2007","citizenship",""
+"qes2007","2007","Quebec Election Study 2007","citizenship",
 "qes2007","2007","Quebec Election Study 2007","year_of_birth","q75"
-"qes2007","2007","Quebec Election Study 2007","age",""
-"qes2007","2007","Quebec Election Study 2007","age_group",""
+"qes2007","2007","Quebec Election Study 2007","age",
+"qes2007","2007","Quebec Election Study 2007","age_group",
 "qes2007","2007","Quebec Election Study 2007","gender","q76"
-"qes2007","2007","Quebec Election Study 2007","province_territory",""
+"qes2007","2007","Quebec Election Study 2007","province_territory",
 "qes2007","2007","Quebec Election Study 2007","education","q77"
 "qes2007","2007","Quebec Election Study 2007","income","q78"
-"qes2007","2007","Quebec Election Study 2007","religion",""
-"qes2007","2007","Quebec Election Study 2007","born_canada",""
+"qes2007","2007","Quebec Election Study 2007","religion",
+"qes2007","2007","Quebec Election Study 2007","born_canada",
 "qes2007","2007","Quebec Election Study 2007","political_interest","q15"
-"qes2007","2007","Quebec Election Study 2007","ideology",""
+"qes2007","2007","Quebec Election Study 2007","ideology",
 "qes2007","2007","Quebec Election Study 2007","turnout","q11"
 "qes2007","2007","Quebec Election Study 2007","vote_choice","q12"
-"qes2007","2007","Quebec Election Study 2007","vote_choice_text",""
+"qes2007","2007","Quebec Election Study 2007","vote_choice_text",
 "qes2007","2007","Quebec Election Study 2007","party_best","q8"
 "qes2007","2007","Quebec Election Study 2007","party_lean","q13"
 "qes2007","2007","Quebec Election Study 2007","sovereignty_support","q19"
 "qes2007","2007","Quebec Election Study 2007","sovereignty","q19"
-"qes2007","2007","Quebec Election Study 2007","federal_pid",""
-"qes2007","2007","Quebec Election Study 2007","provincial_pid",""
+"qes2007","2007","Quebec Election Study 2007","federal_pid",
+"qes2007","2007","Quebec Election Study 2007","provincial_pid",
 "qes2007","2007","Quebec Election Study 2007","survey_weight","pond"
-"qes2007","2007","Quebec Election Study 2007","definibin",""
+"qes2007","2007","Quebec Election Study 2007","definibin",
 "qes2007","2007","Quebec Election Study 2007","ethn1","ethn1"
-"qes2007","2007","Quebec Election Study 2007","influperso",""
-"qes2007","2007","Quebec Election Study 2007","luentend",""
-"qes2007","2007","Quebec Election Study 2007","occup",""
-"qes2007","2007","Quebec Election Study 2007","patron",""
-"qes2007","2007","Quebec Election Study 2007","pondam1",""
+"qes2007","2007","Quebec Election Study 2007","influperso",
+"qes2007","2007","Quebec Election Study 2007","luentend",
+"qes2007","2007","Quebec Election Study 2007","occup",
+"qes2007","2007","Quebec Election Study 2007","patron",
+"qes2007","2007","Quebec Election Study 2007","pondam1",
 "qes2007","2007","Quebec Election Study 2007","issue_family_support","q10"
 "qes2007","2007","Quebec Election Study 2007","info_source_primary","q16"
 "qes2007","2007","Quebec Election Study 2007","info_source_secondary","q17"
-"qes2007","2007","Quebec Election Study 2007","party_best_health",""
+"qes2007","2007","Quebec Election Study 2007","party_best_health",
 "qes2007","2007","Quebec Election Study 2007","identity_self_1","q18a"
 "qes2007","2007","Quebec Election Study 2007","identity_self_2","q18b"
 "qes2007","2007","Quebec Election Study 2007","referendum_intent","q20"
-"qes2007","2007","Quebec Election Study 2007","party_best_anticorruption",""
+"qes2007","2007","Quebec Election Study 2007","party_best_anticorruption",
 "qes2007","2007","Quebec Election Study 2007","elites_out_of_touch","q22"
 "qes2007","2007","Quebec Election Study 2007","trust_government","q23"
 "qes2007","2007","Quebec Election Study 2007","gov_tax_waste","q24"
@@ -849,8 +849,8 @@
 "qes2007","2007","Quebec Election Study 2007","qc_voice_federal","q60"
 "qes2007","2007","Quebec Election Study 2007","party_best_qc_identity","q61b"
 "qes2007","2007","Quebec Election Study 2007","party_best_caisse_depot","q61d"
-"qes2007","2007","Quebec Election Study 2007","decision_level_a",""
-"qes2007","2007","Quebec Election Study 2007","decision_level_b",""
+"qes2007","2007","Quebec Election Study 2007","decision_level_a",
+"qes2007","2007","Quebec Election Study 2007","decision_level_b",
 "qes2007","2007","Quebec Election Study 2007","feeling_unions_0_100","q64"
 "qes2007","2007","Quebec Election Study 2007","feeling_business_0_100","q65"
 "qes2007","2007","Quebec Election Study 2007","same_sex_marriage","q66"
@@ -865,204 +865,204 @@
 "qes2007","2007","Quebec Election Study 2007","home_language","q80"
 "qes2007","2007","Quebec Election Study 2007","gov_role_jobs_income","q81"
 "qes2007","2007","Quebec Election Study 2007","issue_poverty","q9"
-"qes2007","2007","Quebec Election Study 2007","vote_reason_1",""
-"qes2007","2007","Quebec Election Study 2007","vote_reason_2",""
-"qes2007","2007","Quebec Election Study 2007","interview_weekday",""
-"qes2007","2007","Quebec Election Study 2007","gov_satisfaction",""
-"qes2007","2007","Quebec Election Study 2007","polling_trust",""
-"qes2007","2007","Quebec Election Study 2007","polls_eval",""
-"qes2007","2007","Quebec Election Study 2007","previous_vote_2003",""
+"qes2007","2007","Quebec Election Study 2007","vote_reason_1",
+"qes2007","2007","Quebec Election Study 2007","vote_reason_2",
+"qes2007","2007","Quebec Election Study 2007","interview_weekday",
+"qes2007","2007","Quebec Election Study 2007","gov_satisfaction",
+"qes2007","2007","Quebec Election Study 2007","polling_trust",
+"qes2007","2007","Quebec Election Study 2007","polls_eval",
+"qes2007","2007","Quebec Election Study 2007","previous_vote_2003",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","respondent_id","quest"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_start",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_end",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_recorded",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_start",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_end",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_recorded",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","language","lmat"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","citizenship",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","year_of_birth",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","citizenship",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","year_of_birth",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","age","age"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","age_group","age3"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","gender","sexe"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","province_territory","reg"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","education","scol"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","income","revenu"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","religion",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","born_canada",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","religion",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","born_canada",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","political_interest","interet"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","ideology",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","ideology",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","turnout","avote"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_choice","vote"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_choice_text",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_choice_text",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","party_lean","intvote"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","sovereignty_support","intref"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","sovereignty","intref"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","federal_pid",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","federal_pid",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","survey_weight","pond"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","definibin","definibin"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","ethn1",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","ethn1",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","influperso","influperso"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","luentend","luentend"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","occup","occup"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","patron",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","patron",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","pondam1","pondam1"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_family_support",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","info_source_primary",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","info_source_secondary",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_health",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","identity_self_1",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","identity_self_2",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","referendum_intent",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_anticorruption",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","elites_out_of_touch",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","trust_government",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_tax_waste",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_education",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_qs_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","election_timing_eval",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","pr_reform_support",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","democracy_needs_parties",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","parties_all_same",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_charest_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_difference_view",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_boisclair_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_dumont_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_david_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_mckay_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","leader_most_competent",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","fed_gov_too_interventionist",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","leader_closest_people",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_economy_change",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","federalist_sovereignist_self",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","future_outlook",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","privatize_hydro_support",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","private_healthcare_support",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_role_environment",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","profits_help_poor",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_health_alt",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","powers_for_quebec",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_environment",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_poverty",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_voice_federal",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_qc_identity",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_caisse_depot",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","decision_level_a",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","decision_level_b",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_unions_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_business_0_100",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","same_sex_marriage",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","family_values_priority",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_tax_cuts",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid_item",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_party_lean",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_named",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_federal_2006",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","employment_status",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_qc_status",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","home_language",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_role_jobs_income",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_poverty",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_reason_1",""
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_reason_2",""
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_family_support",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","info_source_primary",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","info_source_secondary",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_health",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","identity_self_1",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","identity_self_2",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","referendum_intent",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_anticorruption",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","elites_out_of_touch",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","trust_government",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_tax_waste",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_education",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_qs_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","election_timing_eval",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","pr_reform_support",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","democracy_needs_parties",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parties_all_same",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_charest_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_difference_view",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_boisclair_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_dumont_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_david_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_mckay_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","leader_most_competent",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","fed_gov_too_interventionist",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","leader_closest_people",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_economy_change",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","federalist_sovereignist_self",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","future_outlook",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","privatize_hydro_support",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","private_healthcare_support",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_role_environment",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","profits_help_poor",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_health_alt",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","powers_for_quebec",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_environment",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_poverty",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","qc_voice_federal",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_qc_identity",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best_caisse_depot",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","decision_level_a",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","decision_level_b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_unions_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","feeling_business_0_100",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","same_sex_marriage",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","family_values_priority",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_tax_cuts",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid_item",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_party_lean",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","party_named",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_federal_2006",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","employment_status",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_qc_status",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","home_language",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_role_jobs_income",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","issue_poverty",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_reason_1",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","vote_reason_2",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_weekday","s_jse"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","gov_satisfaction","satisf"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","polling_trust","sefie"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","polls_eval","sondbons"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","previous_vote_2003","voteprec"
 "qes1998","1998","Quebec Elections 1998","respondent_id","quetr"
-"qes1998","1998","Quebec Elections 1998","interview_start",""
-"qes1998","1998","Quebec Elections 1998","interview_end",""
-"qes1998","1998","Quebec Elections 1998","interview_recorded",""
-"qes1998","1998","Quebec Elections 1998","language",""
-"qes1998","1998","Quebec Elections 1998","citizenship",""
-"qes1998","1998","Quebec Elections 1998","year_of_birth",""
+"qes1998","1998","Quebec Elections 1998","interview_start",
+"qes1998","1998","Quebec Elections 1998","interview_end",
+"qes1998","1998","Quebec Elections 1998","interview_recorded",
+"qes1998","1998","Quebec Elections 1998","language",
+"qes1998","1998","Quebec Elections 1998","citizenship",
+"qes1998","1998","Quebec Elections 1998","year_of_birth",
 "qes1998","1998","Quebec Elections 1998","age","age"
 "qes1998","1998","Quebec Elections 1998","age_group","age"
 "qes1998","1998","Quebec Elections 1998","gender","sexe_post"
-"qes1998","1998","Quebec Elections 1998","province_territory",""
+"qes1998","1998","Quebec Elections 1998","province_territory",
 "qes1998","1998","Quebec Elections 1998","education","scol"
-"qes1998","1998","Quebec Elections 1998","income",""
-"qes1998","1998","Quebec Elections 1998","religion",""
-"qes1998","1998","Quebec Elections 1998","born_canada",""
-"qes1998","1998","Quebec Elections 1998","political_interest",""
-"qes1998","1998","Quebec Elections 1998","ideology",""
+"qes1998","1998","Quebec Elections 1998","income",
+"qes1998","1998","Quebec Elections 1998","religion",
+"qes1998","1998","Quebec Elections 1998","born_canada",
+"qes1998","1998","Quebec Elections 1998","political_interest",
+"qes1998","1998","Quebec Elections 1998","ideology",
 "qes1998","1998","Quebec Elections 1998","turnout","q1post"
 "qes1998","1998","Quebec Elections 1998","vote_choice","intvote"
-"qes1998","1998","Quebec Elections 1998","vote_choice_text",""
-"qes1998","1998","Quebec Elections 1998","party_best",""
-"qes1998","1998","Quebec Elections 1998","party_lean",""
+"qes1998","1998","Quebec Elections 1998","vote_choice_text",
+"qes1998","1998","Quebec Elections 1998","party_best",
+"qes1998","1998","Quebec Elections 1998","party_lean",
 "qes1998","1998","Quebec Elections 1998","sovereignty_support","voteref"
 "qes1998","1998","Quebec Elections 1998","sovereignty","voteref"
-"qes1998","1998","Quebec Elections 1998","federal_pid",""
-"qes1998","1998","Quebec Elections 1998","provincial_pid",""
+"qes1998","1998","Quebec Elections 1998","federal_pid",
+"qes1998","1998","Quebec Elections 1998","provincial_pid",
 "qes1998","1998","Quebec Elections 1998","survey_weight","ponderc"
-"qes1998","1998","Quebec Elections 1998","definibin",""
-"qes1998","1998","Quebec Elections 1998","ethn1",""
-"qes1998","1998","Quebec Elections 1998","influperso",""
-"qes1998","1998","Quebec Elections 1998","luentend",""
+"qes1998","1998","Quebec Elections 1998","definibin",
+"qes1998","1998","Quebec Elections 1998","ethn1",
+"qes1998","1998","Quebec Elections 1998","influperso",
+"qes1998","1998","Quebec Elections 1998","luentend",
 "qes1998","1998","Quebec Elections 1998","occup","occup"
-"qes1998","1998","Quebec Elections 1998","patron",""
-"qes1998","1998","Quebec Elections 1998","pondam1",""
-"qes1998","1998","Quebec Elections 1998","issue_family_support",""
-"qes1998","1998","Quebec Elections 1998","info_source_primary",""
-"qes1998","1998","Quebec Elections 1998","info_source_secondary",""
-"qes1998","1998","Quebec Elections 1998","party_best_health",""
-"qes1998","1998","Quebec Elections 1998","identity_self_1",""
-"qes1998","1998","Quebec Elections 1998","identity_self_2",""
-"qes1998","1998","Quebec Elections 1998","referendum_intent",""
-"qes1998","1998","Quebec Elections 1998","party_best_anticorruption",""
-"qes1998","1998","Quebec Elections 1998","elites_out_of_touch",""
-"qes1998","1998","Quebec Elections 1998","trust_government",""
-"qes1998","1998","Quebec Elections 1998","gov_tax_waste",""
-"qes1998","1998","Quebec Elections 1998","issue_education",""
-"qes1998","1998","Quebec Elections 1998","feeling_qs_0_100",""
-"qes1998","1998","Quebec Elections 1998","election_timing_eval",""
-"qes1998","1998","Quebec Elections 1998","pr_reform_support",""
-"qes1998","1998","Quebec Elections 1998","democracy_needs_parties",""
-"qes1998","1998","Quebec Elections 1998","parties_all_same",""
-"qes1998","1998","Quebec Elections 1998","feeling_charest_0_100",""
-"qes1998","1998","Quebec Elections 1998","qc_difference_view",""
-"qes1998","1998","Quebec Elections 1998","feeling_boisclair_0_100",""
-"qes1998","1998","Quebec Elections 1998","feeling_dumont_0_100",""
-"qes1998","1998","Quebec Elections 1998","feeling_david_0_100",""
-"qes1998","1998","Quebec Elections 1998","feeling_mckay_0_100",""
-"qes1998","1998","Quebec Elections 1998","leader_most_competent",""
-"qes1998","1998","Quebec Elections 1998","fed_gov_too_interventionist",""
-"qes1998","1998","Quebec Elections 1998","leader_closest_people",""
-"qes1998","1998","Quebec Elections 1998","qc_economy_change",""
-"qes1998","1998","Quebec Elections 1998","federalist_sovereignist_self",""
-"qes1998","1998","Quebec Elections 1998","future_outlook",""
-"qes1998","1998","Quebec Elections 1998","privatize_hydro_support",""
-"qes1998","1998","Quebec Elections 1998","private_healthcare_support",""
-"qes1998","1998","Quebec Elections 1998","gov_role_environment",""
-"qes1998","1998","Quebec Elections 1998","profits_help_poor",""
-"qes1998","1998","Quebec Elections 1998","party_best_health_alt",""
-"qes1998","1998","Quebec Elections 1998","powers_for_quebec",""
-"qes1998","1998","Quebec Elections 1998","party_best_environment",""
-"qes1998","1998","Quebec Elections 1998","party_best_poverty",""
-"qes1998","1998","Quebec Elections 1998","qc_voice_federal",""
-"qes1998","1998","Quebec Elections 1998","party_best_qc_identity",""
-"qes1998","1998","Quebec Elections 1998","party_best_caisse_depot",""
-"qes1998","1998","Quebec Elections 1998","decision_level_a",""
-"qes1998","1998","Quebec Elections 1998","decision_level_b",""
-"qes1998","1998","Quebec Elections 1998","feeling_unions_0_100",""
-"qes1998","1998","Quebec Elections 1998","feeling_business_0_100",""
-"qes1998","1998","Quebec Elections 1998","same_sex_marriage",""
-"qes1998","1998","Quebec Elections 1998","family_values_priority",""
-"qes1998","1998","Quebec Elections 1998","issue_tax_cuts",""
-"qes1998","1998","Quebec Elections 1998","provincial_pid_item",""
-"qes1998","1998","Quebec Elections 1998","provincial_party_lean",""
-"qes1998","1998","Quebec Elections 1998","party_named",""
-"qes1998","1998","Quebec Elections 1998","vote_federal_2006",""
-"qes1998","1998","Quebec Elections 1998","employment_status",""
-"qes1998","1998","Quebec Elections 1998","issue_qc_status",""
-"qes1998","1998","Quebec Elections 1998","home_language",""
-"qes1998","1998","Quebec Elections 1998","gov_role_jobs_income",""
-"qes1998","1998","Quebec Elections 1998","issue_poverty",""
+"qes1998","1998","Quebec Elections 1998","patron",
+"qes1998","1998","Quebec Elections 1998","pondam1",
+"qes1998","1998","Quebec Elections 1998","issue_family_support",
+"qes1998","1998","Quebec Elections 1998","info_source_primary",
+"qes1998","1998","Quebec Elections 1998","info_source_secondary",
+"qes1998","1998","Quebec Elections 1998","party_best_health",
+"qes1998","1998","Quebec Elections 1998","identity_self_1",
+"qes1998","1998","Quebec Elections 1998","identity_self_2",
+"qes1998","1998","Quebec Elections 1998","referendum_intent",
+"qes1998","1998","Quebec Elections 1998","party_best_anticorruption",
+"qes1998","1998","Quebec Elections 1998","elites_out_of_touch",
+"qes1998","1998","Quebec Elections 1998","trust_government",
+"qes1998","1998","Quebec Elections 1998","gov_tax_waste",
+"qes1998","1998","Quebec Elections 1998","issue_education",
+"qes1998","1998","Quebec Elections 1998","feeling_qs_0_100",
+"qes1998","1998","Quebec Elections 1998","election_timing_eval",
+"qes1998","1998","Quebec Elections 1998","pr_reform_support",
+"qes1998","1998","Quebec Elections 1998","democracy_needs_parties",
+"qes1998","1998","Quebec Elections 1998","parties_all_same",
+"qes1998","1998","Quebec Elections 1998","feeling_charest_0_100",
+"qes1998","1998","Quebec Elections 1998","qc_difference_view",
+"qes1998","1998","Quebec Elections 1998","feeling_boisclair_0_100",
+"qes1998","1998","Quebec Elections 1998","feeling_dumont_0_100",
+"qes1998","1998","Quebec Elections 1998","feeling_david_0_100",
+"qes1998","1998","Quebec Elections 1998","feeling_mckay_0_100",
+"qes1998","1998","Quebec Elections 1998","leader_most_competent",
+"qes1998","1998","Quebec Elections 1998","fed_gov_too_interventionist",
+"qes1998","1998","Quebec Elections 1998","leader_closest_people",
+"qes1998","1998","Quebec Elections 1998","qc_economy_change",
+"qes1998","1998","Quebec Elections 1998","federalist_sovereignist_self",
+"qes1998","1998","Quebec Elections 1998","future_outlook",
+"qes1998","1998","Quebec Elections 1998","privatize_hydro_support",
+"qes1998","1998","Quebec Elections 1998","private_healthcare_support",
+"qes1998","1998","Quebec Elections 1998","gov_role_environment",
+"qes1998","1998","Quebec Elections 1998","profits_help_poor",
+"qes1998","1998","Quebec Elections 1998","party_best_health_alt",
+"qes1998","1998","Quebec Elections 1998","powers_for_quebec",
+"qes1998","1998","Quebec Elections 1998","party_best_environment",
+"qes1998","1998","Quebec Elections 1998","party_best_poverty",
+"qes1998","1998","Quebec Elections 1998","qc_voice_federal",
+"qes1998","1998","Quebec Elections 1998","party_best_qc_identity",
+"qes1998","1998","Quebec Elections 1998","party_best_caisse_depot",
+"qes1998","1998","Quebec Elections 1998","decision_level_a",
+"qes1998","1998","Quebec Elections 1998","decision_level_b",
+"qes1998","1998","Quebec Elections 1998","feeling_unions_0_100",
+"qes1998","1998","Quebec Elections 1998","feeling_business_0_100",
+"qes1998","1998","Quebec Elections 1998","same_sex_marriage",
+"qes1998","1998","Quebec Elections 1998","family_values_priority",
+"qes1998","1998","Quebec Elections 1998","issue_tax_cuts",
+"qes1998","1998","Quebec Elections 1998","provincial_pid_item",
+"qes1998","1998","Quebec Elections 1998","provincial_party_lean",
+"qes1998","1998","Quebec Elections 1998","party_named",
+"qes1998","1998","Quebec Elections 1998","vote_federal_2006",
+"qes1998","1998","Quebec Elections 1998","employment_status",
+"qes1998","1998","Quebec Elections 1998","issue_qc_status",
+"qes1998","1998","Quebec Elections 1998","home_language",
+"qes1998","1998","Quebec Elections 1998","gov_role_jobs_income",
+"qes1998","1998","Quebec Elections 1998","issue_poverty",
 "qes1998","1998","Quebec Elections 1998","vote_reason_1","raison1"
 "qes1998","1998","Quebec Elections 1998","vote_reason_2","raison2"
 "qes1998","1998","Quebec Elections 1998","interview_weekday","s_jse"
 "qes1998","1998","Quebec Elections 1998","gov_satisfaction","satisf"
-"qes1998","1998","Quebec Elections 1998","polling_trust",""
-"qes1998","1998","Quebec Elections 1998","polls_eval",""
-"qes1998","1998","Quebec Elections 1998","previous_vote_2003",""
+"qes1998","1998","Quebec Elections 1998","polling_trust",
+"qes1998","1998","Quebec Elections 1998","polls_eval",
+"qes1998","1998","Quebec Elections 1998","previous_vote_2003",

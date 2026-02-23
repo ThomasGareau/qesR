@@ -87,9 +87,7 @@ knitr::kable(sov)
 
 </details>
 
-## Load merged data
-
-```{r}
+```{r, include = FALSE}
 master_paths <- c("qes_master.csv", "../qes_master.csv")
 master_path <- master_paths[file.exists(master_paths)][1]
 if (is.na(master_path) || !nzchar(master_path)) {
@@ -121,11 +119,6 @@ master$period_order <- ifelse(
 if (!("sovereignty_support" %in% names(master))) {
   master$sovereignty_support <- NA_real_
 }
-```
-
-## Dedicated sovereignty question
-
-```{r}
 master <- master %>%
   mutate(sovereignty_final = suppressWarnings(as.numeric(sovereignty_support)))
 
@@ -157,6 +150,8 @@ sov <- sov %>% arrange(period_order, study_period)
 periods <- sov$study_period
 sov$period_index <- seq_len(nrow(sov))
 ```
+
+The estimates below use the dedicated sovereignty question harmonized across study periods.
 
 ## Table 1: sovereignty support by study period
 
@@ -216,6 +211,6 @@ ggplot(plot_sov, aes(x = period_index, y = support_share)) +
 ## Notes
 
 - The sovereignty trend uses the dedicated sovereignty item from each study.
-- The pooled `qes_crop_2007_2010` study is included as period `2007-2010`.
+- The `qes_crop_2007_2010` study is split into 2007, 2008, 2009, and 2010 using its collection-wave date variable.
 - Confidence intervals are binomial 95% intervals using normal approximation.
 - `n_with_measure` in the table shows where coverage is thinner.
