@@ -1,9 +1,9 @@
 # Exemple de cas d'usage : évolution des attitudes liées à la souveraineté
 
-Cette page utilise le fichier fusionne pour estimer l’appui a la
-souverainete dans le temps.
+Cette page utilise le fichier fusionné pour estimer l’appui à la
+souveraineté dans le temps.
 
-Afficher le code utilise dans cette page
+Afficher le code utilisé dans cette page
 
 ``` r
 library(dplyr)
@@ -64,36 +64,36 @@ knitr::kable(sov)
 ```
 
 Les estimations ci-dessous utilisent la question directe sur la
-souverainete harmonisee entre les periodes.
+souveraineté harmonisée entre les périodes.
 
-## Tableau 1 : appui a la souverainete par periode d’etude
+## Tableau 1 : appui à la souveraineté par période d’étude
 
-| Periode d’etude | N repondants | N avec item souverainete | Appui a la souverainete (%) | IC 95% (%)  |
+| Période d’étude | N répondants | N avec item souveraineté | Appui à la souveraineté (%) | IC 95 % (%) |
 |:----------------|-------------:|-------------------------:|----------------------------:|:------------|
-| 1998            |         1483 |                      381 |                        43.3 | 38.3 a 48.3 |
-| 2007            |         9244 |                     8207 |                        40.1 | 39.0 a 41.1 |
-| 2008            |        11162 |                    10379 |                        40.1 | 39.2 a 41.0 |
-| 2009            |         8008 |                     7455 |                        39.3 | 38.2 a 40.4 |
-| 2010            |         1000 |                      923 |                        39.9 | 36.7 a 43.0 |
-| 2012            |         2349 |                     2066 |                        40.1 | 38.0 a 42.2 |
-| 2014            |         1517 |                     1353 |                        34.1 | 31.6 a 36.7 |
-| 2018            |         4322 |                     3338 |                        33.6 | 32.0 a 35.2 |
-| 2022            |         1521 |                     1284 |                        36.4 | 33.7 a 39.0 |
+| 1998            |         1483 |                      381 |                        43.3 | 38.3 à 48.3 |
+| 2007            |         9244 |                     8207 |                        40.1 | 39.0 à 41.1 |
+| 2008            |        11162 |                    10379 |                        40.1 | 39.2 à 41.0 |
+| 2009            |         8008 |                     7455 |                        39.3 | 38.2 à 40.4 |
+| 2010            |         1000 |                      923 |                        39.9 | 36.7 à 43.0 |
+| 2012            |         2349 |                     2066 |                        40.1 | 38.0 à 42.2 |
+| 2014            |         1517 |                     1353 |                        34.1 | 31.6 à 36.7 |
+| 2018            |         4322 |                     3338 |                        33.6 | 32.0 à 35.2 |
+| 2022            |         1521 |                     1284 |                        36.4 | 33.7 à 39.0 |
 
-Appui a la souverainete par periode d’etude
+Appui à la souveraineté par période d’étude
 
-## Figure 1 : tendance de l’appui a la souverainete
+## Figure 1 : tendance de l’appui à la souveraineté
 
-![Graphique de l'evolution de l'appui a la souverainete par periode
-d'etude.](fr-analyse-souverainete_files/figure-html/unnamed-chunk-5-1.png)
+![Graphique de l'évolution de l'appui à la souveraineté par période
+d'étude.](fr-analyse-souverainete_files/figure-html/unnamed-chunk-5-1.png)
 
 ## Notes
 
-- La tendance utilise la question directe sur la souverainete de chaque
-  etude.
-- Le jeu `qes_crop_2007_2010` est ventile en 2007, 2008, 2009 et 2010 a
+- La tendance utilise la question directe sur la souveraineté de chaque
+  étude.
+- Le jeu `qes_crop_2007_2010` est ventilé en 2007, 2008, 2009 et 2010 à
   partir de sa variable de date de collecte.
 - Les intervalles de confiance sont des IC95 binomiaux (approximation
   normale).
-- La colonne `N avec item souverainete` indique la couverture disponible
-  selon la periode.
+- La colonne `N avec item souveraineté` indique la couverture disponible
+  selon la période.

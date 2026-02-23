@@ -72,7 +72,7 @@ table_vote <- vote_parti %>%
   knitr::kable(
   table_vote %>%
     transmute(
-      `Annee d'etude` = annee,
+      `Année d'étude` = annee,
       `N avec item choix de vote` = n_avec_choix_vote,
       `CAQ/ADQ (%)` = round(caq_adq, 1),
       `PLQ (%)` = round(plq, 1),
@@ -95,9 +95,9 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
   theme(panel.grid.minor = element_blank(), axis.text.x = element_text(size = 9))
 ```
 
-## Tableau 1 : parts de choix de vote par annee
+## Tableau 1 : parts de choix de vote par année
 
-| Annee d’etude | N avec item choix de vote | CAQ/ADQ (%) | PLQ (%) | PQ (%) | QS (%) | PCQ (%) |
+| Année d’étude | N avec item choix de vote | CAQ/ADQ (%) | PLQ (%) | PQ (%) | QS (%) | PCQ (%) |
 |--------------:|--------------------------:|------------:|--------:|-------:|-------:|--------:|
 |          1998 |                      1048 |        26.4 |    31.0 |   42.6 |    0.0 |     0.0 |
 |          2007 |                      6852 |        33.6 |    27.7 |   33.9 |    4.9 |     0.0 |
@@ -109,13 +109,13 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 |          2018 |                      2582 |        37.3 |    26.7 |   19.4 |   16.6 |     0.0 |
 |          2022 |                      1196 |        37.6 |    10.9 |   13.7 |   22.0 |    15.8 |
 
-Parts de choix de vote des principaux partis par annee
+Parts de choix de vote des principaux partis par année
 
 ## Figure 1 : tendance du choix de vote
 
 ![Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ,
 QS et le PCQ selon
-l'annee.](fr-analyse-choix-vote_files/figure-html/unnamed-chunk-5-1.png)
+l'année.](fr-analyse-choix-vote_files/figure-html/unnamed-chunk-5-1.png)
 
 ## Notes
 
