@@ -3,6 +3,23 @@
 This page uses the merged file to estimate sovereignty support over
 time.
 
+Show code used in this page
+
+``` r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
+master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
+
+# Summarize yearly support, confidence intervals, then plot.
+```
+
 ## Load merged data
 
 ## Dedicated sovereignty question

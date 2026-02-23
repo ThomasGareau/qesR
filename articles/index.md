@@ -20,7 +20,7 @@
   harmonisées](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
 - [Citations des
   études](https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.md):
-- [Analyse : évolution des attitudes liées à la
+- [Cas d'usage : évolution des attitudes liées à la
   souveraineté](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md):
 - [Analyse : statistiques
   descriptives](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md):

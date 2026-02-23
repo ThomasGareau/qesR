@@ -88,7 +88,6 @@
 <li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
 <li class="active nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
@@ -115,75 +114,116 @@
 
     
     
-<div class="section level2">
+<details><summary>
+Show code used in this page
+</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>assign_global <span class="op">=</span> <span class="cn">FALSE</span>, strict <span class="op">=</span> <span class="cn">FALSE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    vote_choice_raw <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    vote_choice_party <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>      <span class="va">vote_choice_raw</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"ADQ"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"CAQ/ADQ"</span>,</span>
+<span>      <span class="va">vote_choice_raw</span> <span class="op">==</span> <span class="st">"PLQ"</span> <span class="op">~</span> <span class="st">"PLQ"</span>,</span>
+<span>      <span class="va">vote_choice_raw</span> <span class="op">==</span> <span class="st">"PQ"</span> <span class="op">~</span> <span class="st">"PQ"</span>,</span>
+<span>      <span class="va">vote_choice_raw</span> <span class="op">==</span> <span class="st">"QS"</span> <span class="op">~</span> <span class="st">"QS"</span>,</span>
+<span>      <span class="va">vote_choice_raw</span> <span class="op">==</span> <span class="st">"PCQ"</span> <span class="op">~</span> <span class="st">"PCQ"</span>,</span>
+<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="cn">NA_character_</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compute yearly shares and confidence intervals, then plot.</span></span></code></pre></div>
+</details><div class="section level2">
 <h2 id="table-1-major-party-vote-choice-shares-by-year">Table 1: major-party vote-choice shares by year<a class="anchor" aria-label="anchor" href="#table-1-major-party-vote-choice-shares-by-year"></a>
 </h2>
 <table class="table">
-<caption>Major-party vote-choice shares by year</caption>
+<caption>Major-party vote-choice shares by year (including
+PCQ)</caption>
+<colgroup>
+<col width="14%">
+<col width="31%">
+<col width="15%">
+<col width="10%">
+<col width="9%">
+<col width="9%">
+<col width="10%">
+</colgroup>
 <thead><tr class="header">
 <th align="right">Study year</th>
 <th align="right">N with vote-choice item</th>
-<th align="right">CAQ (%)</th>
+<th align="right">CAQ/ADQ (%)</th>
 <th align="right">PLQ (%)</th>
 <th align="right">PQ (%)</th>
 <th align="right">QS (%)</th>
+<th align="right">PCQ (%)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1998</td>
-<td align="right">1483</td>
+<td align="right">1048</td>
+<td align="right">26.4</td>
+<td align="right">31.0</td>
+<td align="right">42.6</td>
 <td align="right">0.0</td>
-<td align="right">21.9</td>
-<td align="right">30.1</td>
 <td align="right">0.0</td>
 </tr>
 <tr class="even">
 <td align="right">2007</td>
-<td align="right">4052</td>
+<td align="right">2823</td>
+<td align="right">35.0</td>
+<td align="right">28.3</td>
+<td align="right">32.3</td>
+<td align="right">4.4</td>
 <td align="right">0.0</td>
-<td align="right">19.7</td>
-<td align="right">22.5</td>
-<td align="right">3.0</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
-<td align="right">986</td>
+<td align="right">870</td>
+<td align="right">16.6</td>
+<td align="right">40.5</td>
+<td align="right">38.6</td>
+<td align="right">4.4</td>
 <td align="right">0.0</td>
-<td align="right">35.7</td>
-<td align="right">34.1</td>
-<td align="right">3.9</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
-<td align="right">2213</td>
-<td align="right">21.5</td>
-<td align="right">20.1</td>
-<td align="right">34.0</td>
-<td align="right">6.4</td>
+<td align="right">1813</td>
+<td align="right">26.2</td>
+<td align="right">24.5</td>
+<td align="right">41.5</td>
+<td align="right">7.8</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
 <td align="right">2014</td>
-<td align="right">1352</td>
-<td align="right">20.5</td>
-<td align="right">36.2</td>
-<td align="right">25.4</td>
-<td align="right">9.7</td>
+<td align="right">1241</td>
+<td align="right">22.3</td>
+<td align="right">39.4</td>
+<td align="right">27.7</td>
+<td align="right">10.6</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
-<td align="right">3049</td>
-<td align="right">31.6</td>
-<td align="right">22.6</td>
-<td align="right">16.4</td>
-<td align="right">14.1</td>
+<td align="right">2582</td>
+<td align="right">37.3</td>
+<td align="right">26.7</td>
+<td align="right">19.4</td>
+<td align="right">16.6</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="odd">
 <td align="right">2022</td>
-<td align="right">1432</td>
-<td align="right">31.4</td>
-<td align="right">9.1</td>
-<td align="right">11.5</td>
-<td align="right">18.4</td>
+<td align="right">1196</td>
+<td align="right">37.6</td>
+<td align="right">10.9</td>
+<td align="right">13.7</td>
+<td align="right">22.0</td>
+<td align="right">15.8</td>
 </tr>
 </tbody>
 </table>
@@ -191,7 +231,7 @@
 <div class="section level2">
 <h2 id="figure-1-major-party-vote-choice-trend">Figure 1: major-party vote-choice trend<a class="anchor" aria-label="anchor" href="#figure-1-major-party-vote-choice-trend"></a>
 </h2>
-<p><img src="analysis-vote-choice_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Line chart of vote-choice shares for CAQ, PLQ, PQ and QS across study years." width="700"></p>
+<p><img src="analysis-vote-choice_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Line chart of vote-choice shares for CAQ/ADQ, PLQ, PQ, QS and PCQ across study years." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
@@ -201,7 +241,8 @@
 value.</li>
 <li>Confidence intervals are binomial 95% intervals (normal
 approximation).</li>
-<li>The trend figure is restricted to CAQ, PLQ, PQ, and QS.</li>
+<li>The trend figure is restricted to CAQ/ADQ, PLQ, PQ, QS, and
+PCQ.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

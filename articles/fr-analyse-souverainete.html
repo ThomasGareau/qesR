@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Analyse : évolution des attitudes liées à la souveraineté • qesR</title>
+<title>Cas d'usage : évolution des attitudes liées à la souveraineté • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Analyse : évolution des attitudes liées à la souveraineté">
+<meta property="og:title" content="Cas d'usage : évolution des attitudes liées à la souveraineté">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -88,7 +88,6 @@
 <li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
@@ -106,7 +105,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Analyse : évolution des attitudes liées à la souveraineté</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Cas d'usage : évolution des attitudes liées à la souveraineté</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/fr-analyse-souverainete.Rmd" class="external-link"><code>vignettes/fr-analyse-souverainete.Rmd</code></a></small>
@@ -117,7 +116,22 @@
     
 <p>Cette page présente l’évolution de l’appui à la souveraineté dans le
 fichier fusionné.</p>
-<div class="section level2">
+<details><summary>
+Afficher le code utilisé dans cette page
+</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>assign_global <span class="op">=</span> <span class="cn">FALSE</span>, strict <span class="op">=</span> <span class="cn">FALSE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span></span>
+<span><span class="co"># Résumer l'appui annuel, calculer les IC95, puis tracer.</span></span></code></pre></div>
+</details><div class="section level2">
 <h2 id="chargement">Chargement<a class="anchor" aria-label="anchor" href="#chargement"></a>
 </h2>
 </div>

@@ -1,7 +1,24 @@
-# Analyse : évolution des attitudes liées à la souveraineté
+# Cas d'usage : évolution des attitudes liées à la souveraineté
 
 Cette page présente l’évolution de l’appui à la souveraineté dans le
 fichier fusionné.
+
+Afficher le code utilisé dans cette page
+
+``` r
+library(qesR)
+library(dplyr)
+library(ggplot2)
+
+master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+  mutate(annee = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
+  filter(qes_code != "qes_crop_2007_2010")
+
+master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
+master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
+
+# Résumer l'appui annuel, calculer les IC95, puis tracer.
+```
 
 ## Chargement
 

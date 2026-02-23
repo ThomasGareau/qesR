@@ -91,7 +91,6 @@
 <li class="nav-item"><a class="nav-link" href="articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/study-citations.html">Study Citations</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
 <li class="nav-item"><a class="nav-link" href="articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
@@ -176,19 +175,8 @@
 <code class="sourceCode R"><span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.csv"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.rds"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>What it harmonizes:</p>
-<ul>
-<li>study metadata: <code>qes_code</code>, <code>qes_year</code>, <code>qes_name_en</code>
-</li>
-<li>respondent/interview info: <code>respondent_id</code>, <code>interview_start</code>, <code>interview_end</code>, <code>interview_recorded</code>
-</li>
-<li>demographics: <code>year_of_birth</code>, <code>age</code>, <code>age_group</code>, <code>gender</code>, <code>education</code>, <code>language</code>, <code>province_territory</code>
-</li>
-<li>political variables: <code>turnout</code>, <code>vote_choice</code>, <code>vote_choice_text</code>, <code>party_best</code>, <code>party_lean</code>, <code>ideology</code>, <code>political_interest</code>, <code>sovereignty_support</code>, <code>sovereignty</code>
-</li>
-<li>additional fields where available: <code>citizenship</code>, <code>born_canada</code>, <code>income</code>, <code>religion</code>, <code>federal_pid</code>, <code>provincial_pid</code>, <code>survey_weight</code>
-</li>
-<li>additional harmonized columns for variables observed in at least two studies (for example <code>q23</code>, <code>q24</code>, <code>occup</code>, <code>satisf</code>, <code>voteprec</code>)</li>
-</ul>
+<p>Current harmonized columns in <code>qes_master</code>:</p>
+<p><code>qes_code</code>, <code>qes_year</code>, <code>qes_name_en</code>, <code>respondent_id</code>, <code>interview_start</code>, <code>interview_end</code>, <code>interview_recorded</code>, <code>language</code>, <code>citizenship</code>, <code>year_of_birth</code>, <code>age</code>, <code>age_group</code>, <code>gender</code>, <code>province_territory</code>, <code>education</code>, <code>income</code>, <code>religion</code>, <code>born_canada</code>, <code>political_interest</code>, <code>ideology</code>, <code>turnout</code>, <code>vote_choice</code>, <code>vote_choice_text</code>, <code>party_best</code>, <code>party_lean</code>, <code>sovereignty_support</code>, <code>sovereignty</code>, <code>federal_pid</code>, <code>provincial_pid</code>, <code>survey_weight</code>, <code>definibin</code>, <code>ethn1</code>, <code>influperso</code>, <code>luentend</code>, <code>occup</code>, <code>patron</code>, <code>pondam1</code>, <code>q10</code>, <code>q16</code>, <code>q17</code>, <code>q18</code>, <code>q18a</code>, <code>q18b</code>, <code>q20</code>, <code>q20b</code>, <code>q22</code>, <code>q23</code>, <code>q24</code>, <code>q3</code>, <code>q31</code>, <code>q33</code>, <code>q35</code>, <code>q37</code>, <code>q38</code>, <code>q39</code>, <code>q4</code>, <code>q40</code>, <code>q41</code>, <code>q42</code>, <code>q43</code>, <code>q44</code>, <code>q45</code>, <code>q46</code>, <code>q47</code>, <code>q48</code>, <code>q49</code>, <code>q50</code>, <code>q51</code>, <code>q53</code>, <code>q54</code>, <code>q55</code>, <code>q56</code>, <code>q58</code>, <code>q59</code>, <code>q60</code>, <code>q61b</code>, <code>q61d</code>, <code>q62a</code>, <code>q62b</code>, <code>q64</code>, <code>q65</code>, <code>q66</code>, <code>q68</code>, <code>q7</code>, <code>q70</code>, <code>q72</code>, <code>q73</code>, <code>q74</code>, <code>q79</code>, <code>q8</code>, <code>q80</code>, <code>q81</code>, <code>q9</code>, <code>raison1</code>, <code>raison2</code>, <code>s_jse</code>, <code>satisf</code>, <code>sefie</code>, <code>sondbons</code>, <code>voteprec</code></p>
 <p>Harmonization applies value normalization, derived age groups, within-study de-duplication, and removal of rows that are empty across harmonized variables.</p>
 <p>See: <a href="articles/merged-dataset.html">Merged Dataset</a></p>
 </div>
@@ -279,7 +267,6 @@
 <p>Use cases available in separate tabs:</p>
 <ul>
 <li><a href="articles/analysis-sovereignty.html">Evolution of sovereignty attitudes</a></li>
-<li><a href="articles/analysis-descriptive.html">Descriptive statistics and profiles</a></li>
 <li><a href="articles/analysis-vote-choice.html">Vote-choice patterns over time</a></li>
 </ul>
 </div>
