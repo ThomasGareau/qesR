@@ -116,11 +116,18 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   txt_file <- tempfile(fileext = ".txt")
   on.exit(unlink(txt_file), add = TRUE)
 
-  status <- suppressWarnings(system2(
-    "pdftotext",
-    args = c("-layout", pdf_file, txt_file),
-    stdout = if (isTRUE(quiet)) FALSE else "",
-    stderr = if (isTRUE(quiet)) FALSE else ""
+  cmd <- paste(
+    shQuote(Sys.which("pdftotext")),
+    "-layout",
+    shQuote(pdf_file),
+    shQuote(txt_file)
+  )
+
+  status <- suppressWarnings(system(
+    cmd,
+    intern = FALSE,
+    ignore.stdout = isTRUE(quiet),
+    ignore.stderr = isTRUE(quiet)
   ))
 
   if (!identical(status, 0L) || !file.exists(txt_file)) {
@@ -141,18 +148,18 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   txt_file <- tempfile(fileext = ".txt")
   on.exit(unlink(txt_file), add = TRUE)
 
-  status <- suppressWarnings(system2(
-    "gs",
-    args = c(
-      "-q",
-      "-dNOPAUSE",
-      "-dBATCH",
-      "-sDEVICE=txtwrite",
-      paste0("-sOutputFile=", txt_file),
-      pdf_file
-    ),
-    stdout = if (isTRUE(quiet)) FALSE else "",
-    stderr = if (isTRUE(quiet)) FALSE else ""
+  cmd <- paste(
+    shQuote(Sys.which("gs")),
+    "-q -dNOPAUSE -dBATCH -sDEVICE=txtwrite",
+    paste0("-sOutputFile=", shQuote(txt_file)),
+    shQuote(pdf_file)
+  )
+
+  status <- suppressWarnings(system(
+    cmd,
+    intern = FALSE,
+    ignore.stdout = isTRUE(quiet),
+    ignore.stderr = isTRUE(quiet)
   ))
 
   if (!identical(status, 0L) || !file.exists(txt_file)) {
@@ -165,10 +172,71 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   )
 }
 
+.read_pdf_lines_with_python <- function(pdf_file, quiet = TRUE) {
+  py <- Sys.which("python3")
+  if (!nzchar(py)) {
+    return(character(0))
+  }
+
+  script_file <- tempfile(fileext = ".py")
+  out_file <- tempfile(fileext = ".txt")
+  on.exit(unlink(c(script_file, out_file)), add = TRUE)
+
+  writeLines(
+    c(
+      "import sys",
+      "try:",
+      "    from PyPDF2 import PdfReader",
+      "except Exception:",
+      "    sys.exit(1)",
+      "pdf_path = sys.argv[1]",
+      "try:",
+      "    reader = PdfReader(pdf_path)",
+      "except Exception:",
+      "    sys.exit(1)",
+      "with open(sys.argv[2], 'w', encoding='utf-8') as f:",
+      "    for page in reader.pages:",
+      "        txt = page.extract_text() or ''",
+      "        if txt:",
+      "            f.write(txt)",
+      "            f.write('\\n')"
+    ),
+    con = script_file,
+    useBytes = TRUE
+  )
+
+  cmd <- paste(
+    shQuote(py),
+    shQuote(script_file),
+    shQuote(pdf_file),
+    shQuote(out_file)
+  )
+
+  status <- tryCatch(
+    suppressWarnings(system(
+      cmd,
+      intern = FALSE,
+      ignore.stdout = isTRUE(quiet),
+      ignore.stderr = isTRUE(quiet)
+    )),
+    error = function(e) 1L
+  )
+
+  if (!identical(status, 0L) || !file.exists(out_file)) {
+    return(character(0))
+  }
+
+  tryCatch(
+    readLines(out_file, warn = FALSE, encoding = "UTF-8"),
+    error = function(e) character(0)
+  )
+}
+
 .extract_pdf_text_lines <- function(pdf_file, quiet = TRUE) {
   candidates <- list(
     .read_pdf_lines_with_pdftotext(pdf_file, quiet = quiet),
-    .read_pdf_lines_with_gs(pdf_file, quiet = quiet)
+    .read_pdf_lines_with_gs(pdf_file, quiet = quiet),
+    .read_pdf_lines_with_python(pdf_file, quiet = quiet)
   )
 
   for (lines in candidates) {

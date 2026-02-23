@@ -4,44 +4,175 @@
     interview_start = c("cps_StartDate", "sdat", "SDAT", "startdate", "StartDate"),
     interview_end = c("cps_EndDate", "enddate", "EndDate"),
     interview_recorded = c("cps_RecordedDate", "recordeddate", "RecordedDate", "date"),
-    language = c("cps_UserLanguage", "LANG", "lang", "qlang", "QLANG", "langu", "lmat"),
+    language = c("cps_UserLanguage", "LANG", "lang", "qlang", "QLANG", "qlangue", "s1", "langfix", "langu", "lmat", "lmat2", "lusag", "lusage", "lang_pre", "s_lang_pst"),
     citizenship = c("cps_citizen", "cps_citizenship", "citizenship"),
     year_of_birth = c("cps_yob", "QAGE", "qage", "agex", "ageyear_1", "yob", "q75", "Q75"),
     age = c("cps_age_in_years", "SMAGE", "smage", "age", "agecalc", "agenum", "QAGE", "qage", "q0age"),
     age_group = c("CLAGE", "clage", "age_3gr", "agegrp", "age3", "age45", "age"),
-    gender = c("cps_genderid", "QSEXE", "qsexe", "sexe", "sexe_post", "gender"),
-    province_territory = c("cps_province", "q0qc", "Q0QC", "QREGION", "qregion", "regio", "reg", "reg_3gr"),
-    education = c("cps_edu", "QSCOL", "qscol", "scol", "scolU", "scolu", "education", "educ", "edu", "scolu"),
-    income = c("cps_income", "income"),
-    religion = c("cps_religion", "religion"),
-    born_canada = c("cps_borncda", "born_canada"),
-    political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest", "interet"),
-    ideology = c("cps_ideoself_1", "lr", "ideology", "q70a"),
-    turnout = c("cps_turnout", "Q2", "q21", "q11", "q5", "rts_q1", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
+    gender = c("cps_genderid", "QSEXE", "qsexe", "sexfix", "sexe", "sexe_post", "gender", "q76", "SEXE"),
+    province_territory = c("cps_province", "q0qc", "Q0QC", "QREGION", "qregion", "regio", "reg", "reg_3gr", "region"),
+    education = c("cps_edu", "QSCOL", "qscol", "q77", "d3", "scol", "scolU", "scolu", "education", "educ", "edu"),
+    income = c("cps_income", "q78", "Q78", "q100", "Q100", "q57", "Q57", "q61", "Q61", "d5", "D5", "revenu", "income"),
+    religion = c("cps_religion", "q103", "Q103", "q63", "Q63", "religion"),
+    born_canada = c("cps_borncda", "q105", "Q105", "born_canada"),
+    political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest", "interet", "interetrec", "interet2", "interetbin", "interetrev", "interetrev2", "q14", "Q14", "q15", "Q15", "q27", "Q27", "q28", "Q28"),
+    ideology = c("cps_ideoself_1", "lr", "ideology", "q71", "Q71", "q32", "Q32", "q36", "Q36", "rts_q8", "q70a"),
+    turnout = c("cps_turnout", "Q2", "q21", "q11", "q5", "rts_q1", "q1post", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
     vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "q6", "rts_q2", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
     vote_choice_text = c("cps_votechoice1_8_TEXT", "q2_96_other", "votechoice_text"),
     party_best = c("cps_partybest", "partybest", "qpartybest", "Q8"),
     party_lean = c("cps_votelean", "Q5", "q13", "q12b", "q5a", "rv1b", "intvote", "intvoteprov", "votelean", "partylean"),
-    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "Q20", "q52", "q26", "q19", "souv_rec", "voteref", "intvoteref", "intref"),
+    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "q26", "q19", "Q19", "q52", "Q20", "souv_rec", "voteref", "intvoteref", "intref"),
+    sovereignty = c("cps_qc_referendum", "cps_qc_independent", "independance", "q26", "q19", "Q19", "q52", "Q20", "souv_rec", "voteref", "intvoteref", "intref"),
     federal_pid = c("cps_fedpid", "fed_pid", "fpid"),
     provincial_pid = c("cps_provpid", "prov_pid", "ppid"),
-    survey_weight = c("cps_wts", "poids", "pond", "pondx", "ponder2", "ponder3", "ponderc", "pondvote", "weight", "weights", "wgt", "pdspart", "pdspart2")
+    survey_weight = c(
+      "cps_weight_general",
+      "cps_weight_general_trimmed",
+      "pes_weight_general",
+      "pes_weight_general_trimmed",
+      "cps_wts",
+      "ponderc",
+      "poids",
+      "POND",
+      "pond",
+      "pondx",
+      "xpond",
+      "XPOND",
+      "pond_post",
+      "pond_postam1",
+      "ponder2",
+      "ponder3",
+      "pondvote",
+      "weight",
+      "weights",
+      "wgt",
+      "pdspart",
+      "pdspart2"
+    )
   )
 }
 
 .master_study_overrides <- function() {
   list(
-    qes2022 = c(sovereignty_support = "cps_qc_referendum"),
-    qes2018 = c(turnout = "q5", vote_choice = "q6", party_lean = "q5a", sovereignty_support = "q26"),
-    qes2018_panel = c(turnout = "rts_q1", vote_choice = "vote", party_lean = "rv1b", sovereignty_support = "independance"),
-    qes2014 = c(turnout = "Q2", vote_choice = "Q3", party_lean = "Q5", sovereignty_support = "Q19"),
-    qes2012 = c(turnout = "q21", vote_choice = "q25", sovereignty_support = "q52"),
-    qes2012_panel = c(turnout = "participation", vote_choice = "voteprov", party_lean = "intvoteprov", sovereignty_support = "souv_rec"),
-    qes_crop_2007_2010 = c(age = NA_character_, age_group = "QAGE", sovereignty_support = NA_character_),
-    qes2008 = c(turnout = "q11", vote_choice = "q12a", party_lean = "q12b", sovereignty_support = "q19"),
-    qes2007 = c(turnout = "q11", vote_choice = "q12", party_lean = "q13", sovereignty_support = "q19"),
-    qes2007_panel = c(turnout = "avote", vote_choice = "vote", party_lean = "intvote", sovereignty_support = "intref"),
-    qes1998 = c(turnout = "allervot", vote_choice = "intvote", party_lean = NA_character_, sovereignty_support = "voteref")
+    qes2022 = c(
+      sovereignty_support = "cps_qc_referendum",
+      sovereignty = "cps_qc_referendum",
+      survey_weight = "cps_weight_general"
+    ),
+    qes2018 = c(
+      language = "qlangue",
+      turnout = "q5",
+      vote_choice = "q6",
+      party_lean = "q5a",
+      political_interest = "q27",
+      ideology = "q36",
+      income = "q61",
+      religion = "q67",
+      born_canada = "q69",
+      sovereignty_support = "q26",
+      sovereignty = "q26"
+    ),
+    qes2018_panel = c(
+      language = "s1",
+      gender = "sexfix",
+      province_territory = "region",
+      education = "d3",
+      turnout = "vote",
+      vote_choice = "vote",
+      party_lean = "rv1b",
+      ideology = "rts_q8",
+      income = "d5",
+      sovereignty_support = "independance",
+      sovereignty = "independance",
+      survey_weight = "weight"
+    ),
+    qes2014 = c(
+      turnout = "Q2",
+      vote_choice = "Q3",
+      party_lean = "Q5",
+      political_interest = "Q28",
+      ideology = "Q32",
+      income = "Q57",
+      religion = "Q63",
+      born_canada = "Q65",
+      sovereignty_support = "Q19",
+      sovereignty = "Q19",
+      survey_weight = "POND"
+    ),
+    qes2012 = c(
+      gender = "sexe",
+      turnout = "q21",
+      vote_choice = "q25",
+      political_interest = "q67",
+      ideology = "q71",
+      income = NA_character_,
+      religion = "q103",
+      born_canada = "q105",
+      sovereignty_support = "q52",
+      sovereignty = "q52"
+    ),
+    qes2012_panel = c(
+      turnout = "participation",
+      vote_choice = "voteprov",
+      party_lean = "intvoteprov",
+      political_interest = "interetrec",
+      sovereignty_support = "souv_rec",
+      sovereignty = "souv_rec"
+    ),
+    qes_crop_2007_2010 = c(
+      age = NA_character_,
+      age_group = "QAGE",
+      gender = "SEXE",
+      income = "revenu",
+      sovereignty_support = "intvoteref",
+      sovereignty = "intvoteref",
+      survey_weight = "XPOND"
+    ),
+    qes2008 = c(
+      gender = "q76",
+      education = "q77",
+      turnout = "q11",
+      vote_choice = "q12a",
+      party_lean = "q12b",
+      political_interest = "q14",
+      income = "q78",
+      ideology = NA_character_,
+      religion = NA_character_,
+      born_canada = NA_character_,
+      sovereignty_support = "q19",
+      sovereignty = "q19"
+    ),
+    qes2007 = c(
+      gender = "q76",
+      education = "q77",
+      turnout = "q11",
+      vote_choice = "q12",
+      party_lean = "q13",
+      political_interest = "q15",
+      income = "q78",
+      ideology = NA_character_,
+      religion = NA_character_,
+      born_canada = NA_character_,
+      sovereignty_support = "q19",
+      sovereignty = "q19"
+    ),
+    qes2007_panel = c(
+      turnout = "avote",
+      vote_choice = "vote",
+      party_lean = "intvote",
+      political_interest = "interet",
+      sovereignty_support = "intref",
+      sovereignty = "intref"
+    ),
+    qes1998 = c(
+      turnout = "q1post",
+      vote_choice = "intvote",
+      party_lean = NA_character_,
+      sovereignty_support = "voteref",
+      sovereignty = "voteref",
+      survey_weight = "ponderc"
+    )
   )
 }
 
@@ -60,13 +191,30 @@
     out[idx_2018] <- NA_real_
     out[idx_2018 & raw_num %in% c(4)] <- 1
     out[idx_2018 & raw_num %in% c(1, 2, 3)] <- 0
+    out[idx_2018 & grepl("\\ba vote\\b|certain davoir vote", raw_chr, perl = TRUE)] <- 1
+    out[idx_2018 & grepl("n a pas vote|voulait voter|vote generalement mais n a pas vote", raw_chr, perl = TRUE)] <- 0
   }
 
-  # qes2018_panel RTS_Q1: 3 = voted, 1/2 = did not vote.
+  # qes2018_panel: use vote behavior coding when available; fall back to RTS wording.
   idx_2018_panel <- code == "qes2018_panel"
   if (any(idx_2018_panel, na.rm = TRUE)) {
     out[idx_2018_panel] <- NA_real_
 
+    # vote labels: party choices imply voted; explicit no-vote/spoiled imply no.
+    vote_no_hit <- idx_2018_panel & grepl(
+      "n a pas vote|n'a pas vote|n a pas vot|n'a pas vot|annul",
+      raw_chr,
+      perl = TRUE
+    )
+    vote_yes_hit <- idx_2018_panel & grepl(
+      "parti liberal|parti quebec|coalition avenir|quebec solidaire|parti vert|option nationale|autre parti",
+      raw_chr,
+      perl = TRUE
+    )
+    out[vote_no_hit] <- 0
+    out[vote_yes_hit & !vote_no_hit] <- 1
+
+    # rts_q1 style fallback.
     no_hit <- idx_2018_panel & (
       raw_num %in% c(1, 2) |
       grepl("navez pas pu|decide de ne pas|ne pas aller voter", raw_chr, perl = TRUE)
@@ -76,8 +224,29 @@
       grepl("etes alle voter|est alle voter|alle voter", raw_chr, perl = TRUE)
     )
 
-    out[no_hit] <- 0
-    out[yes_hit & !no_hit] <- 1
+    out[no_hit & is.na(out)] <- 0
+    out[yes_hit & !no_hit & is.na(out)] <- 1
+  }
+
+  # qes1998 q1post: 1 = yes voted, 2 = no.
+  idx_1998 <- code == "qes1998"
+  if (any(idx_1998, na.rm = TRUE)) {
+    out[idx_1998] <- NA_real_
+    out[idx_1998 & (raw_num %in% c(1) | raw_chr %in% c("oui", "yes"))] <- 1
+    out[idx_1998 & (raw_num %in% c(2) | raw_chr %in% c("non", "no"))] <- 0
+
+    # allervot fallback when q1post is not available.
+    out[idx_1998 & is.na(out) & raw_num %in% c(1, 2)] <- 1
+    out[idx_1998 & is.na(out) & raw_num %in% c(3, 4)] <- 0
+    out[idx_1998 & is.na(out) & grepl("certain|tres prob|assez prob", raw_chr, perl = TRUE)] <- 1
+    out[idx_1998 & is.na(out) & grepl("peu prob|pas prob", raw_chr, perl = TRUE)] <- 0
+  }
+
+  # qes2012_panel participation: 1/2 = yes (different voting modes), 3 = no.
+  idx_2012_panel <- code == "qes2012_panel"
+  if (any(idx_2012_panel, na.rm = TRUE)) {
+    out[idx_2012_panel & raw_num %in% c(1, 2)] <- 1
+    out[idx_2012_panel & raw_num %in% c(3)] <- 0
   }
 
   out
@@ -89,25 +258,95 @@
   }
 
   code <- as.character(qes_code)
+  raw_chr <- .normalize_master_text(raw)
   raw_num <- suppressWarnings(as.numeric(as.character(raw)))
 
   # qes2018 Q26: 1 = Yes, 2 = No, 8/9 = DK/PNTS.
   idx_2018 <- code == "qes2018"
   if (any(idx_2018, na.rm = TRUE)) {
     out[idx_2018] <- NA_real_
-    out[idx_2018 & raw_num %in% c(1)] <- 1
-    out[idx_2018 & raw_num %in% c(2)] <- 0
+    out[idx_2018 & (raw_num %in% c(1) | raw_chr %in% c("oui", "yes"))] <- 1
+    out[idx_2018 & (raw_num %in% c(2) | raw_chr %in% c("non", "no"))] <- 0
   }
 
   # qes1998 voteref: keep explicit Yes/No only.
   idx_1998 <- code == "qes1998"
   if (any(idx_1998, na.rm = TRUE)) {
     out[idx_1998] <- NA_real_
-    out[idx_1998 & raw_num %in% c(1)] <- 1
-    out[idx_1998 & raw_num %in% c(2)] <- 0
+    out[idx_1998 & (raw_num %in% c(1) | raw_chr %in% c("oui", "yes"))] <- 1
+    out[idx_1998 & (raw_num %in% c(2) | raw_chr %in% c("non", "no"))] <- 0
+  }
+
+  # qes2018_panel independance is already binary: 1 yes / 0 no.
+  idx_2018_panel <- code == "qes2018_panel"
+  if (any(idx_2018_panel, na.rm = TRUE)) {
+    out[idx_2018_panel & (raw_num %in% c(1) | raw_chr %in% c("oui", "yes"))] <- 1
+    out[idx_2018_panel & (raw_num %in% c(0) | raw_chr %in% c("non", "no"))] <- 0
+  }
+
+  # Legacy studies with 1=yes and 2=no coding.
+  legacy <- code %in% c("qes2007", "qes2008", "qes2012", "qes2012_panel", "qes2014", "qes2007_panel", "qes_crop_2007_2010")
+  if (any(legacy, na.rm = TRUE)) {
+    out[legacy & (raw_num %in% c(1) | raw_chr %in% c("oui", "yes"))] <- 1
+    out[legacy & (raw_num %in% c(2) | raw_chr %in% c("non", "no"))] <- 0
   }
 
   out
+}
+
+.recode_language_by_study <- function(out, raw, qes_code) {
+  if (length(out) == 0L) {
+    return(out)
+  }
+
+  code <- as.character(qes_code)
+  raw_chr <- .normalize_master_text(raw)
+  raw_num <- suppressWarnings(as.numeric(as.character(raw)))
+  out <- as.character(out)
+
+  # qes2018 QLANGUE programmed values:
+  # 1 French, 2 English, 96 Other, 98 DK, 99 PNR.
+  idx_2018 <- code == "qes2018"
+  if (any(idx_2018, na.rm = TRUE)) {
+    out[idx_2018] <- NA_character_
+    out[idx_2018 & (raw_num %in% c(1) | grepl("francais|french", raw_chr, perl = TRUE))] <- "French"
+    out[idx_2018 & (raw_num %in% c(2) | grepl("anglais|english", raw_chr, perl = TRUE))] <- "English"
+    out[idx_2018 & (
+      raw_num %in% c(96, 3) |
+      grepl("^autre$|\\bother\\b", raw_chr, perl = TRUE)
+    )] <- "Other"
+  }
+
+  # qes2007 can include unlabelled non-1/2 codes for other languages.
+  idx_2007 <- code == "qes2007"
+  if (any(idx_2007, na.rm = TRUE)) {
+    out[idx_2007 & raw_num %in% c(1)] <- "French"
+    out[idx_2007 & raw_num %in% c(2)] <- "English"
+    out[idx_2007 & !is.na(raw_num) & !(raw_num %in% c(1, 2, 9, 98, 99))] <- "Other"
+  }
+
+  out
+}
+
+.fill_study_constants <- function(master) {
+  if (!is.data.frame(master) || nrow(master) == 0L || !("qes_code" %in% names(master))) {
+    return(master)
+  }
+
+  code <- as.character(master$qes_code)
+
+  if ("language" %in% names(master)) {
+    # 1998 files retained in this package are francophone-only.
+    idx <- code == "qes1998" & is.na(master$language)
+    master$language[idx] <- "French"
+  }
+
+  if ("province_territory" %in% names(master)) {
+    idx <- code != "qes2022" & is.na(master$province_territory)
+    master$province_territory[idx] <- "Quebec"
+  }
+
+  master
 }
 
 .resolve_master_source_column <- function(data, srvy, target, candidates) {
@@ -119,8 +358,11 @@
     if (length(preferred) == 1L && is.na(preferred)) {
       return(NA_character_)
     }
-    if (!is.na(preferred) && preferred %in% names(data)) {
-      return(preferred)
+    if (!is.na(preferred)) {
+      preferred_hit <- .pick_first_column(data, preferred)
+      if (!is.na(preferred_hit)) {
+        return(preferred_hit)
+      }
     }
   }
 
@@ -404,10 +646,18 @@
 
   yes_hit <- grepl("^(1|yes|oui)$|\\byes\\b|\\boui\\b", norm, perl = TRUE)
   no_hit <- grepl("^(0|2|no|non)$|\\bno\\b|\\bnon\\b", norm, perl = TRUE)
+  born_here_hit <- grepl(
+    "in quebec|au quebec|another part of canada|ailleurs au canada|reste du canada|outside quebec but in canada",
+    norm,
+    perl = TRUE
+  )
+  born_elsewhere_hit <- grepl("somewhere else|ailleurs|outside canada|hors du canada", norm, perl = TRUE)
   dk_hit <- grepl("dont know|don t know|refus|prefer not", norm, perl = TRUE)
 
   rec[yes_hit] <- "Yes"
   rec[no_hit] <- "No"
+  rec[born_here_hit] <- "Yes"
+  rec[born_elsewhere_hit & !born_here_hit] <- "No"
   rec[dk_hit] <- NA_character_
 
   keep_original <- is.na(rec) & !is.na(out)
@@ -556,10 +806,22 @@
   out[valid_num] <- num[valid_num]
 
   if (kind == "interest") {
-    out[is.na(out) & grepl("beaucoup|very interested|a lot", norm, perl = TRUE)] <- 10
-    out[is.na(out) & grepl("assez|fairly|somewhat", norm, perl = TRUE)] <- 7
-    out[is.na(out) & grepl("^peu$|\\ba little\\b|little", norm, perl = TRUE)] <- 3
-    out[is.na(out) & grepl("pas du tout|not at all|none", norm, perl = TRUE)] <- 0
+    # Many legacy waves use 1-4 ordinal interest levels rather than 0-10.
+    out[is.na(out) & num %in% c(1)] <- 10
+    out[is.na(out) & num %in% c(2)] <- 7
+    out[is.na(out) & num %in% c(3)] <- 3
+    out[is.na(out) & num %in% c(4)] <- 0
+
+    none_hit <- grepl("pas du tout|not at all|none", norm, perl = TRUE)
+    low_hit <- grepl("^peu$|\\ba little\\b|little|hardly interested|pas tres interess", norm, perl = TRUE)
+    mid_hit <- grepl("assez|fairly|somewhat|quite interested|plut\\s*ot interess", norm, perl = TRUE)
+    high_hit <- grepl("beaucoup|very interested|a lot|tres interess|tr[eè]s interess", norm, perl = TRUE) &
+      !grepl("pas tres interess", norm, perl = TRUE)
+
+    out[is.na(out) & none_hit] <- 0
+    out[is.na(out) & low_hit] <- 3
+    out[is.na(out) & mid_hit] <- 7
+    out[is.na(out) & high_hit] <- 10
   }
 
   if (kind == "ideology") {
@@ -746,8 +1008,31 @@
     )
   }
 
+  if ("sovereignty" %in% names(master)) {
+    sov_raw <- master$sovereignty
+    master$sovereignty <- .coerce_sovereignty_binary(sov_raw)
+    master$sovereignty <- .recode_sovereignty_by_study(
+      out = master$sovereignty,
+      raw = sov_raw,
+      qes_code = master$qes_code
+    )
+  }
+
+  if (all(c("sovereignty_support", "sovereignty") %in% names(master))) {
+    fill_from_support <- is.na(master$sovereignty) & !is.na(master$sovereignty_support)
+    fill_from_sovereignty <- is.na(master$sovereignty_support) & !is.na(master$sovereignty)
+    master$sovereignty[fill_from_support] <- master$sovereignty_support[fill_from_support]
+    master$sovereignty_support[fill_from_sovereignty] <- master$sovereignty[fill_from_sovereignty]
+  }
+
   if ("language" %in% names(master)) {
-    master$language <- .standardize_language_labels(master$language)
+    lang_raw <- master$language
+    lang_recoded <- .recode_language_by_study(
+      out = as.character(lang_raw),
+      raw = lang_raw,
+      qes_code = master$qes_code
+    )
+    master$language <- .standardize_language_labels(lang_recoded)
   }
 
   if ("citizenship" %in% names(master)) {
@@ -799,6 +1084,8 @@
   if ("vote_choice_text" %in% names(master)) {
     master$vote_choice_text <- .clean_vote_choice_text(master$vote_choice_text)
   }
+
+  master <- .fill_study_constants(master)
 
   master
 }

@@ -30,7 +30,7 @@ The merged data includes cross-study fields such as:
 - study metadata: `qes_code`, `qes_year`, `qes_name_en`
 - respondent/interview fields: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
 - demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
 - additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
 `get_qes_master()` also keeps the merge logic explicit:

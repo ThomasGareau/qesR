@@ -55,7 +55,7 @@ What it harmonizes:
 - Study metadata: `qes_code`, `qes_year`, `qes_name_en`
 - Respondent and interview fields: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
 - Core demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`
+- Political behavior and attitudes: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
 - Additional cross-study fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
 Harmonization rules include:

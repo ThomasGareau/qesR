@@ -71,7 +71,7 @@ What it harmonizes:
 - study metadata: `qes_code`, `qes_year`, `qes_name_en`
 - respondent/interview info: `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`
 - demographics: `year_of_birth`, `age`, `age_group`, `gender`, `education`, `language`, `province_territory`
-- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`
+- political variables: `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `ideology`, `political_interest`, `sovereignty_support`, `sovereignty`
 - additional fields where available: `citizenship`, `born_canada`, `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
 Harmonization applies value normalization, derived age groups, within-study de-duplication, and removal of rows that are empty across harmonized variables.

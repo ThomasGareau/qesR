@@ -22,14 +22,15 @@
 "qes2022","2022","Quebec Election Study 2022","party_best","cps_partybest"
 "qes2022","2022","Quebec Election Study 2022","party_lean","cps_votelean"
 "qes2022","2022","Quebec Election Study 2022","sovereignty_support","cps_qc_referendum"
+"qes2022","2022","Quebec Election Study 2022","sovereignty","cps_qc_referendum"
 "qes2022","2022","Quebec Election Study 2022","federal_pid","cps_fedpid"
 "qes2022","2022","Quebec Election Study 2022","provincial_pid","cps_provpid"
-"qes2022","2022","Quebec Election Study 2022","survey_weight",
+"qes2022","2022","Quebec Election Study 2022","survey_weight","cps_weight_general"
 "qes2018","2018","Quebec Election Study 2018","respondent_id","responseid"
 "qes2018","2018","Quebec Election Study 2018","interview_start",
 "qes2018","2018","Quebec Election Study 2018","interview_end",
 "qes2018","2018","Quebec Election Study 2018","interview_recorded",
-"qes2018","2018","Quebec Election Study 2018","language",
+"qes2018","2018","Quebec Election Study 2018","language","qlangue"
 "qes2018","2018","Quebec Election Study 2018","citizenship",
 "qes2018","2018","Quebec Election Study 2018","year_of_birth","ageyear_1"
 "qes2018","2018","Quebec Election Study 2018","age","age"
@@ -37,17 +38,18 @@
 "qes2018","2018","Quebec Election Study 2018","gender","qsexe"
 "qes2018","2018","Quebec Election Study 2018","province_territory","q0qc"
 "qes2018","2018","Quebec Election Study 2018","education","qscol"
-"qes2018","2018","Quebec Election Study 2018","income",
-"qes2018","2018","Quebec Election Study 2018","religion",
-"qes2018","2018","Quebec Election Study 2018","born_canada",
-"qes2018","2018","Quebec Election Study 2018","political_interest",
+"qes2018","2018","Quebec Election Study 2018","income","q61"
+"qes2018","2018","Quebec Election Study 2018","religion","q67"
+"qes2018","2018","Quebec Election Study 2018","born_canada","q69"
+"qes2018","2018","Quebec Election Study 2018","political_interest","q27"
 "qes2018","2018","Quebec Election Study 2018","ideology",
 "qes2018","2018","Quebec Election Study 2018","turnout","q5"
 "qes2018","2018","Quebec Election Study 2018","vote_choice","q6"
 "qes2018","2018","Quebec Election Study 2018","vote_choice_text","q2_96_other"
-"qes2018","2018","Quebec Election Study 2018","party_best",
+"qes2018","2018","Quebec Election Study 2018","party_best","q8"
 "qes2018","2018","Quebec Election Study 2018","party_lean","q5a"
 "qes2018","2018","Quebec Election Study 2018","sovereignty_support","q26"
+"qes2018","2018","Quebec Election Study 2018","sovereignty","q26"
 "qes2018","2018","Quebec Election Study 2018","federal_pid",
 "qes2018","2018","Quebec Election Study 2018","provincial_pid",
 "qes2018","2018","Quebec Election Study 2018","survey_weight","pond"
@@ -55,25 +57,26 @@
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_start",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_end",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_recorded",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","language",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","language","s1"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","citizenship",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","year_of_birth",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","age","age"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","age_group","age"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","gender",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","province_territory",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","education","scolU"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","income",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gender","sexfix"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","province_territory","region"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","education","d3"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","income","d5"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","religion",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","born_canada",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","political_interest",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","ideology",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","turnout","rts_q1"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","ideology","rts_q8"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","turnout","vote"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice","vote"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","vote_choice_text",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","party_best",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","party_lean","rv1b"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","sovereignty_support","independance"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","sovereignty","independance"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","federal_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","provincial_pid",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","survey_weight","weight"
@@ -89,20 +92,21 @@
 "qes2014","2014","Quebec Election Study 2014","gender","QSEXE"
 "qes2014","2014","Quebec Election Study 2014","province_territory","QREGION"
 "qes2014","2014","Quebec Election Study 2014","education","QSCOL"
-"qes2014","2014","Quebec Election Study 2014","income",
-"qes2014","2014","Quebec Election Study 2014","religion",
-"qes2014","2014","Quebec Election Study 2014","born_canada",
-"qes2014","2014","Quebec Election Study 2014","political_interest",
-"qes2014","2014","Quebec Election Study 2014","ideology",
+"qes2014","2014","Quebec Election Study 2014","income","Q57"
+"qes2014","2014","Quebec Election Study 2014","religion","Q63"
+"qes2014","2014","Quebec Election Study 2014","born_canada","Q65"
+"qes2014","2014","Quebec Election Study 2014","political_interest","Q28"
+"qes2014","2014","Quebec Election Study 2014","ideology","Q32"
 "qes2014","2014","Quebec Election Study 2014","turnout","Q2"
 "qes2014","2014","Quebec Election Study 2014","vote_choice","Q3"
 "qes2014","2014","Quebec Election Study 2014","vote_choice_text",
 "qes2014","2014","Quebec Election Study 2014","party_best","Q8"
 "qes2014","2014","Quebec Election Study 2014","party_lean","Q5"
 "qes2014","2014","Quebec Election Study 2014","sovereignty_support","Q19"
+"qes2014","2014","Quebec Election Study 2014","sovereignty","Q19"
 "qes2014","2014","Quebec Election Study 2014","federal_pid",
 "qes2014","2014","Quebec Election Study 2014","provincial_pid",
-"qes2014","2014","Quebec Election Study 2014","survey_weight",
+"qes2014","2014","Quebec Election Study 2014","survey_weight","POND"
 "qes2012","2012","Quebec Election Study 2012","respondent_id","quest"
 "qes2012","2012","Quebec Election Study 2012","interview_start",
 "qes2012","2012","Quebec Election Study 2012","interview_end",
@@ -116,16 +120,17 @@
 "qes2012","2012","Quebec Election Study 2012","province_territory","q0qc"
 "qes2012","2012","Quebec Election Study 2012","education","scol"
 "qes2012","2012","Quebec Election Study 2012","income",
-"qes2012","2012","Quebec Election Study 2012","religion",
-"qes2012","2012","Quebec Election Study 2012","born_canada",
-"qes2012","2012","Quebec Election Study 2012","political_interest",
-"qes2012","2012","Quebec Election Study 2012","ideology","q70a"
+"qes2012","2012","Quebec Election Study 2012","religion","q103"
+"qes2012","2012","Quebec Election Study 2012","born_canada","q105"
+"qes2012","2012","Quebec Election Study 2012","political_interest","q67"
+"qes2012","2012","Quebec Election Study 2012","ideology","q71"
 "qes2012","2012","Quebec Election Study 2012","turnout","q21"
 "qes2012","2012","Quebec Election Study 2012","vote_choice","q25"
 "qes2012","2012","Quebec Election Study 2012","vote_choice_text",
-"qes2012","2012","Quebec Election Study 2012","party_best",
+"qes2012","2012","Quebec Election Study 2012","party_best","q8"
 "qes2012","2012","Quebec Election Study 2012","party_lean","q13"
 "qes2012","2012","Quebec Election Study 2012","sovereignty_support","q52"
+"qes2012","2012","Quebec Election Study 2012","sovereignty","q52"
 "qes2012","2012","Quebec Election Study 2012","federal_pid",
 "qes2012","2012","Quebec Election Study 2012","provincial_pid",
 "qes2012","2012","Quebec Election Study 2012","survey_weight","pond"
@@ -144,7 +149,7 @@
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","income",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","religion",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","born_canada",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","political_interest",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","political_interest","interetrec"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","ideology",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","turnout","participation"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","vote_choice","voteprov"
@@ -152,6 +157,7 @@
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","party_best",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","party_lean","intvoteprov"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","sovereignty_support","souv_rec"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","sovereignty","souv_rec"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","federal_pid",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","provincial_pid",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","survey_weight","pond"
@@ -164,10 +170,10 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","year_of_birth","QAGE"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","age_group","QAGE"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gender",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","province_territory",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gender","SEXE"
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","province_territory","REG"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","education","scol"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","income",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","income","revenu"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","religion",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","born_canada",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","political_interest",
@@ -177,10 +183,11 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","vote_choice_text",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_best",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","party_lean","intvoteprov"
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty_support",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty_support","intvoteref"
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sovereignty","intvoteref"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","federal_pid",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","provincial_pid",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","survey_weight",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","survey_weight","XPOND"
 "qes2008","2008","Quebec Election Study 2008","respondent_id","seq"
 "qes2008","2008","Quebec Election Study 2008","interview_start",
 "qes2008","2008","Quebec Election Study 2008","interview_end",
@@ -190,13 +197,13 @@
 "qes2008","2008","Quebec Election Study 2008","year_of_birth","q75"
 "qes2008","2008","Quebec Election Study 2008","age","q0age"
 "qes2008","2008","Quebec Election Study 2008","age_group",
-"qes2008","2008","Quebec Election Study 2008","gender",
+"qes2008","2008","Quebec Election Study 2008","gender","q76"
 "qes2008","2008","Quebec Election Study 2008","province_territory","regio"
-"qes2008","2008","Quebec Election Study 2008","education",
-"qes2008","2008","Quebec Election Study 2008","income",
+"qes2008","2008","Quebec Election Study 2008","education","q77"
+"qes2008","2008","Quebec Election Study 2008","income","q78"
 "qes2008","2008","Quebec Election Study 2008","religion",
 "qes2008","2008","Quebec Election Study 2008","born_canada",
-"qes2008","2008","Quebec Election Study 2008","political_interest",
+"qes2008","2008","Quebec Election Study 2008","political_interest","q14"
 "qes2008","2008","Quebec Election Study 2008","ideology",
 "qes2008","2008","Quebec Election Study 2008","turnout","q11"
 "qes2008","2008","Quebec Election Study 2008","vote_choice","q12a"
@@ -204,6 +211,7 @@
 "qes2008","2008","Quebec Election Study 2008","party_best",
 "qes2008","2008","Quebec Election Study 2008","party_lean","q12b"
 "qes2008","2008","Quebec Election Study 2008","sovereignty_support","q19"
+"qes2008","2008","Quebec Election Study 2008","sovereignty","q19"
 "qes2008","2008","Quebec Election Study 2008","federal_pid",
 "qes2008","2008","Quebec Election Study 2008","provincial_pid",
 "qes2008","2008","Quebec Election Study 2008","survey_weight","pond"
@@ -216,20 +224,21 @@
 "qes2007","2007","Quebec Election Study 2007","year_of_birth","q75"
 "qes2007","2007","Quebec Election Study 2007","age",
 "qes2007","2007","Quebec Election Study 2007","age_group",
-"qes2007","2007","Quebec Election Study 2007","gender",
+"qes2007","2007","Quebec Election Study 2007","gender","q76"
 "qes2007","2007","Quebec Election Study 2007","province_territory",
-"qes2007","2007","Quebec Election Study 2007","education",
-"qes2007","2007","Quebec Election Study 2007","income",
+"qes2007","2007","Quebec Election Study 2007","education","q77"
+"qes2007","2007","Quebec Election Study 2007","income","q78"
 "qes2007","2007","Quebec Election Study 2007","religion",
 "qes2007","2007","Quebec Election Study 2007","born_canada",
-"qes2007","2007","Quebec Election Study 2007","political_interest",
+"qes2007","2007","Quebec Election Study 2007","political_interest","q15"
 "qes2007","2007","Quebec Election Study 2007","ideology",
 "qes2007","2007","Quebec Election Study 2007","turnout","q11"
 "qes2007","2007","Quebec Election Study 2007","vote_choice","q12"
 "qes2007","2007","Quebec Election Study 2007","vote_choice_text",
-"qes2007","2007","Quebec Election Study 2007","party_best",
+"qes2007","2007","Quebec Election Study 2007","party_best","q8"
 "qes2007","2007","Quebec Election Study 2007","party_lean","q13"
 "qes2007","2007","Quebec Election Study 2007","sovereignty_support","q19"
+"qes2007","2007","Quebec Election Study 2007","sovereignty","q19"
 "qes2007","2007","Quebec Election Study 2007","federal_pid",
 "qes2007","2007","Quebec Election Study 2007","provincial_pid",
 "qes2007","2007","Quebec Election Study 2007","survey_weight","pond"
@@ -245,7 +254,7 @@
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","gender","sexe"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","province_territory","reg"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","education","scol"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","income",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","income","revenu"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","religion",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","born_canada",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","political_interest","interet"
@@ -256,6 +265,7 @@
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","party_best",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","party_lean","intvote"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","sovereignty_support","intref"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","sovereignty","intref"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","federal_pid",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","provincial_pid",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","survey_weight","pond"
@@ -276,12 +286,13 @@
 "qes1998","1998","Quebec Elections 1998","born_canada",
 "qes1998","1998","Quebec Elections 1998","political_interest",
 "qes1998","1998","Quebec Elections 1998","ideology",
-"qes1998","1998","Quebec Elections 1998","turnout","allervot"
+"qes1998","1998","Quebec Elections 1998","turnout","q1post"
 "qes1998","1998","Quebec Elections 1998","vote_choice","intvote"
 "qes1998","1998","Quebec Elections 1998","vote_choice_text",
 "qes1998","1998","Quebec Elections 1998","party_best",
 "qes1998","1998","Quebec Elections 1998","party_lean",
 "qes1998","1998","Quebec Elections 1998","sovereignty_support","voteref"
+"qes1998","1998","Quebec Elections 1998","sovereignty","voteref"
 "qes1998","1998","Quebec Elections 1998","federal_pid",
 "qes1998","1998","Quebec Elections 1998","provincial_pid",
-"qes1998","1998","Quebec Elections 1998","survey_weight","poids"
+"qes1998","1998","Quebec Elections 1998","survey_weight","ponderc"

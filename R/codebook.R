@@ -193,7 +193,7 @@ get_codebook <- function(
   if (!isTRUE(refresh) && exists(key, envir = .qes_codebook_cache, inherits = FALSE)) {
     codebook <- get(key, envir = .qes_codebook_cache, inherits = FALSE)
   } else {
-    payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = FALSE)
+    payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE)
     codebook <- payload$codebook
     codebook <- .normalize_codebook_class(codebook)
     attr(codebook, "cached_at") <- Sys.time()

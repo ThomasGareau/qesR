@@ -1,9 +1,31 @@
 .pick_first_column <- function(data, candidates) {
-  hit <- candidates[candidates %in% names(data)]
-  if (length(hit) == 0L) {
+  if (length(candidates) == 0L || length(names(data)) == 0L) {
     return(NA_character_)
   }
-  hit[1]
+
+  candidates <- as.character(candidates)
+  candidates <- candidates[!is.na(candidates) & nzchar(candidates)]
+  if (length(candidates) == 0L) {
+    return(NA_character_)
+  }
+
+  # Prefer exact hits first.
+  hit <- candidates[candidates %in% names(data)]
+  if (length(hit) > 0L) {
+    return(hit[1])
+  }
+
+  # Fall back to case-insensitive matching while keeping candidate priority.
+  data_names <- names(data)
+  data_names_lower <- tolower(data_names)
+  for (cand in candidates) {
+    idx <- match(tolower(cand), data_names_lower)
+    if (!is.na(idx)) {
+      return(data_names[idx])
+    }
+  }
+
+  NA_character_
 }
 
 .to_display_column <- function(x) {
