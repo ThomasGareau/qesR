@@ -374,7 +374,7 @@
   out <- trimws(out)
   out <- iconv(out, from = "", to = "ASCII//TRANSLIT")
   out <- tolower(out)
-  out <- gsub("['`’]", "", out, perl = TRUE)
+  out <- gsub("['`]", "", out, perl = TRUE)
   out <- gsub("[^a-z0-9]+", " ", out, perl = TRUE)
   trimws(out)
 }
@@ -482,7 +482,7 @@
     lab_year[bad] <- NA_character_
 
     key <- as.character(lab_vals)
-    year_map <- setNames(lab_year, key)
+    year_map <- stats::setNames(lab_year, key)
     hit <- as.character(x_num)
     mapped <- unname(year_map[hit])
     out[!is.na(mapped)] <- mapped[!is.na(mapped)]
@@ -849,7 +849,7 @@
     none_hit <- grepl("pas du tout|not at all|none", norm, perl = TRUE)
     low_hit <- grepl("^peu$|\\ba little\\b|little|hardly interested|pas tres interess", norm, perl = TRUE)
     mid_hit <- grepl("assez|fairly|somewhat|quite interested|plut\\s*ot interess", norm, perl = TRUE)
-    high_hit <- grepl("beaucoup|very interested|a lot|tres interess|tr[eè]s interess", norm, perl = TRUE) &
+    high_hit <- grepl("beaucoup|very interested|a lot|tres interess", norm, perl = TRUE) &
       !grepl("pas tres interess", norm, perl = TRUE)
 
     out[is.na(out) & none_hit] <- 0
@@ -1329,10 +1329,10 @@
 
 .extract_master_label_map <- function(data) {
   if (!is.data.frame(data) || ncol(data) == 0L) {
-    return(setNames(character(0), character(0)))
+    return(stats::setNames(character(0), character(0)))
   }
 
-  out <- setNames(rep(NA_character_, ncol(data)), names(data))
+  out <- stats::setNames(rep(NA_character_, ncol(data)), names(data))
   for (nm in names(data)) {
     lb <- attr(data[[nm]], "label", exact = TRUE)
     if (!is.null(lb) && length(lb) > 0L) {
@@ -1391,7 +1391,7 @@
   txt <- tolower(txt)
   txt <- gsub("<[^>]+>", " ", txt, perl = TRUE)
   txt <- gsub("&[a-z]+;", " ", txt, perl = TRUE)
-  txt <- gsub("['`’]", "", txt, perl = TRUE)
+  txt <- gsub("['`]", "", txt, perl = TRUE)
   txt <- gsub("[^a-z0-9]+", " ", txt, perl = TRUE)
   txt <- trimws(txt)
   if (!nzchar(txt)) {
@@ -1534,7 +1534,7 @@
   names(master)[idx] <- rename_map$master_variable
 
   if (is.data.frame(source_map) && "harmonized_variable" %in% names(source_map)) {
-    lookup <- setNames(rename_map$master_variable, rename_map$legacy_variable)
+    lookup <- stats::setNames(rename_map$master_variable, rename_map$legacy_variable)
     hit <- source_map$harmonized_variable %in% names(lookup)
     source_map$harmonized_variable[hit] <- unname(lookup[source_map$harmonized_variable[hit]])
   }
@@ -1712,7 +1712,7 @@
 #'
 #' @param surveys Character vector of qesR survey codes. Defaults to all
 #'   available studies in [get_qescodes()].
-#' @param assign_global If `TRUE`, assign the result to `.GlobalEnv` using
+#' @param assign_global If `TRUE`, assign the result to the global environment using
 #'   `object_name`.
 #' @param object_name Name used when `assign_global = TRUE`. Defaults to
 #'   `"qes_master"`.
@@ -1836,7 +1836,7 @@ get_qes_master <- function(
   source_map <- renamed$source_map
   variable_name_map <- renamed$rename_map
 
-  renamed_lookup <- setNames(variable_name_map$master_variable, variable_name_map$legacy_variable)
+  renamed_lookup <- stats::setNames(variable_name_map$master_variable, variable_name_map$legacy_variable)
   extra_vars_named <- extra$extra_vars
   if (length(extra_vars_named) > 0L && length(renamed_lookup) > 0L) {
     hit <- extra_vars_named %in% names(renamed_lookup)
@@ -1855,7 +1855,7 @@ get_qes_master <- function(
   attr(master, "saved_to") <- NULL
 
   if (isTRUE(assign_global)) {
-    assign(object_name, master, envir = .GlobalEnv)
+    assign(object_name, master, envir = globalenv())
   }
 
   if (!is.null(save_path)) {

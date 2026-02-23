@@ -3,7 +3,14 @@
 \title{Download Codebook Files}
 \description{Downloads codebook/support files (PDFs, questionnaires, metadata files) into a local directory.}
 \usage{
-download_codebook(srvy, dest_dir = tempdir(), file = NULL, quiet = FALSE, refresh = FALSE, overwrite = FALSE)
+download_codebook(
+  srvy,
+  dest_dir = tempdir(),
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
   \item{srvy}{A qesR survey code.}

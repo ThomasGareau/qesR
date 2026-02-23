@@ -2,7 +2,6 @@ Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
 Version: 0.4.4
-Author: Thomas Gareau-Paquette [aut, cre]
 Maintainer: Thomas Gareau-Paquette <qesr@example.org>
 Authors@R: c(
     person(
@@ -29,7 +28,9 @@ Suggests:
     ggplot2,
     knitr,
     pkgdown,
-    rmarkdown
+    rmarkdown,
+    vctrs,
+    waldo
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://thomasgareau.github.io/qesR/,

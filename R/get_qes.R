@@ -36,7 +36,7 @@ get_qes <- function(srvy, file = NULL, assign_global = TRUE, with_codebook = TRU
     }
 
     if (isTRUE(assign_global)) {
-      assign(paste0(srvy, "_codebook"), payload$codebook, envir = .GlobalEnv)
+      assign(paste0(srvy, "_codebook"), payload$codebook, envir = globalenv())
     }
 
     if (!quiet) {
@@ -48,7 +48,7 @@ get_qes <- function(srvy, file = NULL, assign_global = TRUE, with_codebook = TRU
   }
 
   if (isTRUE(assign_global)) {
-    assign(srvy, data, envir = .GlobalEnv)
+    assign(srvy, data, envir = globalenv())
   }
 
   data
@@ -548,7 +548,7 @@ get_question <- function(do, q, full = TRUE) {
       if (!is.null(srvy_hint)) {
         attr(obj, "qes_survey_code") <- srvy_hint
       }
-      assign(object_name, obj, envir = .GlobalEnv)
+      assign(object_name, obj, envir = globalenv())
     }
     return(from_fetched)
   }

@@ -97,7 +97,7 @@ get_decon <- function(srvy = "qes2022", assign_global = TRUE, quiet = FALSE) {
   decon <- .build_decon(data, srvy = srvy)
 
   if (isTRUE(assign_global)) {
-    assign("decon", decon, envir = .GlobalEnv)
+    assign("decon", decon, envir = globalenv())
   }
 
   decon

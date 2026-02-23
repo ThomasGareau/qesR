@@ -3,7 +3,13 @@
 \title{Alias for get_codebook_files}
 \description{Backward-compatible alias for \code{get_codebook_files()}.}
 \usage{
-get_qes_codebook_files(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE)
+get_qes_codebook_files(
+  srvy = NULL,
+  codebook = NULL,
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE
+)
 }
 \arguments{
   \item{srvy}{A qesR survey code. Required if \code{codebook} is NULL.}

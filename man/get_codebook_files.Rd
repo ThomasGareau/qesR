@@ -3,7 +3,13 @@
 \title{Get Codebook Files}
 \description{Returns codebook/support files (PDFs, questionnaires, metadata files) associated with a study.}
 \usage{
-get_codebook_files(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE)
+get_codebook_files(
+  srvy = NULL,
+  codebook = NULL,
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE
+)
 }
 \arguments{
   \item{srvy}{A qesR survey code. Required if \code{codebook} is NULL.}

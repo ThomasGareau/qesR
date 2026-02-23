@@ -201,7 +201,7 @@ get_codebook <- function(
   }
 
   if (isTRUE(assign_global)) {
-    assign(paste0(srvy, "_codebook"), codebook, envir = .GlobalEnv)
+    assign(paste0(srvy, "_codebook"), codebook, envir = globalenv())
   }
 
   format_codebook(codebook, layout = layout)
