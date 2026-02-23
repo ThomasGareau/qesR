@@ -23,15 +23,11 @@ Imports:
     jsonlite,
     xml2
 Suggests:
-    testthat (>= 3.0.0),
     dplyr,
     ggplot2,
     knitr,
     pkgdown,
-    rmarkdown,
-    vctrs,
-    waldo
-Config/testthat/edition: 3
+    rmarkdown
 VignetteBuilder: knitr
 URL: https://thomasgareau.github.io/qesR/,
     https://github.com/ThomasGareau/qesR,
