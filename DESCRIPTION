@@ -8,12 +8,11 @@ Authors@R: c(
       given = "Thomas",
       family = "Gareau-Paquette",
       role = c("aut", "cre"),
-      email = "tg454@cornell.edu",
-      comment = c(URL = "https://thomasgp.com")
+      email = "tg454@cornell.edu"
     )
     )
-Description: Download and load Quebec election study datasets from Dataverse
-    archives through a simple survey-code API inspired by cesR.
+Description: Download and load Quebec election study datasets from public
+    archives through a simple survey-code interface.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false
