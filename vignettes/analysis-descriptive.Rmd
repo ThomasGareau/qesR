@@ -155,6 +155,8 @@ knitr::kable(
 
 ```{r, fig.alt="Line chart of harmonized age-group composition across study years."}
 age_table$age_group_3 <- factor(age_table$age_group_3, levels = age_order)
+ymax_age <- suppressWarnings(max(age_table$pct, na.rm = TRUE))
+ymax_age <- if (is.finite(ymax_age)) min(100, ymax_age + 5) else 100
 
 ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group_3, group = age_group_3)) +
   geom_line(linewidth = 1.1) +
@@ -174,14 +176,18 @@ ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group_3, group = ag
     ),
     name = "Age group"
   ) +
-  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, 100)) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, ymax_age)) +
+  scale_x_continuous(breaks = sort(unique(age_table$qes_year_num))) +
   labs(
     title = "Age-group composition across years",
     x = "Study year",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 9)
+  )
 ```
 
 ## Table 3 and Figure 2: turnout by year
@@ -229,6 +235,8 @@ knitr::kable(
 ```{r, fig.alt="Line chart of turnout indicator across study years."}
 plot_turnout <- turnout_year %>%
   filter(!is.na(turnout_rate), !is.na(ci_low), !is.na(ci_high))
+ymax_turnout <- suppressWarnings(max(plot_turnout$ci_high, plot_turnout$turnout_rate, na.rm = TRUE))
+ymax_turnout <- if (is.finite(ymax_turnout)) min(1, ymax_turnout + 0.05) else 1
 
 ggplot(plot_turnout, aes(x = qes_year_num, y = turnout_rate)) +
   geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
@@ -245,14 +253,18 @@ ggplot(plot_turnout, aes(x = qes_year_num, y = turnout_rate)) +
     linewidth = 0.8,
     na.rm = TRUE
   ) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_turnout)) +
+  scale_x_continuous(breaks = sort(unique(plot_turnout$qes_year_num))) +
   labs(
     title = "Turnout indicator across study years",
     x = "Study year",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 9)
+  )
 ```
 
 ## Notes

@@ -1182,6 +1182,203 @@
   sort(unique(keep))
 }
 
+.master_opaque_variable_candidates <- function() {
+  c(
+    "q10", "q16", "q17", "q18", "q18a", "q18b", "q20", "q20b", "q22", "q23", "q24",
+    "q3", "q31", "q33", "q35", "q37", "q38", "q39", "q4", "q40", "q41", "q42", "q43",
+    "q44", "q45", "q46", "q47", "q48", "q49", "q50", "q51", "q53", "q54", "q55", "q56",
+    "q58", "q59", "q60", "q61b", "q61d", "q62a", "q62b", "q64", "q65", "q66", "q68",
+    "q7", "q70", "q72", "q73", "q74", "q79", "q8", "q80", "q81", "q9", "raison1",
+    "raison2", "s_jse", "satisf", "sefie", "sondbons", "voteprec"
+  )
+}
+
+.extract_master_label_map <- function(data) {
+  if (!is.data.frame(data) || ncol(data) == 0L) {
+    return(setNames(character(0), character(0)))
+  }
+
+  out <- setNames(rep(NA_character_, ncol(data)), names(data))
+  for (nm in names(data)) {
+    lb <- attr(data[[nm]], "label", exact = TRUE)
+    if (!is.null(lb) && length(lb) > 0L) {
+      txt <- trimws(as.character(lb[[1]]))
+      if (nzchar(txt)) {
+        out[[nm]] <- txt
+      }
+    }
+  }
+  out
+}
+
+.select_master_label_hint <- function(var, label_maps_by_study) {
+  if (!is.list(label_maps_by_study) || length(label_maps_by_study) == 0L) {
+    return(NA_character_)
+  }
+
+  vals <- unlist(
+    lapply(label_maps_by_study, function(m) {
+      if (is.null(m) || !(var %in% names(m))) {
+        return(NA_character_)
+      }
+      as.character(m[[var]])
+    }),
+    use.names = FALSE
+  )
+
+  vals <- trimws(as.character(vals))
+  vals <- vals[!is.na(vals) & nzchar(vals)]
+  if (length(vals) == 0L) {
+    return(NA_character_)
+  }
+
+  norm <- .normalize_master_text(vals)
+  keep <- nzchar(norm) & norm != .normalize_master_text(var)
+  vals <- vals[keep]
+  norm <- norm[keep]
+
+  if (length(vals) == 0L) {
+    return(NA_character_)
+  }
+
+  tab <- sort(table(norm), decreasing = TRUE)
+  winners <- names(tab)[tab == max(tab)]
+  cand <- vals[norm %in% winners]
+  cand <- cand[order(nchar(cand), decreasing = TRUE)]
+  cand[[1]]
+}
+
+.slugify_master_label <- function(text, max_words = 8L, max_chars = 64L) {
+  if (is.null(text) || length(text) == 0L || is.na(text) || !nzchar(trimws(text))) {
+    return(NA_character_)
+  }
+
+  txt <- iconv(as.character(text), from = "", to = "ASCII//TRANSLIT")
+  txt <- tolower(txt)
+  txt <- gsub("<[^>]+>", " ", txt, perl = TRUE)
+  txt <- gsub("&[a-z]+;", " ", txt, perl = TRUE)
+  txt <- gsub("['`’]", "", txt, perl = TRUE)
+  txt <- gsub("[^a-z0-9]+", " ", txt, perl = TRUE)
+  txt <- trimws(txt)
+  if (!nzchar(txt)) {
+    return(NA_character_)
+  }
+
+  tokens <- strsplit(txt, "\\s+", perl = TRUE)[[1]]
+  stop_words <- c(
+    "the", "a", "an", "and", "or", "to", "of", "for", "in", "on", "at", "is", "are", "was", "were",
+    "be", "do", "did", "does", "with", "from", "that", "this", "these", "those", "your", "you",
+    "que", "qui", "quoi", "quel", "quelle", "quels", "quelles", "de", "du", "des", "la", "le", "les",
+    "et", "en", "au", "aux", "pour", "dans", "sur", "est", "sont", "etre", "avoir", "votre", "vous",
+    "ce", "cet", "cette", "ces", "une", "un", "d", "l"
+  )
+  tokens <- tokens[!(tokens %in% stop_words)]
+  tokens <- tokens[nchar(tokens) >= 2L]
+  if (length(tokens) == 0L) {
+    return(NA_character_)
+  }
+
+  tokens <- tokens[seq_len(min(length(tokens), max_words))]
+  slug <- paste(tokens, collapse = "_")
+  slug <- gsub("_+", "_", slug, perl = TRUE)
+  slug <- gsub("^_|_$", "", slug, perl = TRUE)
+  if (!nzchar(slug)) {
+    return(NA_character_)
+  }
+  if (nchar(slug) > max_chars) {
+    slug <- substr(slug, 1L, max_chars)
+    slug <- gsub("_+$", "", slug, perl = TRUE)
+  }
+  if (grepl("^[0-9]", slug, perl = TRUE)) {
+    slug <- paste0("var_", slug)
+  }
+  slug
+}
+
+.make_unique_master_names <- function(candidates, existing = character(0)) {
+  if (length(candidates) == 0L) {
+    return(candidates)
+  }
+
+  out <- character(length(candidates))
+  taken <- as.character(existing)
+
+  for (i in seq_along(candidates)) {
+    base <- candidates[[i]]
+    cur <- base
+    k <- 2L
+    while (cur %in% c(taken, out[seq_len(max(0L, i - 1L))])) {
+      cur <- paste0(base, "_", k)
+      k <- k + 1L
+    }
+    out[[i]] <- cur
+  }
+
+  out
+}
+
+.build_master_opaque_rename_map <- function(master, label_maps_by_study) {
+  vars <- intersect(names(master), .master_opaque_variable_candidates())
+  if (length(vars) == 0L) {
+    return(data.frame(
+      legacy_variable = character(0),
+      master_variable = character(0),
+      label_hint = character(0),
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  label_hint <- vapply(
+    vars,
+    .select_master_label_hint,
+    character(1),
+    label_maps_by_study = label_maps_by_study
+  )
+
+  slug <- vapply(label_hint, .slugify_master_label, character(1))
+  fallback <- is.na(slug) | !nzchar(slug)
+  slug[fallback] <- paste0("legacy_item_", vars[fallback])
+
+  candidates <- paste0(slug, "_", vars)
+  candidates <- gsub("\\.+", "_", make.names(candidates, unique = FALSE), perl = TRUE)
+
+  existing <- setdiff(names(master), vars)
+  master_names <- .make_unique_master_names(candidates, existing = existing)
+
+  data.frame(
+    legacy_variable = vars,
+    master_variable = master_names,
+    label_hint = label_hint,
+    stringsAsFactors = FALSE
+  )
+}
+
+.rename_master_opaque_variables <- function(master, source_map, label_maps_by_study) {
+  rename_map <- .build_master_opaque_rename_map(master, label_maps_by_study)
+  if (nrow(rename_map) == 0L) {
+    return(list(
+      master = master,
+      source_map = source_map,
+      rename_map = rename_map
+    ))
+  }
+
+  idx <- match(rename_map$legacy_variable, names(master))
+  names(master)[idx] <- rename_map$master_variable
+
+  if (is.data.frame(source_map) && "harmonized_variable" %in% names(source_map)) {
+    lookup <- setNames(rename_map$master_variable, rename_map$legacy_variable)
+    hit <- source_map$harmonized_variable %in% names(lookup)
+    source_map$harmonized_variable[hit] <- unname(lookup[source_map$harmonized_variable[hit]])
+  }
+
+  list(
+    master = master,
+    source_map = source_map,
+    rename_map = rename_map
+  )
+}
+
 .append_crossstudy_variables <- function(stacked, source_maps, raw_by_study, study_meta) {
   extra_vars <- .discover_crossstudy_raw_variables(raw_by_study, min_studies = 2L)
   if (length(extra_vars) == 0L) {
@@ -1351,11 +1548,15 @@
 #'   return partial results and record failures in attributes.
 #' @param save_path Optional file path to persist the master dataset. If the
 #'   path ends with `.rds`, it is saved with [saveRDS()]. Otherwise, a CSV is
-#'   written with [utils::write.csv()].
+#'   written with [utils::write.csv()]. When opaque legacy variables are
+#'   renamed in the merged output, an old-to-new variable map is also written
+#'   alongside the saved file.
 #'
 #' @return A harmonized stacked data frame. Attributes include:
 #'   `source_map`, `loaded_surveys`, `failed_surveys`,
-#'   `duplicates_removed`, and `empty_rows_removed`.
+#'   `duplicates_removed`, `empty_rows_removed`, and `variable_name_map`.
+#'   When `save_path` is provided and renaming is applied, the map path is
+#'   stored in `variable_name_map_path`.
 #' @export
 get_qes_master <- function(
   surveys = NULL,
@@ -1374,6 +1575,7 @@ get_qes_master <- function(
   stacked <- list()
   source_maps <- list()
   raw_by_study <- list()
+  label_maps_by_study <- list()
   study_meta <- list()
   failed <- character(0)
 
@@ -1408,6 +1610,7 @@ get_qes_master <- function(
     stacked[[srvy]] <- built$data
     source_maps[[srvy]] <- built$source_map
     raw_by_study[[srvy]] <- dat
+    label_maps_by_study[[srvy]] <- .extract_master_label_map(dat)
     study_meta[[srvy]] <- list(
       year = study$year,
       name_en = study$name_en
@@ -1451,13 +1654,31 @@ get_qes_master <- function(
   source_map <- do.call(rbind, source_maps)
   rownames(source_map) <- NULL
 
+  renamed <- .rename_master_opaque_variables(
+    master = master,
+    source_map = source_map,
+    label_maps_by_study = label_maps_by_study
+  )
+  master <- renamed$master
+  source_map <- renamed$source_map
+  variable_name_map <- renamed$rename_map
+
+  renamed_lookup <- setNames(variable_name_map$master_variable, variable_name_map$legacy_variable)
+  extra_vars_named <- extra$extra_vars
+  if (length(extra_vars_named) > 0L && length(renamed_lookup) > 0L) {
+    hit <- extra_vars_named %in% names(renamed_lookup)
+    extra_vars_named[hit] <- unname(renamed_lookup[extra_vars_named[hit]])
+  }
+
   attr(master, "source_map") <- source_map
   attr(master, "loaded_surveys") <- names(stacked)
   attr(master, "failed_surveys") <- failed
   attr(master, "duplicates_removed") <- dedup$removed
   attr(master, "empty_rows_removed") <- no_empty$removed
   attr(master, "harmonized_variables") <- setdiff(names(master), c("qes_code", "qes_year", "qes_name_en"))
-  attr(master, "crossstudy_variables_added") <- extra$extra_vars
+  attr(master, "crossstudy_variables_added") <- extra_vars_named
+  attr(master, "variable_name_map") <- variable_name_map
+  attr(master, "variable_name_map_path") <- NULL
   attr(master, "saved_to") <- NULL
 
   if (isTRUE(assign_global)) {
@@ -1476,6 +1697,14 @@ get_qes_master <- function(
     } else {
       utils::write.csv(master, save_path, row.names = FALSE, na = "")
     }
+
+    if (is.data.frame(variable_name_map) && nrow(variable_name_map) > 0L) {
+      stem <- sub("\\.[^.]+$", "", save_path, perl = TRUE)
+      map_path <- paste0(stem, "_variable_name_map.csv")
+      utils::write.csv(variable_name_map, map_path, row.names = FALSE, na = "")
+      attr(master, "variable_name_map_path") <- map_path
+    }
+
     attr(master, "saved_to") <- save_path
   }
 
@@ -1493,6 +1722,12 @@ get_qes_master <- function(
     }
     if (length(extra$extra_vars) > 0L) {
       message(sprintf("Master dataset cross-study variables added: %s", length(extra$extra_vars)))
+    }
+    if (is.data.frame(variable_name_map) && nrow(variable_name_map) > 0L) {
+      message(sprintf("Master dataset opaque legacy variables renamed: %s", nrow(variable_name_map)))
+      if (!is.null(save_path) && !is.null(attr(master, "variable_name_map_path", exact = TRUE))) {
+        message(sprintf("Master dataset variable name map saved to: %s", attr(master, "variable_name_map_path", exact = TRUE)))
+      }
     }
     if (!is.null(save_path)) {
       message(sprintf("Master dataset saved to: %s", save_path))

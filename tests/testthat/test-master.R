@@ -178,3 +178,68 @@ test_that("get_qes_master can save master file to disk", {
   roundtrip <- readRDS(rds_path)
   expect_true(identical(nrow(roundtrip), nrow(master_rds)))
 })
+
+test_that("get_qes_master renames opaque legacy variables and records mapping", {
+  local_mocked_bindings(
+    get_qes = function(srvy, assign_global, with_codebook, quiet) {
+      if (identical(srvy, "qes2022")) {
+        dat <- data.frame(ResponseId = "x1", q10 = 1, q16 = 2, stringsAsFactors = FALSE)
+        attr(dat$q10, "label") <- "Important issue: cost of living"
+        attr(dat$q16, "label") <- "Main source of political information"
+        return(dat)
+      }
+      if (identical(srvy, "qes2018")) {
+        dat <- data.frame(responseid = "x2", q10 = 3, q16 = 4, stringsAsFactors = FALSE)
+        attr(dat$q10, "label") <- "Important issue: cost of living"
+        attr(dat$q16, "label") <- "Main source of political information"
+        return(dat)
+      }
+      stop("mocked failure")
+    },
+    .env = asNamespace("qesR")
+  )
+
+  master <- get_qes_master(
+    surveys = c("qes2022", "qes2018"),
+    assign_global = FALSE,
+    quiet = TRUE
+  )
+
+  var_map <- attr(master, "variable_name_map", exact = TRUE)
+  expect_true(is.data.frame(var_map))
+  expect_true(all(c("legacy_variable", "master_variable", "label_hint") %in% names(var_map)))
+  expect_true(all(c("q10", "q16") %in% var_map$legacy_variable))
+  expect_false(any(c("q10", "q16") %in% names(master)))
+  expect_true(all(var_map$master_variable %in% names(master)))
+})
+
+test_that("get_qes_master saves variable name sidecar map when renaming occurs", {
+  local_mocked_bindings(
+    get_qes = function(srvy, assign_global, with_codebook, quiet) {
+      if (identical(srvy, "qes2022")) {
+        dat <- data.frame(ResponseId = "x1", q10 = 1, stringsAsFactors = FALSE)
+        attr(dat$q10, "label") <- "Important issue: cost of living"
+        return(dat)
+      }
+      if (identical(srvy, "qes2018")) {
+        dat <- data.frame(responseid = "x2", q10 = 2, stringsAsFactors = FALSE)
+        attr(dat$q10, "label") <- "Important issue: cost of living"
+        return(dat)
+      }
+      stop("mocked failure")
+    },
+    .env = asNamespace("qesR")
+  )
+
+  out <- tempfile(fileext = ".csv")
+  master <- get_qes_master(
+    surveys = c("qes2022", "qes2018"),
+    assign_global = FALSE,
+    quiet = TRUE,
+    save_path = out
+  )
+
+  map_path <- attr(master, "variable_name_map_path", exact = TRUE)
+  expect_true(is.character(map_path) && length(map_path) == 1L && nzchar(map_path))
+  expect_true(file.exists(map_path))
+})

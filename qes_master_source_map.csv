@@ -33,69 +33,69 @@
 "qes2022","2022","Quebec Election Study 2022","occup",
 "qes2022","2022","Quebec Election Study 2022","patron",
 "qes2022","2022","Quebec Election Study 2022","pondam1",
-"qes2022","2022","Quebec Election Study 2022","q10",
-"qes2022","2022","Quebec Election Study 2022","q16",
-"qes2022","2022","Quebec Election Study 2022","q17",
-"qes2022","2022","Quebec Election Study 2022","q18",
-"qes2022","2022","Quebec Election Study 2022","q18a",
-"qes2022","2022","Quebec Election Study 2022","q18b",
-"qes2022","2022","Quebec Election Study 2022","q20",
-"qes2022","2022","Quebec Election Study 2022","q20b",
-"qes2022","2022","Quebec Election Study 2022","q22",
-"qes2022","2022","Quebec Election Study 2022","q23",
-"qes2022","2022","Quebec Election Study 2022","q24",
-"qes2022","2022","Quebec Election Study 2022","q3",
-"qes2022","2022","Quebec Election Study 2022","q31",
-"qes2022","2022","Quebec Election Study 2022","q33",
-"qes2022","2022","Quebec Election Study 2022","q35",
-"qes2022","2022","Quebec Election Study 2022","q37",
-"qes2022","2022","Quebec Election Study 2022","q38",
-"qes2022","2022","Quebec Election Study 2022","q39",
-"qes2022","2022","Quebec Election Study 2022","q4",
-"qes2022","2022","Quebec Election Study 2022","q40",
-"qes2022","2022","Quebec Election Study 2022","q41",
-"qes2022","2022","Quebec Election Study 2022","q42",
-"qes2022","2022","Quebec Election Study 2022","q43",
-"qes2022","2022","Quebec Election Study 2022","q44",
-"qes2022","2022","Quebec Election Study 2022","q45",
-"qes2022","2022","Quebec Election Study 2022","q46",
-"qes2022","2022","Quebec Election Study 2022","q47",
-"qes2022","2022","Quebec Election Study 2022","q48",
-"qes2022","2022","Quebec Election Study 2022","q49",
-"qes2022","2022","Quebec Election Study 2022","q50",
-"qes2022","2022","Quebec Election Study 2022","q51",
-"qes2022","2022","Quebec Election Study 2022","q53",
-"qes2022","2022","Quebec Election Study 2022","q54",
-"qes2022","2022","Quebec Election Study 2022","q55",
-"qes2022","2022","Quebec Election Study 2022","q56",
-"qes2022","2022","Quebec Election Study 2022","q58",
-"qes2022","2022","Quebec Election Study 2022","q59",
-"qes2022","2022","Quebec Election Study 2022","q60",
-"qes2022","2022","Quebec Election Study 2022","q61b",
-"qes2022","2022","Quebec Election Study 2022","q61d",
-"qes2022","2022","Quebec Election Study 2022","q62a",
-"qes2022","2022","Quebec Election Study 2022","q62b",
-"qes2022","2022","Quebec Election Study 2022","q64",
-"qes2022","2022","Quebec Election Study 2022","q65",
-"qes2022","2022","Quebec Election Study 2022","q66",
-"qes2022","2022","Quebec Election Study 2022","q68",
-"qes2022","2022","Quebec Election Study 2022","q7",
-"qes2022","2022","Quebec Election Study 2022","q70",
-"qes2022","2022","Quebec Election Study 2022","q72",
-"qes2022","2022","Quebec Election Study 2022","q73",
-"qes2022","2022","Quebec Election Study 2022","q74",
-"qes2022","2022","Quebec Election Study 2022","q79",
-"qes2022","2022","Quebec Election Study 2022","q8",
-"qes2022","2022","Quebec Election Study 2022","q80",
-"qes2022","2022","Quebec Election Study 2022","q81",
-"qes2022","2022","Quebec Election Study 2022","q9",
-"qes2022","2022","Quebec Election Study 2022","raison1",
-"qes2022","2022","Quebec Election Study 2022","raison2",
-"qes2022","2022","Quebec Election Study 2022","s_jse",
-"qes2022","2022","Quebec Election Study 2022","satisf",
-"qes2022","2022","Quebec Election Study 2022","sefie",
-"qes2022","2022","Quebec Election Study 2022","sondbons",
-"qes2022","2022","Quebec Election Study 2022","voteprec",
+"qes2022","2022","Quebec Election Study 2022","laide_familles_etait_enjeu_important_election_q10",
+"qes2022","2022","Quebec Election Study 2022","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2022","2022","Quebec Election Study 2022","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2022","2022","Quebec Election Study 2022","which_party_best_managing_health_care_system_q18",
+"qes2022","2022","Quebec Election Study 2022","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2022","2022","Quebec Election Study 2022","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2022","2022","Quebec Election Study 2022","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2022","2022","Quebec Election Study 2022","which_party_best_fighting_corruption_q20b",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2022","2022","Quebec Election Study 2022","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes2022","2022","Quebec Election Study 2022","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes2022","2022","Quebec Election Study 2022","leducation_etait_enjeu_important_election_q3",
+"qes2022","2022","Quebec Election Study 2022","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2022","2022","Quebec Election Study 2022","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2022","2022","Quebec Election Study 2022","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2022","2022","Quebec Election Study 2022","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2022","2022","Quebec Election Study 2022","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2022","2022","Quebec Election Study 2022","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2022","2022","Quebec Election Study 2022","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2022","2022","Quebec Election Study 2022","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes2022","2022","Quebec Election Study 2022","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes2022","2022","Quebec Election Study 2022","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes2022","2022","Quebec Election Study 2022","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes2022","2022","Quebec Election Study 2022","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2022","2022","Quebec Election Study 2022","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2022","2022","Quebec Election Study 2022","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes2022","2022","Quebec Election Study 2022","dapres_lavenir_q49",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2022","2022","Quebec Election Study 2022","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2022","2022","Quebec Election Study 2022","if_had_choose_between_no_change_more_powers_q56",
+"qes2022","2022","Quebec Election Study 2022","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2022","2022","Quebec Election Study 2022","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2022","2022","Quebec Election Study 2022","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2022","2022","Quebec Election Study 2022","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2022","2022","Quebec Election Study 2022","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2022","2022","Quebec Election Study 2022","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2022","2022","Quebec Election Study 2022","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2022","2022","Quebec Election Study 2022","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2022","2022","Quebec Election Study 2022","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2022","2022","Quebec Election Study 2022","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes2022","2022","Quebec Election Study 2022","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes2022","2022","Quebec Election Study 2022","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2022","2022","Quebec Election Study 2022","politique_provinciale_habituellement_identifiez_q70",
+"qes2022","2022","Quebec Election Study 2022","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2022","2022","Quebec Election Study 2022","parti_q73",
+"qes2022","2022","Quebec Election Study 2022","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2022","2022","Quebec Election Study 2022","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2022","2022","Quebec Election Study 2022","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2022","2022","Quebec Election Study 2022","langue_parlez_plus_souvent_maison_q80",
+"qes2022","2022","Quebec Election Study 2022","some_people_say_governments_should_see_it_every_q81",
+"qes2022","2022","Quebec Election Study 2022","pauvrete_etait_enjeu_important_election_q9",
+"qes2022","2022","Quebec Election Study 2022","raison_vote_recodee_raison1",
+"qes2022","2022","Quebec Election Study 2022","raison_vote_recodee_raison2",
+"qes2022","2022","Quebec Election Study 2022","jour_semaine_s_jse",
+"qes2022","2022","Quebec Election Study 2022","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2022","2022","Quebec Election Study 2022","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2022","2022","Quebec Election Study 2022","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2022","2022","Quebec Election Study 2022","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2018","2018","Quebec Election Study 2018","respondent_id","responseid"
 "qes2018","2018","Quebec Election Study 2018","interview_start",
 "qes2018","2018","Quebec Election Study 2018","interview_end",
@@ -130,69 +130,69 @@
 "qes2018","2018","Quebec Election Study 2018","occup",
 "qes2018","2018","Quebec Election Study 2018","patron",
 "qes2018","2018","Quebec Election Study 2018","pondam1",
-"qes2018","2018","Quebec Election Study 2018","q10","q10"
-"qes2018","2018","Quebec Election Study 2018","q16",
-"qes2018","2018","Quebec Election Study 2018","q17",
-"qes2018","2018","Quebec Election Study 2018","q18","q18"
-"qes2018","2018","Quebec Election Study 2018","q18a",
-"qes2018","2018","Quebec Election Study 2018","q18b",
-"qes2018","2018","Quebec Election Study 2018","q20",
-"qes2018","2018","Quebec Election Study 2018","q20b","q20b"
-"qes2018","2018","Quebec Election Study 2018","q22",
-"qes2018","2018","Quebec Election Study 2018","q23","q23"
-"qes2018","2018","Quebec Election Study 2018","q24","q24"
-"qes2018","2018","Quebec Election Study 2018","q3","q3"
-"qes2018","2018","Quebec Election Study 2018","q31",
-"qes2018","2018","Quebec Election Study 2018","q33",
-"qes2018","2018","Quebec Election Study 2018","q35",
-"qes2018","2018","Quebec Election Study 2018","q37",
-"qes2018","2018","Quebec Election Study 2018","q38",
-"qes2018","2018","Quebec Election Study 2018","q39",
-"qes2018","2018","Quebec Election Study 2018","q4","q4"
-"qes2018","2018","Quebec Election Study 2018","q40",
-"qes2018","2018","Quebec Election Study 2018","q41",
-"qes2018","2018","Quebec Election Study 2018","q42","q42"
-"qes2018","2018","Quebec Election Study 2018","q43","q43"
-"qes2018","2018","Quebec Election Study 2018","q44","q44"
-"qes2018","2018","Quebec Election Study 2018","q45","q45"
-"qes2018","2018","Quebec Election Study 2018","q46","q46"
-"qes2018","2018","Quebec Election Study 2018","q47",
-"qes2018","2018","Quebec Election Study 2018","q48","q48"
-"qes2018","2018","Quebec Election Study 2018","q49","q49"
-"qes2018","2018","Quebec Election Study 2018","q50",
-"qes2018","2018","Quebec Election Study 2018","q51",
-"qes2018","2018","Quebec Election Study 2018","q53","q53"
-"qes2018","2018","Quebec Election Study 2018","q54","q54"
-"qes2018","2018","Quebec Election Study 2018","q55",
-"qes2018","2018","Quebec Election Study 2018","q56","q56"
-"qes2018","2018","Quebec Election Study 2018","q58","q58"
-"qes2018","2018","Quebec Election Study 2018","q59",
-"qes2018","2018","Quebec Election Study 2018","q60","q60"
-"qes2018","2018","Quebec Election Study 2018","q61b",
-"qes2018","2018","Quebec Election Study 2018","q61d",
-"qes2018","2018","Quebec Election Study 2018","q62a","q62a"
-"qes2018","2018","Quebec Election Study 2018","q62b","q62b"
-"qes2018","2018","Quebec Election Study 2018","q64",
-"qes2018","2018","Quebec Election Study 2018","q65",
-"qes2018","2018","Quebec Election Study 2018","q66","q66"
-"qes2018","2018","Quebec Election Study 2018","q68","q68"
-"qes2018","2018","Quebec Election Study 2018","q7","q7"
-"qes2018","2018","Quebec Election Study 2018","q70","q70"
-"qes2018","2018","Quebec Election Study 2018","q72",
-"qes2018","2018","Quebec Election Study 2018","q73",
-"qes2018","2018","Quebec Election Study 2018","q74",
-"qes2018","2018","Quebec Election Study 2018","q79",
-"qes2018","2018","Quebec Election Study 2018","q8","q8"
-"qes2018","2018","Quebec Election Study 2018","q80",
-"qes2018","2018","Quebec Election Study 2018","q81",
-"qes2018","2018","Quebec Election Study 2018","q9","q9"
-"qes2018","2018","Quebec Election Study 2018","raison1",
-"qes2018","2018","Quebec Election Study 2018","raison2",
-"qes2018","2018","Quebec Election Study 2018","s_jse",
-"qes2018","2018","Quebec Election Study 2018","satisf",
-"qes2018","2018","Quebec Election Study 2018","sefie",
-"qes2018","2018","Quebec Election Study 2018","sondbons",
-"qes2018","2018","Quebec Election Study 2018","voteprec",
+"qes2018","2018","Quebec Election Study 2018","laide_familles_etait_enjeu_important_election_q10","q10"
+"qes2018","2018","Quebec Election Study 2018","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2018","2018","Quebec Election Study 2018","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2018","2018","Quebec Election Study 2018","which_party_best_managing_health_care_system_q18","q18"
+"qes2018","2018","Quebec Election Study 2018","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2018","2018","Quebec Election Study 2018","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2018","2018","Quebec Election Study 2018","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2018","2018","Quebec Election Study 2018","which_party_best_fighting_corruption_q20b","q20b"
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2018","2018","Quebec Election Study 2018","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23","q23"
+"qes2018","2018","Quebec Election Study 2018","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24","q24"
+"qes2018","2018","Quebec Election Study 2018","leducation_etait_enjeu_important_election_q3","q3"
+"qes2018","2018","Quebec Election Study 2018","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2018","2018","Quebec Election Study 2018","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2018","2018","Quebec Election Study 2018","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2018","2018","Quebec Election Study 2018","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2018","2018","Quebec Election Study 2018","according_what_main_difference_between_quebecois_people_peopl_q4","q4"
+"qes2018","2018","Quebec Election Study 2018","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2018","2018","Quebec Election Study 2018","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2018","2018","Quebec Election Study 2018","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42","q42"
+"qes2018","2018","Quebec Election Study 2018","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43","q43"
+"qes2018","2018","Quebec Election Study 2018","selon_lequel_chefs_parti_plus_competent_ne_pas_q44","q44"
+"qes2018","2018","Quebec Election Study 2018","would_say_canadian_government_intervenes_too_much_affairs_q45","q45"
+"qes2018","2018","Quebec Election Study 2018","selon_lequel_chefs_parti_plus_proche_gens_ne_q46","q46"
+"qes2018","2018","Quebec Election Study 2018","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2018","2018","Quebec Election Study 2018","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48","q48"
+"qes2018","2018","Quebec Election Study 2018","dapres_lavenir_q49","q49"
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53","q53"
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54","q54"
+"qes2018","2018","Quebec Election Study 2018","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2018","2018","Quebec Election Study 2018","if_had_choose_between_no_change_more_powers_q56","q56"
+"qes2018","2018","Quebec Election Study 2018","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58","q58"
+"qes2018","2018","Quebec Election Study 2018","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2018","2018","Quebec Election Study 2018","it_important_quebec_has_sufficient_voice_central_decision_q60","q60"
+"qes2018","2018","Quebec Election Study 2018","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2018","2018","Quebec Election Study 2018","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2018","2018","Quebec Election Study 2018","each_following_areas_think_decisions_should_made_by_q62a","q62a"
+"qes2018","2018","Quebec Election Study 2018","each_following_areas_think_decisions_should_made_by_q62b","q62b"
+"qes2018","2018","Quebec Election Study 2018","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2018","2018","Quebec Election Study 2018","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2018","2018","Quebec Election Study 2018","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66","q66"
+"qes2018","2018","Quebec Election Study 2018","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68","q68"
+"qes2018","2018","Quebec Election Study 2018","baisses_dimp_ots_etaient_enjeu_important_election_q7","q7"
+"qes2018","2018","Quebec Election Study 2018","politique_provinciale_habituellement_identifiez_q70","q70"
+"qes2018","2018","Quebec Election Study 2018","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2018","2018","Quebec Election Study 2018","parti_q73",
+"qes2018","2018","Quebec Election Study 2018","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2018","2018","Quebec Election Study 2018","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2018","2018","Quebec Election Study 2018","statut_politique_quebec_etait_enjeu_important_election_q8","q8"
+"qes2018","2018","Quebec Election Study 2018","langue_parlez_plus_souvent_maison_q80",
+"qes2018","2018","Quebec Election Study 2018","some_people_say_governments_should_see_it_every_q81",
+"qes2018","2018","Quebec Election Study 2018","pauvrete_etait_enjeu_important_election_q9","q9"
+"qes2018","2018","Quebec Election Study 2018","raison_vote_recodee_raison1",
+"qes2018","2018","Quebec Election Study 2018","raison_vote_recodee_raison2",
+"qes2018","2018","Quebec Election Study 2018","jour_semaine_s_jse",
+"qes2018","2018","Quebec Election Study 2018","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2018","2018","Quebec Election Study 2018","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2018","2018","Quebec Election Study 2018","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2018","2018","Quebec Election Study 2018","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","respondent_id","(synthetic_rowid)"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_start",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","interview_end",
@@ -227,69 +227,69 @@
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","occup",
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","patron","patron"
 "qes2018_panel","2018","Quebec Election Study 2018 Panel","pondam1",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q10",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q16",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q17",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18a",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q18b",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q20",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q20b",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q22",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q23",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q24",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q3",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q31",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q33",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q35",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q37",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q38",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q39",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q4",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q40",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q41",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q42",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q43",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q44",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q45",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q46",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q47",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q48",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q49",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q50",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q51",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q53",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q54",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q55",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q56",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q58",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q59",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q60",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q61b",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q61d",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q62a",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q62b",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q64",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q65",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q66",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q68",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q7",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q70",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q72",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q73",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q74",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q79",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q8",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q80",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q81",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","q9",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison1","raison1"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison2","raison2"
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","s_jse",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","satisf",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","sefie",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","sondbons",
-"qes2018_panel","2018","Quebec Election Study 2018 Panel","voteprec",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","laide_familles_etait_enjeu_important_election_q10",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","which_party_best_managing_health_care_system_q18",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","which_party_best_fighting_corruption_q20b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","leducation_etait_enjeu_important_election_q3",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","dapres_lavenir_q49",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","if_had_choose_between_no_change_more_powers_q56",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","politique_provinciale_habituellement_identifiez_q70",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","parti_q73",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","langue_parlez_plus_souvent_maison_q80",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","some_people_say_governments_should_see_it_every_q81",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","pauvrete_etait_enjeu_important_election_q9",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison_vote_recodee_raison1","raison1"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","raison_vote_recodee_raison2","raison2"
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","jour_semaine_s_jse",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2018_panel","2018","Quebec Election Study 2018 Panel","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2014","2014","Quebec Election Study 2014","respondent_id","(synthetic_rowid)"
 "qes2014","2014","Quebec Election Study 2014","interview_start","SDAT"
 "qes2014","2014","Quebec Election Study 2014","interview_end",
@@ -324,69 +324,69 @@
 "qes2014","2014","Quebec Election Study 2014","occup",
 "qes2014","2014","Quebec Election Study 2014","patron",
 "qes2014","2014","Quebec Election Study 2014","pondam1",
-"qes2014","2014","Quebec Election Study 2014","q10",
-"qes2014","2014","Quebec Election Study 2014","q16",
-"qes2014","2014","Quebec Election Study 2014","q17",
-"qes2014","2014","Quebec Election Study 2014","q18",
-"qes2014","2014","Quebec Election Study 2014","q18a",
-"qes2014","2014","Quebec Election Study 2014","q18b",
-"qes2014","2014","Quebec Election Study 2014","q20",
-"qes2014","2014","Quebec Election Study 2014","q20b",
-"qes2014","2014","Quebec Election Study 2014","q22",
-"qes2014","2014","Quebec Election Study 2014","q23",
-"qes2014","2014","Quebec Election Study 2014","q24",
-"qes2014","2014","Quebec Election Study 2014","q3",
-"qes2014","2014","Quebec Election Study 2014","q31",
-"qes2014","2014","Quebec Election Study 2014","q33",
-"qes2014","2014","Quebec Election Study 2014","q35",
-"qes2014","2014","Quebec Election Study 2014","q37",
-"qes2014","2014","Quebec Election Study 2014","q38",
-"qes2014","2014","Quebec Election Study 2014","q39",
-"qes2014","2014","Quebec Election Study 2014","q4",
-"qes2014","2014","Quebec Election Study 2014","q40",
-"qes2014","2014","Quebec Election Study 2014","q41",
-"qes2014","2014","Quebec Election Study 2014","q42",
-"qes2014","2014","Quebec Election Study 2014","q43",
-"qes2014","2014","Quebec Election Study 2014","q44",
-"qes2014","2014","Quebec Election Study 2014","q45",
-"qes2014","2014","Quebec Election Study 2014","q46",
-"qes2014","2014","Quebec Election Study 2014","q47",
-"qes2014","2014","Quebec Election Study 2014","q48",
-"qes2014","2014","Quebec Election Study 2014","q49",
-"qes2014","2014","Quebec Election Study 2014","q50",
-"qes2014","2014","Quebec Election Study 2014","q51",
-"qes2014","2014","Quebec Election Study 2014","q53",
-"qes2014","2014","Quebec Election Study 2014","q54",
-"qes2014","2014","Quebec Election Study 2014","q55",
-"qes2014","2014","Quebec Election Study 2014","q56",
-"qes2014","2014","Quebec Election Study 2014","q58",
-"qes2014","2014","Quebec Election Study 2014","q59",
-"qes2014","2014","Quebec Election Study 2014","q60",
-"qes2014","2014","Quebec Election Study 2014","q61b",
-"qes2014","2014","Quebec Election Study 2014","q61d",
-"qes2014","2014","Quebec Election Study 2014","q62a",
-"qes2014","2014","Quebec Election Study 2014","q62b",
-"qes2014","2014","Quebec Election Study 2014","q64",
-"qes2014","2014","Quebec Election Study 2014","q65",
-"qes2014","2014","Quebec Election Study 2014","q66",
-"qes2014","2014","Quebec Election Study 2014","q68",
-"qes2014","2014","Quebec Election Study 2014","q7",
-"qes2014","2014","Quebec Election Study 2014","q70",
-"qes2014","2014","Quebec Election Study 2014","q72",
-"qes2014","2014","Quebec Election Study 2014","q73",
-"qes2014","2014","Quebec Election Study 2014","q74",
-"qes2014","2014","Quebec Election Study 2014","q79",
-"qes2014","2014","Quebec Election Study 2014","q8",
-"qes2014","2014","Quebec Election Study 2014","q80",
-"qes2014","2014","Quebec Election Study 2014","q81",
-"qes2014","2014","Quebec Election Study 2014","q9",
-"qes2014","2014","Quebec Election Study 2014","raison1",
-"qes2014","2014","Quebec Election Study 2014","raison2",
-"qes2014","2014","Quebec Election Study 2014","s_jse",
-"qes2014","2014","Quebec Election Study 2014","satisf",
-"qes2014","2014","Quebec Election Study 2014","sefie",
-"qes2014","2014","Quebec Election Study 2014","sondbons",
-"qes2014","2014","Quebec Election Study 2014","voteprec",
+"qes2014","2014","Quebec Election Study 2014","laide_familles_etait_enjeu_important_election_q10",
+"qes2014","2014","Quebec Election Study 2014","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2014","2014","Quebec Election Study 2014","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2014","2014","Quebec Election Study 2014","which_party_best_managing_health_care_system_q18",
+"qes2014","2014","Quebec Election Study 2014","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2014","2014","Quebec Election Study 2014","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2014","2014","Quebec Election Study 2014","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2014","2014","Quebec Election Study 2014","which_party_best_fighting_corruption_q20b",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2014","2014","Quebec Election Study 2014","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes2014","2014","Quebec Election Study 2014","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes2014","2014","Quebec Election Study 2014","leducation_etait_enjeu_important_election_q3",
+"qes2014","2014","Quebec Election Study 2014","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2014","2014","Quebec Election Study 2014","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2014","2014","Quebec Election Study 2014","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2014","2014","Quebec Election Study 2014","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2014","2014","Quebec Election Study 2014","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2014","2014","Quebec Election Study 2014","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2014","2014","Quebec Election Study 2014","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2014","2014","Quebec Election Study 2014","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes2014","2014","Quebec Election Study 2014","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes2014","2014","Quebec Election Study 2014","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes2014","2014","Quebec Election Study 2014","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes2014","2014","Quebec Election Study 2014","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2014","2014","Quebec Election Study 2014","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2014","2014","Quebec Election Study 2014","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes2014","2014","Quebec Election Study 2014","dapres_lavenir_q49",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2014","2014","Quebec Election Study 2014","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2014","2014","Quebec Election Study 2014","if_had_choose_between_no_change_more_powers_q56",
+"qes2014","2014","Quebec Election Study 2014","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2014","2014","Quebec Election Study 2014","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2014","2014","Quebec Election Study 2014","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2014","2014","Quebec Election Study 2014","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2014","2014","Quebec Election Study 2014","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2014","2014","Quebec Election Study 2014","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2014","2014","Quebec Election Study 2014","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2014","2014","Quebec Election Study 2014","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2014","2014","Quebec Election Study 2014","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2014","2014","Quebec Election Study 2014","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes2014","2014","Quebec Election Study 2014","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes2014","2014","Quebec Election Study 2014","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2014","2014","Quebec Election Study 2014","politique_provinciale_habituellement_identifiez_q70",
+"qes2014","2014","Quebec Election Study 2014","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2014","2014","Quebec Election Study 2014","parti_q73",
+"qes2014","2014","Quebec Election Study 2014","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2014","2014","Quebec Election Study 2014","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2014","2014","Quebec Election Study 2014","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2014","2014","Quebec Election Study 2014","langue_parlez_plus_souvent_maison_q80",
+"qes2014","2014","Quebec Election Study 2014","some_people_say_governments_should_see_it_every_q81",
+"qes2014","2014","Quebec Election Study 2014","pauvrete_etait_enjeu_important_election_q9",
+"qes2014","2014","Quebec Election Study 2014","raison_vote_recodee_raison1",
+"qes2014","2014","Quebec Election Study 2014","raison_vote_recodee_raison2",
+"qes2014","2014","Quebec Election Study 2014","jour_semaine_s_jse",
+"qes2014","2014","Quebec Election Study 2014","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2014","2014","Quebec Election Study 2014","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2014","2014","Quebec Election Study 2014","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2014","2014","Quebec Election Study 2014","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2012","2012","Quebec Election Study 2012","respondent_id","quest"
 "qes2012","2012","Quebec Election Study 2012","interview_start",
 "qes2012","2012","Quebec Election Study 2012","interview_end",
@@ -421,69 +421,69 @@
 "qes2012","2012","Quebec Election Study 2012","occup","occup"
 "qes2012","2012","Quebec Election Study 2012","patron",
 "qes2012","2012","Quebec Election Study 2012","pondam1",
-"qes2012","2012","Quebec Election Study 2012","q10","q10"
-"qes2012","2012","Quebec Election Study 2012","q16","q16"
-"qes2012","2012","Quebec Election Study 2012","q17","q17"
-"qes2012","2012","Quebec Election Study 2012","q18","q18"
-"qes2012","2012","Quebec Election Study 2012","q18a",
-"qes2012","2012","Quebec Election Study 2012","q18b",
-"qes2012","2012","Quebec Election Study 2012","q20","q20"
-"qes2012","2012","Quebec Election Study 2012","q20b","q20b"
-"qes2012","2012","Quebec Election Study 2012","q22","q22"
-"qes2012","2012","Quebec Election Study 2012","q23","q23"
-"qes2012","2012","Quebec Election Study 2012","q24","q24"
-"qes2012","2012","Quebec Election Study 2012","q3","q3"
-"qes2012","2012","Quebec Election Study 2012","q31","q31"
-"qes2012","2012","Quebec Election Study 2012","q33",
-"qes2012","2012","Quebec Election Study 2012","q35","q35"
-"qes2012","2012","Quebec Election Study 2012","q37","q37"
-"qes2012","2012","Quebec Election Study 2012","q38","q38"
-"qes2012","2012","Quebec Election Study 2012","q39",
-"qes2012","2012","Quebec Election Study 2012","q4","q4"
-"qes2012","2012","Quebec Election Study 2012","q40",
-"qes2012","2012","Quebec Election Study 2012","q41","q41"
-"qes2012","2012","Quebec Election Study 2012","q42","q42"
-"qes2012","2012","Quebec Election Study 2012","q43","q43"
-"qes2012","2012","Quebec Election Study 2012","q44","q44"
-"qes2012","2012","Quebec Election Study 2012","q45","q45"
-"qes2012","2012","Quebec Election Study 2012","q46",
-"qes2012","2012","Quebec Election Study 2012","q47","q47"
-"qes2012","2012","Quebec Election Study 2012","q48","q48"
-"qes2012","2012","Quebec Election Study 2012","q49",
-"qes2012","2012","Quebec Election Study 2012","q50","q50"
-"qes2012","2012","Quebec Election Study 2012","q51","q51"
-"qes2012","2012","Quebec Election Study 2012","q53","q53"
-"qes2012","2012","Quebec Election Study 2012","q54","q54"
-"qes2012","2012","Quebec Election Study 2012","q55","q55"
-"qes2012","2012","Quebec Election Study 2012","q56","q56"
-"qes2012","2012","Quebec Election Study 2012","q58","q58"
-"qes2012","2012","Quebec Election Study 2012","q59","q59"
-"qes2012","2012","Quebec Election Study 2012","q60","q60"
-"qes2012","2012","Quebec Election Study 2012","q61b",
-"qes2012","2012","Quebec Election Study 2012","q61d",
-"qes2012","2012","Quebec Election Study 2012","q62a","q62a"
-"qes2012","2012","Quebec Election Study 2012","q62b","q62b"
-"qes2012","2012","Quebec Election Study 2012","q64","q64"
-"qes2012","2012","Quebec Election Study 2012","q65","q65"
-"qes2012","2012","Quebec Election Study 2012","q66","q66"
-"qes2012","2012","Quebec Election Study 2012","q68","q68"
-"qes2012","2012","Quebec Election Study 2012","q7","q7"
-"qes2012","2012","Quebec Election Study 2012","q70",
-"qes2012","2012","Quebec Election Study 2012","q72","q72"
-"qes2012","2012","Quebec Election Study 2012","q73",
-"qes2012","2012","Quebec Election Study 2012","q74","q74"
-"qes2012","2012","Quebec Election Study 2012","q79","q79"
-"qes2012","2012","Quebec Election Study 2012","q8","q8"
-"qes2012","2012","Quebec Election Study 2012","q80","q80"
-"qes2012","2012","Quebec Election Study 2012","q81","q81"
-"qes2012","2012","Quebec Election Study 2012","q9","q9"
-"qes2012","2012","Quebec Election Study 2012","raison1",
-"qes2012","2012","Quebec Election Study 2012","raison2",
-"qes2012","2012","Quebec Election Study 2012","s_jse",
-"qes2012","2012","Quebec Election Study 2012","satisf",
-"qes2012","2012","Quebec Election Study 2012","sefie",
-"qes2012","2012","Quebec Election Study 2012","sondbons",
-"qes2012","2012","Quebec Election Study 2012","voteprec",
+"qes2012","2012","Quebec Election Study 2012","laide_familles_etait_enjeu_important_election_q10","q10"
+"qes2012","2012","Quebec Election Study 2012","principale_source_dinformation_politique_ne_pas_lire_q16","q16"
+"qes2012","2012","Quebec Election Study 2012","deuxieme_source_dinformation_politique_television_radio_journaux_q17","q17"
+"qes2012","2012","Quebec Election Study 2012","which_party_best_managing_health_care_system_q18","q18"
+"qes2012","2012","Quebec Election Study 2012","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2012","2012","Quebec Election Study 2012","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2012","2012","Quebec Election Study 2012","eme_si_navez_peut_pas_encore_fait_choix_q20","q20"
+"qes2012","2012","Quebec Election Study 2012","which_party_best_fighting_corruption_q20b","q20b"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22","q22"
+"qes2012","2012","Quebec Election Study 2012","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23","q23"
+"qes2012","2012","Quebec Election Study 2012","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24","q24"
+"qes2012","2012","Quebec Election Study 2012","leducation_etait_enjeu_important_election_q3","q3"
+"qes2012","2012","Quebec Election Study 2012","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31","q31"
+"qes2012","2012","Quebec Election Study 2012","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2012","2012","Quebec Election Study 2012","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35","q35"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37","q37"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38","q38"
+"qes2012","2012","Quebec Election Study 2012","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2012","2012","Quebec Election Study 2012","according_what_main_difference_between_quebecois_people_peopl_q4","q4"
+"qes2012","2012","Quebec Election Study 2012","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2012","2012","Quebec Election Study 2012","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41","q41"
+"qes2012","2012","Quebec Election Study 2012","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42","q42"
+"qes2012","2012","Quebec Election Study 2012","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43","q43"
+"qes2012","2012","Quebec Election Study 2012","selon_lequel_chefs_parti_plus_competent_ne_pas_q44","q44"
+"qes2012","2012","Quebec Election Study 2012","would_say_canadian_government_intervenes_too_much_affairs_q45","q45"
+"qes2012","2012","Quebec Election Study 2012","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2012","2012","Quebec Election Study 2012","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47","q47"
+"qes2012","2012","Quebec Election Study 2012","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48","q48"
+"qes2012","2012","Quebec Election Study 2012","dapres_lavenir_q49",
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50","q50"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51","q51"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53","q53"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54","q54"
+"qes2012","2012","Quebec Election Study 2012","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55","q55"
+"qes2012","2012","Quebec Election Study 2012","if_had_choose_between_no_change_more_powers_q56","q56"
+"qes2012","2012","Quebec Election Study 2012","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58","q58"
+"qes2012","2012","Quebec Election Study 2012","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59","q59"
+"qes2012","2012","Quebec Election Study 2012","it_important_quebec_has_sufficient_voice_central_decision_q60","q60"
+"qes2012","2012","Quebec Election Study 2012","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2012","2012","Quebec Election Study 2012","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2012","2012","Quebec Election Study 2012","each_following_areas_think_decisions_should_made_by_q62a","q62a"
+"qes2012","2012","Quebec Election Study 2012","each_following_areas_think_decisions_should_made_by_q62b","q62b"
+"qes2012","2012","Quebec Election Study 2012","echelle_va_100_ou_veut_dire_naimez_vraiment_q64","q64"
+"qes2012","2012","Quebec Election Study 2012","echelle_va_100_ou_veut_dire_naimez_vraiment_q65","q65"
+"qes2012","2012","Quebec Election Study 2012","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66","q66"
+"qes2012","2012","Quebec Election Study 2012","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68","q68"
+"qes2012","2012","Quebec Election Study 2012","baisses_dimp_ots_etaient_enjeu_important_election_q7","q7"
+"qes2012","2012","Quebec Election Study 2012","politique_provinciale_habituellement_identifiez_q70",
+"qes2012","2012","Quebec Election Study 2012","sentez_peu_plus_proche_lun_ou_lautre_partis_q72","q72"
+"qes2012","2012","Quebec Election Study 2012","parti_q73",
+"qes2012","2012","Quebec Election Study 2012","lors_derniere_election_federale_janvier_2006_parti_avez_q74","q74"
+"qes2012","2012","Quebec Election Study 2012","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79","q79"
+"qes2012","2012","Quebec Election Study 2012","statut_politique_quebec_etait_enjeu_important_election_q8","q8"
+"qes2012","2012","Quebec Election Study 2012","langue_parlez_plus_souvent_maison_q80","q80"
+"qes2012","2012","Quebec Election Study 2012","some_people_say_governments_should_see_it_every_q81","q81"
+"qes2012","2012","Quebec Election Study 2012","pauvrete_etait_enjeu_important_election_q9","q9"
+"qes2012","2012","Quebec Election Study 2012","raison_vote_recodee_raison1",
+"qes2012","2012","Quebec Election Study 2012","raison_vote_recodee_raison2",
+"qes2012","2012","Quebec Election Study 2012","jour_semaine_s_jse",
+"qes2012","2012","Quebec Election Study 2012","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2012","2012","Quebec Election Study 2012","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2012","2012","Quebec Election Study 2012","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2012","2012","Quebec Election Study 2012","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","respondent_id","quest"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_start",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","interview_end",
@@ -518,69 +518,69 @@
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","occup",
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","patron","patron"
 "qes2012_panel","2012","Quebec Election Study 2012 Panel","pondam1","pondam1"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q10",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q16",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q17",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18a",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q18b",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q20",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q20b",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q22",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q23",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q24",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q3",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q31",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q33",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q35",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q37",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q38",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q39",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q4",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q40",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q41",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q42",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q43",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q44",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q45",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q46",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q47",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q48",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q49",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q50",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q51",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q53",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q54",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q55",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q56",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q58",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q59",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q60",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q61b",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q61d",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q62a",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q62b",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q64",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q65",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q66",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q68",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q7",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q70",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q72",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q73",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q74",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q79",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q8",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q80",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q81",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","q9",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison1",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison2",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","s_jse",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","satisf",
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","sefie","sefie"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","sondbons","sondbons"
-"qes2012_panel","2012","Quebec Election Study 2012 Panel","voteprec",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","laide_familles_etait_enjeu_important_election_q10",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","which_party_best_managing_health_care_system_q18",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","which_party_best_fighting_corruption_q20b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","leducation_etait_enjeu_important_election_q3",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","dapres_lavenir_q49",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","if_had_choose_between_no_change_more_powers_q56",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","politique_provinciale_habituellement_identifiez_q70",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","parti_q73",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","langue_parlez_plus_souvent_maison_q80",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","some_people_say_governments_should_see_it_every_q81",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","pauvrete_etait_enjeu_important_election_q9",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison_vote_recodee_raison1",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","raison_vote_recodee_raison2",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","jour_semaine_s_jse",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie","sefie"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons","sondbons"
+"qes2012_panel","2012","Quebec Election Study 2012 Panel","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","respondent_id","QUEST"
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_start",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","interview_end",
@@ -615,69 +615,69 @@
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","occup",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","patron",
 "qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pondam1",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q10",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q16",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q17",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18a",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q18b",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q20",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q20b",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q22",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q23",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q24",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q3",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q31",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q33",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q35",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q37",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q38",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q39",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q4",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q40",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q41",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q42",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q43",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q44",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q45",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q46",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q47",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q48",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q49",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q50",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q51",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q53",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q54",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q55",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q56",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q58",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q59",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q60",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q61b",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q61d",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q62a",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q62b",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q64",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q65",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q66",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q68",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q7",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q70",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q72",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q73",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q74",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q79",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q8",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q80",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q81",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","q9",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison1",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison2",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","s_jse",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","satisf",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sefie",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sondbons",
-"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","voteprec","voteprec"
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","laide_familles_etait_enjeu_important_election_q10",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","which_party_best_managing_health_care_system_q18",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","which_party_best_fighting_corruption_q20b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","leducation_etait_enjeu_important_election_q3",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","dapres_lavenir_q49",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","if_had_choose_between_no_change_more_powers_q56",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","each_following_areas_think_decisions_should_made_by_q62a",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","each_following_areas_think_decisions_should_made_by_q62b",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","politique_provinciale_habituellement_identifiez_q70",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","parti_q73",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","langue_parlez_plus_souvent_maison_q80",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","some_people_say_governments_should_see_it_every_q81",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","pauvrete_etait_enjeu_important_election_q9",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison_vote_recodee_raison1",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","raison_vote_recodee_raison2",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","jour_semaine_s_jse",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes_crop_2007_2010","2007-2010","CROP Quebec Opinion Polls (2007-2010)","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec","voteprec"
 "qes2008","2008","Quebec Election Study 2008","respondent_id","seq"
 "qes2008","2008","Quebec Election Study 2008","interview_start",
 "qes2008","2008","Quebec Election Study 2008","interview_end",
@@ -712,69 +712,69 @@
 "qes2008","2008","Quebec Election Study 2008","occup",
 "qes2008","2008","Quebec Election Study 2008","patron",
 "qes2008","2008","Quebec Election Study 2008","pondam1",
-"qes2008","2008","Quebec Election Study 2008","q10",
-"qes2008","2008","Quebec Election Study 2008","q16",
-"qes2008","2008","Quebec Election Study 2008","q17",
-"qes2008","2008","Quebec Election Study 2008","q18",
-"qes2008","2008","Quebec Election Study 2008","q18a","q18a"
-"qes2008","2008","Quebec Election Study 2008","q18b","q18b"
-"qes2008","2008","Quebec Election Study 2008","q20","q20"
-"qes2008","2008","Quebec Election Study 2008","q20b",
-"qes2008","2008","Quebec Election Study 2008","q22","q22"
-"qes2008","2008","Quebec Election Study 2008","q23","q23"
-"qes2008","2008","Quebec Election Study 2008","q24","q24"
-"qes2008","2008","Quebec Election Study 2008","q3",
-"qes2008","2008","Quebec Election Study 2008","q31",
-"qes2008","2008","Quebec Election Study 2008","q33","q33"
-"qes2008","2008","Quebec Election Study 2008","q35",
-"qes2008","2008","Quebec Election Study 2008","q37",
-"qes2008","2008","Quebec Election Study 2008","q38",
-"qes2008","2008","Quebec Election Study 2008","q39","q39"
-"qes2008","2008","Quebec Election Study 2008","q4",
-"qes2008","2008","Quebec Election Study 2008","q40","q40"
-"qes2008","2008","Quebec Election Study 2008","q41","q41"
-"qes2008","2008","Quebec Election Study 2008","q42","q42"
-"qes2008","2008","Quebec Election Study 2008","q43","q43"
-"qes2008","2008","Quebec Election Study 2008","q44","q44"
-"qes2008","2008","Quebec Election Study 2008","q45","q45"
-"qes2008","2008","Quebec Election Study 2008","q46","q46"
-"qes2008","2008","Quebec Election Study 2008","q47","q47"
-"qes2008","2008","Quebec Election Study 2008","q48","q48"
-"qes2008","2008","Quebec Election Study 2008","q49","q49"
-"qes2008","2008","Quebec Election Study 2008","q50","q50"
-"qes2008","2008","Quebec Election Study 2008","q51","q51"
-"qes2008","2008","Quebec Election Study 2008","q53","q53"
-"qes2008","2008","Quebec Election Study 2008","q54",
-"qes2008","2008","Quebec Election Study 2008","q55","q55"
-"qes2008","2008","Quebec Election Study 2008","q56",
-"qes2008","2008","Quebec Election Study 2008","q58",
-"qes2008","2008","Quebec Election Study 2008","q59",
-"qes2008","2008","Quebec Election Study 2008","q60",
-"qes2008","2008","Quebec Election Study 2008","q61b","q61b"
-"qes2008","2008","Quebec Election Study 2008","q61d","q61d"
-"qes2008","2008","Quebec Election Study 2008","q62a",
-"qes2008","2008","Quebec Election Study 2008","q62b",
-"qes2008","2008","Quebec Election Study 2008","q64","q64"
-"qes2008","2008","Quebec Election Study 2008","q65","q65"
-"qes2008","2008","Quebec Election Study 2008","q66","q66"
-"qes2008","2008","Quebec Election Study 2008","q68","q68"
-"qes2008","2008","Quebec Election Study 2008","q7",
-"qes2008","2008","Quebec Election Study 2008","q70","q70"
-"qes2008","2008","Quebec Election Study 2008","q72","q72"
-"qes2008","2008","Quebec Election Study 2008","q73","q73"
-"qes2008","2008","Quebec Election Study 2008","q74","q74"
-"qes2008","2008","Quebec Election Study 2008","q79","q79"
-"qes2008","2008","Quebec Election Study 2008","q8",
-"qes2008","2008","Quebec Election Study 2008","q80","q80"
-"qes2008","2008","Quebec Election Study 2008","q81","q81"
-"qes2008","2008","Quebec Election Study 2008","q9",
-"qes2008","2008","Quebec Election Study 2008","raison1",
-"qes2008","2008","Quebec Election Study 2008","raison2",
-"qes2008","2008","Quebec Election Study 2008","s_jse",
-"qes2008","2008","Quebec Election Study 2008","satisf",
-"qes2008","2008","Quebec Election Study 2008","sefie",
-"qes2008","2008","Quebec Election Study 2008","sondbons",
-"qes2008","2008","Quebec Election Study 2008","voteprec",
+"qes2008","2008","Quebec Election Study 2008","laide_familles_etait_enjeu_important_election_q10",
+"qes2008","2008","Quebec Election Study 2008","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2008","2008","Quebec Election Study 2008","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2008","2008","Quebec Election Study 2008","which_party_best_managing_health_care_system_q18",
+"qes2008","2008","Quebec Election Study 2008","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a","q18a"
+"qes2008","2008","Quebec Election Study 2008","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b","q18b"
+"qes2008","2008","Quebec Election Study 2008","eme_si_navez_peut_pas_encore_fait_choix_q20","q20"
+"qes2008","2008","Quebec Election Study 2008","which_party_best_fighting_corruption_q20b",
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22","q22"
+"qes2008","2008","Quebec Election Study 2008","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23","q23"
+"qes2008","2008","Quebec Election Study 2008","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24","q24"
+"qes2008","2008","Quebec Election Study 2008","leducation_etait_enjeu_important_election_q3",
+"qes2008","2008","Quebec Election Study 2008","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2008","2008","Quebec Election Study 2008","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33","q33"
+"qes2008","2008","Quebec Election Study 2008","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2008","2008","Quebec Election Study 2008","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39","q39"
+"qes2008","2008","Quebec Election Study 2008","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2008","2008","Quebec Election Study 2008","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40","q40"
+"qes2008","2008","Quebec Election Study 2008","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41","q41"
+"qes2008","2008","Quebec Election Study 2008","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42","q42"
+"qes2008","2008","Quebec Election Study 2008","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43","q43"
+"qes2008","2008","Quebec Election Study 2008","selon_lequel_chefs_parti_plus_competent_ne_pas_q44","q44"
+"qes2008","2008","Quebec Election Study 2008","would_say_canadian_government_intervenes_too_much_affairs_q45","q45"
+"qes2008","2008","Quebec Election Study 2008","selon_lequel_chefs_parti_plus_proche_gens_ne_q46","q46"
+"qes2008","2008","Quebec Election Study 2008","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47","q47"
+"qes2008","2008","Quebec Election Study 2008","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48","q48"
+"qes2008","2008","Quebec Election Study 2008","dapres_lavenir_q49","q49"
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50","q50"
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51","q51"
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53","q53"
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2008","2008","Quebec Election Study 2008","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55","q55"
+"qes2008","2008","Quebec Election Study 2008","if_had_choose_between_no_change_more_powers_q56",
+"qes2008","2008","Quebec Election Study 2008","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2008","2008","Quebec Election Study 2008","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2008","2008","Quebec Election Study 2008","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2008","2008","Quebec Election Study 2008","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b","q61b"
+"qes2008","2008","Quebec Election Study 2008","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d","q61d"
+"qes2008","2008","Quebec Election Study 2008","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2008","2008","Quebec Election Study 2008","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2008","2008","Quebec Election Study 2008","echelle_va_100_ou_veut_dire_naimez_vraiment_q64","q64"
+"qes2008","2008","Quebec Election Study 2008","echelle_va_100_ou_veut_dire_naimez_vraiment_q65","q65"
+"qes2008","2008","Quebec Election Study 2008","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66","q66"
+"qes2008","2008","Quebec Election Study 2008","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68","q68"
+"qes2008","2008","Quebec Election Study 2008","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2008","2008","Quebec Election Study 2008","politique_provinciale_habituellement_identifiez_q70","q70"
+"qes2008","2008","Quebec Election Study 2008","sentez_peu_plus_proche_lun_ou_lautre_partis_q72","q72"
+"qes2008","2008","Quebec Election Study 2008","parti_q73","q73"
+"qes2008","2008","Quebec Election Study 2008","lors_derniere_election_federale_janvier_2006_parti_avez_q74","q74"
+"qes2008","2008","Quebec Election Study 2008","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79","q79"
+"qes2008","2008","Quebec Election Study 2008","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2008","2008","Quebec Election Study 2008","langue_parlez_plus_souvent_maison_q80","q80"
+"qes2008","2008","Quebec Election Study 2008","some_people_say_governments_should_see_it_every_q81","q81"
+"qes2008","2008","Quebec Election Study 2008","pauvrete_etait_enjeu_important_election_q9",
+"qes2008","2008","Quebec Election Study 2008","raison_vote_recodee_raison1",
+"qes2008","2008","Quebec Election Study 2008","raison_vote_recodee_raison2",
+"qes2008","2008","Quebec Election Study 2008","jour_semaine_s_jse",
+"qes2008","2008","Quebec Election Study 2008","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2008","2008","Quebec Election Study 2008","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2008","2008","Quebec Election Study 2008","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2008","2008","Quebec Election Study 2008","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2007","2007","Quebec Election Study 2007","respondent_id","quest"
 "qes2007","2007","Quebec Election Study 2007","interview_start",
 "qes2007","2007","Quebec Election Study 2007","interview_end",
@@ -809,69 +809,69 @@
 "qes2007","2007","Quebec Election Study 2007","occup",
 "qes2007","2007","Quebec Election Study 2007","patron",
 "qes2007","2007","Quebec Election Study 2007","pondam1",
-"qes2007","2007","Quebec Election Study 2007","q10","q10"
-"qes2007","2007","Quebec Election Study 2007","q16","q16"
-"qes2007","2007","Quebec Election Study 2007","q17","q17"
-"qes2007","2007","Quebec Election Study 2007","q18",
-"qes2007","2007","Quebec Election Study 2007","q18a","q18a"
-"qes2007","2007","Quebec Election Study 2007","q18b","q18b"
-"qes2007","2007","Quebec Election Study 2007","q20","q20"
-"qes2007","2007","Quebec Election Study 2007","q20b",
-"qes2007","2007","Quebec Election Study 2007","q22","q22"
-"qes2007","2007","Quebec Election Study 2007","q23","q23"
-"qes2007","2007","Quebec Election Study 2007","q24","q24"
-"qes2007","2007","Quebec Election Study 2007","q3","q3"
-"qes2007","2007","Quebec Election Study 2007","q31","q31"
-"qes2007","2007","Quebec Election Study 2007","q33","q33"
-"qes2007","2007","Quebec Election Study 2007","q35","q35"
-"qes2007","2007","Quebec Election Study 2007","q37","q37"
-"qes2007","2007","Quebec Election Study 2007","q38","q38"
-"qes2007","2007","Quebec Election Study 2007","q39","q39"
-"qes2007","2007","Quebec Election Study 2007","q4","q4"
-"qes2007","2007","Quebec Election Study 2007","q40","q40"
-"qes2007","2007","Quebec Election Study 2007","q41","q41"
-"qes2007","2007","Quebec Election Study 2007","q42","q42"
-"qes2007","2007","Quebec Election Study 2007","q43","q43"
-"qes2007","2007","Quebec Election Study 2007","q44","q44"
-"qes2007","2007","Quebec Election Study 2007","q45","q45"
-"qes2007","2007","Quebec Election Study 2007","q46","q46"
-"qes2007","2007","Quebec Election Study 2007","q47","q47"
-"qes2007","2007","Quebec Election Study 2007","q48","q48"
-"qes2007","2007","Quebec Election Study 2007","q49","q49"
-"qes2007","2007","Quebec Election Study 2007","q50","q50"
-"qes2007","2007","Quebec Election Study 2007","q51","q51"
-"qes2007","2007","Quebec Election Study 2007","q53","q53"
-"qes2007","2007","Quebec Election Study 2007","q54","q54"
-"qes2007","2007","Quebec Election Study 2007","q55","q55"
-"qes2007","2007","Quebec Election Study 2007","q56","q56"
-"qes2007","2007","Quebec Election Study 2007","q58","q58"
-"qes2007","2007","Quebec Election Study 2007","q59","q59"
-"qes2007","2007","Quebec Election Study 2007","q60","q60"
-"qes2007","2007","Quebec Election Study 2007","q61b","q61b"
-"qes2007","2007","Quebec Election Study 2007","q61d","q61d"
-"qes2007","2007","Quebec Election Study 2007","q62a",
-"qes2007","2007","Quebec Election Study 2007","q62b",
-"qes2007","2007","Quebec Election Study 2007","q64","q64"
-"qes2007","2007","Quebec Election Study 2007","q65","q65"
-"qes2007","2007","Quebec Election Study 2007","q66","q66"
-"qes2007","2007","Quebec Election Study 2007","q68","q68"
-"qes2007","2007","Quebec Election Study 2007","q7","q7"
-"qes2007","2007","Quebec Election Study 2007","q70","q70"
-"qes2007","2007","Quebec Election Study 2007","q72","q72"
-"qes2007","2007","Quebec Election Study 2007","q73","q73"
-"qes2007","2007","Quebec Election Study 2007","q74","q74"
-"qes2007","2007","Quebec Election Study 2007","q79","q79"
-"qes2007","2007","Quebec Election Study 2007","q8","q8"
-"qes2007","2007","Quebec Election Study 2007","q80","q80"
-"qes2007","2007","Quebec Election Study 2007","q81","q81"
-"qes2007","2007","Quebec Election Study 2007","q9","q9"
-"qes2007","2007","Quebec Election Study 2007","raison1",
-"qes2007","2007","Quebec Election Study 2007","raison2",
-"qes2007","2007","Quebec Election Study 2007","s_jse",
-"qes2007","2007","Quebec Election Study 2007","satisf",
-"qes2007","2007","Quebec Election Study 2007","sefie",
-"qes2007","2007","Quebec Election Study 2007","sondbons",
-"qes2007","2007","Quebec Election Study 2007","voteprec",
+"qes2007","2007","Quebec Election Study 2007","laide_familles_etait_enjeu_important_election_q10","q10"
+"qes2007","2007","Quebec Election Study 2007","principale_source_dinformation_politique_ne_pas_lire_q16","q16"
+"qes2007","2007","Quebec Election Study 2007","deuxieme_source_dinformation_politique_television_radio_journaux_q17","q17"
+"qes2007","2007","Quebec Election Study 2007","which_party_best_managing_health_care_system_q18",
+"qes2007","2007","Quebec Election Study 2007","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a","q18a"
+"qes2007","2007","Quebec Election Study 2007","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b","q18b"
+"qes2007","2007","Quebec Election Study 2007","eme_si_navez_peut_pas_encore_fait_choix_q20","q20"
+"qes2007","2007","Quebec Election Study 2007","which_party_best_fighting_corruption_q20b",
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22","q22"
+"qes2007","2007","Quebec Election Study 2007","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23","q23"
+"qes2007","2007","Quebec Election Study 2007","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24","q24"
+"qes2007","2007","Quebec Election Study 2007","leducation_etait_enjeu_important_election_q3","q3"
+"qes2007","2007","Quebec Election Study 2007","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31","q31"
+"qes2007","2007","Quebec Election Study 2007","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33","q33"
+"qes2007","2007","Quebec Election Study 2007","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35","q35"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37","q37"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38","q38"
+"qes2007","2007","Quebec Election Study 2007","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39","q39"
+"qes2007","2007","Quebec Election Study 2007","according_what_main_difference_between_quebecois_people_peopl_q4","q4"
+"qes2007","2007","Quebec Election Study 2007","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40","q40"
+"qes2007","2007","Quebec Election Study 2007","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41","q41"
+"qes2007","2007","Quebec Election Study 2007","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42","q42"
+"qes2007","2007","Quebec Election Study 2007","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43","q43"
+"qes2007","2007","Quebec Election Study 2007","selon_lequel_chefs_parti_plus_competent_ne_pas_q44","q44"
+"qes2007","2007","Quebec Election Study 2007","would_say_canadian_government_intervenes_too_much_affairs_q45","q45"
+"qes2007","2007","Quebec Election Study 2007","selon_lequel_chefs_parti_plus_proche_gens_ne_q46","q46"
+"qes2007","2007","Quebec Election Study 2007","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47","q47"
+"qes2007","2007","Quebec Election Study 2007","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48","q48"
+"qes2007","2007","Quebec Election Study 2007","dapres_lavenir_q49","q49"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50","q50"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51","q51"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53","q53"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54","q54"
+"qes2007","2007","Quebec Election Study 2007","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55","q55"
+"qes2007","2007","Quebec Election Study 2007","if_had_choose_between_no_change_more_powers_q56","q56"
+"qes2007","2007","Quebec Election Study 2007","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58","q58"
+"qes2007","2007","Quebec Election Study 2007","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59","q59"
+"qes2007","2007","Quebec Election Study 2007","it_important_quebec_has_sufficient_voice_central_decision_q60","q60"
+"qes2007","2007","Quebec Election Study 2007","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b","q61b"
+"qes2007","2007","Quebec Election Study 2007","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d","q61d"
+"qes2007","2007","Quebec Election Study 2007","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2007","2007","Quebec Election Study 2007","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2007","2007","Quebec Election Study 2007","echelle_va_100_ou_veut_dire_naimez_vraiment_q64","q64"
+"qes2007","2007","Quebec Election Study 2007","echelle_va_100_ou_veut_dire_naimez_vraiment_q65","q65"
+"qes2007","2007","Quebec Election Study 2007","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66","q66"
+"qes2007","2007","Quebec Election Study 2007","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68","q68"
+"qes2007","2007","Quebec Election Study 2007","baisses_dimp_ots_etaient_enjeu_important_election_q7","q7"
+"qes2007","2007","Quebec Election Study 2007","politique_provinciale_habituellement_identifiez_q70","q70"
+"qes2007","2007","Quebec Election Study 2007","sentez_peu_plus_proche_lun_ou_lautre_partis_q72","q72"
+"qes2007","2007","Quebec Election Study 2007","parti_q73","q73"
+"qes2007","2007","Quebec Election Study 2007","lors_derniere_election_federale_janvier_2006_parti_avez_q74","q74"
+"qes2007","2007","Quebec Election Study 2007","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79","q79"
+"qes2007","2007","Quebec Election Study 2007","statut_politique_quebec_etait_enjeu_important_election_q8","q8"
+"qes2007","2007","Quebec Election Study 2007","langue_parlez_plus_souvent_maison_q80","q80"
+"qes2007","2007","Quebec Election Study 2007","some_people_say_governments_should_see_it_every_q81","q81"
+"qes2007","2007","Quebec Election Study 2007","pauvrete_etait_enjeu_important_election_q9","q9"
+"qes2007","2007","Quebec Election Study 2007","raison_vote_recodee_raison1",
+"qes2007","2007","Quebec Election Study 2007","raison_vote_recodee_raison2",
+"qes2007","2007","Quebec Election Study 2007","jour_semaine_s_jse",
+"qes2007","2007","Quebec Election Study 2007","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf",
+"qes2007","2007","Quebec Election Study 2007","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes2007","2007","Quebec Election Study 2007","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes2007","2007","Quebec Election Study 2007","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","respondent_id","quest"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_start",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","interview_end",
@@ -906,69 +906,69 @@
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","occup","occup"
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","patron",
 "qes2007_panel","2007","Quebec Election Study 2007 Panel","pondam1","pondam1"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q10",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q16",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q17",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18a",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q18b",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q20",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q20b",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q22",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q23",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q24",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q3",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q31",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q33",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q35",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q37",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q38",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q39",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q4",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q40",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q41",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q42",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q43",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q44",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q45",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q46",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q47",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q48",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q49",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q50",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q51",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q53",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q54",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q55",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q56",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q58",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q59",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q60",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q61b",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q61d",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q62a",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q62b",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q64",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q65",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q66",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q68",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q7",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q70",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q72",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q73",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q74",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q79",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q8",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q80",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q81",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","q9",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison1",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison2",
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","s_jse","s_jse"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","satisf","satisf"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","sefie","sefie"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","sondbons","sondbons"
-"qes2007_panel","2007","Quebec Election Study 2007 Panel","voteprec","voteprec"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","laide_familles_etait_enjeu_important_election_q10",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","which_party_best_managing_health_care_system_q18",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","which_party_best_fighting_corruption_q20b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","leducation_etait_enjeu_important_election_q3",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","dapres_lavenir_q49",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","if_had_choose_between_no_change_more_powers_q56",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","each_following_areas_think_decisions_should_made_by_q62a",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","each_following_areas_think_decisions_should_made_by_q62b",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","politique_provinciale_habituellement_identifiez_q70",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","parti_q73",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","langue_parlez_plus_souvent_maison_q80",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","some_people_say_governments_should_see_it_every_q81",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","pauvrete_etait_enjeu_important_election_q9",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison_vote_recodee_raison1",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","raison_vote_recodee_raison2",
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","jour_semaine_s_jse","s_jse"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf","satisf"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie","sefie"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons","sondbons"
+"qes2007_panel","2007","Quebec Election Study 2007 Panel","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec","voteprec"
 "qes1998","1998","Quebec Elections 1998","respondent_id","quetr"
 "qes1998","1998","Quebec Elections 1998","interview_start",
 "qes1998","1998","Quebec Elections 1998","interview_end",
@@ -1003,66 +1003,66 @@
 "qes1998","1998","Quebec Elections 1998","occup","occup"
 "qes1998","1998","Quebec Elections 1998","patron",
 "qes1998","1998","Quebec Elections 1998","pondam1",
-"qes1998","1998","Quebec Elections 1998","q10",
-"qes1998","1998","Quebec Elections 1998","q16",
-"qes1998","1998","Quebec Elections 1998","q17",
-"qes1998","1998","Quebec Elections 1998","q18",
-"qes1998","1998","Quebec Elections 1998","q18a",
-"qes1998","1998","Quebec Elections 1998","q18b",
-"qes1998","1998","Quebec Elections 1998","q20",
-"qes1998","1998","Quebec Elections 1998","q20b",
-"qes1998","1998","Quebec Elections 1998","q22",
-"qes1998","1998","Quebec Elections 1998","q23",
-"qes1998","1998","Quebec Elections 1998","q24",
-"qes1998","1998","Quebec Elections 1998","q3",
-"qes1998","1998","Quebec Elections 1998","q31",
-"qes1998","1998","Quebec Elections 1998","q33",
-"qes1998","1998","Quebec Elections 1998","q35",
-"qes1998","1998","Quebec Elections 1998","q37",
-"qes1998","1998","Quebec Elections 1998","q38",
-"qes1998","1998","Quebec Elections 1998","q39",
-"qes1998","1998","Quebec Elections 1998","q4",
-"qes1998","1998","Quebec Elections 1998","q40",
-"qes1998","1998","Quebec Elections 1998","q41",
-"qes1998","1998","Quebec Elections 1998","q42",
-"qes1998","1998","Quebec Elections 1998","q43",
-"qes1998","1998","Quebec Elections 1998","q44",
-"qes1998","1998","Quebec Elections 1998","q45",
-"qes1998","1998","Quebec Elections 1998","q46",
-"qes1998","1998","Quebec Elections 1998","q47",
-"qes1998","1998","Quebec Elections 1998","q48",
-"qes1998","1998","Quebec Elections 1998","q49",
-"qes1998","1998","Quebec Elections 1998","q50",
-"qes1998","1998","Quebec Elections 1998","q51",
-"qes1998","1998","Quebec Elections 1998","q53",
-"qes1998","1998","Quebec Elections 1998","q54",
-"qes1998","1998","Quebec Elections 1998","q55",
-"qes1998","1998","Quebec Elections 1998","q56",
-"qes1998","1998","Quebec Elections 1998","q58",
-"qes1998","1998","Quebec Elections 1998","q59",
-"qes1998","1998","Quebec Elections 1998","q60",
-"qes1998","1998","Quebec Elections 1998","q61b",
-"qes1998","1998","Quebec Elections 1998","q61d",
-"qes1998","1998","Quebec Elections 1998","q62a",
-"qes1998","1998","Quebec Elections 1998","q62b",
-"qes1998","1998","Quebec Elections 1998","q64",
-"qes1998","1998","Quebec Elections 1998","q65",
-"qes1998","1998","Quebec Elections 1998","q66",
-"qes1998","1998","Quebec Elections 1998","q68",
-"qes1998","1998","Quebec Elections 1998","q7",
-"qes1998","1998","Quebec Elections 1998","q70",
-"qes1998","1998","Quebec Elections 1998","q72",
-"qes1998","1998","Quebec Elections 1998","q73",
-"qes1998","1998","Quebec Elections 1998","q74",
-"qes1998","1998","Quebec Elections 1998","q79",
-"qes1998","1998","Quebec Elections 1998","q8",
-"qes1998","1998","Quebec Elections 1998","q80",
-"qes1998","1998","Quebec Elections 1998","q81",
-"qes1998","1998","Quebec Elections 1998","q9",
-"qes1998","1998","Quebec Elections 1998","raison1","raison1"
-"qes1998","1998","Quebec Elections 1998","raison2","raison2"
-"qes1998","1998","Quebec Elections 1998","s_jse","s_jse"
-"qes1998","1998","Quebec Elections 1998","satisf","satisf"
-"qes1998","1998","Quebec Elections 1998","sefie",
-"qes1998","1998","Quebec Elections 1998","sondbons",
-"qes1998","1998","Quebec Elections 1998","voteprec",
+"qes1998","1998","Quebec Elections 1998","laide_familles_etait_enjeu_important_election_q10",
+"qes1998","1998","Quebec Elections 1998","principale_source_dinformation_politique_ne_pas_lire_q16",
+"qes1998","1998","Quebec Elections 1998","deuxieme_source_dinformation_politique_television_radio_journaux_q17",
+"qes1998","1998","Quebec Elections 1998","which_party_best_managing_health_care_system_q18",
+"qes1998","1998","Quebec Elections 1998","gens_ont_differentes_facons_se_definir_diriez_considerez_q18a",
+"qes1998","1998","Quebec Elections 1998","gens_ont_differentes_facons_se_definir_diriez_considerez_q18b",
+"qes1998","1998","Quebec Elections 1998","eme_si_navez_peut_pas_encore_fait_choix_q20",
+"qes1998","1998","Quebec Elections 1998","which_party_best_fighting_corruption_q20b",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22",
+"qes1998","1998","Quebec Elections 1998","mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23",
+"qes1998","1998","Quebec Elections 1998","pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24",
+"qes1998","1998","Quebec Elections 1998","leducation_etait_enjeu_important_election_q3",
+"qes1998","1998","Quebec Elections 1998","echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31",
+"qes1998","1998","Quebec Elections 1998","personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33",
+"qes1998","1998","Quebec Elections 1998","recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38",
+"qes1998","1998","Quebec Elections 1998","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39",
+"qes1998","1998","Quebec Elections 1998","according_what_main_difference_between_quebecois_people_peopl_q4",
+"qes1998","1998","Quebec Elections 1998","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40",
+"qes1998","1998","Quebec Elections 1998","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41",
+"qes1998","1998","Quebec Elections 1998","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42",
+"qes1998","1998","Quebec Elections 1998","maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43",
+"qes1998","1998","Quebec Elections 1998","selon_lequel_chefs_parti_plus_competent_ne_pas_q44",
+"qes1998","1998","Quebec Elections 1998","would_say_canadian_government_intervenes_too_much_affairs_q45",
+"qes1998","1998","Quebec Elections 1998","selon_lequel_chefs_parti_plus_proche_gens_ne_q46",
+"qes1998","1998","Quebec Elections 1998","selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47",
+"qes1998","1998","Quebec Elections 1998","considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48",
+"qes1998","1998","Quebec Elections 1998","dapres_lavenir_q49",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54",
+"qes1998","1998","Quebec Elections 1998","selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55",
+"qes1998","1998","Quebec Elections 1998","if_had_choose_between_no_change_more_powers_q56",
+"qes1998","1998","Quebec Elections 1998","parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58",
+"qes1998","1998","Quebec Elections 1998","parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59",
+"qes1998","1998","Quebec Elections 1998","it_important_quebec_has_sufficient_voice_central_decision_q60",
+"qes1998","1998","Quebec Elections 1998","parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b",
+"qes1998","1998","Quebec Elections 1998","parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d",
+"qes1998","1998","Quebec Elections 1998","each_following_areas_think_decisions_should_made_by_q62a",
+"qes1998","1998","Quebec Elections 1998","each_following_areas_think_decisions_should_made_by_q62b",
+"qes1998","1998","Quebec Elections 1998","echelle_va_100_ou_veut_dire_naimez_vraiment_q64",
+"qes1998","1998","Quebec Elections 1998","echelle_va_100_ou_veut_dire_naimez_vraiment_q65",
+"qes1998","1998","Quebec Elections 1998","etes_ou_contre_mariage_entre_personnes_eme_sexe_q66",
+"qes1998","1998","Quebec Elections 1998","veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68",
+"qes1998","1998","Quebec Elections 1998","baisses_dimp_ots_etaient_enjeu_important_election_q7",
+"qes1998","1998","Quebec Elections 1998","politique_provinciale_habituellement_identifiez_q70",
+"qes1998","1998","Quebec Elections 1998","sentez_peu_plus_proche_lun_ou_lautre_partis_q72",
+"qes1998","1998","Quebec Elections 1998","parti_q73",
+"qes1998","1998","Quebec Elections 1998","lors_derniere_election_federale_janvier_2006_parti_avez_q74",
+"qes1998","1998","Quebec Elections 1998","travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79",
+"qes1998","1998","Quebec Elections 1998","statut_politique_quebec_etait_enjeu_important_election_q8",
+"qes1998","1998","Quebec Elections 1998","langue_parlez_plus_souvent_maison_q80",
+"qes1998","1998","Quebec Elections 1998","some_people_say_governments_should_see_it_every_q81",
+"qes1998","1998","Quebec Elections 1998","pauvrete_etait_enjeu_important_election_q9",
+"qes1998","1998","Quebec Elections 1998","raison_vote_recodee_raison1","raison1"
+"qes1998","1998","Quebec Elections 1998","raison_vote_recodee_raison2","raison2"
+"qes1998","1998","Quebec Elections 1998","jour_semaine_s_jse","s_jse"
+"qes1998","1998","Quebec Elections 1998","diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf","satisf"
+"qes1998","1998","Quebec Elections 1998","var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie",
+"qes1998","1998","Quebec Elections 1998","var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons",
+"qes1998","1998","Quebec Elections 1998","var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec",

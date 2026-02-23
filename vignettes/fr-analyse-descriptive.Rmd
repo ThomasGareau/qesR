@@ -153,6 +153,8 @@ knitr::kable(
 
 ```{r, fig.alt="Graphique en lignes de la répartition harmonisée des groupes d'âge selon l'année."}
 age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
+ymax_age <- suppressWarnings(max(age_dist$pct, na.rm = TRUE))
+ymax_age <- if (is.finite(ymax_age)) min(100, ymax_age + 5) else 100
 
 ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_3)) +
   geom_line(linewidth = 1.1) +
@@ -172,14 +174,18 @@ ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_
     ),
     name = "Groupe d'age"
   ) +
-  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, 100)) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 0), "%"), limits = c(0, ymax_age)) +
+  scale_x_continuous(breaks = sort(unique(age_dist$annee))) +
   labs(
     title = "Répartition des groupes d'âge dans le temps",
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 9)
+  )
 ```
 
 ## Participation électorale par année
@@ -227,6 +233,8 @@ knitr::kable(
 ```{r, fig.alt="Graphique de l'indicateur de participation électorale selon l'année."}
 plot_turnout <- turnout_annee %>%
   filter(!is.na(taux), !is.na(ci_bas), !is.na(ci_haut))
+ymax_turnout <- suppressWarnings(max(plot_turnout$ci_haut, plot_turnout$taux, na.rm = TRUE))
+ymax_turnout <- if (is.finite(ymax_turnout)) min(1, ymax_turnout + 0.05) else 1
 
 ggplot(plot_turnout, aes(x = annee, y = taux)) +
   geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
@@ -243,14 +251,18 @@ ggplot(plot_turnout, aes(x = annee, y = taux)) +
     linewidth = 0.8,
     na.rm = TRUE
   ) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_turnout)) +
+  scale_x_continuous(breaks = sort(unique(plot_turnout$annee))) +
   labs(
     title = "Indicateur de participation électorale",
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
   theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank())
+  theme(
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(size = 9)
+  )
 ```
 
 ## Notes

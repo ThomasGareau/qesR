@@ -106,6 +106,7 @@ main <- function() {
   out_csv <- file.path(opts$out_dir, paste0(opts$out_prefix, ".csv"))
   out_rds <- file.path(opts$out_dir, paste0(opts$out_prefix, ".rds"))
   out_map <- file.path(opts$out_dir, paste0(opts$out_prefix, "_source_map.csv"))
+  out_var_map <- file.path(opts$out_dir, paste0(opts$out_prefix, "_variable_name_map.csv"))
 
   master <- get_qes_master(
     surveys = opts$surveys,
@@ -120,6 +121,11 @@ main <- function() {
   src_map <- attr(master, "source_map", exact = TRUE)
   if (is.data.frame(src_map) && nrow(src_map) > 0L) {
     utils::write.csv(src_map, out_map, row.names = FALSE, na = "")
+  }
+
+  var_map <- attr(master, "variable_name_map", exact = TRUE)
+  if (is.data.frame(var_map) && nrow(var_map) > 0L) {
+    utils::write.csv(var_map, out_var_map, row.names = FALSE, na = "")
   }
 
   failed <- attr(master, "failed_surveys", exact = TRUE)
@@ -139,6 +145,9 @@ main <- function() {
   cat(sprintf("Saved RDS: %s\n", out_rds))
   if (file.exists(out_map)) {
     cat(sprintf("Saved source map: %s\n", out_map))
+  }
+  if (file.exists(out_var_map)) {
+    cat(sprintf("Saved variable name map: %s\n", out_var_map))
   }
 
   if (length(failed) > 0L) {

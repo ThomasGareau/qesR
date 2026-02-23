@@ -33,6 +33,7 @@ This page uses the merged file to estimate sovereignty support over time.
 library(qesR)
 library(dplyr)
 library(ggplot2)
+library(knitr)
 
 master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
   mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
@@ -41,7 +42,41 @@ master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>
 master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
 master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
 
-# Summarize yearly support, confidence intervals, then plot.
+sov <- master %>%
+  filter(!is.na(qes_year_num)) %>%
+  group_by(qes_year_num) %>%
+  summarise(
+    respondents = n(),
+    n_with_measure = sum(!is.na(sovereignty_support)),
+    support_share = ifelse(n_with_measure > 0, mean(sovereignty_support, na.rm = TRUE), NA_real_),
+    se = ifelse(n_with_measure > 0, sqrt(pmax(support_share * (1 - support_share), 0) / n_with_measure), NA_real_),
+    ci_low = ifelse(!is.na(se), pmax(0, support_share - 1.96 * se), NA_real_),
+    ci_high = ifelse(!is.na(se), pmin(1, support_share + 1.96 * se), NA_real_),
+    .groups = "drop"
+  )
+
+knitr::kable(
+  sov %>%
+    transmute(
+      `Study year` = qes_year_num,
+      `N respondents` = respondents,
+      `N with sovereignty item` = n_with_measure,
+      `Sovereignty support (%)` = round(100 * support_share, 1)
+    )
+)
+
+ymax_sov <- suppressWarnings(max(sov$ci_high, sov$support_share, na.rm = TRUE))
+ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
+
+ggplot(sov, aes(x = qes_year_num, y = support_share)) +
+  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35) +
+  geom_line(linewidth = 1, color = "#12355b") +
+  geom_point(size = 2.3, color = "#b5651d") +
+  geom_smooth(method = "loess", se = TRUE, span = 0.9, color = "#12355b", fill = "#c9d6e4", alpha = 0.25, linetype = "dashed", linewidth = 0.8) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
+  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
+  theme_minimal(base_size = 12) +
+  theme(axis.text.x = element_text(size = 9))
 ```
 
 </details>
@@ -130,6 +165,8 @@ knitr::kable(
 ```{r, fig.alt="Line chart of sovereignty support trend over study years."}
 plot_sov <- sov %>%
   filter(!is.na(support_share), !is.na(ci_low), !is.na(ci_high))
+ymax_sov <- suppressWarnings(max(plot_sov$ci_high, plot_sov$support_share, na.rm = TRUE))
+ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
 
 ggplot(plot_sov, aes(x = qes_year_num, y = support_share)) +
   geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
@@ -146,18 +183,15 @@ ggplot(plot_sov, aes(x = qes_year_num, y = support_share)) +
     linewidth = 0.8,
     na.rm = TRUE
   ) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
-  scale_x_continuous(
-    breaks = sort(unique(sov$qes_year_num)),
-    guide = guide_axis(n.dodge = 2)
-  ) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
+  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
   labs(
     title = "Sovereignty support across QES studies",
     x = "Study year",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
+  theme(axis.text.x = element_text(size = 9))
 ```
 
 ## Notes
