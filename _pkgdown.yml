@@ -66,6 +66,10 @@ home:
   title: qesR
   description: Access and harmonize Quebec Election Study datasets in R.
 
+authors:
+  Thomas Gareau-Paquette:
+    href: https://thomasgp.com
+
 navbar:
   structure:
     left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_vote_choice, news]

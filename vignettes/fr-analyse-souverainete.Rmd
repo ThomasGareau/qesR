@@ -24,152 +24,171 @@ library(ggplot2)
 library(knitr)
 ```
 
-Cette page présente l'évolution de l'appui à la souveraineté dans le fichier fusionné.
+Cette page utilise le fichier fusionne pour estimer l'appui a la souverainete dans le temps.
 
 <details>
-<summary>Afficher le code utilisé dans cette page</summary>
+<summary>Afficher le code utilise dans cette page</summary>
 
 ```r
-library(qesR)
 library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
-  mutate(annee = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
+
+master <- master %>%
+  mutate(
+    qes_year_chr = trimws(as.character(qes_year)),
+    qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr))
+  )
+
+is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
+start_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\1", master$qes_year_chr)))
+end_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\2", master$qes_year_chr)))
+
+master$periode_etude <- ifelse(
+  is_range,
+  master$qes_year_chr,
+  ifelse(!is.na(master$qes_year_num), as.character(master$qes_year_num), master$qes_year_chr)
+)
+master$ordre_periode <- ifelse(
+  is_range & is.finite(start_year) & is.finite(end_year),
+  (start_year + end_year) / 2,
+  master$qes_year_num
+)
 
 master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
 master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
 
+toutes_periodes <- master %>%
+  filter(!is.na(periode_etude), nzchar(periode_etude), !is.na(ordre_periode)) %>%
+  distinct(periode_etude, ordre_periode)
+
 sov <- master %>%
-  filter(!is.na(annee)) %>%
-  group_by(annee) %>%
+  filter(!is.na(periode_etude), nzchar(periode_etude), !is.na(ordre_periode)) %>%
+  group_by(periode_etude, ordre_periode) %>%
   summarise(
     repondants = n(),
-    n_mesure = sum(!is.na(sovereignty_support)),
-    taux = ifelse(n_mesure > 0, mean(sovereignty_support, na.rm = TRUE), NA_real_),
-    se = ifelse(n_mesure > 0, sqrt(pmax(taux * (1 - taux), 0) / n_mesure), NA_real_),
-    ci_bas = ifelse(!is.na(se), pmax(0, taux - 1.96 * se), NA_real_),
-    ci_haut = ifelse(!is.na(se), pmin(1, taux + 1.96 * se), NA_real_),
+    n_avec_mesure = sum(!is.na(sovereignty_support)),
+    part_appui = ifelse(n_avec_mesure > 0, mean(sovereignty_support, na.rm = TRUE), NA_real_),
+    se = ifelse(n_avec_mesure > 0, sqrt(pmax(part_appui * (1 - part_appui), 0) / n_avec_mesure), NA_real_),
+    ic_bas = ifelse(!is.na(se), pmax(0, part_appui - 1.96 * se), NA_real_),
+    ic_haut = ifelse(!is.na(se), pmin(1, part_appui + 1.96 * se), NA_real_),
     .groups = "drop"
   )
 
-knitr::kable(
-  sov %>%
-    transmute(
-      `Annee d'etude` = annee,
-      `N repondants` = repondants,
-      `N avec item souverainete` = n_mesure,
-      `Appui a la souverainete (%)` = round(100 * taux, 1)
-    )
-)
+sov <- merge(toutes_periodes, sov, by = c("periode_etude", "ordre_periode"), all.x = TRUE, sort = TRUE)
+sov <- sov %>% arrange(ordre_periode, periode_etude)
+sov$indice_periode <- seq_len(nrow(sov))
 
-ymax_sov <- suppressWarnings(max(sov$ci_haut, sov$taux, na.rm = TRUE))
-ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
-
-ggplot(sov, aes(x = annee, y = taux)) +
-  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut), fill = "#9fb6ce", alpha = 0.35) +
-  geom_line(linewidth = 1, color = "#12355b") +
-  geom_point(size = 2.3, color = "#b5651d") +
-  geom_smooth(method = "loess", se = TRUE, span = 0.9, color = "#12355b", fill = "#c9d6e4", alpha = 0.25, linetype = "dashed", linewidth = 0.8) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = sort(unique(sov$annee))) +
-  theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(size = 9))
+knitr::kable(sov)
 ```
 
 </details>
 
-## Chargement
+## Chargement des donnees fusionnees
 
 ```{r}
-master <- if (file.exists("qes_master.csv")) {
-  read.csv("qes_master.csv", stringsAsFactors = FALSE)
-} else {
-  get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master_path <- master_paths[file.exists(master_paths)][1]
+if (is.na(master_path) || !nzchar(master_path)) {
+  stop("qes_master.csv introuvable localement. Lancez d'abord scripts/build_qes_master.R", call. = FALSE)
 }
+master <- read.csv(master_path, stringsAsFactors = FALSE)
 
 master <- master %>%
   mutate(
-    annee = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)))
+    qes_year_chr = trimws(as.character(qes_year)),
+    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr)))
   )
 
-# Les vagues CROP sont exclues ici pour conserver une série basée sur les
-# enquêtes électorales.
-master <- master %>%
-  filter(qes_code != "qes_crop_2007_2010")
+is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
+start_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\1", master$qes_year_chr)))
+end_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\2", master$qes_year_chr)))
+
+master$periode_etude <- ifelse(
+  is_range,
+  master$qes_year_chr,
+  ifelse(!is.na(master$qes_year_num), as.character(master$qes_year_num), master$qes_year_chr)
+)
+master$ordre_periode <- ifelse(
+  is_range & is.finite(start_year) & is.finite(end_year),
+  (start_year + end_year) / 2,
+  master$qes_year_num
+)
 
 if (!("sovereignty_support" %in% names(master))) {
   master$sovereignty_support <- NA_real_
 }
 ```
 
-## Question directe sur la souveraineté
+## Question directe sur la souverainete
 
 ```{r}
 master <- master %>%
-  mutate(
-    appui_souverainete = suppressWarnings(as.numeric(sovereignty_support))
-  )
+  mutate(appui_souverainete = suppressWarnings(as.numeric(sovereignty_support)))
 
 master$appui_souverainete[!(master$appui_souverainete %in% c(0, 1))] <- NA_real_
 
-annees <- data.frame(
-  annee = sort(unique(master$annee[!is.na(master$annee)]))
-)
+toutes_periodes <- master %>%
+  filter(!is.na(periode_etude), nzchar(periode_etude), !is.na(ordre_periode)) %>%
+  distinct(periode_etude, ordre_periode)
 
 sov <- master %>%
-  filter(!is.na(annee)) %>%
-  group_by(annee) %>%
+  filter(!is.na(periode_etude), nzchar(periode_etude), !is.na(ordre_periode)) %>%
+  group_by(periode_etude, ordre_periode) %>%
   summarise(
     repondants = n(),
-    n_mesure = sum(!is.na(appui_souverainete)),
-    taux = ifelse(n_mesure > 0, mean(appui_souverainete, na.rm = TRUE), NA_real_),
+    n_avec_mesure = sum(!is.na(appui_souverainete)),
+    part_appui = ifelse(n_avec_mesure > 0, mean(appui_souverainete, na.rm = TRUE), NA_real_),
     se = ifelse(
-      n_mesure > 0,
-      sqrt(pmax(taux * (1 - taux), 0) / n_mesure),
+      n_avec_mesure > 0,
+      sqrt(pmax(part_appui * (1 - part_appui), 0) / n_avec_mesure),
       NA_real_
     ),
-    ci_bas = ifelse(!is.na(se), pmax(0, taux - 1.96 * se), NA_real_),
-    ci_haut = ifelse(!is.na(se), pmin(1, taux + 1.96 * se), NA_real_),
+    ic_bas = ifelse(!is.na(se), pmax(0, part_appui - 1.96 * se), NA_real_),
+    ic_haut = ifelse(!is.na(se), pmin(1, part_appui + 1.96 * se), NA_real_),
     .groups = "drop"
   )
 
-sov <- merge(annees, sov, by = "annee", all.x = TRUE, sort = TRUE)
+sov <- merge(toutes_periodes, sov, by = c("periode_etude", "ordre_periode"), all.x = TRUE, sort = TRUE)
+sov <- sov %>% arrange(ordre_periode, periode_etude)
+periodes <- sov$periode_etude
+sov$indice_periode <- seq_len(nrow(sov))
 ```
 
-## Tableau 1 : appui à la souveraineté par année
+## Tableau 1 : appui a la souverainete par periode d'etude
 
 ```{r}
 knitr::kable(
   sov %>%
     mutate(
-      appui_souverainete_pct = round(100 * taux, 1),
-      ci_bas_pct = round(100 * ci_bas, 1),
-      ci_haut_pct = round(100 * ci_haut, 1)
+      appui_pct = round(100 * part_appui, 1),
+      ic_bas_pct = round(100 * ic_bas, 1),
+      ic_haut_pct = round(100 * ic_haut, 1)
     ) %>%
     transmute(
-      `Annee d'etude` = annee,
+      `Periode d'etude` = periode_etude,
       `N repondants` = repondants,
-      `N avec item souverainete` = n_mesure,
-      `Appui a la souverainete (%)` = appui_souverainete_pct,
-      `IC 95% (%)` = ifelse(is.na(ci_bas_pct), NA_character_, sprintf("%.1f a %.1f", ci_bas_pct, ci_haut_pct))
+      `N avec item souverainete` = n_avec_mesure,
+      `Appui a la souverainete (%)` = appui_pct,
+      `IC 95% (%)` = ifelse(is.na(ic_bas_pct), NA_character_, sprintf("%.1f a %.1f", ic_bas_pct, ic_haut_pct))
     ),
-  caption = "Appui à la souveraineté par année"
+  caption = "Appui a la souverainete par periode d'etude"
 )
 ```
 
-## Figure 1 : tendance de l'appui à la souveraineté
+## Figure 1 : tendance de l'appui a la souverainete
 
-```{r, fig.alt="Graphique de l'évolution de l'appui à la souveraineté par année."}
+```{r, fig.alt="Graphique de l'evolution de l'appui a la souverainete par periode d'etude."}
 plot_sov <- sov %>%
-  filter(!is.na(taux), !is.na(ci_bas), !is.na(ci_haut))
-ymax_sov <- suppressWarnings(max(plot_sov$ci_haut, plot_sov$taux, na.rm = TRUE))
+  filter(!is.na(part_appui), !is.na(ic_bas), !is.na(ic_haut), !is.na(indice_periode))
+ymax_sov <- suppressWarnings(max(plot_sov$ic_haut, plot_sov$part_appui, na.rm = TRUE))
 ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
 
-ggplot(plot_sov, aes(x = annee, y = taux)) +
-  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
+ggplot(plot_sov, aes(x = indice_periode, y = part_appui)) +
+  geom_ribbon(aes(ymin = ic_bas, ymax = ic_haut), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
   geom_smooth(
@@ -184,11 +203,11 @@ ggplot(plot_sov, aes(x = annee, y = taux)) +
     na.rm = TRUE
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = sort(unique(sov$annee))) +
+  scale_x_continuous(breaks = seq_along(periodes), labels = periodes) +
   labs(
-    title = "Évolution de l'appui à la souveraineté",
-    x = "Année d'étude",
-    y = "Part des répondants"
+    title = "Evolution de l'appui a la souverainete dans les etudes QES",
+    x = "Periode d'etude",
+    y = "Part des repondants"
   ) +
   theme_minimal(base_size = 12) +
   theme(axis.text.x = element_text(size = 9))
@@ -196,6 +215,7 @@ ggplot(plot_sov, aes(x = annee, y = taux)) +
 
 ## Notes
 
-- L'analyse repose uniquement sur la variable directe d'appui à la souveraineté.
+- La tendance utilise la question directe sur la souverainete de chaque etude.
+- Le jeu poolé `qes_crop_2007_2010` est inclus comme periode `2007-2010`.
 - Les intervalles de confiance sont des IC95 binomiaux (approximation normale).
-- La colonne `N avec mesure` indique la couverture disponible selon l'année.
+- La colonne `N avec item souverainete` indique la couverture disponible selon la periode.

@@ -38,15 +38,36 @@ master_paths <- c("qes_master.csv", "../qes_master.csv")
 master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
 
 master <- master %>%
-  mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+  mutate(
+    qes_year_chr = trimws(as.character(qes_year)),
+    qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr))
+  )
+
+is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
+start_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\1", master$qes_year_chr)))
+end_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\2", master$qes_year_chr)))
+
+master$study_period <- ifelse(
+  is_range,
+  master$qes_year_chr,
+  ifelse(!is.na(master$qes_year_num), as.character(master$qes_year_num), master$qes_year_chr)
+)
+master$period_order <- ifelse(
+  is_range & is.finite(start_year) & is.finite(end_year),
+  (start_year + end_year) / 2,
+  master$qes_year_num
+)
 
 master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
 master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
 
+all_periods <- master %>%
+  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
+  distinct(study_period, period_order)
+
 sov <- master %>%
-  filter(!is.na(qes_year_num)) %>%
-  group_by(qes_year_num) %>%
+  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
+  group_by(study_period, period_order) %>%
   summarise(
     respondents = n(),
     n_with_measure = sum(!is.na(sovereignty_support)),
@@ -57,8 +78,9 @@ sov <- master %>%
     .groups = "drop"
   )
 
-years <- sort(unique(sov$qes_year_num))
-sov$year_index <- match(sov$qes_year_num, years)
+sov <- merge(all_periods, sov, by = c("study_period", "period_order"), all.x = TRUE, sort = TRUE)
+sov <- sov %>% arrange(period_order, study_period)
+sov$period_index <- seq_len(nrow(sov))
 
 knitr::kable(sov)
 ```
@@ -76,8 +98,25 @@ if (is.na(master_path) || !nzchar(master_path)) {
 master <- read.csv(master_path, stringsAsFactors = FALSE)
 
 master <- master %>%
-  mutate(qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)))) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+  mutate(
+    qes_year_chr = trimws(as.character(qes_year)),
+    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year_chr)))
+  )
+
+is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
+start_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\1", master$qes_year_chr)))
+end_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\2", master$qes_year_chr)))
+
+master$study_period <- ifelse(
+  is_range,
+  master$qes_year_chr,
+  ifelse(!is.na(master$qes_year_num), as.character(master$qes_year_num), master$qes_year_chr)
+)
+master$period_order <- ifelse(
+  is_range & is.finite(start_year) & is.finite(end_year),
+  (start_year + end_year) / 2,
+  master$qes_year_num
+)
 
 if (!("sovereignty_support" %in% names(master))) {
   master$sovereignty_support <- NA_real_
@@ -92,13 +131,13 @@ master <- master %>%
 
 master$sovereignty_final[!(master$sovereignty_final %in% c(0, 1))] <- NA_real_
 
-all_years <- data.frame(
-  qes_year_num = sort(unique(master$qes_year_num[!is.na(master$qes_year_num)]))
-)
+all_periods <- master %>%
+  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
+  distinct(study_period, period_order)
 
 sov <- master %>%
-  filter(!is.na(qes_year_num)) %>%
-  group_by(qes_year_num) %>%
+  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
+  group_by(study_period, period_order) %>%
   summarise(
     respondents = n(),
     n_with_measure = sum(!is.na(sovereignty_final)),
@@ -113,12 +152,13 @@ sov <- master %>%
     .groups = "drop"
   )
 
-sov <- merge(all_years, sov, by = "qes_year_num", all.x = TRUE, sort = TRUE)
-years <- sort(unique(sov$qes_year_num[!is.na(sov$qes_year_num)]))
-sov$year_index <- match(sov$qes_year_num, years)
+sov <- merge(all_periods, sov, by = c("study_period", "period_order"), all.x = TRUE, sort = TRUE)
+sov <- sov %>% arrange(period_order, study_period)
+periods <- sov$study_period
+sov$period_index <- seq_len(nrow(sov))
 ```
 
-## Table 1: sovereignty support by year
+## Table 1: sovereignty support by study period
 
 ```{r}
 knitr::kable(
@@ -129,25 +169,25 @@ knitr::kable(
       ci_high_pct = round(100 * ci_high, 1)
     ) %>%
     transmute(
-      `Study year` = qes_year_num,
+      `Study period` = study_period,
       `N respondents` = respondents,
       `N with sovereignty item` = n_with_measure,
       `Sovereignty support (%)` = sovereignty_support_pct,
       `95% CI (%)` = ifelse(is.na(ci_low_pct), NA_character_, sprintf("%.1f to %.1f", ci_low_pct, ci_high_pct))
     ),
-  caption = "Sovereignty support by study year"
+  caption = "Sovereignty support by study period"
 )
 ```
 
 ## Figure 1: sovereignty trend
 
-```{r, fig.alt="Line chart of sovereignty support trend over study years."}
+```{r, fig.alt="Line chart of sovereignty support trend over study periods."}
 plot_sov <- sov %>%
-  filter(!is.na(support_share), !is.na(ci_low), !is.na(ci_high), !is.na(year_index))
+  filter(!is.na(support_share), !is.na(ci_low), !is.na(ci_high), !is.na(period_index))
 ymax_sov <- suppressWarnings(max(plot_sov$ci_high, plot_sov$support_share, na.rm = TRUE))
 ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
 
-ggplot(plot_sov, aes(x = year_index, y = support_share)) +
+ggplot(plot_sov, aes(x = period_index, y = support_share)) +
   geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
@@ -163,10 +203,10 @@ ggplot(plot_sov, aes(x = year_index, y = support_share)) +
     na.rm = TRUE
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = seq_along(years), labels = years) +
+  scale_x_continuous(breaks = seq_along(periods), labels = periods) +
   labs(
     title = "Sovereignty support across QES studies",
-    x = "Study year",
+    x = "Study period",
     y = "Share of respondents"
   ) +
   theme_minimal(base_size = 12) +
@@ -176,5 +216,6 @@ ggplot(plot_sov, aes(x = year_index, y = support_share)) +
 ## Notes
 
 - The sovereignty trend uses the dedicated sovereignty item from each study.
+- The pooled `qes_crop_2007_2010` study is included as period `2007-2010`.
 - Confidence intervals are binomial 95% intervals using normal approximation.
 - `n_with_measure` in the table shows where coverage is thinner.

@@ -5,7 +5,13 @@ Version: 0.4.4
 Author: Thomas Gareau-Paquette [aut, cre]
 Maintainer: Thomas Gareau-Paquette <qesr@example.org>
 Authors@R: c(
-    person(given = "Thomas", family = "Gareau-Paquette", role = c("aut", "cre"), email = "qesr@example.org")
+    person(
+      given = "Thomas",
+      family = "Gareau-Paquette",
+      role = c("aut", "cre"),
+      email = "qesr@example.org",
+      comment = c(URL = "https://thomasgp.com")
+    )
     )
 Description: Download and load Quebec election study datasets from Dataverse
     archives through a simple survey-code API inspired by cesR.
