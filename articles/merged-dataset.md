@@ -24,7 +24,7 @@ The merged data includes cross-study fields such as:
   `education`, `language`, `province_territory`
 - political variables: `turnout`, `vote_choice`, `vote_choice_text`,
   `party_best`, `party_lean`, `ideology`, `political_interest`,
-  `sovereignty_support`
+  `sovereignty_support`, `sovereignty`
 - additional fields where available: `citizenship`, `born_canada`,
   `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
 
