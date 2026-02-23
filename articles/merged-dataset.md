@@ -27,6 +27,8 @@ The merged data includes cross-study fields such as:
   `sovereignty_support`, `sovereignty`
 - additional fields where available: `citizenship`, `born_canada`,
   `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+- additional harmonized columns for variables observed in at least two
+  studies (for example `q23`, `q24`, `occup`, `satisf`, `voteprec`)
 
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
 also keeps the merge logic explicit:
@@ -36,6 +38,8 @@ also keeps the merge logic explicit:
 - derives `age_group` where age or year-of-birth is available
 - retains panel and non-panel respondents as separate observations
 - stores source-variable provenance in `attr(master, "source_map")`
+- stores the list of added cross-study variables in
+  `attr(master, "crossstudy_variables_added")`
 
 It also records source-variable provenance:
 

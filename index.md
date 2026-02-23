@@ -77,6 +77,8 @@ What it harmonizes:
   `sovereignty_support`, `sovereignty`
 - additional fields where available: `citizenship`, `born_canada`,
   `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+- additional harmonized columns for variables observed in at least two
+  studies (for example `q23`, `q24`, `occup`, `satisf`, `voteprec`)
 
 Harmonization applies value normalization, derived age groups,
 within-study de-duplication, and removal of rows that are empty across
@@ -108,14 +110,16 @@ Full citations for all studies are listed in:
 - [Study
   Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md)
 
-## Analyses
+## Use cases
 
-Analyses available in separate tabs:
+Use cases available in separate tabs:
 
 - [Evolution of sovereignty
   attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)
 - [Descriptive statistics and
   profiles](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md)
+- [Vote-choice patterns over
+  time](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md)
 
 ## Version française
 

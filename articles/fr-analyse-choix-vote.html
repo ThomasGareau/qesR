@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Use case: Evolution of Sovereignty Attitudes • qesR</title>
+<title>Cas d'usage : évolution du choix de vote • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Use case: Evolution of Sovereignty Attitudes">
+<meta property="og:title" content="Cas d'usage : évolution du choix de vote">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -87,7 +87,7 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -106,113 +106,112 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Use case: Evolution of Sovereignty Attitudes</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Cas d'usage : évolution du choix de vote</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/analysis-sovereignty.Rmd" class="external-link"><code>vignettes/analysis-sovereignty.Rmd</code></a></small>
-      <div class="d-none name"><code>analysis-sovereignty.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/fr-analyse-choix-vote.Rmd" class="external-link"><code>vignettes/fr-analyse-choix-vote.Rmd</code></a></small>
+      <div class="d-none name"><code>fr-analyse-choix-vote.Rmd</code></div>
     </div>
 
     
     
-<p>This page uses the merged file to estimate sovereignty support over
-time.</p>
 <div class="section level2">
-<h2 id="load-merged-data">Load merged data<a class="anchor" aria-label="anchor" href="#load-merged-data"></a>
+<h2 id="tableau-1-parts-de-choix-de-vote-des-principaux-partis-par-annee">Tableau 1 : parts de choix de vote des principaux partis par
+annee<a class="anchor" aria-label="anchor" href="#tableau-1-parts-de-choix-de-vote-des-principaux-partis-par-annee"></a>
 </h2>
-</div>
-<div class="section level2">
-<h2 id="dedicated-sovereignty-question">Dedicated sovereignty question<a class="anchor" aria-label="anchor" href="#dedicated-sovereignty-question"></a>
-</h2>
-<div class="section level3">
-<h3 id="results-table">Results table<a class="anchor" aria-label="anchor" href="#results-table"></a>
-</h3>
 <table class="table">
-<caption>Sovereignty support by study year</caption>
+<caption>Parts de choix de vote des principaux partis par
+année</caption>
 <colgroup>
-<col width="12%">
-<col width="16%">
-<col width="27%">
-<col width="27%">
-<col width="15%">
+<col width="20%">
+<col width="37%">
+<col width="11%">
+<col width="11%">
+<col width="10%">
+<col width="10%">
 </colgroup>
 <thead><tr class="header">
-<th align="right">Study year</th>
-<th align="right">N respondents</th>
-<th align="right">N with sovereignty item</th>
-<th align="right">Sovereignty support (%)</th>
-<th align="left">95% CI (%)</th>
+<th align="right">Annee d’etude</th>
+<th align="right">N avec item choix de vote</th>
+<th align="right">CAQ (%)</th>
+<th align="right">PLQ (%)</th>
+<th align="right">PQ (%)</th>
+<th align="right">QS (%)</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td align="right">1998</td>
 <td align="right">1483</td>
-<td align="right">381</td>
-<td align="right">43.3</td>
-<td align="left">38.3 to 48.3</td>
+<td align="right">0.0</td>
+<td align="right">21.9</td>
+<td align="right">30.1</td>
+<td align="right">0.0</td>
 </tr>
 <tr class="even">
 <td align="right">2007</td>
-<td align="right">4237</td>
-<td align="right">3534</td>
-<td align="right">43.2</td>
-<td align="left">41.6 to 44.8</td>
+<td align="right">4052</td>
+<td align="right">0.0</td>
+<td align="right">19.7</td>
+<td align="right">22.5</td>
+<td align="right">3.0</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
-<td align="right">1151</td>
-<td align="right">989</td>
-<td align="right">44.9</td>
-<td align="left">41.8 to 48.0</td>
+<td align="right">986</td>
+<td align="right">0.0</td>
+<td align="right">35.7</td>
+<td align="right">34.1</td>
+<td align="right">3.9</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
-<td align="right">2349</td>
-<td align="right">2066</td>
-<td align="right">40.1</td>
-<td align="left">38.0 to 42.2</td>
+<td align="right">2213</td>
+<td align="right">21.5</td>
+<td align="right">20.1</td>
+<td align="right">34.0</td>
+<td align="right">6.4</td>
 </tr>
 <tr class="odd">
 <td align="right">2014</td>
-<td align="right">1517</td>
-<td align="right">1353</td>
-<td align="right">34.1</td>
-<td align="left">31.6 to 36.7</td>
+<td align="right">1352</td>
+<td align="right">20.5</td>
+<td align="right">36.2</td>
+<td align="right">25.4</td>
+<td align="right">9.7</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
-<td align="right">4322</td>
-<td align="right">3338</td>
-<td align="right">33.6</td>
-<td align="left">32.0 to 35.2</td>
+<td align="right">3049</td>
+<td align="right">31.6</td>
+<td align="right">22.6</td>
+<td align="right">16.4</td>
+<td align="right">14.1</td>
 </tr>
 <tr class="odd">
 <td align="right">2022</td>
-<td align="right">1521</td>
-<td align="right">1284</td>
-<td align="right">36.4</td>
-<td align="left">33.7 to 39.0</td>
+<td align="right">1432</td>
+<td align="right">31.4</td>
+<td align="right">9.1</td>
+<td align="right">11.5</td>
+<td align="right">18.4</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="trend-plot">Trend plot<a class="anchor" aria-label="anchor" href="#trend-plot"></a>
-</h3>
-<p><img src="analysis-sovereignty_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Line chart of sovereignty support trend over study years." width="700"></p>
-</div>
+<div class="section level2">
+<h2 id="figure-1-tendance-du-choix-de-vote-des-principaux-partis">Figure 1 : tendance du choix de vote des principaux partis<a class="anchor" aria-label="anchor" href="#figure-1-tendance-du-choix-de-vote-des-principaux-partis"></a>
+</h2>
+<p><img src="fr-analyse-choix-vote_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Graphique des parts de choix de vote pour la CAQ, le PLQ, le PQ et QS selon l'année." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
 </h2>
 <ul>
-<li>The sovereignty trend uses the dedicated sovereignty item from each
-study.</li>
-<li>Confidence intervals are binomial 95% intervals using normal
-approximation.</li>
-<li>
-<code>n_with_measure</code> in the table shows where coverage is
-thinner.</li>
+<li>Les parts utilisent les répondants avec une valeur non manquante de
+<code>vote_choice</code>.</li>
+<li>Les intervalles de confiance sont des IC95 binomiaux (approximation
+normale).</li>
+<li>La figure est limitée à la CAQ, au PLQ, au PQ et à QS.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

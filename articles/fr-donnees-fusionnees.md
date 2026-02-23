@@ -27,6 +27,9 @@ Le fichier fusionné inclut notamment :
   `sovereignty_support`, `sovereignty`
 - champs additionnels (si disponibles) : `citizenship`, `born_canada`,
   `income`, `religion`, `federal_pid`, `provincial_pid`, `survey_weight`
+- colonnes harmonisées additionnelles pour les variables présentes dans
+  au moins deux études (par exemple `q23`, `q24`, `occup`, `satisf`,
+  `voteprec`)
 
 La fusion applique aussi :
 
@@ -36,6 +39,8 @@ La fusion applique aussi :
 - la conservation des répondants panel et non-panel (pas de fusion entre
   études)
 - le suivi de la provenance via `attr(master, "source_map")`
+- la liste des variables inter-études ajoutées via
+  `attr(master, "crossstudy_variables_added")`
 
 La déduplication s’applique uniquement à l’intérieur d’un même code
 d’étude (pas entre enquêtes panel et non-panel).

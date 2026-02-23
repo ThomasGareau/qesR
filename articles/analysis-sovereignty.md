@@ -1,4 +1,4 @@
-# Analysis: Evolution of Sovereignty Attitudes
+# Use case: Evolution of Sovereignty Attitudes
 
 This page uses the merged file to estimate sovereignty support over
 time.

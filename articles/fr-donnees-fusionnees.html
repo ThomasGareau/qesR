@@ -47,11 +47,13 @@
       "articles/study-citations.html": "articles/fr-citations-etudes.html",
       "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
       "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+      "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
       "articles/fr-demarrage.html": "articles/get-started.html",
       "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
       "articles/fr-citations-etudes.html": "articles/study-citations.html",
       "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
+      "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
     };
     var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
     var label = isFrench ? "EN" : "FR";
@@ -85,8 +87,9 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -152,6 +155,10 @@
 <code>federal_pid</code>, <code>provincial_pid</code>,
 <code>survey_weight</code>
 </li>
+<li>colonnes harmonisées additionnelles pour les variables présentes
+dans au moins deux études (par exemple <code>q23</code>,
+<code>q24</code>, <code>occup</code>, <code>satisf</code>,
+<code>voteprec</code>)</li>
 </ul>
 <p>La fusion applique aussi :</p>
 <ul>
@@ -163,6 +170,9 @@ naissance est disponible</li>
 entre études)</li>
 <li>le suivi de la provenance via
 <code>attr(master, "source_map")</code>
+</li>
+<li>la liste des variables inter-études ajoutées via
+<code>attr(master, "crossstudy_variables_added")</code>
 </li>
 </ul>
 <p>La déduplication s’applique uniquement à l’intérieur d’un même code

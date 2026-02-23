@@ -1,4 +1,4 @@
-# Analysis: Descriptive Statistics
+# Use case: Descriptive Statistics
 
 ## Table 1: sample sizes by study
 
@@ -22,13 +22,13 @@ Sample sizes by study
 
 | Study year | N with age group | 18-34 (%) | 35-54 (%) | 55+ (%) |
 |-----------:|-----------------:|----------:|----------:|--------:|
-|       1998 |             1482 |        NA |        NA |      NA |
-|       2007 |             4197 |        NA |        NA |      NA |
-|       2008 |             1125 |        NA |        NA |      NA |
-|       2012 |             2349 |        NA |        NA |      NA |
-|       2014 |             1517 |        NA |        NA |      NA |
-|       2018 |             4052 |        NA |        NA |      NA |
-|       2022 |             1521 |        NA |        NA |      NA |
+|       1998 |             1482 |      25.3 |      46.8 |    27.9 |
+|       2007 |             4197 |      23.9 |      39.5 |    36.7 |
+|       2008 |             1125 |      23.2 |      42.4 |    34.4 |
+|       2012 |             2349 |      28.6 |      41.8 |    29.6 |
+|       2014 |             1517 |      26.2 |      38.8 |    34.9 |
+|       2018 |             4052 |      26.4 |      24.7 |    48.9 |
+|       2022 |             1521 |      25.3 |      32.3 |    42.4 |
 
 Age-group composition by year
 

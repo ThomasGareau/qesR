@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Analysis: Descriptive Statistics • qesR</title>
+<title>Use case: Descriptive Statistics • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Analysis: Descriptive Statistics">
+<meta property="og:title" content="Use case: Descriptive Statistics">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -47,11 +47,13 @@
       "articles/study-citations.html": "articles/fr-citations-etudes.html",
       "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
       "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
+      "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
       "articles/fr-demarrage.html": "articles/get-started.html",
       "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
       "articles/fr-citations-etudes.html": "articles/study-citations.html",
       "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html"
+      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
+      "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
     };
     var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
     var label = isFrench ? "EN" : "FR";
@@ -85,8 +87,9 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
 <li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Analysis: Sovereignty</a></li>
-<li class="active nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Analysis: Descriptive Statistics</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case: Sovereignty</a></li>
+<li class="active nav-item"><a class="nav-link" href="../articles/analysis-descriptive.html">Use case: Descriptive Statistics</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -103,7 +106,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Analysis: Descriptive Statistics</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Use case: Descriptive Statistics</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/analysis-descriptive.Rmd" class="external-link"><code>vignettes/analysis-descriptive.Rmd</code></a></small>
@@ -197,51 +200,51 @@
 <tr class="odd">
 <td align="right">1998</td>
 <td align="right">1482</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">25.3</td>
+<td align="right">46.8</td>
+<td align="right">27.9</td>
 </tr>
 <tr class="even">
 <td align="right">2007</td>
 <td align="right">4197</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">23.9</td>
+<td align="right">39.5</td>
+<td align="right">36.7</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
 <td align="right">1125</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">23.2</td>
+<td align="right">42.4</td>
+<td align="right">34.4</td>
 </tr>
 <tr class="even">
 <td align="right">2012</td>
 <td align="right">2349</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">28.6</td>
+<td align="right">41.8</td>
+<td align="right">29.6</td>
 </tr>
 <tr class="odd">
 <td align="right">2014</td>
 <td align="right">1517</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">26.2</td>
+<td align="right">38.8</td>
+<td align="right">34.9</td>
 </tr>
 <tr class="even">
 <td align="right">2018</td>
 <td align="right">4052</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">26.4</td>
+<td align="right">24.7</td>
+<td align="right">48.9</td>
 </tr>
 <tr class="odd">
 <td align="right">2022</td>
 <td align="right">1521</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<td align="right">25.3</td>
+<td align="right">32.3</td>
+<td align="right">42.4</td>
 </tr>
 </tbody>
 </table>
