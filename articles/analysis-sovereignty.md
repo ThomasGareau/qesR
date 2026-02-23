@@ -61,18 +61,18 @@ sov$period_index <- seq_len(nrow(sov))
 knitr::kable(sov)
 ```
 
-## Load merged data
-
-## Dedicated sovereignty question
+The estimates below use the dedicated sovereignty question harmonized
+across study periods.
 
 ## Table 1: sovereignty support by study period
 
 | Study period | N respondents | N with sovereignty item | Sovereignty support (%) | 95% CI (%)   |
 |:-------------|--------------:|------------------------:|------------------------:|:-------------|
 | 1998         |          1483 |                     381 |                    43.3 | 38.3 to 48.3 |
-| 2007         |          4237 |                    3534 |                    43.2 | 41.6 to 44.8 |
-| 2008         |          1151 |                     989 |                    44.9 | 41.8 to 48.0 |
-| 2007-2010    |         24026 |                   22441 |                    39.1 | 38.5 to 39.7 |
+| 2007         |          9244 |                    8207 |                    40.1 | 39.0 to 41.1 |
+| 2008         |         11162 |                   10379 |                    40.1 | 39.2 to 41.0 |
+| 2009         |          8008 |                    7455 |                    39.3 | 38.2 to 40.4 |
+| 2010         |          1000 |                     923 |                    39.9 | 36.7 to 43.0 |
 | 2012         |          2349 |                    2066 |                    40.1 | 38.0 to 42.2 |
 | 2014         |          1517 |                    1353 |                    34.1 | 31.6 to 36.7 |
 | 2018         |          4322 |                    3338 |                    33.6 | 32.0 to 35.2 |
@@ -83,14 +83,14 @@ Sovereignty support by study period
 ## Figure 1: sovereignty trend
 
 ![Line chart of sovereignty support trend over study
-periods.](analysis-sovereignty_files/figure-html/unnamed-chunk-6-1.png)
+periods.](analysis-sovereignty_files/figure-html/unnamed-chunk-5-1.png)
 
 ## Notes
 
 - The sovereignty trend uses the dedicated sovereignty item from each
   study.
-- The pooled `qes_crop_2007_2010` study is included as period
-  `2007-2010`.
+- The `qes_crop_2007_2010` study is split into 2007, 2008, 2009, and
+  2010 using its collection-wave date variable.
 - Confidence intervals are binomial 95% intervals using normal
   approximation.
 - `n_with_measure` in the table shows where coverage is thinner.

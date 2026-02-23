@@ -172,14 +172,8 @@ Show code used in this page
 <span><span class="va">sov</span><span class="op">$</span><span class="va">period_index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sov</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sov</span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level2">
-<h2 id="load-merged-data">Load merged data<a class="anchor" aria-label="anchor" href="#load-merged-data"></a>
-</h2>
-</div>
-<div class="section level2">
-<h2 id="dedicated-sovereignty-question">Dedicated sovereignty question<a class="anchor" aria-label="anchor" href="#dedicated-sovereignty-question"></a>
-</h2>
-</div>
+</details><p>The estimates below use the dedicated sovereignty question harmonized
+across study periods.</p>
 <div class="section level2">
 <h2 id="table-1-sovereignty-support-by-study-period">Table 1: sovereignty support by study period<a class="anchor" aria-label="anchor" href="#table-1-sovereignty-support-by-study-period"></a>
 </h2>
@@ -209,47 +203,54 @@ Show code used in this page
 </tr>
 <tr class="even">
 <td align="left">2007</td>
-<td align="right">4237</td>
-<td align="right">3534</td>
-<td align="right">43.2</td>
-<td align="left">41.6 to 44.8</td>
+<td align="right">9244</td>
+<td align="right">8207</td>
+<td align="right">40.1</td>
+<td align="left">39.0 to 41.1</td>
 </tr>
 <tr class="odd">
 <td align="left">2008</td>
-<td align="right">1151</td>
-<td align="right">989</td>
-<td align="right">44.9</td>
-<td align="left">41.8 to 48.0</td>
+<td align="right">11162</td>
+<td align="right">10379</td>
+<td align="right">40.1</td>
+<td align="left">39.2 to 41.0</td>
 </tr>
 <tr class="even">
-<td align="left">2007-2010</td>
-<td align="right">24026</td>
-<td align="right">22441</td>
-<td align="right">39.1</td>
-<td align="left">38.5 to 39.7</td>
+<td align="left">2009</td>
+<td align="right">8008</td>
+<td align="right">7455</td>
+<td align="right">39.3</td>
+<td align="left">38.2 to 40.4</td>
 </tr>
 <tr class="odd">
+<td align="left">2010</td>
+<td align="right">1000</td>
+<td align="right">923</td>
+<td align="right">39.9</td>
+<td align="left">36.7 to 43.0</td>
+</tr>
+<tr class="even">
 <td align="left">2012</td>
 <td align="right">2349</td>
 <td align="right">2066</td>
 <td align="right">40.1</td>
 <td align="left">38.0 to 42.2</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">2014</td>
 <td align="right">1517</td>
 <td align="right">1353</td>
 <td align="right">34.1</td>
 <td align="left">31.6 to 36.7</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">2018</td>
 <td align="right">4322</td>
 <td align="right">3338</td>
 <td align="right">33.6</td>
 <td align="left">32.0 to 35.2</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">2022</td>
 <td align="right">1521</td>
 <td align="right">1284</td>
@@ -262,7 +263,7 @@ Show code used in this page
 <div class="section level2">
 <h2 id="figure-1-sovereignty-trend">Figure 1: sovereignty trend<a class="anchor" aria-label="anchor" href="#figure-1-sovereignty-trend"></a>
 </h2>
-<p><img src="analysis-sovereignty_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Line chart of sovereignty support trend over study periods." width="700"></p>
+<p><img src="analysis-sovereignty_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Line chart of sovereignty support trend over study periods." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
@@ -270,8 +271,8 @@ Show code used in this page
 <ul>
 <li>The sovereignty trend uses the dedicated sovereignty item from each
 study.</li>
-<li>The pooled <code>qes_crop_2007_2010</code> study is included as
-period <code>2007-2010</code>.</li>
+<li>The <code>qes_crop_2007_2010</code> study is split into 2007, 2008,
+2009, and 2010 using its collection-wave date variable.</li>
 <li>Confidence intervals are binomial 95% intervals using normal
 approximation.</li>
 <li>
