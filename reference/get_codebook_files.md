@@ -6,7 +6,13 @@ associated with a study.
 ## Usage
 
 ``` r
-get_codebook_files(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE)
+get_codebook_files(
+  srvy = NULL,
+  codebook = NULL,
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE
+)
 ```
 
 ## Arguments

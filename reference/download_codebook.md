@@ -6,7 +6,14 @@ into a local directory.
 ## Usage
 
 ``` r
-download_codebook(srvy, dest_dir = tempdir(), file = NULL, quiet = FALSE, refresh = FALSE, overwrite = FALSE)
+download_codebook(
+  srvy,
+  dest_dir = tempdir(),
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE,
+  overwrite = FALSE
+)
 ```
 
 ## Arguments

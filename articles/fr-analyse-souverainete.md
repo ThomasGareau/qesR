@@ -10,7 +10,9 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master_paths <- c("qes_master.csv", "../qes_master.csv")
+pkg_master <- system.file("extdata", "qes_master.csv", package = "qesR")
+master_paths <- c("qes_master.csv", "../qes_master.csv", pkg_master)
+master_paths <- master_paths[nzchar(master_paths)]
 master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
 
 master <- master %>%

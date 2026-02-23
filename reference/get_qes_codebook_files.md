@@ -6,7 +6,13 @@ Backward-compatible alias for
 ## Usage
 
 ``` r
-get_qes_codebook_files(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE)
+get_qes_codebook_files(
+  srvy = NULL,
+  codebook = NULL,
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE
+)
 ```
 
 ## Arguments
