@@ -181,7 +181,7 @@ vote_table <- vote_party %>%
   ) %>%
   arrange(qes_year_num)
 
-knitr::kable(
+  knitr::kable(
   vote_table %>%
     transmute(
       `Study year` = qes_year_num,
@@ -191,9 +191,9 @@ knitr::kable(
       `PQ (%)` = round(pq, 1),
       `QS (%)` = round(qs, 1),
       `PCQ (%)` = round(pcq, 1)
-    ),
+  ),
   digits = 1,
-  caption = "Major-party vote-choice shares by year (including PCQ)"
+  caption = "Major-party vote-choice shares by year"
 )
 ```
 
@@ -220,7 +220,7 @@ ggplot(vote_party, aes(x = year_index, y = share, color = vote_choice_party, gro
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_vote)) +
   scale_x_continuous(breaks = seq_along(years), labels = years) +
   labs(
-    title = "Major-party vote choice over time (including PCQ)",
+    title = "Major-party vote choice over time",
     x = "Study year",
     y = "Share of respondents"
   ) +

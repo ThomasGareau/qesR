@@ -1196,11 +1196,11 @@
 .master_opaque_short_names <- function() {
   c(
     q10 = "issue_family_support",
-    q16 = "info_source_main",
-    q17 = "info_source_second",
-    q18 = "party_best_healthcare",
-    q18a = "identity_self_position_1",
-    q18b = "identity_self_position_2",
+    q16 = "info_source_primary",
+    q17 = "info_source_secondary",
+    q18 = "party_best_health",
+    q18a = "identity_self_1",
+    q18b = "identity_self_2",
     q20 = "referendum_intent",
     q20b = "party_best_anticorruption",
     q22 = "elites_out_of_touch",
@@ -1227,19 +1227,19 @@
     q50 = "privatize_hydro_support",
     q51 = "private_healthcare_support",
     q53 = "gov_role_environment",
-    q54 = "profits_help_poor_view",
-    q55 = "party_best_healthcare_alt",
-    q56 = "powers_for_quebec_pref",
+    q54 = "profits_help_poor",
+    q55 = "party_best_health_alt",
+    q56 = "powers_for_quebec",
     q58 = "party_best_environment",
     q59 = "party_best_poverty",
-    q60 = "qc_voice_federal_parliament",
+    q60 = "qc_voice_federal",
     q61b = "party_best_qc_identity",
     q61d = "party_best_caisse_depot",
-    q62a = "decision_level_item_a",
-    q62b = "decision_level_item_b",
+    q62a = "decision_level_a",
+    q62b = "decision_level_b",
     q64 = "feeling_unions_0_100",
     q65 = "feeling_business_0_100",
-    q66 = "same_sex_marriage_support",
+    q66 = "same_sex_marriage",
     q68 = "family_values_priority",
     q7 = "issue_tax_cuts",
     q70 = "provincial_pid_item",
@@ -1254,11 +1254,43 @@
     raison1 = "vote_reason_1",
     raison2 = "vote_reason_2",
     s_jse = "interview_weekday",
-    satisf = "satisf_gov_qc",
+    satisf = "gov_satisfaction",
     sefie = "polling_trust",
-    sondbons = "polls_good_for_voters",
+    sondbons = "polls_eval",
     voteprec = "previous_vote_2003"
   )
+}
+
+.resolve_master_opaque_key <- function(var, keys) {
+  if (is.na(var) || !nzchar(var)) {
+    return(NA_character_)
+  }
+  if (var %in% keys) {
+    return(var)
+  }
+  hits <- keys[endsWith(var, paste0("_", keys))]
+  if (length(hits) == 1L) {
+    return(hits[[1]])
+  }
+  NA_character_
+}
+
+.truncate_master_name <- function(x, max_chars = 32L) {
+  x <- as.character(x)
+  x <- gsub("\\.+", "_", x, perl = TRUE)
+  x <- gsub("_+", "_", x, perl = TRUE)
+  x <- gsub("^_|_$", "", x, perl = TRUE)
+  if (!is.finite(max_chars) || max_chars <= 0L) {
+    return(x)
+  }
+  if (nchar(x) > max_chars) {
+    x <- substr(x, 1L, max_chars)
+    x <- gsub("_+$", "", x, perl = TRUE)
+  }
+  if (!nzchar(x)) {
+    x <- "var"
+  }
+  x
 }
 
 .extract_master_label_map <- function(data) {
@@ -1363,7 +1395,7 @@
   slug
 }
 
-.make_unique_master_names <- function(candidates, existing = character(0)) {
+.make_unique_master_names <- function(candidates, existing = character(0), max_chars = Inf) {
   if (length(candidates) == 0L) {
     return(candidates)
   }
@@ -1372,11 +1404,22 @@
   taken <- as.character(existing)
 
   for (i in seq_along(candidates)) {
-    base <- candidates[[i]]
+    base <- .truncate_master_name(candidates[[i]], max_chars = max_chars)
     cur <- base
     k <- 2L
     while (cur %in% c(taken, out[seq_len(max(0L, i - 1L))])) {
-      cur <- paste0(base, "_", k)
+      suffix <- paste0("_", k)
+      if (is.finite(max_chars)) {
+        room <- max(1L, as.integer(max_chars) - nchar(suffix))
+        stem <- substr(base, 1L, room)
+        stem <- gsub("_+$", "", stem, perl = TRUE)
+        if (!nzchar(stem)) {
+          stem <- "v"
+        }
+        cur <- paste0(stem, suffix)
+      } else {
+        cur <- paste0(base, suffix)
+      }
       k <- k + 1L
     }
     out[[i]] <- cur
@@ -1386,7 +1429,16 @@
 }
 
 .build_master_opaque_rename_map <- function(master, label_maps_by_study) {
-  vars <- intersect(names(master), .master_opaque_variable_candidates())
+  key_space <- .master_opaque_variable_candidates()
+  resolved_key <- vapply(
+    names(master),
+    .resolve_master_opaque_key,
+    character(1),
+    keys = key_space
+  )
+  keep <- !is.na(resolved_key) & nzchar(resolved_key)
+  vars <- names(master)[keep]
+  keys <- resolved_key[keep]
   if (length(vars) == 0L) {
     return(data.frame(
       legacy_variable = character(0),
@@ -1398,25 +1450,33 @@
 
   manual <- .master_opaque_short_names()
 
-  label_hint <- vapply(
-    vars,
-    .select_master_label_hint,
-    character(1),
-    label_maps_by_study = label_maps_by_study
+  label_hint <- mapply(
+    function(v, k) {
+      hint <- .select_master_label_hint(v, label_maps_by_study = label_maps_by_study)
+      if (is.na(hint) || !nzchar(hint)) {
+        hint <- .select_master_label_hint(k, label_maps_by_study = label_maps_by_study)
+      }
+      hint
+    },
+    v = vars,
+    k = keys,
+    SIMPLIFY = TRUE,
+    USE.NAMES = FALSE
   )
 
-  candidates <- unname(manual[vars])
+  candidates <- unname(manual[keys])
   fallback <- is.na(candidates) | !nzchar(candidates)
   if (any(fallback)) {
-    slug <- vapply(label_hint[fallback], .slugify_master_label, character(1), max_words = 4L, max_chars = 28L)
+    slug <- vapply(label_hint[fallback], .slugify_master_label, character(1), max_words = 4L, max_chars = 24L)
     slug_empty <- is.na(slug) | !nzchar(slug)
-    slug[slug_empty] <- paste0("legacy_item_", vars[fallback][slug_empty])
+    slug[slug_empty] <- paste0("legacy_", keys[fallback][slug_empty])
     candidates[fallback] <- slug
   }
   candidates <- gsub("\\.+", "_", make.names(candidates, unique = FALSE), perl = TRUE)
+  candidates <- vapply(candidates, .truncate_master_name, character(1), max_chars = 32L)
 
   existing <- setdiff(names(master), vars)
-  master_names <- .make_unique_master_names(candidates, existing = existing)
+  master_names <- .make_unique_master_names(candidates, existing = existing, max_chars = 32L)
 
   data.frame(
     legacy_variable = vars,

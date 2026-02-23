@@ -120,7 +120,7 @@ table_vote <- vote_parti %>%
   ) %>%
   arrange(annee)
 
-knitr::kable(
+  knitr::kable(
   table_vote %>%
     transmute(
       `Annee d'etude` = annee,
@@ -207,9 +207,9 @@ knitr::kable(
       `PQ (%)` = round(pq, 1),
       `QS (%)` = round(qs, 1),
       `PCQ (%)` = round(pcq, 1)
-    ),
+  ),
   digits = 1,
-  caption = "Parts de choix de vote des principaux partis par annee (incluant le PCQ)"
+  caption = "Parts de choix de vote des principaux partis par annee"
 )
 ```
 
@@ -254,7 +254,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_vote)) +
   scale_x_continuous(breaks = sort(unique(vote_parti$annee))) +
   labs(
-    title = "Choix de vote des principaux partis dans le temps (incluant le PCQ)",
+    title = "Choix de vote des principaux partis dans le temps",
     x = "Année d'étude",
     y = "Part des répondants"
   ) +
