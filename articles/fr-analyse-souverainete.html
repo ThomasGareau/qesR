@@ -114,80 +114,86 @@
 
     
     
-<p>Cette page présente l’évolution de l’appui à la souveraineté dans le
-fichier fusionné.</p>
+<p>Cette page utilise le fichier fusionne pour estimer l’appui a la
+souverainete dans le temps.</p>
 <details><summary>
-Afficher le code utilisé dans cette page
+Afficher le code utilise dans cette page
 </summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>assign_global <span class="op">=</span> <span class="cn">FALSE</span>, strict <span class="op">=</span> <span class="cn">FALSE</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span>
+<span><span class="va">master_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes_master.csv"</span>, <span class="st">"../qes_master.csv"</span><span class="op">)</span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">master_paths</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">master_paths</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    qes_year_chr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">qes_year</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year_chr</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">is_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"^[0-9]{4}-[0-9]{4}$"</span>, <span class="va">master</span><span class="op">$</span><span class="va">qes_year_chr</span><span class="op">)</span></span>
+<span><span class="va">start_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4})-([0-9]{4})$"</span>, <span class="st">"\\1"</span>, <span class="va">master</span><span class="op">$</span><span class="va">qes_year_chr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">end_year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4})-([0-9]{4})$"</span>, <span class="st">"\\2"</span>, <span class="va">master</span><span class="op">$</span><span class="va">qes_year_chr</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">periode_etude</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
+<span>  <span class="va">is_range</span>,</span>
+<span>  <span class="va">master</span><span class="op">$</span><span class="va">qes_year_chr</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">)</span>, <span class="va">master</span><span class="op">$</span><span class="va">qes_year_chr</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">ordre_periode</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span></span>
+<span>  <span class="va">is_range</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">start_year</span><span class="op">)</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">end_year</span><span class="op">)</span>,</span>
+<span>  <span class="op">(</span><span class="va">start_year</span> <span class="op">+</span> <span class="va">end_year</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span>,</span>
+<span>  <span class="va">master</span><span class="op">$</span><span class="va">qes_year_num</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">sovereignty_support</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA_real_</span></span>
 <span></span>
+<span><span class="va">toutes_periodes</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">periode_etude</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">periode_etude</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ordre_periode</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="va">periode_etude</span>, <span class="va">ordre_periode</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">periode_etude</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">periode_etude</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">ordre_periode</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">periode_etude</span>, <span class="va">ordre_periode</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
 <span>    repondants <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    n_mesure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">sovereignty_support</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    taux <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_mesure</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sovereignty_support</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    se <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_mesure</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">taux</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">taux</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_mesure</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    ci_bas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">taux</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    ci_haut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">taux</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    n_avec_mesure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">sovereignty_support</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    part_appui <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_avec_mesure</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">sovereignty_support</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    se <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_avec_mesure</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">part_appui</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">part_appui</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_avec_mesure</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    ic_bas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">part_appui</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
+<span>    ic_haut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">part_appui</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
 <span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">sov</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span></span>
-<span>      `Annee d'etude` <span class="op">=</span> <span class="va">annee</span>,</span>
-<span>      `N repondants` <span class="op">=</span> <span class="va">repondants</span>,</span>
-<span>      `N avec item souverainete` <span class="op">=</span> <span class="va">n_mesure</span>,</span>
-<span>      `Appui a la souverainete (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">taux</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">toutes_periodes</span>, <span class="va">sov</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"periode_etude"</span>, <span class="st">"ordre_periode"</span><span class="op">)</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">sov</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">ordre_periode</span>, <span class="va">periode_etude</span><span class="op">)</span></span>
+<span><span class="va">sov</span><span class="op">$</span><span class="va">indice_periode</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sov</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ymax_sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">sov</span><span class="op">$</span><span class="va">ci_haut</span>, <span class="va">sov</span><span class="op">$</span><span class="va">taux</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">ymax_sov</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/is.finite.html" class="external-link">is.finite</a></span><span class="op">(</span><span class="va">ymax_sov</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">ymax_sov</span> <span class="op">+</span> <span class="fl">0.05</span><span class="op">)</span> <span class="kw">else</span> <span class="fl">1</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">sov</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">annee</span>, y <span class="op">=</span> <span class="va">taux</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">ci_bas</span>, ymax <span class="op">=</span> <span class="va">ci_haut</span><span class="op">)</span>, fill <span class="op">=</span> <span class="st">"#9fb6ce"</span>, alpha <span class="op">=</span> <span class="fl">0.35</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"#12355b"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.3</span>, color <span class="op">=</span> <span class="st">"#b5651d"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, se <span class="op">=</span> <span class="cn">TRUE</span>, span <span class="op">=</span> <span class="fl">0.9</span>, color <span class="op">=</span> <span class="st">"#12355b"</span>, fill <span class="op">=</span> <span class="st">"#c9d6e4"</span>, alpha <span class="op">=</span> <span class="fl">0.25</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, <span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span>, limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax_sov</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">sov</span><span class="op">$</span><span class="va">annee</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sov</span><span class="op">)</span></span></code></pre></div>
 </details><div class="section level2">
-<h2 id="chargement">Chargement<a class="anchor" aria-label="anchor" href="#chargement"></a>
+<h2 id="chargement-des-donnees-fusionnees">Chargement des donnees fusionnees<a class="anchor" aria-label="anchor" href="#chargement-des-donnees-fusionnees"></a>
 </h2>
 </div>
 <div class="section level2">
-<h2 id="question-directe-sur-la-souveraineté">Question directe sur la souveraineté<a class="anchor" aria-label="anchor" href="#question-directe-sur-la-souverainet%C3%A9"></a>
+<h2 id="question-directe-sur-la-souverainete">Question directe sur la souverainete<a class="anchor" aria-label="anchor" href="#question-directe-sur-la-souverainete"></a>
 </h2>
 </div>
 <div class="section level2">
-<h2 id="tableau-1-appui-à-la-souveraineté-par-année">Tableau 1 : appui à la souveraineté par année<a class="anchor" aria-label="anchor" href="#tableau-1-appui-%C3%A0-la-souverainet%C3%A9-par-ann%C3%A9e"></a>
+<h2 id="tableau-1-appui-a-la-souverainete-par-periode-detude">Tableau 1 : appui a la souverainete par periode d’etude<a class="anchor" aria-label="anchor" href="#tableau-1-appui-a-la-souverainete-par-periode-detude"></a>
 </h2>
 <table class="table">
-<caption>Appui à la souveraineté par année</caption>
+<caption>Appui a la souverainete par periode d’etude</caption>
 <colgroup>
-<col width="15%">
-<col width="14%">
-<col width="27%">
-<col width="30%">
+<col width="17%">
 <col width="13%">
+<col width="26%">
+<col width="29%">
+<col width="12%">
 </colgroup>
 <thead><tr class="header">
-<th align="right">Annee d’etude</th>
+<th align="left">Periode d’etude</th>
 <th align="right">N repondants</th>
 <th align="right">N avec item souverainete</th>
 <th align="right">Appui a la souverainete (%)</th>
@@ -195,49 +201,56 @@ Afficher le code utilisé dans cette page
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">1998</td>
+<td align="left">1998</td>
 <td align="right">1483</td>
 <td align="right">381</td>
 <td align="right">43.3</td>
 <td align="left">38.3 a 48.3</td>
 </tr>
 <tr class="even">
-<td align="right">2007</td>
+<td align="left">2007</td>
 <td align="right">4237</td>
 <td align="right">3534</td>
 <td align="right">43.2</td>
 <td align="left">41.6 a 44.8</td>
 </tr>
 <tr class="odd">
-<td align="right">2008</td>
+<td align="left">2008</td>
 <td align="right">1151</td>
 <td align="right">989</td>
 <td align="right">44.9</td>
 <td align="left">41.8 a 48.0</td>
 </tr>
 <tr class="even">
-<td align="right">2012</td>
+<td align="left">2007-2010</td>
+<td align="right">24026</td>
+<td align="right">22441</td>
+<td align="right">39.1</td>
+<td align="left">38.5 a 39.7</td>
+</tr>
+<tr class="odd">
+<td align="left">2012</td>
 <td align="right">2349</td>
 <td align="right">2066</td>
 <td align="right">40.1</td>
 <td align="left">38.0 a 42.2</td>
 </tr>
-<tr class="odd">
-<td align="right">2014</td>
+<tr class="even">
+<td align="left">2014</td>
 <td align="right">1517</td>
 <td align="right">1353</td>
 <td align="right">34.1</td>
 <td align="left">31.6 a 36.7</td>
 </tr>
-<tr class="even">
-<td align="right">2018</td>
+<tr class="odd">
+<td align="left">2018</td>
 <td align="right">4322</td>
 <td align="right">3338</td>
 <td align="right">33.6</td>
 <td align="left">32.0 a 35.2</td>
 </tr>
-<tr class="odd">
-<td align="right">2022</td>
+<tr class="even">
+<td align="left">2022</td>
 <td align="right">1521</td>
 <td align="right">1284</td>
 <td align="right">36.4</td>
@@ -247,20 +260,22 @@ Afficher le code utilisé dans cette page
 </table>
 </div>
 <div class="section level2">
-<h2 id="figure-1-tendance-de-lappui-à-la-souveraineté">Figure 1 : tendance de l’appui à la souveraineté<a class="anchor" aria-label="anchor" href="#figure-1-tendance-de-lappui-%C3%A0-la-souverainet%C3%A9"></a>
+<h2 id="figure-1-tendance-de-lappui-a-la-souverainete">Figure 1 : tendance de l’appui a la souverainete<a class="anchor" aria-label="anchor" href="#figure-1-tendance-de-lappui-a-la-souverainete"></a>
 </h2>
-<p><img src="fr-analyse-souverainete_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Graphique de l'évolution de l'appui à la souveraineté par année." width="700"></p>
+<p><img src="fr-analyse-souverainete_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="Graphique de l'evolution de l'appui a la souverainete par periode d'etude." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
 </h2>
 <ul>
-<li>L’analyse repose uniquement sur la variable directe d’appui à la
-souveraineté.</li>
+<li>La tendance utilise la question directe sur la souverainete de
+chaque etude.</li>
+<li>Le jeu poolé <code>qes_crop_2007_2010</code> est inclus comme
+periode <code>2007-2010</code>.</li>
 <li>Les intervalles de confiance sont des IC95 binomiaux (approximation
 normale).</li>
-<li>La colonne <code>N avec mesure</code> indique la couverture
-disponible selon l’année.</li>
+<li>La colonne <code>N avec item souverainete</code> indique la
+couverture disponible selon la periode.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -270,7 +285,7 @@ disponible selon l’année.</li>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Thomas Gareau-Paquette.</p>
+  <p>Developed by <a href="https://thomasgp.com" class="external-link">Thomas Gareau-Paquette</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">

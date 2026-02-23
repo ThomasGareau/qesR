@@ -2,7 +2,9 @@
 
 ## Authors
 
-- **Thomas Gareau-Paquette**. Author, maintainer.
+- **[Thomas Gareau-Paquette](https://thomasgp.com)**. Author,
+  maintainer.  
+  https://thomasgp.com
 
 ## Citation
 
