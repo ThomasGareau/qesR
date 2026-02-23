@@ -3,8 +3,7 @@
 ## Authors
 
 - **[Thomas Gareau-Paquette](https://thomasgp.com)**. Author,
-  maintainer.  
-  https://thomasgp.com
+  maintainer.
 
 ## Citation
 
