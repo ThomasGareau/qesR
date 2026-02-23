@@ -6,6 +6,7 @@ Show code used in this page
 library(qesR)
 library(dplyr)
 library(ggplot2)
+library(knitr)
 
 master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
   mutate(
@@ -22,7 +23,76 @@ master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>
   ) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
-# Compute yearly shares and confidence intervals, then plot.
+major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
+
+vote_base <- master %>%
+  filter(!is.na(qes_year_num), !is.na(vote_choice_party), nzchar(vote_choice_party))
+
+vote_den <- vote_base %>%
+  group_by(qes_year_num) %>%
+  summarise(n_with_vote_choice = n(), .groups = "drop")
+
+vote_party <- vote_base %>%
+  group_by(qes_year_num, vote_choice_party) %>%
+  summarise(n_party = n(), .groups = "drop")
+
+grid <- expand.grid(
+  qes_year_num = sort(unique(vote_den$qes_year_num)),
+  vote_choice_party = major_parties,
+  stringsAsFactors = FALSE
+)
+
+vote_party <- merge(grid, vote_party, by = c("qes_year_num", "vote_choice_party"), all.x = TRUE, sort = TRUE)
+vote_party$n_party[is.na(vote_party$n_party)] <- 0
+vote_party <- merge(vote_party, vote_den, by = "qes_year_num", all.x = TRUE, sort = TRUE)
+
+vote_party <- vote_party %>%
+  mutate(
+    share = ifelse(n_with_vote_choice > 0, n_party / n_with_vote_choice, NA_real_),
+    se = ifelse(n_with_vote_choice > 0, sqrt(pmax(share * (1 - share), 0) / n_with_vote_choice), NA_real_),
+    ci_low = ifelse(!is.na(se), pmax(0, share - 1.96 * se), NA_real_),
+    ci_high = ifelse(!is.na(se), pmin(1, share + 1.96 * se), NA_real_)
+  )
+
+vote_table <- vote_party %>%
+  group_by(qes_year_num) %>%
+  summarise(
+    n_with_vote_choice = first(n_with_vote_choice),
+    caq_adq = 100 * share[vote_choice_party == "CAQ/ADQ"],
+    plq = 100 * share[vote_choice_party == "PLQ"],
+    pq = 100 * share[vote_choice_party == "PQ"],
+    qs = 100 * share[vote_choice_party == "QS"],
+    pcq = 100 * share[vote_choice_party == "PCQ"],
+    .groups = "drop"
+  ) %>%
+  arrange(qes_year_num)
+
+knitr::kable(
+  vote_table %>%
+    transmute(
+      `Study year` = qes_year_num,
+      `N with vote-choice item` = n_with_vote_choice,
+      `CAQ/ADQ (%)` = round(caq_adq, 1),
+      `PLQ (%)` = round(plq, 1),
+      `PQ (%)` = round(pq, 1),
+      `QS (%)` = round(qs, 1),
+      `PCQ (%)` = round(pcq, 1)
+    )
+)
+
+vote_party$vote_choice_party <- factor(vote_party$vote_choice_party, levels = major_parties)
+ymax_vote <- suppressWarnings(max(vote_party$ci_high, vote_party$share, na.rm = TRUE))
+ymax_vote <- if (is.finite(ymax_vote)) min(1, ymax_vote + 0.05) else 1
+
+ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice_party, group = vote_choice_party)) +
+  geom_ribbon(aes(ymin = ci_low, ymax = ci_high, fill = vote_choice_party), alpha = 0.15, linewidth = 0) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.1) +
+  geom_smooth(method = "loess", se = FALSE, span = 0.9, linewidth = 0.8, linetype = "dashed") +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_vote)) +
+  scale_x_continuous(breaks = sort(unique(vote_party$qes_year_num))) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank(), axis.text.x = element_text(size = 9))
 ```
 
 ## Table 1: major-party vote-choice shares by year

@@ -126,7 +126,9 @@ record failures in attributes.</p></dd>
 
   <dt id="arg-save-path">save_path<a class="anchor" aria-label="anchor" href="#arg-save-path"></a></dt>
 <dd><p>Optional output path for writing the master file. Use <code>.rds</code> for RDS
-output; otherwise CSV is written.</p></dd>
+output; otherwise CSV is written. When opaque legacy variables are renamed
+in the merged output, an old-to-new variable map is also written alongside
+the saved file.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -134,8 +136,11 @@ output; otherwise CSV is written.</p></dd>
     <p>A harmonized stacked data frame with attributes:
 <code>source_map</code>, <code>loaded_surveys</code>, <code>failed_surveys</code>, and
 <code>harmonized_variables</code>. Additional attributes
-<code>duplicates_removed</code> and <code>empty_rows_removed</code> report row filtering.
-When <code>save_path</code> is provided, the output path is stored in <code>saved_to</code>.</p>
+<code>duplicates_removed</code>, <code>empty_rows_removed</code>, and
+<code>variable_name_map</code> report row filtering and renaming details.
+When <code>save_path</code> is provided, the output path is stored in <code>saved_to</code>;
+if renaming is applied, the sidecar mapping file path is stored in
+<code>variable_name_map_path</code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -6,6 +6,7 @@ Afficher le code utilisé dans cette page
 library(qesR)
 library(dplyr)
 library(ggplot2)
+library(knitr)
 
 master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
   mutate(
@@ -22,7 +23,74 @@ master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>
   ) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
-# Calcul des parts annuelles et des intervalles de confiance, puis tracé.
+partis_majeurs <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
+
+vote_base <- master %>%
+  filter(!is.na(annee), !is.na(choix_vote_parti), nzchar(choix_vote_parti))
+
+vote_den <- vote_base %>%
+  group_by(annee) %>%
+  summarise(n_avec_choix_vote = n(), .groups = "drop")
+
+vote_parti <- vote_base %>%
+  group_by(annee, choix_vote_parti) %>%
+  summarise(n_parti = n(), .groups = "drop")
+
+grille <- expand.grid(
+  annee = sort(unique(vote_den$annee)),
+  choix_vote_parti = partis_majeurs,
+  stringsAsFactors = FALSE
+)
+
+vote_parti <- merge(grille, vote_parti, by = c("annee", "choix_vote_parti"), all.x = TRUE, sort = TRUE)
+vote_parti$n_parti[is.na(vote_parti$n_parti)] <- 0
+vote_parti <- merge(vote_parti, vote_den, by = "annee", all.x = TRUE, sort = TRUE)
+
+vote_parti <- vote_parti %>%
+  mutate(
+    part = ifelse(n_avec_choix_vote > 0, n_parti / n_avec_choix_vote, NA_real_),
+    se = ifelse(n_avec_choix_vote > 0, sqrt(pmax(part * (1 - part), 0) / n_avec_choix_vote), NA_real_),
+    ci_bas = ifelse(!is.na(se), pmax(0, part - 1.96 * se), NA_real_),
+    ci_haut = ifelse(!is.na(se), pmin(1, part + 1.96 * se), NA_real_)
+  )
+
+table_vote <- vote_parti %>%
+  group_by(annee) %>%
+  summarise(
+    n_avec_choix_vote = first(n_avec_choix_vote),
+    caq_adq = 100 * part[choix_vote_parti == "CAQ/ADQ"],
+    plq = 100 * part[choix_vote_parti == "PLQ"],
+    pq = 100 * part[choix_vote_parti == "PQ"],
+    qs = 100 * part[choix_vote_parti == "QS"],
+    pcq = 100 * part[choix_vote_parti == "PCQ"],
+    .groups = "drop"
+  ) %>%
+  arrange(annee)
+
+knitr::kable(
+  table_vote %>%
+    transmute(
+      `Annee d'etude` = annee,
+      `N avec item choix de vote` = n_avec_choix_vote,
+      `CAQ/ADQ (%)` = round(caq_adq, 1),
+      `PLQ (%)` = round(plq, 1),
+      `PQ (%)` = round(pq, 1),
+      `QS (%)` = round(qs, 1),
+      `PCQ (%)` = round(pcq, 1)
+    )
+)
+
+vote_parti$choix_vote_parti <- factor(vote_parti$choix_vote_parti, levels = partis_majeurs)
+
+ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = choix_vote_parti)) +
+  geom_ribbon(aes(ymin = ci_bas, ymax = ci_haut, fill = choix_vote_parti), alpha = 0.15, linewidth = 0) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2.1) +
+  geom_smooth(method = "loess", se = FALSE, span = 0.9, linewidth = 0.8, linetype = "dashed") +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%")) +
+  scale_x_continuous(breaks = sort(unique(vote_parti$annee))) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank(), axis.text.x = element_text(size = 9))
 ```
 
 ## Tableau 1 : parts de choix de vote des principaux partis par annee

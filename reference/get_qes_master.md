@@ -46,12 +46,16 @@ get_qes_master(
 - save_path:
 
   Optional output path for writing the master file. Use `.rds` for RDS
-  output; otherwise CSV is written.
+  output; otherwise CSV is written. When opaque legacy variables are
+  renamed in the merged output, an old-to-new variable map is also
+  written alongside the saved file.
 
 ## Value
 
 A harmonized stacked data frame with attributes: `source_map`,
 `loaded_surveys`, `failed_surveys`, and `harmonized_variables`.
-Additional attributes `duplicates_removed` and `empty_rows_removed`
-report row filtering. When `save_path` is provided, the output path is
-stored in `saved_to`.
+Additional attributes `duplicates_removed`, `empty_rows_removed`, and
+`variable_name_map` report row filtering and renaming details. When
+`save_path` is provided, the output path is stored in `saved_to`; if
+renaming is applied, the sidecar mapping file path is stored in
+`variable_name_map_path`.

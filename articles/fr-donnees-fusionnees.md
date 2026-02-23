@@ -25,13 +25,67 @@ Colonnes harmonisées actuelles de `qes_master` :
 `vote_choice_text`, `party_best`, `party_lean`, `sovereignty_support`,
 `sovereignty`, `federal_pid`, `provincial_pid`, `survey_weight`,
 `definibin`, `ethn1`, `influperso`, `luentend`, `occup`, `patron`,
-`pondam1`, `q10`, `q16`, `q17`, `q18`, `q18a`, `q18b`, `q20`, `q20b`,
-`q22`, `q23`, `q24`, `q3`, `q31`, `q33`, `q35`, `q37`, `q38`, `q39`,
-`q4`, `q40`, `q41`, `q42`, `q43`, `q44`, `q45`, `q46`, `q47`, `q48`,
-`q49`, `q50`, `q51`, `q53`, `q54`, `q55`, `q56`, `q58`, `q59`, `q60`,
-`q61b`, `q61d`, `q62a`, `q62b`, `q64`, `q65`, `q66`, `q68`, `q7`, `q70`,
-`q72`, `q73`, `q74`, `q79`, `q8`, `q80`, `q81`, `q9`, `raison1`,
-`raison2`, `s_jse`, `satisf`, `sefie`, `sondbons`, `voteprec`
+`pondam1`, `laide_familles_etait_enjeu_important_election_q10`,
+`principale_source_dinformation_politique_ne_pas_lire_q16`,
+`deuxieme_source_dinformation_politique_television_radio_journaux_q17`,
+`which_party_best_managing_health_care_system_q18`,
+`gens_ont_differentes_facons_se_definir_diriez_considerez_q18a`,
+`gens_ont_differentes_facons_se_definir_diriez_considerez_q18b`,
+`eme_si_navez_peut_pas_encore_fait_choix_q20`,
+`which_party_best_fighting_corruption_q20b`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q22`,
+`mesure_faites_confiance_gouvernements_faire_doit_fait_leur_q23`,
+`pensez_gens_gouvernement_gaspillent_beaucoup_quelque_peu_ou_q24`,
+`leducation_etait_enjeu_important_election_q3`,
+`echelle_zero_cent_zero_veut_dire_naimez_vraiment_q31`,
+`personnellement_trouvez_lidee_tenir_election_quebec_automne_etai_q33`,
+`recemment_gouvernement_quebec_commence_envisager_possibilite_mod_q35`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q37`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q38`,
+`maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q39`,
+`according_what_main_difference_between_quebecois_people_peopl_q4`,
+`maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q40`,
+`maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q41`,
+`maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q42`,
+`maintenant_nous_parlons_chefs_partis_utilisant_echelle_zero_q43`,
+`selon_lequel_chefs_parti_plus_competent_ne_pas_q44`,
+`would_say_canadian_government_intervenes_too_much_affairs_q45`,
+`selon_lequel_chefs_parti_plus_proche_gens_ne_q46`,
+`selon_leconomie_quebecoise_sest_elle_amelioree_deterioree_ou_q47`,
+`considerez_surtout_comme_federaliste_surtout_comme_souverainiste_q48`,
+`dapres_lavenir_q49`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q50`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q51`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q53`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q54`,
+`selon_parti_politique_meilleur_ameliorer_soins_sante_ne_q55`,
+`if_had_choose_between_no_change_more_powers_q56`,
+`parti_meilleur_proteger_lenvironnement_ne_pas_lire_liste_q58`,
+`parti_meilleur_lutter_contre_pauvrete_ne_pas_lire_q59`,
+`it_important_quebec_has_sufficient_voice_central_decision_q60`,
+`parti_meilleur_defendre_lidentite_culture_quebecoise_ne_pas_q61b`,
+`parti_meilleur_soccuper_caisse_dep_ot_placement_quebec_q61d`,
+`each_following_areas_think_decisions_should_made_by_q62a`,
+`each_following_areas_think_decisions_should_made_by_q62b`,
+`echelle_va_100_ou_veut_dire_naimez_vraiment_q64`,
+`echelle_va_100_ou_veut_dire_naimez_vraiment_q65`,
+`etes_ou_contre_mariage_entre_personnes_eme_sexe_q66`,
+`veuillez_indiquer_si_etes_fortement_daccord_plut_ot_q68`,
+`baisses_dimp_ots_etaient_enjeu_important_election_q7`,
+`politique_provinciale_habituellement_identifiez_q70`,
+`sentez_peu_plus_proche_lun_ou_lautre_partis_q72`, `parti_q73`,
+`lors_derniere_election_federale_janvier_2006_parti_avez_q74`,
+`travaillez_actuellement_compte_etes_salarie_avez_pris_retraite_q79`,
+`statut_politique_quebec_etait_enjeu_important_election_q8`,
+`langue_parlez_plus_souvent_maison_q80`,
+`some_people_say_governments_should_see_it_every_q81`,
+`pauvrete_etait_enjeu_important_election_q9`,
+`raison_vote_recodee_raison1`, `raison_vote_recodee_raison2`,
+`jour_semaine_s_jse`,
+`diriez_etes_tres_satisfait_plut_ot_satisfait_plut_satisf`,
+`var_27_personnellement_jusqua_point_fiez_sondages_savoir_gagnera_sefie`,
+`var_28a_diriez_sondages_pendant_campagnes_electorales_tres_bonne_sondbons`,
+`var_15a_parti_avez_vote_dernieres_elections_provinciales_davril_voteprec`
 
 La fusion applique aussi :
 
@@ -40,12 +94,21 @@ La fusion applique aussi :
   disponible
 - la conservation des répondants panel et non-panel (pas de fusion entre
   études)
+- le renommage explicite des variables héritées opaques (par ex. `q10`,
+  `q16`, `voteprec`) vers des noms lisibles
 - le suivi de la provenance via `attr(master, "source_map")`
 - la liste des variables inter-études ajoutées via
   `attr(master, "crossstudy_variables_added")`
+- la table de correspondance anciens/nouveaux noms via
+  `attr(master, "variable_name_map")`
 
 La déduplication s’applique uniquement à l’intérieur d’un même code
 d’étude (pas entre enquêtes panel et non-panel).
+
+``` r
+name_map <- attr(master, "variable_name_map")
+head(name_map)
+```
 
 ## Exporter
 
