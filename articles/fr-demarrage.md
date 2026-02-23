@@ -37,4 +37,5 @@ Voir aussi :
 
 - Données fusionnées : `fr-donnees-fusionnees`
 - Citations : `fr-citations-etudes`
-- Analyses : `fr-analyse-souverainete`, `fr-analyse-descriptive`
+- Exemples de cas d’usage : `fr-analyse-souverainete`,
+  `fr-analyse-descriptive`

@@ -1,4 +1,4 @@
-# Cas d'usage : évolution du choix de vote
+# Exemple de cas d'usage : évolution du choix de vote
 
 Afficher le code utilisé dans cette page
 
@@ -93,7 +93,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
   theme(panel.grid.minor = element_blank(), axis.text.x = element_text(size = 9))
 ```
 
-## Tableau 1 : parts de choix de vote des principaux partis par annee
+## Tableau 1 : parts de choix de vote par annee
 
 | Annee d’etude | N avec item choix de vote | CAQ/ADQ (%) | PLQ (%) | PQ (%) | QS (%) | PCQ (%) |
 |--------------:|--------------------------:|------------:|--------:|-------:|-------:|--------:|
@@ -107,7 +107,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 
 Parts de choix de vote des principaux partis par annee (incluant le PCQ)
 
-## Figure 1 : tendance du choix de vote des principaux partis
+## Figure 1 : tendance du choix de vote
 
 ![Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ,
 QS et le PCQ selon

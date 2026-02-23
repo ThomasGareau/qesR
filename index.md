@@ -174,9 +174,9 @@ Full citations for all studies are listed in:
 - [Study
   Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md)
 
-## Use cases
+## Use case examples
 
-Use cases available in separate tabs:
+Use case examples available in separate tabs:
 
 - [Evolution of sovereignty
   attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)

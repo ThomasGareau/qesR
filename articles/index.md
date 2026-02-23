@@ -8,11 +8,11 @@
   Workflow](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
 - [Study
   Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md):
-- [Use case: Evolution of Sovereignty
+- [Use case example: Evolution of Sovereignty
   Attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md):
-- [Use case: Descriptive
+- [Use case example: Descriptive
   Statistics](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md):
-- [Use case: Vote Choice Over
+- [Use case example: Vote Choice Over
   Time](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md):
 - [Démarrage avec
   qesR](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md):
@@ -20,9 +20,9 @@
   harmonisées](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
 - [Citations des
   études](https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.md):
-- [Cas d'usage : évolution des attitudes liées à la
+- [Exemple de cas d'usage : évolution des attitudes liées à la
   souveraineté](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md):
-- [Analyse : statistiques
+- [Exemple de cas d'usage : statistiques
   descriptives](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md):
-- [Cas d'usage : évolution du choix de
+- [Exemple de cas d'usage : évolution du choix de
   vote](https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.md):

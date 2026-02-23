@@ -55,7 +55,8 @@ table th,
   background: var(--qesr-deep);
   color: #ffffff;
   border-color: var(--qesr-deep);
-  white-space: normal;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
 table td,

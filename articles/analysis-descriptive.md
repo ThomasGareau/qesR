@@ -1,4 +1,4 @@
-# Use case: Descriptive Statistics
+# Use case example: Descriptive Statistics
 
 ## Table 1: sample sizes by study
 
@@ -18,7 +18,7 @@
 
 Sample sizes by study
 
-## Table 2: age-group composition by year (share %)
+## Table 2: age-group composition by year
 
 | Study year | N with age group | 18-34 (%) | 35-54 (%) | 55+ (%) |
 |-----------:|-----------------:|----------:|----------:|--------:|
@@ -37,7 +37,7 @@ Age-group composition by year
 ![Line chart of harmonized age-group composition across study
 years.](analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 
-## Table 3 and Figure 2: turnout by year
+## Table 3: turnout by year
 
 | Study year | N respondents | N with turnout item | Turnout rate (%) | 95% CI (%)   |
 |-----------:|--------------:|--------------------:|-----------------:|:-------------|
@@ -50,6 +50,8 @@ years.](analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 |       2022 |          1521 |                1322 |             98.0 | 97.3 to 98.8 |
 
 Turnout indicator by year
+
+## Figure 2: turnout trend
 
 ![Line chart of turnout indicator across study
 years.](analysis-descriptive_files/figure-html/unnamed-chunk-8-1.png)

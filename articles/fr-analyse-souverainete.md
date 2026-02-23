@@ -1,4 +1,4 @@
-# Cas d'usage : évolution des attitudes liées à la souveraineté
+# Exemple de cas d'usage : évolution des attitudes liées à la souveraineté
 
 Cette page présente l’évolution de l’appui à la souveraineté dans le
 fichier fusionné.
@@ -59,6 +59,8 @@ ggplot(sov, aes(x = annee, y = taux)) +
 
 ## Question directe sur la souveraineté
 
+## Tableau 1 : appui à la souveraineté par année
+
 | Annee d’etude | N repondants | N avec item souverainete | Appui a la souverainete (%) | IC 95% (%)  |
 |--------------:|-------------:|-------------------------:|----------------------------:|:------------|
 |          1998 |         1483 |                      381 |                        43.3 | 38.3 a 48.3 |
@@ -70,6 +72,8 @@ ggplot(sov, aes(x = annee, y = taux)) +
 |          2022 |         1521 |                     1284 |                        36.4 | 33.7 a 39.0 |
 
 Appui à la souveraineté par année
+
+## Figure 1 : tendance de l’appui à la souveraineté
 
 ![Graphique de l'évolution de l'appui à la souveraineté par
 année.](fr-analyse-souverainete_files/figure-html/unnamed-chunk-6-1.png)

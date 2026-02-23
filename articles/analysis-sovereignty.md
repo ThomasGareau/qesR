@@ -1,4 +1,4 @@
-# Use case: Evolution of Sovereignty Attitudes
+# Use case example: Evolution of Sovereignty Attitudes
 
 This page uses the merged file to estimate sovereignty support over
 time.
@@ -6,12 +6,14 @@ time.
 Show code used in this page
 
 ``` r
-library(qesR)
 library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
+
+master <- master %>%
   mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
@@ -31,35 +33,17 @@ sov <- master %>%
     .groups = "drop"
   )
 
-knitr::kable(
-  sov %>%
-    transmute(
-      `Study year` = qes_year_num,
-      `N respondents` = respondents,
-      `N with sovereignty item` = n_with_measure,
-      `Sovereignty support (%)` = round(100 * support_share, 1)
-    )
-)
+years <- sort(unique(sov$qes_year_num))
+sov$year_index <- match(sov$qes_year_num, years)
 
-ymax_sov <- suppressWarnings(max(sov$ci_high, sov$support_share, na.rm = TRUE))
-ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
-
-ggplot(sov, aes(x = qes_year_num, y = support_share)) +
-  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35) +
-  geom_line(linewidth = 1, color = "#12355b") +
-  geom_point(size = 2.3, color = "#b5651d") +
-  geom_smooth(method = "loess", se = TRUE, span = 0.9, color = "#12355b", fill = "#c9d6e4", alpha = 0.25, linetype = "dashed", linewidth = 0.8) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
-  theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(size = 9))
+knitr::kable(sov)
 ```
 
 ## Load merged data
 
 ## Dedicated sovereignty question
 
-### Results table
+## Table 1: sovereignty support by year
 
 | Study year | N respondents | N with sovereignty item | Sovereignty support (%) | 95% CI (%)   |
 |-----------:|--------------:|------------------------:|------------------------:|:-------------|
@@ -73,7 +57,7 @@ ggplot(sov, aes(x = qes_year_num, y = support_share)) +
 
 Sovereignty support by study year
 
-### Trend plot
+## Figure 1: sovereignty trend
 
 ![Line chart of sovereignty support trend over study
 years.](analysis-sovereignty_files/figure-html/unnamed-chunk-6-1.png)

@@ -1,6 +1,6 @@
-# Analyse : statistiques descriptives
+# Exemple de cas d'usage : statistiques descriptives
 
-## Taille des échantillons
+## Tableau 1 : taille des échantillons
 
 | Annee d’etude | Code etude         | Taille echantillon |
 |:--------------|:-------------------|-------------------:|
@@ -18,7 +18,7 @@
 
 Taille d’échantillon par étude
 
-## Répartition des groupes d’âge
+## Tableau 2 : répartition des groupes d’âge
 
 | Annee d’etude | N avec groupe d’age | 18-34 (%) | 35-54 (%) | 55+ (%) |
 |--------------:|--------------------:|----------:|----------:|--------:|
@@ -32,11 +32,13 @@ Taille d’échantillon par étude
 
 Répartition des groupes d’âge par année
 
+## Figure 1 : profil des groupes d’âge dans le temps
+
 ![Graphique en lignes de la répartition harmonisée des groupes d'âge
 selon
 l'année.](fr-analyse-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 
-## Participation électorale par année
+## Tableau 3 : participation électorale par année
 
 | Annee d’etude | N repondants | N avec item participation | Taux de participation (%) | IC 95% (%)  |
 |--------------:|-------------:|--------------------------:|--------------------------:|:------------|
@@ -49,6 +51,8 @@ l'année.](fr-analyse-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 |          2022 |         1521 |                      1322 |                      98.0 | 97.3 a 98.8 |
 
 Indicateur de participation par année
+
+## Figure 2 : tendance de la participation électorale
 
 ![Graphique de l'indicateur de participation électorale selon
 l'année.](fr-analyse-descriptive_files/figure-html/unnamed-chunk-8-1.png)
