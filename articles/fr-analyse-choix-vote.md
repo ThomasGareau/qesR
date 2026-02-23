@@ -8,9 +8,10 @@ library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE) %>%
   mutate(
-    annee = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)),
+    annee = as.integer(substr(as.character(qes_year), 1, 4)),
     vote_choice_brut = trimws(as.character(vote_choice)),
     choix_vote_parti = dplyr::case_when(
       vote_choice_brut %in% c("CAQ", "ADQ") ~ "CAQ/ADQ",
@@ -20,8 +21,7 @@ master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>
       vote_choice_brut == "PCQ" ~ "PCQ",
       TRUE ~ NA_character_
     )
-  ) %>%
-  filter(qes_code != "qes_crop_2007_2010")
+  )
 
 partis_majeurs <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
 
@@ -98,8 +98,10 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 | Annee d’etude | N avec item choix de vote | CAQ/ADQ (%) | PLQ (%) | PQ (%) | QS (%) | PCQ (%) |
 |--------------:|--------------------------:|------------:|--------:|-------:|-------:|--------:|
 |          1998 |                      1048 |        26.4 |    31.0 |   42.6 |    0.0 |     0.0 |
-|          2007 |                      2823 |        35.0 |    28.3 |   32.3 |    4.4 |     0.0 |
-|          2008 |                       870 |        16.6 |    40.5 |   38.6 |    4.4 |     0.0 |
+|          2007 |                      6852 |        33.6 |    27.7 |   33.9 |    4.9 |     0.0 |
+|          2008 |                      8902 |        19.3 |    38.6 |   36.4 |    5.6 |     0.0 |
+|          2009 |                      6121 |        10.4 |    40.6 |   41.2 |    7.7 |     0.0 |
+|          2010 |                       730 |         7.8 |    41.6 |   41.2 |    9.3 |     0.0 |
 |          2012 |                      1813 |        26.2 |    24.5 |   41.5 |    7.8 |     0.0 |
 |          2014 |                      1241 |        22.3 |    39.4 |   27.7 |   10.6 |     0.0 |
 |          2018 |                      2582 |        37.3 |    26.7 |   19.4 |   16.6 |     0.0 |
@@ -117,6 +119,8 @@ l'annee.](fr-analyse-choix-vote_files/figure-html/unnamed-chunk-5-1.png)
 
 - Les parts utilisent les répondants avec une valeur non manquante de
   `vote_choice`.
+- Les années 2009 et 2010 proviennent de `qes_crop_2007_2010` après
+  ventilation par année de collecte.
 - Les intervalles de confiance sont des IC95 binomiaux (approximation
   normale).
 - La figure est limitée à la CAQ/ADQ, au PLQ, au PQ, à QS et au PCQ.

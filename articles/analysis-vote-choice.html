@@ -126,7 +126,7 @@ Show code used in this page
 <span></span>
 <span><span class="va">master</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^([0-9]{4}).*$"</span>, <span class="st">"\\1"</span>, <span class="va">qes_year</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    qes_year_num <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">qes_year</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    vote_choice_raw <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    vote_choice_party <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
 <span>      <span class="va">vote_choice_raw</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"ADQ"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"CAQ/ADQ"</span>,</span>
@@ -136,8 +136,7 @@ Show code used in this page
 <span>      <span class="va">vote_choice_raw</span> <span class="op">==</span> <span class="st">"PCQ"</span> <span class="op">~</span> <span class="st">"PCQ"</span>,</span>
 <span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="cn">NA_character_</span></span>
 <span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">qes_code</span> <span class="op">!=</span> <span class="st">"qes_crop_2007_2010"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="va">major_parties</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ/ADQ"</span>, <span class="st">"PLQ"</span>, <span class="st">"PQ"</span>, <span class="st">"QS"</span>, <span class="st">"PCQ"</span><span class="op">)</span></span>
 <span><span class="va">years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_year_num</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
@@ -220,20 +219,38 @@ Show code used in this page
 </tr>
 <tr class="even">
 <td align="right">2007</td>
-<td align="right">2823</td>
-<td align="right">35.0</td>
-<td align="right">28.3</td>
-<td align="right">32.3</td>
-<td align="right">4.4</td>
+<td align="right">6852</td>
+<td align="right">33.6</td>
+<td align="right">27.7</td>
+<td align="right">33.9</td>
+<td align="right">4.9</td>
 <td align="right">0.0</td>
 </tr>
 <tr class="odd">
 <td align="right">2008</td>
-<td align="right">870</td>
-<td align="right">16.6</td>
-<td align="right">40.5</td>
+<td align="right">8902</td>
+<td align="right">19.3</td>
 <td align="right">38.6</td>
-<td align="right">4.4</td>
+<td align="right">36.4</td>
+<td align="right">5.6</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">6121</td>
+<td align="right">10.4</td>
+<td align="right">40.6</td>
+<td align="right">41.2</td>
+<td align="right">7.7</td>
+<td align="right">0.0</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">730</td>
+<td align="right">7.8</td>
+<td align="right">41.6</td>
+<td align="right">41.2</td>
+<td align="right">9.3</td>
 <td align="right">0.0</td>
 </tr>
 <tr class="even">
@@ -286,6 +303,8 @@ Show code used in this page
 <ul>
 <li>Shares use respondents with a non-missing <code>vote_choice</code>
 value.</li>
+<li>Years 2009 and 2010 come from <code>qes_crop_2007_2010</code> after
+splitting by collection year.</li>
 <li>Confidence intervals are binomial 95% intervals (normal
 approximation).</li>
 <li>The trend figure is restricted to CAQ/ADQ, PLQ, PQ, QS, and
