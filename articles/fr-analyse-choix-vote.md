@@ -67,7 +67,7 @@ table_vote <- vote_parti %>%
   ) %>%
   arrange(annee)
 
-knitr::kable(
+  knitr::kable(
   table_vote %>%
     transmute(
       `Annee d'etude` = annee,
@@ -105,7 +105,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 |          2018 |                      2582 |        37.3 |    26.7 |   19.4 |   16.6 |     0.0 |
 |          2022 |                      1196 |        37.6 |    10.9 |   13.7 |   22.0 |    15.8 |
 
-Parts de choix de vote des principaux partis par annee (incluant le PCQ)
+Parts de choix de vote des principaux partis par annee
 
 ## Figure 1 : tendance du choix de vote
 

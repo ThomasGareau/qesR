@@ -85,7 +85,7 @@ knitr::kable(vote_table)
 |       2018 |                    2582 |        37.3 |    26.7 |   19.4 |   16.6 |     0.0 |
 |       2022 |                    1196 |        37.6 |    10.9 |   13.7 |   22.0 |    15.8 |
 
-Major-party vote-choice shares by year (including PCQ)
+Major-party vote-choice shares by year
 
 ## Figure 1: vote-choice trend
 
