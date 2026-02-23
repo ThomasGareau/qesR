@@ -100,9 +100,9 @@ Full citations for all studies are listed in:
 
 - [Study Citations](articles/study-citations.html)
 
-## Use cases
+## Use case examples
 
-Use cases available in separate tabs:
+Use case examples available in separate tabs:
 
 - [Evolution of sovereignty attitudes](articles/analysis-sovereignty.html)
 - [Vote-choice patterns over time](articles/analysis-vote-choice.html)

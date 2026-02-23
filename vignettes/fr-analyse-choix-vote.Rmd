@@ -1,8 +1,8 @@
 ---
-title: "Cas d'usage : évolution du choix de vote"
+title: "Exemple de cas d'usage : évolution du choix de vote"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Cas d'usage : évolution du choix de vote}
+  %\VignetteIndexEntry{Exemple de cas d'usage : évolution du choix de vote}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -148,7 +148,7 @@ ggplot(vote_parti, aes(x = annee, y = part, color = choix_vote_parti, group = ch
 
 </details>
 
-## Tableau 1 : parts de choix de vote des principaux partis par annee
+## Tableau 1 : parts de choix de vote par annee
 
 ```{r}
 vote_base <- master %>%
@@ -213,7 +213,7 @@ knitr::kable(
 )
 ```
 
-## Figure 1 : tendance du choix de vote des principaux partis
+## Figure 1 : tendance du choix de vote
 
 ```{r, fig.alt="Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ, QS et le PCQ selon l'annee."}
 vote_parti$choix_vote_parti <- factor(vote_parti$choix_vote_parti, levels = partis_majeurs)

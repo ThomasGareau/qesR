@@ -1193,6 +1193,74 @@
   )
 }
 
+.master_opaque_short_names <- function() {
+  c(
+    q10 = "issue_family_support",
+    q16 = "info_source_main",
+    q17 = "info_source_second",
+    q18 = "party_best_healthcare",
+    q18a = "identity_self_position_1",
+    q18b = "identity_self_position_2",
+    q20 = "referendum_intent",
+    q20b = "party_best_anticorruption",
+    q22 = "elites_out_of_touch",
+    q23 = "trust_government",
+    q24 = "gov_tax_waste",
+    q3 = "issue_education",
+    q31 = "feeling_qs_0_100",
+    q33 = "election_timing_eval",
+    q35 = "pr_reform_support",
+    q37 = "democracy_needs_parties",
+    q38 = "parties_all_same",
+    q39 = "feeling_charest_0_100",
+    q4 = "qc_difference_view",
+    q40 = "feeling_boisclair_0_100",
+    q41 = "feeling_dumont_0_100",
+    q42 = "feeling_david_0_100",
+    q43 = "feeling_mckay_0_100",
+    q44 = "leader_most_competent",
+    q45 = "fed_gov_too_interventionist",
+    q46 = "leader_closest_people",
+    q47 = "qc_economy_change",
+    q48 = "federalist_sovereignist_self",
+    q49 = "future_outlook",
+    q50 = "privatize_hydro_support",
+    q51 = "private_healthcare_support",
+    q53 = "gov_role_environment",
+    q54 = "profits_help_poor_view",
+    q55 = "party_best_healthcare_alt",
+    q56 = "powers_for_quebec_pref",
+    q58 = "party_best_environment",
+    q59 = "party_best_poverty",
+    q60 = "qc_voice_federal_parliament",
+    q61b = "party_best_qc_identity",
+    q61d = "party_best_caisse_depot",
+    q62a = "decision_level_item_a",
+    q62b = "decision_level_item_b",
+    q64 = "feeling_unions_0_100",
+    q65 = "feeling_business_0_100",
+    q66 = "same_sex_marriage_support",
+    q68 = "family_values_priority",
+    q7 = "issue_tax_cuts",
+    q70 = "provincial_pid_item",
+    q72 = "provincial_party_lean",
+    q73 = "party_named",
+    q74 = "vote_federal_2006",
+    q79 = "employment_status",
+    q8 = "issue_qc_status",
+    q80 = "home_language",
+    q81 = "gov_role_jobs_income",
+    q9 = "issue_poverty",
+    raison1 = "vote_reason_1",
+    raison2 = "vote_reason_2",
+    s_jse = "interview_weekday",
+    satisf = "satisf_gov_qc",
+    sefie = "polling_trust",
+    sondbons = "polls_good_for_voters",
+    voteprec = "previous_vote_2003"
+  )
+}
+
 .extract_master_label_map <- function(data) {
   if (!is.data.frame(data) || ncol(data) == 0L) {
     return(setNames(character(0), character(0)))
@@ -1328,6 +1396,8 @@
     ))
   }
 
+  manual <- .master_opaque_short_names()
+
   label_hint <- vapply(
     vars,
     .select_master_label_hint,
@@ -1335,11 +1405,14 @@
     label_maps_by_study = label_maps_by_study
   )
 
-  slug <- vapply(label_hint, .slugify_master_label, character(1))
-  fallback <- is.na(slug) | !nzchar(slug)
-  slug[fallback] <- paste0("legacy_item_", vars[fallback])
-
-  candidates <- paste0(slug, "_", vars)
+  candidates <- unname(manual[vars])
+  fallback <- is.na(candidates) | !nzchar(candidates)
+  if (any(fallback)) {
+    slug <- vapply(label_hint[fallback], .slugify_master_label, character(1), max_words = 4L, max_chars = 28L)
+    slug_empty <- is.na(slug) | !nzchar(slug)
+    slug[slug_empty] <- paste0("legacy_item_", vars[fallback][slug_empty])
+    candidates[fallback] <- slug
+  }
   candidates <- gsub("\\.+", "_", make.names(candidates, unique = FALSE), perl = TRUE)
 
   existing <- setdiff(names(master), vars)

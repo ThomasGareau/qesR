@@ -1,8 +1,8 @@
 ---
-title: "Analyse : statistiques descriptives"
+title: "Exemple de cas d'usage : statistiques descriptives"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analyse : statistiques descriptives}
+  %\VignetteIndexEntry{Exemple de cas d'usage : statistiques descriptives}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -79,7 +79,7 @@ master_tendance <- master %>%
   filter(qes_code != "qes_crop_2007_2010")
 ```
 
-## Taille des échantillons
+## Tableau 1 : taille des échantillons
 
 ```{r}
 tailles <- master %>%
@@ -98,7 +98,7 @@ knitr::kable(
 )
 ```
 
-## Répartition des groupes d'âge
+## Tableau 2 : répartition des groupes d'âge
 
 ```{r}
 ordre_age <- c("18-34", "35-54", "55+")
@@ -151,6 +151,8 @@ knitr::kable(
 )
 ```
 
+## Figure 1 : profil des groupes d'âge dans le temps
+
 ```{r, fig.alt="Graphique en lignes de la répartition harmonisée des groupes d'âge selon l'année."}
 age_dist$age_group_3 <- factor(age_dist$age_group_3, levels = ordre_age)
 ymax_age <- suppressWarnings(max(age_dist$pct, na.rm = TRUE))
@@ -188,7 +190,7 @@ ggplot(age_dist, aes(x = annee, y = pct, color = age_group_3, group = age_group_
   )
 ```
 
-## Participation électorale par année
+## Tableau 3 : participation électorale par année
 
 ```{r}
 annees <- data.frame(annee = sort(unique(master_tendance$annee[!is.na(master_tendance$annee)])))
@@ -229,6 +231,8 @@ knitr::kable(
   caption = "Indicateur de participation par année"
 )
 ```
+
+## Figure 2 : tendance de la participation électorale
 
 ```{r, fig.alt="Graphique de l'indicateur de participation électorale selon l'année."}
 plot_turnout <- turnout_annee %>%

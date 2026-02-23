@@ -1,8 +1,8 @@
 ---
-title: "Use case: Evolution of Sovereignty Attitudes"
+title: "Use case example: Evolution of Sovereignty Attitudes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Use case: Evolution of Sovereignty Attitudes}
+  %\VignetteIndexEntry{Use case example: Evolution of Sovereignty Attitudes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -30,12 +30,14 @@ This page uses the merged file to estimate sovereignty support over time.
 <summary>Show code used in this page</summary>
 
 ```r
-library(qesR)
 library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
+
+master <- master %>%
   mutate(qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year))) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
@@ -55,28 +57,10 @@ sov <- master %>%
     .groups = "drop"
   )
 
-knitr::kable(
-  sov %>%
-    transmute(
-      `Study year` = qes_year_num,
-      `N respondents` = respondents,
-      `N with sovereignty item` = n_with_measure,
-      `Sovereignty support (%)` = round(100 * support_share, 1)
-    )
-)
+years <- sort(unique(sov$qes_year_num))
+sov$year_index <- match(sov$qes_year_num, years)
 
-ymax_sov <- suppressWarnings(max(sov$ci_high, sov$support_share, na.rm = TRUE))
-ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
-
-ggplot(sov, aes(x = qes_year_num, y = support_share)) +
-  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35) +
-  geom_line(linewidth = 1, color = "#12355b") +
-  geom_point(size = 2.3, color = "#b5651d") +
-  geom_smooth(method = "loess", se = TRUE, span = 0.9, color = "#12355b", fill = "#c9d6e4", alpha = 0.25, linetype = "dashed", linewidth = 0.8) +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
-  theme_minimal(base_size = 12) +
-  theme(axis.text.x = element_text(size = 9))
+knitr::kable(sov)
 ```
 
 </details>
@@ -84,20 +68,15 @@ ggplot(sov, aes(x = qes_year_num, y = support_share)) +
 ## Load merged data
 
 ```{r}
-master <- if (file.exists("qes_master.csv")) {
-  read.csv("qes_master.csv", stringsAsFactors = FALSE)
-} else {
-  get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master_path <- master_paths[file.exists(master_paths)][1]
+if (is.na(master_path) || !nzchar(master_path)) {
+  stop("Local qes_master.csv not found. Build it first with scripts/build_qes_master.R", call. = FALSE)
 }
+master <- read.csv(master_path, stringsAsFactors = FALSE)
 
 master <- master %>%
-  mutate(
-    qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)))
-  )
-
-# CROP polling waves are useful for other questions, but the sovereignty trend
-# below is restricted to election-study files.
-master <- master %>%
+  mutate(qes_year_num = suppressWarnings(as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)))) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
 if (!("sovereignty_support" %in% names(master))) {
@@ -109,9 +88,7 @@ if (!("sovereignty_support" %in% names(master))) {
 
 ```{r}
 master <- master %>%
-  mutate(
-    sovereignty_final = suppressWarnings(as.numeric(sovereignty_support))
-  )
+  mutate(sovereignty_final = suppressWarnings(as.numeric(sovereignty_support)))
 
 master$sovereignty_final[!(master$sovereignty_final %in% c(0, 1))] <- NA_real_
 
@@ -137,9 +114,11 @@ sov <- master %>%
   )
 
 sov <- merge(all_years, sov, by = "qes_year_num", all.x = TRUE, sort = TRUE)
+years <- sort(unique(sov$qes_year_num[!is.na(sov$qes_year_num)]))
+sov$year_index <- match(sov$qes_year_num, years)
 ```
 
-### Results table
+## Table 1: sovereignty support by year
 
 ```{r}
 knitr::kable(
@@ -160,15 +139,15 @@ knitr::kable(
 )
 ```
 
-### Trend plot
+## Figure 1: sovereignty trend
 
 ```{r, fig.alt="Line chart of sovereignty support trend over study years."}
 plot_sov <- sov %>%
-  filter(!is.na(support_share), !is.na(ci_low), !is.na(ci_high))
+  filter(!is.na(support_share), !is.na(ci_low), !is.na(ci_high), !is.na(year_index))
 ymax_sov <- suppressWarnings(max(plot_sov$ci_high, plot_sov$support_share, na.rm = TRUE))
 ymax_sov <- if (is.finite(ymax_sov)) min(1, ymax_sov + 0.05) else 1
 
-ggplot(plot_sov, aes(x = qes_year_num, y = support_share)) +
+ggplot(plot_sov, aes(x = year_index, y = support_share)) +
   geom_ribbon(aes(ymin = ci_low, ymax = ci_high), fill = "#9fb6ce", alpha = 0.35, na.rm = TRUE) +
   geom_line(linewidth = 1, color = "#12355b", na.rm = TRUE) +
   geom_point(size = 2.3, color = "#b5651d", na.rm = TRUE) +
@@ -184,7 +163,7 @@ ggplot(plot_sov, aes(x = qes_year_num, y = support_share)) +
     na.rm = TRUE
   ) +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_sov)) +
-  scale_x_continuous(breaks = sort(unique(sov$qes_year_num))) +
+  scale_x_continuous(breaks = seq_along(years), labels = years) +
   labs(
     title = "Sovereignty support across QES studies",
     x = "Study year",

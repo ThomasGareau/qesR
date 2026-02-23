@@ -87,10 +87,10 @@ navbar:
       text: Study Citations
       href: articles/study-citations.html
     analysis_sovereignty:
-      text: "Use case: Sovereignty"
+      text: "Use case example: Sovereignty"
       href: articles/analysis-sovereignty.html
     analysis_vote_choice:
-      text: "Use case: Vote Choice"
+      text: "Use case example: Vote Choice"
       href: articles/analysis-vote-choice.html
     github:
       icon: fa-github

@@ -1,8 +1,8 @@
 ---
-title: "Use case: Vote Choice Over Time"
+title: "Use case example: Vote Choice Over Time"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Use case: Vote Choice Over Time}
+  %\VignetteIndexEntry{Use case example: Vote Choice Over Time}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,11 +25,12 @@ library(knitr)
 ```
 
 ```{r}
-master <- if (file.exists("qes_master.csv")) {
-  read.csv("qes_master.csv", stringsAsFactors = FALSE)
-} else {
-  get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE)
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master_path <- master_paths[file.exists(master_paths)][1]
+if (is.na(master_path) || !nzchar(master_path)) {
+  stop("Local qes_master.csv not found. Build it first with scripts/build_qes_master.R", call. = FALSE)
 }
+master <- read.csv(master_path, stringsAsFactors = FALSE)
 
 master <- master %>%
   mutate(
@@ -43,25 +44,31 @@ master <- master %>%
       vote_choice_raw == "PCQ" ~ "PCQ",
       TRUE ~ NA_character_
     )
-  )
-
-# qes_crop_2007_2010 has no row-level year field.
-master <- master %>%
+  ) %>%
   filter(qes_code != "qes_crop_2007_2010")
 
 major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
+party_cols <- c(
+  "CAQ/ADQ" = "#00A3E0",
+  "PLQ" = "#E31B23",
+  "PQ" = "#1E5AA8",
+  "QS" = "#F28C28",
+  "PCQ" = "#0B2E6B"
+)
 ```
 
 <details>
 <summary>Show code used in this page</summary>
 
 ```r
-library(qesR)
 library(dplyr)
 library(ggplot2)
 library(knitr)
 
-master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>%
+master_paths <- c("qes_master.csv", "../qes_master.csv")
+master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
+
+master <- master %>%
   mutate(
     qes_year_num = as.integer(sub("^([0-9]{4}).*$", "\\1", qes_year)),
     vote_choice_raw = trimws(as.character(vote_choice)),
@@ -77,6 +84,7 @@ master <- get_qes_master(assign_global = FALSE, strict = FALSE, quiet = TRUE) %>
   filter(qes_code != "qes_crop_2007_2010")
 
 major_parties <- c("CAQ/ADQ", "PLQ", "PQ", "QS", "PCQ")
+years <- sort(unique(master$qes_year_num[!is.na(master$qes_year_num)]))
 
 vote_base <- master %>%
   filter(!is.na(qes_year_num), !is.na(vote_choice_party), nzchar(vote_choice_party))
@@ -90,7 +98,7 @@ vote_party <- vote_base %>%
   summarise(n_party = n(), .groups = "drop")
 
 grid <- expand.grid(
-  qes_year_num = sort(unique(vote_den$qes_year_num)),
+  qes_year_num = years,
   vote_choice_party = major_parties,
   stringsAsFactors = FALSE
 )
@@ -104,7 +112,8 @@ vote_party <- vote_party %>%
     share = ifelse(n_with_vote_choice > 0, n_party / n_with_vote_choice, NA_real_),
     se = ifelse(n_with_vote_choice > 0, sqrt(pmax(share * (1 - share), 0) / n_with_vote_choice), NA_real_),
     ci_low = ifelse(!is.na(se), pmax(0, share - 1.96 * se), NA_real_),
-    ci_high = ifelse(!is.na(se), pmin(1, share + 1.96 * se), NA_real_)
+    ci_high = ifelse(!is.na(se), pmin(1, share + 1.96 * se), NA_real_),
+    year_index = match(qes_year_num, years)
   )
 
 vote_table <- vote_party %>%
@@ -117,42 +126,18 @@ vote_table <- vote_party %>%
     qs = 100 * share[vote_choice_party == "QS"],
     pcq = 100 * share[vote_choice_party == "PCQ"],
     .groups = "drop"
-  ) %>%
-  arrange(qes_year_num)
+  )
 
-knitr::kable(
-  vote_table %>%
-    transmute(
-      `Study year` = qes_year_num,
-      `N with vote-choice item` = n_with_vote_choice,
-      `CAQ/ADQ (%)` = round(caq_adq, 1),
-      `PLQ (%)` = round(plq, 1),
-      `PQ (%)` = round(pq, 1),
-      `QS (%)` = round(qs, 1),
-      `PCQ (%)` = round(pcq, 1)
-    )
-)
-
-vote_party$vote_choice_party <- factor(vote_party$vote_choice_party, levels = major_parties)
-ymax_vote <- suppressWarnings(max(vote_party$ci_high, vote_party$share, na.rm = TRUE))
-ymax_vote <- if (is.finite(ymax_vote)) min(1, ymax_vote + 0.05) else 1
-
-ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice_party, group = vote_choice_party)) +
-  geom_ribbon(aes(ymin = ci_low, ymax = ci_high, fill = vote_choice_party), alpha = 0.15, linewidth = 0) +
-  geom_line(linewidth = 1.1) +
-  geom_point(size = 2.1) +
-  geom_smooth(method = "loess", se = FALSE, span = 0.9, linewidth = 0.8, linetype = "dashed") +
-  scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_vote)) +
-  scale_x_continuous(breaks = sort(unique(vote_party$qes_year_num))) +
-  theme_minimal(base_size = 12) +
-  theme(panel.grid.minor = element_blank(), axis.text.x = element_text(size = 9))
+knitr::kable(vote_table)
 ```
 
 </details>
 
-## Table 1: major-party vote-choice shares by year
+## Table 1: vote-choice shares by year
 
 ```{r}
+years <- sort(unique(master$qes_year_num[!is.na(master$qes_year_num)]))
+
 vote_base <- master %>%
   filter(!is.na(qes_year_num), !is.na(vote_choice_party), nzchar(vote_choice_party))
 
@@ -165,7 +150,7 @@ vote_party <- vote_base %>%
   summarise(n_party = n(), .groups = "drop")
 
 grid <- expand.grid(
-  qes_year_num = sort(unique(vote_den$qes_year_num)),
+  qes_year_num = years,
   vote_choice_party = major_parties,
   stringsAsFactors = FALSE
 )
@@ -177,13 +162,10 @@ vote_party <- merge(vote_party, vote_den, by = "qes_year_num", all.x = TRUE, sor
 vote_party <- vote_party %>%
   mutate(
     share = ifelse(n_with_vote_choice > 0, n_party / n_with_vote_choice, NA_real_),
-    se = ifelse(
-      n_with_vote_choice > 0,
-      sqrt(pmax(share * (1 - share), 0) / n_with_vote_choice),
-      NA_real_
-    ),
+    se = ifelse(n_with_vote_choice > 0, sqrt(pmax(share * (1 - share), 0) / n_with_vote_choice), NA_real_),
     ci_low = ifelse(!is.na(se), pmax(0, share - 1.96 * se), NA_real_),
-    ci_high = ifelse(!is.na(se), pmin(1, share + 1.96 * se), NA_real_)
+    ci_high = ifelse(!is.na(se), pmin(1, share + 1.96 * se), NA_real_),
+    year_index = match(qes_year_num, years)
   )
 
 vote_table <- vote_party %>%
@@ -215,14 +197,14 @@ knitr::kable(
 )
 ```
 
-## Figure 1: major-party vote-choice trend
+## Figure 1: vote-choice trend
 
 ```{r, fig.alt="Line chart of vote-choice shares for CAQ/ADQ, PLQ, PQ, QS and PCQ across study years."}
 vote_party$vote_choice_party <- factor(vote_party$vote_choice_party, levels = major_parties)
 ymax_vote <- suppressWarnings(max(vote_party$ci_high, vote_party$share, na.rm = TRUE))
 ymax_vote <- if (is.finite(ymax_vote)) min(1, ymax_vote + 0.05) else 1
 
-ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice_party, group = vote_choice_party)) +
+ggplot(vote_party, aes(x = year_index, y = share, color = vote_choice_party, group = vote_choice_party)) +
   geom_ribbon(aes(ymin = ci_low, ymax = ci_high, fill = vote_choice_party), alpha = 0.15, linewidth = 0) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2.1) +
@@ -233,28 +215,10 @@ ggplot(vote_party, aes(x = qes_year_num, y = share, color = vote_choice_party, g
     linewidth = 0.8,
     linetype = "dashed"
   ) +
-  scale_color_manual(
-    values = c(
-      "CAQ/ADQ" = "#12355b",
-      "PLQ" = "#2c7fb8",
-      "PQ" = "#b5651d",
-      "QS" = "#7a3e2d",
-      "PCQ" = "#ba181b"
-    ),
-    name = "Party"
-  ) +
-  scale_fill_manual(
-    values = c(
-      "CAQ/ADQ" = "#12355b",
-      "PLQ" = "#2c7fb8",
-      "PQ" = "#b5651d",
-      "QS" = "#7a3e2d",
-      "PCQ" = "#ba181b"
-    ),
-    guide = "none"
-  ) +
+  scale_color_manual(values = party_cols, name = "Party") +
+  scale_fill_manual(values = party_cols, guide = "none") +
   scale_y_continuous(labels = function(x) paste0(round(100 * x, 0), "%"), limits = c(0, ymax_vote)) +
-  scale_x_continuous(breaks = sort(unique(vote_party$qes_year_num))) +
+  scale_x_continuous(breaks = seq_along(years), labels = years) +
   labs(
     title = "Major-party vote choice over time (including PCQ)",
     x = "Study year",

@@ -1,8 +1,8 @@
 ---
-title: "Cas d'usage : évolution des attitudes liées à la souveraineté"
+title: "Exemple de cas d'usage : évolution des attitudes liées à la souveraineté"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Cas d'usage : évolution des attitudes liées à la souveraineté}
+  %\VignetteIndexEntry{Exemple de cas d'usage : évolution des attitudes liées à la souveraineté}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -139,6 +139,8 @@ sov <- master %>%
 sov <- merge(annees, sov, by = "annee", all.x = TRUE, sort = TRUE)
 ```
 
+## Tableau 1 : appui à la souveraineté par année
+
 ```{r}
 knitr::kable(
   sov %>%
@@ -157,6 +159,8 @@ knitr::kable(
   caption = "Appui à la souveraineté par année"
 )
 ```
+
+## Figure 1 : tendance de l'appui à la souveraineté
 
 ```{r, fig.alt="Graphique de l'évolution de l'appui à la souveraineté par année."}
 plot_sov <- sov %>%

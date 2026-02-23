@@ -1,8 +1,8 @@
 ---
-title: "Use case: Descriptive Statistics"
+title: "Use case example: Descriptive Statistics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Use case: Descriptive Statistics}
+  %\VignetteIndexEntry{Use case example: Descriptive Statistics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -98,7 +98,7 @@ knitr::kable(
 )
 ```
 
-## Table 2: age-group composition by year (share %)
+## Table 2: age-group composition by year
 
 ```{r}
 age_order <- c("18-34", "35-54", "55+")
@@ -190,7 +190,7 @@ ggplot(age_table, aes(x = qes_year_num, y = pct, color = age_group_3, group = ag
   )
 ```
 
-## Table 3 and Figure 2: turnout by year
+## Table 3: turnout by year
 
 ```{r}
 all_years <- data.frame(qes_year_num = sort(unique(master_trend$qes_year_num[!is.na(master_trend$qes_year_num)])))
@@ -231,6 +231,8 @@ knitr::kable(
   caption = "Turnout indicator by year"
 )
 ```
+
+## Figure 2: turnout trend
 
 ```{r, fig.alt="Line chart of turnout indicator across study years."}
 plot_turnout <- turnout_year %>%
