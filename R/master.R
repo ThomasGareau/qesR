@@ -1712,7 +1712,7 @@
 #'
 #' @param surveys Character vector of qesR survey codes. Defaults to all
 #'   available studies in [get_qescodes()].
-#' @param assign_global If `TRUE`, assign the result to the global environment using
+#' @param assign_global If `TRUE`, assign the result to the calling environment using
 #'   `object_name`.
 #' @param object_name Name used when `assign_global = TRUE`. Defaults to
 #'   `"qes_master"`.
@@ -1855,7 +1855,7 @@ get_qes_master <- function(
   attr(master, "saved_to") <- NULL
 
   if (isTRUE(assign_global)) {
-    assign(object_name, master, envir = globalenv())
+    .assign_into_caller(object_name, master)
   }
 
   if (!is.null(save_path)) {

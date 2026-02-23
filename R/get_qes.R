@@ -7,9 +7,9 @@
 #' @param file Optional regular expression to select a specific file when a
 #'   Dataverse dataset has multiple files.
 #' @param assign_global If `TRUE`, assign the returned data object into the
-#'   global environment using `srvy` as object name (cesR-style behavior).
+#'   calling environment using `srvy` as object name (cesR-style behavior).
 #' @param with_codebook If `TRUE`, attach codebook metadata as
-#'   `attr(data, "qes_codebook")` and assign `<srvy>_codebook` in the global
+#'   `attr(data, "qes_codebook")` and assign `<srvy>_codebook` in the calling
 #'   environment when `assign_global = TRUE`.
 #' @param quiet If `TRUE`, suppress informational output and download progress.
 #'
@@ -36,7 +36,7 @@ get_qes <- function(srvy, file = NULL, assign_global = TRUE, with_codebook = TRU
     }
 
     if (isTRUE(assign_global)) {
-      assign(paste0(srvy, "_codebook"), payload$codebook, envir = globalenv())
+      .assign_into_caller(paste0(srvy, "_codebook"), payload$codebook)
     }
 
     if (!quiet) {
@@ -48,7 +48,7 @@ get_qes <- function(srvy, file = NULL, assign_global = TRUE, with_codebook = TRU
   }
 
   if (isTRUE(assign_global)) {
-    assign(srvy, data, envir = globalenv())
+    .assign_into_caller(srvy, data)
   }
 
   data
@@ -475,12 +475,14 @@ get_question <- function(do, q, full = TRUE) {
   .assert_single_string(q, "q")
 
   object_name <- NULL
+  object_env <- NULL
   if (is.character(do) && length(do) == 1L) {
     object_name <- do
-    if (!exists(do, envir = .GlobalEnv, inherits = FALSE)) {
+    object_env <- .GlobalEnv
+    if (!exists(do, envir = object_env, inherits = FALSE)) {
       stop(sprintf("Object '%s' was not found in the global environment.", do), call. = FALSE)
     }
-    data <- get(do, envir = .GlobalEnv, inherits = FALSE)
+    data <- get(do, envir = object_env, inherits = FALSE)
   } else if (is.data.frame(do)) {
     data <- do
   } else {
@@ -542,13 +544,13 @@ get_question <- function(do, q, full = TRUE) {
   fetched_codebook <- .maybe_fetch_codebook(srvy_hint, quiet = TRUE)
   from_fetched <- .get_question_from_codebook(fetched_codebook, q, full = full, quiet = TRUE)
   if (!is.na(from_fetched)) {
-    if (!is.null(object_name) && exists(object_name, envir = .GlobalEnv, inherits = FALSE)) {
-      obj <- get(object_name, envir = .GlobalEnv, inherits = FALSE)
+    if (!is.null(object_name) && !is.null(object_env) && exists(object_name, envir = object_env, inherits = FALSE)) {
+      obj <- get(object_name, envir = object_env, inherits = FALSE)
       attr(obj, "qes_codebook") <- fetched_codebook
       if (!is.null(srvy_hint)) {
         attr(obj, "qes_survey_code") <- srvy_hint
       }
-      assign(object_name, obj, envir = globalenv())
+      .assign_into_caller(object_name, obj, envir = object_env)
     }
     return(from_fetched)
   }

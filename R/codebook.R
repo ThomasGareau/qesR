@@ -169,7 +169,7 @@ get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
 #' @param srvy A qesR survey code (see [get_qescodes()]).
 #' @param file Optional regular expression to select a specific file when a
 #'   Dataverse dataset has multiple files.
-#' @param assign_global If `TRUE`, assign the codebook into the global
+#' @param assign_global If `TRUE`, assign the codebook into the calling
 #'   environment as `<srvy>_codebook`.
 #' @param quiet If `TRUE`, suppress informational output and download progress.
 #' @param refresh If `TRUE`, force a fresh download instead of using session
@@ -201,7 +201,7 @@ get_codebook <- function(
   }
 
   if (isTRUE(assign_global)) {
-    assign(paste0(srvy, "_codebook"), codebook, envir = globalenv())
+    .assign_into_caller(paste0(srvy, "_codebook"), codebook)
   }
 
   format_codebook(codebook, layout = layout)

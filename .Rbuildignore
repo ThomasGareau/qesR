@@ -16,3 +16,4 @@
 ^scripts$
 ^qes_master.*$
 ^qesR_.*\.tar\.gz$
+^cran-comments\.md$

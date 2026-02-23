@@ -80,11 +80,11 @@
 #' from a selected Quebec election study.
 #'
 #' @param srvy A qesR survey code. Defaults to `"qes2022"`.
-#' @param assign_global If `TRUE`, assign the result as `decon` in the global
+#' @param assign_global If `TRUE`, assign the result as `decon` in the calling
 #'   environment.
 #' @param quiet If `TRUE`, suppress informational output while downloading.
 #'
-#' @return A data frame named `decon` when assigned globally.
+#' @return A data frame named `decon` when assigned in the calling environment.
 #' @export
 get_decon <- function(srvy = "qes2022", assign_global = TRUE, quiet = FALSE) {
   data <- get_qes(
@@ -97,7 +97,7 @@ get_decon <- function(srvy = "qes2022", assign_global = TRUE, quiet = FALSE) {
   decon <- .build_decon(data, srvy = srvy)
 
   if (isTRUE(assign_global)) {
-    assign("decon", decon, envir = globalenv())
+    .assign_into_caller("decon", decon)
   }
 
   decon
