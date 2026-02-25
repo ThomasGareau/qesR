@@ -50,20 +50,9 @@ get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```
 
-What it harmonizes:
+Harmonized fields include demographics (age, gender, education, income), vote choice, party identification, sovereignty attitudes, leader thermometers, and more. Use `colnames(master)` to see the full list.
 
-Current harmonized columns in `qes_master`:
-
-`qes_code`, `qes_year`, `qes_name_en`, `respondent_id`, `interview_start`, `interview_end`, `interview_recorded`, `language`, `citizenship`, `year_of_birth`, `age`, `age_group`, `gender`, `province_territory`, `education`, `income`, `religion`, `born_canada`, `political_interest`, `ideology`, `turnout`, `vote_choice`, `vote_choice_text`, `party_best`, `party_lean`, `sovereignty_support`, `sovereignty`, `federal_pid`, `provincial_pid`, `survey_weight`, `definibin`, `ethn1`, `influperso`, `luentend`, `occup`, `patron`, `pondam1`, `issue_family_support`, `info_source_primary`, `info_source_secondary`, `party_best_health`, `identity_self_1`, `identity_self_2`, `referendum_intent`, `party_best_anticorruption`, `elites_out_of_touch`, `trust_government`, `gov_tax_waste`, `issue_education`, `feeling_qs_0_100`, `election_timing_eval`, `pr_reform_support`, `democracy_needs_parties`, `parties_all_same`, `feeling_charest_0_100`, `qc_difference_view`, `feeling_boisclair_0_100`, `feeling_dumont_0_100`, `feeling_david_0_100`, `feeling_mckay_0_100`, `leader_most_competent`, `fed_gov_too_interventionist`, `leader_closest_people`, `qc_economy_change`, `federalist_sovereignist_self`, `future_outlook`, `privatize_hydro_support`, `private_healthcare_support`, `gov_role_environment`, `profits_help_poor`, `party_best_health_alt`, `powers_for_quebec`, `party_best_environment`, `party_best_poverty`, `qc_voice_federal`, `party_best_qc_identity`, `party_best_caisse_depot`, `decision_level_a`, `decision_level_b`, `feeling_unions_0_100`, `feeling_business_0_100`, `same_sex_marriage`, `family_values_priority`, `issue_tax_cuts`, `provincial_pid_item`, `provincial_party_lean`, `party_named`, `vote_federal_2006`, `employment_status`, `issue_qc_status`, `home_language`, `gov_role_jobs_income`, `issue_poverty`, `vote_reason_1`, `vote_reason_2`, `interview_weekday`, `gov_satisfaction`, `polling_trust`, `polls_eval`, `previous_vote_2003`
-
-Harmonization rules include:
-
-- text normalization for common response fields (so values are comparable across studies)
-- derived `age_group` for respondents with valid age/year-of-birth information
-- source-variable tracking via `attr(master, "source_map")`
-- list of automatically added cross-study fields via `attr(master, "crossstudy_variables_added")`
-- explicit renaming of opaque legacy columns (for example `q10`, `q16`, `voteprec`) to readable names in the merged file
-- transparent old-to-new name mapping via `attr(master, "variable_name_map")` and `qes_master_variable_name_map.csv`
+Source-variable provenance is available via `attr(master, "source_map")` and old-to-new variable name mappings via `attr(master, "variable_name_map")`.
 
 Deduplication in `get_qes_master()` is applied **within the same survey code**
 only (e.g., duplicate IDs inside one file). Respondents are not removed across
@@ -73,22 +62,7 @@ panel vs. non-panel studies.
 
 Project website (GitHub Pages): <https://thomasgareau.github.io/qesR/>
 
-The site includes researcher-focused tabs for:
-
-- merged dataset workflow
-- study citations
-- 2 use-case tabs (sovereignty, vote choice)
-- an `FR`/`EN` button in the top bar for page-by-page language switching
-
-## Version française
-
-La documentation française complète est disponible sur le site pkgdown :
-
-- Démarrage : <https://thomasgareau.github.io/qesR/articles/fr-demarrage.html>
-- Données fusionnées : <https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html>
-- Citations des études : <https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.html>
-- Exemple de cas d'usage (souveraineté) : <https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.html>
-- Exemple de cas d'usage (choix de vote) : <https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.html>
+The site includes merged dataset workflow documentation, study citations, and use-case analysis examples. French documentation is accessible via the `FR` toggle in the navigation bar.
 
 ## Usage
 
