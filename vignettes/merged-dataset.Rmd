@@ -8,16 +8,19 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 `qesR` provides a merged harmonized dataset through `get_qes_master()`.
 
-## Build merged data
-
 ```{r}
 library(qesR)
+get_qescodes()
+```
 
+## Build merged data
+
+```{r, eval = FALSE}
 master <- get_qes_master(strict = FALSE)
 dim(master)
 head(master)
@@ -39,12 +42,12 @@ Harmonized fields include demographics (age, gender, education, income), vote ch
 
 It also records source-variable provenance:
 
-```{r}
+```{r, eval = FALSE}
 source_map <- attr(master, "source_map")
 head(source_map)
 ```
 
-```{r}
+```{r, eval = FALSE}
 name_map <- attr(master, "variable_name_map")
 head(name_map)
 ```
@@ -59,7 +62,7 @@ head(name_map)
 
 ## Save merged data
 
-```{r}
-get_qes_master(save_path = "qes_master.csv", strict = FALSE)
-get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+```{r, eval = FALSE}
+get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)
+get_qes_master(save_path = file.path(tempdir(), "qes_master.rds"), strict = FALSE)
 ```

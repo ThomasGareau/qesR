@@ -15,7 +15,7 @@
 #'
 #' @return A labelled data frame/tibble for the selected survey.
 #' @export
-get_qes <- function(srvy, file = NULL, assign_global = TRUE, with_codebook = TRUE, quiet = FALSE) {
+get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE, quiet = FALSE) {
   study <- .get_qes_study(srvy)
 
   if (!quiet) {
@@ -463,7 +463,7 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 #' Get survey question text from labels or the codebook
 #'
 #' @param do A data object or the character name of a data object in the
-#'   global environment.
+#'   calling environment.
 #' @param q Column name whose question label should be returned.
 #' @param full If `TRUE`, try to recover full question text when the codebook
 #'   metadata appears truncated.
@@ -478,15 +478,15 @@ get_question <- function(do, q, full = TRUE) {
   object_env <- NULL
   if (is.character(do) && length(do) == 1L) {
     object_name <- do
-    object_env <- .GlobalEnv
+    object_env <- parent.frame()
     if (!exists(do, envir = object_env, inherits = FALSE)) {
-      stop(sprintf("Object '%s' was not found in the global environment.", do), call. = FALSE)
+      stop(sprintf("Object '%s' was not found in the calling environment.", do), call. = FALSE)
     }
     data <- get(do, envir = object_env, inherits = FALSE)
   } else if (is.data.frame(do)) {
     data <- do
   } else {
-    stop("`do` must be a data.frame or the name of one in the global environment.", call. = FALSE)
+    stop("`do` must be a data.frame or the name of one in the calling environment.", call. = FALSE)
   }
 
   q <- .resolve_question_column(data, q)
@@ -523,9 +523,9 @@ get_question <- function(do, q, full = TRUE) {
 
   if (!is.null(object_name)) {
     codebook_name <- paste0(object_name, "_codebook")
-    if (exists(codebook_name, envir = .GlobalEnv, inherits = FALSE)) {
+    if (exists(codebook_name, envir = object_env, inherits = FALSE)) {
       from_obj <- .get_question_from_codebook(
-        get(codebook_name, envir = .GlobalEnv, inherits = FALSE),
+        get(codebook_name, envir = object_env, inherits = FALSE),
         q,
         full = full,
         quiet = TRUE
@@ -544,14 +544,6 @@ get_question <- function(do, q, full = TRUE) {
   fetched_codebook <- .maybe_fetch_codebook(srvy_hint, quiet = TRUE)
   from_fetched <- .get_question_from_codebook(fetched_codebook, q, full = full, quiet = TRUE)
   if (!is.na(from_fetched)) {
-    if (!is.null(object_name) && !is.null(object_env) && exists(object_name, envir = object_env, inherits = FALSE)) {
-      obj <- get(object_name, envir = object_env, inherits = FALSE)
-      attr(obj, "qes_codebook") <- fetched_codebook
-      if (!is.null(srvy_hint)) {
-        attr(obj, "qes_survey_code") <- srvy_hint
-      }
-      .assign_into_caller(object_name, obj, envir = object_env)
-    }
     return(from_fetched)
   }
 

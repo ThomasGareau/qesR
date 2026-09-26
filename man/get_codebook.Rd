@@ -21,3 +21,9 @@ get_codebook(
   \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{A \code{qes_codebook} data frame with variable metadata and codebook file manifest attributes.}
+\examples{
+\donttest{
+  cb <- get_codebook("qes2022")
+  head(cb)
+}
+}

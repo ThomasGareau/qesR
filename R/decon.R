@@ -86,7 +86,7 @@
 #'
 #' @return A data frame named `decon` when assigned in the calling environment.
 #' @export
-get_decon <- function(srvy = "qes2022", assign_global = TRUE, quiet = FALSE) {
+get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
   data <- get_qes(
     srvy = srvy,
     assign_global = FALSE,

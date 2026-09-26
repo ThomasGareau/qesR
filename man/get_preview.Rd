@@ -11,3 +11,8 @@ get_preview(srvy, obs = 6L, file = NULL)
   \item{file}{Optional regular expression for choosing one file in multi-file datasets.}
 }
 \value{A data frame/tibble preview (with attached codebook metadata).}
+\examples{
+\donttest{
+  get_preview("qes2022", obs = 3)
+}
+}

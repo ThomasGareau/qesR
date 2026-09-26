@@ -1733,7 +1733,7 @@
 #' @export
 get_qes_master <- function(
   surveys = NULL,
-  assign_global = TRUE,
+  assign_global = FALSE,
   object_name = "qes_master",
   quiet = FALSE,
   strict = FALSE,

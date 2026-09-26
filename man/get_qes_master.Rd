@@ -9,7 +9,7 @@ the same survey code, and drops rows that are empty across harmonized variables.
 \usage{
 get_qes_master(
   surveys = NULL,
-  assign_global = TRUE,
+  assign_global = FALSE,
   object_name = "qes_master",
   quiet = FALSE,
   strict = FALSE,
@@ -22,7 +22,7 @@ Character vector of qesR survey codes. Defaults to all studies from
 \code{get_qescodes()}.
 }
   \item{assign_global}{
-If TRUE, assign the result to \code{.GlobalEnv} using \code{object_name}.
+If TRUE, assign the result to the calling environment using \code{object_name}. Defaults to FALSE.
 }
   \item{object_name}{
 Object name used when \code{assign_global = TRUE}. Defaults to
@@ -51,4 +51,10 @@ A harmonized stacked data frame with attributes:
 When \code{save_path} is provided, the output path is stored in \code{saved_to};
 if renaming is applied, the sidecar mapping file path is stored in
 \code{variable_name_map_path}.
+}
+\examples{
+\donttest{
+  master <- get_qes_master(surveys = "qes2022")
+  head(master)
+}
 }

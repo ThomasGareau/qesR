@@ -6,8 +6,14 @@
 get_question(do, q, full = TRUE)
 }
 \arguments{
-  \item{do}{A data.frame or the name of one in the global environment.}
+  \item{do}{A data.frame or the name of one in the calling environment.}
   \item{q}{Column name whose question text should be returned.}
   \item{full}{If TRUE, try to recover full question text when metadata appears truncated.}
 }
 \value{A character scalar with question text, or \code{NA_character_} when none exists.}
+\examples{
+\donttest{
+  d <- get_qes("qes2022")
+  get_question(d, "cps_age_in_years")
+}
+}

@@ -8,7 +8,7 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 `qesR` permet de télécharger les études électorales québécoises, leurs codebooks
@@ -16,9 +16,12 @@ et un fichier fusionné harmonisé.
 
 ## Installation
 
-```{r}
+```{r, eval = FALSE}
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("ThomasGareau/qesR")
+```
+
+```{r}
 library(qesR)
 ```
 
@@ -31,10 +34,15 @@ library(qesR)
 - `get_question(obj, variable)` : texte de question
 - `get_qes_master()` : données fusionnées harmonisées
 
-## Exemple rapide
+## Codes disponibles
 
 ```{r}
-codes <- get_qescodes(detailed = TRUE)
+get_qescodes(detailed = TRUE)
+```
+
+## Exemple rapide
+
+```{r, eval = FALSE}
 qes2022 <- get_qes("qes2022")
 cb <- get_codebook("qes2022")
 master <- get_qes_master(strict = FALSE)

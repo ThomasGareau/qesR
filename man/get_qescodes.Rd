@@ -9,3 +9,7 @@ get_qescodes(detailed = FALSE)
   \item{detailed}{If TRUE, include year, names, DOI, and documentation columns.}
 }
 \value{A data frame of qesR survey codes (cesR-style by default).}
+\examples{
+get_qescodes()
+get_qescodes(detailed = TRUE)
+}

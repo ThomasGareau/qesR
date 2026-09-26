@@ -10,3 +10,9 @@ format_codebook(codebook, layout = c("compact", "wide", "long"))
   \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{A reformatted codebook data frame.}
+\examples{
+\donttest{
+  cb <- get_codebook("qes2022")
+  format_codebook(cb, layout = "long")
+}
+}

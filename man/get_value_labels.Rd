@@ -11,3 +11,9 @@ get_value_labels(codebook, variable = NULL, long = FALSE)
   \item{long}{If TRUE, return a long data frame with \code{variable}, \code{value}, and \code{value_label} columns.}
 }
 \value{A named list of value-label vectors, or a long data frame when \code{long = TRUE}.}
+\examples{
+\donttest{
+  cb <- get_codebook("qes2022")
+  get_value_labels(cb)
+}
+}

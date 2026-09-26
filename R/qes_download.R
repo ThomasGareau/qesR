@@ -1194,17 +1194,12 @@
     return(character(0))
   }
 
-  roots <- c(
-    file.path(getwd(), "codebooks"),
-    file.path(getwd(), "inst", "codebooks")
-  )
+  roots <- character(0)
 
-  pkg_path <- tryCatch(path.package("qesR"), error = function(e) "")
+  pkg_path <- tryCatch(system.file(package = "qesR"), error = function(e) "")
   if (is.character(pkg_path) && length(pkg_path) == 1L && nzchar(pkg_path)) {
     roots <- c(
-      roots,
-      file.path(pkg_path, "codebooks"),
-      file.path(pkg_path, "inst", "codebooks")
+      file.path(pkg_path, "codebooks")
     )
   }
 

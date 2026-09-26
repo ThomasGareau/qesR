@@ -21,3 +21,8 @@ download_codebook(
   \item{overwrite}{If TRUE, overwrite existing files in \code{dest_dir}.}
 }
 \value{A data frame containing source file metadata and local download paths.}
+\examples{
+\donttest{
+  download_codebook("qes2022", dest_dir = tempdir())
+}
+}

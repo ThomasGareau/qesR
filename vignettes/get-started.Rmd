@@ -8,16 +8,19 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 `qesR` helps you access Quebec Election Study data by survey code, plus metadata, codebooks, and a merged harmonized dataset.
 
 ## Install
 
-```{r}
+```{r, eval = FALSE}
 if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+```
+
+```{r}
 library(qesR)
 ```
 
@@ -41,14 +44,14 @@ get_qescodes(detailed = TRUE)
 
 ## Download one study
 
-```{r}
+```{r, eval = FALSE}
 qes2022 <- get_qes("qes2022")
 names(qes2022)[1:20]
 ```
 
 ## Retrieve the codebook in different layouts
 
-```{r}
+```{r, eval = FALSE}
 cb_compact <- get_codebook("qes2022", layout = "compact")
 cb_wide <- get_codebook("qes2022", layout = "wide")
 cb_long <- get_codebook("qes2022", layout = "long")
@@ -56,7 +59,7 @@ cb_long <- get_codebook("qes2022", layout = "long")
 
 ## Get a preview and question text
 
-```{r}
+```{r, eval = FALSE}
 get_preview("qes2022", 10)
 get_question(qes2022, "cps_age_in_years")
 get_question(qes2022, "cps_age_in_years", full = TRUE)
@@ -64,7 +67,7 @@ get_question(qes2022, "cps_age_in_years", full = TRUE)
 
 ## Build a harmonized master dataset
 
-```{r}
+```{r, eval = FALSE}
 master <- get_qes_master(
   surveys = c("qes2022", "qes2018", "qes2014", "qes2007", "qes1998"),
   strict = FALSE
@@ -82,7 +85,7 @@ head(master)
 
 ## Save the master dataset
 
-```{r}
-get_qes_master(save_path = "qes_master.csv", strict = FALSE)
-get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+```{r, eval = FALSE}
+get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)
+get_qes_master(save_path = file.path(tempdir(), "qes_master.rds"), strict = FALSE)
 ```

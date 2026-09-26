@@ -9,10 +9,16 @@ Authors@R: c(
       family = "Gareau-Paquette",
       role = c("aut", "cre"),
       email = "tg454@cornell.edu"
+    ),
+    person(
+      given = "Quebec Election Study",
+      role = "cph"
     )
     )
-Description: Download and load Quebec election study datasets from public
-    archives through a simple survey-code interface.
+Description: Download and load Quebec Election Study ('QES') datasets from
+    Dataverse repositories through a simple survey-code interface. Studies
+    are cataloged by the Centre for the Study of Democratic Citizenship
+    <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: false

@@ -19,3 +19,8 @@ get_qes_codebook_files(
   \item{refresh}{If TRUE, force a fresh codebook download when \code{codebook} is not provided.}
 }
 \value{A data frame of codebook/support files.}
+\examples{
+\donttest{
+  get_qes_codebook_files(srvy = "qes2022")
+}
+}

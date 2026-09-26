@@ -21,3 +21,9 @@ get_qes_codebook(
   \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{A \code{qes_codebook} data frame.}
+\examples{
+\donttest{
+  cb <- get_qes_codebook("qes2022")
+  head(cb)
+}
+}
