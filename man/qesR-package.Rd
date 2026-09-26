@@ -9,8 +9,109 @@
 The \code{qesR} package provides survey-code based access to Quebec election
 study datasets available via Dataverse repositories.
 }
+\section{Returning data}{
+
+Every function returns its result visibly and, by default, writes nothing
+into your workspace: write \code{qes2018 <- get_qes("qes2018")}. Functions with
+an \code{assign_global} argument assign only when it is \code{TRUE}, and then into the
+environment they were called from (the global environment only when called
+at top level).
+}
+
+\section{Options}{
+
+\describe{
+\item{\code{qesR.lang} (environment variable \code{QESR_LANG})}{Language of
+messages, warnings and errors: \code{"en"} or \code{"fr"}. Unset by default, in
+which case qesR follows \code{LANGUAGE}, then the messages locale. It never
+changes the data or text that functions return.}
+\item{\code{qesR.quiet_deprecated}}{\code{TRUE} hides the one-time notices of the
+soft-deprecated legacy functions (see \link{qesR-deprecated}). Default
+\code{FALSE}.}
+}
+}
+
+\section{Conditions}{
+
+Errors, warnings and messages have classes, so code can react to them with
+\code{tryCatch()} or \code{withCallingHandlers()} without matching message text.
+Errors inherit from \code{qesR_error}:
+\describe{
+\item{\code{qesR_error_input}}{an invalid argument (fields \code{arg}, \code{value});}
+\item{\code{qesR_error_unknown_study}}{an unknown study code (fields \code{study},
+\code{suggestions});}
+\item{\code{qesR_error_unknown_variable}}{an unknown column (fields
+\code{variables}, \code{suggestions});}
+\item{\code{qesR_error_ambiguous_file}}{a \code{file} pattern that matches no file
+(fields \code{study}, \code{pattern}, \code{candidates});}
+\item{\code{qesR_error_network}}{a failed download (fields \code{url}, \code{attempts},
+and \code{parent}, the root cause). qesR never retries a download without TLS
+certificate checks;}
+\item{\code{qesR_error_source}}{a problem with the files served for a study
+(fields \code{study}, \code{file_id}).}
+}
+Warnings inherit from \code{qesR_warning} and messages from \code{qesR_message}.
+Progress messages (class \code{qesR_message_download}) are silenced by
+\code{quiet = TRUE}. Two notices are shown at most once per session and are not
+silenced by \code{quiet}: \code{qesR_message_deprecated} (see \link{qesR-deprecated}) and
+\code{qesR_message_assign_default}, shown when \code{get_qes()}, \code{get_qes_master()}
+or \code{get_decon()} is called without \code{assign_global}. Every condition carries
+the fields \code{id} (its message key) and \code{lang} (the language of its message).
+}
+
+\section{Network use}{
+
+Requests go to the Dataverse servers listed in the catalog, one at a time
+and at least one second apart per server. They carry the User-Agent
+\verb{qesR/<version> R/<version>} and no other identifying information.
+}
+
+\section{En français}{
+
+\strong{Données retournées.} Chaque fonction retourne son résultat de façon
+visible et, par défaut, n'écrit rien dans votre espace de travail :
+écrivez \code{qes2018 <- get_qes("qes2018")}. Les fonctions qui ont un argument
+\code{assign_global} n'assignent que s'il vaut \code{TRUE}, et alors dans
+l'environnement d'où elles sont appelées.
+
+\strong{Options.} \code{qesR.lang} (variable d'environnement \code{QESR_LANG}) fixe la
+langue des messages, avertissements et erreurs : \code{"en"} ou \code{"fr"}. Sans
+elle, qesR suit \code{LANGUAGE}, puis la locale des messages. La langue ne change
+jamais les données ni le texte retournés. \code{qesR.quiet_deprecated = TRUE}
+masque les notes uniques des fonctions héritées (voir \link{qesR-deprecated}).
+
+\strong{Conditions.} Les erreurs, avertissements et messages ont des classes,
+ce qui permet d'y réagir avec \code{tryCatch()} ou \code{withCallingHandlers()} sans
+lire le texte. Les erreurs héritent de \code{qesR_error} : \code{qesR_error_input}
+(champs \code{arg}, \code{value}), \code{qesR_error_unknown_study} (\code{study},
+\code{suggestions}), \code{qesR_error_unknown_variable} (\code{variables},
+\code{suggestions}), \code{qesR_error_ambiguous_file} (\code{study}, \code{pattern},
+\code{candidates}), \code{qesR_error_network} (\code{url}, \code{attempts}, et \code{parent}, la
+cause première ; qesR ne désactive jamais la vérification des certificats
+TLS) et \code{qesR_error_source} (\code{study}, \code{file_id}). Les avertissements
+héritent de \code{qesR_warning} et les messages de \code{qesR_message}. Les messages
+de progression (\code{qesR_message_download}) sont masqués par \code{quiet = TRUE}.
+\code{qesR_message_deprecated} et \code{qesR_message_assign_default} s'affichent au
+plus une fois par session et ne sont pas masqués par \code{quiet}. Chaque
+condition porte les champs \code{id} (sa clé de message) et \code{lang} (la langue de
+son message).
+
+\strong{Réseau.} Les requêtes vont aux serveurs Dataverse du catalogue, une à la
+fois et à au moins une seconde d'intervalle par serveur. Elles portent
+l'en-tête User-Agent \verb{qesR/<version> R/<version>} et aucune autre
+information identifiante.
+}
+
 \examples{
 get_qescodes()
+
+# messages in French; returned data is unchanged
+old <- options(qesR.lang = "fr")
+tryCatch(
+  get_qes("QES 2022"),
+  qesR_error_unknown_study = function(e) e$suggestions
+)
+options(old)
 \donttest{
   qes2022 <- get_qes("qes2022")
 }

@@ -70,7 +70,6 @@
       "https://dataverse.harvard.edu",
       rep("https://borealisdata.ca", 10)
     ),
-    allow_insecure_retry = c(TRUE, rep(FALSE, 10)),
     stringsAsFactors = FALSE
   )
 
@@ -85,6 +84,96 @@
   catalog
 })
 
+# ---- study codes -----------------------------------------------------------
+#
+# Study codes are trimmed and case-folded to the canonical catalog code, never
+# matched fuzzily: " QES2018 " is qes2018, "2018" is an error that suggests
+# qes2018 (design.md section 2.1).
+
+.qes_canon_code <- function(x) {
+  tolower(trimws(x))
+}
+
+# Near matches for an unknown code: catalog codes that contain it, then the
+# codes at the smallest edit distance (utils::adist), if it is small.
+.qes_suggest_codes <- function(x, codes = .qes_catalog$qes_survey_code, n = 3L) {
+  key <- .qes_canon_code(x)
+  if (is.na(key) || !nzchar(key)) {
+    return(character(0))
+  }
+  contains <- codes[grepl(key, codes, fixed = TRUE)]
+  d <- as.vector(utils::adist(key, codes))
+  limit <- max(2L, ceiling(nchar(key) / 3))
+  near <- if (min(d) <= limit) codes[d == min(d)] else character(0)
+  utils::head(unique(c(contains, near)), n)
+}
+
+.qes_unknown_study <- function(study) {
+  suggestions <- unique(unlist(lapply(study, .qes_suggest_codes), use.names = FALSE))
+  suggestions <- suggestions %||% character(0)
+  if (length(suggestions) > 0L) {
+    .qes_abort(
+      "unknown_study_suggest",
+      class = "qesR_error_unknown_study",
+      args = list(.qes_q(study), .qes_q(suggestions)),
+      data = list(study = study, suggestions = suggestions)
+    )
+  }
+  .qes_abort(
+    "unknown_study",
+    class = "qesR_error_unknown_study",
+    args = list(.qes_q(study)),
+    data = list(study = study, suggestions = character(0))
+  )
+}
+
+# One catalog row for a single study code (canonicalized).
+.get_qes_study <- function(srvy, arg = "srvy") {
+  .assert_single_string(srvy, arg)
+  if (!nzchar(trimws(srvy))) {
+    .qes_abort(
+      "input_string",
+      class = "qesR_error_input",
+      args = list(arg),
+      data = list(arg = arg, value = srvy)
+    )
+  }
+  idx <- match(.qes_canon_code(srvy), .qes_catalog$qes_survey_code)
+  if (is.na(idx)) {
+    .qes_unknown_study(srvy)
+  }
+  .qes_catalog[idx, , drop = FALSE]
+}
+
+# Canonical codes for a vector of study codes. "all" is valid only on its own.
+.qes_resolve_codes <- function(x, arg) {
+  if (!is.character(x) || length(x) == 0L || anyNA(x) || !all(nzchar(trimws(x)))) {
+    .qes_abort(
+      "input_codes",
+      class = "qesR_error_input",
+      args = list(arg),
+      data = list(arg = arg, value = x)
+    )
+  }
+  canon <- .qes_canon_code(x)
+  if ("all" %in% canon) {
+    if (length(canon) > 1L) {
+      .qes_abort(
+        "input_all_mixed",
+        class = "qesR_error_input",
+        args = list(arg),
+        data = list(arg = arg, value = x)
+      )
+    }
+    return(.qes_catalog$qes_survey_code)
+  }
+  unknown <- x[!(canon %in% .qes_catalog$qes_survey_code)]
+  if (length(unknown) > 0L) {
+    .qes_unknown_study(unknown)
+  }
+  unique(canon)
+}
+
 #' List Quebec Election Study Survey Codes
 #'
 #' Returns a data frame of qesR survey call codes, with optional detailed metadata.
@@ -92,11 +181,17 @@
 #' @param detailed If TRUE, include year, names, DOI, and documentation columns.
 #'
 #' @return A data frame of qesR survey codes (cesR-style by default).
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' get_qescodes()
 #' get_qescodes(detailed = TRUE)
 #' @export
 get_qescodes <- function(detailed = FALSE) {
+  .qes_deprecate("get_qescodes")
+  .get_qescodes_impl(detailed = detailed)
+}
+
+.get_qescodes_impl <- function(detailed = FALSE) {
   out <- .qes_catalog[, c(
     "index",
     "qes_survey_code"

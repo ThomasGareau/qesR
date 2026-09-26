@@ -1685,24 +1685,7 @@
   if (is.null(surveys)) {
     return(.qes_catalog$qes_survey_code)
   }
-
-  if (!is.character(surveys) || length(surveys) == 0L) {
-    stop("`surveys` must be a non-empty character vector.", call. = FALSE)
-  }
-
-  surveys <- unique(surveys)
-  unknown <- setdiff(surveys, .qes_catalog$qes_survey_code)
-  if (length(unknown) > 0L) {
-    stop(
-      sprintf(
-        "Unknown survey code(s): %s. Use get_qescodes() to see valid codes.",
-        paste(unknown, collapse = ", ")
-      ),
-      call. = FALSE
-    )
-  }
-
-  surveys
+  .qes_resolve_codes(surveys, "surveys")
 }
 
 #' Build a Harmonized Stacked Master QES Dataset
@@ -1711,9 +1694,17 @@
 #' stacks all rows into one master data frame, de-duplicates respondents within
 #' the same survey code, and drops rows that are empty across harmonized variables.
 #'
+#' `get_qes_master()` returns the data and assigns nothing unless
+#' `assign_global = TRUE`: write `master <- get_qes_master()`. The first call
+#' in a session that leaves `assign_global` unset prints a one-time note about
+#' this change from qesR 0.4.4.
+#'
 #' @param surveys Character vector of qesR survey codes. Defaults to all studies from
-#'   `get_qescodes()`.
-#' @param assign_global If TRUE, assign the result to the calling environment using `object_name`. Defaults to FALSE.
+#'   `get_qescodes()`. Codes are trimmed and case-insensitive; `"all"` on its
+#'   own also means every study.
+#' @param assign_global If TRUE, also assign the result as `object_name` into
+#'   the environment `get_qes_master()` was called from (the global environment
+#'   only when called at top level), after `saved_to` is set. Defaults to FALSE.
 #' @param object_name Object name used when `assign_global = TRUE`. Defaults to
 #'   `"qes_master"`.
 #' @param quiet If TRUE, suppress informational output while downloading.
@@ -1731,7 +1722,11 @@
 #'   `variable_name_map` report row filtering and renaming details.
 #'   When `save_path` is provided, the output path is stored in `saved_to`;
 #'   if renaming is applied, the sidecar mapping file path is stored in
-#'   `variable_name_map_path`.
+#'   `variable_name_map_path`. `failed_surveys` holds one line per failed
+#'   study, `"<code>: <reason>"`. qesR's own part of the reason is always in
+#'   English, whatever the message language; a root cause raised by R itself
+#'   (for example a download error) keeps the text R reported. The full
+#'   conditions are in the `failures` field of the `strict = TRUE` error. The data frame is returned visibly.
 #' @examples
 #' \donttest{
 #'   master <- get_qes_master(surveys = "qes2022")
@@ -1746,6 +1741,24 @@ get_qes_master <- function(
   strict = FALSE,
   save_path = NULL
 ) {
+  .get_qes_master_impl(
+    surveys = surveys, assign_global = assign_global, object_name = object_name,
+    quiet = quiet, strict = strict, save_path = save_path,
+    envir = parent.frame(),
+    assign_missing = missing(assign_global)
+  )
+}
+
+.get_qes_master_impl <- function(
+  surveys = NULL,
+  assign_global = FALSE,
+  object_name = "qes_master",
+  quiet = FALSE,
+  strict = FALSE,
+  save_path = NULL,
+  envir = NULL,
+  assign_missing = FALSE
+) {
   surveys <- .validate_master_surveys(surveys)
   .assert_single_string(object_name, "object_name")
   if (!is.null(save_path)) {
@@ -1758,12 +1771,13 @@ get_qes_master <- function(
   label_maps_by_study <- list()
   study_meta <- list()
   failed <- character(0)
+  failed_conditions <- list()
 
   for (srvy in surveys) {
     study <- .qes_catalog[.qes_catalog$qes_survey_code == srvy, , drop = FALSE]
 
     dat <- tryCatch(
-      get_qes(
+      .get_qes_impl(
         srvy = srvy,
         assign_global = FALSE,
         with_codebook = FALSE,
@@ -1773,10 +1787,17 @@ get_qes_master <- function(
     )
 
     if (inherits(dat, "error")) {
-      failed <- c(failed, sprintf("%s: %s", srvy, conditionMessage(dat)))
-      if (!quiet) {
-        message(sprintf("Skipping '%s' due to download/read error.", srvy))
-      }
+      # returned text, so rendered in English whatever the session language
+      reason <- gsub("\n", " ", .qes_condition_text(dat, lang = "en"))
+      failed <- c(failed, sprintf("%s: %s", srvy, reason))
+      failed_conditions[[srvy]] <- dat
+      .qes_inform(
+        "master_skip",
+        class = "qesR_message_download",
+        args = list(.qes_q(srvy)),
+        data = list(study = srvy, error = dat),
+        quiet = quiet
+      )
       next
     }
 
@@ -1796,19 +1817,39 @@ get_qes_master <- function(
       name_en = study$name_en
     )
 
-    if (!quiet) {
-      message(sprintf("[%s] rows loaded: %s", srvy, nrow(dat)))
-    }
+    .qes_inform(
+      "master_rows_loaded",
+      class = "qesR_message_download",
+      args = list(srvy, nrow(dat)),
+      data = list(study = srvy),
+      quiet = quiet
+    )
   }
 
   if (length(stacked) == 0L) {
-    stop("No studies could be loaded. Check network access and survey availability.", call. = FALSE)
+    .qes_abort(
+      "master_none",
+      class = "qesR_error_source",
+      data = list(
+        study = names(failed_conditions),
+        file_id = NA_character_,
+        failures = failed_conditions
+      ),
+      parent = if (length(failed_conditions) > 0L) failed_conditions[[1]] else NULL
+    )
   }
 
   if (isTRUE(strict) && length(failed) > 0L) {
-    stop(
-      sprintf("Master build failed for %s study(ies): %s", length(failed), paste(failed, collapse = " | ")),
-      call. = FALSE
+    .qes_abort(
+      "master_strict",
+      class = "qesR_error_source",
+      args = list(length(failed), .qes_q(names(failed_conditions))),
+      data = list(
+        study = names(failed_conditions),
+        file_id = NA_character_,
+        failures = failed_conditions
+      ),
+      parent = failed_conditions[[1]]
     )
   }
 
@@ -1861,14 +1902,15 @@ get_qes_master <- function(
   attr(master, "variable_name_map_path") <- NULL
   attr(master, "saved_to") <- NULL
 
-  if (isTRUE(assign_global)) {
-    .assign_into_caller(object_name, master)
-  }
-
   if (!is.null(save_path)) {
     out_dir <- dirname(save_path)
     if (!dir.exists(out_dir)) {
-      stop(sprintf("Directory does not exist: '%s'.", out_dir), call. = FALSE)
+      .qes_abort(
+        "input_save_dir",
+        class = "qesR_error_input",
+        args = list(.qes_q(out_dir)),
+        data = list(arg = "save_path", value = save_path)
+      )
     }
 
     ext <- tolower(tools::file_ext(save_path))
@@ -1888,29 +1930,38 @@ get_qes_master <- function(
     attr(master, "saved_to") <- save_path
   }
 
+  # Attributes are final before opt-in assignment, so the assigned object is
+  # identical to the returned one.
+  if (isTRUE(assign_global)) {
+    .qes_assign(object_name, master, envir)
+  } else if (isTRUE(assign_missing)) {
+    .qes_assign_default_notice("get_qes_master", object_name)
+  }
+
   if (!quiet) {
-    message(sprintf("Master dataset rows: %s", nrow(master)))
-    message(sprintf("Master dataset studies loaded: %s", length(stacked)))
+    .qes_inform("master_n_rows", class = "qesR_message_download", args = list(nrow(master)))
+    .qes_inform("master_n_loaded", class = "qesR_message_download", args = list(length(stacked)))
     if (length(failed) > 0L) {
-      message(sprintf("Master dataset studies skipped: %s", length(failed)))
+      .qes_inform("master_n_skipped", class = "qesR_message_download", args = list(length(failed)))
     }
     if (dedup$removed > 0L) {
-      message(sprintf("Master dataset within-study duplicate respondents removed: %s", dedup$removed))
+      .qes_inform("master_n_dedup", class = "qesR_message_download", args = list(dedup$removed))
     }
     if (no_empty$removed > 0L) {
-      message(sprintf("Master dataset all-empty rows removed: %s", no_empty$removed))
+      .qes_inform("master_n_empty", class = "qesR_message_download", args = list(no_empty$removed))
     }
     if (length(extra$extra_vars) > 0L) {
-      message(sprintf("Master dataset cross-study variables added: %s", length(extra$extra_vars)))
+      .qes_inform("master_n_extra", class = "qesR_message_download", args = list(length(extra$extra_vars)))
     }
     if (is.data.frame(variable_name_map) && nrow(variable_name_map) > 0L) {
-      message(sprintf("Master dataset opaque legacy variables renamed: %s", nrow(variable_name_map)))
-      if (!is.null(save_path) && !is.null(attr(master, "variable_name_map_path", exact = TRUE))) {
-        message(sprintf("Master dataset variable name map saved to: %s", attr(master, "variable_name_map_path", exact = TRUE)))
+      .qes_inform("master_n_renamed", class = "qesR_message_download", args = list(nrow(variable_name_map)))
+      map_path <- attr(master, "variable_name_map_path", exact = TRUE)
+      if (!is.null(save_path) && !is.null(map_path)) {
+        .qes_inform("master_map_saved", class = "qesR_message_download", args = list(map_path))
       }
     }
     if (!is.null(save_path)) {
-      message(sprintf("Master dataset saved to: %s", save_path))
+      .qes_inform("master_saved", class = "qesR_message_download", args = list(save_path))
     }
   }
 

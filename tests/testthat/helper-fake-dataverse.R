@@ -2,7 +2,7 @@
 #
 # Until slice S2a introduces the `.qes_transport()` seam (design.md section 8.1),
 # every request qesR makes goes through the internal
-# `.download_file_with_fallback(url, destfile, quiet, allow_insecure_retry)`.
+# `.qes_fetch_file(url, destfile, quiet)` (slice S0c).
 # `local_fake_dataverse()` replaces that one function for the calling test with
 # a fake server that answers the three kinds of request the current code makes:
 #
@@ -90,7 +90,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
 
   study_data <- function(code) data[[code]] %||% fake_study_data(code)
 
-  transport <- function(url, destfile, quiet = TRUE, allow_insecure_retry = FALSE) {
+  transport <- function(url, destfile, quiet = TRUE) {
     log$urls <- c(log$urls, url)
 
     if (grepl("/api/datasets/:persistentId/", url, fixed = TRUE)) {
@@ -135,7 +135,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
 
   local_clear_codebook_cache(.env = .env)
   testthat::local_mocked_bindings(
-    .download_file_with_fallback = transport,
+    .qes_fetch_file = transport,
     .package = "qesR",
     .env = .env
   )
@@ -152,10 +152,37 @@ local_clear_codebook_cache <- function(.env = parent.frame()) {
 
 # Once-per-session message state (.qes_once, slice S0c). Reset it before and
 # after the calling test so message tests never depend on test order
-# (design.md section 8.1). Only the S0c-gated tests call this until then.
+# (design.md section 8.1).
 local_qes_once <- function(.env = parent.frame()) {
   reset <- getFromNamespace(".qes_reset_once", "qesR")
   reset()
   withr::defer(reset(), envir = .env)
   invisible()
+}
+
+# Treat every once-per-session notice as already shown, for the calling test
+# only, so tests that are not about the notices print nothing and do not
+# depend on test order.
+local_qes_notices_shown <- function(.env = parent.frame()) {
+  testthat::local_mocked_bindings(
+    .qes_once_first = function(key) FALSE,
+    .package = "qesR",
+    .env = .env
+  )
+  invisible()
+}
+
+# Evaluate `expr`, muffle every message, and return how many had `class`.
+count_class <- function(expr, class) {
+  n <- 0L
+  withCallingHandlers(
+    expr,
+    message = function(m) {
+      if (inherits(m, class)) {
+        n <<- n + 1L
+      }
+      invokeRestart("muffleMessage")
+    }
+  )
+  n
 }

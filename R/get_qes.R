@@ -2,13 +2,27 @@
 #'
 #' Downloads a study file from Dataverse, applies labels when available, and attaches a codebook.
 #'
-#' @param srvy A qesR survey code from `get_qescodes()`.
+#' `get_qes()` returns the data. It does not write anything into your
+#' workspace unless you ask for it with `assign_global = TRUE`: write
+#' `qes2018 <- get_qes("qes2018")`. The first call in a session that leaves
+#' `assign_global` unset prints a one-time note about this change from qesR
+#' 0.4.4; passing `assign_global` explicitly (TRUE or FALSE) avoids it.
+#'
+#' @param srvy A qesR survey code from `get_qescodes()`. Codes are trimmed
+#'   and case-insensitive (`" QES2018 "` is `"qes2018"`); an unknown code is an
+#'   error of class `qesR_error_unknown_study` that suggests near matches.
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
-#' @param assign_global If TRUE, assign the result into the calling environment using `srvy`. Defaults to FALSE.
-#' @param with_codebook If TRUE, attach codebook metadata and assign \code{<srvy>_codebook} when `assign_global = TRUE`.
+#' @param assign_global If TRUE, also assign the data as `<code>` into the
+#'   environment `get_qes()` was called from (the global environment only when
+#'   called at top level), where `<code>` is the canonical study code. With
+#'   `with_codebook = TRUE`, the codebook is assigned as `<code>_codebook` too.
+#'   Defaults to FALSE. The data is returned either way.
+#' @param with_codebook If TRUE, attach codebook metadata as the `qes_codebook`
+#'   attribute (and assign \code{<code>_codebook} when `assign_global = TRUE`).
 #' @param quiet If TRUE, suppress informational output.
 #'
-#' @return A labelled data frame/tibble for the selected survey.
+#' @return A labelled data frame/tibble for the selected survey, returned
+#'   visibly. `attr(, "qes_survey_code")` holds the canonical study code.
 #' @examples
 #' \donttest{
 #'   qes2022 <- get_qes("qes2022")
@@ -16,39 +30,62 @@
 #' }
 #' @export
 get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE, quiet = FALSE) {
-  study <- .get_qes_study(srvy)
+  .get_qes_impl(
+    srvy, file, assign_global, with_codebook, quiet,
+    envir = parent.frame(),
+    assign_missing = missing(assign_global)
+  )
+}
 
-  if (!quiet) {
-    message(sprintf("%s: %s", study$qes_survey_code, study$name_en))
-    message(sprintf("DOI: %s", study$doi_url))
-    message(sprintf("Documentation: %s", study$documentation))
-  }
+# `envir`: where opt-in assignment lands (the caller of the exported name).
+# `assign_missing`: TRUE only when a user called an exported entry point
+# without assign_global; internal callers leave it FALSE.
+.get_qes_impl <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE,
+                          quiet = FALSE, envir = NULL, assign_missing = FALSE) {
+  study <- .get_qes_study(srvy)
+  code <- study$qes_survey_code
+
+  .qes_inform(
+    "get_qes_banner",
+    class = "qesR_message_download",
+    args = list(
+      code,
+      if (identical(.qes_lang(), "fr")) study$name_fr else study$name_en,
+      study$doi_url,
+      study$documentation
+    ),
+    data = list(study = code),
+    quiet = quiet
+  )
 
   payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE)
   data <- payload$data
-  attr(data, "qes_survey_code") <- srvy
+  attr(data, "qes_survey_code") <- code
 
   if (isTRUE(with_codebook)) {
     attr(data, "qes_codebook") <- payload$codebook
-    if (exists(".qes_codebook_cache", mode = "environment")) {
-      cache_key <- .codebook_cache_key(srvy, file = file)
-      assign(cache_key, payload$codebook, envir = .qes_codebook_cache)
-    }
+    .qes_codebook_cache[[.codebook_cache_key(code, file = file)]] <- payload$codebook
 
-    if (isTRUE(assign_global)) {
-      .assign_into_caller(paste0(srvy, "_codebook"), payload$codebook)
-    }
-
-    if (!quiet) {
-      codebook_files <- attr(payload$codebook, "codebook_files", exact = TRUE)
-      n_files <- if (is.null(codebook_files)) 0L else nrow(codebook_files)
-      message(sprintf("Codebook variables available: %s", nrow(payload$codebook)))
-      message(sprintf("Codebook/support files available: %s", n_files))
-    }
+    codebook_files <- attr(payload$codebook, "codebook_files", exact = TRUE)
+    .qes_inform(
+      "codebook_counts",
+      class = "qesR_message_download",
+      args = list(
+        nrow(payload$codebook),
+        if (is.null(codebook_files)) 0L else nrow(codebook_files)
+      ),
+      data = list(study = code),
+      quiet = quiet
+    )
   }
 
   if (isTRUE(assign_global)) {
-    .assign_into_caller(srvy, data)
+    if (isTRUE(with_codebook)) {
+      .qes_assign(paste0(code, "_codebook"), payload$codebook, envir)
+    }
+    .qes_assign(code, data, envir)
+  } else if (isTRUE(assign_missing)) {
+    .qes_assign_default_notice("get_qes", code)
   }
 
   data
@@ -58,22 +95,36 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 #'
 #' Loads a study and returns the first observations.
 #'
+#' Soft-deprecated: use `head(get_qes(srvy), obs)`. `get_preview()` keeps
+#' working and will not be removed; it prints a one-time notice (see
+#' [qesR-deprecated]).
+#'
 #' @param srvy A qesR survey code from `get_qescodes()`.
 #' @param obs Number of observations to return.
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
 #'
 #' @return A data frame/tibble preview (with attached codebook metadata).
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   get_preview("qes2022", obs = 3)
 #' }
 #' @export
 get_preview <- function(srvy, obs = 6L, file = NULL) {
-  if (!is.numeric(obs) || length(obs) != 1L || is.na(obs) || obs < 1L) {
-    stop("`obs` must be a single number greater than or equal to 1.", call. = FALSE)
+  .qes_deprecate("get_preview")
+  .get_preview_impl(srvy, obs = obs, file = file)
+}
+
+.get_preview_impl <- function(srvy, obs = 6L, file = NULL) {
+  if (!is.numeric(obs) || length(obs) != 1L || !is.finite(obs) || obs < 1 || obs != floor(obs)) {
+    .qes_abort(
+      "input_obs",
+      class = "qesR_error_input",
+      data = list(arg = "obs", value = obs)
+    )
   }
 
-  data <- get_qes(srvy, file = file, assign_global = FALSE, with_codebook = TRUE, quiet = TRUE)
+  data <- .get_qes_impl(srvy, file = file, assign_global = FALSE, with_codebook = TRUE, quiet = TRUE)
   utils::head(data, n = as.integer(obs))
 }
 
@@ -307,7 +358,6 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
     return(NA_character_)
   }
 
-  study <- .get_qes_study(survey_code)
   file_row <- files[pdf_idx[1], , drop = FALSE]
   if (!("download_url" %in% names(file_row)) || is.na(file_row$download_url[1])) {
     return(NA_character_)
@@ -318,11 +368,10 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 
   downloaded <- tryCatch(
     {
-      .download_file_with_fallback(
+      .qes_fetch_file(
         file_row$download_url[1],
         pdf_file,
-        quiet = quiet,
-        allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+        quiet = quiet
       )
       TRUE
     },
@@ -418,7 +467,7 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   }
 
   tryCatch(
-    get_codebook(srvy, assign_global = FALSE, quiet = quiet),
+    .qes_codebook_impl(srvy, assign_global = FALSE, quiet = quiet),
     error = function(e) NULL
   )
 }
@@ -444,25 +493,23 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
     return(contains)
   }
 
-  suggestion_pool <- unique(c(exact_ci, starts_with, contains))
-  suggestion <- if (length(suggestion_pool) > 0L) {
-    paste(utils::head(suggestion_pool, 5), collapse = ", ")
-  } else {
-    ""
-  }
+  suggestions <- utils::head(unique(c(exact_ci, starts_with, contains)), 5L)
 
-  if (nzchar(suggestion)) {
-    stop(
-      sprintf(
-        "Column '%s' was not found in the data object. Close matches: %s",
-        q,
-        suggestion
-      ),
-      call. = FALSE
+  if (length(suggestions) > 0L) {
+    .qes_abort(
+      "unknown_variable_suggest",
+      class = "qesR_error_unknown_variable",
+      args = list(.qes_q(q), .qes_q(suggestions)),
+      data = list(study = NA_character_, variables = q, suggestions = suggestions)
     )
   }
 
-  stop(sprintf("Column '%s' was not found in the data object.", q), call. = FALSE)
+  .qes_abort(
+    "unknown_variable",
+    class = "qesR_error_unknown_variable",
+    args = list(.qes_q(q)),
+    data = list(study = NA_character_, variables = q, suggestions = character(0))
+  )
 }
 
 #' Get Survey Question Text
@@ -473,7 +520,9 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 #' @param q Column name whose question text should be returned.
 #' @param full If TRUE, try to recover full question text when metadata appears truncated.
 #'
-#' @return A character scalar with question text, or `NA_character_` when none exists.
+#' @return A character scalar with question text, or `NA_character_` (with a
+#'   warning of class `qesR_warning`) when none exists.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   d <- get_qes("qes2022")
@@ -481,21 +530,37 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 #' }
 #' @export
 get_question <- function(do, q, full = TRUE) {
+  .qes_deprecate("get_question")
+  .get_question_impl(do, q, full = full, envir = parent.frame())
+}
+
+# `envir`: the caller's frame, where a character `do` is looked up (read only,
+# never inherited from enclosing frames).
+.get_question_impl <- function(do, q, full = TRUE, envir) {
   .assert_single_string(q, "q")
 
   object_name <- NULL
   object_env <- NULL
   if (is.character(do) && length(do) == 1L) {
     object_name <- do
-    object_env <- parent.frame()
+    object_env <- envir
     if (!exists(do, envir = object_env, inherits = FALSE)) {
-      stop(sprintf("Object '%s' was not found in the calling environment.", do), call. = FALSE)
+      .qes_abort(
+        "input_object_missing",
+        class = "qesR_error_input",
+        args = list(.qes_q(do)),
+        data = list(arg = "do", value = do)
+      )
     }
     data <- get(do, envir = object_env, inherits = FALSE)
   } else if (is.data.frame(do)) {
     data <- do
   } else {
-    stop("`do` must be a data.frame or the name of one in the calling environment.", call. = FALSE)
+    .qes_abort(
+      "input_do",
+      class = "qesR_error_input",
+      data = list(arg = "do", value = do)
+    )
   }
 
   q <- .resolve_question_column(data, q)
@@ -564,6 +629,10 @@ get_question <- function(do, q, full = TRUE) {
     return(question_hint)
   }
 
-  warning(sprintf("No question label was found for '%s'.", q), call. = FALSE)
+  .qes_warn(
+    "question_missing",
+    args = list(.qes_q(q)),
+    data = list(variable = q)
+  )
   NA_character_
 }

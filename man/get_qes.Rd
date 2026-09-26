@@ -13,21 +13,36 @@ get_qes(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}.}
+\item{srvy}{A qesR survey code from \code{get_qescodes()}. Codes are trimmed
+and case-insensitive (\code{" QES2018 "} is \code{"qes2018"}); an unknown code is an
+error of class \code{qesR_error_unknown_study} that suggests near matches.}
 
 \item{file}{Optional regular expression for choosing one file in multi-file datasets.}
 
-\item{assign_global}{If TRUE, assign the result into the calling environment using \code{srvy}. Defaults to FALSE.}
+\item{assign_global}{If TRUE, also assign the data as \verb{<code>} into the
+environment \code{get_qes()} was called from (the global environment only when
+called at top level), where \verb{<code>} is the canonical study code. With
+\code{with_codebook = TRUE}, the codebook is assigned as \verb{<code>_codebook} too.
+Defaults to FALSE. The data is returned either way.}
 
-\item{with_codebook}{If TRUE, attach codebook metadata and assign \code{<srvy>_codebook} when \code{assign_global = TRUE}.}
+\item{with_codebook}{If TRUE, attach codebook metadata as the \code{qes_codebook}
+attribute (and assign \code{<code>_codebook} when \code{assign_global = TRUE}).}
 
 \item{quiet}{If TRUE, suppress informational output.}
 }
 \value{
-A labelled data frame/tibble for the selected survey.
+A labelled data frame/tibble for the selected survey, returned
+visibly. \code{attr(, "qes_survey_code")} holds the canonical study code.
 }
 \description{
 Downloads a study file from Dataverse, applies labels when available, and attaches a codebook.
+}
+\details{
+\code{get_qes()} returns the data. It does not write anything into your
+workspace unless you ask for it with \code{assign_global = TRUE}: write
+\code{qes2018 <- get_qes("qes2018")}. The first call in a session that leaves
+\code{assign_global} unset prints a one-time note about this change from qesR
+0.4.4; passing \code{assign_global} explicitly (TRUE or FALSE) avoids it.
 }
 \examples{
 \donttest{

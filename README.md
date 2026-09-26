@@ -75,7 +75,7 @@ get_qescodes()
 # detailed metadata table (DOI, documentation links, names)
 get_qescodes(detailed = TRUE)
 
-# load one study and assign object qes2018 into .GlobalEnv
+# load one study: get_qes() returns the data; assign it yourself
 qes2018 <- get_qes("qes2018")
 
 # qes2018 is returned with variable/value labels (when available)
@@ -84,21 +84,22 @@ cb <- attr(qes2018, "qes_codebook")
 head(cb)
 
 # you can also fetch the codebook directly
-qes2018_codebook <- get_codebook("qes2018")
+qes2018_codebook <- qes_codebook("qes2018")
 # compact layout (default): variable, label, question, n_value_labels
 
 # wide layout: adds list-column with value labels
-qes2018_codebook_wide <- get_codebook("qes2018", layout = "wide")
+qes2018_codebook_wide <- qes_codebook("qes2018", layout = "wide")
 
 # long layout: one row per value label
-qes2018_codebook_long <- get_codebook("qes2018", layout = "long")
+qes2018_codebook_long <- qes_codebook("qes2018", layout = "long")
 
 # reformat an existing codebook object
 format_codebook(qes2018_codebook, layout = "wide")
 get_value_labels(qes2018_codebook, long = TRUE)
 
-# alias
-qes2018_codebook <- qes_codebook("qes2018")
+# soft-deprecated aliases of qes_codebook(): they keep working and print a
+# one-time notice (see ?qesR-deprecated)
+qes2018_codebook <- get_codebook("qes2018")
 qes2018_codebook <- get_qes_codebook("qes2018")
 
 # codebook/support files (PDFs, questionnaires, metadata)
@@ -107,7 +108,7 @@ get_qes_codebook_files(codebook = qes2018_codebook)
 download_codebook("qes2018", dest_dir = tempdir())
 
 # preview first 10 rows
-get_preview("qes2018", 10)
+head(qes2018, 10)
 
 # retrieve question text from labels/codebook
 get_question(qes2018, "some_variable")
@@ -128,6 +129,24 @@ head(qes_master)
 # inspect which source variable fed each harmonized field
 head(attr(qes_master, "source_map"))
 ```
+
+### Workspace, messages and errors
+
+- Functions return their result and write nothing into your workspace by
+  default. `assign_global = TRUE` still assigns, into the environment you call
+  the function from.
+- Messages, warnings and errors are available in English and French:
+  `options(qesR.lang = "fr")` (or the `QESR_LANG` environment variable). The
+  data returned never depends on the language.
+- Errors have classes such as `qesR_error_unknown_study` or
+  `qesR_error_network`, so scripts can handle them with `tryCatch()`. See
+  `?qesR` for the list.
+- Downloads use plain HTTPS requests with certificate checks, at most one per
+  second per server; qesR never retries without TLS verification.
+
+Les messages, avertissements et erreurs sont aussi offerts en français
+(`options(qesR.lang = "fr")`). Les fonctions renvoient leurs résultats sans
+rien écrire dans votre espace de travail, sauf avec `assign_global = TRUE`.
 
 ## Study Citations
 

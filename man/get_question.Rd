@@ -14,7 +14,8 @@ get_question(do, q, full = TRUE)
 \item{full}{If TRUE, try to recover full question text when metadata appears truncated.}
 }
 \value{
-A character scalar with question text, or \code{NA_character_} when none exists.
+A character scalar with question text, or \code{NA_character_} (with a
+warning of class \code{qesR_warning}) when none exists.
 }
 \description{
 Returns question text from variable labels or an attached/paired codebook, with optional full-question recovery.
@@ -24,4 +25,7 @@ Returns question text from variable labels or an attached/paired codebook, with 
   d <- get_qes("qes2022")
   get_question(d, "cps_age_in_years")
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

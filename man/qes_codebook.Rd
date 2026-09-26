@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{qes_codebook}
 \alias{qes_codebook}
-\title{Alias for get_codebook}
+\title{Get a Quebec Election Study Codebook}
 \usage{
 qes_codebook(
   srvy,
@@ -14,11 +14,15 @@ qes_codebook(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}.}
+\item{srvy}{A qesR survey code from \code{get_qescodes()}. Codes are trimmed and
+case-insensitive.}
 
 \item{file}{Optional regular expression for choosing one file in multi-file datasets.}
 
-\item{assign_global}{If TRUE, assign the codebook to \code{<srvy>_codebook} in the global environment.}
+\item{assign_global}{If TRUE, also assign the returned codebook as
+\code{<code>_codebook} into the environment the function was called from
+(the global environment only when called at top level), where \verb{<code>} is
+the canonical study code. Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
@@ -27,10 +31,12 @@ qes_codebook(
 \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{
-A \code{qes_codebook} data frame.
+A \code{qes_codebook} data frame, returned visibly.
 }
 \description{
-Convenience alias for \code{get_codebook()}.
+Returns the codebook of a study: one row per variable, with its label,
+question text and value labels, plus a manifest of the study's
+documentation files. Results are cached per session.
 }
 \examples{
 \donttest{

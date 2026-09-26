@@ -7,7 +7,8 @@
 # * The close-match test is skipped until slice S3, which makes the column
 #   match exact and suggests near matches in the error ([A:A6]). Today a
 #   unique prefix ("response" -> "ResponseId") is silently accepted. An
-#   ambiguous prefix already raises "Close matches"; that is tested now.
+#   ambiguous prefix already raises qesR_error_unknown_variable with
+#   suggestions; that is tested now.
 
 test_that("get_question works for data.frame and object name", {
   dat <- data.frame(x = 1:3)
@@ -33,8 +34,9 @@ test_that("get_question does not find objects outside the calling frame", {
     inner <- function() get_question("tmp_qes_hidden", "x")
     inner()
   }
-  withr::local_language("en")
-  expect_error(outer(), "not found")
+  err <- expect_error(outer(), class = "qesR_error_input")
+  expect_identical(err$arg, "do")
+  expect_identical(err$value, "tmp_qes_hidden")
 })
 
 test_that("get_question reports missing label", {
@@ -42,7 +44,7 @@ test_that("get_question reports missing label", {
 
   expect_warning(
     out <- get_question(dat, "x"),
-    "No question label"
+    class = "qesR_warning"
   )
   expect_true(is.na(out))
 })
@@ -55,17 +57,16 @@ test_that("get_question resolves column name case-insensitively", {
 })
 
 test_that("get_question lists close matches for an ambiguous prefix", {
-  withr::local_language("en")
   dat <- data.frame(ResponseId = 1:3, ResponseTime = 1:3)
-  expect_error(get_question(dat, "response"), "Close matches")
+  err <- expect_error(get_question(dat, "response"), class = "qesR_error_unknown_variable")
+  expect_identical(err$variables, "response")
+  expect_setequal(err$suggestions, c("ResponseId", "ResponseTime"))
 })
 
 test_that("get_question provides close-match suggestions", {
   skip("fixed in S3: exact column match with near-match suggestions ([A:A6])")
   dat <- data.frame(ResponseId = 1:3, stringsAsFactors = FALSE)
 
-  expect_error(
-    get_question(dat, "response"),
-    "Close matches"
-  )
+  err <- expect_error(get_question(dat, "response"), class = "qesR_error_unknown_variable")
+  expect_identical(err$suggestions, "ResponseId")
 })

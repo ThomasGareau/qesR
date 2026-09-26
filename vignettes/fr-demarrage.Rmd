@@ -29,10 +29,13 @@ library(qesR)
 
 - `get_qescodes()` : liste des codes d'études
 - `get_qes("qes2022")` : téléchargement d'une étude
-- `get_codebook("qes2022")` : codebook
-- `get_preview("qes2022", 10)` : aperçu rapide
+- `qes_codebook("qes2022")` : codebook
 - `get_question(obj, variable)` : texte de question
 - `get_qes_master()` : données fusionnées harmonisées
+
+Chaque fonction renvoie son résultat. Rien n'est écrit dans votre espace de
+travail, sauf si vous le demandez avec `assign_global = TRUE` : assignez
+donc le résultat vous-même, `qes2022 <- get_qes("qes2022")`.
 
 ## Codes disponibles
 
@@ -44,9 +47,28 @@ get_qescodes(detailed = TRUE)
 
 ```{r, eval = FALSE}
 qes2022 <- get_qes("qes2022")
-cb <- get_codebook("qes2022")
+cb <- qes_codebook("qes2022")
+head(qes2022, 10)
 master <- get_qes_master(strict = FALSE)
 ```
+
+## Messages et erreurs
+
+Les messages, avertissements et erreurs s'affichent en français avec
+`options(qesR.lang = "fr")` ; les données renvoyées sont les mêmes dans les
+deux langues. Les erreurs ont des classes, ce qui permet à un script d'y
+réagir sans lire leur texte :
+
+```{r}
+tryCatch(
+  get_qes("QES 2022"),
+  qesR_error_unknown_study = function(e) e$suggestions
+)
+```
+
+Les anciennes fonctions `get_codebook()`, `get_qes_codebook()` et
+`get_preview()` fonctionnent toujours et affichent une fois par session une
+note qui nomme leur remplacement (`?qesR-deprecated`).
 
 ## Version française complète
 

@@ -78,11 +78,20 @@
 #'
 #' Builds a deconstructed teaching/testing dataset with standardized columns from a selected Quebec election study.
 #'
-#' @param srvy A qesR survey code. Defaults to `"qes2022"`.
-#' @param assign_global If TRUE, assign the result as `decon` in the global environment.
+#' `get_decon()` returns the data and assigns nothing unless
+#' `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
+#' call in a session that leaves `assign_global` unset prints a one-time note
+#' about this change from qesR 0.4.4.
+#'
+#' @param srvy A qesR survey code. Defaults to `"qes2022"`. Codes are trimmed
+#'   and case-insensitive.
+#' @param assign_global If TRUE, also assign the result as `decon` into the
+#'   environment `get_decon()` was called from (the global environment only
+#'   when called at top level). Defaults to FALSE.
 #' @param quiet If TRUE, suppress informational output while downloading.
 #'
-#' @return A data frame with standardized columns.
+#' @return A data frame with standardized columns, returned visibly.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   decon <- get_decon("qes2022")
@@ -90,17 +99,30 @@
 #' }
 #' @export
 get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
-  data <- get_qes(
-    srvy = srvy,
+  .qes_deprecate("get_decon")
+  .get_decon_impl(
+    srvy, assign_global = assign_global, quiet = quiet,
+    envir = parent.frame(),
+    assign_missing = missing(assign_global)
+  )
+}
+
+.get_decon_impl <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE,
+                            envir = NULL, assign_missing = FALSE) {
+  code <- .get_qes_study(srvy)$qes_survey_code
+  data <- .get_qes_impl(
+    srvy = code,
     assign_global = FALSE,
     with_codebook = TRUE,
     quiet = quiet
   )
 
-  decon <- .build_decon(data, srvy = srvy)
+  decon <- .build_decon(data, srvy = code)
 
   if (isTRUE(assign_global)) {
-    .assign_into_caller("decon", decon)
+    .qes_assign("decon", decon, envir)
+  } else if (isTRUE(assign_missing)) {
+    .qes_assign_default_notice("get_decon", "decon")
   }
 
   decon

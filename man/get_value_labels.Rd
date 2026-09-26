@@ -7,7 +7,7 @@
 get_value_labels(codebook, variable = NULL, long = FALSE)
 }
 \arguments{
-\item{codebook}{A \code{qes_codebook} object from \code{get_codebook()}.}
+\item{codebook}{A \code{qes_codebook} object from \code{qes_codebook()}.}
 
 \item{variable}{Optional variable name. If \code{NULL}, returns mappings for all variables.}
 
@@ -21,7 +21,10 @@ Extracts value-label mappings from a \code{qes_codebook} object.
 }
 \examples{
 \donttest{
-  cb <- get_codebook("qes2022")
+  cb <- qes_codebook("qes2022")
   get_value_labels(cb)
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

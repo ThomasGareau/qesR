@@ -15,9 +15,12 @@ get_qes_master(
 }
 \arguments{
 \item{surveys}{Character vector of qesR survey codes. Defaults to all studies from
-\code{get_qescodes()}.}
+\code{get_qescodes()}. Codes are trimmed and case-insensitive; \code{"all"} on its
+own also means every study.}
 
-\item{assign_global}{If TRUE, assign the result to the calling environment using \code{object_name}. Defaults to FALSE.}
+\item{assign_global}{If TRUE, also assign the result as \code{object_name} into
+the environment \code{get_qes_master()} was called from (the global environment
+only when called at top level), after \code{saved_to} is set. Defaults to FALSE.}
 
 \item{object_name}{Object name used when \code{assign_global = TRUE}. Defaults to
 \code{"qes_master"}.}
@@ -40,12 +43,22 @@ A harmonized stacked data frame with attributes:
 \code{variable_name_map} report row filtering and renaming details.
 When \code{save_path} is provided, the output path is stored in \code{saved_to};
 if renaming is applied, the sidecar mapping file path is stored in
-\code{variable_name_map_path}.
+\code{variable_name_map_path}. \code{failed_surveys} holds one line per failed
+study, \code{"<code>: <reason>"}. qesR's own part of the reason is always in
+English, whatever the message language; a root cause raised by R itself
+(for example a download error) keeps the text R reported. The full
+conditions are in the \code{failures} field of the \code{strict = TRUE} error. The data frame is returned visibly.
 }
 \description{
 Downloads multiple Quebec Election Study datasets, harmonizes shared variables,
 stacks all rows into one master data frame, de-duplicates respondents within
 the same survey code, and drops rows that are empty across harmonized variables.
+}
+\details{
+\code{get_qes_master()} returns the data and assigns nothing unless
+\code{assign_global = TRUE}: write \code{master <- get_qes_master()}. The first call
+in a session that leaves \code{assign_global} unset prints a one-time note about
+this change from qesR 0.4.4.
 }
 \examples{
 \donttest{

@@ -3,6 +3,7 @@
 # v0.4.4 outputs (helper-manifests.R); data comes from the offline fake.
 
 test_that("get_qescodes() keeps the v0.4.4 columns and the first 11 codes", {
+  local_qes_notices_shown()
   codes <- get_qescodes()
   expect_s3_class(codes, "data.frame")
   expect_identical(names(codes), v044_qescodes_cols)
@@ -12,6 +13,7 @@ test_that("get_qescodes() keeps the v0.4.4 columns and the first 11 codes", {
 })
 
 test_that("get_qes_master() keeps the 30 documented columns, in order", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   master <- get_qes_master(quiet = TRUE)
   n <- length(v044_master_cols)
@@ -19,6 +21,7 @@ test_that("get_qes_master() keeps the 30 documented columns, in order", {
 })
 
 test_that("get_qes_master() keeps the v0.4.4 type of every documented column", {
+  local_qes_notices_shown()
   skip("fixed in S4: a column with no valid source is all-NA of its v0.4.4 type, not logical")
   local_fake_dataverse()
   master <- get_qes_master(quiet = TRUE)
@@ -28,6 +31,7 @@ test_that("get_qes_master() keeps the v0.4.4 type of every documented column", {
 })
 
 test_that("get_qes_master() keeps every v0.4.4 attribute name", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   master <- get_qes_master(quiet = TRUE)
   expect_true(all(v044_master_attrs %in% names(attributes(master))))
@@ -36,6 +40,7 @@ test_that("get_qes_master() keeps every v0.4.4 attribute name", {
 })
 
 test_that("get_qes_master() records failures and keeps the other studies", {
+  local_qes_notices_shown()
   local_fake_dataverse(fail = "qes2008")
   master <- get_qes_master(surveys = c("qes2018", "qes2008"), quiet = TRUE)
   expect_identical(attr(master, "loaded_surveys"), "qes2018")
@@ -47,6 +52,7 @@ test_that("get_qes_master() records failures and keeps the other studies", {
 })
 
 test_that("get_qes_master() never drops a row", {
+  local_qes_notices_shown()
   skip("fixed in S4: no de-duplication and no empty-row removal (P5)")
   dup <- fake_study_data("qes2018")
   dup$quest[2] <- dup$quest[1]
@@ -59,6 +65,7 @@ test_that("get_qes_master() never drops a row", {
 })
 
 test_that("get_decon() keeps the 19 v0.4.4 columns", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   decon <- get_decon("qes2018", quiet = TRUE)
   expect_identical(names(decon), v044_decon_cols)
@@ -66,6 +73,7 @@ test_that("get_decon() keeps the 19 v0.4.4 columns", {
 })
 
 test_that("codebook layouts keep the v0.4.4 columns", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   for (layout in names(v044_codebook_cols)) {
     cb <- get_codebook("qes2018", quiet = TRUE, layout = layout)
@@ -77,6 +85,7 @@ test_that("codebook layouts keep the v0.4.4 columns", {
 })
 
 test_that("codebook file helpers keep the v0.4.4 columns", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   dest <- withr::local_tempdir()
   expect_identical(names(get_codebook_files("qes2018", quiet = TRUE)), v044_codebook_files_cols)
@@ -88,6 +97,7 @@ test_that("codebook file helpers keep the v0.4.4 columns", {
 })
 
 test_that("get_preview() returns the first `obs` rows of get_qes()", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   prev <- get_preview("qes2018", obs = 2)
   expect_identical(nrow(prev), 2L)
@@ -95,6 +105,7 @@ test_that("get_preview() returns the first `obs` rows of get_qes()", {
 })
 
 test_that("get_qes() returns the served columns unchanged and records the code", {
+  local_qes_notices_shown()
   local_fake_dataverse()
   dat <- get_qes("qes2018", quiet = TRUE)
   expect_s3_class(dat, "data.frame")
@@ -105,6 +116,7 @@ test_that("get_qes() returns the served columns unchanged and records the code",
 })
 
 test_that("the v0.4.4 get_qes() name manifest covers the 11 legacy studies", {
+  local_qes_notices_shown()
   manifest <- v044_get_qes_names()
   expect_identical(names(manifest), c("study", "position", "name"))
   expect_setequal(unique(manifest$study), v044_qescodes)

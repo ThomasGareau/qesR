@@ -7,7 +7,7 @@
 format_codebook(codebook, layout = c("compact", "wide", "long"))
 }
 \arguments{
-\item{codebook}{A \code{qes_codebook} object from \code{get_codebook()}.}
+\item{codebook}{A \code{qes_codebook} object from \code{qes_codebook()}.}
 
 \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
@@ -19,7 +19,10 @@ Reformats a \code{qes_codebook} object into compact, wide, or long layout.
 }
 \examples{
 \donttest{
-  cb <- get_codebook("qes2022")
+  cb <- qes_codebook("qes2022")
   format_codebook(cb, layout = "long")
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

@@ -17,7 +17,7 @@ get_codebook_files(
 
 \item{codebook}{A \code{qes_codebook} object.}
 
-\item{file}{Optional file selector passed to \code{get_codebook()} when \code{codebook} is not provided.}
+\item{file}{Optional file selector passed to \code{qes_codebook()} when \code{codebook} is not provided.}
 
 \item{quiet}{If TRUE, suppress informational output when downloading.}
 
@@ -33,4 +33,7 @@ Returns codebook/support files (PDFs, questionnaires, metadata files) associated
 \donttest{
   get_codebook_files(srvy = "qes2022")
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

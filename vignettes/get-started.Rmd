@@ -30,10 +30,13 @@ Core calls:
 
 - `get_qes(srvy)` download a survey by code
 - `get_qescodes()` list available codes
-- `get_preview(srvy, obs)` preview observations
 - `get_question(data, variable)` retrieve survey question text
-- `get_codebook(srvy)` retrieve codebook
+- `qes_codebook(srvy)` retrieve codebook
 - `get_qes_master()` build merged harmonized data
+
+Every function returns its result. Nothing is written into your workspace
+unless you ask for it with `assign_global = TRUE`, so assign the result
+yourself: `qes2022 <- get_qes("qes2022")`.
 
 ## List available studies
 
@@ -52,15 +55,15 @@ names(qes2022)[1:20]
 ## Retrieve the codebook in different layouts
 
 ```{r, eval = FALSE}
-cb_compact <- get_codebook("qes2022", layout = "compact")
-cb_wide <- get_codebook("qes2022", layout = "wide")
-cb_long <- get_codebook("qes2022", layout = "long")
+cb_compact <- qes_codebook("qes2022", layout = "compact")
+cb_wide <- qes_codebook("qes2022", layout = "wide")
+cb_long <- qes_codebook("qes2022", layout = "long")
 ```
 
 ## Get a preview and question text
 
 ```{r, eval = FALSE}
-get_preview("qes2022", 10)
+head(qes2022, 10)
 get_question(qes2022, "cps_age_in_years")
 get_question(qes2022, "cps_age_in_years", full = TRUE)
 ```
@@ -82,6 +85,24 @@ head(master)
 - Surveys are loaded in labelled form with available variable/value labels.
 - Codebook metadata can be inspected in compact, wide, or long layout.
 - Merged data includes harmonized variables, de-duplication, and source-map tracing.
+
+## Messages and errors
+
+Messages, warnings and errors can be shown in French with
+`options(qesR.lang = "fr")`; the data returned is the same in both
+languages. Errors have classes, so a script can react to them without
+reading their text:
+
+```{r}
+tryCatch(
+  get_qes("QES 2022"),
+  qesR_error_unknown_study = function(e) e$suggestions
+)
+```
+
+The older helpers `get_codebook()`, `get_qes_codebook()` and `get_preview()`
+still work and print a one-time notice naming their replacement
+(`?qesR-deprecated`).
 
 ## Save the master dataset
 

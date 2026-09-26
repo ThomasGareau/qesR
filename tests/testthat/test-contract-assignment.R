@@ -41,11 +41,11 @@ run_in_caller_frame <- function(call, name, nested) {
       value <- .(call)
       list(value = value, frame = environment())
     }), envir = caller)
-    out <- user_fn()
+    out <- suppressMessages(user_fn())
     frame <- out$frame
     value <- out$value
   } else {
-    value <- eval(call, envir = caller)
+    value <- suppressMessages(eval(call, envir = caller))
     frame <- caller
   }
   list(
@@ -71,17 +71,19 @@ test_that("the assignment table covers every export with assign_global", {
 
 test_that("default calls assign nothing into the caller's frame", {
   local_fake_dataverse()
+  local_qes_once()
   for (case in assign_cases()) {
     call <- case$call
     call$assign_global <- NULL
     caller <- new.env(parent = globalenv())
-    eval(call, envir = caller)
+    suppressMessages(eval(call, envir = caller))
     expect_identical(ls(caller, all.names = TRUE), character(0), info = deparse(call))
   }
 })
 
 test_that("opt-in assignment lands in the caller's frame: direct canonical calls", {
   local_fake_dataverse()
+  local_qes_once()
   for (f in c("get_qes", "get_qes_master", "get_decon", "get_codebook")) {
     case <- assign_cases()[[f]]
     expect_assignment_lands(case, nested = FALSE)
@@ -90,8 +92,8 @@ test_that("opt-in assignment lands in the caller's frame: direct canonical calls
 })
 
 test_that("opt-in assignment lands in the caller's frame through wrappers", {
-  skip("fixed in S0c: wrappers assign into their own frame ([A:A1])")
   local_fake_dataverse()
+  local_qes_once()
   for (f in c("get_qes_codebook", "qes_codebook")) {
     case <- assign_cases()[[f]]
     expect_assignment_lands(case, nested = FALSE)
@@ -101,8 +103,9 @@ test_that("opt-in assignment lands in the caller's frame through wrappers", {
 
 test_that("get_qes(assign_global = TRUE) also assigns <code>_codebook", {
   local_fake_dataverse()
+  local_qes_once()
   caller <- new.env(parent = globalenv())
-  value <- eval(quote(get_qes("qes2018", assign_global = TRUE, quiet = TRUE)), envir = caller)
+  value <- suppressMessages(eval(quote(get_qes("qes2018", assign_global = TRUE, quiet = TRUE)), envir = caller))
   expect_true(exists("qes2018_codebook", envir = caller, inherits = FALSE))
   expect_identical(
     get("qes2018_codebook", envir = caller),
@@ -111,22 +114,22 @@ test_that("get_qes(assign_global = TRUE) also assigns <code>_codebook", {
 })
 
 test_that("get_qes() uses the canonical code for assignment and qes_survey_code", {
-  skip("fixed in S0c: codes are trimmed and case-folded to the canonical code")
   local_fake_dataverse()
+  local_qes_once()
   caller <- new.env(parent = globalenv())
-  value <- eval(quote(get_qes(" QES2018 ", assign_global = TRUE, quiet = TRUE)), envir = caller)
+  value <- suppressMessages(eval(quote(get_qes(" QES2018 ", assign_global = TRUE, quiet = TRUE)), envir = caller))
   expect_setequal(ls(caller), c("qes2018", "qes2018_codebook"))
   expect_identical(attr(value, "qes_survey_code"), "qes2018")
 })
 
 test_that("get_qes_master(save_path =) sets saved_to before assigning", {
-  skip("fixed in S0c: attributes are set before assignment")
   local_fake_dataverse()
+  local_qes_once()
   path <- withr::local_tempfile(fileext = ".csv")
   caller <- new.env(parent = globalenv())
-  value <- eval(bquote(get_qes_master(
+  value <- suppressMessages(eval(bquote(get_qes_master(
     surveys = "qes2018", assign_global = TRUE, quiet = TRUE, save_path = .(path)
-  )), envir = caller)
+  )), envir = caller))
   expect_identical(get("qes_master", envir = caller), value)
 })
 
@@ -184,13 +187,16 @@ legacy_calls <- function() {
   )
 }
 
-# Evaluate `call`, muffle and return every qesR_message_deprecated it emits.
+# Evaluate `call`, return every qesR_message_deprecated it emits, and muffle
+# all its messages (e.g. the assign_global note of an inner get_qes()).
 capture_deprecated <- function(call) {
   msgs <- list()
   value <- withCallingHandlers(
     eval(call, envir = new.env(parent = globalenv())),
-    qesR_message_deprecated = function(m) {
-      msgs[[length(msgs) + 1L]] <<- m
+    message = function(m) {
+      if (inherits(m, "qesR_message_deprecated")) {
+        msgs[[length(msgs) + 1L]] <<- m
+      }
       invokeRestart("muffleMessage")
     }
   )
@@ -202,8 +208,6 @@ test_that("the legacy call table covers the 11 legacy wrappers", {
 })
 
 test_that("legacy wrappers emit qesR_message_deprecated once per session", {
-  skip("fixed in S0c: .qes_deprecated registry and local_qes_once()")
-  withr::local_language("en")
   withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
   registry <- qesR:::.qes_deprecated
   expect_setequal(registry$name, legacy_exports)
@@ -222,7 +226,12 @@ test_that("legacy wrappers emit qesR_message_deprecated once per session", {
     first <- capture_deprecated(case$call)
     if (f %in% announcing) {
       expect_identical(length(first$messages), 1L, info = f)
-      expect_match(conditionMessage(first$messages[[1]]), paste0(f, "()"), fixed = TRUE, info = f)
+      expect_identical(first$messages[[1]]$fn, f, info = f)
+      expect_identical(
+        first$messages[[1]]$replacement,
+        registry$replacement[registry$name == f],
+        info = f
+      )
     } else {
       expect_identical(length(first$messages), 0L, info = f)
     }

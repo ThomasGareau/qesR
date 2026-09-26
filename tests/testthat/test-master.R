@@ -68,11 +68,11 @@ test_that("get_qes_master stacks studies and records failures", {
 
 test_that("get_qes_master validates survey codes", {
   log <- local_fake_dataverse()
-  withr::local_language("en")
-  expect_error(
+  err <- expect_error(
     get_qes_master(surveys = c("qes2022", "not_real"), assign_global = FALSE, quiet = TRUE),
-    "Unknown survey code"
+    class = "qesR_error_unknown_study"
   )
+  expect_identical(err$study, "not_real")
   expect_length(log$urls, 0L)
 })
 

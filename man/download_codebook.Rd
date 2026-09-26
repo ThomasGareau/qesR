@@ -18,7 +18,7 @@ download_codebook(
 
 \item{dest_dir}{Directory where files should be downloaded.}
 
-\item{file}{Optional file selector passed to \code{get_codebook()}.}
+\item{file}{Optional file selector passed to \code{qes_codebook()}.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
@@ -36,4 +36,7 @@ Downloads codebook/support files (PDFs, questionnaires, metadata files) into a l
 \donttest{
   download_codebook("qes2022", dest_dir = tempdir())
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

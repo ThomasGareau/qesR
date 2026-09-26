@@ -41,22 +41,24 @@ test_that("no function branches on condition message text", {
 })
 
 test_that("no insecure TLS option or retry", {
-  skip("fixed in S0c: insecure TLS fallback deleted ([A:D1])")
-  expect_no_offender("ssl_verifypeer|--insecure|\\binsecure\\s*=")
+  expect_no_offender("ssl_verifypeer|--insecure|\\binsecure|download\\.file\\.extra")
+})
+
+test_that("no shell-out to curl or wget", {
+  expect_no_offender("\\bsystem2?\\s*\\(\\s*\"(curl|wget)")
+  expect_no_offender("Sys\\.which\\s*\\(\\s*\"(curl|wget)")
 })
 
 test_that("no shell-out", {
-  skip("fixed in S0c (curl fallback) and S3 (PDF/DOC text extraction)")
+  skip("fixed in S3 (PDF/DOC text extraction)")
   expect_no_offender("\\bsystem2?\\s*\\(")
 })
 
 test_that("assign() is used only by .qes_assign()", {
-  skip("fixed in S0c: .qes_assign() is the one assignment point")
   expect_no_offender("(?<![A-Za-z0-9_.])assign\\s*\\(", allow = ".qes_assign")
 })
 
-test_that("readRDS() is never called on downloaded or cached content", {
-  skip("fixed in S2b: the reader reads only pinned .sav/.dta originals")
+test_that("readRDS() is never called", {
   expect_no_offender("\\breadRDS\\s*\\(")
 })
 

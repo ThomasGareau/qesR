@@ -14,11 +14,15 @@ get_qes_codebook(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}.}
+\item{srvy}{A qesR survey code from \code{get_qescodes()}. Codes are trimmed and
+case-insensitive.}
 
 \item{file}{Optional regular expression for choosing one file in multi-file datasets.}
 
-\item{assign_global}{If TRUE, assign the codebook to \code{<srvy>_codebook} in the global environment.}
+\item{assign_global}{If TRUE, also assign the returned codebook as
+\code{<code>_codebook} into the environment the function was called from
+(the global environment only when called at top level), where \verb{<code>} is
+the canonical study code. Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
@@ -32,9 +36,17 @@ A \code{qes_codebook} data frame.
 \description{
 Backward-compatible alias for \code{get_codebook()}.
 }
+\details{
+Soft-deprecated: use \code{\link[=qes_codebook]{qes_codebook()}}, which takes the same arguments.
+\code{get_qes_codebook()} keeps working and will not be removed; it prints a
+one-time notice (see \link{qesR-deprecated}).
+}
 \examples{
 \donttest{
-  cb <- get_qes_codebook("qes2022")
+  cb <- qes_codebook("qes2022")
   head(cb)
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

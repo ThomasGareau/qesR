@@ -19,8 +19,16 @@ A data frame/tibble preview (with attached codebook metadata).
 \description{
 Loads a study and returns the first observations.
 }
+\details{
+Soft-deprecated: use \code{head(get_qes(srvy), obs)}. \code{get_preview()} keeps
+working and will not be removed; it prints a one-time notice (see
+\link{qesR-deprecated}).
+}
 \examples{
 \donttest{
   get_preview("qes2022", obs = 3)
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

@@ -9,7 +9,7 @@ Command, on the tarball from `R CMD build`:
 `R CMD check --as-cran --run-donttest qesR_0.4.4.tar.gz`
 
 Local result (macOS, R 4.4.0): 0 ERRORs, 0 WARNINGs, NOTEs as listed below.
-The tests pass (336 pass, 0 fail, 18 skip); every skip gives its reason.
+The tests pass (933 pass, 0 fail, 10 skip); every skip gives its reason.
 
 * checking CRAN incoming feasibility ... NOTE
 
@@ -48,5 +48,7 @@ The tests pass (336 pass, 0 fail, 18 skip); every skip gives its reason.
 
 - Removed direct global-environment assignments flagged by `R CMD check`.
 - Assignment behavior now targets the calling environment while preserving user-facing workflow.
+- Every function returns its result visibly; `assign_global` defaults to `FALSE` and, when `TRUE`, assigns into the caller's frame through one internal helper. A test scans the installed namespace for any other `assign()` call and for `.GlobalEnv`.
+- Removed the download fallback that disabled TLS certificate verification (`download.file.extra = "--insecure"` and a `system2("curl", "--insecure")` shell-out), and `readRDS()` on downloaded files. A test scans the installed namespace for these calls.
 - Configured a GitHub Actions `R CMD check --as-cran` matrix (macOS, Windows, Ubuntu devel/release/oldrel-1/4.1) in `.github/workflows/R-CMD-check.yml`. It has not run yet; its results will be added here before submission.
 - Restored an offline testthat suite (edition 3); network tests are skipped on CRAN.

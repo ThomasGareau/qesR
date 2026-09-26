@@ -7,21 +7,33 @@
 get_decon(srvy = "qes2022", assign_global = FALSE, quiet = FALSE)
 }
 \arguments{
-\item{srvy}{A qesR survey code. Defaults to \code{"qes2022"}.}
+\item{srvy}{A qesR survey code. Defaults to \code{"qes2022"}. Codes are trimmed
+and case-insensitive.}
 
-\item{assign_global}{If TRUE, assign the result as \code{decon} in the global environment.}
+\item{assign_global}{If TRUE, also assign the result as \code{decon} into the
+environment \code{get_decon()} was called from (the global environment only
+when called at top level). Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output while downloading.}
 }
 \value{
-A data frame with standardized columns.
+A data frame with standardized columns, returned visibly.
 }
 \description{
 Builds a deconstructed teaching/testing dataset with standardized columns from a selected Quebec election study.
+}
+\details{
+\code{get_decon()} returns the data and assigns nothing unless
+\code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
+call in a session that leaves \code{assign_global} unset prints a one-time note
+about this change from qesR 0.4.4.
 }
 \examples{
 \donttest{
   decon <- get_decon("qes2022")
   head(decon)
 }
+}
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
 }

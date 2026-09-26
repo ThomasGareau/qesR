@@ -19,3 +19,6 @@ Returns a data frame of qesR survey call codes, with optional detailed metadata.
 get_qescodes()
 get_qescodes(detailed = TRUE)
 }
+\seealso{
+\link{qesR-deprecated} for the legacy functions and their replacements.
+}

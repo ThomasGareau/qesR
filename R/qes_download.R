@@ -25,116 +25,101 @@
 
 .assert_single_string <- function(x, arg_name) {
   if (!is.character(x) || length(x) != 1L || is.na(x) || !nzchar(x)) {
-    stop(sprintf("`%s` must be a single non-empty character string.", arg_name), call. = FALSE)
+    .qes_abort(
+      "input_string",
+      class = "qesR_error_input",
+      args = list(arg_name),
+      data = list(arg = arg_name, value = x)
+    )
   }
 }
 
-.get_qes_study <- function(srvy) {
-  .assert_single_string(srvy, "srvy")
+# ---- HTTP ------------------------------------------------------------------
+#
+# Interim transport (slice S0c). Every request qesR makes goes through
+# .qes_fetch_file(), which the offline tests replace. It sends one plain
+# request with the package User-Agent and nothing else, keeps requests to one
+# host at least one second apart, and never retries without TLS verification:
+# a failed request is a qesR_error_network carrying the root cause. Slice S2a
+# replaces it with the curl transport of design.md section 4.1 (.qes_transport,
+# retries with backoff, cache).
 
-  idx <- match(srvy, .qes_catalog$qes_survey_code)
-  if (is.na(idx)) {
-    stop(
-      sprintf(
-        "Unknown survey code '%s'. Use get_qescodes() to see valid codes.",
-        srvy
-      ),
-      call. = FALSE
-    )
-  }
-
-  .qes_catalog[idx, , drop = FALSE]
+# Exactly "qesR/<version> R/<version>": no e-mail, URL or other identifier.
+.qes_user_agent <- function() {
+  sprintf("qesR/%s R/%s", as.character(utils::packageVersion("qesR")), as.character(getRversion()))
 }
 
-.download_file_with_fallback <- function(url, destfile, quiet = TRUE, allow_insecure_retry = FALSE) {
-  initial_error <- NULL
+.qes_http_state <- new.env(parent = emptyenv())
 
-  downloaded <- tryCatch(
-    {
-      utils::download.file(url, destfile, mode = "wb", quiet = quiet)
-      TRUE
-    },
-    error = function(e) {
-      initial_error <<- conditionMessage(e)
-      FALSE
-    }
-  )
+.qes_url_host <- function(url) {
+  tolower(sub("^[A-Za-z][A-Za-z0-9+.-]*://([^/?#]+).*$", "\\1", url))
+}
 
-  if (isTRUE(downloaded)) {
-    return(invisible(destfile))
-  }
+.qes_sleep <- function(seconds) {
+  Sys.sleep(seconds)
+}
 
-  should_retry_insecure <- isTRUE(allow_insecure_retry) ||
-    grepl("ssl|certificate", initial_error %||% "", ignore.case = TRUE)
+# Clock seam, replaced in tests so the spacing check does not depend on how
+# fast the machine is.
+.qes_now <- function() {
+  Sys.time()
+}
 
-  if (!should_retry_insecure) {
-    stop(
-      sprintf("Failed to download from '%s': %s", url, initial_error %||% "unknown error"),
-      call. = FALSE
-    )
-  }
-
-  insecure_error <- NULL
-  old_method <- getOption("download.file.method")
-  old_extra <- getOption("download.file.extra")
-  on.exit(
-    options(download.file.method = old_method, download.file.extra = old_extra),
-    add = TRUE
-  )
-
-  options(
-    download.file.method = "libcurl",
-    download.file.extra = "--insecure --location --retry 3 --retry-delay 1"
-  )
-
-  downloaded_insecure <- tryCatch(
-    {
-      utils::download.file(url, destfile, mode = "wb", quiet = quiet)
-      TRUE
-    },
-    error = function(e) {
-      insecure_error <<- conditionMessage(e)
-      FALSE
-    }
-  )
-
-  if (isTRUE(downloaded_insecure)) {
-    return(invisible(destfile))
-  }
-
-  if (nzchar(Sys.which("curl"))) {
-    status <- suppressWarnings(system2(
-      "curl",
-      args = c(
-        "-fsSL",
-        "--retry", "3",
-        "--retry-delay", "1",
-        "--insecure",
-        "--location",
-        url,
-        "-o", destfile
-      ),
-      stdout = if (isTRUE(quiet)) FALSE else "",
-      stderr = if (isTRUE(quiet)) FALSE else ""
-    ))
-
-    if (identical(status, 0L)) {
-      return(invisible(destfile))
+# Wait until at least `gap` seconds have passed since the last request to the
+# same host, then record this request.
+.qes_polite_wait <- function(url, gap = 1) {
+  host <- .qes_url_host(url)
+  last <- .qes_http_state[[host]]
+  if (!is.null(last)) {
+    elapsed <- as.numeric(difftime(.qes_now(), last, units = "secs"))
+    if (is.finite(elapsed) && elapsed < gap) {
+      .qes_sleep(gap - elapsed)
     }
   }
+  .qes_http_state[[host]] <- .qes_now()
+  invisible(host)
+}
 
-  stop(
-    sprintf(
-      paste0(
-        "Failed to download from '%s'. Initial error: %s. ",
-        "Insecure retry error: %s"
-      ),
-      url,
-      initial_error %||% "unknown error",
-      insecure_error %||% "curl fallback failed"
+# The call to the network, kept apart so tests can check what it receives.
+.qes_download_url <- function(url, destfile, quiet = TRUE) {
+  utils::download.file(url, destfile, method = "libcurl", mode = "wb", quiet = quiet)
+}
+
+.qes_fetch_file <- function(url, destfile, quiet = TRUE) {
+  .qes_polite_wait(url)
+  old <- options(HTTPUserAgent = .qes_user_agent())
+  on.exit(options(old), add = TRUE)
+
+  warns <- list()
+  result <- tryCatch(
+    withCallingHandlers(
+      .qes_download_url(url, destfile, quiet = quiet),
+      warning = function(w) {
+        warns[[length(warns) + 1L]] <<- w
+        invokeRestart("muffleWarning")
+      }
     ),
-    call. = FALSE
+    error = function(e) e
   )
+
+  if (inherits(result, "error") || !identical(as.integer(result), 0L)) {
+    unlink(destfile)
+    parent <- if (inherits(result, "error")) result else NULL
+    details <- vapply(warns, conditionMessage, character(1))
+    .qes_abort(
+      "network",
+      class = "qesR_error_network",
+      args = list(.qes_q(url)),
+      data = list(url = url, attempts = 1L, warnings = warns),
+      parent = parent,
+      details = details
+    )
+  }
+
+  for (w in warns) {
+    warning(w)
+  }
+  invisible(destfile)
 }
 
 .fetch_qes_metadata <- function(study, quiet = TRUE) {
@@ -148,18 +133,19 @@
   json_file <- tempfile(fileext = ".json")
   on.exit(unlink(json_file), add = TRUE)
 
-  .download_file_with_fallback(
+  .qes_fetch_file(
     metadata_url,
     json_file,
-    quiet = quiet,
-    allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+    quiet = quiet
   )
   metadata <- jsonlite::fromJSON(json_file, simplifyVector = FALSE)
 
   if (!identical(metadata$status, "OK")) {
-    stop(
-      sprintf("Unable to fetch metadata for %s (%s).", study$qes_survey_code, study$doi),
-      call. = FALSE
+    .qes_abort(
+      "source_metadata",
+      class = "qesR_error_source",
+      args = list(.qes_q(study$qes_survey_code), study$doi),
+      data = list(study = study$qes_survey_code, file_id = NA_character_)
     )
   }
 
@@ -170,7 +156,12 @@
   files <- metadata$data$latestVersion$files
 
   if (is.null(files) || length(files) == 0L) {
-    stop(sprintf("No files were found for survey code '%s'.", srvy_code), call. = FALSE)
+    .qes_abort(
+      "source_no_files",
+      class = "qesR_error_source",
+      args = list(.qes_q(srvy_code)),
+      data = list(study = srvy_code, file_id = NA_character_)
+    )
   }
 
   data.frame(
@@ -187,7 +178,7 @@
 .select_file_by_preference <- function(df) {
   preferred_extensions <- c(
     "sav", "zsav", "dta", "por", "sas7bdat", "xpt",
-    "csv", "tsv", "tab", "txt", "rds", "zip"
+    "csv", "tsv", "tab", "txt", "zip"
   )
 
   for (ext in preferred_extensions) {
@@ -201,19 +192,17 @@
   df[which.max(df$size), , drop = FALSE]
 }
 
-.choose_remote_file <- function(files_df, file = NULL) {
+.choose_remote_file <- function(files_df, file = NULL, study_code = NA_character_) {
   if (!is.null(file)) {
     .assert_single_string(file, "file")
 
     matches <- grepl(file, files_df$filename, ignore.case = TRUE)
     if (!any(matches)) {
-      stop(
-        sprintf(
-          "No files matched regex '%s'. Available files: %s",
-          file,
-          paste(files_df$filename, collapse = ", ")
-        ),
-        call. = FALSE
+      .qes_abort(
+        "file_no_match",
+        class = "qesR_error_ambiguous_file",
+        args = list(.qes_q(study_code), .qes_q(file), .qes_q(files_df$filename)),
+        data = list(study = study_code, pattern = file, candidates = files_df$filename)
       )
     }
 
@@ -232,7 +221,7 @@
 
 .find_qes_data_files <- function(files_df) {
   non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
-  supported_extensions <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt", "rds", "zip")
+  supported_extensions <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt", "zip")
   data_candidates <- files_df[!grepl(non_data_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
   data_candidates <- data_candidates[data_candidates$extension %in% supported_extensions, , drop = FALSE]
 
@@ -252,11 +241,10 @@
   tmp <- tempfile(fileext = if (nzchar(ext)) paste0(".", ext) else "")
   access_url <- sprintf("%s/api/access/datafile/%s", study$server, file_id)
 
-  .download_file_with_fallback(
+  .qes_fetch_file(
     access_url,
     tmp,
-    quiet = quiet,
-    allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+    quiet = quiet
   )
   tmp
 }
@@ -273,11 +261,10 @@
 
     downloaded <- tryCatch(
       {
-        .download_file_with_fallback(
+        .qes_fetch_file(
           url,
           xml_file,
-          quiet = quiet,
-          allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+          quiet = quiet
         )
         TRUE
       },
@@ -1143,11 +1130,10 @@
 
   downloaded <- tryCatch(
     {
-      .download_file_with_fallback(
+      .qes_fetch_file(
         pdf_row$download_url[1],
         pdf_file,
-        quiet = quiet,
-        allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+        quiet = quiet
       )
       TRUE
     },
@@ -2103,7 +2089,7 @@
   files <- list.files(unzip_dir, recursive = TRUE, full.names = TRUE)
 
   if (length(files) == 0L) {
-    stop("Zip file did not contain any files.", call. = FALSE)
+    .qes_abort("source_zip_empty", class = "qesR_error_source")
   }
 
   local_df <- data.frame(
@@ -2114,11 +2100,11 @@
     stringsAsFactors = FALSE
   )
 
-  supported <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt", "rds")
+  supported <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt")
   local_df <- local_df[local_df$extension %in% supported, , drop = FALSE]
 
   if (nrow(local_df) == 0L) {
-    stop("No supported data files were found in the zip archive.", call. = FALSE)
+    .qes_abort("source_zip_no_data", class = "qesR_error_source")
   }
 
   non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
@@ -2163,24 +2149,22 @@
     return(.read_text_table(path))
   }
 
-  if (ext == "rds") {
-    return(readRDS(path))
-  }
-
   if (ext == "zip") {
     return(.read_qes_zip(path))
   }
 
-  stop(
-    sprintf("Unsupported file extension '%s'.", ext),
-    call. = FALSE
+  .qes_abort(
+    "source_format",
+    class = "qesR_error_source",
+    args = list(.qes_q(ext)),
+    data = list(study = NA_character_, file_id = NA_character_, format = ext)
   )
 }
 
 .download_and_read_qes <- function(study, file = NULL, quiet = TRUE, read_data = TRUE) {
   metadata <- .fetch_qes_metadata(study, quiet = quiet)
   files_df <- .extract_qes_files(metadata, srvy_code = study$qes_survey_code)
-  selected <- .choose_remote_file(files_df, file = file)
+  selected <- .choose_remote_file(files_df, file = file, study_code = study$qes_survey_code)
   ddi_choice <- .fetch_best_qes_ddi(study, files_df = files_df, selected_file = selected, quiet = quiet)
   ddi_parsed <- ddi_choice$ddi_parsed
   codebook <- .build_qes_codebook(

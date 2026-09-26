@@ -92,21 +92,36 @@
 #'
 #' Reformats a `qes_codebook` object into compact, wide, or long layout.
 #'
-#' @param codebook A `qes_codebook` object from `get_codebook()`.
+#' @param codebook A `qes_codebook` object from `qes_codebook()`.
 #' @param layout One of `"compact"`, `"wide"`, or `"long"`.
 #'
 #' @return A reformatted codebook data frame.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
-#'   cb <- get_codebook("qes2022")
+#'   cb <- qes_codebook("qes2022")
 #'   format_codebook(cb, layout = "long")
 #' }
 #' @export
 format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
+  .qes_deprecate("format_codebook")
+  layout <- match.arg(layout)
+  .format_codebook_impl(codebook, layout = layout)
+}
+
+.qes_abort_not_codebook <- function(codebook) {
+  .qes_abort(
+    "input_codebook",
+    class = "qesR_error_input",
+    data = list(arg = "codebook", value = class(codebook))
+  )
+}
+
+.format_codebook_impl <- function(codebook, layout = c("compact", "wide", "long")) {
   layout <- match.arg(layout)
 
   if (!is.data.frame(codebook)) {
-    stop("`codebook` must be a data.frame returned by get_codebook().", call. = FALSE)
+    .qes_abort_not_codebook(codebook)
   }
 
   codebook <- .normalize_codebook_class(codebook)
@@ -123,20 +138,26 @@ format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
 #'
 #' Extracts value-label mappings from a `qes_codebook` object.
 #'
-#' @param codebook A `qes_codebook` object from `get_codebook()`.
+#' @param codebook A `qes_codebook` object from `qes_codebook()`.
 #' @param variable Optional variable name. If `NULL`, returns mappings for all variables.
 #' @param long If TRUE, return a long data frame with `variable`, `value`, and `value_label` columns.
 #'
 #' @return A named list of value-label vectors, or a long data frame when `long = TRUE`.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
-#'   cb <- get_codebook("qes2022")
+#'   cb <- qes_codebook("qes2022")
 #'   get_value_labels(cb)
 #' }
 #' @export
 get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
+  .qes_deprecate("get_value_labels")
+  .get_value_labels_impl(codebook, variable = variable, long = long)
+}
+
+.get_value_labels_impl <- function(codebook, variable = NULL, long = FALSE) {
   if (!is.data.frame(codebook)) {
-    stop("`codebook` must be a data.frame returned by get_codebook().", call. = FALSE)
+    .qes_abort_not_codebook(codebook)
   }
 
   map <- .codebook_value_map(codebook)
@@ -178,17 +199,27 @@ get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
 #'
 #' Downloads and returns study codebook metadata; results are cached per session.
 #'
-#' @param srvy A qesR survey code from `get_qescodes()`.
+#' Soft-deprecated: use [qes_codebook()], which takes the same arguments.
+#' `get_codebook()` keeps working and will not be removed; it prints a
+#' one-time notice (see [qesR-deprecated]).
+#'
+#' @param srvy A qesR survey code from `get_qescodes()`. Codes are trimmed and
+#'   case-insensitive.
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
-#' @param assign_global If TRUE, assign the codebook to \code{<srvy>_codebook} in the global environment.
+#' @param assign_global If TRUE, also assign the returned codebook as
+#'   \code{<code>_codebook} into the environment the function was called from
+#'   (the global environment only when called at top level), where `<code>` is
+#'   the canonical study code. Defaults to FALSE.
 #' @param quiet If TRUE, suppress informational output.
 #' @param refresh If TRUE, force a fresh download instead of using cache.
 #' @param layout One of `"compact"`, `"wide"`, or `"long"`.
 #'
-#' @return A `qes_codebook` data frame with variable metadata and codebook file manifest attributes.
+#' @return A `qes_codebook` data frame with variable metadata and codebook file
+#'   manifest attributes, returned visibly.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
-#'   cb <- get_codebook("qes2022")
+#'   cb <- qes_codebook("qes2022")
 #'   head(cb)
 #' }
 #' @export
@@ -200,9 +231,28 @@ get_codebook <- function(
   refresh = FALSE,
   layout = c("compact", "wide", "long")
 ) {
+  .qes_deprecate("get_codebook")
+  .qes_codebook_impl(
+    srvy, file = file, assign_global = assign_global, quiet = quiet,
+    refresh = refresh, layout = layout, envir = parent.frame()
+  )
+}
+
+# The codebook pipeline behind qes_codebook() and its legacy aliases.
+# `envir`: where opt-in assignment lands (the caller of the exported name).
+.qes_codebook_impl <- function(
+  srvy,
+  file = NULL,
+  assign_global = FALSE,
+  quiet = FALSE,
+  refresh = FALSE,
+  layout = c("compact", "wide", "long"),
+  envir = NULL
+) {
   layout <- match.arg(layout)
   study <- .get_qes_study(srvy)
-  key <- .codebook_cache_key(study$qes_survey_code, file = file)
+  code <- study$qes_survey_code
+  key <- .codebook_cache_key(code, file = file)
 
   if (!isTRUE(refresh) && exists(key, envir = .qes_codebook_cache, inherits = FALSE)) {
     codebook <- get(key, envir = .qes_codebook_cache, inherits = FALSE)
@@ -211,26 +261,33 @@ get_codebook <- function(
     codebook <- payload$codebook
     codebook <- .normalize_codebook_class(codebook)
     attr(codebook, "cached_at") <- Sys.time()
-    assign(key, codebook, envir = .qes_codebook_cache)
+    .qes_codebook_cache[[key]] <- codebook
   }
+
+  out <- .format_codebook_impl(codebook, layout = layout)
 
   if (isTRUE(assign_global)) {
-    .assign_into_caller(paste0(srvy, "_codebook"), codebook)
+    .qes_assign(paste0(code, "_codebook"), out, envir)
   }
 
-  format_codebook(codebook, layout = layout)
+  out
 }
 
 #' Alias for get_codebook
 #'
 #' Backward-compatible alias for `get_codebook()`.
 #'
+#' Soft-deprecated: use [qes_codebook()], which takes the same arguments.
+#' `get_qes_codebook()` keeps working and will not be removed; it prints a
+#' one-time notice (see [qesR-deprecated]).
+#'
 #' @inheritParams get_codebook
 #'
 #' @return A `qes_codebook` data frame.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
-#'   cb <- get_qes_codebook("qes2022")
+#'   cb <- qes_codebook("qes2022")
 #'   head(cb)
 #' }
 #' @export
@@ -242,23 +299,22 @@ get_qes_codebook <- function(
   refresh = FALSE,
   layout = c("compact", "wide", "long")
 ) {
-  get_codebook(
-    srvy = srvy,
-    file = file,
-    assign_global = assign_global,
-    quiet = quiet,
-    refresh = refresh,
-    layout = layout
+  .qes_deprecate("get_qes_codebook")
+  .qes_codebook_impl(
+    srvy, file = file, assign_global = assign_global, quiet = quiet,
+    refresh = refresh, layout = layout, envir = parent.frame()
   )
 }
 
-#' Alias for get_codebook
+#' Get a Quebec Election Study Codebook
 #'
-#' Convenience alias for `get_codebook()`.
+#' Returns the codebook of a study: one row per variable, with its label,
+#' question text and value labels, plus a manifest of the study's
+#' documentation files. Results are cached per session.
 #'
 #' @inheritParams get_codebook
 #'
-#' @return A `qes_codebook` data frame.
+#' @return A `qes_codebook` data frame, returned visibly.
 #' @examples
 #' \donttest{
 #'   cb <- qes_codebook("qes2022")
@@ -273,13 +329,9 @@ qes_codebook <- function(
   refresh = FALSE,
   layout = c("compact", "wide", "long")
 ) {
-  get_codebook(
-    srvy = srvy,
-    file = file,
-    assign_global = assign_global,
-    quiet = quiet,
-    refresh = refresh,
-    layout = layout
+  .qes_codebook_impl(
+    srvy, file = file, assign_global = assign_global, quiet = quiet,
+    refresh = refresh, layout = layout, envir = parent.frame()
   )
 }
 
@@ -289,22 +341,32 @@ qes_codebook <- function(
 #'
 #' @param srvy A qesR survey code. Required if `codebook` is NULL.
 #' @param codebook A `qes_codebook` object.
-#' @param file Optional file selector passed to `get_codebook()` when `codebook` is not provided.
+#' @param file Optional file selector passed to `qes_codebook()` when `codebook` is not provided.
 #' @param quiet If TRUE, suppress informational output when downloading.
 #' @param refresh If TRUE, force a fresh codebook download when `codebook` is not provided.
 #'
 #' @return A data frame of codebook/support files.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   get_codebook_files(srvy = "qes2022")
 #' }
 #' @export
 get_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
+  .qes_deprecate("get_codebook_files")
+  .get_codebook_files_impl(srvy, codebook = codebook, file = file, quiet = quiet, refresh = refresh)
+}
+
+.get_codebook_files_impl <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
   if (is.null(codebook)) {
     if (is.null(srvy)) {
-      stop("Provide `srvy` or `codebook`.", call. = FALSE)
+      .qes_abort(
+        "input_srvy_or_codebook",
+        class = "qesR_error_input",
+        data = list(arg = "srvy", value = NULL)
+      )
     }
-    codebook <- get_codebook(srvy, file = file, quiet = quiet, refresh = refresh, layout = "compact")
+    codebook <- .qes_codebook_impl(srvy, file = file, quiet = quiet, refresh = refresh, layout = "compact")
   }
 
   files <- attr(codebook, "codebook_files", exact = TRUE)
@@ -328,12 +390,13 @@ get_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet 
 #'
 #' @param srvy A qesR survey code.
 #' @param dest_dir Directory where files should be downloaded.
-#' @param file Optional file selector passed to `get_codebook()`.
+#' @param file Optional file selector passed to `qes_codebook()`.
 #' @param quiet If TRUE, suppress informational output.
 #' @param refresh If TRUE, force a fresh codebook metadata download first.
 #' @param overwrite If TRUE, overwrite existing files in `dest_dir`.
 #'
 #' @return A data frame containing source file metadata and local download paths.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   download_codebook("qes2022", dest_dir = tempdir())
@@ -347,19 +410,33 @@ download_codebook <- function(
   refresh = FALSE,
   overwrite = FALSE
 ) {
+  .qes_deprecate("download_codebook")
+  .download_codebook_impl(
+    srvy, dest_dir = dest_dir, file = file, quiet = quiet,
+    refresh = refresh, overwrite = overwrite
+  )
+}
+
+.download_codebook_impl <- function(
+  srvy,
+  dest_dir = tempdir(),
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE,
+  overwrite = FALSE
+) {
   .assert_single_string(dest_dir, "dest_dir")
   if (!dir.exists(dest_dir)) {
     dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
   }
 
   study <- .get_qes_study(srvy)
-  codebook <- get_codebook(srvy, file = file, quiet = quiet, refresh = refresh, layout = "compact")
-  files <- get_codebook_files(codebook = codebook)
+  code <- study$qes_survey_code
+  codebook <- .qes_codebook_impl(code, file = file, quiet = quiet, refresh = refresh, layout = "compact")
+  files <- .get_codebook_files_impl(codebook = codebook)
 
   if (nrow(files) == 0L) {
-    if (!quiet) {
-      message(sprintf("No codebook/support files found for '%s'.", srvy))
-    }
+    .qes_inform("no_codebook_files", class = "qesR_message_download", args = list(.qes_q(code)), data = list(study = code), quiet = quiet)
     files$local_path <- character(0)
     files$downloaded <- logical(0)
     return(files)
@@ -378,11 +455,10 @@ download_codebook <- function(
       next
     }
 
-    .download_file_with_fallback(
+    .qes_fetch_file(
       files$download_url[i],
       out_path,
-      quiet = quiet,
-      allow_insecure_retry = isTRUE(study$allow_insecure_retry)
+      quiet = quiet
     )
     downloaded[i] <- TRUE
   }
@@ -399,13 +475,15 @@ download_codebook <- function(
 #' @inheritParams get_codebook_files
 #'
 #' @return A data frame of codebook/support files.
+#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{
 #'   get_qes_codebook_files(srvy = "qes2022")
 #' }
 #' @export
 get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
-  get_codebook_files(
+  .qes_deprecate("get_qes_codebook_files")
+  .get_codebook_files_impl(
     srvy = srvy,
     codebook = codebook,
     file = file,
