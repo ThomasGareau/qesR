@@ -18,3 +18,4 @@
 ^qesR_.*\.tar\.gz$
 ^cran-comments\.md$
 ^\.claude$
+^dev$
