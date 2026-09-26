@@ -1776,3 +1776,11 @@ When this section was written, nothing below had been fetched. The item texts ke
   - **Why the existing builds do not qualify:** the tracked `qes_master.csv` was built by older code, and the fresh 39,132-row build ran under French messages and lost panel rows ([A:D10]).
   - **What depends on it:** the frozen `legacy_source_map.csv` (S4) and the `compare_legacy.R` gate.
   - **Who:** Claude builds it in a temporary library and a fresh session (same privacy check as R2), writing only to the scratchpad. The owner is asked only if a plain request cannot fetch a file.
+
+### 13.4 Owner requests from the slices
+
+Local actions that the binding rules leave to the owner. Nothing here blocks a slice.
+
+- **S0b cleanup (§10).** Delete the ignored, unused local files `qes_master_test.csv`, `qes_master_test.rds` and `qes_master_test_source_map.csv` in the repository root. They stay on disk until the owner confirms. Run `git fetch` to refresh the stale `origin/gh-pages` ref, and optionally `dot_clean -m .` to remove macOS `._*` files (they are git- and build-ignored, so they are harmless).
+- **Local waldo (S0b, resolved).** An earlier session saw waldo 0.5.2 fail to load next to glue 1.8.0, which broke tests under `R CMD check` only. The system library now has waldo 0.6.2, and `R CMD check --as-cran` passes the tests with the default library (336 pass, 0 fail, 18 skip). Nothing to do.
+- **Local HTML validator (S0b, optional).** `/usr/bin/tidy` is Apple's 2006 build and predates HTML5, so `R CMD check` adds a NOTE ("`<main>` is not recognized") for every Rd. Installing tidy-html5 (for example `brew install tidy-html5`) removes it. CRAN does not see this NOTE; it is explained in `cran-comments.md`.

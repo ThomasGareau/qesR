@@ -1,6 +1,8 @@
 # qesR (development version)
 
 - Help pages are now generated with roxygen2 from comments in `R/`. Their content is unchanged: same topics, arguments, defaults and examples. The package help page is also available as `?qesR` and now lists the authors and project links.
+- The test suite is back (testthat 3rd edition). It restores the tests removed before 0.4.4, except one that required the insecure TLS retry, and adds contract tests for the 14 exported functions: their arguments, visible return values, no writes outside `tempdir()` or into your workspace by default, opt-in assignment, and the column names that `get_qes()`, `get_qes_master()`, `get_decon()` and the codebook helpers return. Tests run offline against a simulated Dataverse; the live check against Dataverse runs only when `QESR_LIVE=true`.
+- `R CMD check --as-cran` now runs on GitHub Actions for every push and pull request on macOS, Windows and Ubuntu (R devel, release, oldrel-1 and 4.1).
 
 # qesR 0.4.4
 

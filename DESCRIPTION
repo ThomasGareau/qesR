@@ -32,7 +32,10 @@ Suggests:
     ggplot2,
     knitr,
     pkgdown,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.1.7),
+    withr (>= 2.5.0)
+Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://thomasgareau.github.io/qesR/,
     https://github.com/ThomasGareau/qesR,
