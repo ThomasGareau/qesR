@@ -6,6 +6,7 @@ time.
 Show code used in this page
 
 ``` r
+
 library(dplyr)
 library(ggplot2)
 library(knitr)
@@ -68,19 +69,19 @@ across study periods.
 
 ## Table 1: sovereignty support by study period
 
-| Study period | N respondents | N with sovereignty item | Sovereignty support (%) | 95% CI (%)   |
-|:-------------|--------------:|------------------------:|------------------------:|:-------------|
-| 1998         |          1483 |                     381 |                    43.3 | 38.3 to 48.3 |
-| 2007         |          9244 |                    8207 |                    40.1 | 39.0 to 41.1 |
-| 2008         |         11162 |                   10379 |                    40.1 | 39.2 to 41.0 |
-| 2009         |          8008 |                    7455 |                    39.3 | 38.2 to 40.4 |
-| 2010         |          1000 |                     923 |                    39.9 | 36.7 to 43.0 |
-| 2012         |          2349 |                    2066 |                    40.1 | 38.0 to 42.2 |
-| 2014         |          1517 |                    1353 |                    34.1 | 31.6 to 36.7 |
-| 2018         |          4322 |                    3338 |                    33.6 | 32.0 to 35.2 |
-| 2022         |          1521 |                    1284 |                    36.4 | 33.7 to 39.0 |
+| Study period | N respondents | N with sovereignty item | Sovereignty support (%) | 95% CI (%) |
+|:---|---:|---:|---:|:---|
+| 1998 | 1483 | 381 | 43.3 | 38.3 to 48.3 |
+| 2007 | 9244 | 8207 | 40.1 | 39.0 to 41.1 |
+| 2008 | 11162 | 10379 | 40.1 | 39.2 to 41.0 |
+| 2009 | 8008 | 7455 | 39.3 | 38.2 to 40.4 |
+| 2010 | 1000 | 923 | 39.9 | 36.7 to 43.0 |
+| 2012 | 2349 | 2066 | 40.1 | 38.0 to 42.2 |
+| 2014 | 1517 | 1353 | 34.1 | 31.6 to 36.7 |
+| 2018 | 4322 | 3338 | 33.6 | 32.0 to 35.2 |
+| 2022 | 1521 | 1284 | 36.4 | 33.7 to 39.0 |
 
-Sovereignty support by study period
+Sovereignty support by study period {.table}
 
 ## Figure 1: sovereignty trend
 

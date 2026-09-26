@@ -19,7 +19,7 @@
 |       2018 | qes2018_panel      |        1250 |
 |       2022 | qes2022            |        1521 |
 
-Sample sizes by study
+Sample sizes by study {.table}
 
 ## Table 2: age-group composition by year
 
@@ -33,7 +33,7 @@ Sample sizes by study
 |       2018 |             4052 |      26.4 |      24.7 |    48.9 |
 |       2022 |             1521 |      25.3 |      32.3 |    42.4 |
 
-Age-group composition by year
+Age-group composition by year {.table}
 
 ## Figure 1: age-group profile over time
 
@@ -52,7 +52,7 @@ years.](analysis-descriptive_files/figure-html/unnamed-chunk-6-1.png)
 |       2018 |          4322 |                3131 |             93.0 | 92.1 to 93.9 |
 |       2022 |          1521 |                1322 |             98.0 | 97.3 to 98.8 |
 
-Turnout indicator by year
+Turnout indicator by year {.table}
 
 ## Figure 2: turnout trend
 

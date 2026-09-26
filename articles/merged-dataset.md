@@ -6,6 +6,7 @@
 ## Build merged data
 
 ``` r
+
 library(qesR)
 
 master <- get_qes_master(strict = FALSE)
@@ -37,11 +38,13 @@ also keeps the merge logic explicit:
 It also records source-variable provenance:
 
 ``` r
+
 source_map <- attr(master, "source_map")
 head(source_map)
 ```
 
 ``` r
+
 name_map <- attr(master, "variable_name_map")
 head(name_map)
 ```
@@ -58,6 +61,7 @@ applies:
 ## Save merged data
 
 ``` r
+
 get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```

@@ -6,6 +6,7 @@ codebooks et un fichier fusionné harmonisé.
 ## Installation
 
 ``` r
+
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("ThomasGareau/qesR")
 library(qesR)
@@ -25,6 +26,7 @@ library(qesR)
 ## Exemple rapide
 
 ``` r
+
 codes <- get_qescodes(detailed = TRUE)
 qes2022 <- get_qes("qes2022")
 cb <- get_codebook("qes2022")

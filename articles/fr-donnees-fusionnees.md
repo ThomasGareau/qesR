@@ -6,6 +6,7 @@
 ## Construire la base fusionnée
 
 ``` r
+
 library(qesR)
 
 master <- get_qes_master(strict = FALSE)
@@ -39,6 +40,7 @@ La déduplication s’applique uniquement à l’intérieur d’un même code
 d’étude (pas entre enquêtes panel et non-panel).
 
 ``` r
+
 name_map <- attr(master, "variable_name_map")
 head(name_map)
 ```
@@ -46,6 +48,7 @@ head(name_map)
 ## Exporter
 
 ``` r
+
 get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```

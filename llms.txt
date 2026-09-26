@@ -7,6 +7,7 @@ Access Quebec Election Study datasets in R.
 Install the development version from GitHub:
 
 ``` r
+
 if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
 devtools::install_github("ThomasGareau/qesR")
 ```
@@ -27,6 +28,7 @@ The package provides access to QES surveys through:
 ## Examples
 
 ``` r
+
 library(qesR)
 
 # list survey call codes
@@ -61,6 +63,7 @@ head(master)
 `qesR` includes a merged harmonized dataset workflow:
 
 ``` r
+
 get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```
