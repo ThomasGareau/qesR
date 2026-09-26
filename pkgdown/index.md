@@ -2,102 +2,73 @@
 title: qesR
 ---
 
-<p>
-  <img src="logo.png" alt="qesR logo" width="220" />
-</p>
+# qesR <img src="logo.png" align="right" height="139" alt="qesR logo" />
 
-Access Quebec Election Study datasets in R.
+qesR loads the Quebec Election Studies and related Quebec election surveys
+into R by study code. Each code points to one Dataverse deposit, and the
+package ships an offline catalog of the studies (with the dataset version and
+data file each code is pinned to), their documents and their citations.
 
 ## Installation
 
-Install the development version from GitHub:
-
 ```r
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("ThomasGareau/qesR")
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
 ```
 
-## Using the package
-
-The package provides access to QES surveys through:
-
-- `get_qes(srvy)`: download a survey by code
-- `qes_studies()`: list the studies, with their DOI, licence and pinned version
-- `get_preview(srvy, obs)`: preview a survey
-- `get_question(data, variable)`: retrieve question text
-- `get_codebook(srvy)`: get survey codebook
-- `get_qes_master()`: build a harmonized merged dataset
-
-## Examples
+## A first session
 
 ```r
 library(qesR)
 
-# list the studies
-qes_studies()
+# Which studies are there? (offline)
+studies <- qes_studies()
+studies[, c("study", "year", "title_en", "licence")]
 
-# load one survey
-qes2022 <- get_qes("qes2022")
+# Load one study. The data is returned, not written into your workspace.
+qes2018 <- get_qes("qes2018")
 
-# preview observations
-get_preview("qes2022", 10)
-
-# retrieve question text
-get_question(qes2022, "cps_age_in_years", full = TRUE)
-
-# build merged cross-study dataset
-master <- get_qes_master(strict = FALSE)
-head(master)
+# Its codebook, its deposited documents and its citation
+cb <- qes_codebook("qes2018")
+qes_docs("qes2018")
+qes_cite("qes2018")
 ```
 
-## Details
+The data comes back with its value labels (haven `labelled` columns), and the
+codebook gives each variable's label and question text.
 
-- downloaded survey files are read and returned in labelled form
-- codebook metadata is attached and available through `get_codebook()`
-- merged dataset creation includes harmonization, de-duplication, and filtering of empty rows
-- source-variable provenance is available via `attr(master, "source_map")`
+## Where to go next
 
-## Merged dataset
+- [Getting started](articles/get-started.html): loading a study, codebooks,
+  errors you can handle in scripts.
+- [Study catalog](articles/studies.html): every study code, with its design,
+  population, size, licence, DOI and documents. The page is generated from the
+  catalog that ships with the package, the same data as `qes_studies()`.
+- [Study citations](articles/study-citations.html): how to cite qesR and each
+  dataset you use.
+- [Merged dataset](articles/merged-dataset.html): `get_qes_master()` stacks
+  the studies of qesR 0.4.4 into one harmonized file.
+- [Reference](reference/index.html): every function. The functions of qesR
+  0.4.4 are grouped under *Legacy functions*; they keep working.
 
-`qesR` includes a merged harmonized dataset workflow:
+Not every study is a Quebec Election Study: the Durand panels, the CROP polls
+and the 1998 polls are listed under their own titles and authors. Check each
+study's design and population in the catalog before comparing them.
 
-```r
-get_qes_master(save_path = "qes_master.csv", strict = FALSE)
-get_qes_master(save_path = "qes_master.rds", strict = FALSE)
-```
+## En français
 
-Harmonized fields include demographics (age, gender, education, income), vote choice, party identification, sovereignty attitudes, leader thermometers, and more. Use `colnames(master)` to see the full list.
+qesR charge les Études électorales québécoises et d'autres enquêtes
+électorales québécoises dans R à partir d'un code d'étude. Les messages et
+les erreurs sont aussi offerts en français avec `options(qesR.lang = "fr")`.
 
-Source-variable provenance is available via `attr(master, "source_map")` and old-to-new variable name mappings via `attr(master, "variable_name_map")`.
+- [Démarrage](articles/fr-demarrage.html)
+- [Catalogue des études](articles/fr-etudes.html)
+- [Citations des études](articles/fr-citations-etudes.html)
+- [Données fusionnées](articles/fr-donnees-fusionnees.html)
 
-See: [Merged Dataset](articles/merged-dataset.html)
+## Data licences
 
-## Survey code table
-
-| year | code | name |
-|---|---|---|
-| 2022 | `qes2022` | Quebec Election Study 2022 |
-| 2018 | `qes2018` | Quebec Election Study 2018 |
-| 2018 | `qes2018_panel` | Quebec Election Study 2018 Panel |
-| 2014 | `qes2014` | Quebec Election Study 2014 |
-| 2012 | `qes2012` | Quebec Election Study 2012 |
-| 2012 | `qes2012_panel` | Quebec Election Study 2012 Panel |
-| 2007-2010 | `qes_crop_2007_2010` | CROP Quebec Opinion Polls (2007-2010) |
-| 2008 | `qes2008` | Quebec Election Study 2008 |
-| 2007 | `qes2007` | Quebec Election Study 2007 |
-| 2007 | `qes2007_panel` | Quebec Election Study 2007 Panel |
-| 1998 | `qes1998` | Quebec Elections 1998 |
-
-## Citations
-
-Full citations for all studies are listed in:
-
-- [Study Citations](articles/study-citations.html)
-
-## Use case examples
-
-Use case examples available in separate tabs:
-
-- [Evolution of sovereignty attitudes](articles/analysis-sovereignty.html)
-- [Vote-choice patterns over time](articles/analysis-vote-choice.html)
-
+The data are not part of the package: qesR downloads them from Borealis and
+the Harvard Dataverse. Most studies are released under CC0 1.0. The 2022 study
+is CC BY-NC 4.0 (attribution, no commercial use). `qes_studies()$licence`
+gives the licence of each study.

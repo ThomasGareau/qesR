@@ -1,0 +1,99 @@
+---
+title: "Catalogue des études"
+params:
+  lang: "fr"
+---
+
+Toutes les études que qesR peut charger, avec les informations que qesR fixe
+pour chacune. Cette page est produite à la construction du site à partir du
+catalogue fourni avec le package (`inst/extdata/catalog/`) : ce sont les
+mêmes données que `qes_studies()` et `qes_docs()`, sans copie rédigée à la
+main. [English version](studies.html).
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE, warning = FALSE)
+```
+
+```{r catalog}
+library(qesR)
+lang <- params$lang
+fr <- identical(lang, "fr")
+dir <- system.file("extdata", "catalog", package = "qesR", mustWork = TRUE)
+read <- function(name) {
+  utils::read.csv(file.path(dir, name), colClasses = "character", encoding = "UTF-8", na.strings = "")
+}
+enums <- read("enums.csv")
+label <- function(enum, value) {
+  e <- enums[enums$enum == enum, , drop = FALSE]
+  e[[if (fr) "label_fr" else "label_en"]][match(value, e$value)]
+}
+files <- read("files.csv")
+studies <- qes_studies()
+docs <- qes_docs()
+pick <- function(en, fr_text) if (fr) fr_text else en
+data_rows <- files$n_rows[match(
+  paste(studies$study, studies$data_file_id),
+  paste(files$study, files$file_id)
+)]
+years <- ifelse(studies$year_end == studies$year, studies$year, paste0(studies$year, "-", studies$year_end))
+```
+
+## Études
+
+```{r studies}
+knitr::kable(data.frame(
+  code = paste0("`", studies$study, "`"),
+  year = years,
+  title = sprintf("[%s](%s)", studies[[pick("title_en", "title_fr")]], studies$doi_url),
+  design = label("study_design", studies$study_design),
+  population = studies[[pick("target_population_en", "target_population_fr")]],
+  n = format(as.integer(data_rows), big.mark = pick(",", "\u00a0")),
+  licence = studies$licence,
+  version = studies$dataset_version
+), col.names = if (fr) {
+  c("Code", "Année", "Étude (DOI)", "Devis", "Population", "n", "Licence", "Version")
+} else {
+  c("Code", "Year", "Study (DOI)", "Design", "Population", "n", "Licence", "Version")
+}, align = "lllllrll")
+```
+
+Chaque titre renvoie au DOI du dépôt. `n` est le nombre de lignes du fichier
+de données fixé et *Version* la version fixée du jeu de données. Les panels de Durand,
+les sondages CROP et les sondages de 1998 ne font pas partie des Études
+électorales québécoises ; ils figurent sous leur propre titre. Les trois codes
+de 1998 partagent un même dépôt.
+
+## Notes
+
+```{r notes, results = "asis"}
+notes <- studies[[pick("notes_en", "notes_fr")]]
+for (i in seq_len(nrow(studies))) {
+  if (!is.na(notes[i]) && nzchar(notes[i])) {
+    cat(sprintf("- **`%s`**: %s\n", studies$study[i], notes[i]))
+  }
+}
+```
+
+## Documents
+
+Livres de codes, questionnaires et rapports déposés avec chaque étude, tels
+que les liste `qes_docs()`. Les liens téléchargent le fichier depuis Dataverse.
+
+```{r docs}
+knitr::kable(data.frame(
+  code = paste0("`", docs$study, "`"),
+  document = sprintf("[%s](%s)", docs$file_name, docs$url),
+  role = label("role", docs$role),
+  lang = label("lang", docs$lang),
+  format = toupper(docs$format)
+), col.names = if (fr) {
+  c("Code", "Document", "Rôle", "Langue", "Format")
+} else {
+  c("Code", "Document", "Role", "Language", "Format")
+})
+```
+
+## Citer
+
+`qes_cite()` donne la citation de chaque étude ; voir
+[Citations des études](fr-citations-etudes.html).

@@ -1,112 +1,49 @@
-/* Brand styling for qesR pkgdown site. */
+/* qesR site styles. Colours come from the logo: blue #0468b9, gold #ffe542,
+   slate #3e4b63. Everything else is Bootstrap 5, set in _pkgdown.yml, so the
+   light and dark themes both work. */
 
 :root {
-  --qesr-deep: #12355b;
-  --qesr-accent: #b5651d;
-  --qesr-sand: #eef3f8;
-  --qesr-border: #cad6e5;
-  --qesr-table-stripe: #f7fafe;
-}
-
-body {
-  background: #ffffff;
+  --qesr-gold: #f2c200;
 }
 
 .navbar {
-  border-bottom: 2px solid rgba(18, 53, 91, 0.24);
+  border-bottom: 3px solid var(--qesr-gold);
 }
 
 .navbar-brand {
-  letter-spacing: 0.02em;
   font-weight: 700;
-}
-
-.navbar-brand img {
-  height: 42px;
-  width: auto;
-}
-
-h1, h2, h3 {
   letter-spacing: 0.01em;
 }
 
-a {
-  color: #0d4070;
-  text-decoration-thickness: 0.08em;
-  text-underline-offset: 0.18em;
+/* Wide catalog tables scroll inside their box instead of the page; the
+   flex column must be allowed to shrink for that to work on phones. */
+main {
+  min-width: 0;
 }
 
-img[alt="qesR logo"] {
+.table-responsive,
+main table {
   display: block;
-  margin: 0 auto 1rem auto;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
-table,
-.table {
-  width: 100%;
-  background: transparent;
-  border: 0;
-  border-collapse: collapse;
-  color: #1b2b3b;
-}
-
-table th,
-.table th {
-  background: var(--qesr-deep);
-  color: #ffffff;
-  border-color: var(--qesr-deep);
+main table th {
   white-space: nowrap;
-  vertical-align: middle;
+  border-bottom: 2px solid var(--bs-primary);
 }
 
-table td,
-.table td {
-  border-color: var(--qesr-border);
-  white-space: normal;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+main table td {
   vertical-align: top;
+  hyphens: manual;
 }
 
-table tbody tr:nth-child(even),
-.table tbody tr:nth-child(even) {
-  background: var(--qesr-table-stripe);
+main table td code {
+  white-space: nowrap;
 }
 
-.table-responsive {
-  background: transparent;
-  border: 0;
-  padding: 0;
-  overflow-x: visible;
-}
-
-@media (max-width: 992px) {
-  .table-responsive {
-    overflow-x: auto;
-  }
-}
-
-.qesr-lang-switch-wrap {
-  margin-left: auto;
-  padding-left: 0.5rem;
-}
-
-.qesr-lang-switch {
-  display: inline-block;
-  border: 1px solid var(--qesr-deep);
-  border-radius: 999px;
-  padding: 0.22rem 0.65rem;
-  font-weight: 700;
-  font-size: 0.78rem;
-  line-height: 1.3;
-  color: var(--qesr-deep);
-  background: #ffffff;
-  text-decoration: none;
-}
-
-.qesr-lang-switch:hover,
-.qesr-lang-switch:focus {
-  background: var(--qesr-deep);
-  color: #ffffff;
-  text-decoration: none;
+/* The EN/FR link at the top of each guide. */
+main .contents > p:first-of-type > em:only-child > a {
+  font-style: normal;
+  font-weight: 600;
 }

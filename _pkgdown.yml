@@ -2,69 +2,23 @@ url: https://thomasgareau.github.io/qesR/
 
 template:
   bootstrap: 5
-  logo: man/figures/logo.png
-  includes:
-    before_body: |
-      <script>
-      (function () {
-        function normalizePath(path) {
-          if (!path || path === "/") return "index.html";
-          var clean = path;
-          while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
-            clean = clean.slice(0, -1);
-          }
-          var segments = clean.split("/").filter(Boolean);
-          if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
-          if (segments.length === 0) return "index.html";
-          return segments.join("/");
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-          var path = window.location.pathname || "/";
-          var rel = normalizePath(path);
-          var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
-          var isFrench = /^articles\/fr-/.test(rel);
-          var map = {
-            "index.html": "articles/fr-demarrage.html",
-            "articles/get-started.html": "articles/fr-demarrage.html",
-            "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
-            "articles/study-citations.html": "articles/fr-citations-etudes.html",
-            "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
-            "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
-            "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
-            "articles/fr-demarrage.html": "articles/get-started.html",
-            "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
-            "articles/fr-citations-etudes.html": "articles/study-citations.html",
-            "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-            "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
-            "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
-          };
-          var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
-          var label = isFrench ? "EN" : "FR";
-          var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
-          if (!navbar) return;
-          var holder = document.createElement("div");
-          holder.className = "qesr-lang-switch-wrap";
-          var btn = document.createElement("a");
-          btn.className = "qesr-lang-switch";
-          btn.href = root + target;
-          btn.textContent = label;
-          btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
-          holder.appendChild(btn);
-          navbar.appendChild(holder);
-        });
-      })();
-      </script>
+  light-switch: true
   bslib:
-    primary: "#12355b"
-    secondary: "#b5651d"
-    base_font:
-      google: "Source Sans 3"
-    heading_font:
-      google: "Space Grotesk"
+    primary: "#0468b9"
+    secondary: "#3e4b63"
+    link-color: "#0357a0"
+    font-size-base: 1.0625rem
+    line-height-base: 1.6
+    headings-font-weight: 650
+    border-radius: 0.375rem
 
 home:
   title: qesR
-  description: Access and harmonize Quebec Election Study datasets in R.
+  description: >
+    Load Quebec Election Study data and related Quebec election surveys in R,
+    with study metadata, documents and citations.
+  sidebar:
+    structure: [links, license, citation, authors, dev]
 
 authors:
   Thomas Gareau-Paquette:
@@ -72,30 +26,56 @@ authors:
 
 navbar:
   structure:
-    left: [get_started, reference, merged, citations, analysis_sovereignty, analysis_vote_choice, news]
-    right: [github]
+    left: [intro, studies, guides, guides_fr, reference, news]
+    right: [search, lightswitch, github]
   components:
-    get_started:
+    intro:
       text: Get started
       href: articles/get-started.html
-    reference:
-      text: Reference
-      href: reference/index.html
+    studies:
+      text: Studies
+      href: articles/studies.html
+    guides:
+      text: Guides
+      menu:
+      - text: Getting started
+        href: articles/get-started.html
+      - text: Study catalog
+        href: articles/studies.html
+      - text: Study citations
+        href: articles/study-citations.html
+      - text: Merged dataset
+        href: articles/merged-dataset.html
+      - text: "-------"
+      - text: Examples
+      - text: Descriptive statistics
+        href: articles/analysis-descriptive.html
+      - text: Sovereignty attitudes
+        href: articles/analysis-sovereignty.html
+      - text: Vote choice over time
+        href: articles/analysis-vote-choice.html
+    guides_fr:
+      text: Guides (FR)
+      menu:
+      - text: Démarrage
+        href: articles/fr-demarrage.html
+      - text: Catalogue des études
+        href: articles/fr-etudes.html
+      - text: Citations des études
+        href: articles/fr-citations-etudes.html
+      - text: Données fusionnées
+        href: articles/fr-donnees-fusionnees.html
+      - text: "-------"
+      - text: Exemples
+      - text: Statistiques descriptives
+        href: articles/fr-analyse-descriptive.html
+      - text: Attitudes souverainistes
+        href: articles/fr-analyse-souverainete.html
+      - text: Choix de vote
+        href: articles/fr-analyse-choix-vote.html
     news:
       text: Changelog
       href: news/index.html
-    merged:
-      text: Merged Dataset
-      href: articles/merged-dataset.html
-    citations:
-      text: Study Citations
-      href: articles/study-citations.html
-    analysis_sovereignty:
-      text: "Use case example: Sovereignty"
-      href: articles/analysis-sovereignty.html
-    analysis_vote_choice:
-      text: "Use case example: Vote Choice"
-      href: articles/analysis-vote-choice.html
     github:
       icon: fa-github
       href: https://github.com/ThomasGareau/qesR
@@ -105,46 +85,64 @@ reference:
 - title: Package
   contents:
   - qesR-package
-  - qesR-deprecated
 - title: Studies, documents and citations
+  desc: >
+    The offline catalog: which studies qesR can load, their documents and how
+    to cite them. No network request unless you ask for one.
   contents:
   - qes_studies
   - qes_docs
   - qes_cite
-- title: Download Studies
+- title: Data
+  desc: Download a study, or build the harmonized master file.
   contents:
-  - get_qescodes
   - get_qes
-  - get_preview
-- title: Codebook Tools
+  - get_qes_master
+- title: Codebooks
   contents:
+  - qes_codebook
+- title: Legacy functions
+  desc: >
+    Functions from qesR 0.4.4. They keep working, with the same arguments, and
+    will not be removed. `?qesR-deprecated` names the replacement of each one.
+  contents:
+  - qesR-deprecated
+  - get_qescodes
+  - get_preview
   - get_codebook
   - get_qes_codebook
-  - qes_codebook
   - format_codebook
   - get_value_labels
   - get_question
   - get_codebook_files
   - get_qes_codebook_files
   - download_codebook
-- title: Harmonized Data
-  contents:
   - get_decon
-  - get_qes_master
 
 articles:
-- title: Tutorials
-  navbar: Tutorials
+- title: Guides
+  navbar: ~
   contents:
   - get-started
-  - merged-dataset
+  - articles/studies
   - study-citations
-  - analysis-sovereignty
+  - merged-dataset
+- title: Examples
+  navbar: ~
+  contents:
   - analysis-descriptive
+  - analysis-sovereignty
   - analysis-vote-choice
+- title: Guides en français
+  navbar: ~
+  contents:
   - fr-demarrage
-  - fr-donnees-fusionnees
+  - articles/fr-etudes
   - fr-citations-etudes
-  - fr-analyse-souverainete
+  - fr-donnees-fusionnees
+- title: Exemples en français
+  navbar: ~
+  contents:
   - fr-analyse-descriptive
+  - fr-analyse-souverainete
   - fr-analyse-choix-vote

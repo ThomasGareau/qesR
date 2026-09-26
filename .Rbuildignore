@@ -24,3 +24,4 @@
 (^|/)\.AppleDouble$
 ^data-raw$
 ^\.gitattributes$
+^vignettes/articles$

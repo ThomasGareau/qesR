@@ -7,6 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+*[Version française](fr-analyse-choix-vote.html)*
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,

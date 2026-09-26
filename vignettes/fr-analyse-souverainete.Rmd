@@ -7,6 +7,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+*[English version](analysis-sovereignty.html)*
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
