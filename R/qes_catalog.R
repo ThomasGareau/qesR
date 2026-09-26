@@ -85,13 +85,16 @@
   catalog
 })
 
-#' List Quebec Election Study survey codes
+#' List Quebec Election Study Survey Codes
 #'
-#' Returns available qesR survey codes, with optional extended metadata.
+#' Returns a data frame of qesR survey call codes, with optional detailed metadata.
 #'
-#' @param detailed If `TRUE`, include year, names, DOI, and documentation
-#'   columns.
-#' @return A data frame with qesR survey codes.
+#' @param detailed If TRUE, include year, names, DOI, and documentation columns.
+#'
+#' @return A data frame of qesR survey codes (cesR-style by default).
+#' @examples
+#' get_qescodes()
+#' get_qescodes(detailed = TRUE)
 #' @export
 get_qescodes <- function(detailed = FALSE) {
   out <- .qes_catalog[, c(

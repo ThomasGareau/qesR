@@ -19,3 +19,6 @@
 ^cran-comments\.md$
 ^\.claude$
 ^dev$
+(^|/)\._
+(^|/)\.DS_Store$
+(^|/)\.AppleDouble$

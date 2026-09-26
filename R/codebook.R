@@ -88,12 +88,19 @@
   .copy_codebook_attrs(codebook, out)
 }
 
-#' Reformat a qesR codebook layout
+#' Reformat a qesR Codebook
 #'
-#' @param codebook A `qes_codebook` object.
+#' Reformats a `qes_codebook` object into compact, wide, or long layout.
+#'
+#' @param codebook A `qes_codebook` object from `get_codebook()`.
 #' @param layout One of `"compact"`, `"wide"`, or `"long"`.
 #'
 #' @return A reformatted codebook data frame.
+#' @examples
+#' \donttest{
+#'   cb <- get_codebook("qes2022")
+#'   format_codebook(cb, layout = "long")
+#' }
 #' @export
 format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
   layout <- match.arg(layout)
@@ -112,14 +119,20 @@ format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
   )
 }
 
-#' Get value labels from a codebook
+#' Get Value Labels from a Codebook
 #'
-#' @param codebook A `qes_codebook` object.
-#' @param variable Optional variable name. If `NULL`, returns all variables.
-#' @param long If `TRUE`, return a long data frame with `variable`, `value`, and
-#'   `value_label` columns.
+#' Extracts value-label mappings from a `qes_codebook` object.
 #'
-#' @return A named list or a data frame of value labels.
+#' @param codebook A `qes_codebook` object from `get_codebook()`.
+#' @param variable Optional variable name. If `NULL`, returns mappings for all variables.
+#' @param long If TRUE, return a long data frame with `variable`, `value`, and `value_label` columns.
+#'
+#' @return A named list of value-label vectors, or a long data frame when `long = TRUE`.
+#' @examples
+#' \donttest{
+#'   cb <- get_codebook("qes2022")
+#'   get_value_labels(cb)
+#' }
 #' @export
 get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
   if (!is.data.frame(codebook)) {
@@ -161,22 +174,23 @@ get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
   do.call(rbind, rows)
 }
 
-#' Get a Quebec election study codebook
+#' Get a Quebec Election Study Codebook
 #'
-#' Downloads and returns the codebook (variable metadata + value-label metadata)
-#' for a study. Results are cached per session.
+#' Downloads and returns study codebook metadata; results are cached per session.
 #'
-#' @param srvy A qesR survey code (see [get_qescodes()]).
-#' @param file Optional regular expression to select a specific file when a
-#'   Dataverse dataset has multiple files.
-#' @param assign_global If `TRUE`, assign the codebook into the calling
-#'   environment as `<srvy>_codebook`.
-#' @param quiet If `TRUE`, suppress informational output and download progress.
-#' @param refresh If `TRUE`, force a fresh download instead of using session
-#'   cache.
+#' @param srvy A qesR survey code from `get_qescodes()`.
+#' @param file Optional regular expression for choosing one file in multi-file datasets.
+#' @param assign_global If TRUE, assign the codebook to \code{<srvy>_codebook} in the global environment.
+#' @param quiet If TRUE, suppress informational output.
+#' @param refresh If TRUE, force a fresh download instead of using cache.
 #' @param layout One of `"compact"`, `"wide"`, or `"long"`.
 #'
-#' @return A `qes_codebook` data frame.
+#' @return A `qes_codebook` data frame with variable metadata and codebook file manifest attributes.
+#' @examples
+#' \donttest{
+#'   cb <- get_codebook("qes2022")
+#'   head(cb)
+#' }
 #' @export
 get_codebook <- function(
   srvy,
@@ -209,10 +223,16 @@ get_codebook <- function(
 
 #' Alias for get_codebook
 #'
-#' Backward-compatible alias for [get_codebook()].
+#' Backward-compatible alias for `get_codebook()`.
 #'
 #' @inheritParams get_codebook
+#'
 #' @return A `qes_codebook` data frame.
+#' @examples
+#' \donttest{
+#'   cb <- get_qes_codebook("qes2022")
+#'   head(cb)
+#' }
 #' @export
 get_qes_codebook <- function(
   srvy,
@@ -234,10 +254,16 @@ get_qes_codebook <- function(
 
 #' Alias for get_codebook
 #'
-#' Convenience alias for [get_codebook()].
+#' Convenience alias for `get_codebook()`.
 #'
 #' @inheritParams get_codebook
+#'
 #' @return A `qes_codebook` data frame.
+#' @examples
+#' \donttest{
+#'   cb <- qes_codebook("qes2022")
+#'   head(cb)
+#' }
 #' @export
 qes_codebook <- function(
   srvy,
@@ -257,20 +283,21 @@ qes_codebook <- function(
   )
 }
 
-#' Get codebook files
+#' Get Codebook Files
 #'
-#' Returns codebook/support files (e.g., PDFs, questionnaires, metadata files)
-#' associated with a study.
+#' Returns codebook/support files (PDFs, questionnaires, metadata files) associated with a study.
 #'
-#' @param srvy A qesR survey code. Required if `codebook` is `NULL`.
-#' @param codebook A `qes_codebook` object. If supplied, `srvy` is optional.
-#' @param file Optional file selector passed to [get_codebook()] when `codebook`
-#'   is not provided.
-#' @param quiet If `TRUE`, suppress informational output when downloading.
-#' @param refresh If `TRUE`, force a fresh codebook download when `codebook` is
-#'   not provided.
+#' @param srvy A qesR survey code. Required if `codebook` is NULL.
+#' @param codebook A `qes_codebook` object.
+#' @param file Optional file selector passed to `get_codebook()` when `codebook` is not provided.
+#' @param quiet If TRUE, suppress informational output when downloading.
+#' @param refresh If TRUE, force a fresh codebook download when `codebook` is not provided.
 #'
 #' @return A data frame of codebook/support files.
+#' @examples
+#' \donttest{
+#'   get_codebook_files(srvy = "qes2022")
+#' }
 #' @export
 get_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
   if (is.null(codebook)) {
@@ -295,19 +322,22 @@ get_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet 
   files
 }
 
-#' Download codebook/support files to disk
+#' Download Codebook Files
 #'
-#' Downloads codebook/support files (for example, PDF codebooks or questionnaires)
-#' into a local directory.
+#' Downloads codebook/support files (PDFs, questionnaires, metadata files) into a local directory.
 #'
 #' @param srvy A qesR survey code.
 #' @param dest_dir Directory where files should be downloaded.
-#' @param file Optional file selector passed to [get_codebook()].
-#' @param quiet If `TRUE`, suppress informational output and download progress.
-#' @param refresh If `TRUE`, force a fresh codebook metadata download first.
-#' @param overwrite If `TRUE`, overwrite existing files in `dest_dir`.
+#' @param file Optional file selector passed to `get_codebook()`.
+#' @param quiet If TRUE, suppress informational output.
+#' @param refresh If TRUE, force a fresh codebook metadata download first.
+#' @param overwrite If TRUE, overwrite existing files in `dest_dir`.
 #'
-#' @return A data frame with source filename and local download path.
+#' @return A data frame containing source file metadata and local download paths.
+#' @examples
+#' \donttest{
+#'   download_codebook("qes2022", dest_dir = tempdir())
+#' }
 #' @export
 download_codebook <- function(
   srvy,
@@ -364,10 +394,15 @@ download_codebook <- function(
 
 #' Alias for get_codebook_files
 #'
-#' Backward-compatible alias for [get_codebook_files()].
+#' Backward-compatible alias for `get_codebook_files()`.
 #'
 #' @inheritParams get_codebook_files
+#'
 #' @return A data frame of codebook/support files.
+#' @examples
+#' \donttest{
+#'   get_qes_codebook_files(srvy = "qes2022")
+#' }
 #' @export
 get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
   get_codebook_files(

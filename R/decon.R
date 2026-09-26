@@ -74,17 +74,20 @@
   out
 }
 
-#' Create a prepared non-exhaustive qesR dataset
+#' Create a Prepared Non-Exhaustive qesR Dataset
 #'
-#' Builds a deconstructed (teaching/testing) dataset with standardized columns
-#' from a selected Quebec election study.
+#' Builds a deconstructed teaching/testing dataset with standardized columns from a selected Quebec election study.
 #'
 #' @param srvy A qesR survey code. Defaults to `"qes2022"`.
-#' @param assign_global If `TRUE`, assign the result as `decon` in the calling
-#'   environment.
-#' @param quiet If `TRUE`, suppress informational output while downloading.
+#' @param assign_global If TRUE, assign the result as `decon` in the global environment.
+#' @param quiet If TRUE, suppress informational output while downloading.
 #'
-#' @return A data frame named `decon` when assigned in the calling environment.
+#' @return A data frame with standardized columns.
+#' @examples
+#' \donttest{
+#'   decon <- get_decon("qes2022")
+#'   head(decon)
+#' }
 #' @export
 get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
   data <- get_qes(

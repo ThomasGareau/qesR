@@ -12,3 +12,17 @@ qes_master_test.rds
 qes_master_test_source_map.csv
 .DS_Store
 Images/
+
+# macOS metadata: AppleDouble files (the repo lives on a non-APFS drive) and
+# Finder/Spotlight folders
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+.fseventsd
+.TemporaryItems
+.DocumentRevisions-V100
+
+# Local Claude Code settings
+.claude/

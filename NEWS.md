@@ -1,3 +1,7 @@
+# qesR (development version)
+
+- Help pages are now generated with roxygen2 from comments in `R/`. Their content is unchanged: same topics, arguments, defaults and examples. The package help page is also available as `?qesR` and now lists the authors and project links.
+
 # qesR 0.4.4
 
 - Added `get_qes_master()` for harmonized merged datasets across QES studies.

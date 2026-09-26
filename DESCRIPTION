@@ -38,3 +38,5 @@ URL: https://thomasgareau.github.io/qesR/,
     https://github.com/ThomasGareau/qesR,
     https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/
 BugReports: https://github.com/ThomasGareau/qesR/issues
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

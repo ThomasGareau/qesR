@@ -1,19 +1,19 @@
-#' Download and load a Quebec election study
+#' Download and Load a Quebec Election Study
 #'
-#' Downloads a study file from Dataverse, applies variable/value labels when
-#' metadata is available, and attaches a codebook.
+#' Downloads a study file from Dataverse, applies labels when available, and attaches a codebook.
 #'
-#' @param srvy A qesR survey code (see [get_qescodes()]).
-#' @param file Optional regular expression to select a specific file when a
-#'   Dataverse dataset has multiple files.
-#' @param assign_global If `TRUE`, assign the returned data object into the
-#'   calling environment using `srvy` as object name (cesR-style behavior).
-#' @param with_codebook If `TRUE`, attach codebook metadata as
-#'   `attr(data, "qes_codebook")` and assign `<srvy>_codebook` in the calling
-#'   environment when `assign_global = TRUE`.
-#' @param quiet If `TRUE`, suppress informational output and download progress.
+#' @param srvy A qesR survey code from `get_qescodes()`.
+#' @param file Optional regular expression for choosing one file in multi-file datasets.
+#' @param assign_global If TRUE, assign the result into the calling environment using `srvy`. Defaults to FALSE.
+#' @param with_codebook If TRUE, attach codebook metadata and assign \code{<srvy>_codebook} when `assign_global = TRUE`.
+#' @param quiet If TRUE, suppress informational output.
 #'
 #' @return A labelled data frame/tibble for the selected survey.
+#' @examples
+#' \donttest{
+#'   qes2022 <- get_qes("qes2022")
+#'   names(qes2022)[1:10]
+#' }
 #' @export
 get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE, quiet = FALSE) {
   study <- .get_qes_study(srvy)
@@ -54,14 +54,19 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
   data
 }
 
-#' Preview a Quebec election study
+#' Preview a Quebec Election Study
 #'
-#' @param srvy A qesR survey code (see [get_qescodes()]).
-#' @param obs Number of observations to preview. Default is `6`.
-#' @param file Optional regular expression to select a specific file when a
-#'   Dataverse dataset has multiple files.
+#' Loads a study and returns the first observations.
 #'
-#' @return A data frame/tibble preview.
+#' @param srvy A qesR survey code from `get_qescodes()`.
+#' @param obs Number of observations to return.
+#' @param file Optional regular expression for choosing one file in multi-file datasets.
+#'
+#' @return A data frame/tibble preview (with attached codebook metadata).
+#' @examples
+#' \donttest{
+#'   get_preview("qes2022", obs = 3)
+#' }
 #' @export
 get_preview <- function(srvy, obs = 6L, file = NULL) {
   if (!is.numeric(obs) || length(obs) != 1L || is.na(obs) || obs < 1L) {
@@ -460,16 +465,20 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   stop(sprintf("Column '%s' was not found in the data object.", q), call. = FALSE)
 }
 
-#' Get survey question text from labels or the codebook
+#' Get Survey Question Text
 #'
-#' @param do A data object or the character name of a data object in the
-#'   calling environment.
-#' @param q Column name whose question label should be returned.
-#' @param full If `TRUE`, try to recover full question text when the codebook
-#'   metadata appears truncated.
+#' Returns question text from variable labels or an attached/paired codebook, with optional full-question recovery.
 #'
-#' @return A character string containing the question text, or `NA_character_`
-#'   when no question text is found.
+#' @param do A data.frame or the name of one in the calling environment.
+#' @param q Column name whose question text should be returned.
+#' @param full If TRUE, try to recover full question text when metadata appears truncated.
+#'
+#' @return A character scalar with question text, or `NA_character_` when none exists.
+#' @examples
+#' \donttest{
+#'   d <- get_qes("qes2022")
+#'   get_question(d, "cps_age_in_years")
+#' }
 #' @export
 get_question <- function(do, q, full = TRUE) {
   .assert_single_string(q, "q")

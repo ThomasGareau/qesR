@@ -1705,31 +1705,38 @@
   surveys
 }
 
-#' Build a harmonized stacked master QES dataset
+#' Build a Harmonized Stacked Master QES Dataset
 #'
-#' Downloads multiple Quebec Election Study datasets, harmonizes a shared set of
-#' variables, and stacks all rows into one master data frame.
+#' Downloads multiple Quebec Election Study datasets, harmonizes shared variables,
+#' stacks all rows into one master data frame, de-duplicates respondents within
+#' the same survey code, and drops rows that are empty across harmonized variables.
 #'
-#' @param surveys Character vector of qesR survey codes. Defaults to all
-#'   available studies in [get_qescodes()].
-#' @param assign_global If `TRUE`, assign the result to the calling environment using
-#'   `object_name`.
-#' @param object_name Name used when `assign_global = TRUE`. Defaults to
+#' @param surveys Character vector of qesR survey codes. Defaults to all studies from
+#'   `get_qescodes()`.
+#' @param assign_global If TRUE, assign the result to the calling environment using `object_name`. Defaults to FALSE.
+#' @param object_name Object name used when `assign_global = TRUE`. Defaults to
 #'   `"qes_master"`.
-#' @param quiet If `TRUE`, suppress informational output while downloading.
-#' @param strict If `TRUE`, stop when any study fails to download. If `FALSE`,
-#'   return partial results and record failures in attributes.
-#' @param save_path Optional file path to persist the master dataset. If the
-#'   path ends with `.rds`, it is saved with [saveRDS()]. Otherwise, a CSV is
-#'   written with [utils::write.csv()]. When opaque legacy variables are
-#'   renamed in the merged output, an old-to-new variable map is also written
-#'   alongside the saved file.
+#' @param quiet If TRUE, suppress informational output while downloading.
+#' @param strict If TRUE, stop when any study fails. If FALSE, return partial results and
+#'   record failures in attributes.
+#' @param save_path Optional output path for writing the master file. Use `.rds` for RDS
+#'   output; otherwise CSV is written. When opaque legacy variables are renamed
+#'   in the merged output, an old-to-new variable map is also written alongside
+#'   the saved file.
 #'
-#' @return A harmonized stacked data frame. Attributes include:
-#'   `source_map`, `loaded_surveys`, `failed_surveys`,
-#'   `duplicates_removed`, `empty_rows_removed`, and `variable_name_map`.
-#'   When `save_path` is provided and renaming is applied, the map path is
-#'   stored in `variable_name_map_path`.
+#' @return A harmonized stacked data frame with attributes:
+#'   `source_map`, `loaded_surveys`, `failed_surveys`, and
+#'   `harmonized_variables`. Additional attributes
+#'   `duplicates_removed`, `empty_rows_removed`, and
+#'   `variable_name_map` report row filtering and renaming details.
+#'   When `save_path` is provided, the output path is stored in `saved_to`;
+#'   if renaming is applied, the sidecar mapping file path is stored in
+#'   `variable_name_map_path`.
+#' @examples
+#' \donttest{
+#'   master <- get_qes_master(surveys = "qes2022")
+#'   head(master)
+#' }
 #' @export
 get_qes_master <- function(
   surveys = NULL,
