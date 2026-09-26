@@ -241,7 +241,10 @@ test_that("the qes_demo tree is synthetic, separate and checksummed", {
   manifest <- v044_get_qes_names()
   expect_true(all(names(dat) %in% manifest$name[manifest$study == "qes2014"]))
   expect_identical(demo$studies$family[demo$studies$study == "qes_demo"], "demo")
-  expect_false(anyDuplicated(dat$QUEST) > 0L)
+  # like qes2014: QUEST is constant 0 without a label, and rows are the key
+  expect_true(all(dat$QUEST == 0))
+  expect_null(attr(dat$QUEST, "label", exact = TRUE))
+  expect_identical(row$id_vars, ".row")
 })
 
 test_that(".qes_catalog() reads the catalog once per session", {

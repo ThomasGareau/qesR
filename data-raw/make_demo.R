@@ -11,7 +11,10 @@
 # No row comes from a real respondent: every value is drawn at random with a
 # fixed seed. Variable names, variable labels and value labels are a subset of
 # the Quebec Election Study 2014 SPSS file (10.5683/SP3/64F7WR, file 425916,
-# CC0 1.0), so code written for qes2014 runs on the demo. Non-ASCII text is
+# CC0 1.0), so code written for qes2014 runs on the demo. Labels are copied
+# verbatim, including stray markup such as the " &nbsp;" ending QAGE's label;
+# QUEST is constant 0 with no label, as in qes2014, so the demo's id_vars is
+# `.row` (row order), like the catalog row of qes2014. Non-ASCII text is
 # written with \u escapes so this script is ASCII.
 #
 # The .sav header records when it was written, so every run gives a new md5;
@@ -49,11 +52,12 @@ vote <- ifelse(
   NA_real_
 )
 
+# As in the real qes2014 file, QUEST is constant 0 and has no label, so the
+# demo, like qes2014, has no respondent id and is keyed on row order (`.row`).
 demo <- data.frame(
-  QUEST = seq_len(n),
+  QUEST = rep(0, n),
   stringsAsFactors = FALSE
 )
-attr(demo$QUEST, "label") <- "Identifiant synth\u00e9tique"
 demo$LANG <- lab(
   sample(c("FR", "EN"), n, replace = TRUE, prob = c(0.8, 0.2)),
   paste0(
@@ -64,7 +68,7 @@ demo$LANG <- lab(
 )
 demo$QAGE <- lab(
   as.numeric(sample(1930:1995, n, replace = TRUE)),
-  "En quelle ann\u00e9e \u00eates-vous n\u00e9(e)? / Entrez l'ann\u00e9e de naissance",
+  "En quelle ann\u00e9e \u00eates-vous n\u00e9(e)? / Entrez l'ann\u00e9e de naissance &nbsp;",
   stats::setNames(9999, no_answer)
 )
 demo$QSEXE <- lab(
@@ -159,7 +163,7 @@ write_lines(c(
     sep = ""
   ),
   sprintf(
-    "qes_demo,0,data,,qes_demo.sav,qes_demo.sav,sav,FALSE,%s,%s,MD5,,%d,%d,,QUEST,TRUE,1.0",
+    "qes_demo,0,data,,qes_demo.sav,qes_demo.sav,sav,FALSE,%s,%s,MD5,,%d,%d,,.row,TRUE,1.0",
     format(bytes, scientific = FALSE), md5, nrow(demo), ncol(demo)
   )
 ), file.path(cat_dir, "files.csv"))

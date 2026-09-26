@@ -179,7 +179,7 @@ get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, qu
     }
   }
 
-  docs <- qes_docs(code)
+  docs <- qes_docs(.qes_legacy_deposit_codes(code))
   out <- .qes_legacy_files_frame(nrow(docs))
   out$file_id <- docs$file_id
   out$filename <- docs$file_name
@@ -187,6 +187,19 @@ get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, qu
   out$size <- docs$bytes
   out$download_url <- docs$url
   out
+}
+
+# qesR 0.4.4 listed every document of a study's deposit. For a legacy code,
+# the documents of the other catalog studies that share its deposit belong to
+# it too (qes1998 lists the CROP and CREATEC codebooks as well as its own).
+.qes_legacy_deposit_codes <- function(code) {
+  if (!code %in% .qes_legacy_codes) {
+    return(code)
+  }
+  st <- .qes_catalog()$studies
+  i <- match(code, st$study)
+  shared <- st$study[!st$demo & st$server == st$server[i] & st$doi == st$doi[i]]
+  unique(c(code, shared))
 }
 
 # The file manifest attached to a codebook built by the DDI path

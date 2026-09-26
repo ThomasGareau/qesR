@@ -15,6 +15,12 @@ test_that(".qes_url() builds the three Dataverse endpoints", {
     url("https://dataverse.harvard.edu", "dataset", doi = "10.7910/DVN/PAQBDR", version = "1.1"),
     "https://dataverse.harvard.edu/api/datasets/:persistentId/versions/1.1?persistentId=doi:10.7910/DVN/PAQBDR"
   )
+  expect_identical(
+    url("https://borealisdata.ca", "dataset",
+      doi = "10.5683/SP2/QFUAWG", version = ":latest-published", include_deaccessioned = TRUE
+    ),
+    "https://borealisdata.ca/api/datasets/:persistentId/versions/:latest-published?persistentId=doi:10.5683/SP2/QFUAWG&includeDeaccessioned=true"
+  )
   expect_error(url("http://borealisdata.ca", "file", file_id = "1"))
   expect_error(url("https://borealisdata.ca", "file", file_id = "1;rm"))
   expect_error(url("https://borealisdata.ca", "dataset", doi = "10.1/x", version = "latest"))
@@ -25,7 +31,9 @@ test_that("URLs depend on catalog fields only, not on the user or machine", {
     c(
       qes_docs()$url,
       url("https://borealisdata.ca", "original", file_id = "425916"),
-      url("https://borealisdata.ca", "dataset", doi = "10.5683/SP3/NWTGWS", version = ":latest-published")
+      url("https://borealisdata.ca", "dataset",
+        doi = "10.5683/SP3/NWTGWS", version = ":latest-published", include_deaccessioned = TRUE
+      )
     )
   }
   base <- build()

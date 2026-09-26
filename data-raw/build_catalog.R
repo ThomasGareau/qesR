@@ -209,7 +209,7 @@ for (nm in names(out)) {
 versions_path <- file.path(root, "inst", "extdata", "VERSIONS")
 old <- if (file.exists(versions_path)) read.dcf(versions_path) else NULL
 catalog_version <- if (!is.null(old) && "catalog_version" %in% colnames(old)) {
-  old[1, "catalog_version"]
+  unname(old[1, "catalog_version"])
 } else {
   "1.0.0"
 }

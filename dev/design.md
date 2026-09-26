@@ -157,7 +157,7 @@ Unchanged binding rules: all 14 current exports keep working; `get_qes()`/`get_q
 | `x` | A study code, or an object carrying `qes_provenance` | `qes_question`, `qes_missing`, `qes_provenance`, `qes_cite`, `qes_design` (and the internal `.qes_splice`, `.qes_join_raw`) |
 | `variables` | Raw variable names, exact match | metadata functions, `qes_missing` |
 | `targets` | Harmonized target, family or set names, exact match. The three name spaces are disjoint (validator V-S15). | harmonization functions |
-| `lang` | Language of **returned text**, with a fixed default. It never follows the locale or an option. For raw metadata (`qes_codebook`, `qes_question`, `qes_docs`), `lang = NULL` means the study's source language. For harmonized output and spec views, the default is `"en"`, because the spec always has both languages. | everywhere text is returned |
+| `lang` | Language of **returned text**, with a fixed default. It never follows the locale or an option. For raw metadata (`qes_codebook`, `qes_question`), `lang = NULL` means the study's source language. Exception (S1): `qes_docs(lang = NULL)` lists documents in every language, because it returns files rather than text and filtering to the source language would hide the English questionnaires of French-source studies; `lang` there is only a filter. For harmonized output and spec views, the default is `"en"`, because the spec always has both languages. | everywhere text is returned |
 | `path` | An existing, user-chosen directory, with no default | `qes_download` |
 | `quiet` | Suppresses progress and informational `qesR_message_*` output. It never suppresses warnings, errors, the deprecation notice (controlled only by `qesR.quiet_deprecated`) or the licence notice. | every function that prints or touches the network |
 
@@ -340,12 +340,13 @@ qes2012,qes,2012,QC2012,post,TRUE,https://borealisdata.ca,10.5683/SP2/WXUPXT,1.0
 qes2007_panel,durand_panel,2007,QC2007,panel,FALSE,https://borealisdata.ca,10.5683/SP3/NDS6VT,1.0,352415,,fr,CC0 1.0,TRUE,
 qes2018_panel,durand_panel,2018,QC2018,panel,FALSE,https://borealisdata.ca,10.5683/SP3/XDDMMR,1.0,333052,,fr,CC0 1.0,TRUE,
 qes1998,polls_1998,1998,QC1998,panel,FALSE,https://borealisdata.ca,10.5683/SP2/QFUAWG,1.0,329987,,fr,CC0 1.0,TRUE,QC francophones 18+
-qes1998_crop,polls_1998,1998,QC1998,pooled_polls,FALSE,https://borealisdata.ca,10.5683/SP2/QFUAWG,1.0,286331,,fr,CC0 1.0,TRUE,
+qes1998_crop,polls_1998,1998,QC1998,panel,FALSE,https://borealisdata.ca,10.5683/SP2/QFUAWG,1.0,286331,,fr,CC0 1.0,TRUE,
 ```
 
 **Notes on these rows:**
 - The `post` design for 2012, 2014 and 2018 is to be confirmed from the technical reports already in `codebooks/`; no data request is needed.
 - Durand panels and CROP get corrected display names ([A:C2]).
+- `qes1998_crop` is `panel`: its codebook describes a pre-election poll (N=450) followed by a post-election panel wave (N=426), not pooled cross-sections (corrected in S1).
 - **qes1998 is francophones only** (codebook: "il a été décidé de retenir uniquement les francophones"). It pools two firms, CREATEC (1,057) and CROP (426). Its notes say so, and its waves carry `firm` as a stratum (§5.3).
 
 ### 3.3 `files.csv` schema

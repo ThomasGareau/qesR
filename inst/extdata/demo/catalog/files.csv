@@ -1,2 +1,2 @@
 study,file_id,role,lang,file_name,original_file_name,format,ingested,bytes,md5,checksum_type,unf,n_rows,n_cols,encoding,id_vars,is_default,dataset_version
-qes_demo,0,data,,qes_demo.sav,qes_demo.sav,sav,FALSE,5249,0e2523e46e09bd227b6a2dc56d28d320,MD5,,60,11,,QUEST,TRUE,1.0
+qes_demo,0,data,,qes_demo.sav,qes_demo.sav,sav,FALSE,5229,e956e315800690cb0894c86ed85c8bea,MD5,,60,11,,.row,TRUE,1.0

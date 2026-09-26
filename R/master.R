@@ -1681,9 +1681,12 @@
   list(data = out, source_map = source_map)
 }
 
-# The legacy master builds the 11 qesR 0.4.4 studies by default, and "all"
-# keeps meaning those 11: the studies added to the catalog since (the 1998
-# CROP and CREATEC surveys) are built only when named.
+# The legacy master builds only the 11 qesR 0.4.4 studies, by default and
+# with "all". The studies added to the catalog since (the 1998 CROP and
+# CREATEC surveys) are refused until the engine-based master (HZ5, 0.7.0):
+# the qes1998 panel file already holds their respondents, so naming them
+# with qes1998 would count the same people twice, and the legacy name-matching
+# harmonization is not extended to new studies.
 .validate_master_surveys <- function(surveys) {
   if (is.null(surveys)) {
     return(.qes_legacy_codes)
@@ -1691,7 +1694,17 @@
   if (is.character(surveys) && length(surveys) == 1L && identical(.qes_canon_code(surveys), "all")) {
     return(.qes_legacy_codes)
   }
-  .qes_resolve_codes(surveys, "surveys")
+  codes <- .qes_resolve_codes(surveys, "surveys")
+  new_codes <- setdiff(codes, .qes_legacy_codes)
+  if (length(new_codes) > 0L) {
+    .qes_abort(
+      "input_master_study",
+      class = "qesR_error_input",
+      args = list(.qes_q(new_codes)),
+      data = list(arg = "surveys", value = new_codes)
+    )
+  }
+  codes
 }
 
 #' Build a Harmonized Stacked Master QES Dataset
@@ -1708,8 +1721,9 @@
 #' @param surveys Character vector of qesR survey codes (see [qes_studies()]).
 #'   Defaults to the 11 studies of qesR 0.4.4; `"all"` on its own means the
 #'   same 11. Studies added to the catalog since (`qes1998_crop`,
-#'   `qes1998_createc`) are built only when named. Codes are trimmed and
-#'   case-insensitive.
+#'   `qes1998_createc`) are not in the master yet and raise an error: their
+#'   respondents are already in `qes1998`. Read them with [get_qes()]. Codes
+#'   are trimmed and case-insensitive.
 #' @param assign_global If TRUE, also assign the result as `object_name` into
 #'   the environment `get_qes_master()` was called from (the global environment
 #'   only when called at top level), after `saved_to` is set. Defaults to FALSE.

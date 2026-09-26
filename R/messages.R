@@ -60,6 +60,10 @@
     en = "Object %1$s was not found in the calling environment.",
     fr = "L'objet %1$s est introuvable dans l'environnement appelant."
   ),
+  input_master_study = c(
+    en = "get_qes_master() builds only the qesR 0.4.4 studies; %1$s will be added to the master in qesR 0.7.0. Read it on its own with get_qes().",
+    fr = "get_qes_master() ne construit que les \u00e9tudes de qesR 0.4.4\u00a0; %1$s sera ajout\u00e9 au fichier fusionn\u00e9 dans qesR 0.7.0. Lisez-le seul avec get_qes()."
+  ),
   input_save_dir = c(
     en = "Directory does not exist: %1$s.",
     fr = "Le dossier n'existe pas\u00a0: %1$s."

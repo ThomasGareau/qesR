@@ -17,8 +17,9 @@ get_qes_master(
 \item{surveys}{Character vector of qesR survey codes (see \code{\link[=qes_studies]{qes_studies()}}).
 Defaults to the 11 studies of qesR 0.4.4; \code{"all"} on its own means the
 same 11. Studies added to the catalog since (\code{qes1998_crop},
-\code{qes1998_createc}) are built only when named. Codes are trimmed and
-case-insensitive.}
+\code{qes1998_createc}) are not in the master yet and raise an error: their
+respondents are already in \code{qes1998}. Read them with \code{\link[=get_qes]{get_qes()}}. Codes
+are trimmed and case-insensitive.}
 
 \item{assign_global}{If TRUE, also assign the result as \code{object_name} into
 the environment \code{get_qes_master()} was called from (the global environment

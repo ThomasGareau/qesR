@@ -54,6 +54,15 @@ test_that("get_codebook_files() returns the documents with the v0.4.4 columns", 
   expect_identical(get_qes_codebook_files("qes2014"), files)
 })
 
+test_that("get_codebook_files() lists the whole shared 1998 deposit, as in 0.4.4", {
+  local_qes_notices_shown()
+  files <- get_codebook_files("qes1998")
+  expect_identical(nrow(files), 3L)
+  expect_setequal(files$file_id, c("332049", "332050", "332051"))
+  # the new codes list only their own codebook
+  expect_identical(get_codebook_files("qes1998_crop")$file_id, "332049")
+})
+
 test_that("get_codebook_files() reads the study of a codebook", {
   local_qes_notices_shown()
   cb <- structure(

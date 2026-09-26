@@ -18,6 +18,8 @@ library(qesR)
 qes_studies()$study
 ```
 
+By default, and with `surveys = "all"`, `get_qes_master()` builds the 11 studies of qesR 0.4.4. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in the master yet (their respondents are already in `qes1998`); read them with `get_qes()`, as `?get_qes_master` explains.
+
 ## Build merged data
 
 ```{r, eval = FALSE}

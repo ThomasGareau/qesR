@@ -894,18 +894,25 @@
   )
 }
 
-.fetch_best_qes_ddi <- function(study, files_df, selected_file, quiet = TRUE) {
+.fetch_best_qes_ddi <- function(study, files_df, selected_file, quiet = TRUE, pinned = FALSE) {
   if (!is.data.frame(files_df) || nrow(files_df) == 0L) {
     return(list(ddi_parsed = NULL, ddi_file_id = NA_character_))
   }
 
-  data_candidates <- .find_qes_data_files(files_df)
-  if (nrow(data_candidates) == 0L) {
-    data_candidates <- files_df
-  }
-
   selected_id <- as.character(selected_file$id[1])
-  candidate_ids <- unique(c(selected_id, as.character(data_candidates$id)))
+
+  # A pinned data file (studies added after 0.4.4) takes its codebook from its
+  # own DDI only. Scoring every DDI in a shared deposit would attach another
+  # survey's codebook, e.g. CREATEC's to qes1998_crop.
+  if (isTRUE(pinned)) {
+    candidate_ids <- selected_id
+  } else {
+    data_candidates <- .find_qes_data_files(files_df)
+    if (nrow(data_candidates) == 0L) {
+      data_candidates <- files_df
+    }
+    candidate_ids <- unique(c(selected_id, as.character(data_candidates$id)))
+  }
   candidate_ids <- candidate_ids[!is.na(candidate_ids) & nzchar(candidate_ids)]
 
   best_parsed <- NULL
@@ -2180,13 +2187,20 @@
 .download_and_read_qes <- function(study, file = NULL, quiet = TRUE, read_data = TRUE) {
   metadata <- .fetch_qes_metadata(study, quiet = quiet)
   files_df <- .extract_qes_files(metadata, srvy_code = study$qes_survey_code)
+  pinned_id <- if (study$qes_survey_code %in% .qes_legacy_codes) NULL else study$data_file_id
   selected <- .choose_remote_file(
     files_df,
     file = file,
     study_code = study$qes_survey_code,
-    pinned_id = if (study$qes_survey_code %in% .qes_legacy_codes) NULL else study$data_file_id
+    pinned_id = pinned_id
   )
-  ddi_choice <- .fetch_best_qes_ddi(study, files_df = files_df, selected_file = selected, quiet = quiet)
+  ddi_choice <- .fetch_best_qes_ddi(
+    study,
+    files_df = files_df,
+    selected_file = selected,
+    quiet = quiet,
+    pinned = is.null(file) && !is.null(pinned_id) && !is.na(pinned_id)
+  )
   ddi_parsed <- ddi_choice$ddi_parsed
   codebook <- .build_qes_codebook(
     study,

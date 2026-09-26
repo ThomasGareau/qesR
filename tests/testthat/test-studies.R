@@ -111,7 +111,20 @@ test_that("the legacy master keeps the 11 v0.4.4 studies for NULL and \"all\"", 
   expect_identical(validate(NULL), v044_qescodes)
   expect_identical(validate("all"), v044_qescodes)
   expect_identical(validate(" ALL "), v044_qescodes)
-  expect_identical(validate("qes1998_crop"), "qes1998_crop")
+  expect_identical(validate(c("qes2018", "qes2022")), c("qes2018", "qes2022"))
+})
+
+test_that("the legacy master refuses the 1998 firm codes until the engine", {
+  validate <- getFromNamespace(".validate_master_surveys", "qesR")
+  err <- expect_error(validate("qes1998_crop"), class = "qesR_error_input")
+  expect_identical(err$value, "qes1998_crop")
+  # qes1998 already holds the CROP and CREATEC respondents: no double count
+  err <- expect_error(
+    validate(c("qes1998", "qes1998_crop", "qes1998_createc")),
+    class = "qesR_error_input"
+  )
+  expect_identical(err$value, c("qes1998_crop", "qes1998_createc"))
+  expect_error(get_qes_master("qes1998_createc", quiet = TRUE), class = "qesR_error_input")
 })
 
 test_that("studies added after 0.4.4 read their pinned data file", {
@@ -130,4 +143,36 @@ test_that("studies added after 0.4.4 read their pinned data file", {
     class = "qesR_error_source"
   )
   expect_identical(err$file_id, "286331")
+})
+
+test_that("a pinned data file takes its codebook from its own DDI only", {
+  # The shared 1998 deposit: the CREATEC DDI describes more variables, so
+  # scoring every DDI would attach it to the CROP data (design.md [A:D2]).
+  ddi <- function(n, prefix) {
+    vars <- sprintf("<var ID=\"%s%02d\" name=\"%s%02d\"><labl>v</labl></var>", prefix, seq_len(n), prefix, seq_len(n))
+    paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>")
+  }
+  ddis <- list("329987" = ddi(42, "p"), "286331" = ddi(37, "c"), "316121" = ddi(49, "t"))
+  requested <- character(0)
+  local_mocked_bindings(
+    .fetch_qes_metadata = function(study, quiet = TRUE) {
+      files <- lapply(names(ddis), function(id) {
+        list(dataFile = list(id = as.integer(id), filename = paste0(id, ".tab"), filesize = 1000))
+      })
+      list(status = "OK", data = list(latestVersion = list(files = files)))
+    },
+    .fetch_qes_ddi = function(study, file_id, quiet = TRUE) {
+      requested <<- c(requested, file_id)
+      xml2::read_xml(ddis[[file_id]])
+    },
+    .build_qes_codebook = function(study, files_df, selected_file, ddi_parsed = NULL, quiet = TRUE) {
+      ddi_parsed$data
+    },
+    .package = "qesR"
+  )
+  study <- getFromNamespace(".get_qes_study", "qesR")("qes1998_crop")
+  payload <- getFromNamespace(".download_and_read_qes", "qesR")(study, read_data = FALSE)
+  expect_identical(requested, "286331")
+  expect_identical(nrow(payload$codebook), 37L)
+  expect_true(all(startsWith(payload$codebook$variable, "c")))
 })

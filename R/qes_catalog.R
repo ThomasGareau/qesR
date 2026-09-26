@@ -234,7 +234,8 @@
 #   "dataset"   one version of a dataset's metadata (":latest-published" for
 #               update checks).
 .qes_url <- function(server, kind = c("original", "file", "dataset"),
-                     file_id = NULL, doi = NULL, version = NULL) {
+                     file_id = NULL, doi = NULL, version = NULL,
+                     include_deaccessioned = FALSE) {
   kind <- match.arg(kind)
   ok_server <- is.character(server) && length(server) == 1L && !is.na(server) &&
     grepl("^https://[A-Za-z0-9.-]+$", server)
@@ -257,7 +258,13 @@
   if (!ok_doi || !ok_version) {
     stop("qesR internal error: invalid DOI or dataset version in the catalog.", call. = FALSE)
   }
-  sprintf("%s/api/datasets/:persistentId/versions/%s?persistentId=doi:%s", server, version, doi)
+  url <- sprintf("%s/api/datasets/:persistentId/versions/%s?persistentId=doi:%s", server, version, doi)
+  # Dataverse 6.1+ hides deaccessioned versions unless asked; older servers
+  # ignore the parameter.
+  if (isTRUE(include_deaccessioned)) {
+    url <- paste0(url, "&includeDeaccessioned=true")
+  }
+  url
 }
 
 # ---- qes_studies() ---------------------------------------------------------------
@@ -403,7 +410,14 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
 .qes_fetch_latest <- function(server, doi) {
   tryCatch(
     {
-      url <- .qes_url(server, "dataset", doi = doi, version = ":latest-published")
+      url <- .qes_url(
+        server, "dataset",
+        doi = doi, version = ":latest-published", include_deaccessioned = TRUE
+      )
+      # Cap the wait on an unresponsive network (the check runs one request
+      # per deposit); curl's connectivity check replaces this in slice S2a.
+      op <- options(timeout = min(getOption("timeout", 60), 20))
+      on.exit(options(op), add = TRUE)
       tmp <- tempfile(fileext = ".json")
       on.exit(unlink(tmp), add = TRUE)
       .qes_fetch_file(url, tmp, quiet = TRUE)

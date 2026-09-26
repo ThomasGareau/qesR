@@ -23,7 +23,7 @@ local_update_server <- function(responses, .env = parent.frame()) {
   testthat::local_mocked_bindings(
     .qes_fetch_file = function(url, destfile, quiet = TRUE) {
       log$urls <- c(log$urls, url)
-      doi <- sub("^.*persistentId=doi:", "", url)
+      doi <- sub("&.*$", "", sub("^.*persistentId=doi:", "", url))
       res <- responses[[doi]]
       if (is.null(res)) {
         stop("offline", call. = FALSE)
@@ -50,7 +50,7 @@ test_that("each deposit is checked once and compared with its pins", {
   expect_identical(length(log$urls), 2L)
   expect_identical(
     log$urls[1],
-    "https://dataverse.example.org/api/datasets/:persistentId/versions/:latest-published?persistentId=doi:10.9999/FIX/AAAAAA"
+    "https://dataverse.example.org/api/datasets/:persistentId/versions/:latest-published?persistentId=doi:10.9999/FIX/AAAAAA&includeDeaccessioned=true"
   )
 })
 
