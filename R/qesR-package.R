@@ -37,15 +37,25 @@
 #'     and `parent`, the root cause). qesR never retries a download without TLS
 #'     certificate checks;}
 #'   \item{`qesR_error_source`}{a problem with the files served for a study
-#'     (fields `study`, `file_id`).}
+#'     (fields `study`, `file_id`);}
+#'   \item{`qesR_error_no_provenance`}{an object that no longer records which
+#'     study it comes from, passed to [qes_cite()].}
 #' }
 #' Warnings inherit from `qesR_warning` and messages from `qesR_message`.
 #' Progress messages (class `qesR_message_download`) are silenced by
-#' `quiet = TRUE`. Two notices are shown at most once per session and are not
-#' silenced by `quiet`: `qesR_message_deprecated` (see [qesR-deprecated]) and
-#' `qesR_message_assign_default`, shown when `get_qes()`, `get_qes_master()`
-#' or `get_decon()` is called without `assign_global`. Every condition carries
+#' `quiet = TRUE`. Three notices are shown at most once per session and are
+#' not silenced by `quiet`: `qesR_message_deprecated` (see
+#' [qesR-deprecated]); `qesR_message_assign_default`, shown when `get_qes()`,
+#' `get_qes_master()` or `get_decon()` is called without `assign_global`; and
+#' `qesR_message_arg_ignored`, shown when a legacy argument that no longer
+#' changes the result is used. Every condition carries
 #' the fields `id` (its message key) and `lang` (the language of its message).
+#'
+#' @section Study catalog:
+#' qesR ships a catalog of the studies it can load: [qes_studies()] lists
+#' them, [qes_docs()] lists their documents and [qes_cite()] cites them, all
+#' without a network request. Each study is pinned to one Dataverse dataset
+#' version and one data file, identified by its md5 checksum.
 #'
 #' @section Network use:
 #' Requests go to the Dataverse servers listed in the catalog, one at a time
@@ -73,13 +83,23 @@
 #' `suggestions`), `qesR_error_ambiguous_file` (`study`, `pattern`,
 #' `candidates`), `qesR_error_network` (`url`, `attempts`, et `parent`, la
 #' cause première ; qesR ne désactive jamais la vérification des certificats
-#' TLS) et `qesR_error_source` (`study`, `file_id`). Les avertissements
+#' TLS), `qesR_error_source` (`study`, `file_id`) et
+#' `qesR_error_no_provenance` (objet qui n'indique plus son étude, passé à
+#' [qes_cite()]). Les avertissements
 #' héritent de `qesR_warning` et les messages de `qesR_message`. Les messages
 #' de progression (`qesR_message_download`) sont masqués par `quiet = TRUE`.
-#' `qesR_message_deprecated` et `qesR_message_assign_default` s'affichent au
-#' plus une fois par session et ne sont pas masqués par `quiet`. Chaque
+#' `qesR_message_deprecated`, `qesR_message_assign_default` et
+#' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat)
+#' s'affichent au plus une fois par session et ne sont pas masqués par
+#' `quiet`. Chaque
 #' condition porte les champs `id` (sa clé de message) et `lang` (la langue de
 #' son message).
+#'
+#' **Catalogue.** qesR fournit un catalogue des études qu'il peut charger :
+#' [qes_studies()] les énumère, [qes_docs()] donne leurs documents et
+#' [qes_cite()] les cite, sans aucune requête réseau. Chaque étude est fixée à
+#' une version de jeu de données Dataverse et à un fichier de données,
+#' identifié par sa somme de contrôle md5.
 #'
 #' **Réseau.** Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 #' fois et à au moins une seconde d'intervalle par serveur. Elles portent
@@ -87,7 +107,7 @@
 #' information identifiante.
 #'
 #' @examples
-#' get_qescodes()
+#' qes_studies()[, c("study", "year", "title_en")]
 #'
 #' # messages in French; returned data is unchanged
 #' old <- options(qesR.lang = "fr")

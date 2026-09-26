@@ -48,15 +48,27 @@ Errors inherit from \code{qesR_error}:
 and \code{parent}, the root cause). qesR never retries a download without TLS
 certificate checks;}
 \item{\code{qesR_error_source}}{a problem with the files served for a study
-(fields \code{study}, \code{file_id}).}
+(fields \code{study}, \code{file_id});}
+\item{\code{qesR_error_no_provenance}}{an object that no longer records which
+study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}}.}
 }
 Warnings inherit from \code{qesR_warning} and messages from \code{qesR_message}.
 Progress messages (class \code{qesR_message_download}) are silenced by
-\code{quiet = TRUE}. Two notices are shown at most once per session and are not
-silenced by \code{quiet}: \code{qesR_message_deprecated} (see \link{qesR-deprecated}) and
-\code{qesR_message_assign_default}, shown when \code{get_qes()}, \code{get_qes_master()}
-or \code{get_decon()} is called without \code{assign_global}. Every condition carries
+\code{quiet = TRUE}. Three notices are shown at most once per session and are
+not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
+\link{qesR-deprecated}); \code{qesR_message_assign_default}, shown when \code{get_qes()},
+\code{get_qes_master()} or \code{get_decon()} is called without \code{assign_global}; and
+\code{qesR_message_arg_ignored}, shown when a legacy argument that no longer
+changes the result is used. Every condition carries
 the fields \code{id} (its message key) and \code{lang} (the language of its message).
+}
+
+\section{Study catalog}{
+
+qesR ships a catalog of the studies it can load: \code{\link[=qes_studies]{qes_studies()}} lists
+them, \code{\link[=qes_docs]{qes_docs()}} lists their documents and \code{\link[=qes_cite]{qes_cite()}} cites them, all
+without a network request. Each study is pinned to one Dataverse dataset
+version and one data file, identified by its md5 checksum.
 }
 
 \section{Network use}{
@@ -88,13 +100,23 @@ lire le texte. Les erreurs héritent de \code{qesR_error} : \code{qesR_error_inp
 \code{suggestions}), \code{qesR_error_ambiguous_file} (\code{study}, \code{pattern},
 \code{candidates}), \code{qesR_error_network} (\code{url}, \code{attempts}, et \code{parent}, la
 cause première ; qesR ne désactive jamais la vérification des certificats
-TLS) et \code{qesR_error_source} (\code{study}, \code{file_id}). Les avertissements
+TLS), \code{qesR_error_source} (\code{study}, \code{file_id}) et
+\code{qesR_error_no_provenance} (objet qui n'indique plus son étude, passé à
+\code{\link[=qes_cite]{qes_cite()}}). Les avertissements
 héritent de \code{qesR_warning} et les messages de \code{qesR_message}. Les messages
 de progression (\code{qesR_message_download}) sont masqués par \code{quiet = TRUE}.
-\code{qesR_message_deprecated} et \code{qesR_message_assign_default} s'affichent au
-plus une fois par session et ne sont pas masqués par \code{quiet}. Chaque
+\code{qesR_message_deprecated}, \code{qesR_message_assign_default} et
+\code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat)
+s'affichent au plus une fois par session et ne sont pas masqués par
+\code{quiet}. Chaque
 condition porte les champs \code{id} (sa clé de message) et \code{lang} (la langue de
 son message).
+
+\strong{Catalogue.} qesR fournit un catalogue des études qu'il peut charger :
+\code{\link[=qes_studies]{qes_studies()}} les énumère, \code{\link[=qes_docs]{qes_docs()}} donne leurs documents et
+\code{\link[=qes_cite]{qes_cite()}} les cite, sans aucune requête réseau. Chaque étude est fixée à
+une version de jeu de données Dataverse et à un fichier de données,
+identifié par sa somme de contrôle md5.
 
 \strong{Réseau.} Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 fois et à au moins une seconde d'intervalle par serveur. Elles portent
@@ -103,7 +125,7 @@ information identifiante.
 }
 
 \examples{
-get_qescodes()
+qes_studies()[, c("study", "year", "title_en")]
 
 # messages in French; returned data is unchanged
 old <- options(qesR.lang = "fr")

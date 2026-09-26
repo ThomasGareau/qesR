@@ -8,6 +8,7 @@
 #   the internal `.qes_catalog` table, which becomes a function in slice S1.
 
 test_that("get_qescodes returns expected structure", {
+  local_qes_notices_shown()
   codes <- get_qescodes()
 
   expect_s3_class(codes, "data.frame")
@@ -23,12 +24,14 @@ test_that("get_qescodes returns expected structure", {
 })
 
 test_that("get_qescodes detailed mode adds metadata columns", {
+  local_qes_notices_shown()
   codes <- get_qescodes(detailed = TRUE)
   required_cols <- c("year", "name_en", "name_fr", "doi", "doi_url", "documentation")
   expect_true(all(required_cols %in% names(codes)))
 })
 
 test_that("legacy qes study DOIs match current Borealis records", {
+  local_qes_notices_shown()
   catalog <- get_qescodes(detailed = TRUE)
 
   expected <- c(

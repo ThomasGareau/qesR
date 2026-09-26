@@ -8,7 +8,7 @@
 #' `assign_global` unset prints a one-time note about this change from qesR
 #' 0.4.4; passing `assign_global` explicitly (TRUE or FALSE) avoids it.
 #'
-#' @param srvy A qesR survey code from `get_qescodes()`. Codes are trimmed
+#' @param srvy A qesR survey code from `qes_studies()`. Codes are trimmed
 #'   and case-insensitive (`" QES2018 "` is `"qes2018"`); an unknown code is an
 #'   error of class `qesR_error_unknown_study` that suggests near matches.
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
@@ -99,7 +99,7 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 #' working and will not be removed; it prints a one-time notice (see
 #' [qesR-deprecated]).
 #'
-#' @param srvy A qesR survey code from `get_qescodes()`.
+#' @param srvy A qesR survey code from `qes_studies()`.
 #' @param obs Number of observations to return.
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
 #'
@@ -354,7 +354,7 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
   }
 
   survey_code <- attr(codebook, "survey_code", exact = TRUE)
-  if (is.null(survey_code) || !(survey_code %in% .qes_catalog$qes_survey_code)) {
+  if (is.null(survey_code) || !(survey_code %in% .qes_study_codes())) {
     return(NA_character_)
   }
 
@@ -462,7 +462,7 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
     return(NULL)
   }
 
-  if (!(srvy %in% .qes_catalog$qes_survey_code)) {
+  if (!(srvy %in% .qes_study_codes())) {
     return(NULL)
   }
 
@@ -611,7 +611,7 @@ get_question <- function(do, q, full = TRUE) {
   }
 
   srvy_hint <- attr(data, "qes_survey_code", exact = TRUE)
-  if (is.null(srvy_hint) && !is.null(object_name) && (object_name %in% .qes_catalog$qes_survey_code)) {
+  if (is.null(srvy_hint) && !is.null(object_name) && (object_name %in% .qes_study_codes())) {
     srvy_hint <- object_name
   }
 

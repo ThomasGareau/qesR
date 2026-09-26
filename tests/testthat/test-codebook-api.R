@@ -9,6 +9,7 @@ test_that("qes_codebook alias mirrors get_codebook formals", {
 })
 
 test_that("get_codebook_files reads attached file manifest", {
+  local_qes_notices_shown()
   cb <- data.frame(
     variable = "x",
     label = "X",

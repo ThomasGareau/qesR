@@ -15,10 +15,10 @@ replacement has shipped. Until then it works silently.\tabular{lll}{
    \code{format_codebook()} \tab \code{qes_codebook(codebook, layout = )} \tab when the replacement ships \cr
    \code{get_value_labels()} \tab \code{qes_codebook(layout = "long")} \tab when the replacement ships \cr
    \code{get_question()} \tab \code{qes_question()} \tab when the replacement ships \cr
-   \code{get_codebook_files()} \tab \code{qes_docs()} \tab when the replacement ships \cr
-   \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab when the replacement ships \cr
+   \code{get_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
+   \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
    \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab when the replacement ships \cr
-   \code{get_qescodes()} \tab \code{qes_studies()} \tab when the replacement ships \cr
+   \code{get_qescodes()} \tab \code{qes_studies()} \tab yes \cr
    \code{get_decon()} \tab \code{qes_harmonize(targets = "decon")} \tab from qesR 0.7.0 \cr
 }
 }

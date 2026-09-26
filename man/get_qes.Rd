@@ -13,7 +13,7 @@ get_qes(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}. Codes are trimmed
+\item{srvy}{A qesR survey code from \code{qes_studies()}. Codes are trimmed
 and case-insensitive (\code{" QES2018 "} is \code{"qes2018"}); an unknown code is an
 error of class \code{qesR_error_unknown_study} that suggests near matches.}
 

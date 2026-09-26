@@ -22,7 +22,7 @@ devtools::install_github("ThomasGareau/qesR")
 The package provides access to QES surveys through:
 
 - `get_qes(srvy)`: download a survey by code
-- `get_qescodes()`: list survey codes and metadata
+- `qes_studies()`: list the studies, with their DOI, licence and pinned version
 - `get_preview(srvy, obs)`: preview a survey
 - `get_question(data, variable)`: retrieve question text
 - `get_codebook(srvy)`: get survey codebook
@@ -33,8 +33,8 @@ The package provides access to QES surveys through:
 ```r
 library(qesR)
 
-# list survey call codes
-get_qescodes()
+# list the studies
+qes_studies()
 
 # load one survey
 qes2022 <- get_qes("qes2022")

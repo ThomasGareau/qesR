@@ -1681,9 +1681,15 @@
   list(data = out, source_map = source_map)
 }
 
+# The legacy master builds the 11 qesR 0.4.4 studies by default, and "all"
+# keeps meaning those 11: the studies added to the catalog since (the 1998
+# CROP and CREATEC surveys) are built only when named.
 .validate_master_surveys <- function(surveys) {
   if (is.null(surveys)) {
-    return(.qes_catalog$qes_survey_code)
+    return(.qes_legacy_codes)
+  }
+  if (is.character(surveys) && length(surveys) == 1L && identical(.qes_canon_code(surveys), "all")) {
+    return(.qes_legacy_codes)
   }
   .qes_resolve_codes(surveys, "surveys")
 }
@@ -1699,9 +1705,11 @@
 #' in a session that leaves `assign_global` unset prints a one-time note about
 #' this change from qesR 0.4.4.
 #'
-#' @param surveys Character vector of qesR survey codes. Defaults to all studies from
-#'   `get_qescodes()`. Codes are trimmed and case-insensitive; `"all"` on its
-#'   own also means every study.
+#' @param surveys Character vector of qesR survey codes (see [qes_studies()]).
+#'   Defaults to the 11 studies of qesR 0.4.4; `"all"` on its own means the
+#'   same 11. Studies added to the catalog since (`qes1998_crop`,
+#'   `qes1998_createc`) are built only when named. Codes are trimmed and
+#'   case-insensitive.
 #' @param assign_global If TRUE, also assign the result as `object_name` into
 #'   the environment `get_qes_master()` was called from (the global environment
 #'   only when called at top level), after `saved_to` is set. Defaults to FALSE.
@@ -1774,7 +1782,7 @@ get_qes_master <- function(
   failed_conditions <- list()
 
   for (srvy in surveys) {
-    study <- .qes_catalog[.qes_catalog$qes_survey_code == srvy, , drop = FALSE]
+    study <- .qes_legacy_view(.qes_study_row(srvy))
 
     dat <- tryCatch(
       .get_qes_impl(

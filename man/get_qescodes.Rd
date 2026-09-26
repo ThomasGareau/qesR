@@ -13,12 +13,23 @@ get_qescodes(detailed = FALSE)
 A data frame of qesR survey codes (cesR-style by default).
 }
 \description{
-Returns a data frame of qesR survey call codes, with optional detailed metadata.
+Returns a data frame of qesR survey call codes, with optional detailed
+metadata.
+}
+\details{
+Soft-deprecated: use \code{\link[=qes_studies]{qes_studies()}}, which returns the full catalog.
+\code{get_qescodes()} keeps working and will not be removed; it prints a
+one-time notice (see \link{qesR-deprecated}). Its first 11 rows are the qesR
+0.4.4 codes, in the same order and with the same \code{index}; codes added
+since (the 1998 CROP and CREATEC surveys) follow. Names now carry their
+accents and the Durand panels, CROP and 1998 surveys are listed under their
+own titles; \code{documentation} is the DOI link.
 }
 \examples{
 get_qescodes()
 get_qescodes(detailed = TRUE)
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_studies]{qes_studies()}}, and \link{qesR-deprecated} for the legacy functions
+and their replacements.
 }

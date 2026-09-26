@@ -37,10 +37,13 @@ test_that("every canonical export is mentioned on ?qesR-fr", {
 })
 
 test_that("inst/CITATION equals qes_cite(NULL, 'bibentry')", {
-  skip("fixed in S1 (qes_cite() and the static inst/CITATION)")
   cite <- getExportedValue("qesR", "qes_cite")
   expect_equal(
     cite(NULL, style = "bibentry"),
-    utils::readCitationFile(system.file("CITATION", package = "qesR"))
+    utils::readCitationFile(
+      system.file("CITATION", package = "qesR"),
+      meta = utils::packageDescription("qesR")
+    )
   )
+  expect_equal(cite(NULL, style = "bibentry"), utils::citation("qesR"))
 })

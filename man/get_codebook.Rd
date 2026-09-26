@@ -14,7 +14,7 @@ get_codebook(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}. Codes are trimmed and
+\item{srvy}{A qesR survey code from \code{qes_studies()}. Codes are trimmed and
 case-insensitive.}
 
 \item{file}{Optional regular expression for choosing one file in multi-file datasets.}

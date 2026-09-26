@@ -192,7 +192,7 @@
   df[which.max(df$size), , drop = FALSE]
 }
 
-.choose_remote_file <- function(files_df, file = NULL, study_code = NA_character_) {
+.choose_remote_file <- function(files_df, file = NULL, study_code = NA_character_, pinned_id = NULL) {
   if (!is.null(file)) {
     .assert_single_string(file, "file")
 
@@ -207,6 +207,22 @@
     }
 
     return(files_df[which(matches)[1], , drop = FALSE])
+  }
+
+  # Studies added after qesR 0.4.4 read their pinned catalog file; the 11
+  # legacy studies keep the 0.4.4 choice until the reader moves to the pinned
+  # originals (slice S2b).
+  if (!is.null(pinned_id) && !is.na(pinned_id)) {
+    hit <- files_df[files_df$id == pinned_id, , drop = FALSE]
+    if (nrow(hit) != 1L) {
+      .qes_abort(
+        "source_pinned_missing",
+        class = "qesR_error_source",
+        args = list(.qes_q(study_code), .qes_q(pinned_id)),
+        data = list(study = study_code, file_id = pinned_id)
+      )
+    }
+    return(hit)
   }
 
   data_candidates <- .find_qes_data_files(files_df)
@@ -2164,7 +2180,12 @@
 .download_and_read_qes <- function(study, file = NULL, quiet = TRUE, read_data = TRUE) {
   metadata <- .fetch_qes_metadata(study, quiet = quiet)
   files_df <- .extract_qes_files(metadata, srvy_code = study$qes_survey_code)
-  selected <- .choose_remote_file(files_df, file = file, study_code = study$qes_survey_code)
+  selected <- .choose_remote_file(
+    files_df,
+    file = file,
+    study_code = study$qes_survey_code,
+    pinned_id = if (study$qes_survey_code %in% .qes_legacy_codes) NULL else study$data_file_id
+  )
   ddi_choice <- .fetch_best_qes_ddi(study, files_df = files_df, selected_file = selected, quiet = quiet)
   ddi_parsed <- ddi_choice$ddi_parsed
   codebook <- .build_qes_codebook(

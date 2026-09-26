@@ -27,7 +27,7 @@ library(qesR)
 
 ## Fonctions principales
 
-- `get_qescodes()` : liste des codes d'études
+- `qes_studies()` : liste des études disponibles (catalogue hors ligne)
 - `get_qes("qes2022")` : téléchargement d'une étude
 - `qes_codebook("qes2022")` : codebook
 - `get_question(obj, variable)` : texte de question
@@ -40,7 +40,8 @@ donc le résultat vous-même, `qes2022 <- get_qes("qes2022")`.
 ## Codes disponibles
 
 ```{r}
-get_qescodes(detailed = TRUE)
+studies <- qes_studies()
+studies[, c("study", "year", "title_en", "title_fr")]
 ```
 
 ## Exemple rapide

@@ -44,6 +44,14 @@
     en = "`%1$s`: \"all\" must be used on its own, not together with study codes.",
     fr = "`%1$s`\u00a0: \u00ab\u00a0all\u00a0\u00bb s'utilise seul, sans autre code d'\u00e9tude."
   ),
+  input_choice = c(
+    en = "`%1$s` must be one or more of %2$s.",
+    fr = "`%1$s` doit prendre une ou plusieurs des valeurs %2$s."
+  ),
+  input_flag = c(
+    en = "`%1$s` must be TRUE or FALSE.",
+    fr = "`%1$s` doit valoir TRUE ou FALSE."
+  ),
   input_do = c(
     en = "`do` must be a data.frame or the name of one in the calling environment.",
     fr = "`do` doit \u00eatre un data.frame ou le nom d'un data.frame de l'environnement appelant."
@@ -59,8 +67,8 @@
 
   # ---- qesR_error_unknown_study / _unknown_variable / _ambiguous_file ------
   unknown_study = c(
-    en = "Unknown study code %1$s. See get_qescodes() for valid codes.",
-    fr = "Code d'\u00e9tude inconnu %1$s. Voir get_qescodes() pour les codes valides."
+    en = "Unknown study code %1$s. See qes_studies() for valid codes.",
+    fr = "Code d'\u00e9tude inconnu %1$s. Voir qes_studies() pour les codes valides."
   ),
   unknown_study_suggest = c(
     en = "Unknown study code %1$s. Did you mean %2$s?",
@@ -106,6 +114,14 @@
     en = "qesR does not read files of type %1$s.",
     fr = "qesR ne lit pas les fichiers de type %1$s."
   ),
+  source_pinned_missing = c(
+    en = "The pinned data file %2$s of study %1$s is not in its Dataverse deposit. Run qes_studies(check_updates = TRUE).",
+    fr = "Le fichier de donn\u00e9es retenu %2$s de l'\u00e9tude %1$s ne figure pas dans son d\u00e9p\u00f4t Dataverse. Lancez qes_studies(check_updates = TRUE)."
+  ),
+  catalog_invalid = c(
+    en = "The qesR catalog file %1$s is invalid: %2$s. Reinstall qesR.",
+    fr = "Le fichier de catalogue de qesR %1$s est invalide\u00a0: %2$s. R\u00e9installez qesR."
+  ),
   master_none = c(
     en = "No study could be loaded. Check network access and study availability.",
     fr = "Aucune \u00e9tude n'a pu \u00eatre charg\u00e9e. V\u00e9rifiez l'acc\u00e8s au r\u00e9seau et la disponibilit\u00e9 des \u00e9tudes."
@@ -113,6 +129,12 @@
   master_strict = c(
     en = "The master build failed for %1$s study(ies): %2$s",
     fr = "La construction du fichier fusionn\u00e9 a \u00e9chou\u00e9 pour %1$s \u00e9tude(s)\u00a0: %2$s"
+  ),
+
+  # ---- qesR_error_no_provenance --------------------------------------------
+  no_provenance = c(
+    en = "`%1$s` does not record which study it comes from (it may have lost its attributes, for example through merge()). Pass study codes instead.",
+    fr = "`%1$s` n'indique pas de quelle \u00e9tude il provient (ses attributs ont pu \u00eatre perdus, par exemple avec merge()). Passez plut\u00f4t des codes d'\u00e9tude."
   ),
 
   # ---- warnings ------------------------------------------------------------
@@ -139,7 +161,16 @@
     )
   ),
 
+  arg_ignored = c(
+    en = "In %1$s(), `%2$s` no longer changes the result and is ignored. This note is shown once per session.",
+    fr = "Dans %1$s(), `%2$s` ne change plus le r\u00e9sultat et est ignor\u00e9. Cette note s'affiche une fois par session."
+  ),
+
   # ---- progress (silenced by quiet = TRUE) ---------------------------------
+  check_updates = c(
+    en = "Checking doi:%1$s for a newer version.",
+    fr = "Recherche d'une version plus r\u00e9cente de doi:%1$s."
+  ),
   get_qes_banner = c(
     en = "%1$s: %2$s\nDOI: %3$s\nDocumentation: %4$s",
     fr = "%1$s\u00a0: %2$s\nDOI\u00a0: %3$s\nDocumentation\u00a0: %4$s"

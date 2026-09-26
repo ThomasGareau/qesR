@@ -1,0 +1,105 @@
+enum,value,order,code,scope,label_en,label_fr
+family,qes,1,,,Quebec Election Study,Étude électorale québécoise
+family,durand_panel,2,,,Durand election panel survey,Sondage panel électoral de Durand
+family,crop_polls,3,,,CROP vote-intention polls,Sondages CROP d'intentions de vote
+family,polls_1998,4,,,1998 election polls,Sondages électoraux de 1998
+family,demo,5,,,Synthetic demonstration data,Données de démonstration synthétiques
+study_design,post,1,,,Post-election cross-section,Transversal postélectoral
+study_design,pre,2,,,Pre-election cross-section,Transversal préélectoral
+study_design,pre_post,3,,,Pre- and post-election waves,Vagues préélectorale et postélectorale
+study_design,panel,4,,,Panel,Panel
+study_design,pooled_polls,5,,,Pooled polls,Sondages regroupés
+role,data,1,,,Data file,Fichier de données
+role,label_donor,2,,,"Label donor (same data, other format)","Donneur d'étiquettes (mêmes données, autre format)"
+role,codebook,3,,,Codebook,Livre de codes
+role,questionnaire,4,,,Questionnaire,Questionnaire
+role,technical_report,5,,,Technical report,Rapport technique
+role,methodology,6,,,Methodological report,Rapport méthodologique
+format,sav,1,,,SPSS system file,Fichier système SPSS
+format,zsav,2,,,Compressed SPSS system file,Fichier système SPSS compressé
+format,por,3,,,SPSS portable file,Fichier portable SPSS
+format,dta,4,,,Stata data file,Fichier de données Stata
+format,pdf,5,,,PDF document,Document PDF
+format,doc,6,,,Word document (.doc),Document Word (.doc)
+format,docx,7,,,Word document (.docx),Document Word (.docx)
+lang,en,1,,,English,Anglais
+lang,fr,2,,,French,Français
+licence,CC0 1.0,1,,,Public domain dedication (CC0 1.0),Transfert dans le domaine public (CC0 1.0)
+licence,CC BY-NC 4.0,2,,,Attribution-NonCommercial 4.0 (CC BY-NC 4.0),Attribution - Pas d'utilisation commerciale 4.0 (CC BY-NC 4.0)
+election_type,general,1,,,General election,Élection générale
+jurisdiction,QC,1,,,Quebec (provincial),Québec (provincial)
+jurisdiction,CA,2,,,Canada (federal),Canada (fédéral)
+wave_timing,pre,1,,,Before the election,Avant l'élection
+wave_timing,post,2,,,After the election,Après l'élection
+wave_timing,between,3,,,Spans the election,De part et d'autre de l'élection
+wave_design,cross_section,1,,,Cross-section,Transversal
+wave_design,panel_wave,2,,,Panel wave,Vague de panel
+wave_design,poll_wave,3,,,Poll wave,Vague de sondage
+target_timing,pre,1,,,Pre-election,Préélectoral
+target_timing,post,2,,,Post-election,Postélectoral
+target_timing,any,3,,,Any time,Tout moment
+target_timing,static,4,,,Time-invariant,Invariant
+measure,nominal,1,,,Nominal,Nominal
+measure,ordinal,2,,,Ordinal,Ordinal
+measure,interval,3,,,Interval,Intervalle
+measure,text,4,,,Text,Texte
+measure,id,5,,,Identifier,Identifiant
+measure,weight,6,,,Weight,Pondération
+measure,admin,7,,,Administrative,Administratif
+label_source,file,1,,,Pinned data file,Fichier de données retenu
+label_source,label_donor,2,,,Label donor file,Fichier donneur d'étiquettes
+label_source,supplement,3,,,Reviewed supplement,Supplément révisé
+label_source,questionnaire,4,,,Questionnaire,Questionnaire
+label_source,file_malformed,5,,,Pinned data file (malformed label),Fichier de données retenu (étiquette mal formée)
+label_source,ddi,6,,,DDI metadata (draft rows only),Métadonnées DDI (lignes provisoires seulement)
+label_source,none,7,,,None,Aucune
+missing_type,dk,1,d,spec;dictionary,Don't know,Ne sait pas
+missing_type,refused,2,r,spec;dictionary,Refused,Refus
+missing_type,dk_refused,3,b,spec;dictionary,Don't know or refused (one code),Ne sait pas ou refus (un seul code)
+missing_type,no_answer,4,o,spec;dictionary,No answer (item nonresponse),Sans réponse (non-réponse partielle)
+missing_type,not_selected,5,s,spec;dictionary,Not selected (multiple choice),Non sélectionné (choix multiple)
+missing_type,inapplicable,6,i,spec;dictionary,Inapplicable (routed out),Sans objet (écarté par un filtre)
+missing_type,not_voted,7,v,spec;dictionary,Did not vote,N'a pas voté
+missing_type,spoiled,8,p,spec;dictionary,Spoiled ballot,Bulletin annulé
+missing_type,ineligible,9,e,spec;dictionary,Not eligible to vote,Pas admissible au vote
+missing_type,not_registered,10,g,spec;dictionary,Not on the list of electors,Pas inscrit sur la liste électorale
+missing_type,not_in_wave,11,w,spec;dictionary,Not in this wave,Absent de cette vague
+missing_type,not_mappable,12,m,spec;dictionary,Source category straddles target levels,Catégorie source à cheval sur plusieurs niveaux
+missing_type,user_na,13,u,dictionary,Declared missing code of unknown meaning,Code manquant déclaré de sens inconnu
+missing_type,sysmis,14,,engine,System missing,Valeur manquante système
+missing_type,not_asked,15,,engine,Not asked in this study,Question non posée dans cette étude
+missing_type,below_grade,16,,engine,Below the requested grade,Sous le niveau de comparabilité demandé
+missing_type,unmapped,17,,engine,Code not mapped,Code non apparié
+grade,identical,1,,,Identical,Identique
+grade,comparable,2,,,Comparable,Comparable
+grade,approximate,3,,,Approximate,Approximatif
+grade,not_comparable,4,,,Not comparable,Non comparable
+rule,map,1,,,Code map,Table de correspondance
+rule,numeric,2,,,Numeric pass-through,Valeur numérique transmise
+rule,weight,3,,,Weight,Pondération
+rule,date,4,,,Date,Date
+rule,string,5,,,Open text,Texte libre
+rule,constant,6,,,Constant,Constante
+rule,fn,7,,,Registered function (fn:<name>),Fonction enregistrée (fn:<nom>)
+rule,none,8,,,Documentation only,Documentation seulement
+dk_offered,explicit,1,,,Offered explicitly,Offert explicitement
+dk_offered,volunteered,2,,,Volunteered only,Spontané seulement
+dk_offered,none,3,,,Not offered,Non offert
+row_status,draft,1,,,Draft,Provisoire
+row_status,review,2,,,In review,En révision
+row_status,stable,3,,,Stable,Stable
+target_status,stable,1,,,Stable,Stable
+target_status,experimental,2,,,Experimental,Expérimental
+target_status,retired,3,,,Retired,Retiré
+weight_role,design,1,,,Design weight,Pondération de plan
+weight_role,poststrat,2,,,Post-stratification,Poststratification
+weight_role,raking,3,,,Raking,Calage itératif
+weight_role,vote_calibrated,4,,,Calibrated on reported vote,Calée sur le vote déclaré
+weight_role,turnout_calibrated,5,,,Calibrated on turnout,Calée sur la participation
+weight_scale,mean1,1,,,Mean 1,Moyenne 1
+weight_scale,population,2,,,Population total,Total de la population
+weight_status,reviewed,1,,,Reviewed,Révisée
+weight_status,needs_review,2,,,Needs review,À réviser
+mode,web,1,,,Web,Web
+mode,phone,2,,,Telephone,Téléphone
+mode,mixed,3,,,Mixed,Mixte

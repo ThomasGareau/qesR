@@ -1,0 +1,5 @@
+study,file_id,role,lang,file_name,original_file_name,format,ingested,bytes,md5,checksum_type,unf,n_rows,n_cols,encoding,id_vars,is_default,dataset_version
+qes2018,101,data,,a.tab,a.sav,sav,TRUE,1000,0123456789abcdef0123456789abcdef,MD5,UNF:6:fixtureA==,4,5,,quest,TRUE,1.0
+qes2018,102,questionnaire,fr,a_fr.pdf,a_fr.pdf,pdf,FALSE,2000,fedcba9876543210fedcba9876543210,MD5,,,,,,FALSE,1.0
+qes_fixture_b,201,data,,b.tab,b.dta,dta,TRUE,3000,00112233445566778899aabbccddeeff,MD5,UNF:6:fixtureB==,4,5,,quest,TRUE,2.1
+qes_fixture_b,202,codebook,en,b_en.pdf,b_en.pdf,pdf,FALSE,4000,ffeeddccbbaa99887766554433221100,MD5,,,,,,FALSE,2.1

@@ -17,7 +17,10 @@ export_calls <- function() {
     download_codebook = quote(download_codebook("qes2018")),
     get_preview = quote(get_preview("qes2018")),
     get_decon = quote(get_decon()),
-    get_qescodes = quote(get_qescodes())
+    get_qescodes = quote(get_qescodes()),
+    qes_studies = quote(qes_studies()),
+    qes_docs = quote(qes_docs()),
+    qes_cite = quote(qes_cite("qes2018"))
   )
 }
 
@@ -47,8 +50,9 @@ side_effect_state <- function() {
   )
 }
 
-test_that("the call table covers all 14 v0.4.4 exports", {
-  expect_setequal(names(export_calls()), v044_exports)
+test_that("the call table covers every export", {
+  expect_true(all(v044_exports %in% names(export_calls())))
+  expect_setequal(names(export_calls()), getNamespaceExports("qesR"))
 })
 
 test_that("every export returns its value visibly", {

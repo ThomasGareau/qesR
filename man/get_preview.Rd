@@ -7,7 +7,7 @@
 get_preview(srvy, obs = 6L, file = NULL)
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{get_qescodes()}.}
+\item{srvy}{A qesR survey code from \code{qes_studies()}.}
 
 \item{obs}{Number of observations to return.}
 

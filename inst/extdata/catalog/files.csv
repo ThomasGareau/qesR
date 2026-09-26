@@ -1,0 +1,44 @@
+study,file_id,role,lang,file_name,original_file_name,format,ingested,bytes,md5,checksum_type,unf,n_rows,n_cols,encoding,id_vars,is_default,dataset_version
+qes2022,7449513,data,,2022 Quebec Election Study v1.tab,2022 Quebec Election Study v1.dta,dta,TRUE,2839434,c51bafed57776ffa8d4c6f301f5c945b,MD5,UNF:6:I/DFDdqJv7wNEoyyRdxaIw==,1521,718,,ResponseId,TRUE,1.1
+qes2022,7449514,codebook,en,2022 Quebec Election Study Codebook v1.pdf,2022 Quebec Election Study Codebook v1.pdf,pdf,FALSE,663655,42ad4bbe6eb0f8b4c7522ad376834334,MD5,,,,,,FALSE,1.1
+qes2018,425914,data,,Quebec Election Study 2018.tab,Quebec Election Study 2018.dta,dta,TRUE,6332459,d24f5b0be727d688ad305b8eb61f0d30,MD5,UNF:6:luhys2QSLNTONPOXO4LYpg==,3072,254,,responseid,TRUE,1.0
+qes2018,361049,questionnaire,en,Quebec Election Study 2018 EN.doc,Quebec Election Study 2018 EN.doc,doc,FALSE,232960,e263d7864f9a3ae434295bba954fe931,MD5,,,,,,FALSE,1.0
+qes2018,361050,questionnaire,fr,Quebec Election Study 2018 FR.doc,Quebec Election Study 2018 FR.doc,doc,FALSE,242176,5b1dd8036dca45bf5860f288da7de622,MD5,,,,,,FALSE,1.0
+qes2018,367181,codebook,fr,Quebec Election Study 2018 FR with programmed answer values.docx,Quebec Election Study 2018 FR with programmed answer values.docx,docx,FALSE,73638,c8f58722d652368ff3488f3c638a35c6,MD5,,,,,,FALSE,1.0
+qes2018,361045,methodology,fr,Rapport méthodologique de l'Étude électorale québécoise 2018,Rapport méthodologique de l'Étude électorale québécoise 2018,pdf,FALSE,651382,3e17e3a5266e1f79c4cca1549b56c63c,MD5,,,,,,FALSE,1.0
+qes2018_panel,333052,data,,IPsos_oct_2018_17-057727_V.tab,IPsos_oct_2018_17-057727_V.SAV,sav,TRUE,447984,b6fc93f2918ae4a56de3d19e80d0bd15,MD5,UNF:6:ECsYwSg8SlYcGPle+8FjWw==,1250,72,,method;id,TRUE,1.0
+qes2018_panel,341538,codebook,fr,LivredeCodes_SondagePanelQC2018.pdf,LivredeCodes_SondagePanelQC2018.pdf,pdf,FALSE,146087,66c8b26e8cb1e358f413acb2e3cb24d9,MD5,,,,,,FALSE,1.0
+qes2014,425916,data,,Quebec Election Study 2014 (SPSS).tab,Quebec Election Study 2014.sav,sav,TRUE,377038,9549423b32526a2f11a3d954a87c6861,MD5,UNF:6:lzL3Kyp3lA9mrCtaVZp9ug==,1517,140,,.row,TRUE,1.0
+qes2014,425915,data,,Quebec Election Study 2014 (STATA).tab,Quebec Election Study 2014.dta,dta,TRUE,1803639,508832e68953fa3f430ef76b03dcb074,MD5,UNF:6:lzL3Kyp3lA9mrCtaVZp9ug==,1517,140,,.row,FALSE,1.0
+qes2014,352010,questionnaire,en,Quebec Election Study 2014 EN.doc,Quebec Election Study 2014 EN.doc,doc,FALSE,152576,be898d3aacc9817d0d2bcd74ed05853b,MD5,,,,,,FALSE,1.0
+qes2014,352009,questionnaire,fr,Quebec Election Study 2014 FR.doc,Quebec Election Study 2014 FR.doc,doc,FALSE,149504,084106a7bf6fa379b3ca0c9247200772,MD5,,,,,,FALSE,1.0
+qes2014,352011,technical_report,fr,Quebec Election Study 2014 - Technical Report - Post-Election Study.doc,Quebec Election Study 2014 - Technical Report - Post-Election Study.doc,doc,FALSE,165888,0fbd17814c343f80ba819bc581c867fc,MD5,,,,,,FALSE,1.0
+qes2012,425918,data,,Quebec Election Study 2012 (STATA).tab,Quebec Election Study 2012 (STATA).dta,dta,TRUE,1131600,e5ec063d9b1b03b48f458be4d8ec3d7b,MD5,UNF:6:FtkoQZqZSTVu2BBxD5ufRg==,1505,177,,quest,TRUE,1.0
+qes2012,425917,label_donor,,Quebec Election Study 2012 (SPSS).tab,Quebec Election Study 2012 (SPSS).sav,sav,TRUE,384599,02f304b9bec665c95b18da25a634baa5,MD5,UNF:6:FtkoQZqZSTVu2BBxD5ufRg==,1505,177,,QUEST,FALSE,1.0
+qes2012,196367,questionnaire,en,Quebec Election Study 2012 EN.doc,Quebec Election Study 2012 EN.doc,doc,FALSE,227328,7d4dd4ce93f457eba9b3afe71931725e,MD5,,,,,,FALSE,1.0
+qes2012,196370,questionnaire,fr,Quebec Election Study 2012 FR.doc,Quebec Election Study 2012 FR.doc,doc,FALSE,265728,e9f4642a4a787d5cf4230105c682a2d4,MD5,,,,,,FALSE,1.0
+qes2012,196368,technical_report,fr,Rapport technique - Etude sur la politique - Quebec-Ecosse.doc,Rapport technique - Etude sur la politique - Quebec-Ecosse.doc,doc,FALSE,207872,c94e66cfa453d7f94406cd4bde5c3f6e,MD5,,,,,,FALSE,1.0
+qes2012_panel,361043,data,,panel_quebec_2012.tab,repondants_post_2012.sav,sav,TRUE,196287,8f90a9f97a33e01eff3748f05612e26c,MD5,UNF:6:/ACwE8qVPCB013O9cweCqQ==,844,79,,quest,TRUE,1.0
+qes2012_panel,654292,codebook,fr,Livre de codes - Panel Québec 2012.pdf,Livre de codes - Panel Québec 2012.pdf,pdf,FALSE,160714,99436fbdbe049f6a01a2e12cb15fdac9,MD5,,,,,,FALSE,1.0
+qes2012_panel,654290,questionnaire,en,Questionnaire-post_electionqc-2012_EN.docx,Questionnaire-post_electionqc-2012_EN.docx,docx,FALSE,15594,6d710e67bdff6a88cda1eab0f2fb06df,MD5,,,,,,FALSE,1.0
+qes2012_panel,654291,questionnaire,fr,Questionnaire-post_electionqc-2012_FR.docx,Questionnaire-post_electionqc-2012_FR.docx,docx,FALSE,13808,6577758b08ae22fc6ad70352caa599ab,MD5,,,,,,FALSE,1.0
+qes_crop_2007_2010,329990,data,,intvotetotal_juin2007_jan2010.tab,intvotetotal_juin2007_jan2010.sav,sav,TRUE,847023,534514c7414d462259de4421bb4579e5,MD5,UNF:6:Yaloq+G6EVBknLlAk44JoQ==,24027,19,,.row,TRUE,1.0
+qes_crop_2007_2010,341537,codebook,fr,LivredeCodes_SondagesCROP_2007-2010.pdf,LivredeCodes_SondagesCROP_2007-2010.pdf,pdf,FALSE,31296,e5ea4f4d7030a84b42759fc55f5b8d0d,MD5,,,,,,FALSE,1.0
+qes2008,425919,data,,Quebec Election Study 2008 (SPSS).tab,Quebec Election Study 2008 (SPSS).sav,sav,TRUE,142073,6a69b00b943bb357c3ed10091d936ba9,MD5,UNF:6:JnwEfnp75eFg5HKtsN6CRg==,1151,63,,seq,TRUE,1.0
+qes2008,425920,data,,Quebec Election Study 2008 (STATA).tab,Quebec Election Study 2008 (STATA).dta,dta,TRUE,102489,192547c91c1f1a86b5dcbaf2ee19c511,MD5,UNF:6:SIDtGYYGIY0oZdCC2zT7Jw==,1151,63,,seq,FALSE,1.0
+qes2008,196358,questionnaire,fr,Quebec Election Study 2008 FR.doc,Quebec Election Study 2008 FR.doc,doc,FALSE,86016,451182a24109811f46eeba2bb34be272,MD5,,,,,,FALSE,1.0
+qes2008,197296,questionnaire,en,Quebec Election study 2008 ENG.pdf,Quebec Election study 2008 ENG.pdf,pdf,FALSE,118660,fa57b656d7eda71187a97bfde109dc11,MD5,,,,,,FALSE,1.0
+qes2007,425922,data,,Quebec Election Study 2007 (STATA).tab,Quebec Election Study 2007 (STATA).dta,dta,TRUE,602756,d2355b5d400b16cc999be0a5701463a7,MD5,UNF:6:dahmtsuVCpk42CLMLpbgJA==,2175,93,,quest,TRUE,1.0
+qes2007,425921,data,,Quebec Election Study 2007 (SPSS).tab,Quebec Election Study 2007 (SPSS).sav,sav,TRUE,1557734,e1324bbb582cf6bc01eb9949ecb8b132,MD5,UNF:6:71ThKeRbkmyDsAH85APy7A==,2175,93,,quest,FALSE,1.0
+qes2007,192423,questionnaire,en,Quebec Election Study 2007 ENG.doc,Quebec Election Study 2007 ENG.doc,doc,FALSE,116224,9d09da75d0f0ad008b61f67fb3538320,MD5,,,,,,FALSE,1.0
+qes2007,192422,questionnaire,fr,Quebec Election Study 2007 FR.doc,Quebec Election Study 2007 FR.doc,doc,FALSE,121344,a6ecbace0da2314d4c7065b8bdea81f7,MD5,,,,,,FALSE,1.0
+qes2007_panel,352415,data,,complet_tous_repondants_2007.tab,complet_tous_repondants_2007.sav,sav,TRUE,1599467,20f8c6fd4211744340f76293d18e5b6d,MD5,UNF:6:ASjoqrxxkLm0vvSA6lc9Fw==,2442,270,,nompn;quest,TRUE,1.0
+qes2007_panel,352416,codebook,fr,LivredeCodes_SondagePanel-QC2007.pdf,LivredeCodes_SondagePanel-QC2007.pdf,pdf,FALSE,203404,657fab55a25bee7bd4bf1e3fea8b1864,MD5,,,,,,FALSE,1.0
+qes2007_panel,354955,questionnaire,en,Questionnaire_post-sondage-panel-electionqc-2007_EN.doc,Questionnaire_post-sondage-panel-electionqc-2007_EN.doc,doc,FALSE,34304,d91202792c16b23e7ad60f873d28e10b,MD5,,,,,,FALSE,1.0
+qes2007_panel,354956,questionnaire,fr,Questionnaire_post-sondage-panel-electionqc-2007_FR.doc,Questionnaire_post-sondage-panel-electionqc-2007_FR.doc,doc,FALSE,34304,9fdf02dd9106cd25a3a0ca38f5ef5b11,MD5,,,,,,FALSE,1.0
+qes1998,329987,data,,Total_panel_election_QC1998.tab,Total_panel_election_QC1998.sav,sav,TRUE,207700,a2a2b2fef6a2edb202beae0e63e59f0c,MD5,UNF:6:lT/C1Ddoq+YtsdeMhF5sUg==,1483,42,,quetr,TRUE,1.0
+qes1998,332051,codebook,fr,LivredeCodes_Panel_QC1998.pdf,LivredeCodes_Panel_QC1998.pdf,pdf,FALSE,134855,f9bf9c24a93da87f778a4f44a7824ac3,MD5,,,,,,FALSE,1.0
+qes1998_crop,286331,data,,Total_sondages_election_CROP1998.tab,Total_sondages_election_CROP1998.sav,sav,TRUE,35505,ceec0332eaa0eab117e4bcf5c4d8d672,MD5,UNF:6:EC0fcl/fYVpU901ZRDXSnw==,450,37,,quest,TRUE,1.0
+qes1998_crop,332049,codebook,fr,LivredeCodes_CROP_1998.pdf,LivredeCodes_CROP_1998.pdf,pdf,FALSE,130900,47c0a5765692bfdf1c7028cc29910ea2,MD5,,,,,,FALSE,1.0
+qes1998_createc,316121,data,,Total_sondages_election_CREATEC1998.tab,Total_sondages_election_CREATEC1998.sav,sav,TRUE,166714,1aba610f71f1b5c46e03da2036e83330,MD5,UNF:6:qX0qSRwbqAhw9sU6pIc3Rw==,1057,49,,quetr,TRUE,1.0
+qes1998_createc,332050,codebook,fr,LivredeCodes_CREATEC_1998.pdf,LivredeCodes_CREATEC_1998.pdf,pdf,FALSE,134317,e3c1bbefd64a9481047924b715bdf836,MD5,,,,,,FALSE,1.0

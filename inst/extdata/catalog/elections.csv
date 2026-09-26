@@ -1,0 +1,10 @@
+election_id,jurisdiction,election_type,election_date,label_en,label_fr,source_url
+QC1994,QC,general,1994-09-12,Quebec general election of 1994,Élection générale québécoise de 1994,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen1994-09-12/resultats.json
+QC1998,QC,general,1998-11-30,Quebec general election of 1998,Élection générale québécoise de 1998,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen1998-11-30/resultats.json
+QC2003,QC,general,2003-04-14,Quebec general election of 2003,Élection générale québécoise de 2003,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2003-04-14/resultats.json
+QC2007,QC,general,2007-03-26,Quebec general election of 2007,Élection générale québécoise de 2007,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2007-03-26/resultats.json
+QC2008,QC,general,2008-12-08,Quebec general election of 2008,Élection générale québécoise de 2008,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2008-12-08/resultats.json
+QC2012,QC,general,2012-09-04,Quebec general election of 2012,Élection générale québécoise de 2012,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2012-09-04/resultats.json
+QC2014,QC,general,2014-04-07,Quebec general election of 2014,Élection générale québécoise de 2014,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2014-04-07/resultats.json
+QC2018,QC,general,2018-10-01,Quebec general election of 2018,Élection générale québécoise de 2018,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2018-10-01/resultats.json
+QC2022,QC,general,2022-10-03,Quebec general election of 2022,Élection générale québécoise de 2022,https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2022-10-03/resultats.json
