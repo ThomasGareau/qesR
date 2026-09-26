@@ -1,11 +1,11 @@
-# qesR redesign: integrated design for owner approval
+# qesR redesign: integrated design (approved)
 
 - **Branch:** `redesign` (HEAD c154985, version 0.4.4).
-- **Date:** 2026-09-26. **Revision 2**, after two critic reviews (harmonization validity; API coherence, CRAN and slicing). §12.4 records what was accepted and what was rejected.
+- **Date:** 2026-09-26. **Revision 3.** Revision 2 followed two critic reviews (harmonization validity; API coherence, CRAN and slicing); §12.4 records what was accepted and what was rejected. Revision 3 records the owner's decisions of 2026-09-26 (§0.3): every recommendation OD1-OD16 accepted, the API trimmed to 13 new exports, a new data-access policy and a website slice W.
 - **Inputs:** `dev/assessment.md`, `dev/downstream-impact.md`, and two synthesized track designs:
   - track (a), harmonization, based on *maintainer-first*;
   - track (b), API, HTTP, cache and catalog, based on *ces-familiar*.
-- **Status:** proposal. Nothing here is implemented. Where the two tracks disagreed, this document picks one answer and records the other in §12.
+- **Status:** approved by the owner on 2026-09-26 (§0.3). Implementation proceeds slice by slice on branch `redesign` (§11). Where the two tracks disagreed, this document picks one answer and records the other in §12.
 
 Facts marked "verified" were checked offline against the cached originals: qes2012 SPSS/Stata, qes2014 SPSS/Stata, qes2018 `.dta`, qes2022 `.dta`, and the 2007/2018 panel `.sav` files. The cached DDI files, the 2018 questionnaire text and the 2014 technical note were also used. No network request was made for this document. The checks are in `scratchpad/design/integrate/chk.R`, `scratchpad/design/critic-validity/[a-o].R`, `scratchpad/design/critic-coherence/loc*.R` and `scratchpad/design/apply-critics/v1.R`, `v2.R`.
 
@@ -15,12 +15,13 @@ IDs from different lists never share a prefix:
 
 | Prefix | Meaning | Where defined |
 |---|---|---|
-| `OD1`-`OD16` | owner decisions | §0.2 |
+| `OD1`-`OD19` | owner decisions (all decided 2026-09-26) | §0.2, §0.3 |
 | `P1`-`P10` | design rules | §1.1 |
 | `V-S*`, `V-D*`, `V-P*`, `V-L*` | validator rules: spec, data, projection, live | §5.10 |
 | `S0a`-`S5` | data-lane slices | §11 |
+| `W` | website slice (refreshed at 0.6.0 and 0.7.0 as `W.1`, `W.2`) | §9.1, §11 |
 | `HZ1`-`HZ9` | harmonization-lane slices | §11 |
-| `R1`-`R9` | data requests for the owner | §13.3 |
+| `R1`-`R9` | data needs: Claude fetches public items; the owner is asked only for permissions and non-public documents | §13.3 |
 | `[A:D10]`, `[A:H3]`, `[A:K1]` ... | bug IDs from `dev/assessment.md` | assessment |
 | `CV1`-`CV23`, `CC-A1`-`CC-F7` | critic findings on revision 1 | §12.4 |
 
@@ -45,7 +46,7 @@ IDs from different lists never share a prefix:
    - One harmonized variable ("target") means one question stimulus.
    - Intention and recall are separate targets, and so are lean-pushed intention, the 4-point and 0-10 interest scales, and "independent country" vs "sovereign country" vs 1995 partnership wording.
 5. **[0.6.0] Each (study, target) cell carries a comparability grade** (`identical` / `comparable` / `approximate`) with an EN/FR reason.
-   - `qes_targets()` shows which studies have what.
+   - `qes_spec()` (default view `"targets"`) shows which studies have what.
    - `min_grade =` restricts output to strictly comparable cells.
    - The answer options each study offered are recorded, so a party that was not on a study's list is shown as a structural zero, not as 0% support.
 6. **[0.6.0] Missing data is never silent.**
@@ -68,35 +69,47 @@ IDs from different lists never share a prefix:
    - `qes_cite()` turns that into a citation.
 10. **[0.5.0 or at the replacement's release] Eleven old helper names become soft-deprecated legacy wrappers that keep working indefinitely.** Each prints a one-time EN/FR message naming its replacement, and only once that replacement has shipped. Messages follow your language; returned data never does.
 
-### 0.2 Decisions needed from the owner
+### 0.2 Owner decisions OD1-OD16 (all DECIDED 2026-09-26, as recommended)
 
-The recommended default is given for each.
+The owner accepted every recommendation on 2026-09-26. Each row keeps the recommendation text, which is now the decision.
 
-**What waits on what:**
-- S0a-S3 and HZ1-HZ4 can be merged without any answer.
-- S4 (interim master) needs OD4, OD5, OD8, OD9 and OD15, plus data requests R1, R2 and R9.
-- S5 (0.5.0 on CRAN) needs OD2 and OD3, plus S2b's all-study gate, which needs R1 and R2.
+**What still waits on what** (all owner decisions are in):
+- S0a-S3 and HZ1-HZ4 wait on nothing outside the design.
+- S4 (interim master) needs data items R1, R2 and R9, which Claude fetches or builds itself (§13.3).
+- S5 (0.5.0 on CRAN) needs S2b's all-study gate, which needs R1 and R2.
+- The only items that can wait on the owner are permissions and non-public documents (R8, and any R-item that turns out not to be publicly fetchable).
 
-| # | Decision | Recommended |
+| # | Decision | Decision of 2026-09-26 |
 |---|---|---|
-| OD1 | Status of `get_qes_master()`. Track (a) soft-deprecated it; track (b) kept it stable. | **Stable, no deprecation message.** It is the fixed legacy schema; its docs point new work to `qes_harmonize()`. The one-time "values changed" message still applies. |
-| OD2 | Release plan | **Three CRAN releases.**<br>• **0.5.0:** data lane plus the interim master (§5.12): deletions and blanking of every cell verified invalid, with no new recoding logic.<br>• **0.6.0:** the engine, marked experimental, for the six cached studies.<br>• **0.7.0:** all 11 legacy studies in the spec, the master switched to the engine, and spec 1.0.0.<br>0.5.0 waits for R1/R2 so that `get_qes()` on originals is verified for all 11 studies. The alternative is to keep the engine on GitHub until 0.7.0. |
-| OD3 | May qes2022 (CC BY-NC) value-label text, question wording or aggregate counts ship in the MIT tarball? | **No, until the C-Dem PIs agree in writing.** Ship md5 hashes of labels, `wording_ref` only, and CI-only aggregates. qes2022 metadata is built at runtime from the user's own copy. |
-| OD4 | Legacy `vote_choice`/`turnout`: recall-only, or recall else intention? | **Recall-only.** Intention moves to the appended `vote_intent`/`turnout_intent` columns. In 0.5.0 the interim master blanks the intention-based cells (2022 and CROP). 1998 is filled from the `q3post` recall from 0.7.0. |
-| OD5 | Legacy `sovereignty_support`/`sovereignty`: the independent-country item only, or spliced with other wordings? | **Independent-country only.** NA for 2007, 2008 and 1998 (partnership wording) and for 2012p ("pays souverain"), from 0.5.0 on. Append `sov_partnership_1995`. |
-| OD6 | Legacy `survey_weight` | **Keep the v0.4.4 source variable and raw scale per study.** Append `weight_pre`/`weight_post` (raw); `legacy_column_map` points to the weight guide. The alternative is the recommended post-wave weight normalized to mean 1, which changes values (CROP 6.04 becomes 1). |
-| OD7 | Legacy `political_interest` (the 0-10 legacy column) | **Keep it populated.**<br>• Apply v0.4.4's intended 1→10, 2→7, 3→3, 4→0 map to the 4-point items. This fixes [A:H3], where 2018's raw 1-4 codes landed unconverted on the 0-10 column. The 2018 source uses the same code direction as 2012 and 2014 (verified).<br>• Pass the 2022 0-10 item through.<br>• Flag the column `approximate` in `legacy_column_map`.<br>The new API never pools the two instruments. |
-| OD8 | Legacy `language` when a respondent reports several mother tongues (2014 QLANG 4-6, n = 115) | **NA, with a message.** |
-| OD9 | `get_decon("qes2022")` `votechoice`: intention (v0.4.4, the CES campaign frame) or recall? | **Keep intention**, and add `attr(, "timing")`. |
-| OD10 | qes2022 default weights: untrimmed or trimmed `*_weight_general`? | **Untrimmed**, which reproduces the calibration margins. |
-| OD11 | ADQ and CAQ as separate levels with no merged level? | **Yes.** Also offer an optional lineage helper for ADQ → CAQ time series, graded `approximate` and never applied by default. |
-| OD12 | 2022 `pes_turnout` = 5 ("wasn't registered", n = 3) and = 6 ("don't remember", n = 2) | **5 → NA reason `not_registered`** (still `eligible_voter`, but excluded from official-denominator benchmarks); **6 → `dk`**. The earlier draft's `ineligible` for code 5 was wrong: "ineligible" is reserved for 2018 `q5` = 5 ("I was not eligible"). |
-| OD13 | `cph` entry in DESCRIPTION ("Quebec Election Study" is not a legal person) | **Drop it.** LICENSE names Thomas Gareau-Paquette. `inst/COPYRIGHTS` documents the shipped CC0 labels and wording by study, with DOIs. |
-| OD14 | Ask QES/CECD and C-Dem for permission to deposit a harmonized cumulative file on Borealis? | **Later (slice HZ9).** Nothing depends on it. |
-| OD15 | Legacy `age_group` for qes2018_panel, whose source has only 3 bands (18-34/35-54/55+), while v0.4.4 populated all 1,250 rows | **Keep it populated from `age_group3`**, flagged in `legacy_column_map`. This matches v0.4.4, where the column already mixed band schemes across studies. The alternative, NA, blanks data users had. |
-| OD16 | May `inst/COPYRIGHTS` and the docs say that qes1998 covers "QC francophones 18+" before the definition of "francophone" is known (R2)? | **Yes, quoting the codebook** ("retenir uniquement les francophones"), with the definition marked as pending. |
+| OD1 | Status of `get_qes_master()`. Track (a) soft-deprecated it; track (b) kept it stable. | **DECIDED (as recommended).** **Stable, no deprecation message.** It is the fixed legacy schema; its docs point new work to `qes_harmonize()`. The one-time "values changed" message still applies. |
+| OD2 | Release plan | **DECIDED (as recommended).** **Three CRAN releases.**<br>• **0.5.0:** data lane plus the interim master (§5.12): deletions and blanking of every cell verified invalid, with no new recoding logic.<br>• **0.6.0:** the engine, marked experimental, for the six cached studies.<br>• **0.7.0:** all 11 legacy studies in the spec, the master switched to the engine, and spec 1.0.0.<br>0.5.0 waits for R1/R2 so that `get_qes()` on originals is verified for all 11 studies. The alternative is to keep the engine on GitHub until 0.7.0. |
+| OD3 | May qes2022 (CC BY-NC) value-label text, question wording or aggregate counts ship in the MIT tarball? | **DECIDED (as recommended).** **No, until the C-Dem PIs agree in writing.** Ship md5 hashes of labels, `wording_ref` only, and CI-only aggregates. qes2022 metadata is built at runtime from the user's own copy. |
+| OD4 | Legacy `vote_choice`/`turnout`: recall-only, or recall else intention? | **DECIDED (as recommended).** **Recall-only.** Intention moves to the appended `vote_intent`/`turnout_intent` columns. In 0.5.0 the interim master blanks the intention-based cells (2022 and CROP). 1998 is filled from the `q3post` recall from 0.7.0. |
+| OD5 | Legacy `sovereignty_support`/`sovereignty`: the independent-country item only, or spliced with other wordings? | **DECIDED (as recommended).** **Independent-country only.** NA for 2007, 2008 and 1998 (partnership wording) and for 2012p ("pays souverain"), from 0.5.0 on. Append `sov_partnership_1995`. |
+| OD6 | Legacy `survey_weight` | **DECIDED (as recommended).** **Keep the v0.4.4 source variable and raw scale per study.** Append `weight_pre`/`weight_post` (raw); `legacy_column_map` points to the weight guide. The alternative is the recommended post-wave weight normalized to mean 1, which changes values (CROP 6.04 becomes 1). |
+| OD7 | Legacy `political_interest` (the 0-10 legacy column) | **DECIDED (as recommended).** **Keep it populated.**<br>• Apply v0.4.4's intended 1→10, 2→7, 3→3, 4→0 map to the 4-point items. This fixes [A:H3], where 2018's raw 1-4 codes landed unconverted on the 0-10 column. The 2018 source uses the same code direction as 2012 and 2014 (verified).<br>• Pass the 2022 0-10 item through.<br>• Flag the column `approximate` in `legacy_column_map`.<br>The new API never pools the two instruments. |
+| OD8 | Legacy `language` when a respondent reports several mother tongues (2014 QLANG 4-6, n = 115) | **DECIDED (as recommended).** **NA, with a message.** |
+| OD9 | `get_decon("qes2022")` `votechoice`: intention (v0.4.4, the CES campaign frame) or recall? | **DECIDED (as recommended).** **Keep intention**, and add `attr(, "timing")`. |
+| OD10 | qes2022 default weights: untrimmed or trimmed `*_weight_general`? | **DECIDED (as recommended).** **Untrimmed**, which reproduces the calibration margins. |
+| OD11 | ADQ and CAQ as separate levels with no merged level? | **DECIDED (as recommended).** **Yes.** Also offer an optional lineage helper for ADQ → CAQ time series, graded `approximate` and never applied by default. |
+| OD12 | 2022 `pes_turnout` = 5 ("wasn't registered", n = 3) and = 6 ("don't remember", n = 2) | **DECIDED (as recommended).** **5 → NA reason `not_registered`** (still `eligible_voter`, but excluded from official-denominator benchmarks); **6 → `dk`**. The earlier draft's `ineligible` for code 5 was wrong: "ineligible" is reserved for 2018 `q5` = 5 ("I was not eligible"). |
+| OD13 | `cph` entry in DESCRIPTION ("Quebec Election Study" is not a legal person) | **DECIDED (as recommended).** **Drop it.** LICENSE names Thomas Gareau-Paquette. `inst/COPYRIGHTS` documents the shipped CC0 labels and wording by study, with DOIs. |
+| OD14 | Ask QES/CECD and C-Dem for permission to deposit a harmonized cumulative file on Borealis? | **DECIDED (as recommended).** **Later (slice HZ9).** Nothing depends on it. |
+| OD15 | Legacy `age_group` for qes2018_panel, whose source has only 3 bands (18-34/35-54/55+), while v0.4.4 populated all 1,250 rows | **DECIDED (as recommended).** **Keep it populated from `age_group3`**, flagged in `legacy_column_map`. This matches v0.4.4, where the column already mixed band schemes across studies. The alternative, NA, blanks data users had. |
+| OD16 | May `inst/COPYRIGHTS` and the docs say that qes1998 covers "QC francophones 18+" before the definition of "francophone" is known (R2)? | **DECIDED (as recommended).** **Yes, quoting the codebook** ("retenir uniquement les francophones"), with the definition marked as pending. |
 
-Questions that need documents rather than decisions are listed in §13.3 (data requests R1-R9).
+Questions that need documents rather than decisions are listed in §13.3 (data needs R1-R9).
+
+### 0.3 Owner decisions of 2026-09-26
+
+| # | Decision | Effect in this document |
+|---|---|---|
+| OD1-OD16 | **DECIDED:** every recommendation in §0.2 accepted. | §0.2 rows marked DECIDED; the S4/S5 dependency list no longer waits on the owner. |
+| OD17 | **DECIDED: API trimmed to 13 new exports.** `qes_targets()`, `qes_crosswalk()` and `qes_spec()` fold into one exported metadata function, `qes_spec(view = )`. `qes_splice()` and `qes_join_raw()` stay internal (`.qes_splice()`, `.qes_join_raw()`) for now. | §2.1, §2.2 (13 new, 16 canonical, 27 exports, 28 Rd pages), §5.3, §9, §11 (HZ3, HZ4), §12.2, §13.1. |
+| OD18 | **DECIDED: data access policy.** Claude fetches public data and documents itself, with plain requests carrying no personal information (User-Agent exactly `qesR/<ver> R/<ver>`, cached, sequential, at least 1 s apart, backoff on 429/503). The owner is asked only for permissions and for documents that are not public. If an item cannot be fetched with a plain request (login wall, WAF refusal, terms of use), it is not worked around: it is recorded as a request for the owner. | §13.3 rewritten from "data requests for the owner" to "data needs". |
+| OD19 | **DECIDED: website slice W.** Rework the pkgdown site after S5 and refresh it at 0.6.0 and 0.7.0; built locally, not deployed. | §9.1 (site design), §10, §11 (slice W). |
+
+Unchanged binding rules: all 14 current exports keep working; `get_qes()`/`get_qes_master()` keep their signatures; `assign_global` defaults to FALSE and data is always returned visibly; the 11 old helpers are soft-deprecated wrappers kept indefinitely.
 
 ---
 
@@ -141,7 +154,7 @@ Questions that need documents rather than decisions are listed in §13.3 (data r
 |---|---|---|
 | `studies` | A vector of catalog codes. Trimmed and case-insensitive, never fuzzy; an unknown code raises an error that suggests near matches. `"2018"` is never auto-resolved. `"all"` is valid only on its own, and mixing it with codes is an error. | every new function that accepts several studies |
 | `srvy`, `surveys` | The same meaning under the legacy names (`srvy` is a single code) | `get_qes`, `qes_codebook` (frozen position 1), `get_qes_master` |
-| `x` | A study code, or an object carrying `qes_provenance` | `qes_question`, `qes_missing`, `qes_provenance`, `qes_cite`, `qes_design`, `qes_splice`, `qes_join_raw` |
+| `x` | A study code, or an object carrying `qes_provenance` | `qes_question`, `qes_missing`, `qes_provenance`, `qes_cite`, `qes_design` (and the internal `.qes_splice`, `.qes_join_raw`) |
 | `variables` | Raw variable names, exact match | metadata functions, `qes_missing` |
 | `targets` | Harmonized target, family or set names, exact match. The three name spaces are disjoint (validator V-S15). | harmonization functions |
 | `lang` | Language of **returned text**, with a fixed default. It never follows the locale or an option. For raw metadata (`qes_codebook`, `qes_question`, `qes_docs`), `lang = NULL` means the study's source language. For harmonized output and spec views, the default is `"en"`, because the spec always has both languages. | everywhere text is returned |
@@ -161,7 +174,9 @@ Questions that need documents rather than decisions are listed in §13.3 (data r
 
 **Naming rule:** everything new is `qes_<noun>` or `qes_<verb>`. A test checks that every export outside the frozen legacy list matches `^qes_[a-z_]+$`.
 
-### 2.2 New exports (17)
+### 2.2 New exports (13)
+
+Revised by OD17: the three spec views are one function, and splice/join are internal.
 
 | Family | Signature | Returns | Purpose |
 |---|---|---|---|
@@ -172,21 +187,23 @@ Questions that need documents rather than decisions are listed in §13.3 (data r
 | Metadata | `qes_question(x, variables, lang = NULL)` | data.frame: `study, variable, question, question_lang, truncated, source, doc_ref, universe` | Exact wording. Truncation at 80 characters in the source is flagged rather than guessed ([A:K3]). |
 | Metadata | `qes_docs(studies = NULL, role = NULL, lang = NULL)` | data.frame: `study, file_id, file_name, role, lang, format, bytes, md5, url` | Offline list of codebooks, questionnaires and reports, with curated roles ([A:K2]). Fetching goes through `qes_download(what = "docs")`. |
 | Harmonization | `qes_harmonize(studies = NULL, targets = "core", layout = c("respondent","long"), values = c("factor","labelled","code"), missing = c("na","reasons"), min_grade = c("approximate","comparable","identical"), weights = c("normalized","raw"), unmapped = c("error","warn","na"), on_fail = c("stop","skip"), keep_source = FALSE, include_draft = FALSE, data = NULL, spec = NULL, lang = c("en","fr"), quiet = FALSE)` | data.frame of class `c("qes_harmonized","data.frame")`, returned visibly; details in §5.8 | The engine.<br>• `studies = NULL` means the QES election studies with coverage, and `"all"` means everything except `qes_demo`.<br>• `data` is a **named** list `list(<study> = data.frame)` of `get_qes()`-shaped frames. Unnamed input is an error. Waves come from `waves.csv` membership rules applied to each frame. |
-| Harmonization | `qes_targets(targets = NULL, studies = NULL, lang = "en")` | data.frame: one row per target (`target, family, type, target_timing, label, definition, levels, status, added_in`), plus **one column per study** holding the best grade or `NA` | Dictionary and "which studies have X" grid in one call (like `gss_which_years`). |
-| Harmonization | `qes_crosswalk(targets = NULL, studies = NULL, level = c("row","code"), format = c("qesR","retroharmonize"), lang = "en")` | data.frame of spec rows joined to wording, grade, reason, gate, offered levels and weight. `print()` on a single target renders the generated reference section | Audit and export. The `retroharmonize` format uses its column names (`var_name_orig`, `val_numeric_orig`, ...) with no dependency. |
-| Harmonization | `qes_spec(path = NULL, validate = c("error","report","none"), data = NULL)` | object of class `qes_spec` (list of tables, `version`, `hash`); `attr(, "check")` holds the problems table | Loads the shipped spec or a directory (a frozen or user-extended spec) and runs the single validator (§5.10). With `data =`, it also runs the data checks. |
-| Harmonization | `qes_splice(x, family, into = family, prefer = NULL)` | `x` plus `<into>`, `<into>__target` and `<into>__grade` | The only way to pool across targets of one family. It refuses different level sets, and it warns and lists wording breaks. |
-| Harmonization | `qes_join_raw(x, vars, data = NULL)` | `x` plus `<study>__<var>` columns in native codes, NA for other studies | Adds raw items by `(study, source_row)`. This replaces [A:H1] stacking. |
+| Harmonization | `qes_spec(view = c("targets","crosswalk","spec"), targets = NULL, studies = NULL, level = c("row","code"), format = c("qesR","retroharmonize"), spec = NULL, validate = c("error","report","none"), data = NULL, lang = c("en","fr"))` | By `view`:<br>• `"targets"` (default): data.frame, one row per target (`target, family, type, target_timing, label, definition, levels, status, added_in`), plus **one column per study** holding the best grade or `NA`.<br>• `"crosswalk"`: data.frame of spec rows joined to wording, grade, reason, gate, offered levels and weight; `print()` on a single target renders the generated reference section.<br>• `"spec"`: object of class `qes_spec` (list of tables, `version`, `hash`); `attr(, "check")` holds the problems table. | The one metadata entry point for the harmonization spec.<br>• `targets`/`studies` filter the `"targets"` and `"crosswalk"` views.<br>• `level` and `format` apply only to `view = "crosswalk"`; the `retroharmonize` format uses its column names (`var_name_orig`, `val_numeric_orig`, ...) with no dependency. `data` applies only to `view = "spec"` and adds the data checks. Supplying any of them with another view is a `qesR_error_input`.<br>• `spec = NULL` is the shipped spec; a directory (frozen or user-extended) or a `qes_spec` object selects another. Every view loads and validates the spec once per session (§5.10); `validate` says what a problem does.<br>• `qes_harmonize(spec =)` accepts the same values. |
 | Harmonization | `qes_design(x, weight = NULL, engine = c("survey","srvyr"), pool = c("as_is","equal"))` | `survey.design2` or `tbl_svy` | Suggests only. Details in §5.3 ("Choosing a weight").<br>• `strata = study`, or study × wave in the long layout.<br>• `ids = ~qes_id` in the long layout, else `~1`.<br>• `pool = "equal"` is the **only** way to give each study × wave the same total. |
 | Reproducibility | `qes_provenance(x, level = c("study","cell","spec"))` | data.frame (§5.9). `print()` gives a citable paragraph | Accepts objects or study codes; for codes it shows what would be used. Raises `qesR_error_no_provenance` after `merge()` drops the attribute. |
 | Reproducibility | `qes_cite(x = NULL, style = c("text","bibtex","bibentry"), lang = "en")` | character or `bibentry` | With `NULL`, it cites qesR and the spec version. With codes or objects, it adds each dataset: the verbatim deposit title, authors, pinned version, UNF and doi.org link. `inst/CITATION` is a **static** `bibentry()` generated from the same builder in `data-raw/` (§9). |
 | Cache | `qes_cache_info()` | data.frame: `study, file_id, md5, bytes, retrieved, kind (file/shard), path`; attributes `mode` and `dir` | Inspect the cache. |
 | Cache | `qes_cache_clear(studies = NULL, older_than = NULL)` | invisible removed paths | Refuses any root without the `.qesR-cache` marker. It also clears the in-session memo. |
 
-**Canonical surface: 20 functions.** These are the 17 above, plus `get_qes()`, `get_qes_master()` and `qes_codebook()`. The 11 legacy wrappers bring the total to 31 exports.
+**Canonical surface: 16 functions.** These are the 13 above, plus `get_qes()`, `get_qes_master()` and `qes_codebook()`. The 11 legacy wrappers bring the total to **27 exports** (the 14 current exports keep working: 3 are canonical, 11 are legacy wrappers).
 
-**Rd pages (32):**
-- **the 20 canonical functions;**
+**Internal for now (OD17).** Two harmonization helpers are implemented and tested but not exported, and carry `@keywords internal` with `@noRd`:
+- `.qes_splice(x, family, into = family, prefer = NULL)` adds `<into>`, `<into>__target` and `<into>__grade`, pooling across targets of one family. It refuses different level sets, and it warns and lists wording breaks.
+- `.qes_join_raw(x, vars, data = NULL)` adds `<study>__<var>` columns in native codes (NA for other studies), matched by `(study, source_row)`. It replaces [A:H1] stacking.
+
+Exporting either later is a MINOR change that needs no redesign: the signatures above are kept, and the naming test already allows `qes_[a-z_]+`. Until then, users pool across wordings by hand from the side-by-side targets, and join raw items with `merge()` on `study` and `source_row`, which the docs show.
+
+**Rd pages (28):**
+- **the 16 canonical functions;**
 - **9 legacy pages**, with `@family legacy`. Wrappers share a page only when their arguments mean the same thing:
   - `get_codebook` + `get_qes_codebook`;
   - `get_codebook_files` + `get_qes_codebook_files`;
@@ -666,7 +683,7 @@ qes2007_panel,pre,pondam1,,mean1,,,,TRUE,needs_review,file label pondération à
 - Otherwise it raises `qesR_error_input`, naming `weight = "weight_pre"` or `"weight_post"`.
 - The default `targets = "core"` mixes intention (pre) and recall (post), so the vignettes always pass `weight =` explicitly.
 
-**Trimmed variants** are reachable through `qes_join_raw()`. There is no argument for them.
+**Trimmed variants** have no argument. Users merge them from `get_qes()` by `source_row`; the internal `.qes_join_raw()` does the same and is the route if it is exported later (OD17).
 
 ### 5.4 `targets.csv`, `levels.csv`
 
@@ -914,7 +931,7 @@ These are followed by the targets, then their companion columns (`__na` with `mi
 
 ### 5.10 Validator (one implementation, four places)
 
-`qes_spec(validate =)` runs these rules:
+`qes_spec(validate =)` runs these rules (in every view; `view = "spec"` returns the problems table):
 - at runtime (schema and hash cached per session);
 - in offline CRAN tests (on the shipped CC0 dictionary and `gates.csv`);
 - in CI (`data-raw/spec_check.R`);
@@ -1238,6 +1255,7 @@ There is no insecure option.
 - **Legacy master:** attribute names, `empty_rows_removed = 0L`, and `nrow == sum(n_rows)`.
 - **Legacy name manifests** (column names only, from v0.4.4 outputs).
 - **Export-name grammar**, and every canonical export appears on `?qesR-fr`.
+- **Export manifest:** `getNamespaceExports("qesR")` equals the 27 names of §2.2 (16 canonical plus 11 legacy), so an internal helper such as `.qes_splice()` cannot be exported by accident (OD17).
 - **`CITATION` equality:** `qes_cite(NULL, "bibentry")` equals `readCitationFile(system.file("CITATION", package = "qesR"))`.
 
 **Reader fixtures**, written at test time with `haven::write_sav`/`write_dta`, each under 20 KB and none derived from real rows:
@@ -1374,15 +1392,16 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   - `vignettes/harmonization-reference.Rmd` and `vignettes/fr-reference-harmonisation.Rmd`, each one `results = "asis"` chunk calling `.spec_reference_md(lang)`. They arrive **with the engine** (HZ3), so the engine never ships without its reference. They run offline on CRAN.
     - Each target section has the definition and levels, then a coverage table: study, wave, source, grade and reason, instrument, offered levels, wording or `wording_ref`, gate, weight and `dk_offered`.
     - Each section ends with its CHANGES history.
-  - `?qes_targets` via roxygen `@eval .rd_targets()`;
-  - `print(qes_crosswalk(target))`;
+  - the target list on `?qes_spec` via roxygen `@eval .rd_targets()`;
+  - `print(qes_spec("crosswalk", targets = target))`;
   - the NEWS spec section (from `CHANGES.csv`);
-  - the README coverage table (from `qes_targets()`).
+  - the README coverage table (from `qes_spec()`);
+  - the website's harmonization reference and study catalog pages (§9.1).
 - **CRAN vignettes (all execute offline):**
 
   | EN | FR | Content | From |
   |---|---|---|---|
-  | `get-started` | `demarrage` | `qes_demo`; then `qes_studies()`, `qes_search()`, `qes_codebook("qes2014")`. The `qes_targets()` and `qes_harmonize("qes_demo", ..., weight = ...)` sections are added in 0.6.0 | 0.5.0 |
+  | `get-started` | `demarrage` | `qes_demo`; then `qes_studies()`, `qes_search()`, `qes_codebook("qes2014")`. The `qes_spec()` and `qes_harmonize("qes_demo", ..., weight = ...)` sections are added in 0.6.0 | 0.5.0 |
   | `citations` | `fr-citations` | `qes_cite()` over the catalog (reviewer request 3) | 0.5.0 |
   | `migrating-0.5` | `fr-migrer-0.5` | the §2.3 table, `x <- get_qes("x")`, pinning d1faad6 | 0.5.0 |
   | `harmonization-reference` | `fr-reference-harmonisation` | generated (above) | 0.6.0 |
@@ -1392,12 +1411,12 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   - the reference pair is generated;
   - `_strings.csv`/`knit_child` is not used.
 - **pkgdown-only `vignettes/articles/`** (build-ignored):
-  - the analysis articles, rebuilt at site build time. In 0.5.0 they use `get_qes_master()`. From 0.6.0 they use `qes_harmonize()` with QES-only defaults, `qes_design()` with stated weights, `min_grade`, and `qes_splice("sovereignty")` with wording breaks shown;
+  - the analysis articles, rebuilt at site build time. In 0.5.0 they use `get_qes_master()`. From 0.6.0 they use `qes_harmonize()` with QES-only defaults, `qes_design()` with stated weights, `min_grade`, and the sovereignty targets shown side by side with their wording breaks (no pooling across wordings while `.qes_splice()` is internal);
   - per-study variable pages;
   - the Validation article.
 
   This fixes [A:V1]: there is one data source and no shipped sample. It also fixes [A:V2]: designs are separated, estimates are weighted, structural zeros are marked, and the CROP and denominator statements are corrected.
-- **pkgdown navigation:** FR entries are derived from the `fr-` prefix. This replaces the hand-maintained JS map in `_pkgdown.yml`.
+- **pkgdown navigation:** FR entries are derived from the `fr-` prefix. This replaces the hand-maintained JS map in `_pkgdown.yml`. The full site design is §9.1.
 - **NEWS 0.5.0** sections:
   - *Breaking default*: `assign_global` is now FALSE, and on opt-in the object lands in the calling environment (`.GlobalEnv` only at top level). Opt-in still also assigns `<code>_codebook`. `qes_survey_code` is now the canonical code.
   - *Changed outputs*: every [A:D*]/[A:H*]/[A:K*] fix, with affected variables and the interim blanking list. The `_variable_name_map.csv` sidecar is replaced by `<stem>_provenance.csv`, and `variable_name_map_path` is `NULL`. `format_codebook(<plain data.frame>)` is an error.
@@ -1411,6 +1430,24 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   - the one-line reasons for `curl` and `jsonlite`;
   - libcurl on Linux.
 - **README:** no `save_path` into `getwd()`, and doi.org links only (this removes the 202 NOTE).
+
+### 9.1 Website (slice W, OD19)
+
+The pkgdown site is reworked in slice W, after S5, and refreshed in W.1 (0.6.0) and W.2 (0.7.0). It is **built locally and not deployed**: the build goes to a scratch copy (never `docs/` in the repo), and publishing to gh-pages stays the owner's action.
+
+| Part | Design |
+|---|---|
+| Theme | Bootstrap 5 (`template: bootstrap: 5`), one light theme with a dark-mode toggle, system font stack, no custom JavaScript. The hand-maintained JS language map in `_pkgdown.yml` is deleted. |
+| Logo | `man/figures/logo.png` shrunk to about 40 KB (§10) and used in the navbar, the README and as the favicon source (`pkgdown::build_favicons()` run locally, output committed under `pkgdown/favicon/`). |
+| Bilingual navigation | Two navbar menus, "Guides" and "Guides (FR)", plus an EN/FR link on every article pointing to its pair. Pairs are found by the `fr-` prefix rule, and a build check fails on an article without a partner. The home page has a short French section linking to `?qesR-fr` and the FR articles. |
+| Getting started | One path from install to **a correct weighted estimate**: install; `qes_studies()`; `x <- get_qes("qes2014")` (returned, not assigned); `qes_codebook()`/`qes_search()`; `qes_missing()`; a weighted proportion with the study's recommended weight and the population stated; then, from 0.6.0, `qes_spec()` → `qes_harmonize(..., min_grade = "comparable")` → `qes_design(weight = "weight_post")`. The CRAN vignette runs offline on `qes_demo`; the site version is the same file, so the code is identical. |
+| Reference | Grouped by `@family`: Data; Studies and documents; Codebooks and search; Harmonization; Reproducibility; Cache; Package and French overview (`qesR-package`, `qesR-fr`); and a separate **Legacy** section holding the 9 legacy pages and `qesR-deprecated`, headed by the old-to-new table. A build check fails if an exported topic is missing from the index. |
+| Harmonization reference | The generated reference vignette pair (§9), from the spec, in EN and FR; one section per target with its coverage table and CHANGES history. It appears from W.1. |
+| Study catalog page | A pkgdown article generated at build time from `catalog/studies.csv` and `catalog/files.csv`: one row per study with year, family, design, population, n, licence, DOI link, pinned version and documents (`qes_docs()`), EN/FR. No hand-written copy of catalog facts. |
+| Analysis articles | Website-only (`vignettes/articles/`, build-ignored): the analysis articles and the Validation article (§9). They download through the cache at build time, use stated weights and show structural zeros. |
+| Search | pkgdown's built-in search, with `url:` set in `_pkgdown.yml` so the search index is built. |
+| Removed | The stale 40k-row master and every page built from it (the variable dump, `inst/extdata/qes_master.csv`, root `qes_master.csv`), the French callouts that duplicated article text, and the per-study variable dump pages. Per-study variable information comes from `qes_codebook()` on the reference pages instead. |
+| Checks | Local `pkgdown::check_pkgdown()` and a full build in a temporary copy; link check on internal links; no page reads a file outside the package or the cache. |
 
 ---
 
@@ -1430,9 +1467,9 @@ Dependencies were verified by grep on the current tree.
 | Rest of `R/qes_download.R`: text reader, DDI scoring, PDF/DOC/Python scraping, ASCII override block; `R/assign_utils.R` | code | replaced by `http.R`, `cache.R`, `read.R`, `metadata.R` and `assign.R` | delete (about 3,800 lines; `R/` shrinks from 5,311 lines to about 1,500, plus the engine's roughly 400-line core) | S2a-S3 (DDI path and xml2 in S3) |
 | `R/master.R`, `R/decon.R` | code | legacy functions | S4 makes deletions only (frozen sources). HZ6 replaces them with the renderer and deletes the old code. | S4, HZ6 |
 | `.github/workflows/r-devel-check.yml` | one job on main | none | folded into `R-CMD-check.yml` | S0b |
-| `qesR_0.*.tar.gz`, `..Rcheck/`, `docs/` (67 MB, stale) | ignored | none (CI rebuilds `docs/`) | delete locally; `git fetch` to refresh `origin/gh-pages` | S0b |
+| `qesR_0.*.tar.gz`, `..Rcheck/`, `docs/` (67 MB, stale) | ignored | none (the site is rebuilt in slice W, outside the repo) | delete locally; `git fetch` to refresh `origin/gh-pages` | S0b |
 | `._*` AppleDouble (332 files; `._pack-*.idx` causes "non-monotonic index") | untracked | none | `dot_clean` the drive; add `._*` to `.gitignore` and `.Rbuildignore` | S0b |
-| `man/figures/logo.png` (309 KB, 45% of the tarball) | shipped | pkgdown and README | shrink to about 40 KB | S5 |
+| `man/figures/logo.png` (309 KB, 45% of the tarball) | shipped | pkgdown and README | shrink to about 40 KB; favicons from it in W | S5, W |
 | DESCRIPTION | | | Drop `LazyData`; drop `pkgdown`, `dplyr` and `ggplot2` from Suggests; quote 'Dataverse'; cite the dataset DOIs in Description; bump to 0.5.0; OD13 | S5 |
 | LICENSE, LICENSE.md, `inst/COPYRIGHTS`, `cran-comments.md` | reviewer request 6 open | | Set the copyright holder to the author and make both files match. Add COPYRIGHTS. Write the resubmission section answering all 6 points. | S5 |
 | New: `data-raw/` (build-ignored) | | | `build_catalog.R`, `build_dictionary.R`, `questions/*.csv`, `make_demo.R`, `make_citation.R`, `build_sources.R`, `project_marginals.R`, `spec_check.R`, `add_study.R`, `suggest_grades.R`, `news_from_changes.R`, `compare_legacy.R`, `legacy_source_map.csv`, `check_metadata.R` (xml2 only here), `nc/` | S1+ |
@@ -1454,6 +1491,7 @@ S0a -> S0b -> S0c -> S1 -> S2a -> S2b -> S2c
                       |           |  \-> S3 --------\
                       |           |  \-> S4 (R1,R2,R9; OD4/5/8/9/15) -> S5  = 0.5.0 (CRAN; also needs S2c, S3, OD2, OD3,
                       |           |                                         S2b 11-study gate = R1, R2)
+                      |                                                         \-> W (website, local build) -> W.1 at 0.6.0 -> W.2 at 0.7.0
                       \-> HZ1 -> HZ2 (needs S3) -> HZ3 (needs S2b) -> HZ4  = 0.6.0 (CRAN, experimental; after S5)
                                                                     \-> HZ5 (R1, R2, R4) -> HZ6 = 0.7.0 (CRAN)
                                                                                            -> HZ7 (R3, R5) -> HZ8 -> HZ9 (OD14)
@@ -1471,10 +1509,11 @@ S0a -> S0b -> S0c -> S1 -> S2a -> S2b -> S2c
 | **S3** Metadata | • `build_dictionary.R` and `questions/*.csv` (phase a)<br>• `qes_codebook()`, `qes_question()`, `qes_search()`, `qes_missing()`, the 2022 shard<br>• codebook wrappers rewired<br>• DDI path deleted and **xml2 out**<br>• `codebooks/` untracked | S2b | [A:K1]-[A:K7] and [A:A6] tests; locale identity; dictionary < 1 MB | L | — |
 | **S4** Interim legacy | • `get_qes_master()`/`get_decon()` on the new reader with frozen sources (`legacy_source_map.csv`)<br>• dedup and empty-row removal deleted; blanking (§5.12); timing columns; 2,442 rows<br>• `compare_legacy.R` | S2b; OD4, OD5, OD8, OD9, OD15; R1, R2, R9 | every diff from the R9 baseline is intended and listed | M | — |
 | **S5** Release 0.5.0 | • vignettes (§9); analysis moved to `articles/`<br>• `inst/extdata/qes_master.csv` and the root masters removed<br>• NEWS, licence, COPYRIGHTS, OD13, cran-comments, logo | S0a-S4; OD2, OD3; S2b release gate | `--as-cran` 0/0/1 on the matrix | M | **0.5.0, CRAN** |
-| **HZ1** Spec skeleton | • spec schema and verified rows (§5.5)<br>• `qes_spec()` with V-S*<br>• `.canon()`<br>• SPEC hash test | S1 | V-S1 to V-S17 green on the shipped spec | M | internal |
+| **W** Website | the §9.1 site: Bootstrap 5 theme and logo; EN/FR navigation; grouped reference with a Legacy section; getting-started path to a weighted estimate; study catalog page generated from the catalog CSVs; analysis articles website-only; search; stale master pages removed. **W.1** (with 0.6.0) adds the harmonization reference and engine-based articles; **W.2** (with 0.7.0) the Validation article and the engine-rendered master | S5 | local `pkgdown::build_site()` in a temporary copy with no errors; `check_pkgdown()` clean; every export indexed; every article paired EN/FR; nothing deployed | M | site (local) |
+| **HZ1** Spec skeleton | • spec schema and verified rows (§5.5)<br>• `qes_spec(view = "spec")` with V-S*<br>• `.canon()`<br>• SPEC hash test | S1 | V-S1 to V-S17 green on the shipped spec | M | internal |
 | **HZ2** Offline checks | • `build_sources.R`, `gates.csv`, `expected/`<br>• V-D* and V-P1 on the dictionary<br>• `data-raw/nc/` for 2022<br>• `.qes_synthetic()`<br>• ported `spec_legacy` regressions | HZ1, S3 | V-P1 exact on CC0 studies | M | internal |
-| **HZ3** Engine | • `qes_harmonize()` (respondent layout), `qes_targets()`, `qes_crosswalk()`<br>• cell-level provenance and structural zeros<br>• the six cached studies<br>• **generated reference vignette pair**<br>• **experimental** label | HZ2, S2b | V-L1 on the six studies; regression tests | L | internal |
-| **HZ4** Waves and weights | • long layout; 2022 CPS/PES; panels, including the 2018p pre wave and 2007p disposition membership<br>• `weights.csv`, eligibility, `days_to_election`<br>• `qes_design()`, `qes_join_raw()`, `qes_splice()` | HZ3 (`needs_review` weights stay NA until R4) | V-L3; the design tests | L | **0.6.0, CRAN (experimental)** |
+| **HZ3** Engine | • `qes_harmonize()` (respondent layout); the `"targets"` and `"crosswalk"` views of `qes_spec()`<br>• cell-level provenance and structural zeros<br>• the six cached studies<br>• **generated reference vignette pair**<br>• **experimental** label | HZ2, S2b | V-L1 on the six studies; regression tests | L | internal |
+| **HZ4** Waves and weights | • long layout; 2022 CPS/PES; panels, including the 2018p pre wave and 2007p disposition membership<br>• `weights.csv`, eligibility, `days_to_election`<br>• `qes_design()`; internal `.qes_join_raw()` and `.qes_splice()` (not exported, OD17) | HZ3 (`needs_review` weights stay NA until R4) | V-L3; the design tests | L | **0.6.0, CRAN (experimental)** |
 | **HZ5** Remaining studies | qes2007, qes2008, qes2012_panel, CROP (poll waves), the 1998 split (firm strata, francophone population) | HZ4; R1, R2, R4 | V-D6/V-L1 on the new originals; name maps checked | XL | — |
 | **HZ6** Legacy switch | • only at 11/11: `legacy.csv` renderer for `get_qes_master()`/`get_decon()`<br>• old internals deleted<br>• `get_decon` deprecation message on<br>• NEWS "What changed" table; spec 1.0.0 | HZ5; OD4-OD7, OD15 | `compare_legacy.R` table reviewed by the owner | M | **0.7.0, CRAN** |
 | **HZ7** Live validation | • `live.yml` V-L1 to V-L5 with verified benchmarks<br>• Validation article | HZ6; R3, R5 | V-P3; V-L2 baselines recorded | M | 0.7.x |
@@ -1530,14 +1569,14 @@ The integrated design was not re-scored. Revision 2 instead went through two cri
 | Harmonized unit name | `targets` | `concepts` | **`targets`** | The engine track owns the spec. retroharmonize also uses `*_target`. |
 | Comparability metadata | grades `identical/comparable/approximate/not_comparable` + EN/FR reasons | `comparability` (4 values) + `confidence` + note | **grades** | One scale; `min_grade` filters on it; U found worded grades clearest. |
 | Spec file layout | `inst/harmonize/` (9 CSVs + `sources/`) | `inst/extdata/crosswalk/` (3 CSVs) + `catalog/qes_weights.csv` | **`inst/extdata/{catalog,dict,harmonize,demo}/`**. Waves and weights sit in `harmonize/` (spec-versioned); studies, files, elections, names and enums in `catalog/`. | One tree. Each file has one owner. The spec directory stays freezable. |
-| Crosswalk format | `crosswalk.csv` + shared `valuemaps.csv` + gate columns | retroharmonize-named variables/values files + `universe_var` | **track (a) format**, with a `qes_crosswalk(format = "retroharmonize")` export | Shared maps (guarded by V-D3) cut review load. Export keeps interop. |
+| Crosswalk format | `crosswalk.csv` + shared `valuemaps.csv` + gate columns | retroharmonize-named variables/values files + `universe_var` | **track (a) format**, with a `qes_spec("crosswalk", format = "retroharmonize")` export | Shared maps (guarded by V-D3) cut review load. Export keeps interop. |
 | Offline aggregates | `sources/<file>.codes.csv` | `n` in dictionary values, `n_orig` in crosswalk | **dictionary `n`** + `gates.csv` | One count table; no duplicated per-code counts. |
 | qes2012 pinned file | SPSS twin, keys `Q25` | Stata twin + SPSS label donor | **Stata + donor**; crosswalk keys lowercase `q25` | Keeps v0.4.4 names used by the paper. V-D3 still works because `.norm_label()` lower-cases. Row order is identical (verified). |
 | ID declaration | `id_vars` in `files.csv`, `;`-list | `respondent_key` in `studies.csv`, `+`-joined | **`id_vars` in `files.csv`, `;`** | IDs belong to a file; one list separator everywhere. |
-| Row identifier | `source_row` | `row_in_source` | **`source_row`** | Shorter; already used by `qes_join_raw()`. |
+| Row identifier | `source_row` | `row_in_source` | **`source_row`** | Shorter; the join key for `merge()` and the internal `.qes_join_raw()`. |
 | Weight columns | `weight` + `weight_<wave>` | `weight_pre`/`weight_post` + `_var` + weight guide | **`weight_pre`/`weight_post` (respondent), `weight` (long)**, plus weight guide and timing message | Wave names differ by study (`cps`, `post`); timing names pool cleanly. |
 | Weight default | normalized mean 1 | raw | **normalized** in `qes_harmonize()`; **raw** in the legacy master (OD6); equal study totals only via `qes_design(pool = "equal")` | Raw pooled scales (CROP 6.04) are a trap in new code; the legacy column keeps its meaning; one place for pooling. |
-| Trimmed weights | `weights = "trimmed"` | `weights_other` column | **`qes_join_raw()`** | No argument for a one-study feature. |
+| Trimmed weights | `weights = "trimmed"` | `weights_other` column | **merge by `source_row`** (internal `.qes_join_raw()`, OD17) | No argument for a one-study feature. |
 | Layout argument | `layout = respondent/long` | `panel = primary/long` | **`layout`**; respondent rows carry targets from all waves | Intent (CPS) and recall (PES) on one row; the legacy master agrees. |
 | Default studies | QES election studies | all with coverage | **QES election studies** (`studies = NULL`); `"all"` opt-in | Avoids CROP dominating pooled estimates ([A:V1]/[A:V2]). |
 | Label language | `labels = "en"` for data; option for inspection functions | `lang`; returned text never follows the locale | **`lang` everywhere, fixed defaults**; option and locale for messages only | One rule (P4). |
@@ -1545,9 +1584,9 @@ The integrated design was not re-scored. Revision 2 instead went through two cri
 | Missing vocabulary | 14 reasons | 10 types | **one merged vocabulary** in `enums.csv` (§5.2) | Dictionary, spec and `qes_missing()` share it. |
 | Strictness | `unmapped`, `on_fail` | `strict` | **`unmapped` + `on_fail`**; legacy `strict` maps to `on_fail` | Separates bad data from bad downloads. |
 | Custom spec | `spec = dir / qes_spec` | `crosswalk = table / path` | **`spec`** | Covers freezing and extension with one argument. |
-| Raw extras | `qes_join_raw()` + `keep_source` | `keep = list(...)` + `keep_source` | **`qes_join_raw()`**; companion `<target>__src` | Post-hoc joins avoid a list argument. |
-| Spec views | `qes_targets`, `qes_coverage`, `qes_crosswalk`, `qes_describe` | `qes_crosswalk(level = concepts/variables/values)` | **`qes_targets()`** (with coverage columns) + **`qes_crosswalk()`** (print gives the reference section) | Two functions instead of four. |
-| Spec validation export | `qes_spec()` + `qes_validate_spec()` | none | **`qes_spec(validate =)`** | One export. |
+| Raw extras | `qes_join_raw()` + `keep_source` | `keep = list(...)` + `keep_source` | **post-hoc join** (internal `.qes_join_raw()` for now, OD17); companion `<target>__src` | Post-hoc joins avoid a list argument. |
+| Spec views | `qes_targets`, `qes_coverage`, `qes_crosswalk`, `qes_describe` | `qes_crosswalk(level = concepts/variables/values)` | **`qes_spec(view = )`** (revised by OD17): `"targets"` (with coverage columns), `"crosswalk"` (print gives the reference section), `"spec"` | One function instead of four. |
+| Spec validation export | `qes_spec()` + `qes_validate_spec()` | none | **`qes_spec(view = "spec", validate =)`** | One export, shared with the spec views. |
 | Offline examples | `qes_synthetic()` exported, in memory | `qes_demo` shipped `.sav` in its own shards | **`qes_demo`** for all examples; `.qes_synthetic()` internal for tests | `qes_demo` exercises the full reader; one public mechanism. |
 | `get_qes_master()` status | soft-deprecated | stable | **stable** (OD1) | Constraint 1 names it with `get_qes()` as fixed-underneath. 3 paper calls. |
 | First CRAN release | 0.5.0 with surgical deletions | only after harmonization wiring | **0.5.0 with deletions plus blanking of verified-invalid cells** (OD2), then 0.6.0 engine, 0.7.0 legacy switch | Never ships a known-wrong value or partial engine coverage in the master. |
@@ -1640,7 +1679,7 @@ Every finding was checked before it was applied. The validity findings were re-r
 | CC-B7 | `study` vs `studies`; `"all"` | Accepted. |
 | CC-B8 | `qes_codebook(<data.frame>)` underspecified | Accepted. Precedence list in §6.2. |
 | CC-B9 | `values = "labelled"` | Accepted. Returns `haven::labelled`. |
-| CC-B10 | Rd count; the null-default operator needs R 4.4 | Accepted. Recounted (now 32); `.or_default()`. |
+| CC-B10 | Rd count; the null-default operator needs R 4.4 | Accepted. Recounted (32 in revision 2; 28 after OD17); `.or_default()`. |
 | CC-C1 | Static grep cannot run in `R CMD check` | Accepted. Namespace body scan on CRAN; grep, chunk parity and V-P3 in CI. |
 | CC-C2 | `--as-cran` runs `\donttest{}` | Accepted. One metadata-only network example. |
 | CC-C3 | The privacy test is fragile | Accepted. |
@@ -1671,7 +1710,7 @@ Every finding was checked before it was applied. The validity findings were re-r
 
 | Risk | Mitigation |
 |---|---|
-| Review bandwidth: about 40 targets × 13 studies gives roughly 400 crosswalk rows and 2-3k map rows for one maintainer; revision 2 adds `levels_offered` and per-code gates | Worksheets; shared `map_id`s guarded by V-D3; phasing; `status` shown in `qes_targets()`; V-S16/V-S17 automate part of the grading rule; a second reviewer only for cross-language `identical` rows |
+| Review bandwidth: about 40 targets × 13 studies gives roughly 400 crosswalk rows and 2-3k map rows for one maintainer; revision 2 adds `levels_offered` and per-code gates | Worksheets; shared `map_id`s guarded by V-D3; phasing; `status` shown in `qes_spec()`; V-S16/V-S17 automate part of the grading rule; a second reviewer only for cross-language `identical` rows |
 | qes2018 has no file labels, so questionnaire and data could disagree | V-S8, V-S14, V-S16, V-D7, V-P1/V-L1 and V-L4; the questionnaire text is already cached and was used for `q6`, `q27`, `q56` and `q61` |
 | A source file's own labels are wrong (1998 `intvote2`) | V-D3 cannot catch it. Cross-checks of counts against sibling variables are part of review and of `add_study.R` worksheets. |
 | Label-text changes alter `as_factor()` output (2012 case and length, 2018 labels, 2022 dates) although codes are identical | NEWS lists the variables; the paper keeps its pin until it is edited |
@@ -1695,11 +1734,16 @@ Every finding was checked before it was applied. The validity findings were re-r
 - **Q-f.** 1998: was "francophone" defined by mother tongue or interview language? (R2)
 - **Q-g.** 2012 panel: is `pondam1` a pre-wave weight, and how does it relate to `pond_post`? (R4)
 
-### 13.3 Data requests for the owner
+### 13.3 Data needs (policy OD18)
 
-Nothing below was fetched. Please place files in `scratchpad/impact/orig/` or say where they are.
+**Who gets what.** Claude fetches every public item below itself, with plain requests that carry no personal information (User-Agent exactly `qesR/<ver> R/<ver>`, sequential, cached, at least 1 s apart, backoff on 429/503 and `Retry-After`), and records each file with its source URL and md5 in the scratchpad `data/MANIFEST.md`. The owner is asked only for:
+- permissions (R8);
+- documents that are not public;
+- any item that a plain request cannot fetch (login wall, WAF refusal, terms of use). Such an item is not worked around; it is recorded here as a request for the owner.
 
-- **R1. Original files (`?format=original`)**, with md5s from the cached dataset JSON:
+When this section was written, nothing below had been fetched. The item texts keep the original IDs so that references stay stable.
+
+- **R1. Original files (`?format=original`)**, public on Dataverse; Claude fetches them. md5s from the cached dataset JSON:
   - qes2007 425921 (SPSS, `e1324bbb582cf6bc01eb9949ecb8b132`) and 425922 (Stata, `d2355b5d400b16cc999be0a5701463a7`);
   - qes2008 425919 (SPSS, `6a69b00b943bb357c3ed10091d936ba9`) and 425920 (Stata, `192547c91c1f1a86b5dcbaf2ee19c511`);
   - qes2012_panel 361043 (`8f90a9f97a33e01eff3748f05612e26c`);
@@ -1707,27 +1751,28 @@ Nothing below was fetched. Please place files in `scratchpad/impact/orig/` or sa
   - 1998: 329987 panel (`a2a2b2fef6a2edb202beae0e63e59f0c`), 316121 CREATEC (`1aba610f71f1b5c46e03da2036e83330`) and 286331 CROP (`ceec0332eaa0eab117e4bcf5c4d8d672`).
 
   Purpose: twin choice, name-map checks, user-missing declarations, CP850 confirmation, `n_rows`, the dictionary, and 2007 `q12` = 97. **This is a hard prerequisite for S2b's release gate, S4 and S5 (0.5.0), not only for HZ5.**
-- **R2. v0.4.4 `get_qes()` column names** (name manifests) for qes2008, qes2012_panel, qes2007_panel, qes2018_panel and CROP. Also these questionnaires:
+- **R2. v0.4.4 `get_qes()` column names** (name manifests) for qes2008, qes2012_panel, qes2007_panel, qes2018_panel and CROP. Claude builds them by running d1faad6 in a temporary library, after confirming that its requests carry no personal information (if they do, only the User-Agent is patched in that temporary copy). Also these questionnaires, fetched by Claude where public and requested from the owner otherwise:
   - **CROP 2007-10:** the full `intvoterefa` wording and the `QP4` reference election per wave (Q-e);
   - **1998:** the CREATEC questionnaire, the definition of "francophone" (Q-f), and the weighting documentation per firm (`poids`, `ponder2`, `ponder3`, `ponderc`).
 
   Without full wording, these rows cannot be graded above `approximate`. R2 is also a prerequisite for 0.5.0.
-- **R3. Official DGEQ results** (party shares of valid votes and turnout) for 1994-2022, from DGEQ or doi:10.7910/DVN/PNANLW. **Every benchmark figure in both track designs was recalled from memory**; none is entered until verified.
-- **R4. Weighting documentation (narrowed):**
+- **R3. Official DGEQ results** (party shares of valid votes and turnout) for 1994-2022, from DGEQ or doi:10.7910/DVN/PNANLW; public, Claude fetches them. **Every benchmark figure in both track designs was recalled from memory**; none is entered until verified.
+- **R4. Weighting documentation (narrowed)**, from the public deposits and technical reports where they exist; the owner is asked only for documents that are not public:
   - the 2007 panel post-wave weight (Q-a);
   - 2012 panel `pondam1` vs `pond_post` (Q-g);
   - 2012 QES `pond` (which margins);
   - CROP `XPOND`.
 
   Fieldwork dates and modes for the 2018 panel pre wave (there is no date variable in the file), qes2007, qes2008 and qes2012. The 2012 panel and 2007 panel dates are now known.
-- **R5. Census margins** (StatCan, Quebec 18+ and 16+: sex × age, mother tongue, education) for 2006, 2011, 2016 and 2021, for margin tests where no published targets exist.
+- **R5. Census margins** (StatCan, Quebec 18+ and 16+: sex × age, mother tongue, education) for 2006, 2011, 2016 and 2021, for margin tests where no published targets exist. Public; Claude fetches them.
 - **R6.** Resolved (2014 PID `Q55`, 2018 income `q61`). The ID is kept so references stay stable.
-- **R7.** MEDW 2012 (10.7910/DVN/06OOVN), CROP 2013-14 (10.5683/SP3/AQYTPS) and Durand 2008/2011 federal panels: files, questionnaires and encodings (slice HZ8).
-- **R8. Permissions (not data):**
+- **R7.** MEDW 2012 (10.7910/DVN/06OOVN), CROP 2013-14 (10.5683/SP3/AQYTPS) and Durand 2008/2011 federal panels: files, questionnaires and encodings (slice HZ8). Claude fetches what is public.
+- **R8. Permissions (not data); the only standing requests for the owner:**
   - C-Dem PIs, on redistributing qes2022 labels, wording and aggregates (OD3);
   - QES/CECD and C-Dem, on a harmonized deposit (OD14).
 - **R9. A clean v0.4.4 legacy baseline.**
   - **What to run:** at d1faad6, in a fresh session with `LANGUAGE=en`, run `get_qes_master(assign_global = FALSE)` and `get_decon()` for each study it supports.
   - **What to save:** the returned objects' `source_map` attribute, `table(qes_code)` and column names, or the full `.rds` kept locally and never committed.
   - **Why the existing builds do not qualify:** the tracked `qes_master.csv` was built by older code, and the fresh 39,132-row build ran under French messages and lost panel rows ([A:D10]).
-  - **What depends on it:** the frozen `legacy_source_map.csv` (S4) and the `compare_legacy.R` gate. It needs network access and the owner's machine.
+  - **What depends on it:** the frozen `legacy_source_map.csv` (S4) and the `compare_legacy.R` gate.
+  - **Who:** Claude builds it in a temporary library and a fresh session (same privacy check as R2), writing only to the scratchpad. The owner is asked only if a plain request cannot fetch a file.
