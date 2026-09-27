@@ -110,8 +110,12 @@ v044_codebook_files_cols <- c("file_id", "filename", "extension", "size", "downl
 v044_download_codebook_cols <- c(v044_codebook_files_cols, "local_path", "downloaded")
 
 # get_qes() column names per study: tests/testthat/fixtures/v044-get-qes-names.csv
-# (study, position, name). Built by running d1faad6 against the Dataverse
-# originals; names only, no labels or values. The file is UTF-8. It is read
+# (study, position, name, type, n_na). Built by running d1faad6 against the
+# Dataverse originals: each column's name, its storage ("numeric", "character"
+# or "logical") and its is.na() count (added in slice S2b from the same R9
+# baseline); no labels or values. tests/testthat/fixtures/v044-get-decon-classes.csv
+# holds the class of every get_decon() column of d1faad6 per study, from the
+# same baseline. The file is UTF-8. It is read
 # with `encoding = "UTF-8"` only (no `fileEncoding`), so the bytes are kept and
 # marked UTF-8 instead of being re-encoded to the native locale; re-encoding
 # stops at the first accented name in a C / non-UTF-8 locale.

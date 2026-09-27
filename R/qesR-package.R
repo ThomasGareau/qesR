@@ -44,8 +44,9 @@
 #'     `suggestions`);}
 #'   \item{`qesR_error_unknown_variable`}{an unknown column (fields
 #'     `variables`, `suggestions`);}
-#'   \item{`qesR_error_ambiguous_file`}{a `file` pattern that matches no file
-#'     (fields `study`, `pattern`, `candidates`);}
+#'   \item{`qesR_error_ambiguous_file`}{a `file` pattern that matches no data
+#'     file of the study, or several (fields `study`, `pattern`,
+#'     `candidates`);}
 #'   \item{`qesR_error_network`}{a failed download (fields `url`, `attempts`,
 #'     and `parent`, the root cause). Its subclasses are
 #'     `qesR_error_http` (an HTTP error status; fields `status`,
@@ -55,14 +56,19 @@
 #'     qesR never retries without TLS certificate checks); and
 #'     `qesR_error_offline` (the server's name could not be resolved);}
 #'   \item{`qesR_error_source`}{a problem with the files served for a study
-#'     (fields `study`, `file_id`); subclass `qesR_error_checksum` (a file
-#'     that does not match its catalog md5; fields `expected`, `actual`);}
+#'     (fields `study`, `file_id`); subclasses `qesR_error_checksum` (a file
+#'     that does not match its catalog md5; fields `expected`, `actual`) and
+#'     `qesR_error_rowcount` (a data file whose rows and columns differ from
+#'     the catalog; fields `expected`, `actual`);}
 #'   \item{`qesR_error_cache`}{a cache directory that is missing or is not a
 #'     qesR cache (fields `path`, `reason`);}
 #'   \item{`qesR_error_no_provenance`}{an object that no longer records which
 #'     study it comes from, passed to [qes_cite()].}
 #' }
-#' Warnings inherit from `qesR_warning` and messages from `qesR_message`.
+#' Warnings inherit from `qesR_warning`, among them `qesR_warning_encoding`
+#' (a label or text value that still holds a replacement or control
+#' character after reading; fields `study`, `file_id`, `n`, `variables`).
+#' Messages inherit from `qesR_message`.
 #' Progress messages (classes `qesR_message_download` and
 #' `qesR_message_cached`) are silenced by `quiet = TRUE`, as is the one-time
 #' tip suggesting the disk cache (`qesR_message_disk_cache_tip`). Three notices are shown at most once per session and are
@@ -78,6 +84,16 @@
 #' them, [qes_docs()] lists their documents and [qes_cite()] cites them, all
 #' without a network request. Each study is pinned to one Dataverse dataset
 #' version and one data file, identified by its md5 checksum.
+#'
+#' @section Data files:
+#' [get_qes()] reads the original upload of each study's pinned data file
+#' (SPSS or Stata), after checking its md5 and its rows and columns against
+#' the catalog. Names, codes and missing values are those of the file;
+#' labels come from the file (for `qes2012`, from the SPSS twin of the same
+#' data, whose labels are complete). Codes an SPSS file declares as
+#' user-missing are kept as values, with the declaration in the column
+#' attributes `qes_na_values` and `qes_na_range`. The attribute
+#' `qes_provenance` records which file was read.
 #'
 #' @section Network use:
 #' Requests go to the Dataverse servers listed in the catalog, one at a time
@@ -128,7 +144,8 @@
 #' (champs `arg`, `value`), `qesR_error_unknown_study` (`study`,
 #' `suggestions`), `qesR_error_unknown_variable` (`variables`,
 #' `suggestions`), `qesR_error_ambiguous_file` (`study`, `pattern`,
-#' `candidates`), `qesR_error_network` (`url`, `attempts`, et `parent`, la
+#' `candidates` ; motif `file` qui ne désigne aucun fichier de données de
+#' l'étude, ou plusieurs), `qesR_error_network` (`url`, `attempts`, et `parent`, la
 #' cause première), avec ses sous-classes `qesR_error_http` (statut HTTP
 #' d'erreur ; `status`, `retry_after`, `server_message`), elle-même parente
 #' de `qesR_error_http_refused` (requête automatisée refusée ;
@@ -136,11 +153,16 @@
 #' désactive jamais la vérification des certificats TLS) et
 #' `qesR_error_offline` (nom du serveur introuvable) ; `qesR_error_source`
 #' (`study`, `file_id`), avec `qesR_error_checksum` (fichier dont la somme
-#' md5 ne correspond pas au catalogue ; `expected`, `actual`) ;
+#' md5 ne correspond pas au catalogue ; `expected`, `actual`) et
+#' `qesR_error_rowcount` (fichier de données dont les lignes et colonnes
+#' diffèrent du catalogue ; `expected`, `actual`) ;
 #' `qesR_error_cache` (dossier de cache absent ou qui n'est pas un cache
 #' qesR ; `path`, `reason`) et `qesR_error_no_provenance` (objet qui
 #' n'indique plus son étude, passé à [qes_cite()]). Les avertissements
-#' héritent de `qesR_warning` et les messages de `qesR_message`. Les messages
+#' héritent de `qesR_warning`, dont `qesR_warning_encoding` (étiquette ou
+#' valeur texte qui garde un caractère de remplacement ou de contrôle après
+#' lecture ; `study`, `file_id`, `n`, `variables`), et les messages de
+#' `qesR_message`. Les messages
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 #' masqués par `quiet = TRUE`.
@@ -156,6 +178,16 @@
 #' [qes_cite()] les cite, sans aucune requête réseau. Chaque étude est fixée à
 #' une version de jeu de données Dataverse et à un fichier de données,
 #' identifié par sa somme de contrôle md5.
+#'
+#' **Fichiers de données.** [get_qes()] lit le fichier original déposé pour
+#' chaque étude (SPSS ou Stata), après avoir vérifié sa somme md5, ses lignes
+#' et ses colonnes par rapport au catalogue. Les noms, les codes et les
+#' valeurs manquantes sont ceux du fichier ; les étiquettes viennent du
+#' fichier (pour `qes2012`, du fichier SPSS jumeau des mêmes données, dont les
+#' étiquettes sont complètes). Les codes qu'un fichier SPSS déclare comme
+#' valeurs manquantes sont gardés comme valeurs, et la déclaration est
+#' conservée dans les attributs de colonne `qes_na_values` et `qes_na_range`.
+#' L'attribut `qes_provenance` indique quel fichier a été lu.
 #'
 #' **Réseau.** Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 #' fois et à au moins une seconde d'intervalle par serveur. Elles portent

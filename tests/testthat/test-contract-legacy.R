@@ -118,8 +118,13 @@ test_that("get_qes() returns the served columns unchanged and records the code",
 test_that("the v0.4.4 get_qes() name manifest covers the 11 legacy studies", {
   local_qes_notices_shown()
   manifest <- v044_get_qes_names()
-  expect_identical(names(manifest), c("study", "position", "name"))
+  expect_identical(names(manifest), c("study", "position", "name", "type", "n_na"))
+  expect_true(all(manifest$type %in% c("numeric", "character", "logical")))
+  expect_true(all(manifest$n_na >= 0L))
   expect_setequal(unique(manifest$study), v044_qescodes)
+  classes <- utils::read.csv(testthat::test_path("fixtures", "v044-get-decon-classes.csv"), stringsAsFactors = FALSE)
+  expect_setequal(unique(classes$study), v044_qescodes)
+  expect_true(all(table(classes$study) == 19L))
   for (s in v044_qescodes) {
     rows <- manifest[manifest$study == s, , drop = FALSE]
     expect_identical(rows$position, seq_len(nrow(rows)), info = s)

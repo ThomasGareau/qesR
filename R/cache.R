@@ -266,7 +266,8 @@
 # against the catalog md5 before it gets its final name; a mismatch is a
 # qesR_error_checksum and nothing is kept. In mode "none" the file is put in a
 # new directory under tempdir() and the path has attribute transient = TRUE:
-# the caller deletes it once read.
+# the caller deletes it once read (attribute transient_root: the directory to
+# delete). .qes_cache_via(path) then says where the bytes came from.
 .qes_cache_fetch <- function(file_row, server, quiet = FALSE) {
   mode <- .qes_cache_mode()
   root <- .qes_cache_root(mode)
@@ -288,6 +289,7 @@
         data = list(study = file_row$study, file_id = file_row$file_id, path = path),
         quiet = quiet
       )
+      .qes_cache_state[[paste0("via:", path)]] <- paste0(mode, "_cache")
       return(path)
     }
     # a damaged copy, or a file saved here by hand that is not the pinned one
@@ -351,14 +353,25 @@
   .qes_cache_count_download(mode, quiet)
   if (transient) {
     attr(path, "transient") <- TRUE
+    attr(path, "transient_root") <- root
   }
+  .qes_cache_state[[paste0("via:", path)]] <- "network"
   path
+}
+
+# Where the last .qes_cache_fetch() of `path` got its bytes: "network",
+# "session_cache" or "disk_cache" (for the provenance of get_qes() data).
+.qes_cache_via <- function(path) {
+  .qes_cache_state[[paste0("via:", as.character(path))]] %||% NA_character_
 }
 
 # ---- in-session memo --------------------------------------------------------------------
 
 # Parsed data kept in memory for the session, keyed by the md5 of its source
-# file (option qesR.memo, default TRUE). Never written to disk.
+# file (option qesR.memo, default TRUE). Never written to disk. A key may join
+# several parts with "+": "<md5>+<donor md5>" for data read with a label
+# donor, "ddi+<md5>" for the parsed DDI metadata of a data file. Clearing by
+# md5 drops every entry that has that md5 as one of its parts.
 .qes_memo_get <- function(md5) {
   if (!isTRUE(getOption("qesR.memo", TRUE))) {
     return(NULL)
@@ -377,7 +390,7 @@
   keys <- ls(.qes_memo, all.names = TRUE)
   if (!is.null(studies) || !is.null(md5)) {
     keep <- vapply(keys, function(k) {
-      !(k %in% md5) && !(.qes_memo[[k]]$study %in% studies)
+      !any(strsplit(k, "+", fixed = TRUE)[[1]] %in% md5) && !(.qes_memo[[k]]$study %in% studies)
     }, logical(1))
     keys <- keys[!keep]
   }

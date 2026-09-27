@@ -43,6 +43,12 @@
   name_map = c(
     file_id = "chr", source_name = "chr", name = "chr", evidence = "chr"
   ),
+  text_fixes = c(
+    file_id = "chr", from = "chr", to = "chr", evidence = "chr"
+  ),
+  type_fixes = c(
+    file_id = "chr", variables = "chr", to = "chr", evidence = "chr"
+  ),
   enums = c(
     enum = "chr", value = "chr", order = "int", code = "chr", scope = "chr",
     label_en = "chr", label_fr = "chr"

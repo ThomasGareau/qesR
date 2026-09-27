@@ -1,18 +1,25 @@
-# Offline stand-in for Dataverse, used by the contract tests (slice S0b).
+# Offline stand-in for Dataverse, used by the contract tests (slices S0b, S2b).
 #
-# Every request qesR makes reaches the network only through the internal
-# `.qes_transport(url, dest, handle)` (slice S2a, design.md section 8.1).
-# `local_fake_dataverse()` replaces that one function for the calling test with
-# a fake server that answers the three kinds of request the current code makes:
+# qesR reaches the network only through the internal `.qes_transport(url,
+# dest, handle)`, and reads its catalog only through `.qes_catalog()`
+# (design.md section 8.1). `local_fake_dataverse()` replaces both for the
+# calling test:
 #
-#   <server>/api/datasets/:persistentId/?persistentId=doi:<doi>   dataset JSON
-#   <server>/api/access/datafile/<id>                             file bytes
-#   <server>/api/access/datafile/<id>/metadata/ddi                DDI XML
+#   * every study of the shipped catalog gets one synthetic data file, written
+#     with haven::write_sav() at test time (`data` or fake_study_data(<code>));
+#     the fixture catalog pins it (md5, size, rows, columns) in place of the
+#     real data file, under the real file id, so get_qes() with a real code
+#     reads it through the real reader;
+#   * the fake server answers the requests qesR makes:
+#       <server>/api/access/datafile/<id>?format=original   a data file
+#       <server>/api/access/datafile/<id>/metadata/ddi      its DDI XML
+#       <server>/api/access/datafile/<id>                   a document
+#     Any other URL is an error, so a test that reaches the network by
+#     mistake fails instead of downloading.
 #
-# Every study in the catalog gets one data file (`<code>.sav`) and one
-# questionnaire (`<code>_questionnaire.txt`). All data is synthetic: a few rows
-# built below, never derived from real respondents. Any other URL is an error,
-# so a test that reaches the network by mistake fails instead of downloading.
+# All data is synthetic: a few rows built below, never derived from real
+# respondents. The download cache is off ("none") and so is the in-memory
+# memo, so every test downloads its own files.
 
 fake_study_data <- function(code) {
   out <- data.frame(
@@ -60,83 +67,102 @@ fake_study_data <- function(code) {
 
 `%||%` <- function(x, y) if (is.null(x) || length(x) == 0L) y else x
 
-# Replace the transport for the calling test.
+# A catalog (as .qes_catalog() returns it) whose data files are the
+# synthetic `.sav` files written into `dir`: one per study, from `data` or
+# fake_study_data(). Label donors, text fixes and type fixes are dropped
+# (they describe the real files). Returns list(catalog, demo_catalog, paths)
+# where `paths` maps each data file id to its local file.
+fake_catalog <- function(data = list(), dir = tempfile("fake-dv-")) {
+  dir.create(dir, showWarnings = FALSE, recursive = TRUE)
+  load <- getFromNamespace(".qes_load_catalog", "qesR")
+  catalog <- load(catalog_dir())
+  demo_catalog <- load(catalog_dir(), demo_dir = system.file("extdata", "demo", "catalog", package = "qesR"))
+  files <- catalog$files
+  keep <- !(files$role %in% c("data", "label_donor"))
+  data_rows <- list()
+  paths <- character(0)
+  for (code in catalog$studies$study) {
+    d <- data[[code]] %||% fake_study_data(code)
+    row <- files[files$study == code & files$role == "data" & files$is_default %in% TRUE, , drop = FALSE]
+    path <- file.path(dir, paste0(row$file_id, ".sav"))
+    haven::write_sav(d, path)
+    row$file_name <- paste0(code, ".tab")
+    row$original_file_name <- paste0(code, ".sav")
+    row$format <- "sav"
+    row$ingested <- TRUE
+    row$bytes <- file.size(path)
+    row$md5 <- unname(tools::md5sum(path))
+    row$unf <- paste0("UNF:6:fake-", code)
+    row$n_rows <- nrow(d)
+    row$n_cols <- ncol(d)
+    row$encoding <- NA_character_
+    data_rows[[code]] <- row
+    paths[[row$file_id]] <- path
+  }
+  files <- rbind(do.call(rbind, data_rows), files[keep, , drop = FALSE])
+  rownames(files) <- NULL
+  fix <- function(cat) {
+    cat$files <- rbind(files, cat$files[cat$files$study == "qes_demo", , drop = FALSE])
+    if (!any(cat$studies$demo)) {
+      cat$files <- files
+    }
+    cat$studies$label_file_id <- NA_character_
+    cat$text_fixes <- cat$text_fixes[0, , drop = FALSE]
+    cat$type_fixes <- cat$type_fixes[0, , drop = FALSE]
+    cat
+  }
+  list(catalog = fix(catalog), demo_catalog = fix(demo_catalog), paths = paths)
+}
+
+# Replace the catalog and the transport for the calling test.
 #   data: named list of data frames served instead of fake_study_data(<code>)
-#   fail: study codes whose metadata request fails (a simulated outage)
-# Returns an environment whose `urls` field logs every request made.
+#   fail: study codes whose data file cannot be downloaded (a simulated outage)
+# Returns an environment whose `urls` field logs every request made, and
+# whose `catalog` field is the fixture catalog.
 local_fake_dataverse <- function(data = list(), fail = character(0), .env = parent.frame()) {
-  # Built from the exported catalog, not the internal `.qes_catalog` table,
-  # which becomes a function in slice S1. The option keeps the (future)
-  # deprecation notice of get_qescodes() out of the calling test.
-  catalog <- withr::with_options(
-    list(qesR.quiet_deprecated = TRUE),
-    get_qescodes(detailed = TRUE)
-  )
-  ids <- data.frame(
-    code = rep(catalog$qes_survey_code, each = 2L),
-    id = as.character(rep(9000L + 10L * catalog$index, each = 2L) + c(1L, 2L)),
-    kind = rep(c("data", "doc"), times = nrow(catalog)),
-    stringsAsFactors = FALSE
-  )
-  ids$filename <- ifelse(
-    ids$kind == "data",
-    paste0(ids$code, ".sav"),
-    paste0(ids$code, "_questionnaire.txt")
-  )
+  dir <- withr::local_tempdir(.local_envir = .env)
+  fake <- fake_catalog(data, dir = dir)
+  files <- fake$catalog$files
 
   log <- new.env(parent = emptyenv())
   log$urls <- character(0)
-
-  study_data <- function(code) data[[code]] %||% fake_study_data(code)
-
-  serve <- function(url, dest, write) {
-    fake_response(url, dest, write = write)
-  }
+  log$catalog <- fake$catalog
 
   transport <- function(url, dest = NULL, handle = NULL) {
     log$urls <- c(log$urls, url)
-
-    if (grepl("/api/datasets/:persistentId/", url, fixed = TRUE)) {
-      doi <- sub("^doi:", "", utils::URLdecode(sub("^.*persistentId=", "", url)))
-      code <- catalog$qes_survey_code[match(doi, catalog$doi)]
-      if (is.na(code)) {
-        stop(sprintf("fake Dataverse: unknown DOI in '%s'", url), call. = FALSE)
-      }
-      if (code %in% fail) {
-        stop(sprintf("fake Dataverse: '%s' is unavailable", code), call. = FALSE)
-      }
-      rows <- ids[ids$code == code, , drop = FALSE]
-      files <- lapply(seq_len(nrow(rows)), function(i) {
-        list(dataFile = list(id = as.integer(rows$id[i]), filename = rows$filename[i], filesize = 1000 * i))
-      })
-      json <- list(status = "OK", data = list(latestVersion = list(files = files)))
-      return(serve(url, dest, function(path) jsonlite::write_json(json, path, auto_unbox = TRUE)))
-    }
-
-    m <- regmatches(url, regexec("/api/(access/datafile|files)/([0-9]+)(/metadata/ddi)?$", url))[[1]]
+    m <- regmatches(url, regexec("/api/access/datafile/([0-9]+)(/metadata/ddi|\\?format=original)?$", url))[[1]]
     if (length(m) == 0L) {
       stop(sprintf("fake Dataverse: unexpected request '%s'", url), call. = FALSE)
     }
-    row <- ids[ids$id == m[3], , drop = FALSE]
+    row <- files[files$file_id == m[2], , drop = FALSE]
     if (nrow(row) != 1L) {
       stop(sprintf("fake Dataverse: unknown file id in '%s'", url), call. = FALSE)
     }
-
-    if (nzchar(m[4])) {
-      if (row$kind != "data") {
+    is_data <- identical(row$role, "data")
+    if (is_data && row$study %in% fail) {
+      stop(sprintf("fake Dataverse: '%s' is unavailable", row$study), call. = FALSE)
+    }
+    if (identical(m[3], "/metadata/ddi")) {
+      if (!is_data) {
         stop("fake Dataverse: no DDI for a document", call. = FALSE)
       }
-      serve(url, dest, function(path) writeLines(.fake_ddi(study_data(row$code)), path, useBytes = TRUE))
-    } else if (row$kind == "data") {
-      serve(url, dest, function(path) haven::write_sav(study_data(row$code), path))
-    } else {
-      serve(url, dest, function(path) writeLines(c("Synthetic questionnaire", row$code), path))
+      d <- haven::read_sav(fake$paths[[row$file_id]], user_na = TRUE)
+      return(fake_response(url, dest, write = function(path) writeLines(.fake_ddi(d), path, useBytes = TRUE)))
     }
+    if (is_data) {
+      if (!identical(m[3], "?format=original")) {
+        stop("fake Dataverse: a data file must be requested as its original", call. = FALSE)
+      }
+      return(fake_response(url, dest, write = function(path) file.copy(fake$paths[[row$file_id]], path, overwrite = TRUE)))
+    }
+    fake_response(url, dest, write = function(path) writeLines(c("Synthetic document", row$study), path))
   }
 
   local_clear_codebook_cache(.env = .env)
+  withr::local_options(qesR.cache = "none", qesR.memo = FALSE, .local_envir = .env)
   testthat::local_mocked_bindings(
     .qes_transport = transport,
+    .qes_catalog = function(demo = FALSE) if (isTRUE(demo)) fake$demo_catalog else fake$catalog,
     .qes_sleep = function(seconds) invisible(NULL),
     .package = "qesR",
     .env = .env

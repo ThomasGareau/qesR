@@ -218,3 +218,44 @@ test_that("get_qes_master saves variable name sidecar map when renaming occurs (
   expect_true(file.exists(map_path))
   unlink(map_path)
 })
+
+# Slice S2b: the master reads the original files; until slice S4 freezes its
+# sources it gets the labels of 0.4.4 back where the files have none.
+
+test_that("qes2018 education maps from the 0.4.4 labels of qscol, not raw codes", {
+  local_fake_dataverse(data = list(
+    qes2018 = data.frame(responseid = c("b1", "b2", "b3", "b4", "b5", "b6"), qscol = c(3, 5, 8, 11, 13, 99))
+  ))
+  master <- get_qes_master(surveys = "qes2018", assign_global = FALSE, quiet = TRUE)
+  expect_identical(master$education, c(
+    "Primary or less", "Secondary", "Secondary",
+    "College/CEGEP/Technical", "University", NA
+  ))
+})
+
+test_that("qes1998 education and age group map from the panel file's labels", {
+  local_fake_dataverse(data = list(qes1998 = data.frame(
+    quetr = 1:5,
+    scol = haven::labelled(c(1, 2, 3, 9, NA), labels = c("1-9 ans" = 1, "10-15 ans" = 2, "univ. +" = 3)),
+    age = haven::labelled(c(1, 5, 6, 9, 2), labels = c("18-24" = 1, "25-34" = 2, "55-64" = 5))
+  )))
+  master <- get_qes_master(surveys = "qes1998", assign_global = FALSE, quiet = TRUE)
+  expect_identical(master$education, c("Primary or less", "College/CEGEP/Technical", "University", NA, NA))
+  expect_identical(master$age_group, c("18-24", "55-64", "65+", NA, "25-34"))
+})
+
+test_that("legacy labels: trimmed, blanks dropped, issue text kept out of vote_choice_text", {
+  dat <- data.frame(
+    q1 = haven::labelled(c(1, 96), labels = c(" Refus" = 1, " " = 96)),
+    q2_96_other = haven::labelled(c(1, 2), labels = c("Cannabis" = 1, "Culture" = 2), label = "Other issue")
+  )
+  out <- qesR:::.qes_legacy_source_labels(dat, "qes2018", consumer = "master")
+  expect_identical(attr(out$q1, "labels"), c(Refus = 1))
+  expect_identical(as.character(haven::as_factor(out$q1)), c("Refus", "96"))
+  expect_false(inherits(out$q2_96_other, "haven_labelled"))
+  expect_identical(attr(out$q2_96_other, "label"), "Other issue")
+  # a code the file labels keeps the file's label
+  dat <- data.frame(qscol = haven::labelled(c(8, 9), labels = c("DES (fichier)" = 8)))
+  out <- qesR:::.qes_legacy_source_labels(dat, "qes2018", consumer = "master")
+  expect_identical(as.character(haven::as_factor(out$qscol)), c("DES (fichier)", "Secondaire 5 (DEP)"))
+})

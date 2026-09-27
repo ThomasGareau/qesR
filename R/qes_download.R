@@ -34,142 +34,81 @@
   }
 }
 
-# ---- Dataverse requests of the legacy reader -----------------------------------
+# ---- the interim codebook (until slice S3) ----------------------------------------
 #
-# Every request goes through the transport of R/http.R (.qes_request(), whose
-# only network call is .qes_transport()). The reader below still lists each
-# deposit's files and reads the file Dataverse serves; slice S2b moves it to
-# the pinned originals and the cache (R/cache.R).
+# get_qes() reads its data with .qes_read() (R/read.R). Until the offline
+# dictionary of slice S3 replaces it, the legacy codebook (the qes_codebook
+# attribute of get_qes() and the output of qes_codebook()) is still built
+# here: the file list comes from the catalog, and the DDI metadata of the
+# pinned data file only (never another file's, [A:D2]) adds what the file
+# itself lacks. Labels always come from the data (label precedence of
+# R/read.R); DDI labels fill only variables the data leaves unlabelled.
 
-.fetch_qes_metadata <- function(study, quiet = TRUE) {
-  persistent_id <- paste0("doi:", study$doi)
-  metadata_url <- sprintf(
-    "%s/api/datasets/:persistentId/?persistentId=%s",
-    study$server,
-    utils::URLencode(persistent_id, reserved = TRUE)
-  )
-
-  metadata <- .qes_fetch_json(metadata_url)
-
-  if (!identical(metadata$status, "OK")) {
-    .qes_abort(
-      "source_metadata",
-      class = "qesR_error_source",
-      args = list(.qes_q(study$qes_survey_code), study$doi),
-      data = list(study = study$qes_survey_code, file_id = NA_character_)
-    )
-  }
-
-  metadata
-}
-
-.extract_qes_files <- function(metadata, srvy_code) {
-  files <- metadata$data$latestVersion$files
-
-  if (is.null(files) || length(files) == 0L) {
-    .qes_abort(
-      "source_no_files",
-      class = "qesR_error_source",
-      args = list(.qes_q(srvy_code)),
-      data = list(study = srvy_code, file_id = NA_character_)
-    )
-  }
-
-  data.frame(
-    id = vapply(files, function(x) as.character(x$dataFile$id %||% ""), character(1)),
-    filename = vapply(files, function(x) x$dataFile$filename %||% "", character(1)),
-    extension = vapply(files, function(x) {
-      tolower(tools::file_ext(x$dataFile$filename %||% ""))
-    }, character(1)),
-    size = as.numeric(vapply(files, function(x) x$dataFile$filesize %||% NA_real_, numeric(1))),
-    stringsAsFactors = FALSE
-  )
-}
-
-.select_file_by_preference <- function(df) {
-  preferred_extensions <- c(
-    "sav", "zsav", "dta", "por", "sas7bdat", "xpt",
-    "csv", "tsv", "tab", "txt", "zip"
-  )
-
-  for (ext in preferred_extensions) {
-    idx <- which(df$extension == ext)
-    if (length(idx) > 0L) {
-      candidates <- df[idx, , drop = FALSE]
-      return(candidates[which.max(candidates$size), , drop = FALSE])
-    }
-  }
-
-  df[which.max(df$size), , drop = FALSE]
-}
-
-.choose_remote_file <- function(files_df, file = NULL, study_code = NA_character_, pinned_id = NULL) {
-  if (!is.null(file)) {
-    .assert_single_string(file, "file")
-
-    matches <- grepl(file, files_df$filename, ignore.case = TRUE)
-    if (!any(matches)) {
-      .qes_abort(
-        "file_no_match",
-        class = "qesR_error_ambiguous_file",
-        args = list(.qes_q(study_code), .qes_q(file), .qes_q(files_df$filename)),
-        data = list(study = study_code, pattern = file, candidates = files_df$filename)
-      )
-    }
-
-    return(files_df[which(matches)[1], , drop = FALSE])
-  }
-
-  # Studies added after qesR 0.4.4 read their pinned catalog file; the 11
-  # legacy studies keep the 0.4.4 choice until the reader moves to the pinned
-  # originals (slice S2b).
-  if (!is.null(pinned_id) && !is.na(pinned_id)) {
-    hit <- files_df[files_df$id == pinned_id, , drop = FALSE]
-    if (nrow(hit) != 1L) {
-      .qes_abort(
-        "source_pinned_missing",
-        class = "qesR_error_source",
-        args = list(.qes_q(study_code), .qes_q(pinned_id)),
-        data = list(study = study_code, file_id = pinned_id)
-      )
-    }
-    return(hit)
-  }
-
-  data_candidates <- .find_qes_data_files(files_df)
-
-  .select_file_by_preference(data_candidates)
-}
-
+# The documentation files of a study's file list: every catalog file that is
+# neither data nor a label donor.
 .find_qes_codebook_files <- function(files_df) {
+  if ("role" %in% names(files_df)) {
+    return(files_df[!(files_df$role %in% c("data", "label_donor")), setdiff(names(files_df), "role"), drop = FALSE])
+  }
   codebook_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|dictionary|metadata|ddi|\\.pdf$)"
   files_df[grepl(codebook_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
 }
 
-.find_qes_data_files <- function(files_df) {
-  non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
-  supported_extensions <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt", "zip")
-  data_candidates <- files_df[!grepl(non_data_pattern, files_df$filename, ignore.case = TRUE), , drop = FALSE]
-  data_candidates <- data_candidates[data_candidates$extension %in% supported_extensions, , drop = FALSE]
-
-  if (nrow(data_candidates) == 0L) {
-    data_candidates <- files_df[files_df$extension %in% supported_extensions, , drop = FALSE]
-  }
-
-  if (nrow(data_candidates) == 0L) {
-    data_candidates <- files_df
-  }
-
-  data_candidates
+# The catalog files of `code`, in the shape of the legacy file list.
+.qes_legacy_files <- function(code, demo = .qes_is_demo_code(code)) {
+  files <- .qes_catalog(demo = demo)$files
+  files <- files[files$study == code, , drop = FALSE]
+  data.frame(
+    id = files$file_id,
+    filename = files$file_name,
+    extension = tolower(tools::file_ext(files$file_name)),
+    size = files$bytes,
+    role = files$role,
+    stringsAsFactors = FALSE
+  )
 }
 
-.download_qes_datafile <- function(study, file_id, filename, quiet = TRUE) {
-  ext <- tolower(tools::file_ext(filename))
-  tmp <- tempfile(fileext = if (nzchar(ext)) paste0(".", ext) else "")
-  access_url <- sprintf("%s/api/access/datafile/%s", study$server, file_id)
+# Read a study (get_qes(), qes_codebook()) and build its interim codebook.
+# `study` is a one-row legacy view (.get_qes_study()); `file` selects a data
+# file (.qes_select_data_file(), which may redirect to a sibling study);
+# `selection` is that choice when the caller has already made it.
+# Returns list(data, codebook, study (the code read), selected_file).
+.download_and_read_qes <- function(study, file = NULL, quiet = TRUE, read_data = TRUE,
+                                   with_codebook = TRUE, selection = NULL) {
+  sel <- selection %||% .qes_select_data_file(study$qes_survey_code, file = file, quiet = quiet)
+  data <- if (isTRUE(read_data)) .qes_read(sel$study, sel$file$file_id, quiet = quiet) else NULL
+  codebook <- if (isTRUE(with_codebook)) {
+    .qes_legacy_codebook(sel$study, sel$file, data = data, quiet = quiet)
+  } else {
+    NULL
+  }
+  list(data = data, codebook = codebook, study = sel$study, selected_file = sel$file)
+}
 
-  .qes_fetch(access_url, tmp, quiet = quiet, what = filename)
-  tmp
+.qes_legacy_codebook <- function(code, file_row, data = NULL, quiet = TRUE) {
+  demo <- .qes_is_demo_code(code)
+  study <- .qes_legacy_view(.qes_study_row(code, demo = demo))
+  files_df <- .qes_legacy_files(code, demo = demo)
+  selected <- files_df[files_df$id == file_row$file_id, , drop = FALSE]
+  ddi_parsed <- NULL
+  if (!is.na(study$server) && isTRUE(file_row$ingested)) {
+    # the parsed DDI is kept for the session like the data (qesR.memo), so a
+    # repeated get_qes() or get_preview() sends no request; a failed request
+    # is not remembered and is tried again on the next call
+    ddi_key <- paste0("ddi+", file_row$md5)
+    ddi_parsed <- .qes_memo_get(ddi_key)
+    if (is.null(ddi_parsed)) {
+      ddi_parsed <- .parse_qes_ddi(.fetch_qes_ddi(study, file_row$file_id, quiet = quiet))
+      if (!is.null(ddi_parsed)) {
+        .qes_memo_set(ddi_key, ddi_parsed, study = code)
+      }
+    }
+  }
+  codebook <- .build_qes_codebook(study, files_df, selected, ddi_parsed = ddi_parsed, quiet = quiet)
+  if (!is.null(data)) {
+    codebook <- .align_codebook_to_data(codebook, data)
+  }
+  codebook
 }
 
 .fetch_qes_ddi <- function(study, file_id, quiet = TRUE) {
@@ -240,25 +179,6 @@
   }
 
   .clean_ddi_question_candidate(paste(chunks, collapse = " "))
-}
-
-.count_replacement_chars <- function(x) {
-  if (length(x) == 0L) {
-    return(0L)
-  }
-
-  x <- as.character(x)
-  x[is.na(x)] <- ""
-  total <- 0L
-
-  for (txt in x) {
-    hits <- gregexpr("\uFFFD", txt, fixed = TRUE)[[1]]
-    if (!identical(hits[1], -1L)) {
-      total <- total + length(hits)
-    }
-  }
-
-  as.integer(total)
 }
 
 .is_noisy_question_text <- function(x) {
@@ -758,85 +678,6 @@
   list(
     data = codebook_df,
     value_labels = value_labels
-  )
-}
-
-.score_qes_ddi <- function(ddi_parsed, selected_file_id = NA_character_, candidate_file_id = NA_character_) {
-  if (is.null(ddi_parsed) || !is.list(ddi_parsed) || is.null(ddi_parsed$data)) {
-    return(list(score = -Inf))
-  }
-
-  data <- ddi_parsed$data
-  if (!is.data.frame(data) || nrow(data) == 0L) {
-    return(list(score = -Inf))
-  }
-
-  all_value_labels <- unlist(ddi_parsed$value_labels, use.names = FALSE)
-  replacement_chars <- .count_replacement_chars(c(data$label, data$question, all_value_labels))
-  non_empty_labels <- sum(!is.na(data$label) & nzchar(.squish_ws(data$label)))
-  non_empty_questions <- sum(!is.na(data$question) & nzchar(.squish_ws(data$question)))
-  nontrivial_value_labels <- sum(data$n_value_labels, na.rm = TRUE)
-  selected_bonus <- if (!is.na(selected_file_id) && !is.na(candidate_file_id) && identical(selected_file_id, candidate_file_id)) 5L else 0L
-
-  score <- as.numeric(
-    (1000L * nrow(data)) +
-      (10L * non_empty_labels) +
-      (5L * non_empty_questions) +
-      nontrivial_value_labels +
-      selected_bonus -
-      (50L * replacement_chars)
-  )
-
-  list(
-    score = score,
-    n_variables = nrow(data),
-    non_empty_labels = non_empty_labels,
-    non_empty_questions = non_empty_questions,
-    nontrivial_value_labels = nontrivial_value_labels,
-    replacement_chars = replacement_chars
-  )
-}
-
-.fetch_best_qes_ddi <- function(study, files_df, selected_file, quiet = TRUE, pinned = FALSE) {
-  if (!is.data.frame(files_df) || nrow(files_df) == 0L) {
-    return(list(ddi_parsed = NULL, ddi_file_id = NA_character_))
-  }
-
-  selected_id <- as.character(selected_file$id[1])
-
-  # A pinned data file (studies added after 0.4.4) takes its codebook from its
-  # own DDI only. Scoring every DDI in a shared deposit would attach another
-  # survey's codebook, e.g. CREATEC's to qes1998_crop.
-  if (isTRUE(pinned)) {
-    candidate_ids <- selected_id
-  } else {
-    data_candidates <- .find_qes_data_files(files_df)
-    if (nrow(data_candidates) == 0L) {
-      data_candidates <- files_df
-    }
-    candidate_ids <- unique(c(selected_id, as.character(data_candidates$id)))
-  }
-  candidate_ids <- candidate_ids[!is.na(candidate_ids) & nzchar(candidate_ids)]
-
-  best_parsed <- NULL
-  best_file_id <- NA_character_
-  best_score <- -Inf
-
-  for (file_id in candidate_ids) {
-    ddi <- .fetch_qes_ddi(study, file_id, quiet = quiet)
-    parsed <- .parse_qes_ddi(ddi)
-    metrics <- .score_qes_ddi(parsed, selected_file_id = selected_id, candidate_file_id = file_id)
-
-    if (is.finite(metrics$score) && metrics$score > best_score) {
-      best_score <- metrics$score
-      best_parsed <- parsed
-      best_file_id <- file_id
-    }
-  }
-
-  list(
-    ddi_parsed = best_parsed,
-    ddi_file_id = best_file_id
   )
 }
 
@@ -1539,7 +1380,12 @@
     label_missing <- is.na(row$label) || !nzchar(.squish_ws(row$label))
     question_missing <- is.na(row$question) || !nzchar(.squish_ws(row$question))
 
-    if (label_missing && !is.null(attr_label) && nzchar(.squish_ws(as.character(attr_label)))) {
+    # the data's own label wins (label precedence, R/read.R); the DDI's only
+    # fills a variable the data leaves unlabelled
+    if (!is.null(attr_label) && nzchar(.squish_ws(as.character(attr_label)))) {
+      if (!label_missing && identical(row$question, row$label)) {
+        row$question <- as.character(attr_label)
+      }
       row$label <- as.character(attr_label)
       label_missing <- FALSE
     }
@@ -1561,9 +1407,9 @@
       row$question <- var
     }
 
-    vals <- map[[var]]
+    vals <- .value_map_from_data_column(x)
     if (is.null(vals) || length(vals) == 0L) {
-      vals <- .value_map_from_data_column(x)
+      vals <- map[[var]]
     }
 
     if (!is.null(vals) && length(vals) > 0L) {
@@ -1820,95 +1666,6 @@
   out
 }
 
-.coerce_label_values <- function(values, x) {
-  if (is.numeric(x) || is.integer(x)) {
-    cast <- suppressWarnings(as.numeric(values))
-    keep <- !is.na(cast)
-    return(list(values = cast[keep], keep = keep, target_type = "numeric"))
-  }
-
-  if (is.logical(x)) {
-    numeric_cast <- suppressWarnings(as.numeric(values))
-    numeric_keep <- !is.na(numeric_cast)
-    if (any(numeric_keep)) {
-      return(list(values = numeric_cast[numeric_keep], keep = numeric_keep, target_type = "numeric"))
-    }
-
-    lower <- tolower(as.character(values))
-    logical_cast <- rep(NA, length(lower))
-    logical_cast[lower %in% c("true", "t")] <- TRUE
-    logical_cast[lower %in% c("false", "f")] <- FALSE
-    logical_keep <- !is.na(logical_cast)
-    return(list(values = as.logical(logical_cast[logical_keep]), keep = logical_keep, target_type = "logical"))
-  }
-
-  cast <- as.character(values)
-  keep <- !is.na(cast)
-  list(values = cast[keep], keep = keep, target_type = "character")
-}
-
-.apply_ddi_labels <- function(data, ddi_parsed) {
-  if (is.null(ddi_parsed) || !is.data.frame(data)) {
-    return(data)
-  }
-
-  codebook <- ddi_parsed$data
-  vars <- intersect(names(data), codebook$variable)
-  if (length(vars) == 0L) {
-    return(data)
-  }
-
-  for (var in vars) {
-    idx <- match(var, codebook$variable)
-    x <- data[[var]]
-
-    label <- codebook$label[idx]
-    question <- codebook$question[idx]
-
-    if (!is.na(label) && nzchar(label)) {
-      attr(x, "label") <- label
-    }
-
-    if (!is.na(question) && nzchar(question)) {
-      attr(x, "qes_question") <- question
-    }
-
-    map <- ddi_parsed$value_labels[[var]]
-    if (!is.null(map) && length(map) > 0L) {
-      coerced <- .coerce_label_values(names(map), x)
-      if (length(coerced$values) > 0L) {
-        if (is.logical(x) && identical(coerced$target_type, "numeric")) {
-          x <- as.numeric(x)
-        }
-        if (is.logical(x) && identical(coerced$target_type, "character")) {
-          x <- as.character(x)
-        }
-        if (is.logical(x) && identical(coerced$target_type, "logical")) {
-          x <- as.logical(x)
-        }
-
-        map_labels <- unname(map[coerced$keep])
-        map_labels <- make.unique(map_labels)
-        labels_vec <- stats::setNames(coerced$values, map_labels)
-
-        x <- haven::labelled(
-          x,
-          labels = labels_vec,
-          label = attr(x, "label", exact = TRUE)
-        )
-
-        if (!is.na(question) && nzchar(question)) {
-          attr(x, "qes_question") <- question
-        }
-      }
-    }
-
-    data[[var]] <- x
-  }
-
-  data
-}
-
 .build_qes_codebook <- function(study, files_df, selected_file, ddi_parsed = NULL, quiet = TRUE) {
   if (!is.null(ddi_parsed)) {
     out <- ddi_parsed$data
@@ -1927,9 +1684,12 @@
     filename = files_df$filename,
     extension = files_df$extension,
     size = files_df$size,
-    download_url = sprintf("%s/api/access/datafile/%s", study$server, files_df$id),
+    download_url = if (is.na(study$server)) NA_character_ else sprintf("%s/api/access/datafile/%s", study$server, files_df$id),
     stringsAsFactors = FALSE
   )
+  if ("role" %in% names(files_df)) {
+    file_manifest$role <- files_df$role
+  }
 
   out <- .enrich_codebook_questions(out, study = study, file_manifest = file_manifest, quiet = quiet)
 
@@ -1947,186 +1707,9 @@
   attr(out, "doi") <- study$doi
   attr(out, "doi_url") <- study$doi_url
   attr(out, "selected_data_file") <- selected_file$filename
-  attr(out, "files") <- file_manifest
+  attr(out, "files") <- file_manifest[, setdiff(names(file_manifest), "role"), drop = FALSE]
   attr(out, "codebook_files") <- .find_qes_codebook_files(file_manifest)
   class(out) <- unique(c("qes_codebook", class(out)))
 
   out
-}
-
-.read_text_table <- function(path) {
-  read_delim <- function(quote_chars = "\"") {
-    warning_msg <- NULL
-
-    out <- withCallingHandlers(
-      tryCatch(
-        utils::read.delim(
-          path,
-          stringsAsFactors = FALSE,
-          check.names = FALSE,
-          quote = quote_chars,
-          fill = TRUE,
-          comment.char = ""
-        ),
-        error = function(e) NULL
-      ),
-      warning = function(w) {
-        warning_msg <<- conditionMessage(w)
-        invokeRestart("muffleWarning")
-      }
-    )
-
-    list(data = out, warning = warning_msg)
-  }
-
-  first <- read_delim("\"")
-  has_eof_warning <- !is.null(first$warning) &&
-    grepl("EOF within quoted string", first$warning, ignore.case = TRUE)
-
-  if (!is.null(first$data) && ncol(first$data) > 1L && !has_eof_warning) {
-    return(first$data)
-  }
-
-  second <- read_delim("")
-  if (!is.null(second$data) && ncol(second$data) > 1L) {
-    return(second$data)
-  }
-
-  utils::read.csv(
-    path,
-    stringsAsFactors = FALSE,
-    check.names = FALSE,
-    quote = "",
-    fill = TRUE,
-    comment.char = ""
-  )
-}
-
-.read_qes_zip <- function(path) {
-  unzip_dir <- tempfile("qes_zip_")
-  dir.create(unzip_dir)
-  on.exit(unlink(unzip_dir, recursive = TRUE), add = TRUE)
-
-  utils::unzip(path, exdir = unzip_dir)
-  files <- list.files(unzip_dir, recursive = TRUE, full.names = TRUE)
-
-  if (length(files) == 0L) {
-    .qes_abort("source_zip_empty", class = "qesR_error_source")
-  }
-
-  local_df <- data.frame(
-    path = files,
-    filename = basename(files),
-    extension = tolower(tools::file_ext(files)),
-    size = as.numeric(file.info(files)$size),
-    stringsAsFactors = FALSE
-  )
-
-  supported <- c("sav", "zsav", "dta", "por", "sas7bdat", "xpt", "csv", "tsv", "tab", "txt")
-  local_df <- local_df[local_df$extension %in% supported, , drop = FALSE]
-
-  if (nrow(local_df) == 0L) {
-    .qes_abort("source_zip_no_data", class = "qesR_error_source")
-  }
-
-  non_data_pattern <- "(codebook|questionnaire|instrument|readme|documentation|syntax|\\.pdf$)"
-  local_candidates <- local_df[!grepl(non_data_pattern, local_df$filename, ignore.case = TRUE), , drop = FALSE]
-
-  if (nrow(local_candidates) == 0L) {
-    local_candidates <- local_df
-  }
-
-  chosen <- .select_file_by_preference(local_candidates)
-  .read_qes_file(chosen$path[1])
-}
-
-.read_qes_file <- function(path) {
-  ext <- tolower(tools::file_ext(path))
-
-  if (ext %in% c("sav", "zsav")) {
-    return(haven::read_sav(path))
-  }
-
-  if (ext == "dta") {
-    return(haven::read_dta(path))
-  }
-
-  if (ext == "por") {
-    return(haven::read_por(path))
-  }
-
-  if (ext == "sas7bdat") {
-    return(haven::read_sas(path))
-  }
-
-  if (ext == "xpt") {
-    return(haven::read_xpt(path))
-  }
-
-  if (ext == "csv") {
-    return(utils::read.csv(path, stringsAsFactors = FALSE, check.names = FALSE))
-  }
-
-  if (ext %in% c("tsv", "tab", "txt")) {
-    return(.read_text_table(path))
-  }
-
-  if (ext == "zip") {
-    return(.read_qes_zip(path))
-  }
-
-  .qes_abort(
-    "source_format",
-    class = "qesR_error_source",
-    args = list(.qes_q(ext)),
-    data = list(study = NA_character_, file_id = NA_character_, format = ext)
-  )
-}
-
-.download_and_read_qes <- function(study, file = NULL, quiet = TRUE, read_data = TRUE) {
-  metadata <- .fetch_qes_metadata(study, quiet = quiet)
-  files_df <- .extract_qes_files(metadata, srvy_code = study$qes_survey_code)
-  pinned_id <- if (study$qes_survey_code %in% .qes_legacy_codes) NULL else study$data_file_id
-  selected <- .choose_remote_file(
-    files_df,
-    file = file,
-    study_code = study$qes_survey_code,
-    pinned_id = pinned_id
-  )
-  ddi_choice <- .fetch_best_qes_ddi(
-    study,
-    files_df = files_df,
-    selected_file = selected,
-    quiet = quiet,
-    pinned = is.null(file) && !is.null(pinned_id) && !is.na(pinned_id)
-  )
-  ddi_parsed <- ddi_choice$ddi_parsed
-  codebook <- .build_qes_codebook(
-    study,
-    files_df,
-    selected_file = selected,
-    ddi_parsed = ddi_parsed,
-    quiet = quiet
-  )
-
-  data <- NULL
-  if (isTRUE(read_data)) {
-    local_path <- .download_qes_datafile(study, selected$id, selected$filename, quiet = quiet)
-    on.exit(unlink(local_path), add = TRUE)
-
-    data <- .read_qes_file(local_path)
-    label_payload <- list(
-      data = codebook[, intersect(c("variable", "label", "question", "n_value_labels"), names(codebook)), drop = FALSE],
-      value_labels = attr(codebook, "value_labels_map", exact = TRUE) %||% list()
-    )
-    data <- .apply_ddi_labels(data, label_payload)
-    codebook <- .align_codebook_to_data(codebook, data)
-  }
-
-  list(
-    data = data,
-    codebook = codebook,
-    selected_file = selected,
-    files = files_df
-  )
 }

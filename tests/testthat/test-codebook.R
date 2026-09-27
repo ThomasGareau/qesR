@@ -1,7 +1,10 @@
-# Restored from 397aa0c^ in slice S0b. Triage: kept unchanged. The DDI tests
-# go with the DDI path and xml2 in slice S3; the get_question() test stays.
+# Restored from 397aa0c^ in slice S0b. The DDI tests go with the DDI path and
+# xml2 in slice S3; the get_question() test stays. Since slice S2b the DDI
+# only feeds the interim codebook: labels on the data come from the data file
+# (test-readers.R), so the old check that DDI labels are applied to the data
+# is gone.
 
-test_that("DDI parsing and label application works", {
+test_that("DDI parsing works", {
   ddi <- xml2::read_xml(
     '<codeBook><dataDscr>
       <var ID="V1" name="vote_choice">
@@ -22,12 +25,10 @@ test_that("DDI parsing and label application works", {
   expect_true(all(c("data", "value_labels") %in% names(parsed)))
   expect_true("vote_choice" %in% parsed$data$variable)
 
-  dat <- data.frame(vote_choice = c(1, 2, 1), interest = c(3, 2, 1))
-  out <- qesR:::.apply_ddi_labels(dat, parsed)
-
-  expect_true(inherits(out$vote_choice, "haven_labelled"))
-  expect_true(identical(attr(out$vote_choice, "label"), "Vote choice"))
-  expect_true(identical(attr(out$vote_choice, "qes_question"), "Which party did you vote for?"))
+  row <- parsed$data[parsed$data$variable == "vote_choice", , drop = FALSE]
+  expect_identical(row$label, "Vote choice")
+  expect_identical(row$question, "Which party did you vote for?")
+  expect_identical(unname(parsed$value_labels$vote_choice), c("Party A", "Party B"))
 })
 
 test_that("DDI parser ignores trivial value labels", {

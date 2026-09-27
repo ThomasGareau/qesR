@@ -300,7 +300,7 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 | `enums.csv` | `(enum, value)` | **Every closed vocabulary in the package**: study and wave design, timings, roles, label sources, NA reasons, grades and rules, each with EN/FR labels. Validator V-S3 and the catalog lints read it (P10). |
 
 `inst/extdata/VERSIONS` (DCF) holds:
-- `catalog_version` and `dict_version` (semver: MAJOR when a pin changes, MINOR when rows are added, PATCH for text);
+- `catalog_version` and `dict_version` (semver: MAJOR when a pin changes, MINOR when rows are added, PATCH for text). `data-raw/build_catalog.R` keeps the current value, so a bump is a hand edit. (S2b: 2.0.0, because the qes2007 pin moved from 425922 to 425921 and the `text_fixes.csv`/`type_fixes.csv` tables were added);
 - `schema_version`;
 - `built_from` (the `file_id:md5` list);
 - `csv_md5` (the md5 of every shipped catalog and dictionary CSV).
@@ -445,15 +445,15 @@ Empty cells are filled at slice S1 from the cached originals and JSON. The qes20
 `.qes_read(study, file_id = NULL, cols = NULL)` is the only reader. `get_qes()`, `qes_codebook()`, the 2022 shard builder and `qes_harmonize()` all use it.
 
 1. **Dispatch** on the catalog `format` only: `haven::read_sav(user_na = TRUE, encoding = files$encoding)` or `haven::read_dta(encoding =)`. Any other format is an error. There is no text, `.tab`, RDS or CSV reader for data.
-2. **Post-processing:** `as.data.frame()`, then `.qes_unspss()` on labelled_spss columns (§2.4), then `name_map`, then the `n_rows`/`n_cols` assertion.
+2. **Post-processing:** `as.data.frame()`, the `n_rows`/`n_cols` assertion, labels (step 3) and the catalog's `text_fixes.csv`, then `.qes_unspss()` on labelled_spss columns (§2.4), the catalog's `type_fixes.csv` (whole-number codes stored as text read as numbers, blanks as NA, as v0.4.4 had them: Dataverse's `.tab` keeps these codes as quoted text and its DDI declares them character, and v0.4.4's text reader converted them), then `name_map`. (S2b: `text_fixes.csv` and `type_fixes.csv` are catalog tables keyed by `file_id`; characters are written as code points so the CSVs stay ASCII.)
 3. **Label precedence:**
-   - the pinned file first;
-   - then a same-UNF label donor (qes2012 SPSS);
+   - a same-UNF label donor where the study declares one (qes2012 SPSS), which supplies every label it has: its labels are the uncorrupted originals of the pinned file's (S2b: verified for all 174 differing qes2012 labels, which are lowercased or cut prefixes of the donor's);
+   - else the pinned file;
    - then the reviewed supplement from `data-raw/questions/`, only where the file has no label (e.g. the qes2018 value labels, which the `.dta` lacks, taken from the questionnaire);
    - then NA.
 
    Labels never come from the DDI or from the variable name. The `ddi` origin is allowed only in `status = draft` spec rows (§5.5).
-4. **Malformed labels:** a malformed variable label (qes2007_panel `ininum`, a 63-element vector) is coerced to its first element and recorded as `label_source = "file_malformed"`.
+4. **Malformed labels:** a malformed variable label (qes2007_panel `ininum`, a 63-element vector) is coerced to its first element and recorded as `label_source = "file_malformed"`. (S2b: in the original `.sav`, `ininum` has no variable label, only 63 value labels, so no current file triggers this; the rule stays, tested on a fixture.)
 5. **Tripwire:** any U+FFFD or C1 character raises `qesR_warning_encoding`.
 6. **Attributes:** `qes_survey_code`, `qes_provenance`, and optionally `qes_codebook`.
 
@@ -465,12 +465,12 @@ Empty cells are filled at slice S1 from the cached originals and JSON. The qes20
 | qes2018 | 425914 | dta | The file has no value labels, so the reviewed supplement supplies them (accented). 1,805 U+FFFD cells are fixed. |
 | qes2018_panel | 333052 | sav | `user_na = TRUE`, then `.qes_unspss()`; keys `method;id`. |
 | qes2014 | 425916 | sav (SPSS twin) | v0.4.4 read the Stata twin 425915. The values are identical, and the SPSS labels are correct where the Stata twin's LANG/CODE labels are broken. Names equal v0.4.4. |
-| qes2012 | 425918, plus donor 425917 | dta, with sav labels | The Stata twin keeps v0.4.4's lowercase names (`q25`, `pond`), which the paper uses. The SPSS donor supplies proper-case labels of up to 256 characters to the dictionary. Verified: same UNF, identical `tolower(names)`, identical row order. |
-| qes2012_panel | 361043 | sav | Name map and user_na to be verified (R1). |
-| qes2008 | 425919 (SPSS, the v0.4.4 twin) | sav | The twins' UNFs differ, so keep the v0.4.4 twin until both are compared (R1). |
-| qes2007 | 425922 (Stata, the v0.4.4 twin) | dta | Same rule as qes2008 (R1). |
+| qes2012 | 425918, plus donor 425917 | dta, with sav labels | The Stata twin keeps v0.4.4's lowercase names (`q25`, `pond`), which the paper uses. The SPSS donor supplies proper-case labels of up to 256 characters to the dictionary. Verified: same UNF, identical `tolower(names)`, identical row order. (S2b: the donor stays selectable as data, so `get_qes("qes2012", file = "SPSS")` reads it as v0.4.4 did; it is never the default.) |
+| qes2012_panel | 361043 | sav | S2b (R1 verified): no rename needed; 15 user-missing columns; 3 interviewer-number columns stored as text are read as numbers (`type_fixes.csv`), as v0.4.4 had them. |
+| qes2008 | 425919 (SPSS, the v0.4.4 twin) | sav | S2b (R1 verified): keep the SPSS twin. The Stata twin differs in 9 columns, the 9 with SPSS user-missing codes; the SPSS file equals v0.4.4. |
+| qes2007 | 425921 (SPSS; v0.4.4 read the Stata twin 425922) | sav | S2b (R1 verified): both twins hold the same values, but both store 75 code columns as zero-padded text (`"01"`), which Dataverse's `.tab` keeps as quoted text (DDI `varFormat type="character"`) and which v0.4.4's text reader (`utils::read.delim`) converted to numbers; `type_fixes.csv` restores the v0.4.4 numbers and NA pattern exactly, for both twins (425921 and 425922, so `get_qes("qes2007", file = "STATA")` matches too). The SPSS twin is pinned because its labels are complete (90 value-labelled columns, original case) where the Stata twin's are lowercased (15 value-labelled). |
 | qes2007_panel | 352415 | sav | Name map (3 names). Keys `nompn;quest`: 380 duplicate `quest` values across subsamples, 0 duplicates of the pair. |
-| qes_crop_2007_2010 | 329990 | sav | CP850 encoding to be confirmed (R1). Fixes the `RESTE DU QU\u0090BEC` mojibake. |
+| qes_crop_2007_2010 | 329990 | sav | S2b (R1 verified): the file is Windows-1252 and decodes correctly, except for a few labels typed in CP850 (byte 0x90 `É`, 0x85 `à`); reading the whole file as CP850 garbles the rest. `text_fixes.csv` corrects those characters in labels only (`RESTE DU QUÉBEC`, `trav. à temps plein`). The same CP850 `à` occurs in qes1998_crop (286331) and qes1998_createc (316121, with `CÔTE-NORD`). |
 | qes1998 | 329987 (panel) | sav | This is the file v0.4.4 loaded. It uses its own labels, not the CREATEC file's ([A:D2]). Its `intvote2` value labels are shifted in the source (§5.7), which is recorded in the dictionary. |
 | qes1998_crop | 286331 | sav | New code. Resolves the 24,027 vs 24,026 discrepancy with `n_rows` (R1). |
 | qes1998_createc | 316121 | sav | New code. |

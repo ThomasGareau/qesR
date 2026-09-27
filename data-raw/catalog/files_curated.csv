@@ -28,8 +28,8 @@ qes2008,425919,data,,1151,63,,seq,TRUE
 qes2008,425920,data,,1151,63,,seq,FALSE
 qes2008,196358,questionnaire,fr,,,,,FALSE
 qes2008,197296,questionnaire,en,,,,,FALSE
-qes2007,425922,data,,2175,93,,quest,TRUE
-qes2007,425921,data,,2175,93,,quest,FALSE
+qes2007,425922,data,,2175,93,,quest,FALSE
+qes2007,425921,data,,2175,93,,quest,TRUE
 qes2007,192423,questionnaire,en,,,,,FALSE
 qes2007,192422,questionnaire,fr,,,,,FALSE
 qes2007_panel,352415,data,,2442,270,,nompn;quest,TRUE

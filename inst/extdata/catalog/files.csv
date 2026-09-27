@@ -28,8 +28,8 @@ qes2008,425919,data,,Quebec Election Study 2008 (SPSS).tab,Quebec Election Study
 qes2008,425920,data,,Quebec Election Study 2008 (STATA).tab,Quebec Election Study 2008 (STATA).dta,dta,TRUE,102489,192547c91c1f1a86b5dcbaf2ee19c511,MD5,UNF:6:SIDtGYYGIY0oZdCC2zT7Jw==,1151,63,,seq,FALSE,1.0
 qes2008,196358,questionnaire,fr,Quebec Election Study 2008 FR.doc,Quebec Election Study 2008 FR.doc,doc,FALSE,86016,451182a24109811f46eeba2bb34be272,MD5,,,,,,FALSE,1.0
 qes2008,197296,questionnaire,en,Quebec Election study 2008 ENG.pdf,Quebec Election study 2008 ENG.pdf,pdf,FALSE,118660,fa57b656d7eda71187a97bfde109dc11,MD5,,,,,,FALSE,1.0
-qes2007,425922,data,,Quebec Election Study 2007 (STATA).tab,Quebec Election Study 2007 (STATA).dta,dta,TRUE,602756,d2355b5d400b16cc999be0a5701463a7,MD5,UNF:6:dahmtsuVCpk42CLMLpbgJA==,2175,93,,quest,TRUE,1.0
-qes2007,425921,data,,Quebec Election Study 2007 (SPSS).tab,Quebec Election Study 2007 (SPSS).sav,sav,TRUE,1557734,e1324bbb582cf6bc01eb9949ecb8b132,MD5,UNF:6:71ThKeRbkmyDsAH85APy7A==,2175,93,,quest,FALSE,1.0
+qes2007,425922,data,,Quebec Election Study 2007 (STATA).tab,Quebec Election Study 2007 (STATA).dta,dta,TRUE,602756,d2355b5d400b16cc999be0a5701463a7,MD5,UNF:6:dahmtsuVCpk42CLMLpbgJA==,2175,93,,quest,FALSE,1.0
+qes2007,425921,data,,Quebec Election Study 2007 (SPSS).tab,Quebec Election Study 2007 (SPSS).sav,sav,TRUE,1557734,e1324bbb582cf6bc01eb9949ecb8b132,MD5,UNF:6:71ThKeRbkmyDsAH85APy7A==,2175,93,,quest,TRUE,1.0
 qes2007,192423,questionnaire,en,Quebec Election Study 2007 ENG.doc,Quebec Election Study 2007 ENG.doc,doc,FALSE,116224,9d09da75d0f0ad008b61f67fb3538320,MD5,,,,,,FALSE,1.0
 qes2007,192422,questionnaire,fr,Quebec Election Study 2007 FR.doc,Quebec Election Study 2007 FR.doc,doc,FALSE,121344,a6ecbace0da2314d4c7065b8bdea81f7,MD5,,,,,,FALSE,1.0
 qes2007_panel,352415,data,,complet_tous_repondants_2007.tab,complet_tous_repondants_2007.sav,sav,TRUE,1599467,20f8c6fd4211744340f76293d18e5b6d,MD5,UNF:6:ASjoqrxxkLm0vvSA6lc9Fw==,2442,270,,nompn;quest,TRUE,1.0

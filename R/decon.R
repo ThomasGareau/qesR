@@ -28,8 +28,24 @@
   NA_character_
 }
 
+# A labelled column as get_decon() returned it in qesR 0.4.4: a factor of its
+# labels. A column whose labels only repeat the codes (qes2022
+# cps_age_in_years labels each age 15..115 with itself) stays a plain number,
+# as in 0.4.4: as_factor() would turn ages into levels, and as.numeric() would
+# then return level positions instead of ages.
 .to_display_column <- function(x) {
   if (inherits(x, "haven_labelled") || inherits(x, "labelled")) {
+    labels <- attr(x, "labels", exact = TRUE)
+    identity_only <- length(labels) == 0L ||
+      identical(trimws(names(labels)), trimws(as.character(unclass(labels))))
+    if (identity_only && is.numeric(unclass(x))) {
+      out <- .qes_plain(x)
+      label <- attr(x, "label", exact = TRUE)
+      if (!is.null(label)) {
+        attr(out, "label") <- label
+      }
+      return(out)
+    }
     return(haven::as_factor(x))
   }
   x
@@ -37,6 +53,9 @@
 
 .build_decon <- function(data, srvy) {
   n <- nrow(data)
+  # until the interim legacy builder freezes its sources (slice S4), the
+  # labels qesR 0.4.4 attached to columns the file leaves unlabelled
+  data <- .qes_legacy_source_labels(data, srvy, consumer = "decon")
 
   lookup <- list(
     citizenship = c("cps_citizen", "cps_citizenship", "citizenship"),

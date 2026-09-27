@@ -250,14 +250,21 @@ get_codebook <- function(
   envir = NULL
 ) {
   layout <- match.arg(layout)
-  study <- .get_qes_study(srvy)
+  study <- .get_qes_study(srvy, demo = TRUE)
+  # resolve `file` first, as get_qes() does: it may name the data file of
+  # another study of the same deposit, whose code then names the codebook
+  selection <- .qes_select_data_file(study$qes_survey_code, file = file, quiet = quiet)
+  if (!identical(selection$study, study$qes_survey_code)) {
+    study <- .get_qes_study(selection$study, demo = TRUE)
+  }
   code <- study$qes_survey_code
   key <- .codebook_cache_key(code, file = file)
 
   if (!isTRUE(refresh) && exists(key, envir = .qes_codebook_cache, inherits = FALSE)) {
     codebook <- get(key, envir = .qes_codebook_cache, inherits = FALSE)
   } else {
-    payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE)
+    payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE,
+      selection = selection)
     codebook <- payload$codebook
     codebook <- .normalize_codebook_class(codebook)
     attr(codebook, "cached_at") <- Sys.time()

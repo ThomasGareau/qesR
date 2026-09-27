@@ -13,11 +13,23 @@ get_qes(
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{qes_studies()}. Codes are trimmed
+\item{srvy}{A qesR survey code from \code{qes_studies()}, or \code{"qes_demo"} for
+the small synthetic study shipped with the package. Codes are trimmed
 and case-insensitive (\code{" QES2018 "} is \code{"qes2018"}); an unknown code is an
 error of class \code{qesR_error_unknown_study} that suggests near matches.}
 
-\item{file}{Optional regular expression for choosing one file in multi-file datasets.}
+\item{file}{Optional regular expression that chooses one of the study's
+data files by name, when its deposit holds several (for example
+\code{get_qes("qes2014", file = "dta")} reads the Stata version instead of
+the default SPSS file). It is matched, ignoring case, against data files
+only (\code{get_qes("qes2012", file = "SPSS")} reads the SPSS twin whose
+labels complete the default Stata file's). A pattern that is not a valid
+regular expression is an error of class \code{qesR_error_input}. A pattern
+that matches no data file of the study but the data
+file of another study of the same deposit reads that study, with a
+message: \code{get_qes("qes1998", file = "CROP")} reads \code{qes1998_crop}. A
+pattern that matches no file, or several, is an error of class
+\code{qesR_error_ambiguous_file}.}
 
 \item{assign_global}{If TRUE, also assign the data as \verb{<code>} into the
 environment \code{get_qes()} was called from (the global environment only when
@@ -31,11 +43,16 @@ attribute (and assign \code{<code>_codebook} when \code{assign_global = TRUE}).}
 \item{quiet}{If TRUE, suppress informational output.}
 }
 \value{
-A labelled data frame/tibble for the selected survey, returned
-visibly. \code{attr(, "qes_survey_code")} holds the canonical study code.
+A base data frame, returned visibly, with attributes
+\code{qes_survey_code} (the canonical study code), \code{qes_provenance} (a
+one-row data frame recording the DOI, dataset version, file id, file
+name, md5, UNF, dimensions, where the file came from and when, the
+licence, the source of the labels and the reader used) and, with
+\code{with_codebook = TRUE}, \code{qes_codebook}.
 }
 \description{
-Downloads a study file from Dataverse, applies labels when available, and attaches a codebook.
+Reads a study's data file, as its authors deposited it, and returns it
+with its labels.
 }
 \details{
 \code{get_qes()} returns the data. It does not write anything into your
@@ -44,9 +61,57 @@ workspace unless you ask for it with \code{assign_global = TRUE}: write
 \code{assign_global} unset prints a one-time note about this change from qesR
 0.4.4; passing \code{assign_global} explicitly (TRUE or FALSE) avoids it.
 }
+\section{Which file is read}{
+
+Each study is pinned to one data file of one Dataverse dataset version
+(see \code{\link[=qes_studies]{qes_studies()}}). \code{get_qes()} reads the \strong{original} upload of that
+file (SPSS \code{.sav} or Stata \code{.dta}), not the tab-delimited copy Dataverse
+makes of it, after checking it against the md5 checksum recorded in the
+package catalog. A file that fails the check is an error (class
+\code{qesR_error_checksum}) and is never used; so is a file whose number of
+rows or columns differs from the catalog (\code{qesR_error_rowcount}). The
+file is downloaded once and kept in the download cache (see
+\code{\link[=qes_cache_info]{qes_cache_info()}}); within a session the parsed data, and the Dataverse
+metadata used for the codebook, are also kept in memory, so a second call
+makes no request (\code{options(qesR.memo = FALSE)} turns this off).
+
+The data is returned as deposited: column names, codes and missing values
+(\code{NA}) are those of the file, and no row is dropped or recoded. For qesR
+0.4.4 users, names, codes and \code{is.na()} counts are unchanged; three
+columns of \code{qes2007_panel} keep their 0.4.4 names (\code{AFFGÉN}, \code{PROPRIÉ},
+\code{PROPGÉN}). Compared with 0.4.4, accented text is no longer damaged,
+\code{qes2022} dates are date-times, and labels are those of the file (below).
+}
+
+\section{Labels and missing values}{
+
+Labelled columns are \code{\link[haven:labelled]{haven::labelled()}} vectors; convert one with
+\code{\link[haven:as_factor]{haven::as_factor()}}. Variable and value labels come from the data file
+itself, never from Dataverse's metadata or from a variable name. For
+\code{qes2012}, whose Stata file (the one qesR 0.4.4 read, with its lowercase
+names) has labels that Stata lowercased and cut at 80 characters, the
+complete labels of the SPSS twin of the same data are used. A few labels
+of the CROP files typed in another character set are corrected (for
+example "RESTE DU QUÉBEC"). \code{qes2018}'s data file has value labels for
+only a few variables.
+
+Codes that an SPSS file declares as user-missing (such as 8 or 9 for "Don't
+know") are kept as values, as in qesR 0.4.4; the declaration is kept in
+the column attributes \code{qes_na_values} and \code{qes_na_range}.
+}
+
 \examples{
+# the synthetic demonstration study ships with qesR: no download
+demo <- get_qes("qes_demo", quiet = TRUE)
+dim(demo)
+attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
+
 \donttest{
   qes2022 <- get_qes("qes2022")
   names(qes2022)[1:10]
 }
+}
+\seealso{
+\code{\link[=qes_studies]{qes_studies()}} for the study codes and their pinned files,
+\code{\link[=qes_cache_info]{qes_cache_info()}} for the download cache.
 }

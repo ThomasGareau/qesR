@@ -127,52 +127,86 @@ test_that("the legacy master refuses the 1998 firm codes until the engine", {
   expect_error(get_qes_master("qes1998_createc", quiet = TRUE), class = "qesR_error_input")
 })
 
-test_that("studies added after 0.4.4 read their pinned data file", {
-  choose <- getFromNamespace(".choose_remote_file", "qesR")
-  files <- data.frame(
-    id = c("329987", "316121", "286331"),
-    filename = c("Total_panel.tab", "Total_CREATEC.tab", "Total_CROP.tab"),
-    extension = "tab",
-    size = c(3, 2, 1),
-    stringsAsFactors = FALSE
-  )
-  expect_identical(choose(files, study_code = "qes1998")$id, "329987")
-  expect_identical(choose(files, study_code = "qes1998_crop", pinned_id = "286331")$id, "286331")
-  err <- expect_error(
-    choose(files[1:2, ], study_code = "qes1998_crop", pinned_id = "286331"),
-    class = "qesR_error_source"
-  )
-  expect_identical(err$file_id, "286331")
+test_that("get_qes() reads each study's pinned data file, never one chosen by size", {
+  select <- getFromNamespace(".qes_select_data_file", "qesR")
+  files <- shipped_catalog()$files
+  for (code in v044_qescodes) {
+    pinned <- files$file_id[files$study == code & files$role == "data" & files$is_default]
+    expect_identical(select(code)$file$file_id, pinned, info = code)
+  }
+  # the three 1998 studies of one deposit each read their own file
+  expect_identical(select("qes1998")$file$file_id, "329987")
+  expect_identical(select("qes1998_crop")$file$file_id, "286331")
+  expect_identical(select("qes1998_createc")$file$file_id, "316121")
+  # twins: the SPSS file is pinned for qes2014, the Stata file for qes2012
+  expect_identical(select("qes2014")$file$format, "sav")
+  expect_identical(select("qes2012")$file$format, "dta")
 })
 
-test_that("a pinned data file takes its codebook from its own DDI only", {
+test_that("`file` chooses among a study's data files only ([A:D6])", {
+  select <- getFromNamespace(".qes_select_data_file", "qesR")
+  expect_identical(select("qes2014", file = "STATA")$file$file_id, "425915")
+  expect_identical(select("qes2014", file = "\\.dta$")$file$file_id, "425915")
+  expect_identical(select("qes2014", file = "spss")$file$file_id, "425916")
+
+  err <- expect_error(select("qes2014", file = "Quebec Election"), class = "qesR_error_ambiguous_file")
+  expect_setequal(err$candidates, c("Quebec Election Study 2014.sav", "Quebec Election Study 2014.dta"))
+
+  err <- expect_error(select("qes2018", file = "questionnaire"), class = "qesR_error_ambiguous_file")
+  expect_identical(err$study, "qes2018")
+  expect_identical(err$candidates, "Quebec Election Study 2018.dta")
+
+  # the qes2012 SPSS twin is the label donor, and a complete data file: it
+  # can be chosen (get_qes("qes2012", file = "SPSS") read it in 0.4.4), but is
+  # never the default
+  expect_identical(select("qes2012", file = "SPSS")$file$file_id, "425917")
+  expect_identical(select("qes2012", file = "STATA")$file$file_id, "425918")
+  expect_identical(select("qes2012")$file$file_id, "425918")
+  expect_error(select("qes2012", file = "Quebec Election Study 2012"), class = "qesR_error_ambiguous_file")
+  expect_error(select("qes2014", file = c("a", "b")), class = "qesR_error_input")
+
+  # a pattern R cannot compile is an input error, not a bare regex error
+  err <- expect_error(select("qes2014", file = "("), class = "qesR_error_input")
+  expect_identical(err$arg, "file")
+  expect_identical(err$value, "(")
+})
+
+test_that("`file` naming another study of the same deposit reads that study, with a message", {
+  select <- getFromNamespace(".qes_select_data_file", "qesR")
+  msg <- NULL
+  out <- withCallingHandlers(
+    select("qes1998", file = "CROP"),
+    qesR_message_download = function(m) {
+      msg <<- m
+      invokeRestart("muffleMessage")
+    }
+  )
+  expect_identical(out$study, "qes1998_crop")
+  expect_identical(out$file$file_id, "286331")
+  expect_identical(msg$id, "file_redirect")
+  expect_silent(select("qes1998", file = "CREATEC", quiet = TRUE))
+  # never across deposits
+  expect_error(select("qes2012", file = "2014"), class = "qesR_error_ambiguous_file")
+})
+
+test_that("the interim codebook takes the DDI of the pinned data file only ([A:D2])", {
   # The shared 1998 deposit: the CREATEC DDI describes more variables, so
-  # scoring every DDI would attach it to the CROP data (design.md [A:D2]).
-  ddi <- function(n, prefix) {
-    vars <- sprintf("<var ID=\"%s%02d\" name=\"%s%02d\"><labl>v</labl></var>", prefix, seq_len(n), prefix, seq_len(n))
-    paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>")
-  }
-  ddis <- list("329987" = ddi(42, "p"), "286331" = ddi(37, "c"), "316121" = ddi(49, "t"))
+  # scoring every DDI would attach it to the CROP data.
   requested <- character(0)
   local_mocked_bindings(
-    .fetch_qes_metadata = function(study, quiet = TRUE) {
-      files <- lapply(names(ddis), function(id) {
-        list(dataFile = list(id = as.integer(id), filename = paste0(id, ".tab"), filesize = 1000))
-      })
-      list(status = "OK", data = list(latestVersion = list(files = files)))
-    },
     .fetch_qes_ddi = function(study, file_id, quiet = TRUE) {
       requested <<- c(requested, file_id)
-      xml2::read_xml(ddis[[file_id]])
+      vars <- sprintf("<var ID=\"c%02d\" name=\"c%02d\"><labl>v</labl></var>", 1:37, 1:37)
+      xml2::read_xml(paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>"))
     },
-    .build_qes_codebook = function(study, files_df, selected_file, ddi_parsed = NULL, quiet = TRUE) {
-      ddi_parsed$data
-    },
+    .qes_transport = function(...) stop("no request expected"),
     .package = "qesR"
   )
   study <- getFromNamespace(".get_qes_study", "qesR")("qes1998_crop")
-  payload <- getFromNamespace(".download_and_read_qes", "qesR")(study, read_data = FALSE)
+  payload <- getFromNamespace(".download_and_read_qes", "qesR")(study, read_data = FALSE, quiet = TRUE)
   expect_identical(requested, "286331")
+  expect_identical(payload$study, "qes1998_crop")
   expect_identical(nrow(payload$codebook), 37L)
-  expect_true(all(startsWith(payload$codebook$variable, "c")))
+  # the file list comes from the catalog: no dataset listing request
+  expect_true(all(attr(payload$codebook, "files")$file_id %in% shipped_catalog()$files$file_id))
 })

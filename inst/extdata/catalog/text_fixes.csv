@@ -1,0 +1,6 @@
+file_id,from,to,evidence
+329990,U+0090,U+00C9,"REG value label 4 reads RESTE DU QU<U+0090>BEC: byte 0x90 is E acute in CP850, undefined in Windows-1252 (the file's encoding). Checked by haven on the md5-verified original, 2026-09-26."
+329990,U+2026,U+00E0,"Byte 0x85 is a grave in CP850 but an ellipsis in Windows-1252. All 7 labels that hold it need a grave (Occup: correspond le mieux a, trav. a temps plein; revenu: 20 000 $ a 39 999 $). Checked 2026-09-26."
+286331,U+2026,U+00E0,"Byte 0x85 is a grave in CP850 but an ellipsis in Windows-1252. All 11 labels that hold it need a grave (q5 favorable a continuer; q11 a peu pres; q19 8 a 9 annees; q20 travaille a temps plein; q21 20 000 $ a 39 999 $). Checked 2026-09-26."
+316121,U+2026,U+00E0,"Byte 0x85 is a grave in CP850 but an ellipsis in Windows-1252. Its one occurrence, the r1 label, reads irez voter a la prochaine election. Checked 2026-09-26."
+316121,U+201C,U+00D4,"Byte 0x93 is o circumflex in CP850 but a left double quote in Windows-1252. Its one occurrence, r19 value label C<U+201C>TE-NORD, is the region Cote-Nord, written in capitals (so O circumflex). Checked 2026-09-26."

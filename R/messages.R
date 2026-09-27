@@ -24,6 +24,10 @@
     en = "`%1$s` must be a single non-empty character string.",
     fr = "`%1$s` doit \u00eatre une seule cha\u00eene de caract\u00e8res non vide."
   ),
+  input_regex = c(
+    en = "`%1$s` must be a valid regular expression; %2$s is not.",
+    fr = "`%1$s` doit \u00eatre une expression r\u00e9guli\u00e8re valide\u00a0; %2$s ne l'est pas."
+  ),
   input_obs = c(
     en = "`obs` must be a single whole number greater than or equal to 1.",
     fr = "`obs` doit \u00eatre un seul nombre entier sup\u00e9rieur ou \u00e9gal \u00e0 1."
@@ -104,8 +108,12 @@
     fr = "La colonne %1$s est introuvable dans les donn\u00e9es. Correspondances proches\u00a0: %2$s."
   ),
   file_no_match = c(
-    en = "No file of %1$s matches %2$s. Available files: %3$s.",
-    fr = "Aucun fichier de %1$s ne correspond \u00e0 %2$s. Fichiers disponibles\u00a0: %3$s."
+    en = "No data file of %1$s matches %2$s. Its data files: %3$s.",
+    fr = "Aucun fichier de donn\u00e9es de %1$s ne correspond \u00e0 %2$s. Ses fichiers de donn\u00e9es\u00a0: %3$s."
+  ),
+  file_ambiguous = c(
+    en = "%2$s matches several data files of %1$s: %3$s. Use a pattern that matches only one.",
+    fr = "%2$s correspond \u00e0 plusieurs fichiers de donn\u00e9es de %1$s\u00a0: %3$s. Utilisez un motif qui n'en d\u00e9signe qu'un."
   ),
 
   # ---- qesR_error_network --------------------------------------------------
@@ -151,33 +159,17 @@
   ),
 
   # ---- qesR_error_source ---------------------------------------------------
-  source_metadata = c(
-    en = "Dataverse did not return metadata for %1$s (doi:%2$s).",
-    fr = "Dataverse n'a pas renvoy\u00e9 les m\u00e9tadonn\u00e9es de %1$s (doi:%2$s)."
-  ),
-  source_no_files = c(
-    en = "No files were found for study %1$s.",
-    fr = "Aucun fichier trouv\u00e9 pour l'\u00e9tude %1$s."
-  ),
-  source_zip_empty = c(
-    en = "The zip archive contains no files.",
-    fr = "L'archive zip ne contient aucun fichier."
-  ),
-  source_zip_no_data = c(
-    en = "No supported data file was found in the zip archive.",
-    fr = "L'archive zip ne contient aucun fichier de donn\u00e9es pris en charge."
-  ),
   source_format = c(
     en = "qesR does not read files of type %1$s.",
     fr = "qesR ne lit pas les fichiers de type %1$s."
   ),
-  source_pinned_missing = c(
-    en = "The pinned data file %2$s of study %1$s is not in its Dataverse deposit. Run qes_studies(check_updates = TRUE).",
-    fr = "Le fichier de donn\u00e9es retenu %2$s de l'\u00e9tude %1$s ne figure pas dans son d\u00e9p\u00f4t Dataverse. Lancez qes_studies(check_updates = TRUE)."
-  ),
   checksum = c(
     en = "File %2$s of study %1$s failed its md5 check (expected %3$s, got %4$s). It was not kept; try again, and report the problem if it persists.",
     fr = "Le fichier %2$s de l'\u00e9tude %1$s n'a pas pass\u00e9 le contr\u00f4le md5 (attendu %3$s, obtenu %4$s). Il n'a pas \u00e9t\u00e9 conserv\u00e9\u00a0; r\u00e9essayez, et signalez le probl\u00e8me s'il persiste."
+  ),
+  rowcount = c(
+    en = "File %2$s of study %1$s does not have the size the catalog records (expected %3$s rows x columns, found %4$s). qesR does not use it; report the problem.",
+    fr = "Le fichier %2$s de l'\u00e9tude %1$s n'a pas la taille inscrite au catalogue (attendu %3$s lignes x colonnes, trouv\u00e9 %4$s). qesR ne l'utilise pas\u00a0; signalez le probl\u00e8me."
   ),
   checksum_cached = c(
     en = "The file found at %1$s is not file %3$s of study %2$s: its md5 is %5$s, not %4$s. qesR deleted it, and the server refused the automated download. If you saved it from a web browser, download it again choosing the original file format (not the tab-delimited version), and save it at the same place.",
@@ -225,6 +217,10 @@
     en = "No question label was found for %1$s.",
     fr = "Aucun libell\u00e9 de question trouv\u00e9 pour %1$s."
   ),
+  encoding = c(
+    en = "File %2$s of study %1$s still has %3$s label(s) or text value(s) with a replacement or control character after decoding (in %4$s). Please report it.",
+    fr = "Le fichier %2$s de l'\u00e9tude %1$s contient encore %3$s \u00e9tiquette(s) ou valeur(s) texte avec un caract\u00e8re de remplacement ou de contr\u00f4le apr\u00e8s d\u00e9codage (dans %4$s). Merci de le signaler."
+  ),
 
   # ---- once-per-session notices -------------------------------------------
   deprecated = c(
@@ -265,6 +261,10 @@
   no_codebook_files = c(
     en = "No codebook/support files found for %1$s.",
     fr = "Aucun fichier de documentation trouv\u00e9 pour %1$s."
+  ),
+  file_redirect = c(
+    en = "No data file of %1$s matches %2$s; it matches the data file of study %3$s, which is read instead.",
+    fr = "Aucun fichier de donn\u00e9es de %1$s ne correspond \u00e0 %2$s\u00a0; le motif d\u00e9signe le fichier de donn\u00e9es de l'\u00e9tude %3$s, qui est lu \u00e0 la place."
   ),
   download_file = c(
     en = "Downloading %1$s from %2$s.",

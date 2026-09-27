@@ -8,6 +8,11 @@
 #                  documents, with md5, size, n_rows and n_cols;
 #   elections.csv  public election dates;
 #   name_map.csv   renames that restore v0.4.4 column names;
+#   text_fixes.csv characters of a file's labels that its own encoding
+#                  decodes wrongly (CP850 letters in Windows-1252 labels);
+#   type_fixes.csv text columns that hold whole-number codes, read as numbers
+#                  (as qesR 0.4.4 had them: its text reader converted the
+#                  quoted codes of Dataverse's .tab files);
 #   enums.csv      every closed vocabulary of the package (P10).
 # inst/extdata/VERSIONS records the catalog version and the md5 of each CSV.
 #
@@ -22,7 +27,9 @@
   system.file("extdata", ..., package = "qesR", mustWork = TRUE)
 }
 
-.qes_catalog_tables <- c("studies", "files", "elections", "name_map", "enums")
+.qes_catalog_tables <- c(
+  "studies", "files", "elections", "name_map", "text_fixes", "type_fixes", "enums"
+)
 
 # Read a catalog directory (and optionally a demo catalog directory, whose
 # studies and files are appended). Used by .qes_catalog() and by tests.
@@ -211,7 +218,8 @@
 }
 
 # One study, as a one-row legacy view, from a single user-supplied code.
-.get_qes_study <- function(srvy, arg = "srvy") {
+# `demo = TRUE` also accepts the synthetic study qes_demo.
+.get_qes_study <- function(srvy, arg = "srvy", demo = FALSE) {
   .assert_single_string(srvy, arg)
   if (!nzchar(trimws(srvy))) {
     .qes_abort(
@@ -221,8 +229,8 @@
       data = list(arg = arg, value = srvy)
     )
   }
-  code <- .qes_resolve_codes(srvy, arg)
-  .qes_legacy_view(.qes_study_row(code))
+  code <- .qes_resolve_codes(srvy, arg, demo = demo)
+  .qes_legacy_view(.qes_study_row(code, demo = demo))
 }
 
 # ---- URLs ----------------------------------------------------------------------

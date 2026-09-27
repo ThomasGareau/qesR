@@ -1,6 +1,7 @@
 #' Download and Load a Quebec Election Study
 #'
-#' Downloads a study file from Dataverse, applies labels when available, and attaches a codebook.
+#' Reads a study's data file, as its authors deposited it, and returns it
+#' with its labels.
 #'
 #' `get_qes()` returns the data. It does not write anything into your
 #' workspace unless you ask for it with `assign_global = TRUE`: write
@@ -8,10 +9,57 @@
 #' `assign_global` unset prints a one-time note about this change from qesR
 #' 0.4.4; passing `assign_global` explicitly (TRUE or FALSE) avoids it.
 #'
-#' @param srvy A qesR survey code from `qes_studies()`. Codes are trimmed
+#' @section Which file is read:
+#' Each study is pinned to one data file of one Dataverse dataset version
+#' (see [qes_studies()]). `get_qes()` reads the **original** upload of that
+#' file (SPSS `.sav` or Stata `.dta`), not the tab-delimited copy Dataverse
+#' makes of it, after checking it against the md5 checksum recorded in the
+#' package catalog. A file that fails the check is an error (class
+#' `qesR_error_checksum`) and is never used; so is a file whose number of
+#' rows or columns differs from the catalog (`qesR_error_rowcount`). The
+#' file is downloaded once and kept in the download cache (see
+#' [qes_cache_info()]); within a session the parsed data, and the Dataverse
+#' metadata used for the codebook, are also kept in memory, so a second call
+#' makes no request (`options(qesR.memo = FALSE)` turns this off).
+#'
+#' The data is returned as deposited: column names, codes and missing values
+#' (`NA`) are those of the file, and no row is dropped or recoded. For qesR
+#' 0.4.4 users, names, codes and `is.na()` counts are unchanged; three
+#' columns of `qes2007_panel` keep their 0.4.4 names (`AFFGÉN`, `PROPRIÉ`,
+#' `PROPGÉN`). Compared with 0.4.4, accented text is no longer damaged,
+#' `qes2022` dates are date-times, and labels are those of the file (below).
+#'
+#' @section Labels and missing values:
+#' Labelled columns are [haven::labelled()] vectors; convert one with
+#' [haven::as_factor()]. Variable and value labels come from the data file
+#' itself, never from Dataverse's metadata or from a variable name. For
+#' `qes2012`, whose Stata file (the one qesR 0.4.4 read, with its lowercase
+#' names) has labels that Stata lowercased and cut at 80 characters, the
+#' complete labels of the SPSS twin of the same data are used. A few labels
+#' of the CROP files typed in another character set are corrected (for
+#' example "RESTE DU QUÉBEC"). `qes2018`'s data file has value labels for
+#' only a few variables.
+#'
+#' Codes that an SPSS file declares as user-missing (such as 8 or 9 for "Don't
+#' know") are kept as values, as in qesR 0.4.4; the declaration is kept in
+#' the column attributes `qes_na_values` and `qes_na_range`.
+#'
+#' @param srvy A qesR survey code from `qes_studies()`, or `"qes_demo"` for
+#'   the small synthetic study shipped with the package. Codes are trimmed
 #'   and case-insensitive (`" QES2018 "` is `"qes2018"`); an unknown code is an
 #'   error of class `qesR_error_unknown_study` that suggests near matches.
-#' @param file Optional regular expression for choosing one file in multi-file datasets.
+#' @param file Optional regular expression that chooses one of the study's
+#'   data files by name, when its deposit holds several (for example
+#'   `get_qes("qes2014", file = "dta")` reads the Stata version instead of
+#'   the default SPSS file). It is matched, ignoring case, against data files
+#'   only (`get_qes("qes2012", file = "SPSS")` reads the SPSS twin whose
+#'   labels complete the default Stata file's). A pattern that is not a valid
+#'   regular expression is an error of class `qesR_error_input`. A pattern
+#'   that matches no data file of the study but the data
+#'   file of another study of the same deposit reads that study, with a
+#'   message: `get_qes("qes1998", file = "CROP")` reads `qes1998_crop`. A
+#'   pattern that matches no file, or several, is an error of class
+#'   `qesR_error_ambiguous_file`.
 #' @param assign_global If TRUE, also assign the data as `<code>` into the
 #'   environment `get_qes()` was called from (the global environment only when
 #'   called at top level), where `<code>` is the canonical study code. With
@@ -21,9 +69,20 @@
 #'   attribute (and assign \code{<code>_codebook} when `assign_global = TRUE`).
 #' @param quiet If TRUE, suppress informational output.
 #'
-#' @return A labelled data frame/tibble for the selected survey, returned
-#'   visibly. `attr(, "qes_survey_code")` holds the canonical study code.
+#' @return A base data frame, returned visibly, with attributes
+#'   `qes_survey_code` (the canonical study code), `qes_provenance` (a
+#'   one-row data frame recording the DOI, dataset version, file id, file
+#'   name, md5, UNF, dimensions, where the file came from and when, the
+#'   licence, the source of the labels and the reader used) and, with
+#'   `with_codebook = TRUE`, `qes_codebook`.
+#' @seealso [qes_studies()] for the study codes and their pinned files,
+#'   [qes_cache_info()] for the download cache.
 #' @examples
+#' # the synthetic demonstration study ships with qesR: no download
+#' demo <- get_qes("qes_demo", quiet = TRUE)
+#' dim(demo)
+#' attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
+#'
 #' \donttest{
 #'   qes2022 <- get_qes("qes2022")
 #'   names(qes2022)[1:10]
@@ -42,7 +101,14 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 # without assign_global; internal callers leave it FALSE.
 .get_qes_impl <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE,
                           quiet = FALSE, envir = NULL, assign_missing = FALSE) {
-  study <- .get_qes_study(srvy)
+  study <- .get_qes_study(srvy, demo = TRUE)
+  # `file` may name the data file of another study of the same deposit
+  # (get_qes("qes1998", file = "CROP")): resolve it first, so the banner, the
+  # assigned names and the attributes are those of the study actually read
+  selection <- .qes_select_data_file(study$qes_survey_code, file = file, quiet = quiet)
+  if (!identical(selection$study, study$qes_survey_code)) {
+    study <- .get_qes_study(selection$study, demo = TRUE)
+  }
   code <- study$qes_survey_code
 
   .qes_inform(
@@ -58,8 +124,10 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
     quiet = quiet
   )
 
-  payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE)
+  payload <- .download_and_read_qes(study, file = file, quiet = quiet, read_data = TRUE,
+    with_codebook = with_codebook, selection = selection)
   data <- payload$data
+  attr(data, "qes_label_source") <- NULL
   attr(data, "qes_survey_code") <- code
 
   if (isTRUE(with_codebook)) {

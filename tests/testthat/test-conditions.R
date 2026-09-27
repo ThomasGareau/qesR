@@ -180,6 +180,6 @@ test_that("get_qes_master() records failures in English whatever the language", 
 test_that("unsupported and RDS files are never read", {
   path <- withr::local_tempfile(fileext = ".rds")
   saveRDS(data.frame(x = 1), path)
-  err <- expect_error(qesR:::.read_qes_file(path), class = "qesR_error_source")
+  err <- expect_error(qesR:::.qes_read_file(path, "rds"), class = "qesR_error_source")
   expect_identical(err$format, "rds")
 })

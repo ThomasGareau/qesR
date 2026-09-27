@@ -254,3 +254,24 @@ test_that(".qes_catalog() reads the catalog once per session", {
   cache <- getFromNamespace(".qes_catalog_cache", "qesR")
   expect_true(exists("main", envir = cache, inherits = FALSE))
 })
+
+test_that("text and type fixes name data files and well-formed characters", {
+  cat <- shipped_catalog()
+  data_ids <- cat$files$file_id[cat$files$role %in% c("data", "label_donor")]
+  tf <- cat$text_fixes
+  expect_true(all(tf$file_id %in% data_ids))
+  expect_true(all(grepl("^U\\+[0-9A-F]{4}$", c(tf$from, tf$to))))
+  expect_true(all(tf$from != tf$to))
+  expect_false(anyDuplicated(paste(tf$file_id, tf$from)) > 0L)
+  expect_false(anyNA(tf$evidence))
+  # only characters that a Windows-1252 file decodes wrongly are replaced
+  cps <- strtoi(sub("^U\\+", "", tf$from), 16L)
+  expect_true(all((cps >= 0x80 & cps <= 0x9F) | cps %in% c(0x2026, 0x201C)))
+
+  ty <- cat$type_fixes
+  expect_true(all(ty$file_id %in% data_ids))
+  expect_true(all(ty$to == "numeric"))
+  expect_false(anyNA(ty$variables))
+  expect_false(anyNA(ty$evidence))
+  expect_false(anyDuplicated(ty$file_id) > 0L)
+})

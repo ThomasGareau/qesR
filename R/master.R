@@ -757,6 +757,16 @@
   )
   rec <- unname(code_map[norm])
 
+  # qes1998 panel `scol` labels (years of schooling), mapped to the
+  # categories qesR 0.4.4 gave these codes
+  years_map <- c(
+    "1 9 ans" = "Primary or less",
+    "10 15 ans" = "College/CEGEP/Technical",
+    "univ" = "University"
+  )
+  years_hit <- is.na(rec) & !is.na(norm) & norm %in% names(years_map)
+  rec[years_hit] <- unname(years_map[norm[years_hit]])
+
   university_hit <- grepl(
     "universit|university|undergraduate|bachelor|baccalaureat|master|maitrise|doctor|postgraduate|higher education|professional degree|16 annees ou plus|etudes uni",
     norm,
@@ -1625,6 +1635,91 @@
   x
 }
 
+# ---- labels of qesR 0.4.4 for the legacy builders -------------------------------
+#
+# get_qes_master() and get_decon() turn labelled columns into their labels.
+# qesR 0.4.4 labelled a few source columns that the original files leave
+# unlabelled, from the hand-typed maps of .study_codebook_overrides(); the
+# reader no longer does (labels come from the files, R/read.R), so until the
+# interim legacy builder freezes its sources (slice S4) these builders put the
+# 0.4.4 labels back on exactly the columns whose harmonized values depend on
+# them, and only for codes the file leaves unlabelled:
+#   * qes2018 `qscol` (education) in both builders, and `qsexe` (gender) in
+#     get_decon(), which 0.4.4 returned as factors of those labels;
+#   * qes1998 `scol` code 9 ("Refus / pas de reponse", declared missing in the
+#     panel codebook) and `age` codes 6 and 9, in both builders. The panel
+#     file labels age codes 1-5 only ("18-24" ... "55-64"); its codebook shows
+#     code 6 (234 respondents) as an unlabelled value and code 9 (1) as
+#     missing, and the CREATEC codebook of the same deposit (file 332050), for
+#     the same question, labels 6 "65 ANS ET PLUS" and 9 "REFUS/PAS DE
+#     REPONSE", as 0.4.4 had them.
+# Every labelled column also has its label text trimmed ("  Refus" in the
+# qes2007 SPSS labels) and blank labels dropped (qes2012 code 96), since 0.4.4
+# showed those codes as numbers. qes2018 `q2_96_other` holds the typed text of
+# the "other issue" answer as value labels; 0.4.4 had none, so the master's
+# `vote_choice_text` stayed empty, and it stays unlabelled here.
+.qes_legacy_label_vars <- list(
+  master = list(qes2018 = "qscol", qes1998 = c("scol", "age")),
+  decon = list(qes2018 = c("qsexe", "qscol"), qes1998 = "age")
+)
+.qes_legacy_unlabelled <- list(qes2018 = "q2_96_other")
+
+.qes_legacy_label_fills <- function(srvy, consumer = c("master", "decon")) {
+  consumer <- match.arg(consumer)
+  vars <- .qes_legacy_label_vars[[consumer]][[srvy]]
+  if (length(vars) == 0L) {
+    return(list())
+  }
+  maps <- .study_codebook_overrides(srvy)$value_labels
+  if (identical(srvy, "qes1998")) {
+    maps$age <- c("6" = "65+", "9" = "Refus/pas de reponse")
+  }
+  maps[intersect(vars, names(maps))]
+}
+
+.qes_legacy_source_labels <- function(data, srvy, consumer = c("master", "decon")) {
+  consumer <- match.arg(consumer)
+  for (j in seq_along(data)) {
+    labels <- attr(data[[j]], "labels", exact = TRUE)
+    if (length(labels) == 0L) {
+      next
+    }
+    names(labels) <- trimws(names(labels))
+    labels <- labels[!is.na(names(labels)) & nzchar(names(labels))]
+    attr(data[[j]], "labels") <- if (length(labels) > 0L) labels else NULL
+  }
+
+  for (v in intersect(.qes_legacy_unlabelled[[srvy]], names(data))) {
+    x <- data[[v]]
+    label <- attr(x, "label", exact = TRUE)
+    x <- .qes_plain(x)
+    if (!is.null(label)) {
+      attr(x, "label") <- label
+    }
+    data[[v]] <- x
+  }
+
+  fills <- .qes_legacy_label_fills(srvy, consumer)
+  for (v in intersect(names(fills), names(data))) {
+    x <- data[[v]]
+    values <- .qes_plain(x)
+    if (!is.numeric(values)) {
+      next
+    }
+    existing <- attr(x, "labels", exact = TRUE)
+    fill <- fills[[v]]
+    codes <- as.numeric(names(fill))
+    add <- !(codes %in% as.numeric(unclass(existing)))
+    labels <- c(
+      if (length(existing) > 0L) stats::setNames(as.numeric(unclass(existing)), names(existing)),
+      stats::setNames(codes[add], unname(fill[add]))
+    )
+    storage.mode(labels) <- storage.mode(values)
+    data[[v]] <- haven::labelled(values, labels = labels, label = attr(x, "label", exact = TRUE))
+  }
+  data
+}
+
 .build_qes_master_study <- function(data, srvy, year = NA_character_, name_en = NA_character_) {
   lookup <- .master_harmonization_lookup()
   n <- nrow(data)
@@ -1823,6 +1918,7 @@ get_qes_master <- function(
       next
     }
 
+    dat <- .qes_legacy_source_labels(dat, srvy, consumer = "master")
     built <- .build_qes_master_study(
       data = dat,
       srvy = srvy,
