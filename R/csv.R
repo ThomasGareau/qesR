@@ -92,6 +92,54 @@
   ),
   legacy_removed = c(
     column = "chr", studies = "chr", source_variables = "chr"
+  ),
+  # the harmonization spec (inst/extdata/harmonize/, design.md section 5,
+  # R/hz-spec.R). Code columns (source_code, na_codes, gate_codes) are text:
+  # the literal "NA" in them is the token for system missing.
+  spec_targets = c(
+    target = "chr", family = "chr", block = "chr", type = "chr",
+    target_timing = "chr", jurisdiction = "chr", election_ref_rule = "chr",
+    levels_id = "chr", valid_min = "num", valid_max = "num", anchor_row = "chr",
+    derive_rule = "chr", derive_from = "chr", allow_constant = "lgl",
+    label_en = "chr", label_fr = "chr", description_en = "chr",
+    description_fr = "chr", sets = "chr", status = "chr", replaced_by = "chr",
+    added_in = "chr"
+  ),
+  spec_levels = c(
+    levels_id = "chr", code = "int", name = "chr", label_en = "chr",
+    label_fr = "chr", order = "int", substantive = "lgl", aliases = "chr"
+  ),
+  spec_crosswalk = c(
+    study = "chr", wave = "chr", target = "chr", rule = "chr",
+    source_var = "chr", map_id = "chr", args = "chr", na_codes = "chr",
+    gate_var = "chr", gate_codes = "chr", gate_to = "chr", primary = "lgl",
+    grade = "chr", grade_reason_en = "chr", grade_reason_fr = "chr",
+    instrument = "chr", election_ref = "chr", mode = "chr", dk_offered = "chr",
+    levels_offered = "chr", wording_en = "chr", wording_fr = "chr",
+    wording_ref = "chr", evidence = "chr", notes_en = "chr", notes_fr = "chr",
+    reviewed_by = "chr", reviewed_on = "date", status = "chr"
+  ),
+  spec_valuemaps = c(
+    map_id = "chr", source_code = "chr", source_label = "chr",
+    source_label_hash = "chr", source_label_origin = "chr", target_code = "int",
+    na_reason = "chr", alias_exception = "chr", note = "chr"
+  ),
+  spec_waves = c(
+    study = "chr", wave = "chr", wave_order = "int", wave_timing = "chr",
+    wave_design = "chr", election_ref = "chr", member_var = "chr",
+    member_codes = "chr", n_cases = "int", target_population_en = "chr",
+    target_population_fr = "chr", subsample_var = "chr", strata_var = "chr",
+    fieldwork_start = "date", fieldwork_end = "date", date_var = "chr",
+    date_format = "chr", mode = "chr", notes = "chr"
+  ),
+  spec_weights = c(
+    study = "chr", wave = "chr", weight_var = "chr", role = "chr",
+    scale = "chr", trim = "chr", calibrated_on = "chr", population = "chr",
+    recommended = "lgl", status = "chr", source_ref = "chr"
+  ),
+  spec_changes = c(
+    spec_version = "chr", date = "date", kind = "chr", targets = "chr",
+    studies = "chr", change_en = "chr", change_fr = "chr"
   )
 )
 

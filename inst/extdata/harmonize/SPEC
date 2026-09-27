@@ -1,0 +1,6 @@
+Spec-Version: 0.1.0
+Spec-Date: 2026-09-27
+Schema-Version: 1
+Engine-Min: 0.5.0
+Hash: f14d31addcc49ae53563b23fe8b145ea
+Licence: MIT (see the qesR LICENSE file); the wording and value labels quoted from CC0 studies are listed in inst/COPYRIGHTS

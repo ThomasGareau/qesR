@@ -68,11 +68,15 @@ jobs:
           upload-snapshots: true
 
       # CI-only checks on sources that are not installed with the package
-      # (design.md section 8.4). data-raw/spec_check.R arrives with the
-      # harmonization spec (HZ1); until then this step is skipped.
+      # (design.md section 8.4): the spec validator with its source-tree
+      # rules, the spec version bump against the merge-base with main, and
+      # the grep of R/ for forbidden calls. On a tag, the release rules too.
       - name: Spec and source checks
         if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' && hashFiles('data-raw/spec_check.R') != ''
-        run: Rscript data-raw/spec_check.R
+        run: |
+          git fetch --no-tags --unshallow origin "+refs/heads/main:refs/remotes/origin/main" ||
+            git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main" || true
+          Rscript data-raw/spec_check.R ${{ startsWith(github.ref, 'refs/tags/') && '--release' || '' }}
 
       # EN/FR vignette pairs: every page has a partner that links back, and
       # the shipped pairs run identical code (design.md sections 1.2 and 9).

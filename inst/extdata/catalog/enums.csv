@@ -85,6 +85,7 @@ rule,none,8,,,Documentation only,Documentation seulement
 dk_offered,explicit,1,,,Offered explicitly,Offert explicitement
 dk_offered,volunteered,2,,,Volunteered only,Spontané seulement
 dk_offered,none,3,,,Not offered,Non offert
+dk_offered,unknown,4,,,Not documented,Non documenté
 row_status,draft,1,,,Draft,Provisoire
 row_status,review,2,,,In review,En révision
 row_status,stable,3,,,Stable,Stable
@@ -103,3 +104,26 @@ weight_status,needs_review,2,,,Needs review,À réviser
 mode,web,1,,,Web,Web
 mode,phone,2,,,Telephone,Téléphone
 mode,mixed,3,,,Mixed,Mixte
+block,id,1,,,Identifiers,Identifiants
+block,design,2,,,Survey design,Plan de sondage
+block,vote,3,,,Vote and turnout,Vote et participation
+block,party,4,,,Party identification,Identification partisane
+block,attitudes,5,,,Attitudes,Attitudes
+block,issues,6,,,Issues,Enjeux
+block,socio,7,,,Sociodemographics,Sociodémographie
+target_type,categorical,1,,,Categorical,Catégorielle
+target_type,ordinal,2,,,Ordinal,Ordinale
+target_type,numeric,3,,,Numeric,Numérique
+target_type,date,4,,,Date,Date
+target_type,string,5,,,Text,Texte
+target_type,weight,6,,,Weight,Pondération
+election_ref_rule,study,1,,,The study's election,L'élection de l'étude
+election_ref_rule,previous,2,,,An earlier election,Une élection antérieure
+election_ref_rule,none,3,,,No election,Aucune élection
+date_format,yyyymmdd,1,,,Number yyyymmdd,Nombre aaaammjj
+date_format,posixct,2,,,Date-time,Date et heure
+date_format,stata,3,,,Stata date,Date Stata
+spec_change,initial,1,,,First version,Première version
+spec_change,major,2,,,Major (values can change),Majeure (des valeurs peuvent changer)
+spec_change,minor,3,,,Minor (rows added),Mineure (lignes ajoutées)
+spec_change,patch,4,,,Patch (text only),Correctif (texte seulement)

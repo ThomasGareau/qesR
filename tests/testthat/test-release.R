@@ -28,9 +28,9 @@ test_that("no respondent data ship: the only data file is the synthetic demo", {
   files <- list.files(pkg_file("extdata"), recursive = TRUE)
   data_files <- files[grepl("\\.(sav|zsav|dta|por|rds|rda|RData|tab|xlsx?)$", files, ignore.case = TRUE)]
   expect_identical(data_files, "demo/data/qes_demo.sav")
-  # every CSV is metadata: catalog, dictionary, legacy tables
+  # every CSV is metadata: catalog, dictionary, legacy tables, harmonization spec
   csv <- files[grepl("\\.csv(\\.gz)?$", files)]
-  expect_true(all(grepl("^(catalog|dict|legacy|demo/catalog|demo/dict)/", csv)), info = paste(csv, collapse = ", "))
+  expect_true(all(grepl("^(catalog|dict|legacy|harmonize|demo/catalog|demo/dict)/", csv)), info = paste(csv, collapse = ", "))
 })
 
 test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of qes2022", {
@@ -44,7 +44,7 @@ test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of
     expect_true(grepl(studies$doi[i], text, fixed = TRUE), info = studies$doi[i])
   }
   expect_true(grepl("CC BY-NC 4.0", text, fixed = TRUE))
-  expect_true(grepl("ships none of its value labels, question text or counts", text, fixed = TRUE))
+  expect_true(grepl("ships none of its value labels, question text or\\s+answer\\s+counts", text))
   # OD16: the 1998 population is quoted from the codebook, definition pending
   expect_true(grepl("retenir uniquement les\\s+francophones", text))
   expect_true(grepl("pending", text, fixed = TRUE))
@@ -115,4 +115,16 @@ test_that("NEWS has a 0.5.0 section with the soft-deprecation table", {
     expect_true(any(grepl(paste0("`", f, "()`"), section, fixed = TRUE)), info = f)
   }
   expect_true(any(grepl("legacy-diff.md", section, fixed = TRUE)))
+})
+
+test_that("the catalog version NEWS quotes is the one in VERSIONS", {
+  news_path <- pkg_file("NEWS.md")
+  versions_path <- pkg_file("extdata", "VERSIONS")
+  skip_if(!nzchar(news_path) || !nzchar(versions_path), "NEWS.md or VERSIONS is not installed")
+  news <- readLines(news_path, encoding = "UTF-8", warn = FALSE)
+  section <- news[seq_len(which(news == "# qesR 0.4.4") - 1L)]
+  quoted <- regmatches(section, regexpr("catalog version is now [0-9]+\\.[0-9]+\\.[0-9]+", section))
+  expect_length(quoted, 1L)
+  recorded <- unname(trimws(read.dcf(versions_path, fields = "catalog_version")[1, 1]))
+  expect_identical(sub("^.* ", "", quoted), recorded)
 })

@@ -1,9 +1,8 @@
 # Forbidden calls (design.md section 8.1, P8, constraint 6). Walks every
 # function in the installed namespace, deparses it and looks for calls that
 # the design rules out. This works where R/ is absent (an installed package).
-# A grep of the R/ sources for the same patterns arrives with
-# data-raw/spec_check.R (slice HZ1, design.md section 8.4); until then this
-# test is the only check.
+# data-raw/spec_check.R greps the R/ sources for the same patterns in CI
+# (design.md section 8.4).
 #
 # Rules with no offender today are enforced now. Each pending rule has its own
 # test, skipped until the slice that removes its last offender; that slice

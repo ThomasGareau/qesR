@@ -3,4 +3,5 @@
 *.csv text eol=lf
 inst/extdata/VERSIONS text eol=lf
 inst/CITATION text eol=lf
+inst/extdata/harmonize/** text eol=lf
 *.sav binary

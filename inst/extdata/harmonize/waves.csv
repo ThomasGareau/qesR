@@ -1,0 +1,12 @@
+study,wave,wave_order,wave_timing,wave_design,election_ref,member_var,member_codes,n_cases,target_population_en,target_population_fr,subsample_var,strata_var,fieldwork_start,fieldwork_end,date_var,date_format,mode,notes
+qes2022,cps,1,pre,panel_wave,QC2022,,,1521,,,,,2022-09-19,2022-09-23,cps_StartDate,posixct,web,Campaign-period survey; every row of the file (codebook p. 5).
+qes2022,pes,2,post,panel_wave,QC2022,pes_StartDate,!NA,1220,,,,,2022-10-04,2022-10-15,pes_StartDate,posixct,web,Post-election recontact; non-missing pes_StartDate equals non-missing pes_weight_general (checked). Codebook p. 5 gives the dates.
+qes2018,post,1,post,cross_section,QC2018,,,3072,,,,,2018-10-10,2018-10-30,,,web,"Ages 16 and over; pretest on 2018-10-10 and collection until 2018-10-30 (Rapport methodologique, file 361045). No date variable in the file."
+qes2014,post,1,post,cross_section,QC2014,,,1517,,,,,2014-04-09,2014-04-16,,,web,"Leger technical note (file 352011) gives 2014-04-09 to 2014-04-16 and 1,516 respondents; the file has 1,517 rows."
+qes2012,post,1,post,cross_section,QC2012,,,1505,,,,,2012-09-12,2012-09-25,,,web,"Leger technical report (file 196368): 1,505 Quebec respondents, 2012-09-12 to 2012-09-25."
+qes2018_panel,pre,1,pre,panel_wave,QC2018,,,1250,,,,,,,,,var:method,"Every row; method 1-2 telephone (landline, cell), 3 web. The codebook dates the wave to September 2018 only (R4)."
+qes2018_panel,post,2,post,panel_wave,QC2018,repondant_post,1,842,,,,,,,,,mixed,"repondant_post = 1 equals non-missing weight_rts (checked). The codebook dates the wave to October 2018 and gives 75% web, 25% telephone for the surveys; per-respondent mode of this wave is not documented (R4)."
+qes2007_panel,pre,1,pre,panel_wave,QC2007,resultat,C,2050,,,nom_proj2,,2007-03-01,2007-03-22,s_date,yyyymmdd,phone,Project 734A completes (resultat = C); dates are the range of s_date.
+qes2007_panel,post,2,post,panel_wave,QC2007,resultat_pst,CO,2054,,,nom_proj2,,2007-03-29,2007-04-13,s_date_pst,yyyymmdd,phone,"1,663 two-wave respondents (= non-missing questpost) plus 391 pre-wave refusals converted in project 734B; dates are the range of s_date_pst."
+qes2012_panel,pre,1,pre,panel_wave,QC2012,,,844,,,,,2012-08-24,2012-08-26,,,phone,"The file holds only the 844 respondents who completed both waves (codebook, file 654292), so pre-wave estimates are conditional on retention."
+qes2012_panel,post,2,post,panel_wave,QC2012,,,844,,,,,2012-09-10,2012-09-18,,,phone,"Post-election recontact (codebook, file 654292)."

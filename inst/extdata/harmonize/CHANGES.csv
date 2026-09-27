@@ -1,0 +1,2 @@
+spec_version,date,kind,targets,studies,change_en,change_fr
+0.1.0,2026-09-27,initial,,,"First spec: 11 core targets with rows checked against the original files, in review, for qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level sets, waves and weights.","Première spécification : 11 cibles de base avec des lignes vérifiées sur les fichiers originaux, en révision, pour qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et qes2018_panel, leurs ensembles de niveaux, vagues et pondérations."

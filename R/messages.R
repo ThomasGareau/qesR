@@ -113,6 +113,18 @@
     en = "`%1$s` must be one of %2$s.",
     fr = "`%1$s` doit prendre l'une des valeurs %2$s."
   ),
+  input_spec = c(
+    en = "`spec` must be NULL (the spec shipped with qesR), the path of an existing spec directory or a qes_spec object.",
+    fr = "`spec` doit valoir NULL (la sp\u00e9cification fournie avec qesR), le chemin d'un dossier de sp\u00e9cification existant ou un objet qes_spec."
+  ),
+  input_spec_view = c(
+    en = "`%1$s` applies only to view %2$s.",
+    fr = "`%1$s` ne s'applique qu'\u00e0 la vue %2$s."
+  ),
+  spec_later = c(
+    en = "%1$s is not available yet: it arrives with the harmonization engine.",
+    fr = "%1$s n'est pas encore disponible\u00a0: cette fonctionnalit\u00e9 arrive avec le moteur d'harmonisation."
+  ),
   input_path_dir = c(
     en = "`path` must be an existing directory. qesR writes only into a directory you have created.",
     fr = "`path` doit \u00eatre un dossier existant. qesR n'\u00e9crit que dans un dossier que vous avez cr\u00e9\u00e9."
@@ -242,6 +254,19 @@
   catalog_invalid = c(
     en = "The qesR catalog file %1$s is invalid: %2$s. Reinstall qesR.",
     fr = "Le fichier de catalogue de qesR %1$s est invalide\u00a0: %2$s. R\u00e9installez qesR."
+  ),
+  # ---- qesR_error_spec -----------------------------------------------------
+  spec_invalid = c(
+    en = "The harmonization spec in %1$s has %2$s problem(s); the `problems` field of this error lists them all.",
+    fr = "La sp\u00e9cification d'harmonisation de %1$s a %2$s probl\u00e8me(s)\u00a0; le champ `problems` de cette erreur les \u00e9num\u00e8re tous."
+  ),
+  spec_schema = c(
+    en = "The harmonization spec in %1$s has schema version %2$s; this version of qesR reads schema version %3$s.",
+    fr = "La sp\u00e9cification d'harmonisation de %1$s a la version de sch\u00e9ma %2$s\u00a0; cette version de qesR lit la version de sch\u00e9ma %3$s."
+  ),
+  spec_engine = c(
+    en = "The harmonization spec in %1$s needs qesR %2$s or later; this is qesR %3$s.",
+    fr = "La sp\u00e9cification d'harmonisation de %1$s demande qesR %2$s ou plus r\u00e9cent\u00a0; celle-ci est qesR %3$s."
   ),
   master_none = c(
     en = "No study could be loaded. Check network access and study availability.",
@@ -476,6 +501,22 @@
   prov_licence = c(
     en = "Licence: %1$s. qesR catalog %2$s.",
     fr = "Licence\u00a0: %1$s. Catalogue qesR %2$s."
+  ),
+  spec_print_head = c(
+    en = "qesR harmonization spec %1$s (%2$s), content hash %3$s",
+    fr = "Sp\u00e9cification d'harmonisation qesR %1$s (%2$s), empreinte du contenu %3$s"
+  ),
+  spec_print_custom = c(
+    en = "Not the spec shipped with qesR: %1$s",
+    fr = "Pas la sp\u00e9cification fournie avec qesR\u00a0: %1$s"
+  ),
+  spec_print_check = c(
+    en = "Check: %1$s error(s), %2$s warning(s), %3$s note(s).",
+    fr = "V\u00e9rification\u00a0: %1$s erreur(s), %2$s avertissement(s), %3$s remarque(s)."
+  ),
+  spec_print_unchecked = c(
+    en = "Not checked (validate = \"none\").",
+    fr = "Non v\u00e9rifi\u00e9e (validate = \"none\")."
   ),
   prov_footer = c(
     en = "as.data.frame() gives every column.",

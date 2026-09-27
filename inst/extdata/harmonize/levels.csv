@@ -1,0 +1,27 @@
+levels_id,code,name,label_en,label_fr,order,substantive,aliases
+party_qc,1,PLQ,PLQ,PLQ,1,TRUE,quebec liberal party;parti liberal du quebec;liberal;le parti liberal du quebec;le parti liberal du quebec (plq);...le parti liberal du quebec;le parti liberal du quebec dirige par philippe couillard
+party_qc,2,PQ,PQ,PQ,2,TRUE,parti quebecois;pequiste;pequist;le parti quebecois;le parti quebecois (pq);...le parti quebecois;le parti quebecois dirige par jean-francois lisee
+party_qc,3,CAQ,CAQ,CAQ,3,TRUE,coalition avenir quebec;caquiste;caquist;la coalition avenir quebec (caq);la coalition avenir quebec dirigee par francois legault
+party_qc,4,QS,QS,QS,4,TRUE,quebec solidaire;solidaire;quebec solidaire (qs);...le parti quebec solidaire;quebec solidaire dirige par manon masse et gabriel nadeau-du
+party_qc,5,PVQ,PVQ,PVQ,5,TRUE,parti vert du quebec;green party of quebec;vert;green;le parti vert;...le parti vert du quebec
+party_qc,6,PCQ,PCQ,PCQ,6,TRUE,parti conservateur du quebec;conservative party of quebec;conservateur
+party_qc,7,ON,ON,ON,7,TRUE,option nationale;oniste;onist
+party_qc,8,ADQ,ADQ,ADQ,8,TRUE,action democratique du quebec;adq;...l'action democratique du quebec;l'action democratique du quebec/adq
+party_qc,90,other,Other party,Autre parti,90,TRUE,another party;un autre parti;un autre parti?;autre parti;...ou un autre parti? (precisez) :
+party_qc_intent,,inherits=party_qc,,,,,
+party_qc_intent,95,no_party,Would not vote / none / would spoil,Ne voterait pas / aucun / annulerait,95,TRUE,"* annulerait/ne voterait pas/aucun;annule, aucun, nvp;ne voterais pas/aucun/gaterais mon bulletin de vote"
+pid_qc,,inherits=party_qc,,,,,
+pid_qc,97,none,None of these,Aucun de ceux-là,97,TRUE,none of these;rien de cela
+yes_no,1,yes,Yes,Oui,1,TRUE,yes;oui
+yes_no,2,no,No,Non,2,TRUE,no;non
+referendum,1,yes,Yes,Oui,1,TRUE,yes;oui
+referendum,2,no,No,Non,2,TRUE,no;non
+referendum,95,would_not_vote,Would not vote / would spoil,N'irait pas voter / annulerait,95,TRUE,je n'irais pas voter/j'annulerais mon vote
+favour4,1,very_favourable,Very favourable,Très favorable,1,TRUE,very favourable;tres favorable
+favour4,2,somewhat_favourable,Somewhat favourable,Assez favorable,2,TRUE,somewhat favourable;assez favorable
+favour4,3,somewhat_opposed,Somewhat opposed,Assez opposé,3,TRUE,somewhat opposed;assez oppose
+favour4,4,very_opposed,Very opposed,Très opposé,4,TRUE,very opposed;tres oppose
+interest4,1,very,Very interested,Très intéressé(e),1,TRUE,very interested;tres interesse(e)
+interest4,2,quite,Quite interested,Plutôt intéressé(e),2,TRUE,quite interested;somewhat interested;plutot interesse(e);assez interesse(e)
+interest4,3,hardly,Hardly interested,Pas très intéressé(e),3,TRUE,hardly interested;not very interested;pas tres interesse(e);peu interesse(e)
+interest4,4,not_at_all,Not at all interested,Pas du tout intéressé(e),4,TRUE,not at all interested;pas du tout interesse(e)

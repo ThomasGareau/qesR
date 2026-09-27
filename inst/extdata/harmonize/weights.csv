@@ -1,0 +1,17 @@
+study,wave,weight_var,role,scale,trim,calibrated_on,population,recommended,status,source_ref
+qes2022,cps,cps_weight_general,raking,mean1,,age;gender;education;language,"Quebec, 18 and over, 2021 Census",TRUE,reviewed,"Codebook v1 (file 7449514) p. 7: raking (ipfraking), not trimmed"
+qes2022,cps,cps_weight_general_trimmed,raking,mean1,0.2;5,age;gender;education;language,"Quebec, 18 and over, 2021 Census",FALSE,reviewed,Codebook v1 (file 7449514) p. 7: trimmed to 0.2-5
+qes2022,pes,pes_weight_general,raking,mean1,,age;gender;education;language,"Quebec, 18 and over, 2021 Census",TRUE,reviewed,"Codebook v1 (file 7449514) p. 7: raking (ipfraking), not trimmed"
+qes2022,pes,pes_weight_general_trimmed,raking,mean1,0.2;5,age;gender;education;language,"Quebec, 18 and over, 2021 Census",FALSE,reviewed,Codebook v1 (file 7449514) p. 7: trimmed to 0.2-5
+qes2018,post,pond,poststrat,mean1,,sex x age;sex x region;sex x language;age x education,"Quebec, 16 and over, Census (age cell 16-18)",TRUE,reviewed,"Rapport methodologique 2018 (file 361045), Tables 12-15; mean 1 in the file"
+qes2014,post,POND,poststrat,mean1,,sex;age;region;language,"Quebec adults, latest Census",TRUE,reviewed,"Leger technical note 2014 (file 352011), Ponderation; mean 1 in the file"
+qes2012,post,pond,poststrat,mean1,,sex;age;region;language,"Quebec adults, latest Census",TRUE,reviewed,"Leger technical report 2012 (file 196368), Ponderation (POND); the pinned Stata file spells it pond; mean 1 in the file"
+qes2018_panel,pre,weight,,,,,,TRUE,needs_review,"File label WEIGHT - WEB + CATI COMBINED; mean 1 over the 1,250 rows; margins not documented (R4)"
+qes2018_panel,post,weight_rts,,,,,,TRUE,needs_review,"File label Weight_RTS; non-missing for the 842 post-wave members, mean 1; margins not documented (R4)"
+qes2012_panel,pre,pondam1,,,,,,TRUE,needs_review,File label Ponderation pre? a moyenne 1? (question marks in the source); proportional to pond; not documented (R4)
+qes2012_panel,pre,pond,,,,,,FALSE,needs_review,File label Ponderation; proportional to pondam1 (population-scale twin); not documented (R4)
+qes2012_panel,post,pond_post,poststrat,,,census,,TRUE,needs_review,File label ponderation_recensement; not documented (R4)
+qes2012_panel,post,pond_postam1,poststrat,mean1,,census,,FALSE,needs_review,File label ponderation_recensement a moyenne 1; proportional to pond_post
+qes2012_panel,post,pondvote,vote_calibrated,,,reported vote,,FALSE,needs_review,File label ponderation par le vote declare
+qes2007_panel,pre,pondam1,,,,,,TRUE,needs_review,"File label ponderation a moyenne 1; mean 0.974 over the 2,049 pre-wave members with a value; not documented (R4)"
+qes2007_panel,pre,pdspart2,vote_calibrated,,,previous vote,,FALSE,needs_review,File label: surponderation par le vote a la derniere election
