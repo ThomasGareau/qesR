@@ -123,3 +123,32 @@ out commercial use.
     inst/extdata/legacy/: the columns qesR 0.4.4 stacked by name and no
     longer built (removed.csv), and the studies whose legacy values differ
     from qesR 0.4.4 (changes.csv, no counts); part of qesR (MIT).
+  - inst/extdata/validation/official_results.csv and official_turnout.csv:
+    province-wide votes by party, valid and rejected ballots, ballots cast
+    and registered electors of the Quebec general elections of 1998 to
+    2022, from the official results published by Élections Québec (its
+    archived results files; each row gives its source URL). Parties other
+    than those the harmonization spec names are summed into one row.
+    Source: Élections Québec, official results of the general elections,
+    © Directeur général des élections du Québec. Élections Québec's terms
+    of use (https://www.electionsquebec.qc.ca/en/our-institution/terms-of-use/,
+    consulted 2026-09-27) allow reproduction for non-profit purposes with
+    mention of the source and copyright; other uses and adaptations need
+    its written permission. Whether these terms cover their redistribution
+    in qesR (MIT) is pending the owner's confirmation with Élections Québec
+    before a CRAN release.
+  - inst/extdata/validation/census_margins.csv: counts of the Quebec
+    population by gender, age group, mother tongue and highest certificate
+    at the censuses of 2006, 2011 (with the 2011 National Household Survey)
+    2016 and 2021, summed from Statistics Canada tables 98-10-0020-01,
+    98-10-0218-01 and 98-10-0384-01 (each row gives its table and URL),
+    used under the Statistics Canada Open Licence
+    (https://www.statcan.gc.ca/en/terms-conditions/open-licence). The sums
+    and shares are qesR's. Adapted from Statistics Canada, Census of
+    Population, tables 98-10-0020-01, 98-10-0218-01 and 98-10-0384-01
+    (2006, 2011 NHS, 2016, 2021). This does not constitute an endorsement
+    by Statistics Canada of this product.
+  - inst/extdata/validation/validation_report.csv: aggregates computed by
+    qesR from the CC0 studies of section 1 (weighted and unweighted shares
+    and differences from the tables above; no respondent rows), and no
+    aggregate of qes2022 (section 2).

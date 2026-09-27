@@ -70,6 +70,8 @@ navbar:
         href: articles/coverage.html
       - text: Harmonization reference
         href: articles/harmonization-reference.html
+      - text: Validation against official results
+        href: articles/validation.html
       - text: "-------"
       - text: Examples (built from the full data files)
       - text: Respondents by study
@@ -102,6 +104,8 @@ navbar:
         href: articles/fr-couverture.html
       - text: Référence de l'harmonisation
         href: articles/fr-reference-harmonisation.html
+      - text: Validation par les résultats officiels
+        href: articles/fr-validation.html
       - text: "-------"
       - text: Exemples (construits à partir des fichiers complets)
       - text: Répondants par étude
@@ -212,14 +216,15 @@ articles:
 - title: Harmonization (experimental)
   desc: >
     Built from the specification that ships with qesR. The first article
-    reads the full data files through qesR's cache when the site is built;
-    the coverage grid and the reference are generated from the
-    specification alone.
+    and the validation read the full data files through qesR's cache when
+    the site is built; the coverage grid and the reference are generated
+    from the specification alone.
   navbar: ~
   contents:
   - articles/harmonization
   - articles/coverage
   - harmonization-reference
+  - articles/validation
 - title: Examples
   desc: >
     Built when the site is built, from the full data files downloaded
@@ -241,14 +246,15 @@ articles:
 - title: Harmonisation en français (expérimental)
   desc: >
     Construits à partir de la spécification fournie avec qesR. Le premier
-    article lit les fichiers de données complets par le cache de qesR à la
-    construction du site ; la grille de couverture et la référence sont
-    générées à partir de la spécification seule.
+    article et la validation lisent les fichiers de données complets par le
+    cache de qesR à la construction du site ; la grille de couverture et la
+    référence sont générées à partir de la spécification seule.
   navbar: ~
   contents:
   - articles/fr-harmonisation
   - articles/fr-couverture
   - fr-reference-harmonisation
+  - articles/fr-validation
 - title: Exemples en français
   desc: >
     Construits à la construction du site, à partir des fichiers de données

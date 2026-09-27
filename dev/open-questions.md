@@ -8,6 +8,118 @@ Nothing here blocks a slice. Data requests follow the policy of design.md
 section 0.3 (OD18): Claude fetches public documents itself; the items below
 are either not in any public deposit or need the owner's judgement.
 
+## Slice HZ7: live validation (qesR 0.7.0.9000, spec 1.0.0 unchanged)
+
+Sources used: Élections Québec's archived results files of the general
+elections of 1998 to 2022 (R3) and Statistics Canada census tables
+98-10-0020-01, 98-10-0218-01 and 98-10-0384-01 (R5), all fetched with plain
+requests (scratch `data/MANIFEST.md`); the pinned originals (offline cache);
+the 2018 methodological report (file 361045) for the weighting cells.
+`qes_studies(check_updates = TRUE)` was run once (13 metadata requests,
+User-Agent `qesR/0.7.0 R/4.4.0`): every deposit is `current`.
+
+### A. Decisions taken in the slice that the owner may want to change
+
+V1. **Age cuts where 18+ is not published.** Gender 18+ and six age bands
+    18+ only for 2016 and 2021 (single years, 98-10-0020-01). For 2006 and
+    2011: gender 20+ (98-10-0384-01, private households; 2011 from the
+    voluntary NHS) and five age bands from 25 (the tables have 15-19 and
+    20-24 bands, so 18-24 cannot be formed). Mother tongue 20+
+    (98-10-0218-01, outside institutions, single answers only; no 2006
+    column). Education 25+. Respondents are cut the same way where their
+    age is known (the `age` target, else election year minus year of
+    birth, one year high for those born after election day; else the
+    `age_group6` bands). Closing it needs a custom tabulation or the 2011
+    topic-based table 98-311-XCB2011018, which a plain request could not
+    fetch (MANIFEST, NEEDS OWNER 1). *To confirm.*
+V2. **Education is compared as university or below**, not in the four
+    levels of `education4`. The census counts the certificate completed;
+    the surveys ask the level reached (a year of CEGEP or university
+    counts), and a trades certificate (DEP) is secondary in 2018 and
+    technical (college) in 2014. A three-group comparison gave 18-37 point
+    indices driven by that boundary; with two groups `qes2022` (weighted on
+    education) is 3.5 points from the census and the others 9-23. *To
+    confirm.*
+V3. **Census year.** The census on or before the study's latest year, for
+    every row of the study (the CROP polls, 2007-2010, all get 2006; a
+    pooled study whose rows would map to two censuses stops with an error
+    rather than compare its early rows with the later census): 2006 for 2007-2010,
+    2011 for 2012 and 2014, 2016 for 2018, 2021 for 2022. Mother tongue has
+    no 2006 benchmark, so `qes2007`, `qes2008`, the 2007 panel and CROP have
+    no mother-tongue comparison.
+V4. **What is gated.** The weighted V-L2 indices (the design) and, beyond
+    the design text, the weighted census indices, both at the recorded
+    value + 2.0 points. Unweighted rows are recorded for information only
+    (the studies whose weights are `needs_review` have only these). The
+    turnout rule of section 8.3 (fail outside 0-35 points) applies to every
+    row. V-L4 thresholds are those of section 8.3; `pid_prov` agreement is
+    computed among partisans (a party, not "none") who reported a party
+    vote, which gives 78-87% rather than the provisional 70-72% (the
+    denominator of the provisional figure is not recorded). A
+    newly reviewed weight gives a gated row with no record: the live test
+    fails until `data-raw/build_validation.R` records it.
+V5. **Where the report lives.** `inst/extdata/validation/validation_report.csv`
+    (with the benchmark tables), not `inst/validation/` as section 8.3
+    says, so that every shipped table is under `inst/extdata/`. qes2022
+    rows are in `data-raw/nc/validation_qes2022.csv` (build-ignored, OD3)
+    and in the CI artifact.
+V6. **The website article shows qes2022 aggregates**, computed at build
+    time from the downloaded file, as the existing analysis articles do;
+    nothing of qes2022 ships in the package. *To confirm* while OD3 is open
+    (the article can drop qes2022 rows if the owner prefers).
+V7. **Version.** DESCRIPTION is 0.7.0.9000 with a NEWS section of its own,
+    as in HZ5; nothing that qesR returns changed.
+
+### B. Findings for review (no change made)
+
+F1. **qes2018 mother tongue: English 16.7%, other languages 6.7% (weighted),
+    against 7.3% and 14.0% at the 2016 census (20+).** The map follows the
+    questionnaire with programmed answer values (file 367181: 1 French,
+    2 English, 96 other) and the French share is right (V-L3). Table 14 of
+    the methodological report calibrates "Anglais" to 22.9%, which is the
+    whole non-French share, so the weight does not correct the split
+    between English and other languages. Either the online panel
+    over-represents English speakers, or codes 2 and 96 are swapped in the
+    file. The deposit cannot settle it; the article describes the first
+    reading. *Owner's judgement.*
+F2. **qes2018 weighted education.** `pond` gives 32.4% with a university
+    degree (codes 14-15), Table 15's "Universitaire", so the weighting
+    counted incomplete university (code 13) outside university, while
+    `education4` counts it as university (the level reached). Not a map
+    error; recorded for the education grading.
+F3. **qes2018 weighted age bands** are 4 to 5 points off the 2016 census
+    for 35-44, 45-54 and 55-64: the weight's age cells (Table 12: 16-18,
+    19-38, 39-58, 59-73, 74+) cut across ten-year bands. Not a map error.
+F4. **V-L2 baselines of design section 8.3 confirmed** on the official
+    figures: 8.0 (`qes2012`), 5.6 (`qes2014`), 3.2 (`qes2018`), 8.0
+    (`qes2022`, recorded in `data-raw/nc/`). In 2022 the CAQ is
+    under-reported by 8.0 points and every other party over-reported.
+
+### C. Deferred (other slices)
+
+- Licence terms of the benchmark sources (licence pages fetched
+  2026-09-27, one plain request each). Statistics Canada: the Open Licence,
+  named in `inst/COPYRIGHTS` with its "Adapted from Statistics Canada ...
+  This does not constitute an endorsement" notice; no question left.
+  Élections Québec: no open licence is published for
+  donnees.electionsquebec.qc.ca (its open-data page names none); its site
+  terms of use allow reproduction for non-profit purposes with source and
+  copyright, and require written permission for other uses and for
+  adaptations. `official_results.csv` sums minor parties (an adaptation)
+  and qesR is MIT (commercial use allowed). **Owner request before a CRAN
+  release:** ask Élections Québec for permission to redistribute these
+  province-wide totals in qesR, or drop the file and fetch the results at
+  build time. `inst/COPYRIGHTS` states the terms and marks this pending.
+- Weighted validation of the studies whose weights are `needs_review`
+  (qes2007, qes2008, the panels, CROP, 1998) waits for R4.
+- A 2011 age-by-sex benchmark at 18+ (V1) and 2006 mother tongue.
+- `age` derived from the year of birth and age groups derived from ages
+  as harmonized targets (HZ4's deferral): validation derives them locally
+  and does not add them to the spec.
+- The panel stability check of section 8.3 (time-invariant agreement and
+  intent-to-recall stability on two-wave respondents) is not part of
+  V-L1 to V-L5 and was not implemented.
+
 ## Slice HZ6: the legacy switch (qesR 0.7.0, spec 1.0.0)
 
 Sources used: the pinned originals (md5-verified, offline cache), the

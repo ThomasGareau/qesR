@@ -1,0 +1,339 @@
+---
+title: "Validation par les résultats officiels et le recensement"
+params:
+  lang: "fr"
+---
+
+*[English version](validation.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 6)
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
+```
+
+Jusqu'où les études harmonisées rejoignent-elles ce que l'on sait de
+l'électorat ? Cette page compare, pour chaque étude que couvre la
+spécification d'harmonisation :
+
+1. le **vote déclaré** aux résultats officiels de chaque élection générale,
+   publiés par Élections Québec ;
+2. la **participation déclarée** à la participation officielle ;
+3. le **genre, l'âge, la langue maternelle et la scolarité** des
+   répondants au recensement qui précède l'étude (Statistique Canada) ;
+4. quelques **relations entre les réponses** que toute mesure valide
+   devrait montrer (validité de construit).
+
+La page est construite à la construction du site : les fichiers de données
+sont téléchargés depuis leurs dépôts Dataverse par le cache de qesR et
+harmonisés avec `qes_harmonize()`. Les données de référence sont fournies
+avec qesR, chaque ligne avec sa source (`inst/extdata/validation/`). Les
+mêmes vérifications tournent chaque semaine sur les fichiers épinglés
+et échouent lorsque l'indice pondéré du vote déclaré (vérification V-L2
+de la spécification) ou un indice pondéré du recensement dépasse de plus
+de 2 points sa valeur consignée, lorsque la surdéclaration de la
+participation sort de l'intervalle de 0 à 35 points, ou lorsqu'une
+direction de validité de construit (vérification V-L4) échoue. Un indice
+qui baisse, ou qui monte moins, passe.
+
+```{r packages, message = FALSE, warning = FALSE}
+library(qesR)
+library(ggplot2)
+```
+
+```{r run, message = FALSE}
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+num <- function(x, digits = 1, sign = FALSE) {
+  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
+          decimal.mark = tr(".", ","))
+}
+# every study the specification covers, harmonized from the pinned files,
+# against the benchmarks that ship with qesR
+report <- qesR:::.qes_validation_run("all")
+report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
+studies <- qes_studies()
+report$year <- studies$year[match(report$study, studies$study)]
+report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
+                           tr("weighted", "pondéré"))
+# one row per study and check: the weighted value where the study has a
+# reviewed weight, the unweighted one otherwise
+best <- function(x) {
+  x <- x[order(x$study, x$variable, x$weight == "none"), ]
+  x[!duplicated(paste(x$study, x$variable)), ]
+}
+```
+
+## 1. Vote déclaré et résultats officiels
+
+Pour chaque étude, le tableau donne l'**indice de dissimilarité** entre la
+distribution du vote déclaré et les parts officielles des votes valides :
+la moitié de la somme des écarts absolus entre les deux distributions, en
+points. C'est la part des répondants qui devraient changer de parti pour
+que les deux concordent ; 0 est une concordance parfaite. Les partis que la
+question de l'étude n'énumérait pas sont comptés comme « autre parti » du
+côté officiel, puisque c'est la seule réponse que leurs électeurs
+pouvaient donner.
+
+```{r recall-table}
+idx <- report[report$check == "recall" & is.na(report$level), ]
+wide <- reshape(idx[, c("study", "year", "reference", "weighting", "n", "value")],
+                idvar = c("study", "year", "reference"), timevar = "weighting",
+                direction = "wide", drop = "n")
+wide <- merge(wide, aggregate(n ~ study, idx, max), by = "study")
+wide <- wide[order(wide$year, wide$study), ]
+un <- wide[[paste0("value.", tr("unweighted", "non pondéré"))]]
+we <- wide[[paste0("value.", tr("weighted", "pondéré"))]]
+knitr::kable(
+  data.frame(wide$study, wide$reference, wide$n, num(un),
+             ifelse(is.na(we), "", num(we))),
+  col.names = tr(c("Study", "Election", "N (reported a party)", "Index, unweighted", "Index, weighted"),
+                 c("Étude", "Élection", "N (ont nommé un parti)", "Indice, non pondéré", "Indice, pondéré")),
+  align = c("l", "l", "r", "r", "r")
+)
+```
+
+L'indice pondéré utilise la pondération que la spécification recommande
+pour la vague qui a posé la question ; seules `qes2012`, `qes2014`,
+`qes2018` et `qes2022` ont pour l'instant une pondération révisée. Les
+pondérations des autres études ne sont pas assez documentées pour être
+utilisées (leurs lignes sont `needs_review`) : leur indice est non
+pondéré. `qes1998` n'a interrogé que des francophones, une population que
+les résultats officiels ne décrivent pas : l'étude est montrée à titre
+indicatif, sans être vérifiée.
+
+```{r recall-plot, fig.height = 8, fig.alt = tr("For each study, the difference in points between the reported vote share of each party and its official share of valid votes; weighted where the study has a reviewed weight.", "Pour chaque étude, l'écart en points entre la part du vote déclaré de chaque parti et sa part officielle des votes valides ; pondéré lorsque l'étude a une pondération révisée.")}
+# the weighted distribution where the study has a reviewed weight
+shown <- best(idx[idx$study != "qes1998", ])
+lv <- report[report$check == "recall" & !is.na(report$level) &
+               paste(report$study, report$weight) %in% paste(shown$study, shown$weight), ]
+lv$party <- ifelse(lv$level == "other", tr("Other", "Autre"), lv$level)
+lv$label <- paste0(lv$study, " (", lv$weighting, ")")
+lv$label <- factor(lv$label, unique(lv$label[order(lv$year, lv$study)]))
+ggplot(lv, aes(x = value, y = party)) +
+  geom_vline(xintercept = 0, colour = "grey50") +
+  geom_segment(aes(x = 0, xend = value, yend = party), colour = "grey70") +
+  geom_point(size = 2.2, colour = "#0468b9") +
+  facet_wrap(~label, ncol = 3, scales = "free_y") +
+  labs(
+    x = tr("Reported minus official share (points)", "Part déclarée moins part officielle (points)"),
+    y = NULL
+  ) +
+  theme_minimal(base_size = 11)
+```
+
+```{r recall-numbers, include = FALSE}
+d <- function(study, level) {
+  x <- lv$value[lv$study == study & lv$level == level]
+  if (length(x)) x else NA_real_
+}
+```
+
+## 2. Participation déclarée
+
+```{r turnout-table}
+to <- best(report[report$check == "turnout", ])
+to <- to[order(to$year, to$study), ]
+# qes1998 (francophones only) is shown but not checked
+checked <- to[!(to$status %in% "skipped"), ]
+knitr::kable(
+  data.frame(to$study, to$reference, to$weighting, to$n, num(to$estimate), num(to$benchmark),
+             num(to$value, sign = TRUE)),
+  col.names = tr(c("Study", "Election", "Weighting", "N", "Reported turnout (%)", "Official turnout (%)", "Difference (points)"),
+                 c("Étude", "Élection", "Pondération", "N", "Participation déclarée (%)", "Participation officielle (%)", "Écart (points)")),
+  align = c("l", "l", "l", "r", "r", "r", "r")
+)
+```
+
+La participation officielle est le nombre de bulletins déposés sur le
+nombre d'électeurs inscrits. La participation déclarée est la part des
+répondants qui disent avoir voté parmi ceux qui ont répondu oui ou non ;
+les personnes non inscrites ou non admissibles, et celles qui ne savaient
+pas ou n'ont pas voulu répondre, sont laissées de côté.
+
+## 3. Répondants et recensement
+
+Chaque étude est comparée au recensement qui précède son élection (2006,
+2011, 2016 ou 2021). Statistique Canada ne publie des effectifs de 18 ans
+et plus que pour le genre et l'âge en 2016 et 2021 ; ailleurs, la coupure
+d'âge publiée la plus proche est utilisée, et les répondants sont coupés
+de la même façon lorsque leur âge est connu :
+
+| Marge | Recensement | Population comparée | Tableau |
+|---|---|---|---|
+| Genre | 2016, 2021 | 18 ans et plus | 98-10-0020-01 |
+| Genre | 2006, 2011 | 20 ans et plus, ménages privés | 98-10-0384-01 |
+| Âge (six tranches) | 2016, 2021 | 18 ans et plus | 98-10-0020-01 |
+| Âge (cinq tranches) | 2006, 2011 | 25 ans et plus, ménages privés | 98-10-0384-01 |
+| Langue maternelle | 2011, 2016, 2021 | 20 ans et plus, hors établissements, une seule langue maternelle | 98-10-0218-01 |
+| Scolarité | 2006 à 2021 | 25 ans et plus, ménages privés | 98-10-0384-01 |
+
+Les effectifs de scolarité et de genre de 2011 viennent de l'Enquête
+nationale auprès des ménages, qui était facultative. La langue maternelle
+est comparée parmi les personnes qui déclarent une seule langue
+maternelle : les réponses multiples du recensement et les réponses des
+enquêtes qui nomment deux langues sont laissées de côté. La scolarité est
+comparée en deux groupes : universitaire (tout certificat, diplôme ou grade
+universitaire) ou non.
+
+```{r census-table}
+cz <- report[report$check == "census" & is.na(report$level), ]
+vars <- c(gender = tr("Gender", "Genre"), age_group6 = tr("Age", "Âge"),
+          lang_mother = tr("Mother tongue", "Langue maternelle"),
+          education = tr("Education", "Scolarité"))
+cz$cell <- num(cz$value)
+cw <- reshape(cz[, c("study", "year", "reference", "variable", "weighting", "cell")],
+              idvar = c("study", "year", "reference", "weighting"), timevar = "variable",
+              direction = "wide")
+names(cw) <- sub("^cell\\.", "", names(cw))
+for (v in names(vars)) if (is.null(cw[[v]])) cw[[v]] <- NA
+cw <- cw[order(cw$year, cw$study, cw$weighting), ]
+out <- cw[, c("study", "reference", "weighting", names(vars))]
+out[is.na(out)] <- ""
+knitr::kable(
+  out, row.names = FALSE,
+  col.names = c(tr(c("Study", "Census", "Weighting"), c("Étude", "Recensement", "Pondération")), unname(vars)),
+  align = c("l", "l", "l", "r", "r", "r", "r")
+)
+```
+
+Chaque cellule est un indice de dissimilarité en points (0 est une
+concordance parfaite) ; une cellule vide est une marge que l'étude n'a pas
+mesurée, ou que les tableaux du recensement recueillis ne publient pas pour
+cette année (la langue maternelle en 2006).
+
+```{r census-plot, fig.height = 7, fig.alt = tr("For the four studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les quatre études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
+cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
+cl$variable <- factor(vars[cl$variable], unname(vars))
+cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
+ggplot(cl, aes(x = value, y = level, colour = study, shape = study)) +
+  geom_vline(xintercept = 0, colour = "grey50") +
+  geom_point(size = 2.2) +
+  facet_wrap(~variable, ncol = 2, scales = "free_y") +
+  labs(
+    x = tr("Weighted survey share minus census share (points)",
+           "Part pondérée de l'enquête moins part au recensement (points)"),
+    y = NULL, colour = tr("Study", "Étude"), shape = tr("Study", "Étude")
+  ) +
+  theme_minimal(base_size = 11)
+```
+
+## 4. Relations entre les réponses
+
+Ces vérifications ne se comparent à aucune source extérieure. Elles
+demandent si les réponses harmonisées sont liées entre elles comme des
+décennies de recherche disent qu'elles devraient l'être ; une erreur de
+correspondance (deux codes de partis inversés, une échelle renversée) les
+ferait échouer.
+
+```{r construct-table}
+k <- report[report$check == "construct", ]
+k <- k[order(k$year, k$study, k$variable), ]
+what <- c(interest_4pt = tr("Voters are more interested than nonvoters (mean, 1-4)",
+                            "Les votants sont plus intéressés que les abstentionnistes (moyenne, 1-4)"),
+          lr_self = tr("QS voters are to the left of CAQ voters (mean, 0-10)",
+                       "Les électeurs de QS sont à gauche de ceux de la CAQ (moyenne, 0-10)"),
+          sov_indep = tr("Yes to independence: PQ voters more than 40 points above PLQ voters (%)",
+                         "Oui à l'indépendance : électeurs du PQ plus de 40 points au-dessus de ceux du PLQ (%)"),
+          pid_prov = tr("Partisans who voted for their party: at least 55% (%)",
+                        "Partisans qui ont voté pour leur parti : au moins 55 % (%)"))
+knitr::kable(
+  data.frame(k$study, what[k$variable], num(k$estimate),
+             ifelse(is.na(k$benchmark), "", num(k$benchmark)),
+             ifelse(k$status == "pass", tr("yes", "oui"), tr("no", "non"))),
+  col.names = tr(c("Study", "Expected", "Value", "Compared with", "Holds"),
+                 c("Étude", "Attendu", "Valeur", "Comparé à", "Vérifié")),
+  align = c("l", "l", "r", "r", "l")
+)
+```
+
+## Lire les écarts
+
+**La participation est surdéclarée dans toutes les études**, ici de
+`r num(min(checked$value), 0)` à `r num(max(checked$value), 0)` points
+(sans `qes1998`, limitée aux francophones). Deux causes s'additionnent,
+qu'on ne peut pas séparer avec ces données : des abstentionnistes disent
+avoir voté, et les personnes qui votent acceptent plus volontiers de
+répondre aux enquêtes électorales. Les formats de question qui ménagent la
+face de `qes2018` et de `qes2022` (plusieurs façons de dire qu'on n'a pas
+voté) visent à réduire la première cause ; les pondérations calées sur
+l'âge, le genre, la scolarité et la langue ne corrigent ni l'une ni
+l'autre. Les deux taux ne comptent pas non plus les mêmes personnes : le
+taux officiel porte sur les électeurs inscrits, dont certains ont déménagé
+ou sont décédés, alors que les enquêtes interrogent les adultes qu'elles
+ont joints. Toute analyse de la participation tirée de ces études décrit
+les répondants, pas l'électorat.
+
+**Le vote déclaré est un rappel, pas le vote.** Il est demandé de quelques
+jours à quelques semaines après l'élection, à des répondants dont la
+participation est elle-même sélective. On dit souvent que le rappel dérive
+vers le gagnant, mais on ne voit pas ici une simple prime au gagnant : dans
+`qes2012`, le PQ, qui a gagné par moins d'un point, est surdéclaré de
+`r num(d("qes2012", "PQ"))` points et le PLQ sous-déclaré de
+`r num(-d("qes2012", "PLQ"))` ; dans `qes2022`, la CAQ, qui a gagné, est
+sous-déclarée de `r num(-d("qes2022", "CAQ"))` points. Qui répond compte au
+moins autant que la mémoire : les panels en ligne tendent à surreprésenter
+les personnes engagées en politique et scolarisées, et les électeurs de
+certains partis sont peut-être plus difficiles à joindre. La pondération
+sur les caractéristiques sociodémographiques ne l'efface pas et peut
+déplacer l'indice dans un sens ou dans l'autre (comparez les deux colonnes
+du premier tableau).
+
+**La question compte.** Un parti que la question n'énumérait pas ne
+pouvait être déclaré que comme « autre » (le Parti vert dans `qes2018` et
+`qes2022`, le Parti conservateur dans `qes2018`). Les deux panels Durand
+de 2007 et de 2012 demandent le vote sans lire les partis, par téléphone ;
+les autres études lisent ou montrent une liste. Les cotes de
+`qes_spec(view = "crosswalk")` consignent ces différences.
+
+**Les échantillons ne sont pas la population du recensement.** Le
+recensement compte les résidents, y compris des personnes qui ne sont pas
+citoyennes et ne peuvent pas voter ; `qes2022` n'a échantillonné que des
+citoyens. Les tableaux du recensement sur la langue maternelle et la
+scolarité portent sur les ménages privés, et leurs coupures d'âge
+diffèrent de 18 ans et plus (section 3). Trois écarts ressortent.
+Scolarité : chaque étude compte plus de répondants ayant fait des études
+universitaires que le recensement ne compte de titulaires d'un titre
+universitaire, en partie parce que les enquêtes demandent le niveau
+atteint (une année d'université compte) et le recensement le titre obtenu,
+et en partie, très probablement, parce que les personnes plus scolarisées
+acceptent plus volontiers de répondre aux enquêtes ; `qes2022`, pondérée
+sur la scolarité, est la seule étude proche du recensement. Langue
+maternelle dans `qes2018` : les anglophones sont surreprésentés et les
+allophones sous-représentés ; la pondération de 2018 corrige le français
+par rapport à toutes les autres langues (son rapport méthodologique,
+tableau 14), pas la répartition entre l'anglais et les autres langues. Âge
+dans `qes2018` : sa pondération corrige l'âge par cellules
+générationnelles (16-18, 19-38, 39-58, 59-73, 74 et plus : tableau 12 du
+même rapport), qui chevauchent les tranches de dix ans utilisées ici ; à
+l'intérieur de celles-ci, l'échantillon pondéré compte encore trop peu de
+personnes de 35 à 54 ans et trop de personnes de 55 à 64 ans.
+
+**Ces repères sont grossiers.** Un indice peut cacher des erreurs qui se
+compensent : en 2012, le PQ et le PLQ ont terminé à moins d'un point l'un
+de l'autre, si bien qu'une étude qui aurait inversé leurs codes
+concorderait à peu près aussi bien avec les résultats officiels. C'est
+pourquoi l'harmonisation est aussi vérifiée par les effectifs exacts de
+chaque réponse dans les fichiers originaux et par les relations de la
+section 4, et pourquoi chaque ligne de correspondance est révisée par
+rapport au questionnaire.
+
+## Sources
+
+- Élections Québec, résultats officiels des élections générales de 1998 à
+  2022, votes par parti et bulletins déposés pour l'ensemble du Québec,
+  tirés de ses fichiers de résultats archivés (par exemple
+  <https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2022-10-03/resultats.json>).
+- Statistique Canada, tableaux du recensement
+  [98-10-0020-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=9810002001)
+  (âge et genre, 2016 et 2021),
+  [98-10-0218-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=9810021801)
+  (langue maternelle selon l'âge, 2011 à 2021) et
+  [98-10-0384-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=9810038401)
+  (plus haut niveau de scolarité selon l'âge et le genre, 2006 à 2021).
+
+Les tableaux de référence se trouvent dans `system.file("extdata",
+"validation", package = "qesR")`, avec la source de chaque ligne. Les
+résultats consignés des études diffusées sous CC0 s'y trouvent dans
+`validation_report.csv` ; ceux de `qes2022`, dont la licence (CC BY-NC 4.0)
+ne permet pas à qesR de fournir des agrégats, sont calculés sur cette page
+à partir de votre copie du fichier, à la construction du site.

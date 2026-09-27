@@ -3,9 +3,10 @@
 # ubuntu r-devel job on main only.
 #
 # Tests run offline: network tests are skipped unless QESR_LIVE=true, which is
-# never set here. The tier-1 live checks (tests/testthat/test-live-read.R) run
-# locally, with QESR_TEST_DATA_DIR=<a download cache laid out by hand> (no
-# request) or QESR_LIVE=true; the weekly live.yml job arrives with slice HZ7.
+# never set here. The live checks (tests/testthat/test-*live*.R: V-L1 to V-L5)
+# run in the weekly live.yml job, and locally with
+# QESR_TEST_DATA_DIR=<a download cache laid out by hand> (no request) or
+# QESR_LIVE=true.
 
 name: R-CMD-check
 

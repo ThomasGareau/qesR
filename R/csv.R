@@ -156,6 +156,31 @@
     target = "chr", render = "chr", type = "chr", flag = "chr", cause = "chr",
     definition = "chr", note = "chr"
   ),
+  # the benchmarks of the live validation (inst/extdata/validation/, written
+  # by data-raw/build_benchmarks.R, read by R/validation.R): official results
+  # of Élections Québec and census margins of Statistics Canada
+  validation_results = c(
+    election_id = "chr", party = "chr", name_official = "chr", votes = "num",
+    votes_valid = "num", share_valid = "num", source_url = "chr"
+  ),
+  validation_turnout = c(
+    election_id = "chr", registered = "num", ballots_cast = "num",
+    ballots_valid = "num", ballots_rejected = "num", turnout = "num",
+    source_url = "chr"
+  ),
+  validation_census = c(
+    census_year = "int", variable = "chr", level = "chr", universe = "chr",
+    count = "num", share = "num", source_table = "chr", source_url = "chr",
+    note = "chr"
+  ),
+  # the recorded validation report (aggregates of CC0 studies only; the
+  # baselines of the V-L2 gate), written by data-raw/build_validation.R
+  validation_report = c(
+    study = "chr", check = "chr", rule = "chr", reference = "chr",
+    variable = "chr", universe = "chr", level = "chr", weight = "chr",
+    n = "int", estimate = "num", benchmark = "num", value = "num",
+    status = "chr", note = "chr"
+  ),
   # the same aggregates for a study whose metadata cannot ship (OD3), kept in
   # the build-ignored data-raw/nc/ for CI: variable types and missing-code
   # declarations, and per-code counts with label hashes instead of labels

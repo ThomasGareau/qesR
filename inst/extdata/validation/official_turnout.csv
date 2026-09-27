@@ -1,0 +1,8 @@
+"election_id","registered","ballots_cast","ballots_valid","ballots_rejected","turnout","source_url"
+"QC1998",5254482,4115163,4068472,46691,78.3172,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen1998-11-30/resultats.json"
+"QC2007",5630567,4010696,3970618,40078,71.2308,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2007-03-26/resultats.json"
+"QC2008",5738811,3295914,3246333,49581,57.432,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2008-12-08/resultats.json"
+"QC2012",5919808,4416437,4362688,53749,74.6044,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2012-09-04/resultats.json"
+"QC2014",6012440,4295055,4232262,62793,71.4361,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2014-04-07/resultats.json"
+"QC2018",6169772,4099623,4033538,66085,66.4469,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2018-10-01/resultats.json"
+"QC2022",6302789,4169137,4112821,56316,66.1475,"https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen2022-10-03/resultats.json"

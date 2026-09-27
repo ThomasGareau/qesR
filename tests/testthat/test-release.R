@@ -28,9 +28,11 @@ test_that("no respondent data ship: the only data file is the synthetic demo", {
   files <- list.files(pkg_file("extdata"), recursive = TRUE)
   data_files <- files[grepl("\\.(sav|zsav|dta|por|rds|rda|RData|tab|xlsx?)$", files, ignore.case = TRUE)]
   expect_identical(data_files, "demo/data/qes_demo.sav")
-  # every CSV is metadata: catalog, dictionary, legacy tables, harmonization spec
+  # every CSV is metadata (catalog, dictionary, legacy tables, harmonization
+  # spec) or a validation table: public benchmarks and the aggregates of the
+  # validation report
   csv <- files[grepl("\\.csv(\\.gz)?$", files)]
-  expect_true(all(grepl("^(catalog|dict|legacy|harmonize|demo/catalog|demo/dict)/", csv)), info = paste(csv, collapse = ", "))
+  expect_true(all(grepl("^(catalog|dict|legacy|harmonize|validation|demo/catalog|demo/dict)/", csv)), info = paste(csv, collapse = ", "))
 })
 
 test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of qes2022", {
@@ -48,6 +50,11 @@ test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of
   # OD16: the 1998 population is quoted from the codebook, definition pending
   expect_true(grepl("retenir uniquement les\\s+francophones", text))
   expect_true(grepl("pending", text, fixed = TRUE))
+  # the benchmark sources of inst/extdata/validation/ and their terms
+  expect_true(grepl("Statistics Canada Open Licence", text, fixed = TRUE))
+  expect_true(grepl("Adapted from Statistics Canada", text, fixed = TRUE))
+  expect_true(grepl("does not constitute an endorsement\\s+by Statistics Canada", text))
+  expect_true(grepl("\u00c9lections Qu\u00e9bec's terms\\s+of use", text))
 })
 
 test_that("the only network example is qes_studies(check_updates = TRUE), guarded", {

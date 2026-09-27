@@ -1,7 +1,7 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.7.0
+Version: 0.7.0.9000
 Maintainer: Thomas Gareau-Paquette <tg454@cornell.edu>
 Authors@R:
     person(
@@ -37,8 +37,10 @@ Description: Load the Quebec Election Studies and related Quebec election
     the Study of Democratic Citizenship
     <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>.
 License: MIT + file LICENSE
-Copyright: See file COPYRIGHTS for the third-party (CC0) study metadata
-    shipped in inst/extdata.
+Copyright: See file COPYRIGHTS for the third-party content shipped in
+    inst/extdata: CC0 study metadata, and official election results
+    (Élections Québec) and census counts (Statistics Canada) used as
+    validation benchmarks.
 Encoding: UTF-8
 Depends: R (>= 4.1)
 Imports:

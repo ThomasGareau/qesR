@@ -1,0 +1,106 @@
+# Weekly live validation (design.md sections 5.10, 8.2 to 8.4; slice HZ7).
+#
+# Runs the tier-1 and tier-2 checks on the pinned original files:
+#   V-L1  engine marginals and column hashes == inst/extdata/harmonize/expected/
+#   V-L2  weighted reported vote vs the official results (Élections Québec),
+#         within the recorded baseline + 2.0 points; turnout over-report;
+#         margins vs the census (Statistics Canada)
+#   V-L3  2018 weighting margins (methodological report, Table 14)
+#   V-L4  construct-validity directions
+#   V-L5  a new dataset version or md5 on Dataverse fails the job and lists it
+# plus every other live test (get_qes() on each original, the legacy builders).
+#
+# The originals are restored from the Actions cache (keyed on the catalog's
+# md5 pins; saved right after the fetch, whatever the checks do); only
+# missing files are downloaded, through qesR's own client
+# (User-Agent "qesR/<ver> R/<ver>", no personal information, requests at
+# least 1 s apart). The job uploads an aggregates-only report; it never
+# commits, pushes or opens issues. A failure is the notification.
+
+name: live
+
+"on":
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      QESR_CACHE_DIR: ${{ github.workspace }}/../qesr-cache
+      _R_CHECK_FORCE_SUGGESTS_: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgload, any::testthat, any::withr
+
+      # Restore and save are separate steps so that the fetched originals are
+      # cached even when a later check fails (actions/cache saves only on
+      # success): a failing week does not download them again.
+      - name: Restore the pinned originals
+        id: restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.QESR_CACHE_DIR }}
+          key: qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}
+          restore-keys: qesr-originals-
+
+      - name: Fetch missing originals
+        run: Rscript data-raw/live_fetch.R
+
+      - name: Save the pinned originals
+        if: always() && steps.restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.QESR_CACHE_DIR }}
+          key: qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}
+
+      # The originals come from the cache (QESR_TEST_DATA_DIR: no request);
+      # QESR_LIVE=true lets V-L5 ask Dataverse for the latest versions.
+      - name: Live tests (V-L1 to V-L5)
+        env:
+          QESR_TEST_DATA_DIR: ${{ env.QESR_CACHE_DIR }}
+          QESR_LIVE: "true"
+        run: |
+          Rscript -e 'res <- as.data.frame(testthat::test_local(".", reporter = "summary", stop_on_failure = FALSE)); cat(sprintf("failed %d, errors %d, skipped %d, passed %d\n", sum(res$failed), sum(res$error), sum(res$skipped), sum(res$passed))); if (sum(res$failed) > 0 || any(res$error)) quit(status = 1)'
+
+      - name: Column hashes (V-L1)
+        if: always()
+        run: Rscript data-raw/build_hashes.R --check
+
+      # Information only: lists recorded baselines that differ from the report
+      # (stale); the 2.0-point gate that fails the job is in the live tests.
+      - name: Validation report (V-L2, census)
+        if: always()
+        continue-on-error: true
+        run: Rscript data-raw/build_validation.R --check --out validation-report.csv
+
+      - name: Upload the aggregates-only report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.csv
+          if-no-files-found: ignore
+          retention-days: 90

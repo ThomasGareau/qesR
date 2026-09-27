@@ -1,0 +1,278 @@
+"study","check","rule","reference","variable","universe","level","weight","n","estimate","benchmark","value","status","note"
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"PLQ","none",490,24.31,24.82,-0.51,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"PQ","none",392,19.44,17.06,2.39,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"CAQ","none",700,34.72,37.42,-2.7,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"QS","none",342,16.96,16.1,0.86,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"other","none",92,4.56,4.6,-0.04,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,,"none",2016,,,3.25,"info",
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"PLQ","pond",490,23.27,24.82,-1.55,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"PQ","pond",392,19.57,17.06,2.51,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"CAQ","pond",700,35.81,37.42,-1.61,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"QS","pond",342,16.25,16.1,0.15,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,"other","pond",92,5.1,4.6,0.5,,
+"qes2018","recall","V-L2","QC2018","vote_prov_recall",,,"pond",2016,,,3.16,"gate",
+"qes2018","turnout","turnout","QC2018","turnout_prov_recall",,"yes","none",2635,83.76,66.45,17.31,"info",
+"qes2018","turnout","turnout","QC2018","turnout_prov_recall",,"yes","pond",2635,83.2,66.45,16.75,"info",
+"qes2018","census","census","Census 2016","gender","18+","man","none",1378,48.54,48.72,-0.18,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","gender","18+","woman","none",1461,51.46,51.28,0.18,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","gender","18+",,"none",2839,,,0.18,"info","Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","gender","18+","man","pond",1378,48.57,48.72,-0.15,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","gender","18+","woman","pond",1461,51.43,51.28,0.15,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","gender","18+",,"pond",2839,,,0.15,"gate","Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a18_24","none",398,14.02,10.33,3.69,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a25_34","none",434,15.29,15.36,-0.07,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a35_44","none",255,8.98,16.06,-7.08,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a45_54","none",294,10.36,17.31,-6.95,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a55_64","none",616,21.7,18.22,3.48,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a65_plus","none",842,29.66,22.72,6.94,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+",,"none",2839,,,14.1,"info","Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a18_24","pond",398,10.49,10.33,0.17,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a25_34","pond",434,17.9,15.36,2.53,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a35_44","pond",255,11.75,16.06,-4.31,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a45_54","pond",294,13.3,17.31,-4.01,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a55_64","pond",616,23,18.22,4.78,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+","a65_plus","pond",842,23.56,22.72,0.84,,"Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","age_group6","18+",,"pond",2839,,,8.32,"gate","Statistics Canada 98-10-0020-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","french","none",2054,77.86,78.68,-0.82,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","english","none",421,15.96,7.33,8.62,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","other","none",163,6.18,13.98,-7.8,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+",,"none",2638,,,8.62,"info","Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","french","pond",2054,76.65,78.68,-2.04,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","english","pond",421,16.69,7.33,9.35,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+","other","pond",163,6.67,13.98,-7.31,,"Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","lang_mother","20+",,"pond",2638,,,9.35,"gate","Statistics Canada 98-10-0218-01"
+"qes2018","census","census","Census 2016","education","25+","below_university","none",1321,54.54,73.25,-18.71,,"Statistics Canada 98-10-0384-01"
+"qes2018","census","census","Census 2016","education","25+","university","none",1101,45.46,26.75,18.71,,"Statistics Canada 98-10-0384-01"
+"qes2018","census","census","Census 2016","education","25+",,"none",2422,,,18.71,"info","Statistics Canada 98-10-0384-01"
+"qes2018","census","census","Census 2016","education","25+","below_university","pond",1321,55.65,73.25,-17.6,,"Statistics Canada 98-10-0384-01"
+"qes2018","census","census","Census 2016","education","25+","university","pond",1101,44.35,26.75,17.6,,"Statistics Canada 98-10-0384-01"
+"qes2018","census","census","Census 2016","education","25+",,"pond",2422,,,17.6,"gate","Statistics Canada 98-10-0384-01"
+"qes2018","construct","V-L4","direction","interest_4pt",,"voters - nonvoters","pond",2602,3.02,2.51,0.51,"pass","mean interest (1 = not at all, 4 = very) of voters (estimate) and nonvoters (benchmark)"
+"qes2018","construct","V-L4","direction","lr_self",,"QS - CAQ","pond",903,3.7,6,-2.29,"pass","mean left-right self-placement (0-10) of QS voters (estimate) and CAQ voters (benchmark)"
+"qes2018","construct","V-L4","direction","sov_indep",,"PQ - PLQ","pond",821,85.94,2.48,83.46,"pass","percent yes (among yes and no) of PQ voters (estimate) and PLQ voters (benchmark)"
+"qes2018","construct","V-L4","direction","pid_prov",,"pid = vote","pond",1647,82.92,,82.92,"pass","percent of partisans (a party identification) who voted for that party"
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,"PLQ","none",200,28.41,24.82,3.59,,
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,"PQ","none",108,15.34,17.06,-1.72,,
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,"CAQ","none",263,37.36,37.42,-0.06,,
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,"QS","none",87,12.36,16.1,-3.74,,
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,"other","none",46,6.53,4.6,1.93,,
+"qes2018_panel","recall","V-L2","QC2018","vote_prov_recall",,,"none",704,,,5.53,"info",
+"qes2018_panel","turnout","turnout","QC2018","turnout_prov_recall",,"yes","none",842,86.82,66.45,20.37,"info",
+"qes2018_panel","census","census","Census 2016","gender","18+","man","none",610,48.8,48.72,0.08,,"Statistics Canada 98-10-0020-01"
+"qes2018_panel","census","census","Census 2016","gender","18+","woman","none",640,51.2,51.28,-0.08,,"Statistics Canada 98-10-0020-01"
+"qes2018_panel","census","census","Census 2016","gender","18+",,"none",1250,,,0.08,"info","Statistics Canada 98-10-0020-01"
+"qes2018_panel","census","census","Census 2016","lang_mother","20+","french","none",998,79.9,78.68,1.22,,"Statistics Canada 98-10-0218-01"
+"qes2018_panel","census","census","Census 2016","lang_mother","20+","english","none",183,14.65,7.33,7.32,,"Statistics Canada 98-10-0218-01"
+"qes2018_panel","census","census","Census 2016","lang_mother","20+","other","none",68,5.44,13.98,-8.54,,"Statistics Canada 98-10-0218-01"
+"qes2018_panel","census","census","Census 2016","lang_mother","20+",,"none",1249,,,8.54,"info","Statistics Canada 98-10-0218-01"
+"qes2018_panel","construct","V-L4","direction","lr_self",,"QS - CAQ","none",297,3.65,5.82,-2.17,"pass","mean left-right self-placement (0-10) of QS voters (estimate) and CAQ voters (benchmark)"
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PLQ","none",489,38.11,41.52,-3.4,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PQ","none",344,26.81,25.38,1.43,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"CAQ","none",277,21.59,23.05,-1.46,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"QS","none",131,10.21,7.63,2.58,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PVQ","none",16,1.25,0.55,0.7,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"ON","none",9,0.7,0.73,-0.02,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"other","none",17,1.33,1.15,0.18,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,,"none",1283,,,4.89,"info",
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PLQ","POND",489,35.87,41.52,-5.64,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PQ","POND",344,29.81,25.38,4.43,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"CAQ","POND",277,23.12,23.05,0.07,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"QS","POND",131,8.23,7.63,0.59,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"PVQ","POND",16,0.96,0.55,0.41,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"ON","POND",9,0.73,0.73,0,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,"other","POND",17,1.27,1.15,0.13,,
+"qes2014","recall","V-L2","QC2014","vote_prov_recall",,,"POND",1283,,,5.64,"gate",
+"qes2014","turnout","turnout","QC2014","turnout_prov_recall",,"yes","none",1499,90.19,71.44,18.76,"info",
+"qes2014","turnout","turnout","QC2014","turnout_prov_recall",,"yes","POND",1499,88.92,71.44,17.49,"info",
+"qes2014","census","census","Census 2011","gender","20+","man","none",830,55.44,48.76,6.69,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","gender","20+","woman","none",667,44.56,51.24,-6.69,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","gender","20+",,"none",1497,,,6.69,"info","Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","gender","20+","man","POND",830,48.89,48.76,0.13,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","gender","20+","woman","POND",667,51.11,51.24,-0.13,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","gender","20+",,"POND",1497,,,0.13,"gate","Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a25_34","none",204,15.42,18.51,-3.09,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a35_44","none",259,19.58,18.4,1.18,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a45_54","none",330,24.94,22.95,1.99,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a55_64","none",243,18.37,19.61,-1.24,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a65_plus","none",287,21.69,20.54,1.16,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+",,"none",1323,,,4.33,"info","Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a25_34","POND",204,18.07,18.51,-0.44,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a35_44","POND",259,17.96,18.4,-0.44,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a45_54","POND",330,22.45,22.95,-0.5,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a55_64","POND",243,19.3,19.61,-0.3,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+","a65_plus","POND",287,22.22,20.54,1.69,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","age_group6","25+",,"POND",1323,,,1.69,"gate","Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","french","none",1128,81.39,79.57,1.82,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","english","none",191,13.78,7.5,6.28,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","other","none",67,4.83,12.93,-8.1,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+",,"none",1386,,,8.1,"info","Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","french","POND",1128,84.32,79.57,4.75,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","english","POND",191,6.64,7.5,-0.87,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+","other","POND",67,9.05,12.93,-3.88,,"Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","lang_mother","20+",,"POND",1386,,,4.75,"gate","Statistics Canada 98-10-0218-01"
+"qes2014","census","census","Census 2011","education","25+","below_university","none",692,52.7,73.98,-21.27,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","education","25+","university","none",621,47.3,26.02,21.27,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","education","25+",,"none",1313,,,21.27,"info","Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","education","25+","below_university","POND",692,64.86,73.98,-9.12,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","education","25+","university","POND",621,35.14,26.02,9.12,,"Statistics Canada 98-10-0384-01"
+"qes2014","census","census","Census 2011","education","25+",,"POND",1313,,,9.12,"gate","Statistics Canada 98-10-0384-01"
+"qes2014","construct","V-L4","direction","interest_4pt",,"voters - nonvoters","POND",1489,2.95,2.32,0.63,"pass","mean interest (1 = not at all, 4 = very) of voters (estimate) and nonvoters (benchmark)"
+"qes2014","construct","V-L4","direction","lr_self",,"QS - CAQ","POND",341,3.41,5.68,-2.28,"pass","mean left-right self-placement (0-10) of QS voters (estimate) and CAQ voters (benchmark)"
+"qes2014","construct","V-L4","direction","sov_indep",,"PQ - PLQ","POND",781,87.44,2.92,84.52,"pass","percent yes (among yes and no) of PQ voters (estimate) and PLQ voters (benchmark)"
+"qes2014","construct","V-L4","direction","pid_prov",,"pid = vote","POND",1090,84.21,,84.21,"pass","percent of partisans (a party identification) who voted for that party"
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PLQ","none",278,21.82,31.2,-9.37,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PQ","none",509,39.95,31.95,8.01,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"CAQ","none",324,25.43,27.05,-1.62,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"QS","none",96,7.54,6.03,1.5,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PVQ","none",13,1.02,0.99,0.03,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"ON","none",39,3.06,1.89,1.17,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"other","none",15,1.18,0.89,0.29,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,,"none",1274,,,11,"info",
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PLQ","pond",278,24.9,31.2,-6.29,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PQ","pond",509,38.82,31.95,6.87,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"CAQ","pond",324,25.38,27.05,-1.68,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"QS","pond",96,6.49,6.03,0.46,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"PVQ","pond",13,1.02,0.99,0.02,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"ON","pond",39,2.32,1.89,0.43,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,"other","pond",15,1.08,0.89,0.19,,
+"qes2012","recall","V-L2","QC2012","vote_prov_recall",,,"pond",1274,,,7.97,"gate",
+"qes2012","turnout","turnout","QC2012","turnout_prov_recall",,"yes","none",1486,92.13,74.6,17.52,"info",
+"qes2012","turnout","turnout","QC2012","turnout_prov_recall",,"yes","pond",1486,93.23,74.6,18.62,"info",
+"qes2012","census","census","Census 2011","gender","20+","man","none",745,50.99,48.76,2.23,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","gender","20+","woman","none",716,49.01,51.24,-2.23,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","gender","20+",,"none",1461,,,2.23,"info","Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","gender","20+","man","pond",745,48.46,48.76,-0.3,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","gender","20+","woman","pond",716,51.54,51.24,0.3,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","gender","20+",,"pond",1461,,,0.3,"gate","Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a25_34","none",305,24.11,18.51,5.6,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a35_44","none",328,25.93,18.4,7.53,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a45_54","none",315,24.9,22.95,1.95,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a55_64","none",166,13.12,19.61,-6.49,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a65_plus","none",151,11.94,20.54,-8.6,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+",,"none",1265,,,15.09,"info","Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a25_34","pond",305,18.07,18.51,-0.44,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a35_44","pond",328,17.96,18.4,-0.44,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a45_54","pond",315,22.45,22.95,-0.5,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a55_64","pond",166,19.3,19.61,-0.3,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+","a65_plus","pond",151,22.22,20.54,1.69,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","age_group6","25+",,"pond",1265,,,1.69,"gate","Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","french","none",1228,84.05,79.57,4.48,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","english","none",106,7.26,7.5,-0.25,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","other","none",127,8.69,12.93,-4.24,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+",,"none",1461,,,4.48,"info","Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","french","pond",1228,79.17,79.57,-0.4,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","english","pond",106,8.36,7.5,0.86,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+","other","pond",127,12.48,12.93,-0.45,,"Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","lang_mother","20+",,"pond",1461,,,0.86,"gate","Statistics Canada 98-10-0218-01"
+"qes2012","census","census","Census 2011","education","25+","below_university","none",647,55.49,73.98,-18.49,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","education","25+","university","none",519,44.51,26.02,18.49,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","education","25+",,"none",1166,,,18.49,"info","Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","education","25+","below_university","pond",647,56.33,73.98,-17.64,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","education","25+","university","pond",519,43.67,26.02,17.64,,"Statistics Canada 98-10-0384-01"
+"qes2012","census","census","Census 2011","education","25+",,"pond",1166,,,17.64,"gate","Statistics Canada 98-10-0384-01"
+"qes2012","construct","V-L4","direction","interest_4pt",,"voters - nonvoters","pond",1472,2.94,2.28,0.66,"pass","mean interest (1 = not at all, 4 = very) of voters (estimate) and nonvoters (benchmark)"
+"qes2012","construct","V-L4","direction","lr_self",,"QS - CAQ","pond",350,3.11,6.29,-3.19,"pass","mean left-right self-placement (0-10) of QS voters (estimate) and CAQ voters (benchmark)"
+"qes2012","construct","V-L4","direction","sov_indep",,"PQ - PLQ","pond",717,84.46,1.27,83.18,"pass","percent yes (among yes and no) of PQ voters (estimate) and PLQ voters (benchmark)"
+"qes2012","construct","V-L4","direction","pid_prov",,"pid = vote","pond",1042,83.02,,83.02,"pass","percent of partisans (a party identification) who voted for that party"
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"CAQ","none",151,23.85,27.05,-3.2,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"PLQ","none",167,26.38,31.2,-4.81,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"PQ","none",243,38.39,31.95,6.44,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"QS","none",45,7.11,6.03,1.08,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"PVQ","none",10,1.58,0.99,0.59,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"ON","none",16,2.53,1.89,0.64,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,"other","none",1,0.16,0.89,-0.73,,
+"qes2012_panel","recall","V-L2","QC2012","vote_prov_recall",,,"none",633,,,8.74,"info",
+"qes2012_panel","turnout","turnout","QC2012","turnout_prov_recall",,"yes","none",844,92.18,74.6,17.58,"info",
+"qes2012_panel","census","census","Census 2011","gender","20+","man","none",336,39.81,48.76,-8.95,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","gender","20+","woman","none",508,60.19,51.24,8.95,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","gender","20+",,"none",844,,,8.95,"info","Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+","a25_34","none",93,11.48,18.51,-7.03,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+","a35_44","none",155,19.14,18.4,0.74,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+","a45_54","none",184,22.72,22.95,-0.24,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+","a55_64","none",169,20.86,19.61,1.26,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+","a65_plus","none",209,25.8,20.54,5.27,,"Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","age_group6","25+",,"none",810,,,7.26,"info","Statistics Canada 98-10-0384-01"
+"qes2012_panel","census","census","Census 2011","lang_mother","20+","french","none",751,88.98,79.57,9.41,,"Statistics Canada 98-10-0218-01"
+"qes2012_panel","census","census","Census 2011","lang_mother","20+","english","none",41,4.86,7.5,-2.64,,"Statistics Canada 98-10-0218-01"
+"qes2012_panel","census","census","Census 2011","lang_mother","20+","other","none",52,6.16,12.93,-6.77,,"Statistics Canada 98-10-0218-01"
+"qes2012_panel","census","census","Census 2011","lang_mother","20+",,"none",844,,,9.41,"info","Statistics Canada 98-10-0218-01"
+"qes_crop_2007_2010","census","census","Census 2006","gender","20+","man","none",9540,41.44,48.44,-7,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","gender","20+","woman","none",13484,58.56,51.56,7,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","gender","20+",,"none",23024,,,7,"info","Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+","a25_34","none",3834,17.05,18.32,-1.27,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+","a35_44","none",4776,21.24,21.38,-0.14,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+","a45_54","none",5412,24.07,23.46,0.6,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+","a55_64","none",4446,19.77,18.05,1.72,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+","a65_plus","none",4020,17.88,18.79,-0.91,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","age_group6","25+",,"none",22488,,,2.33,"info","Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","education","25+","below_university","none",13993,62.7,76.19,-13.49,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","education","25+","university","none",8325,37.3,23.81,13.49,,"Statistics Canada 98-10-0384-01"
+"qes_crop_2007_2010","census","census","Census 2006","education","25+",,"none",22318,,,13.49,"info","Statistics Canada 98-10-0384-01"
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"PLQ","none",352,39.2,42.08,-2.88,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"PQ","none",336,37.42,35.17,2.25,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"ADQ","none",144,16.04,16.37,-0.33,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"QS","none",38,4.23,3.78,0.45,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"PVQ","none",22,2.45,2.17,0.28,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,"other","none",6,0.67,0.44,0.23,,
+"qes2008","recall","V-L2","QC2008","vote_prov_recall",,,"none",898,,,3.21,"info",
+"qes2008","turnout","turnout","QC2008","turnout_prov_recall",,"yes","none",1131,87.18,57.43,29.75,"info",
+"qes2008","census","census","Census 2006","gender","20+","man","none",528,46.44,48.44,-2,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","gender","20+","woman","none",609,53.56,51.56,2,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","gender","20+",,"none",1137,,,2,"info","Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+","a25_34","none",173,16.35,18.32,-1.97,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+","a35_44","none",243,22.97,21.38,1.59,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+","a45_54","none",241,22.78,23.46,-0.68,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+","a55_64","none",184,17.39,18.05,-0.66,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+","a65_plus","none",217,20.51,18.79,1.72,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","age_group6","25+",,"none",1058,,,3.31,"info","Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","education","25+","below_university","none",559,53.34,76.19,-22.85,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","education","25+","university","none",489,46.66,23.81,22.85,,"Statistics Canada 98-10-0384-01"
+"qes2008","census","census","Census 2006","education","25+",,"none",1048,,,22.85,"info","Statistics Canada 98-10-0384-01"
+"qes2008","construct","V-L4","direction","pid_prov",,"pid = vote","none",763,86.89,,86.89,"pass","percent of partisans (a party identification) who voted for that party"
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"PLQ","none",439,25.42,33.08,-7.66,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"PQ","none",521,30.17,28.35,1.82,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"ADQ","none",583,33.76,30.84,2.92,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"QS","none",75,4.34,3.64,0.71,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"PVQ","none",101,5.85,3.85,2,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,"other","none",8,0.46,0.24,0.22,,
+"qes2007","recall","V-L2","QC2007","vote_prov_recall",,,"none",1727,,,7.66,"info",
+"qes2007","turnout","turnout","QC2007","turnout_prov_recall",,"yes","none",2162,92.04,71.23,20.81,"info",
+"qes2007","census","census","Census 2006","gender","20+","man","none",932,43.09,48.44,-5.35,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","gender","20+","woman","none",1231,56.91,51.56,5.35,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","gender","20+",,"none",2163,,,5.35,"info","Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+","a25_34","none",403,20.39,18.32,2.08,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+","a35_44","none",320,16.19,21.38,-5.19,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+","a45_54","none",422,21.36,23.46,-2.11,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+","a55_64","none",517,26.16,18.05,8.12,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+","a65_plus","none",314,15.89,18.79,-2.9,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","age_group6","25+",,"none",1976,,,10.19,"info","Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","education","25+","below_university","none",1089,55.42,76.19,-20.77,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","education","25+","university","none",876,44.58,23.81,20.77,,"Statistics Canada 98-10-0384-01"
+"qes2007","census","census","Census 2006","education","25+",,"none",1965,,,20.77,"info","Statistics Canada 98-10-0384-01"
+"qes2007","construct","V-L4","direction","pid_prov",,"pid = vote","none",1526,83.42,,83.42,"pass","percent of partisans (a party identification) who voted for that party"
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"ADQ","none",480,32.13,30.84,1.29,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"PLQ","none",428,28.65,33.08,-4.44,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"PQ","none",460,30.79,28.35,2.44,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"QS","none",57,3.82,3.64,0.18,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"PVQ","none",66,4.42,3.85,0.57,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,"other","none",3,0.2,0.24,-0.04,,
+"qes2007_panel","recall","V-L2","QC2007","vote_prov_recall",,,"none",1494,,,4.48,"info",
+"qes2007_panel","turnout","turnout","QC2007","turnout_prov_recall",,"yes","none",2054,85.3,71.23,14.07,"info",
+"qes2007_panel","census","census","Census 2006","gender","20+","man","none",1039,42.58,48.44,-5.86,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","gender","20+","woman","none",1401,57.42,51.56,5.86,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","gender","20+",,"none",2440,,,5.86,"info","Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+","a25_34","none",374,16.36,18.32,-1.96,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+","a35_44","none",495,21.65,21.38,0.27,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+","a45_54","none",570,24.93,23.46,1.47,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+","a55_64","none",429,18.77,18.05,0.72,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+","a65_plus","none",418,18.29,18.79,-0.5,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","age_group6","25+",,"none",2286,,,2.46,"info","Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","education","25+","below_university","none",1492,65.55,76.19,-10.64,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","education","25+","university","none",784,34.45,23.81,10.64,,"Statistics Canada 98-10-0384-01"
+"qes2007_panel","census","census","Census 2006","education","25+",,"none",2276,,,10.64,"info","Statistics Canada 98-10-0384-01"
+"qes1998","recall","V-L2","QC1998","vote_prov_recall",,"ADQ","none",204,18.12,11.81,6.3,,
+"qes1998","recall","V-L2","QC1998","vote_prov_recall",,"PLQ","none",384,34.1,43.55,-9.45,,
+"qes1998","recall","V-L2","QC1998","vote_prov_recall",,"PQ","none",517,45.91,42.87,3.04,,
+"qes1998","recall","V-L2","QC1998","vote_prov_recall",,"other","none",21,1.87,1.76,0.1,,
+"qes1998","recall","V-L2","QC1998","vote_prov_recall",,,"none",1126,,,9.45,"skipped","the study's population is not the electorate (a wave declares its own target population)"
+"qes1998","turnout","turnout","QC1998","turnout_prov_recall",,"yes","none",1483,87.39,78.32,9.07,"skipped","the study's population is not the electorate (a wave declares its own target population)"
