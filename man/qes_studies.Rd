@@ -69,6 +69,7 @@ qes_studies(check_updates = TRUE)[, c("study", "status")]
 them.
 
 Other studies and documents: 
-\code{\link{qes_docs}()}
+\code{\link{qes_docs}()},
+\code{\link{qes_download}()}
 }
 \concept{studies and documents}

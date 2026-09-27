@@ -435,18 +435,61 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
       if (!identical(json$status, "OK") || is.null(d$versionNumber)) {
         stop("unexpected Dataverse response", call. = FALSE)
       }
-      ids <- vapply(d$files, function(f) as.character(f$dataFile$id %||% NA), character(1))
-      md5 <- vapply(d$files, function(f) as.character(f$dataFile$md5 %||% NA), character(1))
+      files <- .qes_latest_files(d$files)
       out <- list(
         version = sprintf("%s.%s", d$versionNumber, d$versionMinorNumber %||% 0L),
         state = d$versionState %||% NA_character_,
-        md5 = stats::setNames(md5, ids)
+        md5 = stats::setNames(files$md5, files$id),
+        files = files
       )
       .qes_latest_memo[[url]] <- out
       out
     },
     error = function(e) e
   )
+}
+
+# The files of a dataset version (the `files` list of the Dataverse JSON) as a
+# data frame: id, md5 (of the original upload for an ingested file; NA when
+# the server records another checksum type), the id of the file it replaced
+# (`previous`) and of the first file of that chain (`root`), its name (the
+# original upload's name for an ingested file), whether it was ingested, its
+# size (of the original upload) and whether it is restricted.
+.qes_latest_files <- function(files) {
+  field <- function(f, name) {
+    v <- f$dataFile[[name]]
+    if (is.null(v) || length(v) != 1L) NA_character_ else as.character(v)
+  }
+  one <- function(f) {
+    md5 <- field(f, "md5")
+    checksum <- f$dataFile$checksum
+    if (is.na(md5) && is.list(checksum) && identical(toupper(checksum$type %||% ""), "MD5")) {
+      md5 <- as.character(checksum$value)
+    }
+    tabular <- isTRUE(f$dataFile$tabularData) || !is.na(field(f, "originalFileName"))
+    name <- if (tabular && !is.na(field(f, "originalFileName"))) field(f, "originalFileName") else field(f, "filename")
+    bytes <- if (tabular && !is.na(field(f, "originalFileSize"))) field(f, "originalFileSize") else field(f, "filesize")
+    data.frame(
+      id = field(f, "id"),
+      md5 = tolower(md5),
+      previous = field(f, "previousDataFileId"),
+      root = field(f, "rootDataFileId"),
+      name = name %||% NA_character_,
+      ingested = tabular,
+      bytes = suppressWarnings(as.numeric(bytes)),
+      restricted = isTRUE(f$restricted),
+      stringsAsFactors = FALSE
+    )
+  }
+  out <- do.call(rbind, lapply(files, one))
+  if (is.null(out)) {
+    out <- data.frame(
+      id = character(0), md5 = character(0), previous = character(0), root = character(0),
+      name = character(0), ingested = logical(0), bytes = numeric(0), restricted = logical(0),
+      stringsAsFactors = FALSE
+    )
+  }
+  out
 }
 
 # ---- get_qescodes() (legacy) ------------------------------------------------------

@@ -203,7 +203,8 @@ get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, qu
 }
 
 # The file manifest attached to a codebook built by the DDI path
-# (attr "codebook_files"). Used by download_codebook() until slice S2c.
+# (attr "codebook_files"), for get_codebook_files(codebook = ) on a codebook
+# that does not record its study.
 .qes_codebook_attr_files <- function(codebook) {
   files <- attr(codebook, "codebook_files", exact = TRUE)
   if (is.null(files)) {

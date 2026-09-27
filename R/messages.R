@@ -85,6 +85,26 @@
     en = "Option %1$s must be the path of an existing directory.",
     fr = "L'option %1$s doit \u00eatre le chemin d'un dossier existant."
   ),
+  input_choice_one = c(
+    en = "`%1$s` must be one of %2$s.",
+    fr = "`%1$s` doit prendre l'une des valeurs %2$s."
+  ),
+  input_path_dir = c(
+    en = "`path` must be an existing directory. qesR writes only into a directory you have created.",
+    fr = "`path` doit \u00eatre un dossier existant. qesR n'\u00e9crit que dans un dossier que vous avez cr\u00e9\u00e9."
+  ),
+  download_exists = c(
+    en = "These files already exist and differ from the files to download: %1$s. Nothing was written. Use `overwrite = TRUE` to replace them, or choose another `path`.",
+    fr = "Ces fichiers existent d\u00e9j\u00e0 et diff\u00e8rent des fichiers \u00e0 t\u00e9l\u00e9charger\u00a0: %1$s. Rien n'a \u00e9t\u00e9 \u00e9crit. Utilisez `overwrite = TRUE` pour les remplacer, ou choisissez un autre `path`."
+  ),
+  download_write = c(
+    en = "qesR could not write into %1$s.",
+    fr = "qesR n'a pas pu \u00e9crire dans %1$s."
+  ),
+  download_latest_demo = c(
+    en = "%1$s ships with qesR and has no Dataverse deposit, so it has no latest version. Use `version = \"pinned\"`.",
+    fr = "%1$s est fourni avec qesR et n'a pas de d\u00e9p\u00f4t Dataverse, donc pas de derni\u00e8re version. Utilisez `version = \"pinned\"`."
+  ),
   input_older_than = c(
     en = "`older_than` must be a single non-negative number of days, or a difftime.",
     fr = "`older_than` doit \u00eatre un seul nombre de jours positif ou nul, ou un difftime."
@@ -175,6 +195,18 @@
     en = "The file found at %1$s is not file %3$s of study %2$s: its md5 is %5$s, not %4$s. qesR deleted it, and the server refused the automated download. If you saved it from a web browser, download it again choosing the original file format (not the tab-delimited version), and save it at the same place.",
     fr = "Le fichier trouv\u00e9 \u00e0 %1$s n'est pas le fichier %3$s de l'\u00e9tude %2$s\u00a0: sa somme md5 est %5$s, et non %4$s. qesR l'a supprim\u00e9, et le serveur a refus\u00e9 le t\u00e9l\u00e9chargement automatis\u00e9. Si vous l'avez enregistr\u00e9 depuis un navigateur, t\u00e9l\u00e9chargez-le \u00e0 nouveau en choisissant le format original (et non la version tabul\u00e9e), puis enregistrez-le au m\u00eame endroit."
   ),
+  latest_unreadable = c(
+    en = "Could not read the latest version of doi:%2$s (study %1$s). Nothing was written.",
+    fr = "Impossible de lire la derni\u00e8re version de doi:%2$s (\u00e9tude %1$s). Rien n'a \u00e9t\u00e9 \u00e9crit."
+  ),
+  latest_deaccessioned = c(
+    en = "The latest version (%3$s) of doi:%2$s (study %1$s) is deaccessioned. Nothing was written; `version = \"pinned\"` fetches the files qesR pins.",
+    fr = "La derni\u00e8re version (%3$s) de doi:%2$s (\u00e9tude %1$s) est retir\u00e9e. Rien n'a \u00e9t\u00e9 \u00e9crit\u00a0; `version = \"pinned\"` t\u00e9l\u00e9charge les fichiers retenus par qesR."
+  ),
+  latest_missing = c(
+    en = "File %2$s of study %1$s is not in version %3$s of its deposit (or has no md5 to check it against). Nothing was written; `version = \"pinned\"` fetches the files qesR pins.",
+    fr = "Le fichier %2$s de l'\u00e9tude %1$s n'est pas dans la version %3$s de son d\u00e9p\u00f4t (ou n'a pas de somme md5 permettant de le v\u00e9rifier). Rien n'a \u00e9t\u00e9 \u00e9crit\u00a0; `version = \"pinned\"` t\u00e9l\u00e9charge les fichiers retenus par qesR."
+  ),
   catalog_invalid = c(
     en = "The qesR catalog file %1$s is invalid: %2$s. Reinstall qesR.",
     fr = "Le fichier de catalogue de qesR %1$s est invalide\u00a0: %2$s. R\u00e9installez qesR."
@@ -212,10 +244,19 @@
     fr = "`%1$s` n'indique pas de quelle \u00e9tude il provient (ses attributs ont pu \u00eatre perdus, par exemple avec merge()). Passez plut\u00f4t des codes d'\u00e9tude."
   ),
 
+  no_provenance_level = c(
+    en = "`%1$s` records study-level provenance only; %2$s-level provenance is recorded for harmonized data.",
+    fr = "`%1$s` n'enregistre que la provenance au niveau de l'\u00e9tude\u00a0; la provenance au niveau %2$s est enregistr\u00e9e pour les donn\u00e9es harmonis\u00e9es."
+  ),
+
   # ---- warnings ------------------------------------------------------------
   question_missing = c(
     en = "No question label was found for %1$s.",
     fr = "Aucun libell\u00e9 de question trouv\u00e9 pour %1$s."
+  ),
+  unpinned = c(
+    en = "qes_download(version = \"latest\") saved files that the qesR catalog does not pin, for %1$s. They were checked against the md5 given by Dataverse, not by qesR, and get_qes() keeps reading the pinned files.",
+    fr = "qes_download(version = \"latest\") a enregistr\u00e9 des fichiers que le catalogue de qesR ne retient pas, pour %1$s. Ils ont \u00e9t\u00e9 v\u00e9rifi\u00e9s par la somme md5 donn\u00e9e par Dataverse, et non par qesR, et get_qes() continue de lire les fichiers retenus."
   ),
   encoding = c(
     en = "File %2$s of study %1$s still has %3$s label(s) or text value(s) with a replacement or control character after decoding (in %4$s). Please report it.",
@@ -286,6 +327,61 @@
     en = "Downloaded files are kept only until R closes. To keep them between sessions, set options(qesR.cache = \"disk\"). This tip is shown once per session.",
     fr = "Les fichiers t\u00e9l\u00e9charg\u00e9s ne sont conserv\u00e9s que jusqu'\u00e0 la fermeture de R. Pour les garder d'une session \u00e0 l'autre, fixez options(qesR.cache = \"disk\"). Ce conseil s'affiche une fois par session."
   ),
+  download_kept = c(
+    en = "%1$s is already there, with the expected md5; kept.",
+    fr = "%1$s est d\u00e9j\u00e0 pr\u00e9sent, avec la somme md5 attendue\u00a0; conserv\u00e9."
+  ),
+  download_done = c(
+    en = "%1$s file(s) saved in %3$s, %2$s already there.",
+    fr = "%1$s fichier(s) enregistr\u00e9(s) dans %3$s, %2$s d\u00e9j\u00e0 pr\u00e9sent(s)."
+  ),
+  download_none = c(
+    en = "No file of %1$s matches the request; nothing was written.",
+    fr = "Aucun fichier de %1$s ne correspond \u00e0 la demande\u00a0; rien n'a \u00e9t\u00e9 \u00e9crit."
+  ),
+
+  # ---- print.qes_provenance() ------------------------------------------------
+  prov_head = c(
+    en = "%1$s: file %2$s (%3$s) of the Dataverse dataset https://doi.org/%4$s, version %5$s.",
+    fr = "%1$s\u00a0: fichier %2$s (%3$s) du jeu de donn\u00e9es Dataverse https://doi.org/%4$s, version %5$s."
+  ),
+  prov_head_demo = c(
+    en = "%1$s: file %2$s (%3$s), synthetic data shipped with qesR.",
+    fr = "%1$s\u00a0: fichier %2$s (%3$s), donn\u00e9es synth\u00e9tiques fournies avec qesR."
+  ),
+  prov_unpinned = c(
+    en = "This is not the version pinned by the qesR catalog.",
+    fr = "Ce n'est pas la version retenue par le catalogue de qesR."
+  ),
+  prov_md5_verified = c(
+    en = "md5 %1$s, verified.",
+    fr = "Somme md5 %1$s, v\u00e9rifi\u00e9e."
+  ),
+  prov_md5_expected = c(
+    en = "Expected md5 %1$s (not yet checked).",
+    fr = "Somme md5 attendue %1$s (pas encore v\u00e9rifi\u00e9e)."
+  ),
+  prov_dims = c(
+    en = "%1$s rows, %2$s columns.",
+    fr = "%1$s lignes, %2$s colonnes."
+  ),
+  prov_retrieved = c(
+    en = "Retrieved on %1$s UTC (%2$s).",
+    fr = "Obtenu le %1$s UTC (%2$s)."
+  ),
+  prov_reader = c(
+    en = "Read with %1$s, haven %2$s.",
+    fr = "Lu avec %1$s, haven %2$s."
+  ),
+  prov_licence = c(
+    en = "Licence: %1$s. qesR catalog %2$s.",
+    fr = "Licence\u00a0: %1$s. Catalogue qesR %2$s."
+  ),
+  prov_footer = c(
+    en = "as.data.frame() gives every column.",
+    fr = "as.data.frame() donne toutes les colonnes."
+  ),
+
   master_skip = c(
     en = "Skipping %1$s due to a download or read error.",
     fr = "%1$s est ignor\u00e9e \u00e0 cause d'une erreur de t\u00e9l\u00e9chargement ou de lecture."

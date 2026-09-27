@@ -73,10 +73,11 @@
 #'   `qes_survey_code` (the canonical study code), `qes_provenance` (a
 #'   one-row data frame recording the DOI, dataset version, file id, file
 #'   name, md5, UNF, dimensions, where the file came from and when, the
-#'   licence, the source of the labels and the reader used) and, with
-#'   `with_codebook = TRUE`, `qes_codebook`.
+#'   licence, the source of the labels and the reader used; see
+#'   [qes_provenance()]) and, with `with_codebook = TRUE`, `qes_codebook`.
 #' @seealso [qes_studies()] for the study codes and their pinned files,
-#'   [qes_cache_info()] for the download cache.
+#'   [qes_provenance()] for the record of the file read, [qes_download()] to
+#'   save the original files, [qes_cache_info()] for the download cache.
 #' @examples
 #' # the synthetic demonstration study ships with qesR: no download
 #' demo <- get_qes("qes_demo", quiet = TRUE)
@@ -165,13 +166,19 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 #'
 #' Soft-deprecated: use `head(get_qes(srvy), obs)`. `get_preview()` keeps
 #' working and will not be removed; it prints a one-time notice (see
-#' [qesR-deprecated]).
+#' [qesR-deprecated]). It is exactly `head()` of what [get_qes()] returns,
+#' so the data comes from the same pinned file, is served from memory or the
+#' download cache when the study was read before in the session, and keeps
+#' the attributes `qes_survey_code`, `qes_provenance` and `qes_codebook`.
 #'
 #' @param srvy A qesR survey code from `qes_studies()`.
-#' @param obs Number of observations to return.
+#' @param obs Number of observations to return: a whole number of at least
+#'   1 (otherwise an error of class `qesR_error_input`).
 #' @param file Optional regular expression for choosing one file in multi-file datasets.
 #'
-#' @return A data frame/tibble preview (with attached codebook metadata).
+#' @return A base data frame with the first `obs` rows, and the attributes
+#'   of [get_qes()] data (`qes_survey_code`, `qes_provenance`,
+#'   `qes_codebook`).
 #' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' \donttest{

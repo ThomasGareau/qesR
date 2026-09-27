@@ -21,6 +21,8 @@ export_calls <- function() {
     qes_studies = quote(qes_studies()),
     qes_docs = quote(qes_docs()),
     qes_cite = quote(qes_cite("qes2018")),
+    qes_download = quote(qes_download("qes2018", path = tempdir(), what = c("data", "docs"))),
+    qes_provenance = quote(qes_provenance(get_qes("qes2018", quiet = TRUE))),
     qes_cache_info = quote(qes_cache_info()),
     qes_cache_clear = quote(qes_cache_clear())
   )
@@ -63,7 +65,7 @@ test_that("the call table covers every export", {
 
 test_that("every export returns its value visibly", {
   local_fake_dataverse()
-  withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
+  local_tempdir_cleanup()
   for (f in names(export_calls())) {
     res <- suppressMessages(withVisible(eval(export_calls()[[f]])))
     expect_identical(res$visible, !(f %in% invisible_by_design), info = f)
@@ -74,7 +76,7 @@ test_that("every export returns its value visibly", {
 test_that("default calls leave globalenv, the working directory, ~ and R_user_dir untouched", {
   local_user_dirs()
   local_fake_dataverse()
-  withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
+  local_tempdir_cleanup()
   before <- side_effect_state()
   expect_identical(unname(lengths(before$user_files)), c(0L, 0L, 0L))
   for (f in names(export_calls())) {
@@ -85,7 +87,7 @@ test_that("default calls leave globalenv, the working directory, ~ and R_user_di
 
 test_that("the offline fake answers every request the exports make", {
   log <- local_fake_dataverse()
-  withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
+  local_tempdir_cleanup()
   for (f in names(export_calls())) {
     suppressMessages(eval(export_calls()[[f]]))
   }

@@ -39,6 +39,7 @@ qes_docs(qes_studies(family = "qes")$study, role = "questionnaire", lang = "fr")
 \code{\link[=qes_studies]{qes_studies()}} for the studies.
 
 Other studies and documents: 
+\code{\link{qes_download}()},
 \code{\link{qes_studies}()}
 }
 \concept{studies and documents}

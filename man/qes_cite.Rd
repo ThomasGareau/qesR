@@ -8,8 +8,9 @@ qes_cite(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "en")
 }
 \arguments{
 \item{x}{\code{NULL} to cite qesR only; a character vector of study codes (see
-\code{\link[=qes_studies]{qes_studies()}}); or a data frame returned by \code{\link[=get_qes]{get_qes()}}, whose study is
-read from its attributes. A data frame that has lost those attributes
+\code{\link[=qes_studies]{qes_studies()}}); a data frame returned by \code{\link[=get_qes]{get_qes()}}, or the result of
+\code{\link[=qes_download]{qes_download()}} or \code{\link[=qes_provenance]{qes_provenance()}}, whose studies are read from its
+provenance record. A data frame that has lost those attributes
 (for example after \code{\link[=merge]{merge()}}) is an error of class
 \code{qesR_error_no_provenance}. The synthetic study \code{qes_demo} has no
 deposit and adds nothing.}
@@ -47,5 +48,8 @@ cat(qes_cite("qes2022", style = "bibtex"), sep = "\n\n")
 }
 \seealso{
 \code{\link[=qes_studies]{qes_studies()}} for the catalog, and \code{citation("qesR")}.
+
+Other reproducibility: 
+\code{\link{qes_provenance}()}
 }
 \concept{reproducibility}

@@ -16,27 +16,48 @@ download_codebook(
 \arguments{
 \item{srvy}{A qesR survey code.}
 
-\item{dest_dir}{Directory where files should be downloaded.}
+\item{dest_dir}{Directory where files should be downloaded. Created if
+needed, only when there is a file to download.}
 
-\item{file}{Optional file selector passed to \code{qes_codebook()}.}
+\item{file}{Optional regular expression matched (ignoring case) against
+the document file names; only matching documents are downloaded.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
-\item{refresh}{If TRUE, force a fresh codebook metadata download first.}
+\item{refresh}{Ignored: the list comes from the catalog shipped with qesR.}
 
 \item{overwrite}{If TRUE, overwrite existing files in \code{dest_dir}.}
 }
 \value{
-A data frame containing source file metadata and local download paths.
+A data frame with the columns \code{file_id}, \code{filename}, \code{extension},
+\code{size}, \code{download_url}, \code{local_path} and \code{downloaded}.
 }
 \description{
-Downloads codebook/support files (PDFs, questionnaires, metadata files) into a local directory.
+Downloads a study's documentation files (codebooks, questionnaires and
+reports) into a local directory.
+}
+\details{
+Soft-deprecated: use \code{\link[=qes_download]{qes_download()}} with \code{what = "docs"}.
+\code{download_codebook()} keeps working and will not be removed; it prints a
+one-time notice (see \link{qesR-deprecated}). It now downloads the documents
+listed in the offline catalog (the same files as \code{\link[=get_codebook_files]{get_codebook_files()}}),
+checks each one against its md5 checksum before giving it its final name,
+and makes no metadata request. \code{file} now selects documents by name; in
+qesR 0.4.4 it selected a data file. \code{refresh} no longer changes the result.
+\code{dest_dir} is created only when there is at least one file to download. A
+file already in \code{dest_dir} is kept as it is unless \code{overwrite = TRUE}.
 }
 \examples{
 \donttest{
-  download_codebook("qes2022", dest_dir = tempdir())
+# one small document (the 2018 English questionnaire, from Borealis);
+# a network failure gives its message instead of an error
+tryCatch(
+  download_codebook("qes2018", dest_dir = tempdir(), file = "EN\\\\.doc$"),
+  qesR_error_network = function(e) conditionMessage(e)
+)
 }
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_download]{qes_download()}}, \code{\link[=qes_docs]{qes_docs()}}, and \link{qesR-deprecated} for the
+legacy functions and their replacements.
 }

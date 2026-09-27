@@ -16,7 +16,7 @@
 #' | `get_question()` | `qes_question()` | when the replacement ships |
 #' | `get_codebook_files()` | `qes_docs()` | yes |
 #' | `get_qes_codebook_files()` | `qes_docs()` | yes |
-#' | `download_codebook()` | `qes_download(what = "docs")` | when the replacement ships |
+#' | `download_codebook()` | `qes_download(what = "docs")` | yes |
 #' | `get_qescodes()` | `qes_studies()` | yes |
 #' | `get_decon()` | `qes_harmonize(targets = "decon")` | from qesR 0.7.0 |
 #'
@@ -74,7 +74,7 @@ NULL
   shipped = c(
     TRUE, TRUE, TRUE,
     FALSE, FALSE, FALSE,
-    TRUE, TRUE, FALSE,
+    TRUE, TRUE, TRUE,
     TRUE, FALSE
   ),
   stringsAsFactors = FALSE

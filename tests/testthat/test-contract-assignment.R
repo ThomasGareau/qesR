@@ -208,7 +208,7 @@ test_that("the legacy call table covers the 11 legacy wrappers", {
 })
 
 test_that("legacy wrappers emit qesR_message_deprecated once per session", {
-  withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
+  local_tempdir_cleanup()
   registry <- qesR:::.qes_deprecated
   expect_setequal(registry$name, legacy_exports)
   # Only wrappers whose replacement has shipped announce anything (design.md

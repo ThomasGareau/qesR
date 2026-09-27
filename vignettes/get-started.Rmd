@@ -35,6 +35,8 @@ Core calls:
 - `get_question(data, variable)` retrieve survey question text
 - `qes_codebook(srvy)` retrieve codebook
 - `get_qes_master()` build merged harmonized data
+- `qes_download(studies, path)` save the original files, md5-checked
+- `qes_provenance(data)` record which file the data came from
 
 Every function returns its result. Nothing is written into your workspace
 unless you ask for it with `assign_global = TRUE`, so assign the result
@@ -68,6 +70,24 @@ cb_long <- qes_codebook("qes2022", layout = "long")
 head(qes2022, 10)
 get_question(qes2022, "cps_age_in_years")
 get_question(qes2022, "cps_age_in_years", full = TRUE)
+```
+
+## Keep the original files and their provenance
+
+`qes_download()` saves a study's original files in a folder you choose: the
+data file as its authors deposited it and, with `what = "docs"`, the
+codebooks, questionnaires and reports. Each file is checked against the md5
+checksum in the qesR catalog before it gets its final name, and nothing is
+written outside that folder. `qes_provenance()` records which file a data
+frame was read from (DOI, dataset version, file, md5, when and how it was
+retrieved); printed, it gives a paragraph for a replication log.
+
+```{r, eval = FALSE}
+dir.create("originals")
+qes_download("qes2018", path = "originals", what = c("data", "docs"))
+qes2018 <- get_qes("qes2018")
+qes_provenance(qes2018)
+qes_cite(qes2018)
 ```
 
 ## Build a harmonized master dataset

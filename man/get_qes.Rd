@@ -47,8 +47,8 @@ A base data frame, returned visibly, with attributes
 \code{qes_survey_code} (the canonical study code), \code{qes_provenance} (a
 one-row data frame recording the DOI, dataset version, file id, file
 name, md5, UNF, dimensions, where the file came from and when, the
-licence, the source of the labels and the reader used) and, with
-\code{with_codebook = TRUE}, \code{qes_codebook}.
+licence, the source of the labels and the reader used; see
+\code{\link[=qes_provenance]{qes_provenance()}}) and, with \code{with_codebook = TRUE}, \code{qes_codebook}.
 }
 \description{
 Reads a study's data file, as its authors deposited it, and returns it
@@ -113,5 +113,6 @@ attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
 }
 \seealso{
 \code{\link[=qes_studies]{qes_studies()}} for the study codes and their pinned files,
-\code{\link[=qes_cache_info]{qes_cache_info()}} for the download cache.
+\code{\link[=qes_provenance]{qes_provenance()}} for the record of the file read, \code{\link[=qes_download]{qes_download()}} to
+save the original files, \code{\link[=qes_cache_info]{qes_cache_info()}} for the download cache.
 }

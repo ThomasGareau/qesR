@@ -34,6 +34,8 @@ library(qesR)
 - `qes_codebook("qes2022")` : codebook
 - `get_question(obj, variable)` : texte de question
 - `get_qes_master()` : données fusionnées harmonisées
+- `qes_download(studies, path)` : fichiers originaux, vérifiés par somme md5
+- `qes_provenance(donnees)` : fichier dont proviennent les données
 
 Chaque fonction renvoie son résultat. Rien n'est écrit dans votre espace de
 travail, sauf si vous le demandez avec `assign_global = TRUE` : assignez
@@ -53,6 +55,25 @@ qes2022 <- get_qes("qes2022")
 cb <- qes_codebook("qes2022")
 head(qes2022, 10)
 master <- get_qes_master(strict = FALSE)
+```
+
+## Fichiers originaux et provenance
+
+`qes_download()` enregistre les fichiers originaux d'une étude dans un
+dossier de votre choix : le fichier de données tel que ses auteurs l'ont
+déposé et, avec `what = "docs"`, les livres de codes, questionnaires et
+rapports. Chaque fichier est vérifié par la somme md5 du catalogue de qesR
+avant de recevoir son nom définitif, et rien n'est écrit hors de ce dossier.
+`qes_provenance()` indique de quel fichier proviennent des données (DOI,
+version du jeu de données, fichier, somme md5, date et mode d'obtention) ;
+affiché, il donne un paragraphe pour un journal de réplication.
+
+```{r, eval = FALSE}
+dir.create("originals")
+qes_download("qes2018", path = "originals", what = c("data", "docs"))
+qes2018 <- get_qes("qes2018")
+qes_provenance(qes2018)
+qes_cite(qes2018)
 ```
 
 ## Messages et erreurs

@@ -344,20 +344,40 @@ qes_codebook <- function(
 
 #' Download Codebook Files
 #'
-#' Downloads codebook/support files (PDFs, questionnaires, metadata files) into a local directory.
+#' Downloads a study's documentation files (codebooks, questionnaires and
+#' reports) into a local directory.
+#'
+#' Soft-deprecated: use [qes_download()] with `what = "docs"`.
+#' `download_codebook()` keeps working and will not be removed; it prints a
+#' one-time notice (see [qesR-deprecated]). It now downloads the documents
+#' listed in the offline catalog (the same files as [get_codebook_files()]),
+#' checks each one against its md5 checksum before giving it its final name,
+#' and makes no metadata request. `file` now selects documents by name; in
+#' qesR 0.4.4 it selected a data file. `refresh` no longer changes the result.
+#' `dest_dir` is created only when there is at least one file to download. A
+#' file already in `dest_dir` is kept as it is unless `overwrite = TRUE`.
 #'
 #' @param srvy A qesR survey code.
-#' @param dest_dir Directory where files should be downloaded.
-#' @param file Optional file selector passed to `qes_codebook()`.
+#' @param dest_dir Directory where files should be downloaded. Created if
+#'   needed, only when there is a file to download.
+#' @param file Optional regular expression matched (ignoring case) against
+#'   the document file names; only matching documents are downloaded.
 #' @param quiet If TRUE, suppress informational output.
-#' @param refresh If TRUE, force a fresh codebook metadata download first.
+#' @param refresh Ignored: the list comes from the catalog shipped with qesR.
 #' @param overwrite If TRUE, overwrite existing files in `dest_dir`.
 #'
-#' @return A data frame containing source file metadata and local download paths.
-#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
+#' @return A data frame with the columns `file_id`, `filename`, `extension`,
+#'   `size`, `download_url`, `local_path` and `downloaded`.
+#' @seealso [qes_download()], [qes_docs()], and [qesR-deprecated] for the
+#'   legacy functions and their replacements.
 #' @examples
 #' \donttest{
-#'   download_codebook("qes2022", dest_dir = tempdir())
+#' # one small document (the 2018 English questionnaire, from Borealis);
+#' # a network failure gives its message instead of an error
+#' tryCatch(
+#'   download_codebook("qes2018", dest_dir = tempdir(), file = "EN\\.doc$"),
+#'   qesR_error_network = function(e) conditionMessage(e)
+#' )
 #' }
 #' @export
 download_codebook <- function(
@@ -375,6 +395,7 @@ download_codebook <- function(
   )
 }
 
+# The legacy adapter over qes_download(what = "docs") (design.md section 2.3).
 .download_codebook_impl <- function(
   srvy,
   dest_dir = tempdir(),
@@ -384,42 +405,49 @@ download_codebook <- function(
   overwrite = FALSE
 ) {
   .assert_single_string(dest_dir, "dest_dir")
-  if (!dir.exists(dest_dir)) {
-    dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
+  if (!is.null(file)) {
+    .assert_single_string(file, "file")
+    .qes_assert_regex(file, "file")
+  }
+  .qes_check_flag(overwrite, "overwrite")
+  if (isTRUE(refresh)) {
+    .qes_arg_ignored("download_codebook", "refresh")
+  }
+  code <- .get_qes_study(srvy)$qes_survey_code
+  rows <- .qes_download_select(.qes_legacy_deposit_codes(code), what = "docs")
+  if (!is.null(file)) {
+    rows <- rows[grepl(file, rows$file_name, ignore.case = TRUE), , drop = FALSE]
   }
 
-  study <- .get_qes_study(srvy)
-  code <- study$qes_survey_code
-  codebook <- .qes_codebook_impl(code, file = file, quiet = quiet, refresh = refresh, layout = "compact")
-  files <- .qes_codebook_attr_files(codebook)
-
-  if (nrow(files) == 0L) {
+  out <- .qes_legacy_files_frame(nrow(rows))
+  if (nrow(rows) == 0L) {
     .qes_inform("no_codebook_files", class = "qesR_message_download", args = list(.qes_q(code)), data = list(study = code), quiet = quiet)
-    files$local_path <- character(0)
-    files$downloaded <- logical(0)
-    return(files)
+    out$local_path <- character(0)
+    out$downloaded <- logical(0)
+    return(out)
   }
-
-  local_paths <- character(nrow(files))
-  downloaded <- logical(nrow(files))
-
-  for (i in seq_len(nrow(files))) {
-    src_name <- basename(files$filename[i])
-    out_path <- file.path(dest_dir, src_name)
-    local_paths[i] <- out_path
-
-    if (file.exists(out_path) && !isTRUE(overwrite)) {
-      downloaded[i] <- FALSE
-      next
-    }
-
-    .qes_fetch(files$download_url[i], out_path, quiet = quiet, what = src_name)
-    downloaded[i] <- TRUE
+  if (!dir.exists(dest_dir) && !dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)) {
+    .qes_abort(
+      "download_write",
+      class = "qesR_error_input",
+      args = list(.qes_q(dest_dir)),
+      data = list(arg = "dest_dir", value = dest_dir)
+    )
   }
+  done <- .qes_download_files(rows, normalizePath(dest_dir, winslash = "/", mustWork = TRUE),
+    overwrite = overwrite, quiet = quiet, legacy = TRUE)
 
-  files$local_path <- local_paths
-  files$downloaded <- downloaded
-  files
+  servers <- .qes_catalog()$studies$server[match(rows$study, .qes_catalog()$studies$study)]
+  out$file_id <- rows$file_id
+  out$filename <- rows$file_name
+  out$extension <- rows$format
+  out$size <- rows$bytes
+  out$download_url <- vapply(seq_len(nrow(rows)), function(i) {
+    .qes_url(servers[i], "file", file_id = rows$file_id[i])
+  }, character(1))
+  out$local_path <- done$local_path
+  out$downloaded <- done$downloaded
+  out
 }
 
 #' @export

@@ -102,8 +102,13 @@ get_value_labels(qes2018_codebook, long = TRUE)
 qes2018_codebook <- get_codebook("qes2018")
 qes2018_codebook <- get_qes_codebook("qes2018")
 
-# download the documents (PDFs, questionnaires)
-download_codebook("qes2018", dest_dir = tempdir())
+# save the original files (data file and documents), md5-checked,
+# in a folder you have created
+dir.create("originals")
+qes_download("qes2018", path = "originals", what = c("data", "docs"))
+
+# which file the data came from: DOI, version, file id, md5, retrieval
+qes_provenance(qes2018)
 
 # preview first 10 rows
 head(qes2018, 10)

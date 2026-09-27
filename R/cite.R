@@ -117,8 +117,12 @@
   if (is.character(x)) {
     return(.qes_resolve_codes(x, "x", demo = TRUE))
   }
-  prov <- attr(x, "qes_provenance", exact = TRUE)
+  prov <- if (inherits(x, "qes_provenance")) x else attr(x, "qes_provenance", exact = TRUE)
   if (is.data.frame(prov) && "study" %in% names(prov)) {
+    # an empty record (qes_download() with no matching file): no study
+    if (nrow(prov) == 0L) {
+      return(character(0))
+    }
     return(.qes_resolve_codes(unique(prov$study), "x", demo = TRUE))
   }
   code <- attr(x, "qes_survey_code", exact = TRUE)
@@ -145,8 +149,9 @@
 #' share one deposit, so their citations add the data file used.
 #'
 #' @param x `NULL` to cite qesR only; a character vector of study codes (see
-#'   [qes_studies()]); or a data frame returned by [get_qes()], whose study is
-#'   read from its attributes. A data frame that has lost those attributes
+#'   [qes_studies()]); a data frame returned by [get_qes()], or the result of
+#'   [qes_download()] or [qes_provenance()], whose studies are read from its
+#'   provenance record. A data frame that has lost those attributes
 #'   (for example after [merge()]) is an error of class
 #'   `qesR_error_no_provenance`. The synthetic study `qes_demo` has no
 #'   deposit and adds nothing.

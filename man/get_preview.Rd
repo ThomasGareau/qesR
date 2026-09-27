@@ -9,12 +9,15 @@ get_preview(srvy, obs = 6L, file = NULL)
 \arguments{
 \item{srvy}{A qesR survey code from \code{qes_studies()}.}
 
-\item{obs}{Number of observations to return.}
+\item{obs}{Number of observations to return: a whole number of at least
+1 (otherwise an error of class \code{qesR_error_input}).}
 
 \item{file}{Optional regular expression for choosing one file in multi-file datasets.}
 }
 \value{
-A data frame/tibble preview (with attached codebook metadata).
+A base data frame with the first \code{obs} rows, and the attributes
+of \code{\link[=get_qes]{get_qes()}} data (\code{qes_survey_code}, \code{qes_provenance},
+\code{qes_codebook}).
 }
 \description{
 Loads a study and returns the first observations.
@@ -22,7 +25,10 @@ Loads a study and returns the first observations.
 \details{
 Soft-deprecated: use \code{head(get_qes(srvy), obs)}. \code{get_preview()} keeps
 working and will not be removed; it prints a one-time notice (see
-\link{qesR-deprecated}).
+\link{qesR-deprecated}). It is exactly \code{head()} of what \code{\link[=get_qes]{get_qes()}} returns,
+so the data comes from the same pinned file, is served from memory or the
+download cache when the study was read before in the session, and keeps
+the attributes \code{qes_survey_code}, \code{qes_provenance} and \code{qes_codebook}.
 }
 \examples{
 \donttest{

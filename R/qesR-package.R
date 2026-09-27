@@ -39,7 +39,9 @@
 #' `tryCatch()` or `withCallingHandlers()` without matching message text.
 #' Errors inherit from `qesR_error`:
 #' \describe{
-#'   \item{`qesR_error_input`}{an invalid argument (fields `arg`, `value`);}
+#'   \item{`qesR_error_input`}{an invalid argument (fields `arg`, `value`),
+#'     including files that [qes_download()] would overwrite (field
+#'     `paths`);}
 #'   \item{`qesR_error_unknown_study`}{an unknown study code (fields `study`,
 #'     `suggestions`);}
 #'   \item{`qesR_error_unknown_variable`}{an unknown column (fields
@@ -56,18 +58,22 @@
 #'     qesR never retries without TLS certificate checks); and
 #'     `qesR_error_offline` (the server's name could not be resolved);}
 #'   \item{`qesR_error_source`}{a problem with the files served for a study
-#'     (fields `study`, `file_id`); subclasses `qesR_error_checksum` (a file
+#'     (fields `study`, `file_id`), such as a file missing from the latest
+#'     version of its deposit; subclasses `qesR_error_checksum` (a file
 #'     that does not match its catalog md5; fields `expected`, `actual`) and
 #'     `qesR_error_rowcount` (a data file whose rows and columns differ from
 #'     the catalog; fields `expected`, `actual`);}
 #'   \item{`qesR_error_cache`}{a cache directory that is missing or is not a
 #'     qesR cache (fields `path`, `reason`);}
 #'   \item{`qesR_error_no_provenance`}{an object that no longer records which
-#'     study it comes from, passed to [qes_cite()].}
+#'     study it comes from, passed to [qes_cite()] or [qes_provenance()], or
+#'     a provenance level the object does not record (field `level`).}
 #' }
 #' Warnings inherit from `qesR_warning`, among them `qesR_warning_encoding`
 #' (a label or text value that still holds a replacement or control
-#' character after reading; fields `study`, `file_id`, `n`, `variables`).
+#' character after reading; fields `study`, `file_id`, `n`, `variables`) and
+#' `qesR_warning_unpinned` (files saved by `qes_download(version =
+#' "latest")`, which the catalog does not pin; fields `study`, `file_id`).
 #' Messages inherit from `qesR_message`.
 #' Progress messages (classes `qesR_message_download` and
 #' `qesR_message_cached`) are silenced by `quiet = TRUE`, as is the one-time
@@ -93,7 +99,10 @@
 #' data, whose labels are complete). Codes an SPSS file declares as
 #' user-missing are kept as values, with the declaration in the column
 #' attributes `qes_na_values` and `qes_na_range`. The attribute
-#' `qes_provenance` records which file was read.
+#' `qes_provenance` records which file was read; [qes_provenance()] returns
+#' it and prints it as a paragraph for a replication log.
+#' [qes_download()] saves the original files themselves (data file and
+#' documents), md5-checked, in a directory you choose.
 #'
 #' @section Network use:
 #' Requests go to the Dataverse servers listed in the catalog, one at a time
@@ -141,7 +150,8 @@
 #' **Conditions.** Les erreurs, avertissements et messages ont des classes,
 #' ce qui permet d'y réagir avec `tryCatch()` ou `withCallingHandlers()` sans
 #' lire le texte. Les erreurs héritent de `qesR_error` : `qesR_error_input`
-#' (champs `arg`, `value`), `qesR_error_unknown_study` (`study`,
+#' (champs `arg`, `value` ; aussi pour des fichiers que [qes_download()]
+#' écraserait, champ `paths`), `qesR_error_unknown_study` (`study`,
 #' `suggestions`), `qesR_error_unknown_variable` (`variables`,
 #' `suggestions`), `qesR_error_ambiguous_file` (`study`, `pattern`,
 #' `candidates` ; motif `file` qui ne désigne aucun fichier de données de
@@ -152,17 +162,21 @@
 #' `manual_path`), `qesR_error_tls` (échec de la connexion sécurisée ; qesR ne
 #' désactive jamais la vérification des certificats TLS) et
 #' `qesR_error_offline` (nom du serveur introuvable) ; `qesR_error_source`
-#' (`study`, `file_id`), avec `qesR_error_checksum` (fichier dont la somme
+#' (`study`, `file_id` ; par exemple un fichier absent de la dernière
+#' version de son dépôt), avec `qesR_error_checksum` (fichier dont la somme
 #' md5 ne correspond pas au catalogue ; `expected`, `actual`) et
 #' `qesR_error_rowcount` (fichier de données dont les lignes et colonnes
 #' diffèrent du catalogue ; `expected`, `actual`) ;
 #' `qesR_error_cache` (dossier de cache absent ou qui n'est pas un cache
 #' qesR ; `path`, `reason`) et `qesR_error_no_provenance` (objet qui
-#' n'indique plus son étude, passé à [qes_cite()]). Les avertissements
-#' héritent de `qesR_warning`, dont `qesR_warning_encoding` (étiquette ou
-#' valeur texte qui garde un caractère de remplacement ou de contrôle après
-#' lecture ; `study`, `file_id`, `n`, `variables`), et les messages de
-#' `qesR_message`. Les messages
+#' n'indique plus son étude, passé à [qes_cite()] ou [qes_provenance()], ou
+#' niveau de provenance que l'objet n'enregistre pas ; champ `level`). Les
+#' avertissements héritent de `qesR_warning`, dont `qesR_warning_encoding`
+#' (étiquette ou valeur texte qui garde un caractère de remplacement ou de
+#' contrôle après lecture ; `study`, `file_id`, `n`, `variables`) et
+#' `qesR_warning_unpinned` (fichiers enregistrés par `qes_download(version =
+#' "latest")`, que le catalogue ne retient pas ; `study`, `file_id`), et les
+#' messages de `qesR_message`. Les messages
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 #' masqués par `quiet = TRUE`.
@@ -187,7 +201,11 @@
 #' étiquettes sont complètes). Les codes qu'un fichier SPSS déclare comme
 #' valeurs manquantes sont gardés comme valeurs, et la déclaration est
 #' conservée dans les attributs de colonne `qes_na_values` et `qes_na_range`.
-#' L'attribut `qes_provenance` indique quel fichier a été lu.
+#' L'attribut `qes_provenance` indique quel fichier a été lu ;
+#' [qes_provenance()] le renvoie et l'affiche comme un paragraphe pour un
+#' journal de réplication. [qes_download()] enregistre les fichiers originaux
+#' eux-mêmes (fichier de données et documents), vérifiés par somme md5, dans
+#' un dossier de votre choix.
 #'
 #' **Réseau.** Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 #' fois et à au moins une seconde d'intervalle par serveur. Elles portent

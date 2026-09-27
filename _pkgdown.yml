@@ -87,16 +87,21 @@ reference:
   - qesR-package
 - title: Studies, documents and citations
   desc: >
-    The offline catalog: which studies qesR can load, their documents and how
-    to cite them. No network request unless you ask for one.
+    The offline catalog: which studies qesR can load, their documents, how
+    to cite them and which file a result was read from. No network request
+    unless you ask for one.
   contents:
   - qes_studies
   - qes_docs
   - qes_cite
+  - qes_provenance
 - title: Data
-  desc: Download a study, or build the harmonized master file.
+  desc: >
+    Load a study, save its original files, or build the harmonized master
+    file.
   contents:
   - get_qes
+  - qes_download
   - get_qes_master
 - title: Codebooks
   contents:

@@ -14,6 +14,7 @@
 #       <server>/api/access/datafile/<id>?format=original   a data file
 #       <server>/api/access/datafile/<id>/metadata/ddi      its DDI XML
 #       <server>/api/access/datafile/<id>                   a document
+#     (a short synthetic text, whose size and md5 the fixture catalog pins)
 #     Any other URL is an error, so a test that reaches the network by
 #     mistake fails instead of downloading.
 #
@@ -65,6 +66,11 @@ fake_study_data <- function(code) {
   paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>")
 }
 
+# The body the fake server sends for a document of `study`.
+fake_document <- function(path, study) {
+  writeBin(charToRaw(paste0("Synthetic document\n", study, "\n")), path)
+}
+
 `%||%` <- function(x, y) if (is.null(x) || length(x) == 0L) y else x
 
 # A catalog (as .qes_catalog() returns it) whose data files are the
@@ -99,7 +105,16 @@ fake_catalog <- function(data = list(), dir = tempfile("fake-dv-")) {
     data_rows[[code]] <- row
     paths[[row$file_id]] <- path
   }
-  files <- rbind(do.call(rbind, data_rows), files[keep, , drop = FALSE])
+  # documents: the fake server serves a short synthetic text for each one
+  # (fake_document()); pin its size and md5 so downloads pass their check
+  docs <- files[keep, , drop = FALSE]
+  for (i in seq_len(nrow(docs))) {
+    path <- file.path(dir, paste0(docs$file_id[i], ".doc"))
+    fake_document(path, docs$study[i])
+    docs$bytes[i] <- file.size(path)
+    docs$md5[i] <- unname(tools::md5sum(path))
+  }
+  files <- rbind(do.call(rbind, data_rows), docs)
   rownames(files) <- NULL
   fix <- function(cat) {
     cat$files <- rbind(files, cat$files[cat$files$study == "qes_demo", , drop = FALSE])
@@ -155,7 +170,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
       }
       return(fake_response(url, dest, write = function(path) file.copy(fake$paths[[row$file_id]], path, overwrite = TRUE)))
     }
-    fake_response(url, dest, write = function(path) writeLines(c("Synthetic document", row$study), path))
+    fake_response(url, dest, write = function(path) fake_document(path, row$study))
   }
 
   local_clear_codebook_cache(.env = .env)
@@ -252,4 +267,16 @@ local_clear_latest_memo <- function(.env = parent.frame()) {
   memo <- qesR:::.qes_latest_memo
   rm(list = ls(memo, all.names = TRUE), envir = memo)
   withr::defer(rm(list = ls(memo, all.names = TRUE), envir = memo), envir = .env)
+}
+
+# Remove the plain files that the calling test adds at the top of tempdir()
+# (download_codebook() and qes_download(path = tempdir()) write there).
+local_tempdir_cleanup <- function(.env = parent.frame()) {
+  before <- list.files(tempdir(), all.files = TRUE, no.. = TRUE)
+  withr::defer({
+    after <- list.files(tempdir(), all.files = TRUE, no.. = TRUE)
+    added <- file.path(tempdir(), setdiff(after, before))
+    unlink(added[!dir.exists(added)])
+  }, envir = .env)
+  invisible()
 }

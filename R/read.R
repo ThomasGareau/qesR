@@ -542,12 +542,23 @@
   list(catalog_version = get("catalog_version"), dict_version = get("dict_version"))
 }
 
-# The study-level provenance of data read from `file_row` (design.md
-# section 5.9); qes_provenance() prints it.
-.qes_read_provenance <- function(study_row, file_row, donor, path, label_source, name_map_applied) {
+# One row of study-level provenance (design.md section 5.9), shared by the
+# reader, qes_download() and qes_provenance(<codes>). `file_row` is the
+# files.csv row of the file (or, for qes_download(version = "latest"), the
+# row describing the latest file); fields that do not apply are NA.
+.qes_provenance_row <- function(study_row, file_row,
+                                md5_observed = NA_character_, md5_verified = NA,
+                                pinned = TRUE, retrieved_via = NA_character_,
+                                retrieved_at = NA, label_source = NA_character_,
+                                label_file_id = NA_character_,
+                                name_map_applied = NA_integer_,
+                                reader = NA_character_, haven_version = NA_character_) {
   versions <- .qes_versions()
-  sources <- unique(label_source[label_source != "none"])
-  sources <- sources[order(match(sources, c("label_donor", "file", "file_malformed")))]
+  when <- if (length(retrieved_at) == 1L && !is.na(retrieved_at)) {
+    as.POSIXct(format(retrieved_at, tz = "UTC"), tz = "UTC")
+  } else {
+    as.POSIXct(NA, tz = "UTC")
+  }
   data.frame(
     study = study_row$study,
     doi = study_row$doi,
@@ -556,23 +567,43 @@
     file_name = file_row$original_file_name,
     format = file_row$format,
     md5_expected = file_row$md5,
-    md5_observed = file_row$md5,
-    md5_verified = TRUE,
+    md5_observed = as.character(md5_observed),
+    md5_verified = as.logical(md5_verified),
     unf = file_row$unf,
     n_rows = file_row$n_rows,
     n_cols = file_row$n_cols,
-    pinned = TRUE,
-    retrieved_via = attr(path, "retrieved_via", exact = TRUE) %||% NA_character_,
-    retrieved_at = as.POSIXct(format(Sys.time(), tz = "UTC"), tz = "UTC"),
+    pinned = as.logical(pinned),
+    retrieved_via = as.character(retrieved_via),
+    retrieved_at = when,
     licence = study_row$licence,
-    label_source = if (length(sources) == 0L) "none" else paste(sources, collapse = ";"),
-    label_file_id = if (is.null(donor)) NA_character_ else donor$file_id,
+    label_source = as.character(label_source),
+    label_file_id = as.character(label_file_id),
     name_map_applied = as.integer(name_map_applied),
-    reader = .qes_reader_call(file_row$format),
-    haven_version = as.character(utils::packageVersion("haven")),
+    reader = as.character(reader),
+    haven_version = as.character(haven_version),
     catalog_version = versions$catalog_version,
     dict_version = versions$dict_version,
     stringsAsFactors = FALSE
+  )
+}
+
+# The study-level provenance of data read from `file_row`; qes_provenance()
+# returns it.
+.qes_read_provenance <- function(study_row, file_row, donor, path, label_source, name_map_applied) {
+  sources <- unique(label_source[label_source != "none"])
+  sources <- sources[order(match(sources, c("label_donor", "file", "file_malformed")))]
+  .qes_provenance_row(
+    study_row, file_row,
+    md5_observed = file_row$md5,
+    md5_verified = TRUE,
+    pinned = TRUE,
+    retrieved_via = attr(path, "retrieved_via", exact = TRUE) %||% NA_character_,
+    retrieved_at = Sys.time(),
+    label_source = if (length(sources) == 0L) "none" else paste(sources, collapse = ";"),
+    label_file_id = if (is.null(donor)) NA_character_ else donor$file_id,
+    name_map_applied = name_map_applied,
+    reader = .qes_reader_call(file_row$format),
+    haven_version = as.character(utils::packageVersion("haven"))
   )
 }
 

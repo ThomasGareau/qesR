@@ -50,7 +50,9 @@ Errors, warnings and messages have classes, so code can react to them with
 \code{tryCatch()} or \code{withCallingHandlers()} without matching message text.
 Errors inherit from \code{qesR_error}:
 \describe{
-\item{\code{qesR_error_input}}{an invalid argument (fields \code{arg}, \code{value});}
+\item{\code{qesR_error_input}}{an invalid argument (fields \code{arg}, \code{value}),
+including files that \code{\link[=qes_download]{qes_download()}} would overwrite (field
+\code{paths});}
 \item{\code{qesR_error_unknown_study}}{an unknown study code (fields \code{study},
 \code{suggestions});}
 \item{\code{qesR_error_unknown_variable}}{an unknown column (fields
@@ -67,18 +69,21 @@ field \code{manual_path}); \code{qesR_error_tls} (the secure connection failed;
 qesR never retries without TLS certificate checks); and
 \code{qesR_error_offline} (the server's name could not be resolved);}
 \item{\code{qesR_error_source}}{a problem with the files served for a study
-(fields \code{study}, \code{file_id}); subclasses \code{qesR_error_checksum} (a file
+(fields \code{study}, \code{file_id}), such as a file missing from the latest
+version of its deposit; subclasses \code{qesR_error_checksum} (a file
 that does not match its catalog md5; fields \code{expected}, \code{actual}) and
 \code{qesR_error_rowcount} (a data file whose rows and columns differ from
 the catalog; fields \code{expected}, \code{actual});}
 \item{\code{qesR_error_cache}}{a cache directory that is missing or is not a
 qesR cache (fields \code{path}, \code{reason});}
 \item{\code{qesR_error_no_provenance}}{an object that no longer records which
-study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}}.}
+study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}} or \code{\link[=qes_provenance]{qes_provenance()}}, or
+a provenance level the object does not record (field \code{level}).}
 }
 Warnings inherit from \code{qesR_warning}, among them \code{qesR_warning_encoding}
 (a label or text value that still holds a replacement or control
-character after reading; fields \code{study}, \code{file_id}, \code{n}, \code{variables}).
+character after reading; fields \code{study}, \code{file_id}, \code{n}, \code{variables}) and
+\code{qesR_warning_unpinned} (files saved by \code{qes_download(version = "latest")}, which the catalog does not pin; fields \code{study}, \code{file_id}).
 Messages inherit from \code{qesR_message}.
 Progress messages (classes \code{qesR_message_download} and
 \code{qesR_message_cached}) are silenced by \code{quiet = TRUE}, as is the one-time
@@ -108,7 +113,10 @@ labels come from the file (for \code{qes2012}, from the SPSS twin of the same
 data, whose labels are complete). Codes an SPSS file declares as
 user-missing are kept as values, with the declaration in the column
 attributes \code{qes_na_values} and \code{qes_na_range}. The attribute
-\code{qes_provenance} records which file was read.
+\code{qes_provenance} records which file was read; \code{\link[=qes_provenance]{qes_provenance()}} returns
+it and prints it as a paragraph for a replication log.
+\code{\link[=qes_download]{qes_download()}} saves the original files themselves (data file and
+documents), md5-checked, in a directory you choose.
 }
 
 \section{Network use}{
@@ -160,7 +168,8 @@ abandonné.
 \strong{Conditions.} Les erreurs, avertissements et messages ont des classes,
 ce qui permet d'y réagir avec \code{tryCatch()} ou \code{withCallingHandlers()} sans
 lire le texte. Les erreurs héritent de \code{qesR_error} : \code{qesR_error_input}
-(champs \code{arg}, \code{value}), \code{qesR_error_unknown_study} (\code{study},
+(champs \code{arg}, \code{value} ; aussi pour des fichiers que \code{\link[=qes_download]{qes_download()}}
+écraserait, champ \code{paths}), \code{qesR_error_unknown_study} (\code{study},
 \code{suggestions}), \code{qesR_error_unknown_variable} (\code{variables},
 \code{suggestions}), \code{qesR_error_ambiguous_file} (\code{study}, \code{pattern},
 \code{candidates} ; motif \code{file} qui ne désigne aucun fichier de données de
@@ -171,17 +180,20 @@ de \code{qesR_error_http_refused} (requête automatisée refusée ;
 \code{manual_path}), \code{qesR_error_tls} (échec de la connexion sécurisée ; qesR ne
 désactive jamais la vérification des certificats TLS) et
 \code{qesR_error_offline} (nom du serveur introuvable) ; \code{qesR_error_source}
-(\code{study}, \code{file_id}), avec \code{qesR_error_checksum} (fichier dont la somme
+(\code{study}, \code{file_id} ; par exemple un fichier absent de la dernière
+version de son dépôt), avec \code{qesR_error_checksum} (fichier dont la somme
 md5 ne correspond pas au catalogue ; \code{expected}, \code{actual}) et
 \code{qesR_error_rowcount} (fichier de données dont les lignes et colonnes
 diffèrent du catalogue ; \code{expected}, \code{actual}) ;
 \code{qesR_error_cache} (dossier de cache absent ou qui n'est pas un cache
 qesR ; \code{path}, \code{reason}) et \code{qesR_error_no_provenance} (objet qui
-n'indique plus son étude, passé à \code{\link[=qes_cite]{qes_cite()}}). Les avertissements
-héritent de \code{qesR_warning}, dont \code{qesR_warning_encoding} (étiquette ou
-valeur texte qui garde un caractère de remplacement ou de contrôle après
-lecture ; \code{study}, \code{file_id}, \code{n}, \code{variables}), et les messages de
-\code{qesR_message}. Les messages
+n'indique plus son étude, passé à \code{\link[=qes_cite]{qes_cite()}} ou \code{\link[=qes_provenance]{qes_provenance()}}, ou
+niveau de provenance que l'objet n'enregistre pas ; champ \code{level}). Les
+avertissements héritent de \code{qesR_warning}, dont \code{qesR_warning_encoding}
+(étiquette ou valeur texte qui garde un caractère de remplacement ou de
+contrôle après lecture ; \code{study}, \code{file_id}, \code{n}, \code{variables}) et
+\code{qesR_warning_unpinned} (fichiers enregistrés par \code{qes_download(version = "latest")}, que le catalogue ne retient pas ; \code{study}, \code{file_id}), et les
+messages de \code{qesR_message}. Les messages
 de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le
 conseil unique sur le cache disque (\code{qesR_message_disk_cache_tip}) sont
 masqués par \code{quiet = TRUE}.
@@ -206,7 +218,11 @@ fichier (pour \code{qes2012}, du fichier SPSS jumeau des mêmes données, dont l
 étiquettes sont complètes). Les codes qu'un fichier SPSS déclare comme
 valeurs manquantes sont gardés comme valeurs, et la déclaration est
 conservée dans les attributs de colonne \code{qes_na_values} et \code{qes_na_range}.
-L'attribut \code{qes_provenance} indique quel fichier a été lu.
+L'attribut \code{qes_provenance} indique quel fichier a été lu ;
+\code{\link[=qes_provenance]{qes_provenance()}} le renvoie et l'affiche comme un paragraphe pour un
+journal de réplication. \code{\link[=qes_download]{qes_download()}} enregistre les fichiers originaux
+eux-mêmes (fichier de données et documents), vérifiés par somme md5, dans
+un dossier de votre choix.
 
 \strong{Réseau.} Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 fois et à au moins une seconde d'intervalle par serveur. Elles portent
