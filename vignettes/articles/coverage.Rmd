@@ -1,0 +1,36 @@
+---
+title: "Coverage by study"
+params:
+  lang: "en"
+---
+
+*[Version française](fr-couverture.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
+```
+
+Which harmonized variable ("target") of `qes_harmonize()` each study has,
+and how comparable its question is. The grid and the table of studies below
+are generated from the specification that ships with qesR when the site is
+built; none of it is written by hand.
+
+```{r coverage, echo = FALSE, results = "asis"}
+cat(qesR:::.spec_coverage_md(lang = params$lang))
+```
+
+## The same grid in R
+
+`qes_spec()` returns the grid as a data frame, one row per target and one
+column per study, each cell the grade of that study's question:
+
+```{r spec, eval = FALSE}
+library(qesR)
+qes_spec(lang = params$lang)
+```
+
+A grade compares a study's question with the target's anchor question.
+[Harmonizing across studies](harmonization.html) shows how grades, missing
+values and weights carry into an estimate.

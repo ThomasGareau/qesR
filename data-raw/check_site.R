@@ -120,8 +120,9 @@ for (href in c(vapply(en_menu, function(x) x$href %||% NA_character_, ""),
 }
 
 sections <- vapply(config$articles, `[[`, "", "title")
-en_sections <- c("Guides", "Examples")
-fr_sections <- c("Guides en français", "Exemples en français")
+en_sections <- c("Guides", "Harmonization (experimental)", "Examples")
+fr_sections <- c("Guides en français", "Harmonisation en français (expérimental)",
+                 "Exemples en français")
 for (i in seq_along(en_sections)) {
   en <- config$articles[[match(en_sections[i], sections)]]$contents
   fr <- config$articles[[match(fr_sections[i], sections)]]$contents

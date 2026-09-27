@@ -56,6 +56,12 @@ ships with qesR.
   "refused".
 - **Citations.** `qes_cite()` cites qesR and each dataset with its DOI,
   version and UNF.
+- **Harmonized data, experimental.** `qes_harmonize()` builds one data frame
+  from several studies from a specification checked against the original
+  files: a comparability grade for each study's question, a reason for every
+  missing value, each wave's weight, and `qes_design()` for the `survey`
+  package. It applies only the rows a reviewer has signed off, and none is
+  signed off yet: `include_draft = TRUE` applies the others too.
 - **Nothing written behind your back.** Data are returned, not assigned into
   your workspace; downloads go to a temporary cache unless you choose
   `options(qesR.cache = "disk")`.
@@ -70,6 +76,13 @@ ships with qesR.
   the catalog that ships with the package.
 - [Study citations](articles/citations.html): how to cite qesR and each
   dataset you use.
+- Harmonization (experimental):
+  [harmonizing across studies](articles/harmonization.html), from
+  `qes_harmonize()` to a weighted estimate;
+  [coverage by study](articles/coverage.html), the grade of every
+  harmonized variable in every study; and the
+  [harmonization reference](articles/harmonization-reference.html), both
+  generated from the specification.
 - Examples built from the full data files:
   [respondents by study](articles/analysis-descriptive.html),
   [support for independence](articles/analysis-sovereignty.html) and
@@ -103,6 +116,10 @@ chaque étude.
 - [Catalogue des études](articles/fr-etudes.html)
 - [Citations des études](articles/fr-citations.html)
 - [Passer de qesR 0.4.4 à 0.5.0](articles/fr-migrer-0.5.html)
+- Harmonisation (expérimental) :
+  [harmoniser entre études](articles/fr-harmonisation.html),
+  [couverture par étude](articles/fr-couverture.html),
+  [référence de l'harmonisation](articles/fr-reference-harmonisation.html)
 - [Le fichier fusionné hérité](articles/fr-donnees-fusionnees.html)
 - Exemples : [répondants par étude](articles/fr-analyse-descriptive.html),
   [appui à l'indépendance](articles/fr-analyse-souverainete.html),

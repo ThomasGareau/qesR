@@ -18,6 +18,11 @@ site : les fichiers de données sont téléchargés de leurs dépôts Dataverse 
 le cache de qesR, et les nombres sont donc ceux des fichiers complets, pas
 d'un échantillon.
 
+Pour des estimations avec le moteur d'harmonisation (expérimental), avec un
+niveau de comparabilité pour la question de chaque étude et la pondération
+de la vague qui l'a posée, voir
+[Harmoniser entre études](fr-harmonisation.html).
+
 Les études n'ont pas été conçues de la même façon : les Études électorales
 québécoises (famille `qes`), les panels Durand (`durand_panel`), les sondages
 CROP (`crop_polls`) et les sondages de 1998 (`polls_1998`) diffèrent par le

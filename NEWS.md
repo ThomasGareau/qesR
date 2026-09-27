@@ -27,6 +27,11 @@ the same data, and `get_qes_master()` and `get_decon()` the same values.
 - `qes_provenance(x, level = "cell")` also gives the registry status and raw mean of each cell's weight (`weight_status`, `weight_mean_raw`) and, for targets about an election, the number of the wave's members who could not vote in it (`n_outside_universe`; `NA` when eligibility is not available for the wave, for example when its age rows are not signed off).
 - DESCRIPTION: `survey` and `srvyr` are suggested.
 
+## Website
+
+- The website has a *Harmonization (experimental)* menu, in English and French: *Harmonizing across studies* (*Harmoniser entre études*) goes from `qes_harmonize()` to weighted estimates by study with `qes_design()`, and shows the comparability grades, the reason for every missing value, the weight of each wave, structural zeros and the provenance of each cell, on the full data files; *Coverage by study* (*Couverture par étude*) is a grid of every target and study, with the grade of each study's question and each study's waves and recommended weights, generated from the specification when the site is built; the *Harmonization reference* is listed with them. Each target of the reference now has a fixed anchor, `#target-<name>`, which the grid links to.
+- The README, in English and French, presents `qes_harmonize()`, `qes_design()` and `qes_spec()`, with a compact grid of the grade of each study's question for each target, generated from the specification.
+
 # qesR 0.5.0
 
 qesR 0.5.0 reads each study from its original data file, pinned and checked

@@ -160,3 +160,179 @@ test_that("qes_search() gives the targets a variable feeds, and searches them", 
   cb14 <- qes_codebook("qes2014", layout = "wide")
   expect_identical(cb14$targets[cb14$variable == "Q19"], "sov_indep")
 })
+
+# ---- the coverage grid of the website (design.md section 9.1, slice W.1) ------------
+
+# The rows of the markdown table that follows heading `title` in `md`, as a
+# list of character vectors (header and separator rows dropped).
+md_table_rows <- function(md, title) {
+  lines <- strsplit(md, "\n", fixed = TRUE)[[1]]
+  start <- match(title, lines)
+  expect_false(is.na(start), label = title)
+  lines <- lines[-seq_len(start)]
+  lines <- lines[cumsum(!grepl("^\\|", lines) & cumsum(grepl("^\\|", lines)) > 0) == 0]
+  lines <- lines[grepl("^\\|", lines)][-(1:2)]
+  lapply(strsplit(sub("^\\| (.*) \\|$", "\\1", lines), " | ", fixed = TRUE), trimws)
+}
+
+test_that("the reference gives every target a fixed anchor, in English and French", {
+  s <- hz_spec()
+  for (lang in c("en", "fr")) {
+    ref <- .spec_reference_md(lang)
+    for (t in s$tables$targets$target) {
+      expect_true(any(grepl(sprintf("^#### `%s`.*\\{#target-%s\\}$", t, t),
+                            strsplit(ref, "\n", fixed = TRUE)[[1]], perl = TRUE)), label = t)
+    }
+  }
+  # printing one target (no header) gives no anchor, so the console shows none
+  withr::local_options(qesR.lang = "en")
+  out <- capture.output(print(qes_spec("crosswalk", targets = "sov_indep")))
+  expect_false(any(grepl("{#target-", out, fixed = TRUE)))
+})
+
+test_that("the coverage grid gives each target's grade in each study, as qes_spec() does", {
+  v <- qes_spec()
+  s <- hz_spec()
+  md <- .spec_coverage_md("en")
+  rows <- md_table_rows(md, "## Targets by study")
+  # a row per block, with the block's name only, before its targets
+  is_block <- vapply(rows, function(r) grepl("^\\*\\*", r[1]), logical(1))
+  blocks <- unique(s$tables$targets$block)
+  expect_identical(sum(is_block), length(blocks))
+  expect_true(is_block[1])
+  expect_true(all(vapply(rows[is_block], function(r) all(r[-1] == ""), logical(1))))
+  rows <- rows[!is_block]
+  expect_length(rows, nrow(s$tables$targets))
+  lines <- strsplit(md, "\n", fixed = TRUE)[[1]]
+  header <- strsplit(lines[grep("^\\| Target \\|", lines)], " | ", fixed = TRUE)[[1]]
+  studies <- sub(" \\|$", "", header[-1])
+  expect_setequal(studies, names(v)[-(1:9)])
+  xw <- s$tables$crosswalk
+  multi <- names(which(table(s$tables$waves$study) > 1L))
+  for (r in rows) {
+    t <- sub("^\\[`([a-z0-9_]+)`\\].*$", "\\1", r[1])
+    expect_identical(r[1], sprintf("[`%s`](harmonization-reference.html#target-%s)<br>%s", t, t,
+                                   s$tables$targets$label_en[s$tables$targets$target == t]))
+    for (k in seq_along(studies)) {
+      cell <- r[1 + k]
+      g <- v[[studies[k]]][v$target == t]
+      if (is.na(g)) {
+        expect_identical(cell, "\u2014", label = paste(t, studies[k]))
+        next
+      }
+      expect_true(startsWith(cell, .qes_enum_label("grade", g, "en")), label = paste(t, studies[k]))
+      row <- xw[xw$study == studies[k] & xw$target == t & xw$rule != "none", , drop = FALSE]
+      if (studies[k] %in% multi) expect_true(grepl(sprintf("(%s)", row$wave), cell, fixed = TRUE))
+      zero <- .qes_not_offered(s, row)
+      expect_identical(endsWith(cell, "\\*"), !is.na(zero) && nzchar(zero), label = paste(t, studies[k]))
+    }
+  }
+  # a few cells, by hand
+  cell <- function(t, study) rows[[match(t, vapply(rows, function(r) sub("^\\[`([a-z0-9_]+)`\\].*$", "\\1", r[1]), ""))]][1 + match(study, studies)]
+  expect_identical(cell("vote_prov_recall", "qes2018"), "Comparable \\*")
+  expect_identical(cell("vote_prov_recall", "qes2022"), "Comparable (pes) \\*")
+  expect_identical(cell("turnout_prov_recall", "qes2014"), "Comparable")
+  expect_identical(cell("sov_indep", "qes2018_panel"), "\u2014")
+  # every mapped row is a cell; none is signed off yet, and the page says so
+  expect_identical(sum(vapply(rows, function(r) sum(r[-1] != "\u2014"), 0L)), sum(xw$rule != "none"))
+  if (all(xw$status[xw$rule != "none"] != "stable")) {
+    expect_true(grepl(sprintf("All %d cells use crosswalk rows", sum(xw$rule != "none")), md, fixed = TRUE))
+  }
+  expect_true(grepl(s$version, md, fixed = TRUE))
+  expect_true(grepl(s$hash, md, fixed = TRUE))
+})
+
+test_that("the coverage grid lists each study's waves, weights and grades", {
+  s <- hz_spec()
+  md <- .spec_coverage_md("en")
+  rows <- md_table_rows(md, "## Studies")
+  studies <- gsub("`", "", vapply(rows, `[`, "", 1))
+  expect_setequal(studies, unique(s$tables$waves$study))
+  xw <- s$tables$crosswalk
+  xw <- xw[xw$rule != "none" & xw$primary %in% TRUE, , drop = FALSE]
+  for (r in rows) {
+    st <- gsub("`", "", r[1])
+    g <- xw$grade[xw$study == st]
+    # the targets of the study (its primary rows, one per target)
+    expect_identical(as.integer(r[3]), length(unique(xw$target[xw$study == st])))
+    expect_identical(as.integer(r[4:6]), vapply(c("identical", "comparable", "approximate"), function(x) sum(g == x), 0L,
+                                                USE.NAMES = FALSE))
+  }
+  waves <- setNames(vapply(rows, `[`, "", 2), studies)
+  expect_identical(waves[["qes2022"]], "cps (n = 1,521): `cps_weight_general`; pes (n = 1,220): `pes_weight_general`")
+  expect_match(waves[["qes2018_panel"]], "`weight` (needs review, not applied)", fixed = TRUE)
+  expect_match(waves[["qes2007_panel"]], "post (n = 2,054): no recommended weight", fixed = TRUE)
+  # the catalog's studies without a spec row are named
+  others <- setdiff(.qes_study_codes(), studies)
+  expect_true(length(others) > 0L)
+  expect_true(grepl(paste0("`", others, "`", collapse = ", "), md, fixed = TRUE))
+})
+
+test_that("the coverage grid has the same shape in English and French, whatever the locale", {
+  en <- .spec_coverage_md("en")
+  fr <- .spec_coverage_md("fr")
+  lines_en <- strsplit(en, "\n", fixed = TRUE)[[1]]
+  lines_fr <- strsplit(fr, "\n", fixed = TRUE)[[1]]
+  expect_identical(length(lines_en), length(lines_fr))
+  expect_identical(grepl("^#", lines_en), grepl("^#", lines_fr))
+  expect_identical(grepl("^\\|", lines_en), grepl("^\\|", lines_fr))
+  # the dashes (no question) are in the same cells
+  dashes <- function(rows) lapply(rows, function(r) r == "\u2014")
+  expect_identical(dashes(md_table_rows(en, "## Targets by study")),
+                   dashes(md_table_rows(fr, "## Cibles par \u00e9tude")))
+  # French links go to the French reference, with the same anchors
+  expect_true(grepl("(fr-reference-harmonisation.html#target-sov_indep)", fr, fixed = TRUE))
+  expect_false(grepl("(harmonization-reference.html", fr, fixed = TRUE))
+  expect_true(grepl("Identique (cps)", fr, fixed = TRUE))
+  expect_true(grepl("(n = 1\u00a0521)\u00a0: `cps_weight_general`\u00a0; pes", fr, fixed = TRUE))
+  expect_false(grepl("\u00a0:", en, fixed = TRUE))
+  withr::with_locale(c(LC_COLLATE = "C", LC_CTYPE = "C"), {
+    expect_identical(.spec_coverage_md("fr"), fr)
+    expect_identical(.spec_coverage_md("en"), en)
+  })
+  # another reference page can be named
+  expect_true(grepl("(ref.html#target-age)", .spec_coverage_md("en", reference = "ref.html"), fixed = TRUE))
+})
+
+test_that("the coverage grid counts the rows qes_harmonize() applies, and says which are drafts", {
+  s <- hz_spec()
+  xw <- s$tables$crosswalk
+  mapped <- which(xw$rule != "none" & xw$primary %in% TRUE)
+  # one draft row, and a second, non-primary row for the same study and target
+  i <- mapped[1]
+  xw$status[i] <- "draft"
+  extra <- xw[i, , drop = FALSE]
+  extra$primary <- FALSE
+  extra$status <- "review"
+  s$tables$crosswalk <- rbind(xw, extra)
+  n <- length(mapped)
+  for (lang in c("en", "fr")) {
+    md <- .spec_coverage_md(lang, spec = s)
+    key <- function(k) .qes_rt(k, lang)
+    expect_true(grepl(sprintf(key("cov_status_note"), n - 1L, n), md, fixed = TRUE), label = lang)
+    expect_true(grepl(sprintf(key("cov_draft_note"), 1L, n), md, fixed = TRUE), label = lang)
+    expect_false(grepl(sprintf(key("cov_status_all"), n), md, fixed = TRUE), label = lang)
+  }
+  md <- .spec_coverage_md("en", spec = s)
+  rows <- md_table_rows(md, "## Studies")
+  st <- xw$study[i]
+  r <- rows[[match(paste0("`", st, "`"), vapply(rows, `[`, "", 1))]]
+  expect_identical(as.integer(r[3]), sum(xw$study[mapped] == st))
+})
+
+test_that("the README grid gives the first letter of each grade qes_spec() gives", {
+  v <- qes_spec()
+  md <- .spec_readme_md(hz_spec())
+  lines <- strsplit(md, "\n", fixed = TRUE)[[1]]
+  header <- strsplit(sub("^\\| (.*) \\|$", "\\1", lines[1]), " | ", fixed = TRUE)[[1]]
+  studies <- gsub("`", "", trimws(header[-1]))
+  expect_setequal(studies, names(v)[-(1:9)])
+  rows <- lapply(strsplit(sub("^\\| (.*) \\|$", "\\1", lines[-(1:2)]), " | ", fixed = TRUE), trimws)
+  expect_setequal(vapply(rows, function(r) gsub("`", "", r[1]), ""), v$target)
+  letter <- c(identical = "I", comparable = "C", approximate = "A")
+  for (r in rows) {
+    t <- gsub("`", "", r[1])
+    g <- unlist(v[v$target == t, studies], use.names = FALSE)
+    expect_identical(r[-1], ifelse(is.na(g), "—", letter[g]), label = t)
+  }
+})

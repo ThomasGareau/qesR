@@ -306,7 +306,52 @@ print.qes_crosswalk <- function(x, ...) {
   none = c(en = "No study has a question for this target yet.", fr = "Aucune \u00e9tude n'a encore de question pour cette cible."),
   not_used = c(en = "Not used", fr = "Non utilis\u00e9"),
   history = c(en = "History", fr = "Historique"),
-  all_targets = c(en = "all targets", fr = "toutes les cibles")
+  all_targets = c(en = "all targets", fr = "toutes les cibles"),
+  # the coverage grid (.spec_coverage_md)
+  cov_note = c(
+    en = "This grid is generated from the harmonization spec shipped with qesR: version %s of %s, content hash %s. It is **experimental**. Each cell gives the comparability grade of the study's question for the target, against the target's anchor question; a dash means the study has no question for the target in the spec. A target's name links to its section of the [harmonization reference](%s), which gives the question, its wording, the levels it offered and the reason for its grade. `qes_spec()` returns the same grid as a data frame.",
+    fr = "Cette grille est g\u00e9n\u00e9r\u00e9e \u00e0 partir de la sp\u00e9cification d'harmonisation fournie avec qesR\u00a0: version %s du %s, empreinte du contenu %s. Elle est **exp\u00e9rimentale**. Chaque cellule donne le niveau de comparabilit\u00e9 de la question de l'\u00e9tude pour la cible, par rapport \u00e0 la question d'ancrage de la cible\u00a0; un tiret signifie que l'\u00e9tude n'a pas de question pour la cible dans la sp\u00e9cification. Le nom d'une cible m\u00e8ne \u00e0 sa section de la [r\u00e9f\u00e9rence de l'harmonisation](%s), qui donne la question, son libell\u00e9, les niveaux offerts et la raison de son niveau. `qes_spec()` renvoie la m\u00eame grille sous forme de tableau."
+  ),
+  cov_grid_title = c(en = "Targets by study", fr = "Cibles par \u00e9tude"),
+  cov_studies_title = c(en = "Studies", fr = "\u00c9tudes"),
+  cov_target = c(en = "Target", fr = "Cible"),
+  cov_wave_note = c(
+    en = "For a study with more than one wave, the wave that asked the question is in parentheses.",
+    fr = "Pour une \u00e9tude de plusieurs vagues, la vague qui a pos\u00e9 la question est entre parenth\u00e8ses."
+  ),
+  cov_zero_note = c(
+    en = "\\* The study's question did not offer every level of the target: the levels it did not offer are structural zeros, listed in the reference.",
+    fr = "\\* La question de l'\u00e9tude n'offrait pas tous les niveaux de la cible\u00a0: les niveaux non offerts sont des z\u00e9ros structurels, list\u00e9s dans la r\u00e9f\u00e9rence."
+  ),
+  cov_status_all = c(
+    en = "All %d cells use crosswalk rows that are checked against the original files and documents but not yet signed off by a reviewer; `qes_harmonize()` applies them only with `include_draft = TRUE`.",
+    fr = "Les %d cellules utilisent toutes des lignes de correspondance v\u00e9rifi\u00e9es sur les fichiers et documents originaux, mais pas encore approuv\u00e9es par un r\u00e9viseur\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
+  ),
+  cov_draft_all = c(
+    en = "All %d cells use draft crosswalk rows, not yet checked against the original files and documents; `qes_harmonize()` applies them only with `include_draft = TRUE`.",
+    fr = "Les %d cellules utilisent toutes des lignes de correspondance provisoires, pas encore v\u00e9rifi\u00e9es sur les fichiers et documents originaux\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
+  ),
+  cov_draft_note = c(
+    en = "%d of the %d cells use draft crosswalk rows, not yet checked against the original files and documents; `qes_harmonize()` applies them only with `include_draft = TRUE`.",
+    fr = "%d des %d cellules utilisent des lignes de correspondance provisoires, pas encore v\u00e9rifi\u00e9es sur les fichiers et documents originaux\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
+  ),
+  semi = c(en = "; ", fr = "\u00a0; "),
+  cov_status_note = c(
+    en = "%d of the %d cells use crosswalk rows that are checked against the original files and documents but not yet signed off by a reviewer; `qes_harmonize()` applies them only with `include_draft = TRUE`.",
+    fr = "%d des %d cellules utilisent des lignes de correspondance v\u00e9rifi\u00e9es sur les fichiers et documents originaux, mais pas encore approuv\u00e9es par un r\u00e9viseur\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
+  ),
+  cov_waves = c(en = "Waves and recommended weights", fr = "Vagues et pond\u00e9rations recommand\u00e9es"),
+  cov_n_targets = c(en = "Targets", fr = "Cibles"),
+  cov_no_weight = c(en = "no recommended weight", fr = "aucune pond\u00e9ration recommand\u00e9e"),
+  cov_weight_review = c(en = "needs review, not applied", fr = "\u00e0 r\u00e9viser, non appliqu\u00e9e"),
+  cov_studies_note = c(
+    en = "`n` is the number of respondents of each wave. A weight that needs review is not applied: `qes_harmonize()` returns `NA` for it until its documentation is checked. `qes_design()` uses the weight of the wave each target came from.",
+    fr = "`n` est le nombre de r\u00e9pondants de chaque vague. Une pond\u00e9ration \u00e0 r\u00e9viser n'est pas appliqu\u00e9e\u00a0: `qes_harmonize()` renvoie `NA` pour cette pond\u00e9ration tant que sa documentation n'est pas v\u00e9rifi\u00e9e. `qes_design()` utilise la pond\u00e9ration de la vague d'o\u00f9 vient chaque cible."
+  ),
+  cov_not_in_spec = c(
+    en = "Studies of the catalog that are not in the spec yet: %s. `get_qes()` reads them; `qes_harmonize()` does not cover them yet.",
+    fr = "\u00c9tudes du catalogue qui ne sont pas encore dans la sp\u00e9cification\u00a0: %s. `get_qes()` les lit\u00a0; `qes_harmonize()` ne les couvre pas encore."
+  )
 )
 
 .qes_rt <- function(key, lang) {
@@ -374,7 +419,11 @@ print.qes_crosswalk <- function(x, ...) {
       out <- c(out, paste("###", .qes_enum_label("block", current_block, lang)), "")
     }
     h <- if (isTRUE(header)) "####" else "##"
-    out <- c(out, sprintf("%s `%s`%s%s", h, t, cl, .qes_pick_lang(tg[j, , drop = FALSE], "label", lang)), "",
+    # with the header (the reference page), each target's section has a
+    # fixed id, "target-<name>", so other pages (the coverage grid) can
+    # link to it
+    id <- if (isTRUE(header)) sprintf(" {#target-%s}", t) else ""
+    out <- c(out, sprintf("%s `%s`%s%s%s", h, t, cl, .qes_pick_lang(tg[j, , drop = FALSE], "label", lang), id), "",
              .qes_pick_lang(tg[j, , drop = FALSE], "description", lang), "")
     facts <- sprintf("%s `%s` \u00b7 %s %s \u00b7 %s %s \u00b7 %s %s \u00b7 %s %s",
                      t_("family"), tg$family[j], t_("type"), .qes_enum_label("target_type", tg$type[j], lang),
@@ -445,6 +494,131 @@ print.qes_crosswalk <- function(x, ...) {
     }
   }
   paste0(paste(out, collapse = "\n"), "\n")
+}
+
+# The coverage grid of the spec as markdown text, in `lang` (the website's
+# coverage page, design.md section 9.1): one row per target, grouped by
+# block, one column per study of the spec, each cell the grade of the
+# study's mapped row (the wave in parentheses for studies of several waves,
+# "\\*" when its question did not offer every level of the target); then
+# one row per study with its waves, their size and recommended weight, and
+# the number of targets of each grade. `reference` is the page the target
+# names link to (anchors "#target-<name>" of .spec_reference_md()).
+.spec_coverage_md <- function(lang = "en", spec = NULL, reference = NULL) {
+  lang <- if (identical(lang, "fr")) "fr" else "en"
+  spec <- if (inherits(spec, "qes_spec")) spec else .qes_spec_get(spec, "none")
+  if (is.null(reference)) {
+    reference <- if (identical(lang, "fr")) "fr-reference-harmonisation.html" else "harmonization-reference.html"
+  }
+  t_ <- function(key) .qes_rt(key, lang)
+  number <- function(n) formatC(as.integer(n), format = "d", big.mark = if (identical(lang, "fr")) "\u00a0" else ",")
+  dash <- "\u2014"
+  tg <- spec$tables$targets
+  xw <- spec$tables$crosswalk
+  used <- xw[!is.na(xw$rule) & xw$rule != "none", , drop = FALSE]
+  # the counts are of the rows qes_harmonize() would apply: the primary row
+  # of each study and target (at most one, rule V-S5)
+  applied <- used[used$primary %in% TRUE, , drop = FALSE]
+  wv <- spec$tables$waves
+  wt <- spec$tables$weights
+  studies <- intersect(.qes_study_codes(), unique(c(used$study, wv$study)))
+  # studies of another catalog (a user spec) come after, in their own order
+  studies <- c(studies, setdiff(unique(used$study), studies))
+  multi_wave <- names(which(table(wv$study) > 1L))
+  not_off <- .qes_not_offered(spec, used)
+  blocks <- .qes_enum("block")$value
+  ord <- order(match(tg$block, blocks), seq_len(nrow(tg)))
+  tg <- tg[ord, , drop = FALSE]
+  # one row per target, its label under its name; a row with the block's
+  # name before the first target of each block (a narrow table: the study
+  # columns must fit beside it)
+  grid <- list()
+  for (j in seq_len(nrow(tg))) {
+    t <- tg$target[j]
+    if (j == 1L || !identical(tg$block[j], tg$block[j - 1L])) {
+      grid[[length(grid) + 1L]] <- c(paste0("**", .qes_enum_label("block", tg$block[j], lang), "**"),
+                                     rep("", length(studies)))
+    }
+    cells <- vapply(studies, function(s) {
+      k <- which(used$study == s & used$target == t)
+      if (length(k) == 0L) return(dash)
+      paste(vapply(k, function(i) {
+        paste0(.qes_enum_label("grade", used$grade[i], lang),
+               if (s %in% multi_wave) paste0(" (", used$wave[i], ")") else "",
+               if (!is.na(not_off[i]) && nzchar(not_off[i])) " \\*" else "")
+      }, character(1)), collapse = t_("semi"))
+    }, character(1), USE.NAMES = FALSE)
+    grid[[length(grid) + 1L]] <- c(sprintf("[`%s`](%s#target-%s)<br>%s", t, reference, t,
+                                           .qes_pick_lang(tg[j, , drop = FALSE], "label", lang)), cells)
+  }
+  grades <- intersect(.qes_hz_grades, c("identical", "comparable", "approximate"))
+  study_rows <- lapply(studies, function(s) {
+    w <- wv[wv$study == s, , drop = FALSE]
+    w <- w[order(w$wave_order), , drop = FALSE]
+    waves <- vapply(seq_len(nrow(w)), function(i) {
+      rec <- wt[wt$study == s & wt$wave == w$wave[i] & wt$recommended %in% TRUE, , drop = FALSE]
+      weight <- if (nrow(rec) == 0L) {
+        t_("cov_no_weight")
+      } else if (identical(rec$status[1], "reviewed")) {
+        paste0("`", rec$weight_var[1], "`")
+      } else {
+        paste0("`", rec$weight_var[1], "` (", t_("cov_weight_review"), ")")
+      }
+      sprintf("%s (n = %s)%s%s", w$wave[i], number(w$n_cases[i]), t_("colon"), weight)
+    }, character(1))
+    g <- applied$grade[applied$study == s]
+    c(paste0("`", s, "`"), paste(waves, collapse = t_("semi")),
+      as.character(length(unique(applied$target[applied$study == s]))),
+      vapply(grades, function(x) as.character(sum(g == x)), character(1), USE.NAMES = FALSE))
+  })
+  # rows in review were checked against the files but not signed off; draft
+  # rows were not yet checked: each has its own sentence
+  status_line <- function(n, all_key, some_key) {
+    if (n == 0L) return(NULL)
+    if (n == nrow(applied)) c(sprintf(t_(all_key), n), "") else c(sprintf(t_(some_key), n, nrow(applied)), "")
+  }
+  others <- setdiff(.qes_study_codes(), studies)
+  out <- c(
+    sprintf(t_("cov_note"), spec$version, format(as.Date(spec$date)), paste0("`", spec$hash, "`"), reference), "",
+    paste("##", t_("cov_grid_title")), "",
+    .qes_md_table(c(t_("cov_target"), studies), grid), "",
+    t_("cov_wave_note"), "", t_("cov_zero_note"), "",
+    status_line(sum(applied$status == "review"), "cov_status_all", "cov_status_note"),
+    status_line(sum(applied$status == "draft"), "cov_draft_all", "cov_draft_note"),
+    paste("##", t_("cov_studies_title")), "",
+    .qes_md_table(c(t_("study"), t_("cov_waves"), t_("cov_n_targets"),
+                    .qes_enum_label("grade", grades, lang)), study_rows), "",
+    t_("cov_studies_note"), ""
+  )
+  if (length(others) > 0L) {
+    out <- c(out, sprintf(t_("cov_not_in_spec"), paste0("`", others, "`", collapse = ", ")), "")
+  }
+  paste0(paste(out, collapse = "\n"), "\n")
+}
+
+# The compact coverage grid of README.md (design.md section 9), one row per
+# target in block order, one column per study of the spec, each cell the
+# first letter of the grade of the row qes_harmonize() applies (I, C or A,
+# the same in English and French) or a dash. data-raw/readme_coverage.R
+# writes it between the "coverage" markers of README.md, and
+# data-raw/spec_check.R (V-P3) checks that README.md is current.
+.spec_readme_md <- function(spec = NULL) {
+  spec <- if (inherits(spec, "qes_spec")) spec else .qes_spec_get(spec, "none")
+  tg <- spec$tables$targets
+  xw <- spec$tables$crosswalk
+  applied <- xw[!is.na(xw$rule) & xw$rule != "none" & xw$primary %in% TRUE, , drop = FALSE]
+  wv <- spec$tables$waves
+  studies <- intersect(.qes_study_codes(), unique(c(applied$study, wv$study)))
+  studies <- c(studies, setdiff(unique(applied$study), studies))
+  tg <- tg[order(match(tg$block, .qes_enum("block")$value), seq_len(nrow(tg))), , drop = FALSE]
+  letter <- c(identical = "I", comparable = "C", approximate = "A")
+  rows <- lapply(tg$target, function(t) {
+    c(paste0("`", t, "`"), vapply(studies, function(s) {
+      g <- applied$grade[applied$study == s & applied$target == t]
+      if (length(g) == 0L || is.na(letter[g[1]])) "\u2014" else letter[[g[1]]]
+    }, character(1), USE.NAMES = FALSE))
+  })
+  paste0(paste(.qes_md_table(c("", paste0("`", studies, "`")), rows), collapse = "\n"), "\n")
 }
 
 # The list of targets for the Rd page of qes_spec() (roxygen @eval), from

@@ -17,6 +17,11 @@ fusionné hérité, `get_qes_master()`. Elle est construite en même temps que
 le site : les fichiers de données sont téléchargés de leurs dépôts
 Dataverse par le cache de qesR.
 
+Pour des estimations avec le moteur d'harmonisation (expérimental), avec un
+niveau de comparabilité pour la question de chaque étude et la pondération
+de la vague qui l'a posée, voir
+[Harmoniser entre études](fr-harmonisation.html).
+
 Depuis qesR 0.5.0, `vote_choice` ne contient que le vote déclaré après
 l'élection (`vote_choice_timing` vaut `"post"`). Il vaut `NA` dans les
 études dont la source était une intention de vote : `qes2022`, les sondages

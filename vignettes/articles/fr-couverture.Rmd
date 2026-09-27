@@ -1,0 +1,38 @@
+---
+title: "Couverture par étude"
+params:
+  lang: "fr"
+---
+
+*[English version](coverage.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
+```
+
+Quelles variables harmonisées (« cibles ») de `qes_harmonize()` chaque
+étude possède, et à quel point sa question est comparable. La grille et le
+tableau des études ci-dessous sont générés à partir de la spécification
+fournie avec qesR, à la construction du site ; rien n'y est écrit à la main.
+
+```{r coverage, echo = FALSE, results = "asis"}
+cat(qesR:::.spec_coverage_md(lang = params$lang))
+```
+
+## La même grille dans R
+
+`qes_spec()` renvoie la grille sous forme de tableau, une ligne par cible et
+une colonne par étude, chaque cellule donnant le niveau de comparabilité de
+la question de cette étude :
+
+```{r spec, eval = FALSE}
+library(qesR)
+qes_spec(lang = params$lang)
+```
+
+Un niveau compare la question d'une étude à la question d'ancrage de la
+cible. [Harmoniser entre études](fr-harmonisation.html) montre comment les
+niveaux, les valeurs manquantes et les pondérations se rendent jusqu'à une
+estimation.

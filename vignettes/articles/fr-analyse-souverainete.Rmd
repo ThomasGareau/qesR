@@ -17,6 +17,11 @@ fichier fusionné hérité, `get_qes_master()`. Elle est construite en même
 temps que le site : les fichiers de données sont téléchargés de leurs dépôts
 Dataverse par le cache de qesR.
 
+Pour des estimations avec le moteur d'harmonisation (expérimental), avec un
+niveau de comparabilité pour la question de chaque étude et la pondération
+de la vague qui l'a posée, voir
+[Harmoniser entre études](fr-harmonisation.html).
+
 Une question sur la souveraineté n'est comparable d'une étude à l'autre que
 si elle demande la même chose. Depuis qesR 0.5.0, `sovereignty_support` ne
 contient qu'une question : le vote du répondant à un référendum sur un Québec

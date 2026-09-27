@@ -17,6 +17,10 @@ legacy merged file, `get_qes_master()`. It is built when the website is
 built: the data files are downloaded from their Dataverse deposits through
 qesR's cache.
 
+For estimates with the harmonization engine (experimental), with a
+comparability grade for each study's question and the weight of the wave
+that asked it, see [Harmonizing across studies](harmonization.html).
+
 A sovereignty question is only comparable across studies when it asks the
 same thing. Since qesR 0.5.0, `sovereignty_support` holds one question only:
 how the respondent would vote in a referendum on Quebec becoming an

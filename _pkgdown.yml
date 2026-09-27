@@ -60,10 +60,16 @@ navbar:
         href: articles/citations.html
       - text: Moving from qesR 0.4.4
         href: articles/migrating-0.5.html
-      - text: Harmonization reference
-        href: articles/harmonization-reference.html
       - text: Legacy merged file
         href: articles/merged-dataset.html
+      - text: "-------"
+      - text: Harmonization (experimental)
+      - text: Harmonizing across studies
+        href: articles/harmonization.html
+      - text: Coverage by study
+        href: articles/coverage.html
+      - text: Harmonization reference
+        href: articles/harmonization-reference.html
       - text: "-------"
       - text: Examples (built from the full data files)
       - text: Respondents by study
@@ -86,10 +92,16 @@ navbar:
         href: articles/fr-citations.html
       - text: Passer de qesR 0.4.4 à 0.5.0
         href: articles/fr-migrer-0.5.html
-      - text: Référence de l'harmonisation
-        href: articles/fr-reference-harmonisation.html
       - text: Fichier fusionné hérité
         href: articles/fr-donnees-fusionnees.html
+      - text: "-------"
+      - text: Harmonisation (expérimental)
+      - text: Harmoniser entre études
+        href: articles/fr-harmonisation.html
+      - text: Couverture par étude
+        href: articles/fr-couverture.html
+      - text: Référence de l'harmonisation
+        href: articles/fr-reference-harmonisation.html
       - text: "-------"
       - text: Exemples (construits à partir des fichiers complets)
       - text: Répondants par étude
@@ -141,12 +153,19 @@ reference:
   - qes_missing
 - title: Harmonization (experimental)
   desc: >
-    A cross-study engine driven by a reviewed specification: `qes_spec()`
+    A cross-study engine driven by a specification checked against the
+    original files (rows not yet signed off by a reviewer are applied only
+    with `include_draft = TRUE`): `qes_spec()`
     shows which studies have which harmonized variable and how comparable
     each study's question is; `qes_harmonize()` applies it, with a reason
     for every missing value, each respondent's waves and weights, and
-    `qes_design()` turns the result into a survey design. The reference
-    generated from the spec is the article *Harmonization reference*.
+    `qes_design()` turns the result into a survey design. Three articles
+    go with them, in English and French, the last two generated from the
+    spec: [Harmonizing across studies](../articles/harmonization.html),
+    from `qes_harmonize()` to a weighted estimate;
+    [Coverage by study](../articles/coverage.html), the grade of every
+    target in every study; and the
+    [Harmonization reference](../articles/harmonization-reference.html).
     `get_qes_master()` is kept for code written for qesR 0.4.4.
   contents:
   - qes_spec
@@ -189,8 +208,18 @@ articles:
   - articles/studies
   - citations
   - migrating-0.5
-  - harmonization-reference
   - articles/merged-dataset
+- title: Harmonization (experimental)
+  desc: >
+    Built from the specification that ships with qesR. The first article
+    reads the full data files through qesR's cache when the site is built;
+    the coverage grid and the reference are generated from the
+    specification alone.
+  navbar: ~
+  contents:
+  - articles/harmonization
+  - articles/coverage
+  - harmonization-reference
 - title: Examples
   desc: >
     Built when the site is built, from the full data files downloaded
@@ -208,8 +237,18 @@ articles:
   - articles/fr-etudes
   - fr-citations
   - fr-migrer-0.5
-  - fr-reference-harmonisation
   - articles/fr-donnees-fusionnees
+- title: Harmonisation en français (expérimental)
+  desc: >
+    Construits à partir de la spécification fournie avec qesR. Le premier
+    article lit les fichiers de données complets par le cache de qesR à la
+    construction du site ; la grille de couverture et la référence sont
+    générées à partir de la spécification seule.
+  navbar: ~
+  contents:
+  - articles/fr-harmonisation
+  - articles/fr-couverture
+  - fr-reference-harmonisation
 - title: Exemples en français
   desc: >
     Construits à la construction du site, à partir des fichiers de données
