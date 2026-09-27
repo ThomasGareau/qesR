@@ -1,6 +1,6 @@
 # qes_studies(check_updates = TRUE), offline (slice S1, design.md section 2.2).
 # The transport is replaced by canned Dataverse responses; nothing reaches the
-# network. Until slice S2a it is .qes_fetch_file(url, destfile, quiet).
+# network: the seam is .qes_transport(url, dest, handle) (slice S2a).
 
 latest_json <- function(version, files, state = "RELEASED") {
   v <- strsplit(version, ".", fixed = TRUE)[[1]]
@@ -20,17 +20,18 @@ latest_json <- function(version, files, state = "RELEASED") {
 local_update_server <- function(responses, .env = parent.frame()) {
   log <- new.env(parent = emptyenv())
   log$urls <- character(0)
+  local_clear_latest_memo(.env = .env)
   testthat::local_mocked_bindings(
-    .qes_fetch_file = function(url, destfile, quiet = TRUE) {
+    .qes_transport = function(url, dest = NULL, handle = NULL) {
       log$urls <- c(log$urls, url)
       doi <- sub("&.*$", "", sub("^.*persistentId=doi:", "", url))
       res <- responses[[doi]]
       if (is.null(res)) {
-        stop("offline", call. = FALSE)
+        stop(fake_curl_error("curl_error_couldnt_resolve_host", "offline"))
       }
-      jsonlite::write_json(res, destfile, auto_unbox = TRUE)
-      invisible(destfile)
+      fake_response(url, dest, write = function(path) jsonlite::write_json(res, path, auto_unbox = TRUE))
     },
+    .qes_sleep = function(seconds) invisible(NULL),
     .package = "qesR",
     .env = .env
   )
@@ -81,4 +82,20 @@ test_that("the three 1998 studies share one request, and quiet silences progress
   expect_identical(length(log$urls), 1L)
   expect_identical(s$status, rep("unreachable", 3L))
   expect_silent(qes_studies(family = "polls_1998", check_updates = TRUE, quiet = TRUE))
+})
+
+test_that("an answer is memoized for the session, a failure is not", {
+  local_fixture_catalog()
+  log <- local_update_server(list(
+    "10.9999/FIX/AAAAAA" = latest_json("1.0", list("101" = "0123456789abcdef0123456789abcdef"))
+  ))
+  qes_studies(check_updates = TRUE, quiet = TRUE)
+  expect_identical(length(log$urls), 2L)
+  s <- qes_studies(check_updates = TRUE, quiet = TRUE)
+  # the answered deposit is not asked again; the unreachable one is
+  expect_identical(length(log$urls), 3L)
+  expect_identical(s$status, c("current", "unreachable"))
+  qes_cache_clear()
+  qes_studies(check_updates = TRUE, quiet = TRUE)
+  expect_identical(length(log$urls), 5L)
 })

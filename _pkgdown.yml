@@ -101,6 +101,12 @@ reference:
 - title: Codebooks
   contents:
   - qes_codebook
+- title: Cache
+  desc: >
+    Where downloaded files are kept, and how to list or delete them.
+  contents:
+  - qes_cache_info
+  - qes_cache_clear
 - title: Legacy functions
   desc: >
     Functions from qesR 0.4.4. They keep working, with the same arguments, and

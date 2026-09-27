@@ -1,8 +1,7 @@
 # Offline stand-in for Dataverse, used by the contract tests (slice S0b).
 #
-# Until slice S2a introduces the `.qes_transport()` seam (design.md section 8.1),
-# every request qesR makes goes through the internal
-# `.qes_fetch_file(url, destfile, quiet)` (slice S0c).
+# Every request qesR makes reaches the network only through the internal
+# `.qes_transport(url, dest, handle)` (slice S2a, design.md section 8.1).
 # `local_fake_dataverse()` replaces that one function for the calling test with
 # a fake server that answers the three kinds of request the current code makes:
 #
@@ -90,7 +89,11 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
 
   study_data <- function(code) data[[code]] %||% fake_study_data(code)
 
-  transport <- function(url, destfile, quiet = TRUE) {
+  serve <- function(url, dest, write) {
+    fake_response(url, dest, write = write)
+  }
+
+  transport <- function(url, dest = NULL, handle = NULL) {
     log$urls <- c(log$urls, url)
 
     if (grepl("/api/datasets/:persistentId/", url, fixed = TRUE)) {
@@ -107,8 +110,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
         list(dataFile = list(id = as.integer(rows$id[i]), filename = rows$filename[i], filesize = 1000 * i))
       })
       json <- list(status = "OK", data = list(latestVersion = list(files = files)))
-      jsonlite::write_json(json, destfile, auto_unbox = TRUE)
-      return(invisible(destfile))
+      return(serve(url, dest, function(path) jsonlite::write_json(json, path, auto_unbox = TRUE)))
     }
 
     m <- regmatches(url, regexec("/api/(access/datafile|files)/([0-9]+)(/metadata/ddi)?$", url))[[1]]
@@ -124,22 +126,53 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
       if (row$kind != "data") {
         stop("fake Dataverse: no DDI for a document", call. = FALSE)
       }
-      writeLines(.fake_ddi(study_data(row$code)), destfile, useBytes = TRUE)
+      serve(url, dest, function(path) writeLines(.fake_ddi(study_data(row$code)), path, useBytes = TRUE))
     } else if (row$kind == "data") {
-      haven::write_sav(study_data(row$code), destfile)
+      serve(url, dest, function(path) haven::write_sav(study_data(row$code), path))
     } else {
-      writeLines(c("Synthetic questionnaire", row$code), destfile)
+      serve(url, dest, function(path) writeLines(c("Synthetic questionnaire", row$code), path))
     }
-    invisible(destfile)
   }
 
   local_clear_codebook_cache(.env = .env)
   testthat::local_mocked_bindings(
-    .qes_fetch_file = transport,
+    .qes_transport = transport,
+    .qes_sleep = function(seconds) invisible(NULL),
     .package = "qesR",
     .env = .env
   )
   invisible(log)
+}
+
+# A transport response, shaped like the value of qesR:::.qes_transport():
+# list(url, status, headers, content). `write(path)` writes the body; `body`
+# (raw or character) is the alternative. With `dest` the body goes to that
+# file and `content` is `dest`; without it `content` is the raw body.
+fake_response <- function(url, dest = NULL, status = 200L, headers = list(),
+                          body = NULL, write = NULL) {
+  target <- dest %||% tempfile()
+  if (!is.null(write)) {
+    write(target)
+  } else {
+    bytes <- if (is.raw(body)) body else charToRaw(paste(body %||% "", collapse = "\n"))
+    writeBin(bytes, target)
+  }
+  content <- if (is.null(dest)) {
+    on.exit(unlink(target), add = TRUE)
+    readBin(target, "raw", file.size(target))
+  } else {
+    dest
+  }
+  list(url = url, status = as.integer(status), headers = headers, content = content)
+}
+
+# A curl-like transport error of class `curl_class` (for example
+# "curl_error_operation_timedout").
+fake_curl_error <- function(curl_class, message = "fake transport failure") {
+  structure(
+    class = c(curl_class, "curl_error", "error", "condition"),
+    list(message = message, call = NULL)
+  )
 }
 
 # The session codebook cache is package state; clear it before and after a test
@@ -185,4 +218,12 @@ count_class <- function(expr, class) {
     }
   )
   n
+}
+
+# The session memo of dataset-version answers (qes_studies(check_updates =
+# TRUE)); cleared before and after the calling test.
+local_clear_latest_memo <- function(.env = parent.frame()) {
+  memo <- qesR:::.qes_latest_memo
+  rm(list = ls(memo, all.names = TRUE), envir = memo)
+  withr::defer(rm(list = ls(memo, all.names = TRUE), envir = memo), envir = .env)
 }

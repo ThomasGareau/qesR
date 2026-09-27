@@ -406,11 +406,7 @@ download_codebook <- function(
       next
     }
 
-    .qes_fetch_file(
-      files$download_url[i],
-      out_path,
-      quiet = quiet
-    )
+    .qes_fetch(files$download_url[i], out_path, quiet = quiet, what = src_name)
     downloaded[i] <- TRUE
   }
 

@@ -34,93 +34,12 @@
   }
 }
 
-# ---- HTTP ------------------------------------------------------------------
+# ---- Dataverse requests of the legacy reader -----------------------------------
 #
-# Interim transport (slice S0c). Every request qesR makes goes through
-# .qes_fetch_file(), which the offline tests replace. It sends one plain
-# request with the package User-Agent and nothing else, keeps requests to one
-# host at least one second apart, and never retries without TLS verification:
-# a failed request is a qesR_error_network carrying the root cause. Slice S2a
-# replaces it with the curl transport of design.md section 4.1 (.qes_transport,
-# retries with backoff, cache).
-
-# Exactly "qesR/<version> R/<version>": no e-mail, URL or other identifier.
-.qes_user_agent <- function() {
-  sprintf("qesR/%s R/%s", as.character(utils::packageVersion("qesR")), as.character(getRversion()))
-}
-
-.qes_http_state <- new.env(parent = emptyenv())
-
-.qes_url_host <- function(url) {
-  tolower(sub("^[A-Za-z][A-Za-z0-9+.-]*://([^/?#]+).*$", "\\1", url))
-}
-
-.qes_sleep <- function(seconds) {
-  Sys.sleep(seconds)
-}
-
-# Clock seam, replaced in tests so the spacing check does not depend on how
-# fast the machine is.
-.qes_now <- function() {
-  Sys.time()
-}
-
-# Wait until at least `gap` seconds have passed since the last request to the
-# same host, then record this request.
-.qes_polite_wait <- function(url, gap = 1) {
-  host <- .qes_url_host(url)
-  last <- .qes_http_state[[host]]
-  if (!is.null(last)) {
-    elapsed <- as.numeric(difftime(.qes_now(), last, units = "secs"))
-    if (is.finite(elapsed) && elapsed < gap) {
-      .qes_sleep(gap - elapsed)
-    }
-  }
-  .qes_http_state[[host]] <- .qes_now()
-  invisible(host)
-}
-
-# The call to the network, kept apart so tests can check what it receives.
-.qes_download_url <- function(url, destfile, quiet = TRUE) {
-  utils::download.file(url, destfile, method = "libcurl", mode = "wb", quiet = quiet)
-}
-
-.qes_fetch_file <- function(url, destfile, quiet = TRUE) {
-  .qes_polite_wait(url)
-  old <- options(HTTPUserAgent = .qes_user_agent())
-  on.exit(options(old), add = TRUE)
-
-  warns <- list()
-  result <- tryCatch(
-    withCallingHandlers(
-      .qes_download_url(url, destfile, quiet = quiet),
-      warning = function(w) {
-        warns[[length(warns) + 1L]] <<- w
-        invokeRestart("muffleWarning")
-      }
-    ),
-    error = function(e) e
-  )
-
-  if (inherits(result, "error") || !identical(as.integer(result), 0L)) {
-    unlink(destfile)
-    parent <- if (inherits(result, "error")) result else NULL
-    details <- vapply(warns, conditionMessage, character(1))
-    .qes_abort(
-      "network",
-      class = "qesR_error_network",
-      args = list(.qes_q(url)),
-      data = list(url = url, attempts = 1L, warnings = warns),
-      parent = parent,
-      details = details
-    )
-  }
-
-  for (w in warns) {
-    warning(w)
-  }
-  invisible(destfile)
-}
+# Every request goes through the transport of R/http.R (.qes_request(), whose
+# only network call is .qes_transport()). The reader below still lists each
+# deposit's files and reads the file Dataverse serves; slice S2b moves it to
+# the pinned originals and the cache (R/cache.R).
 
 .fetch_qes_metadata <- function(study, quiet = TRUE) {
   persistent_id <- paste0("doi:", study$doi)
@@ -130,15 +49,7 @@
     utils::URLencode(persistent_id, reserved = TRUE)
   )
 
-  json_file <- tempfile(fileext = ".json")
-  on.exit(unlink(json_file), add = TRUE)
-
-  .qes_fetch_file(
-    metadata_url,
-    json_file,
-    quiet = quiet
-  )
-  metadata <- jsonlite::fromJSON(json_file, simplifyVector = FALSE)
+  metadata <- .qes_fetch_json(metadata_url)
 
   if (!identical(metadata$status, "OK")) {
     .qes_abort(
@@ -257,11 +168,7 @@
   tmp <- tempfile(fileext = if (nzchar(ext)) paste0(".", ext) else "")
   access_url <- sprintf("%s/api/access/datafile/%s", study$server, file_id)
 
-  .qes_fetch_file(
-    access_url,
-    tmp,
-    quiet = quiet
-  )
+  .qes_fetch(access_url, tmp, quiet = quiet, what = filename)
   tmp
 }
 
@@ -277,11 +184,7 @@
 
     downloaded <- tryCatch(
       {
-        .qes_fetch_file(
-          url,
-          xml_file,
-          quiet = quiet
-        )
+        .qes_fetch(url, xml_file, quiet = TRUE)
         TRUE
       },
       error = function(e) FALSE
@@ -1153,11 +1056,7 @@
 
   downloaded <- tryCatch(
     {
-      .qes_fetch_file(
-        pdf_row$download_url[1],
-        pdf_file,
-        quiet = quiet
-      )
+      .qes_fetch(pdf_row$download_url[1], pdf_file, quiet = TRUE)
       TRUE
     },
     error = function(e) FALSE

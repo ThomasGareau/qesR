@@ -9,7 +9,7 @@ Command, on the tarball from `R CMD build`:
 `R CMD check --as-cran --run-donttest qesR_0.4.4.tar.gz`
 
 Local result (macOS, R 4.4.0): 0 ERRORs, 0 WARNINGs, NOTEs as listed below.
-The tests pass (933 pass, 0 fail, 10 skip); every skip gives its reason.
+The tests pass with 0 failures and 0 warnings; every skip gives its reason (live network tests run only with `QESR_LIVE=true`).
 
 * checking CRAN incoming feasibility ... NOTE
 
@@ -52,3 +52,15 @@ The tests pass (933 pass, 0 fail, 10 skip); every skip gives its reason.
 - Removed the download fallback that disabled TLS certificate verification (`download.file.extra = "--insecure"` and a `system2("curl", "--insecure")` shell-out), and `readRDS()` on downloaded files. A test scans the installed namespace for these calls.
 - Configured a GitHub Actions `R CMD check --as-cran` matrix (macOS, Windows, Ubuntu devel/release/oldrel-1/4.1) in `.github/workflows/R-CMD-check.yml`. It has not run yet; its results will be added here before submission.
 - Restored an offline testthat suite (edition 3); network tests are skipped on CRAN.
+
+## Dependencies
+
+- `curl` (Imports) is the HTTP client. It returns the status, headers and body
+  of a request in one call, which qesR needs to honour `Retry-After`, to
+  recognise a server's refusal of automated requests without retrying it, and
+  to verify each file before it is kept; it has per-transfer stall timeouts,
+  no R dependencies and no shell-out. It replaces `utils::download.file()`.
+- `jsonlite` (Imports) reads Dataverse's JSON answers, used only for
+  `qes_studies(check_updates = TRUE)` and the legacy download path.
+- Nothing is written outside `tempdir()` unless the user opts in with
+  `options(qesR.cache = "disk")` or `options(qesR.cache_dir =)`.

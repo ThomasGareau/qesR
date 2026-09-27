@@ -407,32 +407,35 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
 
 # The latest published version of a deposit: list(version, state, md5), where
 # md5 is named by file id; or the condition that prevented reading it.
+# Memoized for the session (qes_cache_clear() forgets it); a failure is not
+# memoized. Two attempts at most, so that the check does not stall.
 .qes_fetch_latest <- function(server, doi) {
+  url <- tryCatch(
+    .qes_url(server, "dataset", doi = doi, version = ":latest-published", include_deaccessioned = TRUE),
+    error = function(e) e
+  )
+  if (inherits(url, "error")) {
+    return(url)
+  }
+  if (!is.null(.qes_latest_memo[[url]])) {
+    return(.qes_latest_memo[[url]])
+  }
   tryCatch(
     {
-      url <- .qes_url(
-        server, "dataset",
-        doi = doi, version = ":latest-published", include_deaccessioned = TRUE
-      )
-      # Cap the wait on an unresponsive network (the check runs one request
-      # per deposit); curl's connectivity check replaces this in slice S2a.
-      op <- options(timeout = min(getOption("timeout", 60), 20))
-      on.exit(options(op), add = TRUE)
-      tmp <- tempfile(fileext = ".json")
-      on.exit(unlink(tmp), add = TRUE)
-      .qes_fetch_file(url, tmp, quiet = TRUE)
-      json <- jsonlite::fromJSON(tmp, simplifyVector = FALSE)
+      json <- .qes_fetch_json(url, max_tries = 2L)
       d <- json$data
       if (!identical(json$status, "OK") || is.null(d$versionNumber)) {
         stop("unexpected Dataverse response", call. = FALSE)
       }
       ids <- vapply(d$files, function(f) as.character(f$dataFile$id %||% NA), character(1))
       md5 <- vapply(d$files, function(f) as.character(f$dataFile$md5 %||% NA), character(1))
-      list(
+      out <- list(
         version = sprintf("%s.%s", d$versionNumber, d$versionMinorNumber %||% 0L),
         state = d$versionState %||% NA_character_,
         md5 = stats::setNames(md5, ids)
       )
+      .qes_latest_memo[[url]] <- out
+      out
     },
     error = function(e) e
   )

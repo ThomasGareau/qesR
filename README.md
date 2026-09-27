@@ -140,11 +140,15 @@ head(attr(qes_master, "source_map"))
   `qesR_error_network`, so scripts can handle them with `tryCatch()`. See
   `?qesR` for the list.
 - Downloads use plain HTTPS requests with certificate checks, at most one per
-  second per server; qesR never retries without TLS verification.
+  second per server; qesR never retries without TLS verification. A request
+  that fails for a passing reason (timeout, HTTP 429 or 503, ...) is retried a
+  few times with growing pauses, honouring the server's `Retry-After`.
 
 Les messages, avertissements et erreurs sont aussi offerts en français
 (`options(qesR.lang = "fr")`). Les fonctions renvoient leurs résultats sans
 rien écrire dans votre espace de travail, sauf avec `assign_global = TRUE`.
+Les requêtes qui échouent pour une raison passagère sont reprises quelques
+fois, avec des pauses croissantes, en respectant le `Retry-After` du serveur.
 
 ## Citing the studies
 

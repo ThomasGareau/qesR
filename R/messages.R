@@ -69,6 +69,23 @@
     fr = "Le dossier n'existe pas\u00a0: %1$s."
   ),
 
+  input_option_count = c(
+    en = "Option %1$s must be a whole number of at least 1.",
+    fr = "L'option %1$s doit \u00eatre un nombre entier sup\u00e9rieur ou \u00e9gal \u00e0 1."
+  ),
+  input_option_choice = c(
+    en = "Option %1$s must be one of %2$s.",
+    fr = "L'option %1$s doit prendre l'une des valeurs %2$s."
+  ),
+  input_option_dir = c(
+    en = "Option %1$s must be the path of an existing directory.",
+    fr = "L'option %1$s doit \u00eatre le chemin d'un dossier existant."
+  ),
+  input_older_than = c(
+    en = "`older_than` must be a single non-negative number of days, or a difftime.",
+    fr = "`older_than` doit \u00eatre un seul nombre de jours positif ou nul, ou un difftime."
+  ),
+
   # ---- qesR_error_unknown_study / _unknown_variable / _ambiguous_file ------
   unknown_study = c(
     en = "Unknown study code %1$s. See qes_studies() for valid codes.",
@@ -96,6 +113,42 @@
     en = "Could not download %1$s.",
     fr = "Impossible de t\u00e9l\u00e9charger %1$s."
   ),
+  network_attempts = c(
+    en = "Could not download %1$s (%2$s attempt(s)).",
+    fr = "Impossible de t\u00e9l\u00e9charger %1$s (%2$s tentative(s))."
+  ),
+  http_status = c(
+    en = "The server answered HTTP status %2$s for %1$s (%3$s attempt(s)).",
+    fr = "Le serveur a r\u00e9pondu par le statut HTTP %2$s pour %1$s (%3$s tentative(s))."
+  ),
+  http_not_found = c(
+    en = "%1$s was not found (HTTP 404). The file may have been removed from its Dataverse deposit; run qes_studies(check_updates = TRUE) to check the pinned versions.",
+    fr = "%1$s est introuvable (HTTP 404). Le fichier a peut-\u00eatre \u00e9t\u00e9 retir\u00e9 de son d\u00e9p\u00f4t Dataverse\u00a0; lancez qes_studies(check_updates = TRUE) pour v\u00e9rifier les versions retenues."
+  ),
+  http_retry_after_long = c(
+    en = "The server asked qesR to wait %2$s seconds before requesting %1$s again. qesR waits at most 120 seconds; try again later.",
+    fr = "Le serveur demande d'attendre %2$s secondes avant de redemander %1$s. qesR attend au plus 120 secondes\u00a0; r\u00e9essayez plus tard."
+  ),
+  http_refused = c(
+    en = "The server refused the automated request for %1$s (HTTP %2$s). qesR does not retry or work around this. Try again later, or download the file in a web browser.",
+    fr = "Le serveur a refus\u00e9 la requ\u00eate automatis\u00e9e pour %1$s (HTTP %2$s). qesR ne r\u00e9essaie pas et ne contourne pas ce refus. R\u00e9essayez plus tard, ou t\u00e9l\u00e9chargez le fichier dans un navigateur."
+  ),
+  http_refused_manual = c(
+    en = "The server refused the automated request for %1$s (HTTP %2$s). qesR does not retry or work around this. Download the file in a web browser (for a data file, choose the original file format) and save it as %3$s; qesR uses it once its md5 matches the catalog. To keep it between sessions, first set options(qesR.cache_dir = \"<folder>\") to an existing folder and save the file as <folder>/%4$s instead.",
+    fr = "Le serveur a refus\u00e9 la requ\u00eate automatis\u00e9e pour %1$s (HTTP %2$s). qesR ne r\u00e9essaie pas et ne contourne pas ce refus. T\u00e9l\u00e9chargez le fichier dans un navigateur (pour un fichier de donn\u00e9es, choisissez le format original) et enregistrez-le sous %3$s\u00a0; qesR l'utilise d\u00e8s que sa somme md5 correspond au catalogue. Pour le garder d'une session \u00e0 l'autre, fixez d'abord options(qesR.cache_dir = \"<dossier>\") sur un dossier existant et enregistrez plut\u00f4t le fichier sous <dossier>/%4$s."
+  ),
+  http_refused_save = c(
+    en = "The server refused the automated request for %1$s (HTTP %2$s). qesR does not retry or work around this. Download the file in a web browser and save it as %3$s.",
+    fr = "Le serveur a refus\u00e9 la requ\u00eate automatis\u00e9e pour %1$s (HTTP %2$s). qesR ne r\u00e9essaie pas et ne contourne pas ce refus. T\u00e9l\u00e9chargez le fichier dans un navigateur et enregistrez-le sous %3$s."
+  ),
+  tls = c(
+    en = "The secure (TLS) connection to %1$s failed. qesR never retries without certificate checks; check the system's certificates or proxy settings.",
+    fr = "La connexion s\u00e9curis\u00e9e (TLS) \u00e0 %1$s a \u00e9chou\u00e9. qesR ne r\u00e9essaie jamais sans v\u00e9rifier les certificats\u00a0; v\u00e9rifiez les certificats du syst\u00e8me ou les r\u00e9glages du proxy."
+  ),
+  offline = c(
+    en = "Could not reach %1$s: its name could not be resolved. Check your internet connection.",
+    fr = "Impossible de joindre %1$s\u00a0: son nom n'a pas pu \u00eatre r\u00e9solu. V\u00e9rifiez votre connexion internet."
+  ),
 
   # ---- qesR_error_source ---------------------------------------------------
   source_metadata = c(
@@ -122,6 +175,14 @@
     en = "The pinned data file %2$s of study %1$s is not in its Dataverse deposit. Run qes_studies(check_updates = TRUE).",
     fr = "Le fichier de donn\u00e9es retenu %2$s de l'\u00e9tude %1$s ne figure pas dans son d\u00e9p\u00f4t Dataverse. Lancez qes_studies(check_updates = TRUE)."
   ),
+  checksum = c(
+    en = "File %2$s of study %1$s failed its md5 check (expected %3$s, got %4$s). It was not kept; try again, and report the problem if it persists.",
+    fr = "Le fichier %2$s de l'\u00e9tude %1$s n'a pas pass\u00e9 le contr\u00f4le md5 (attendu %3$s, obtenu %4$s). Il n'a pas \u00e9t\u00e9 conserv\u00e9\u00a0; r\u00e9essayez, et signalez le probl\u00e8me s'il persiste."
+  ),
+  checksum_cached = c(
+    en = "The file found at %1$s is not file %3$s of study %2$s: its md5 is %5$s, not %4$s. qesR deleted it, and the server refused the automated download. If you saved it from a web browser, download it again choosing the original file format (not the tab-delimited version), and save it at the same place.",
+    fr = "Le fichier trouv\u00e9 \u00e0 %1$s n'est pas le fichier %3$s de l'\u00e9tude %2$s\u00a0: sa somme md5 est %5$s, et non %4$s. qesR l'a supprim\u00e9, et le serveur a refus\u00e9 le t\u00e9l\u00e9chargement automatis\u00e9. Si vous l'avez enregistr\u00e9 depuis un navigateur, t\u00e9l\u00e9chargez-le \u00e0 nouveau en choisissant le format original (et non la version tabul\u00e9e), puis enregistrez-le au m\u00eame endroit."
+  ),
   catalog_invalid = c(
     en = "The qesR catalog file %1$s is invalid: %2$s. Reinstall qesR.",
     fr = "Le fichier de catalogue de qesR %1$s est invalide\u00a0: %2$s. R\u00e9installez qesR."
@@ -133,6 +194,24 @@
   master_strict = c(
     en = "The master build failed for %1$s study(ies): %2$s",
     fr = "La construction du fichier fusionn\u00e9 a \u00e9chou\u00e9 pour %1$s \u00e9tude(s)\u00a0: %2$s"
+  ),
+
+  # ---- qesR_error_cache ----------------------------------------------------
+  cache_dir_missing = c(
+    en = "The cache directory %1$s (option qesR.cache_dir) does not exist. qesR only uses a directory you have created.",
+    fr = "Le dossier de cache %1$s (option qesR.cache_dir) n'existe pas. qesR n'utilise qu'un dossier que vous avez cr\u00e9\u00e9."
+  ),
+  cache_not_ours = c(
+    en = "%1$s already exists and is not a qesR cache (it has no .qesR-cache file); qesR will not write into it. Choose another cache directory.",
+    fr = "%1$s existe d\u00e9j\u00e0 et n'est pas un cache qesR (il n'a pas de fichier .qesR-cache)\u00a0; qesR n'y \u00e9crira pas. Choisissez un autre dossier de cache."
+  ),
+  cache_unmarked = c(
+    en = "%1$s is not a qesR cache (it has no .qesR-cache file); qes_cache_clear() will not delete anything in it.",
+    fr = "%1$s n'est pas un cache qesR (il n'a pas de fichier .qesR-cache)\u00a0; qes_cache_clear() n'y supprimera rien."
+  ),
+  cache_write = c(
+    en = "qesR could not write %1$s.",
+    fr = "qesR n'a pas pu \u00e9crire %1$s."
   ),
 
   # ---- qesR_error_no_provenance --------------------------------------------
@@ -186,6 +265,26 @@
   no_codebook_files = c(
     en = "No codebook/support files found for %1$s.",
     fr = "Aucun fichier de documentation trouv\u00e9 pour %1$s."
+  ),
+  download_file = c(
+    en = "Downloading %1$s from %2$s.",
+    fr = "T\u00e9l\u00e9chargement de %1$s depuis %2$s."
+  ),
+  cached_file = c(
+    en = "Using the cached copy of %1$s.",
+    fr = "Utilisation de la copie en cache de %1$s."
+  ),
+  cache_rejected = c(
+    en = "The cached copy %1$s does not match the catalog (md5 %3$s, expected %2$s); qesR deletes it and downloads the file again.",
+    fr = "La copie en cache %1$s ne correspond pas au catalogue (somme md5 %3$s, attendue %2$s)\u00a0; qesR la supprime et t\u00e9l\u00e9charge le fichier \u00e0 nouveau."
+  ),
+  cache_created = c(
+    en = "qesR keeps downloaded files in %1$s. qes_cache_info() lists them and qes_cache_clear() deletes them.",
+    fr = "qesR conserve les fichiers t\u00e9l\u00e9charg\u00e9s dans %1$s. qes_cache_info() les \u00e9num\u00e8re et qes_cache_clear() les supprime."
+  ),
+  disk_cache_tip = c(
+    en = "Downloaded files are kept only until R closes. To keep them between sessions, set options(qesR.cache = \"disk\"). This tip is shown once per session.",
+    fr = "Les fichiers t\u00e9l\u00e9charg\u00e9s ne sont conserv\u00e9s que jusqu'\u00e0 la fermeture de R. Pour les garder d'une session \u00e0 l'autre, fixez options(qesR.cache = \"disk\"). Ce conseil s'affiche une fois par session."
   ),
   master_skip = c(
     en = "Skipping %1$s due to a download or read error.",

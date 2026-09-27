@@ -368,11 +368,7 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 
   downloaded <- tryCatch(
     {
-      .qes_fetch_file(
-        file_row$download_url[1],
-        pdf_file,
-        quiet = quiet
-      )
+      .qes_fetch(file_row$download_url[1], pdf_file, quiet = TRUE)
       TRUE
     },
     error = function(e) FALSE

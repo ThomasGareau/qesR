@@ -28,6 +28,19 @@ changes the data or text that functions return.}
 \item{\code{qesR.quiet_deprecated}}{\code{TRUE} hides the one-time notices of the
 soft-deprecated legacy functions (see \link{qesR-deprecated}). Default
 \code{FALSE}.}
+\item{\code{qesR.cache} (environment variable \code{QESR_CACHE})}{Where downloaded
+files are kept: \code{"session"} (default; a folder in \code{\link[=tempdir]{tempdir()}}, deleted
+when R exits), \code{"disk"} (kept between sessions in
+\code{tools::R_user_dir("qesR", "cache")}, created only when you choose it)
+or \code{"none"}. See \code{\link[=qes_cache_info]{qes_cache_info()}}.}
+\item{\code{qesR.cache_dir} (environment variable \code{QESR_CACHE_DIR})}{An
+existing directory to keep downloads in, instead of the default disk
+location; implies \code{"disk"}. qesR works only in a \code{qesR} subfolder that
+it creates and marks.}
+\item{\code{qesR.max_tries}}{Attempts per request before giving up. Default
+4.}
+\item{\code{qesR.stall_timeout}}{Seconds a download may stay below 1 KB/s
+before it is abandoned (and retried). Default 60.}
 }
 }
 
@@ -45,16 +58,25 @@ Errors inherit from \code{qesR_error}:
 \item{\code{qesR_error_ambiguous_file}}{a \code{file} pattern that matches no file
 (fields \code{study}, \code{pattern}, \code{candidates});}
 \item{\code{qesR_error_network}}{a failed download (fields \code{url}, \code{attempts},
-and \code{parent}, the root cause). qesR never retries a download without TLS
-certificate checks;}
+and \code{parent}, the root cause). Its subclasses are
+\code{qesR_error_http} (an HTTP error status; fields \code{status},
+\code{retry_after}, \code{server_message}), itself the parent of
+\code{qesR_error_http_refused} (the server refused the automated request;
+field \code{manual_path}); \code{qesR_error_tls} (the secure connection failed;
+qesR never retries without TLS certificate checks); and
+\code{qesR_error_offline} (the server's name could not be resolved);}
 \item{\code{qesR_error_source}}{a problem with the files served for a study
-(fields \code{study}, \code{file_id});}
+(fields \code{study}, \code{file_id}); subclass \code{qesR_error_checksum} (a file
+that does not match its catalog md5; fields \code{expected}, \code{actual});}
+\item{\code{qesR_error_cache}}{a cache directory that is missing or is not a
+qesR cache (fields \code{path}, \code{reason});}
 \item{\code{qesR_error_no_provenance}}{an object that no longer records which
 study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}}.}
 }
 Warnings inherit from \code{qesR_warning} and messages from \code{qesR_message}.
-Progress messages (class \code{qesR_message_download}) are silenced by
-\code{quiet = TRUE}. Three notices are shown at most once per session and are
+Progress messages (classes \code{qesR_message_download} and
+\code{qesR_message_cached}) are silenced by \code{quiet = TRUE}, as is the one-time
+tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}). Three notices are shown at most once per session and are
 not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
 \link{qesR-deprecated}); \code{qesR_message_assign_default}, shown when \code{get_qes()},
 \code{get_qes_master()} or \code{get_decon()} is called without \code{assign_global}; and
@@ -76,6 +98,21 @@ version and one data file, identified by its md5 checksum.
 Requests go to the Dataverse servers listed in the catalog, one at a time
 and at least one second apart per server. They carry the User-Agent
 \verb{qesR/<version> R/<version>} and no other identifying information.
+A request that fails for a passing reason (a timeout, a dropped
+connection, HTTP 408, 429, 500, 502, 503 or 504) is tried again, up to
+\code{qesR.max_tries} attempts in all, after a growing pause, or after the delay
+the server asks for in \code{Retry-After} (at most two minutes; a longer delay
+is an error). A download that stalls is abandoned after
+\code{qesR.stall_timeout} seconds. A file is saved under its final name only
+once it is complete and, for catalog files, once its md5 matches the
+catalog.
+
+Some servers (Harvard Dataverse) may refuse automated requests. qesR does
+not work around this: the error (class \code{qesR_error_http_refused}) says
+where to save the file after downloading it in a web browser.
+
+Downloaded catalog files are kept in a cache, by default only for the
+session; see \code{\link[=qes_cache_info]{qes_cache_info()}} and \code{\link[=qes_cache_clear]{qes_cache_clear()}}.
 }
 
 \section{En français}{
@@ -91,6 +128,16 @@ langue des messages, avertissements et erreurs : \code{"en"} ou \code{"fr"}. San
 elle, qesR suit \code{LANGUAGE}, puis la locale des messages. La langue ne change
 jamais les données ni le texte retournés. \code{qesR.quiet_deprecated = TRUE}
 masque les notes uniques des fonctions héritées (voir \link{qesR-deprecated}).
+\code{qesR.cache} (\code{QESR_CACHE}) fixe où sont gardés les fichiers téléchargés :
+\code{"session"} (par défaut ; un dossier de \code{\link[=tempdir]{tempdir()}}, supprimé à la
+fermeture de R), \code{"disk"} (gardés d'une session à l'autre dans
+\code{tools::R_user_dir("qesR", "cache")}, créé seulement sur demande) ou
+\code{"none"}. \code{qesR.cache_dir} (\code{QESR_CACHE_DIR}) désigne un dossier existant
+de votre choix et implique \code{"disk"} ; qesR n'y utilise qu'un sous-dossier
+\code{qesR} qu'il crée et marque. \code{qesR.max_tries} (4 par défaut) est le nombre
+de tentatives par requête et \code{qesR.stall_timeout} (60 par défaut) le
+nombre de secondes sous 1 Ko/s après lequel un téléchargement est
+abandonné.
 
 \strong{Conditions.} Les erreurs, avertissements et messages ont des classes,
 ce qui permet d'y réagir avec \code{tryCatch()} ou \code{withCallingHandlers()} sans
@@ -99,12 +146,21 @@ lire le texte. Les erreurs héritent de \code{qesR_error} : \code{qesR_error_inp
 \code{suggestions}), \code{qesR_error_unknown_variable} (\code{variables},
 \code{suggestions}), \code{qesR_error_ambiguous_file} (\code{study}, \code{pattern},
 \code{candidates}), \code{qesR_error_network} (\code{url}, \code{attempts}, et \code{parent}, la
-cause première ; qesR ne désactive jamais la vérification des certificats
-TLS), \code{qesR_error_source} (\code{study}, \code{file_id}) et
-\code{qesR_error_no_provenance} (objet qui n'indique plus son étude, passé à
-\code{\link[=qes_cite]{qes_cite()}}). Les avertissements
+cause première), avec ses sous-classes \code{qesR_error_http} (statut HTTP
+d'erreur ; \code{status}, \code{retry_after}, \code{server_message}), elle-même parente
+de \code{qesR_error_http_refused} (requête automatisée refusée ;
+\code{manual_path}), \code{qesR_error_tls} (échec de la connexion sécurisée ; qesR ne
+désactive jamais la vérification des certificats TLS) et
+\code{qesR_error_offline} (nom du serveur introuvable) ; \code{qesR_error_source}
+(\code{study}, \code{file_id}), avec \code{qesR_error_checksum} (fichier dont la somme
+md5 ne correspond pas au catalogue ; \code{expected}, \code{actual}) ;
+\code{qesR_error_cache} (dossier de cache absent ou qui n'est pas un cache
+qesR ; \code{path}, \code{reason}) et \code{qesR_error_no_provenance} (objet qui
+n'indique plus son étude, passé à \code{\link[=qes_cite]{qes_cite()}}). Les avertissements
 héritent de \code{qesR_warning} et les messages de \code{qesR_message}. Les messages
-de progression (\code{qesR_message_download}) sont masqués par \code{quiet = TRUE}.
+de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le
+conseil unique sur le cache disque (\code{qesR_message_disk_cache_tip}) sont
+masqués par \code{quiet = TRUE}.
 \code{qesR_message_deprecated}, \code{qesR_message_assign_default} et
 \code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat)
 s'affichent au plus une fois par session et ne sont pas masqués par
@@ -121,7 +177,18 @@ identifié par sa somme de contrôle md5.
 \strong{Réseau.} Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 fois et à au moins une seconde d'intervalle par serveur. Elles portent
 l'en-tête User-Agent \verb{qesR/<version> R/<version>} et aucune autre
-information identifiante.
+information identifiante. Une requête qui échoue pour une raison passagère
+(délai dépassé, connexion interrompue, HTTP 408, 429, 500, 502, 503 ou 504)
+est reprise, jusqu'à \code{qesR.max_tries} tentatives en tout, après une pause
+croissante ou le délai demandé par le serveur dans \code{Retry-After} (deux
+minutes au plus ; au-delà, c'est une erreur). Un fichier ne reçoit son nom
+définitif qu'une fois complet et, pour les fichiers du catalogue, une fois
+sa somme md5 vérifiée. Certains serveurs (Harvard Dataverse) peuvent
+refuser les requêtes automatisées : qesR ne contourne pas ce refus, et
+l'erreur (\code{qesR_error_http_refused}) indique où enregistrer le fichier
+téléchargé dans un navigateur. Les fichiers du catalogue sont gardés dans
+un cache, par défaut pour la session seulement ; voir \code{\link[=qes_cache_info]{qes_cache_info()}} et
+\code{\link[=qes_cache_clear]{qes_cache_clear()}}.
 }
 
 \examples{

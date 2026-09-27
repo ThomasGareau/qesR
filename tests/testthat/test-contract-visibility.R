@@ -20,9 +20,15 @@ export_calls <- function() {
     get_qescodes = quote(get_qescodes()),
     qes_studies = quote(qes_studies()),
     qes_docs = quote(qes_docs()),
-    qes_cite = quote(qes_cite("qes2018"))
+    qes_cite = quote(qes_cite("qes2018")),
+    qes_cache_info = quote(qes_cache_info()),
+    qes_cache_clear = quote(qes_cache_clear())
   )
 }
+
+# Exports that return invisibly by design (design.md section 2.2): they act on
+# files and return what they did, not data.
+invisible_by_design <- c("qes_cache_clear", "qes_download")
 
 # Point the R_user_dir() roots at empty temporary directories for the calling
 # test; tools::R_user_dir() reads these variables on every call.
@@ -60,7 +66,7 @@ test_that("every export returns its value visibly", {
   withr::defer(unlink(file.path(tempdir(), "qes2018_questionnaire.txt")))
   for (f in names(export_calls())) {
     res <- suppressMessages(withVisible(eval(export_calls()[[f]])))
-    expect_true(res$visible, info = f)
+    expect_identical(res$visible, !(f %in% invisible_by_design), info = f)
     expect_false(is.null(res$value), info = f)
   }
 })
