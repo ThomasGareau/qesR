@@ -30,7 +30,8 @@ Les fonctions sont regroupées comme dans la référence du site web.\tabular{ll
    Métadonnées et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr
    Métadonnées et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
    Harmonisation (expérimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. \cr
-   Harmonisation (expérimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement. \cr
+   Harmonisation (expérimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. \cr
+   Harmonisation (expérimental) \tab \code{\link[=qes_design]{qes_design()}} \tab Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. \cr
    Reproductibilité \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. \cr
    Reproductibilité \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation de qesR et de chaque jeu de données, en texte, BibTeX ou \code{bibentry}. \cr
    Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Liste ou supprime les fichiers gardés dans le cache de téléchargement. \cr
@@ -38,7 +39,8 @@ Les fonctions sont regroupées comme dans la référence du site web.\tabular{ll
 
 
 L'harmonisation entre études est expérimentale : \code{\link[=qes_spec]{qes_spec()}} montre la
-spécification révisée et \code{\link[=qes_harmonize]{qes_harmonize()}} l'applique ; la référence
+spécification révisée, \code{\link[=qes_harmonize]{qes_harmonize()}} l'applique et \code{\link[=qes_design]{qes_design()}} en
+fait un plan de sondage ; la référence
 générée à partir de la spécification est
 \code{vignette("fr-reference-harmonisation", package = "qesR")}.
 

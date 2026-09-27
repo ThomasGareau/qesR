@@ -174,6 +174,54 @@ design-based standard error, from the `survey` package for instance, would
 not have its usual meaning. Compute each estimate within one study: studies differ in design,
 population and wording, and their weights are on their own scales.
 
+## Harmonized data across studies (experimental)
+
+`qes_harmonize()` builds one data frame from several studies, one column
+per harmonized variable ("target"), from a reviewed specification only.
+`qes_spec()` shows which question of each study feeds a target and how
+comparable it is to the target's anchor question:
+
+```{r spec}
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw[, c("study", "wave", "source_var", "grade", "weight_var")]
+```
+
+The rows of this first specification are checked against the original
+files but not yet signed off by a reviewer, so they are applied only with
+`include_draft = TRUE`. On the demonstration study, which stands in for
+`qes2014`:
+
+```{r harmonize}
+h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
+                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
+                   lang = params$lang)
+h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
+attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
+```
+
+Every missing value has a reason (`sov_indep__na`). `eligible_voter` says
+whether the respondent could vote in the election, and each wave's
+recommended weight has mean 1: these questions were asked after the
+election, so `weight_post` is their weight, as the weight guide says.
+`qes_design()` hands the data to the `survey` package:
+
+```{r design}
+if (requireNamespace("survey", quietly = TRUE)) {
+  d <- qes_design(h, weight = "weight_post")
+  survey::svymean(~sov_indep, d, na.rm = TRUE)
+}
+```
+
+The standard error treats the weighted sample as a probability sample; for
+an opt-in panel such as qes2014, read it as a rough guide only (see
+`?qes_design`).
+
+A pre-election question (vote intention) takes `weight_pre` instead, and a
+study's two waves can have different weights: `qes_design()` asks you to
+choose when the targets need different ones. The reference of every target,
+generated from the specification, is
+`vignette("harmonization-reference", package = "qesR")`.
+
 ## Provenance and citations
 
 Data returned by `get_qes()` records which file it was read from.

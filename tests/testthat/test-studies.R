@@ -17,8 +17,13 @@ test_that("qes_studies() returns the offline catalog with doi_url and waves", {
   expect_identical(nrow(s), 13L)
   expect_false("qes_demo" %in% s$study)
   expect_identical(s$doi_url, paste0("https://doi.org/", s$doi))
-  # waves arrive with the harmonization spec (slice HZ4)
-  expect_true(all(is.na(s$waves)))
+  # waves come from the harmonization spec (slice HZ4), in field order; NA
+  # for a study the spec does not cover yet
+  waves <- stats::setNames(s$waves, s$study)
+  expect_identical(unname(waves[c("qes2022", "qes2018", "qes2014", "qes2012", "qes2018_panel",
+                                  "qes2007_panel", "qes2012_panel")]),
+                   c("cps;pes", "post", "post", "post", "pre;post", "pre;post", "pre;post"))
+  expect_true(all(is.na(waves[c("qes2007", "qes2008", "qes_crop_2007_2010", "qes1998")])))
   expect_type(s$year, "integer")
   expect_type(s$default_member, "logical")
   expect_identical(rownames(s), as.character(seq_len(nrow(s))))

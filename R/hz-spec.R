@@ -503,7 +503,7 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
   }
   if (view != "spec") {
     obj <- .qes_spec_get(spec, validate)
-    tsel <- if (is.null(targets)) NULL else .qes_hz_resolve_targets(targets, obj)
+    tsel <- if (is.null(targets)) NULL else .qes_hz_resolve_targets(targets, obj, leading = TRUE)
     ssel <- .qes_view_studies(studies)
     out <- if (view == "targets") {
       .qes_spec_targets_view(obj, tsel, ssel, lang)

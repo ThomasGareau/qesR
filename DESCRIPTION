@@ -1,7 +1,7 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.5.0
+Version: 0.6.0
 Maintainer: Thomas Gareau-Paquette <tg454@cornell.edu>
 Authors@R:
     person(
@@ -17,8 +17,11 @@ Description: Load the Quebec Election Studies and related Quebec election
     checksum before use. An offline catalog lists the studies, their
     documents and their citations, and shipped metadata give codebooks,
     question wording and search in English and French without network
-    access. Data come from the Quebec Election Studies of 2007 (Bélanger et
-    al. 2023) <doi:10.5683/SP2/6XGOKA>, 2008 (Bélanger and Nadeau 2023)
+    access. An experimental engine harmonizes selected variables across
+    studies from a reviewed specification only, with each study's waves,
+    weights and comparability grades, and returns survey designs for the
+    'survey' and 'srvyr' packages. Data come from the Quebec Election
+    Studies of 2007 (Bélanger et al. 2023) <doi:10.5683/SP2/6XGOKA>, 2008 (Bélanger and Nadeau 2023)
     <doi:10.5683/SP2/8KEYU3>, 2012 (Bélanger et al. 2023)
     <doi:10.5683/SP2/WXUPXT>, 2014 (Bélanger and Nadeau 2023)
     <doi:10.5683/SP3/64F7WR>, 2018 (Bélanger et al. 2023)
@@ -43,6 +46,8 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
+    srvyr,
+    survey,
     testthat (>= 3.1.7),
     withr (>= 2.5.0)
 Config/Needs/website: ggplot2, pkgdown

@@ -114,7 +114,7 @@ le libellé ; la vue \code{"spec"} renvoie la spécification vérifiée.
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 0.1.2)}{
+\section{Targets in the shipped spec (version 0.2.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{
@@ -128,7 +128,12 @@ Generated from the spec by roxygen; \code{qes_spec()} gives the same list with e
 \item{\code{lr_self}}{Left-right self-placement (0-10) (family \code{left_right}; sets \code{core}; numeric). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel.}
 \item{\code{pid_prov}}{Provincial party identification (family \code{party_id}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2018, qes2022.}
 \item{\code{interest_4pt}}{Interest in politics (4 points) (family \code{interest}; sets \code{core}; ordinal). Studies: qes2012, qes2014, qes2018.}
-\item{\code{birth_year}}{Year of birth (family \code{birth}; sets \code{core}; numeric). Studies: qes2022.}
+\item{\code{birth_year}}{Year of birth (family \code{birth}; sets \code{core}; numeric). Studies: qes2022, qes2012, qes2014, qes2018.}
+\item{\code{birth_month}}{Month of birth (family \code{birth}; no set; numeric). Studies: qes2018.}
+\item{\code{age}}{Age in years (family \code{age_years}; sets \code{core}; numeric). Studies: qes2018, qes2022.}
+\item{\code{age_group3}}{Age group (3 bands) (family \code{age_bands}; sets \code{core}; ordinal). Studies: qes2018_panel, qes2012_panel, qes2007_panel.}
+\item{\code{citizen}}{Canadian citizen (family \code{citizenship}; sets \code{core}; categorical). Studies: qes2022.}
+\item{\code{survey_mode}}{Interview mode (family \code{interview_mode}; no set; categorical). Studies: qes2018_panel.}
 }
 }
 
@@ -155,6 +160,7 @@ s
 generated from the spec.
 
 Other harmonization: 
+\code{\link{qes_design}()},
 \code{\link{qes_harmonize}()}
 }
 \concept{harmonization}

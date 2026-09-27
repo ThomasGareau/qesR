@@ -144,12 +144,14 @@ reference:
     A cross-study engine driven by a reviewed specification: `qes_spec()`
     shows which studies have which harmonized variable and how comparable
     each study's question is; `qes_harmonize()` applies it, with a reason
-    for every missing value. The reference generated from the spec is the
-    article *Harmonization reference*. `get_qes_master()` is kept for code
-    written for qesR 0.4.4.
+    for every missing value, each respondent's waves and weights, and
+    `qes_design()` turns the result into a survey design. The reference
+    generated from the spec is the article *Harmonization reference*.
+    `get_qes_master()` is kept for code written for qesR 0.4.4.
   contents:
   - qes_spec
   - qes_harmonize
+  - qes_design
 - title: Reproducibility
   desc: >
     Which file a result was read from, and how to cite qesR and each dataset.

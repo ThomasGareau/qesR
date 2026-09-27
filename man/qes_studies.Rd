@@ -27,7 +27,9 @@ catalog's \code{studies.csv}: \code{study}, \code{aliases}, \code{family}, \code
 \code{dataset_version} (pinned), \code{data_file_id} (pinned), \code{label_file_id},
 \code{source_lang}, \code{licence}, \code{licence_url}, \code{metadata_shipped}, \code{publisher},
 \code{citation_year}, \code{dataset_unf}, \code{notes_en}, \code{notes_fr}; then \code{doi_url}
-and \code{waves} (\code{NA} until waves are defined). With \code{check_updates = TRUE}
+and \code{waves}, the waves of the study in the harmonization spec
+(\verb{;}-separated, in field order, such as \code{"cps;pes"}; \code{NA} for a study
+the spec does not cover yet). With \code{check_updates = TRUE}
 it adds \code{latest_version}, \code{latest_md5} (of the pinned data file in the
 latest version) and \code{status}: \code{"current"}, \code{"new_version_same_file"},
 \code{"data_changed"}, \code{"deaccessioned"} or \code{"unreachable"}.

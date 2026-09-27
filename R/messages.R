@@ -145,6 +145,54 @@
     en = "Unknown target, family or set name(s) in `targets`: %1$s. Did you mean %2$s?",
     fr = "Nom(s) de cible, de famille ou d'ensemble inconnu(s) dans `targets`\u00a0: %1$s. Vouliez-vous dire %2$s\u00a0?"
   ),
+  input_targets_leading = c(
+    en = "%1$s is a leading column of every result of qes_harmonize(), not a target to request.",
+    fr = "%1$s est une colonne de t\u00eate de tout r\u00e9sultat de qes_harmonize(), et non une cible \u00e0 demander."
+  ),
+  input_design_x = c(
+    en = "`x` must be harmonized data returned by qes_harmonize(), with its weight columns.",
+    fr = "`x` doit \u00eatre un tableau harmonis\u00e9 renvoy\u00e9 par qes_harmonize(), avec ses colonnes de pond\u00e9ration."
+  ),
+  input_design_weight = c(
+    en = "`weight` must be one of the weight columns of `x`: %1$s.",
+    fr = "`weight` doit \u00eatre une des colonnes de pond\u00e9ration de `x`\u00a0: %1$s."
+  ),
+  input_design_weight_choose = c(
+    en = "The targets of `x` come from waves that call for different weight columns (%1$s), so no one weight column fits them all. Choose one: weight = \"weight_pre\" (the pre-election waves) or weight = \"weight_post\" (the post-election waves).",
+    fr = "Les cibles de `x` viennent de vagues qui appellent des colonnes de pond\u00e9ration diff\u00e9rentes (%1$s), si bien qu'aucune ne convient \u00e0 toutes. Choisissez-en une\u00a0: weight = \"weight_pre\" (les vagues pr\u00e9\u00e9lectorales) ou weight = \"weight_post\" (les vagues post\u00e9lectorales)."
+  ),
+  input_design_weight_untimed = c(
+    en = "No target of `x` depends on the moment of the interview, and `x` has values in both %1$s. Choose one: weight = \"weight_pre\" (the pre-election waves) or weight = \"weight_post\" (the post-election waves).",
+    fr = "Aucune cible de `x` ne d\u00e9pend du moment de l'entrevue, et `x` a des valeurs dans %1$s. Choisissez-en une\u00a0: weight = \"weight_pre\" (les vagues pr\u00e9\u00e9lectorales) ou weight = \"weight_post\" (les vagues post\u00e9lectorales)."
+  ),
+  input_splice_into_exists = c(
+    en = "%1$s is already a column of `x`; choose another `into`.",
+    fr = "%1$s est d\u00e9j\u00e0 une colonne de `x`\u00a0; choisissez un autre `into`."
+  ),
+  hz_rbind_layout = c(
+    en = "Harmonized data with different layouts (respondent and long) cannot be combined with rbind(). Harmonize every study with one layout.",
+    fr = "Des donn\u00e9es harmonis\u00e9es de dispositions diff\u00e9rentes (par r\u00e9pondant et longue) ne peuvent pas \u00eatre combin\u00e9es avec rbind(). Harmonisez toutes les \u00e9tudes avec une seule disposition."
+  ),
+  input_design_no_weight = c(
+    en = "No row of `x` has a value of %1$s: no design can be built. Weights that need review are NA (qes_harmonize() says which).",
+    fr = "Aucune ligne de `x` n'a de valeur de %1$s\u00a0: aucun plan ne peut \u00eatre construit. Les pond\u00e9rations \u00e0 r\u00e9viser valent NA (qes_harmonize() indique lesquelles)."
+  ),
+  design_dependency = c(
+    en = "qes_design(engine = \"%1$s\") needs the %2$s package: install.packages(\"%2$s\").",
+    fr = "qes_design(engine = \"%1$s\") a besoin du package %2$s\u00a0: install.packages(\"%2$s\")."
+  ),
+  input_splice_family = c(
+    en = "%1$s names no target family with targets in `x`.",
+    fr = "%1$s ne d\u00e9signe aucune famille de cibles pr\u00e9sentes dans `x`."
+  ),
+  input_splice_levels = c(
+    en = "The targets %1$s have different level sets (%2$s) and cannot be pooled into one column.",
+    fr = "Les cibles %1$s ont des ensembles de niveaux diff\u00e9rents (%2$s) et ne peuvent pas \u00eatre regroup\u00e9es en une colonne."
+  ),
+  input_join_raw_vars = c(
+    en = "Variable(s) %1$s are in none of the studies of `x`.",
+    fr = "Variable(s) %1$s absente(s) de toutes les \u00e9tudes de `x`."
+  ),
   input_harmonize_study = c(
     en = "The harmonization spec has no rows yet for %1$s. It covers %2$s.",
     fr = "La sp\u00e9cification d'harmonisation n'a encore aucune ligne pour %1$s. Elle couvre %2$s."
@@ -152,10 +200,6 @@
   input_harmonize_data_names = c(
     en = "`data` gives %1$s, which is not in `studies`.",
     fr = "`data` fournit %1$s, qui ne fait pas partie de `studies`."
-  ),
-  harmonize_later = c(
-    en = "%1$s is not available yet: it arrives with the waves and weights of the harmonization engine.",
-    fr = "%1$s n'est pas encore disponible\u00a0: cette fonctionnalit\u00e9 arrive avec les vagues et les pond\u00e9rations du moteur d'harmonisation."
   ),
   input_path_dir = c(
     en = "`path` must be an existing directory. qesR writes only into a directory you have created.",
@@ -399,6 +443,22 @@
     fr = "Les niveaux que la question d'une \u00e9tude n'offrait pas sont des z\u00e9ros structurels, pas une absence d'appui\u00a0: %1$s. qes_provenance(x, level = \"cell\") les \u00e9num\u00e8re."
   ),
 
+  weight_review = c(
+    en = "The recommended weights of these waves are not documented yet and are NA until they are reviewed: %1$s. qes_spec(\"spec\")$tables$weights gives the registry.",
+    fr = "Les pond\u00e9rations recommand\u00e9es de ces vagues ne sont pas encore document\u00e9es et valent NA jusqu'\u00e0 leur r\u00e9vision\u00a0: %1$s. qes_spec(\"spec\")$tables$weights donne le registre."
+  ),
+  weight_timing = c(
+    en = "In %1$s the requested targets come from waves with different weights (before and after the election). Use weight_pre for the pre-election targets and weight_post for the post-election ones; attr(, \"qes_weight_guide\") says which.",
+    fr = "Dans %1$s, les cibles demand\u00e9es viennent de vagues aux pond\u00e9rations diff\u00e9rentes (avant et apr\u00e8s l'\u00e9lection). Utilisez weight_pre pour les cibles pr\u00e9\u00e9lectorales et weight_post pour les post\u00e9lectorales\u00a0; attr(, \"qes_weight_guide\") indique laquelle."
+  ),
+  design_dropped = c(
+    en = "%1$s row(s) with no value of %2$s are left out of the design (not in a wave with that weight, or its weight needs review): %3$s.",
+    fr = "%1$s ligne(s) sans valeur de %2$s sont laiss\u00e9es hors du plan (hors d'une vague ayant cette pond\u00e9ration, ou pond\u00e9ration \u00e0 r\u00e9viser)\u00a0: %3$s."
+  ),
+  splice_wording = c(
+    en = "The pooled column %1$s mixes questions with different wordings: %2$s. Column %3$s gives each row's source target.",
+    fr = "La colonne regroup\u00e9e %1$s m\u00eale des questions de libell\u00e9s diff\u00e9rents\u00a0: %2$s. La colonne %3$s donne la cible source de chaque ligne."
+  ),
   hz_rbind_spec = c(
     en = "Harmonized data built with different specs (content hashes %1$s) cannot be combined with rbind(). Harmonize every study with one spec, in one qes_harmonize() call.",
     fr = "Des donn\u00e9es harmonis\u00e9es avec des sp\u00e9cifications diff\u00e9rentes (empreintes %1$s) ne peuvent pas \u00eatre combin\u00e9es avec rbind(). Harmonisez toutes les \u00e9tudes avec une seule sp\u00e9cification, en un seul appel \u00e0 qes_harmonize()."
@@ -633,6 +693,10 @@
   hz_print_zeros = c(
     en = "Structural zeros (levels not offered): %1$s.",
     fr = "Z\u00e9ros structurels (niveaux non offerts)\u00a0: %1$s."
+  ),
+  hz_print_weight_review = c(
+    en = "Weights awaiting review (NA): %1$s.",
+    fr = "Pond\u00e9rations \u00e0 r\u00e9viser (NA)\u00a0: %1$s."
   ),
   hz_print_failed = c(
     en = "Failed and left out: %1$s (attr(, \"failed_studies\")).",

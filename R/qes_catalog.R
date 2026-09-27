@@ -311,7 +311,9 @@
 #'   `dataset_version` (pinned), `data_file_id` (pinned), `label_file_id`,
 #'   `source_lang`, `licence`, `licence_url`, `metadata_shipped`, `publisher`,
 #'   `citation_year`, `dataset_unf`, `notes_en`, `notes_fr`; then `doi_url`
-#'   and `waves` (`NA` until waves are defined). With `check_updates = TRUE`
+#'   and `waves`, the waves of the study in the harmonization spec
+#'   (`;`-separated, in field order, such as `"cps;pes"`; `NA` for a study
+#'   the spec does not cover yet). With `check_updates = TRUE`
 #'   it adds `latest_version`, `latest_md5` (of the pinned data file in the
 #'   latest version) and `status`: `"current"`, `"new_version_same_file"`,
 #'   `"data_changed"`, `"deaccessioned"` or `"unreachable"`.
@@ -367,12 +369,23 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
   }
   studies$demo <- NULL
   studies$doi_url <- .qes_doi_url(studies$doi)
-  studies$waves <- rep(NA_character_, nrow(studies))
+  studies$waves <- .qes_study_waves(studies$study)
   if (isTRUE(check_updates)) {
     studies <- .qes_check_updates(studies, catalog$files, quiet = quiet)
   }
   rownames(studies) <- NULL
   studies
+}
+
+# The waves of each study in the shipped harmonization spec, ";"-separated in
+# wave order; NA for a study without waves.
+.qes_study_waves <- function(codes) {
+  wv <- .qes_spec_get(NULL, "none")$tables$waves
+  wv <- wv[order(wv$study, wv$wave_order), , drop = FALSE]
+  vapply(codes, function(s) {
+    w <- wv$wave[wv$study == s]
+    if (length(w) == 0L) NA_character_ else paste(w, collapse = ";")
+  }, character(1), USE.NAMES = FALSE)
 }
 
 # One metadata request per deposit, compared with the pinned version and the

@@ -91,7 +91,9 @@
 #'   `study`, `wave`, `target`, `source_var`, `rule`, `map_id`, `grade`,
 #'   `status` (of the crosswalk row: `stable`, or `review` and `draft` for
 #'   rows not yet signed off), `instrument`, `weight_var` (the wave's
-#'   recommended weight),
+#'   recommended weight), `weight_status` (`reviewed`, or `needs_review`
+#'   when the weight is not documented yet and is `NA` in the data),
+#'   `weight_mean_raw` (the mean of the raw weight over the wave's members),
 #'   `levels_not_offered` (structural zeros, `;`-separated; empty when
 #'   every level was offered, `NA` for targets without levels), `included`
 #'   (`FALSE` when no row was applied), `excluded` (why not: `no_row`, the
@@ -100,7 +102,11 @@
 #'   variable is not in the demonstration data; `below_grade`, its grade is
 #'   below `min_grade`; `NA` when included), `n_valid`, one count
 #'   `n_<reason>` per NA reason (they sum with `n_valid` to the study's
-#'   rows) and `note`.
+#'   rows), `n_outside_universe` (for targets about an election: the
+#'   wave's members who could not vote in it, `eligible_voter` `FALSE`; `NA`
+#'   for other targets, and `NA` when eligibility is not available for any
+#'   member of the wave, for example when its age rows are not signed off
+#'   and `include_draft = FALSE`) and `note`.
 #'
 #'   For `level = "spec"`, one row (one per [qes_harmonize()] call for
 #'   results combined with [rbind()]): `spec_version`, `spec_hash`,

@@ -32,7 +32,13 @@ export_calls <- function() {
     # against the shipped catalog, not the fake one (the demo study is read
     # from the package, with no request)
     qes_spec = quote(with_shipped_catalog(qes_spec())),
-    qes_harmonize = quote(with_shipped_catalog(qes_harmonize("qes_demo", include_draft = TRUE)))
+    qes_harmonize = quote(with_shipped_catalog(qes_harmonize("qes_demo", include_draft = TRUE))),
+    # survey is suggested: without it the design cannot be built (the error
+    # is tested in test-hz-design.R), and the harmonized data stand in
+    qes_design = quote(with_shipped_catalog({
+      h <- qes_harmonize("qes_demo", targets = "sov_indep", include_draft = TRUE)
+      if (requireNamespace("survey", quietly = TRUE)) qes_design(h) else h
+    }))
   )
 }
 

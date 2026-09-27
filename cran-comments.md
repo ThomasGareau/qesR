@@ -1,7 +1,7 @@
 ## Resubmission
 
 This is a resubmission of qesR (first submitted as 0.4.4, reviewed by
-B. Altmann on 2026-02-27). Version 0.5.0 answers each point of the
+B. Altmann on 2026-02-27). This version answers each point of the
 review:
 
 1. **Method references in the Description.** The Description now cites the
@@ -24,8 +24,9 @@ review:
    example with the network code replaced by an error, to keep them
    offline, and check that no example line is commented-out code.
 
-3. **Vignettes should execute code.** The six vignettes (three in English,
-   three in French: getting started, study citations, and moving from 0.4.4)
+3. **Vignettes should execute code.** The eight vignettes (four in English,
+   four in French: getting started, study citations, moving from 0.4.4, and
+   the harmonization reference generated from the package's specification)
    execute their code, offline, on the catalog, the shipped metadata and
    `qes_demo`. Only the chunks that would download a full study are shown
    without being run. The analysis examples that need full data files are
@@ -89,13 +90,15 @@ function of 0.4.4 keeps its name and arguments.
 
 ## R CMD check results
 
-`R CMD check --as-cran qesR_0.5.0.tar.gz` on the local machine (macOS,
-R 4.4.0, `_R_CHECK_CRAN_INCOMING_REMOTE_=true`): 0 errors | 0 warnings |
-3 NOTEs, below; the last two come from the local machine.
+`R CMD check --as-cran qesR_0.6.0.tar.gz` on the local machine (macOS,
+R 4.4.0), run with `_R_CHECK_CRAN_INCOMING_REMOTE_=true`: 0 errors |
+0 warnings | 3 NOTEs: the "New submission" NOTE (below; the URL
+checks of the same step reported no problem) and two NOTEs from the
+local machine (below).
 
-The tests pass (3,921 expectations, 0 failures, 0 warnings; 12 skipped
-with their reason: network tests, skipped on CRAN, and two checks planned
-for later versions). The examples, also with `--run-donttest`, and the
+The tests pass (5,589 expectations, 0 failures, 0 warnings; 15 skipped
+with their reason: network tests, skipped on CRAN, and one check planned
+for a later version). The examples, also with `--run-donttest`, and the
 vignettes run without errors.
 
 * checking CRAN incoming feasibility ... NOTE
@@ -136,6 +139,11 @@ vignettes run without errors.
   timeouts, no R dependencies and never shells out. It replaces
   `utils::download.file()`. On Linux, installing `curl` from source needs
   the system libcurl (libcurl4-openssl-dev), which is standard.
+- `survey` and `srvyr` (Suggests) are used only by `qes_design()`, which
+  turns harmonized data into a survey design when the user asks for one;
+  it checks that they are installed and says which one to install when
+  they are not. The examples, tests and vignettes that use them run only
+  when they are installed.
 - `jsonlite` (Imports) reads Dataverse's JSON answers, used only for
   `qes_studies(check_updates = TRUE)` and `qes_download(version =
   "latest")`.

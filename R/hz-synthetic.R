@@ -73,6 +73,10 @@
   files <- .qes_catalog()$files
   f <- files[files$study == study & files$role == "data" & files$is_default %in% TRUE, , drop = FALSE]
   ids <- setdiff(.qes_split_list(if (nrow(f) > 0L) f$id_vars[1] else NA_character_), ".row")
+  # an identifier that is also a crosswalk source (qes2018_panel method, the
+  # interview mode) is filled with the source's codes below; the first other
+  # identifier makes the key unique
+  ids <- setdiff(ids, xw$source_var)
   for (k in seq_along(ids)) {
     d[[ids[k]]] <- if (k == 1L) as.numeric(seq_len(N)) else rep(1, N)
   }
@@ -166,14 +170,18 @@
     }
     info[[v]] <- it
   }
-  # a gate variable that is no row's source: its closed codes and one open code
-  for (v in names(info)) {
-    g <- info[[v]]$gate
-    if (is.na(g) || !is.null(info[[g]])) next
-    closed <- info[[v]]$closed
+  # a gate variable that is no row's source: the closed codes of every row
+  # it filters (qes2018 agensp closes birth_year on 1 and age on 0) and one
+  # code open for all of them
+  gated <- names(info)[vapply(names(info), function(v) !is.na(info[[v]]$gate), logical(1))]
+  for (g in unique(vapply(gated, function(v) info[[v]]$gate, character(1)))) {
+    if (!is.null(info[[g]])) next
+    users <- gated[vapply(gated, function(v) identical(info[[v]]$gate, g), logical(1))]
+    closed <- unique(unlist(lapply(users, function(v) info[[v]]$closed)))
+    mask <- Reduce(`|`, lapply(users, function(v) info[[v]]$mask))
     info[[g]] <- list(codes = c(setdiff(closed, "NA"), .qes_synth_other(closed)),
                       na_token = "NA" %in% closed, gate = NA_character_, closed = character(0),
-                      mask = info[[v]]$mask, labels = NULL)
+                      mask = mask, labels = NULL)
   }
 
   # fill the variables, gates first

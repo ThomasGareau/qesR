@@ -23,7 +23,8 @@ Grouped as in the reference index of the website.\tabular{lll}{
    Metadata and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
    Metadata and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
    Harmonization (experimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
-   Harmonization (experimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only. \cr
+   Harmonization (experimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. \cr
+   Harmonization (experimental) \tab \code{\link[=qes_design]{qes_design()}} \tab Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. \cr
    Reproducibility \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. \cr
    Reproducibility \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation of qesR and of each dataset, as text, BibTeX or \code{bibentry}. \cr
    Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Lists or deletes the files kept in the download cache. \cr
@@ -31,8 +32,9 @@ Grouped as in the reference index of the website.\tabular{lll}{
 
 
 Harmonization across studies is experimental: \code{\link[=qes_spec]{qes_spec()}} shows the
-reviewed spec and \code{\link[=qes_harmonize]{qes_harmonize()}} applies it; the reference generated
-from the spec is \code{vignette("harmonization-reference", package = "qesR")}.
+reviewed spec, \code{\link[=qes_harmonize]{qes_harmonize()}} applies it and \code{\link[=qes_design]{qes_design()}} turns the
+result into a survey design; the reference generated from the spec is
+\code{vignette("harmonization-reference", package = "qesR")}.
 
 The functions of qesR 0.4.4 (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) keep working and will not be
@@ -116,7 +118,10 @@ the catalog; fields \code{expected}, \code{actual});}
 qesR cache (fields \code{path}, \code{reason});}
 \item{\code{qesR_error_no_provenance}}{an object that no longer records which
 study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}} or \code{\link[=qes_provenance]{qes_provenance()}}, or
-a provenance level the object does not record (field \code{level}).}
+a provenance level the object does not record (field \code{level});}
+\item{\code{qesR_error_dependency}}{a suggested package that a function
+needs is not installed, such as \pkg{survey} for \code{\link[=qes_design]{qes_design()}}
+(field \code{package}).}
 }
 Warnings inherit from \code{qesR_warning}, among them \code{qesR_warning_encoding}
 (a label or text value that still holds a replacement or control
@@ -243,9 +248,11 @@ md5 ne correspond pas au catalogue ; \code{expected}, \code{actual}) et
 \code{qesR_error_rowcount} (fichier de données dont les lignes et colonnes
 diffèrent du catalogue ; \code{expected}, \code{actual}) ;
 \code{qesR_error_cache} (dossier de cache absent ou qui n'est pas un cache
-qesR ; \code{path}, \code{reason}) et \code{qesR_error_no_provenance} (objet qui
+qesR ; \code{path}, \code{reason}) ; \code{qesR_error_no_provenance} (objet qui
 n'indique plus son étude, passé à \code{\link[=qes_cite]{qes_cite()}} ou \code{\link[=qes_provenance]{qes_provenance()}}, ou
-niveau de provenance que l'objet n'enregistre pas ; champ \code{level}). Les
+niveau de provenance que l'objet n'enregistre pas ; champ \code{level}) et
+\code{qesR_error_dependency} (package suggéré non installé dont une fonction a
+besoin, comme \pkg{survey} pour \code{\link[=qes_design]{qes_design()}} ; champ \code{package}). Les
 avertissements héritent de \code{qesR_warning}, dont \code{qesR_warning_encoding}
 (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 contrôle après lecture ; \code{study}, \code{file_id}, \code{n}, \code{variables}) et

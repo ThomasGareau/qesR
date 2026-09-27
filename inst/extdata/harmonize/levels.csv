@@ -25,3 +25,9 @@ interest4,1,very,Very interested,Très intéressé(e),1,TRUE,very interested;tre
 interest4,2,quite,Quite interested,Plutôt intéressé(e),2,TRUE,quite interested;somewhat interested;plutot interesse(e);assez interesse(e)
 interest4,3,hardly,Hardly interested,Pas très intéressé(e),3,TRUE,hardly interested;not very interested;pas tres interesse(e);peu interesse(e)
 interest4,4,not_at_all,Not at all interested,Pas du tout intéressé(e),4,TRUE,not at all interested;pas du tout interesse(e)
+age3,1,a18_34,18-34,18-34,1,TRUE,18-34;18-34 ans
+age3,2,a35_54,35-54,35-54,2,TRUE,35-54;35-54 ans
+age3,3,a55_plus,55 and over,55 et plus,3,TRUE,55+;55 ans et plus;55 and over
+survey_mode,1,web,Web,Web,1,TRUE,web;internet;en ligne
+survey_mode,2,phone,Telephone,Téléphone,2,TRUE,telephone;phone
+survey_mode,3,mixed,Mixed,Mixte,3,TRUE,mixed;mixte

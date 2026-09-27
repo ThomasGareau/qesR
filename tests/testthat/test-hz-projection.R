@@ -86,13 +86,32 @@ test_that("real-code marginals are what the source files give", {
   expect_identical(n("qes2018_panel", "vote_prov_recall", reason = "not_voted"), 111L)
   expect_false(any(e$source_var == "independance"))
   # 2012 panel: 97 would not vote is a level of the referendum set
-  expect_true(all(e$value[e$study == "qes2012_panel"] %in% c(NA, "yes", "no", "would_not_vote")))
+  expect_true(all(e$value[e$study == "qes2012_panel" & e$target == "sov_sovereign_country"] %in%
+                    c(NA, "yes", "no", "would_not_vote")))
+  # age bands collapse exactly from six bands (slice HZ4): 2012 panel 34 + 93,
+  # 155 + 184, 169 + 209; the producers' own recodes give the same counts
+  expect_identical(n("qes2012_panel", "age_group3", "a18_34"), 127L)
+  expect_identical(n("qes2012_panel", "age_group3", "a35_54"), 339L)
+  expect_identical(n("qes2012_panel", "age_group3", "a55_plus"), 378L)
+  expect_identical(n("qes2007_panel", "age_group3", "a18_34"), 441L)
+  expect_identical(n("qes2007_panel", "age_group3", reason = "sysmis"), 1L)
+  expect_identical(n("qes2018_panel", "age_group3", "a55_plus"), 551L)
+  # 2018 year and month of birth: the 41 who chose not to answer are refused
+  expect_identical(n("qes2018", "birth_year", reason = "refused"), 41L)
+  expect_identical(n("qes2018", "birth_month", reason = "refused"), 41L)
+  expect_identical(n("qes2018", "age", reason = "inapplicable"), 3031L)
+  # the interview mode of the 2018 panel's first wave: 400 telephone, 850 web
+  expect_identical(n("qes2018_panel", "survey_mode", "phone"), 400L)
+  expect_identical(n("qes2018_panel", "survey_mode", "web"), 850L)
 })
 
 test_that("a row without cells in gates.csv is reported, never projected from the dictionary", {
   # the dictionary lists only the labelled codes of agex (more than 50
   # codes): its counts must not stand in for the cells
   s <- hz_spec()
+  # (the birth_year row of qes2012 reads agex: drop it and its cells)
+  s$tables$crosswalk <- s$tables$crosswalk[-hz_xw_row(s$tables, "qes2012", "birth_year"), , drop = FALSE]
+  s$tables$gates <- s$tables$gates[!(s$tables$gates$study == "qes2012" & s$tables$gates$source_var == "agex"), , drop = FALSE]
   i <- hz_xw_row(s$tables, "qes2012", "lr_self")
   s$tables$crosswalk$source_var[i] <- "agex"
   s$tables$crosswalk$args[i] <- "min=18;max=120"

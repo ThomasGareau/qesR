@@ -433,6 +433,19 @@
   add("V-S4", "waves", bad, wkeys[bad], "election_ref is not in catalog/elections.csv")
   bad <- which(!paste(wt$study, wt$wave) %in% paste(wv$study, wv$wave))
   add("V-S4", "weights", bad, tkeys[bad], "(study, wave) is not in waves.csv")
+  # a mode that varies by respondent (var:<name>) is read through the
+  # wave's survey_mode crosswalk row on that variable
+  for (w in which(has(wv$mode) & grepl("^var:", wv$mode))) {
+    v <- sub("^var:", "", wv$mode[w])
+    ok <- any(xw$study == wv$study[w] & xw$wave == wv$wave[w] & xw$target %in% "survey_mode" &
+                xw$source_var %in% v & xw$rule %in% "map")
+    if (!ok) {
+      add("V-S4", "waves", w, wkeys[w], sprintf("mode var:%s needs a survey_mode crosswalk row (rule map) on %s in this wave", v, v))
+    }
+  }
+  # targets of the id and design blocks are leading columns: never in a set
+  lead <- which(tg$block %in% c("id", "design") & has(tg$sets))
+  add("V-S4", "targets", lead, tg$target[lead], "a target of the id or design block is a leading column and cannot be in a set")
   if (!is.null(gt) && nrow(gt) > 0L) {
     # the gate is part of the match: cells counted under a gate the row no
     # longer has are never read (.qes_hz_cells() filters on gate_var)

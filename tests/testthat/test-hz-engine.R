@@ -15,7 +15,12 @@ hz_run <- function(data, ..., include_draft = TRUE, quiet = TRUE) {
 
 hz_syn <- function(studies) .qes_synthetic(studies, spec = hz_spec())
 
-core_targets <- function() hz_spec()$tables$targets$target
+# the targets of the "core" set, in spec order (the leading-column target
+# survey_mode and birth_month are not in it)
+core_targets <- function() {
+  tg <- hz_spec()$tables$targets
+  tg$target[vapply(tg$sets, function(x) "core" %in% .qes_split_list(x), logical(1))]
+}
 
 # The classes of the messages `expr` signals (muffled), and its value.
 hz_messages <- function(expr) {
@@ -44,10 +49,13 @@ test_that("two panel studies with two waves each give one row per respondent", {
   expect_identical(h$qes_id[1], paste0("qes2007_panel:", .canon(syn$qes2007_panel$nompn[1]), "-",
                                        .canon(syn$qes2007_panel$quest[1])))
   # leading columns, then the core targets
-  expect_identical(names(h)[1:10], c("study", "year", "election_date", "family", "study_design",
-                                     "target_population", "waves", "qes_id", "subsample", "source_row"))
-  core <- hz_spec()$tables$targets$target
-  expect_identical(names(h)[11:(10 + length(core))], core)
+  expect_identical(names(h)[1:14], c("study", "year", "election_date", "family", "study_design",
+                                     "target_population", "waves", "qes_id", "subsample", "source_row",
+                                     "survey_mode", "interview_date", "days_to_election", "eligible_voter"))
+  core <- core_targets()
+  expect_identical(names(h)[15:(14 + length(core))], core)
+  expect_identical(names(h)[(15 + length(core)):ncol(h)],
+                   c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var"))
   expect_s3_class(h$election_date, "Date")
   expect_identical(unique(h$election_date[h$study == "qes2007_panel"]), as.Date("2007-03-26"))
   # wave membership: the waves column and not_in_wave for non-members
@@ -216,7 +224,12 @@ test_that("cells left out for another reason are not counted as not signed off",
   withr::local_options(qesR.lang = "en")
   # below min_grade, with include_draft = TRUE
   syn <- hz_syn(c("qes2022", "qes2014"))
-  m <- hz_messages(hz_run(syn, include_draft = TRUE, min_grade = "identical", quiet = FALSE))
+  # (the synthetic qes2022 has no value labels, which the spec holds only as
+  # hashes: the citizenship row that eligible_voter reads warns about them)
+  m <- hz_messages(withCallingHandlers(
+    hz_run(syn, include_draft = TRUE, min_grade = "identical", quiet = FALSE),
+    qesR_warning_label_mismatch = function(w) invokeRestart("muffleWarning")
+  ))
   expect_false("qesR_message_unreviewed_skipped" %in% m$classes)
   cell <- qes_provenance(m$value, level = "cell")
   expect_true(all(cell$excluded[!cell$included] %in% c("below_grade", "no_row")))
@@ -299,7 +312,10 @@ test_that("identifiers must exist and be unique", {
 
 test_that("arguments are checked", {
   syn <- hz_syn("qes2014")
-  expect_error(qes_harmonize(layout = "long"), class = "qesR_error_input")
+  expect_error(qes_harmonize(layout = "wide"), class = "qesR_error_input")
+  expect_error(qes_harmonize(weights = "trimmed"), class = "qesR_error_input")
+  # the interview mode is a leading column, not a target to request
+  expect_error(qes_harmonize(targets = "survey_mode", data = syn), class = "qesR_error_input")
   expect_error(qes_harmonize(values = "text"), class = "qesR_error_input")
   expect_error(qes_harmonize(keep_source = NA), class = "qesR_error_input")
   err <- expect_error(qes_harmonize(targets = "vote_prov_recal", data = syn), class = "qesR_error_input")
@@ -317,10 +333,15 @@ test_that("arguments are checked", {
 
 test_that("targets accepts target, family and set names, in spec order", {
   syn <- hz_syn("qes2014")
+  wcols <- c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var")
   h <- hz_run(syn, targets = c("sov_indep", "vote_prov"))
-  expect_identical(names(h)[-(1:10)], c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "sov_indep"))
+  expect_identical(setdiff(names(h)[-(1:14)], wcols),
+                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "sov_indep"))
   h <- hz_run(syn, targets = "vote")
-  expect_identical(names(h)[-(1:10)], c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall"))
+  expect_identical(setdiff(names(h)[-(1:14)], wcols),
+                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall"))
+  # a family whose only target is a leading column adds nothing
+  expect_error(hz_run(syn, targets = "interview_mode"), class = "qesR_error_input")
 })
 
 test_that("study selection: defaults, 'all' and the demonstration study", {

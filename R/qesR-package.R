@@ -18,14 +18,16 @@
 #' | Metadata and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
 #' | Metadata and search | [qes_missing()] | Sets "don't know", "refused" and declared missing codes to `NA`. |
 #' | Harmonization (experimental) | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
-#' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only. |
+#' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
+#' | Harmonization (experimental) | [qes_design()] | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
 #' | Reproducibility | [qes_provenance()] | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 #' | Reproducibility | [qes_cite()] | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Lists or deletes the files kept in the download cache. |
 #'
 #' Harmonization across studies is experimental: [qes_spec()] shows the
-#' reviewed spec and [qes_harmonize()] applies it; the reference generated
-#' from the spec is `vignette("harmonization-reference", package = "qesR")`.
+#' reviewed spec, [qes_harmonize()] applies it and [qes_design()] turns the
+#' result into a survey design; the reference generated from the spec is
+#' `vignette("harmonization-reference", package = "qesR")`.
 #'
 #' The functions of qesR 0.4.4 (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) keep working and will not be
@@ -103,7 +105,10 @@
 #'     qesR cache (fields `path`, `reason`);}
 #'   \item{`qesR_error_no_provenance`}{an object that no longer records which
 #'     study it comes from, passed to [qes_cite()] or [qes_provenance()], or
-#'     a provenance level the object does not record (field `level`).}
+#'     a provenance level the object does not record (field `level`);}
+#'   \item{`qesR_error_dependency`}{a suggested package that a function
+#'     needs is not installed, such as \pkg{survey} for [qes_design()]
+#'     (field `package`).}
 #' }
 #' Warnings inherit from `qesR_warning`, among them `qesR_warning_encoding`
 #' (a label or text value that still holds a replacement or control
@@ -221,9 +226,11 @@
 #' `qesR_error_rowcount` (fichier de données dont les lignes et colonnes
 #' diffèrent du catalogue ; `expected`, `actual`) ;
 #' `qesR_error_cache` (dossier de cache absent ou qui n'est pas un cache
-#' qesR ; `path`, `reason`) et `qesR_error_no_provenance` (objet qui
+#' qesR ; `path`, `reason`) ; `qesR_error_no_provenance` (objet qui
 #' n'indique plus son étude, passé à [qes_cite()] ou [qes_provenance()], ou
-#' niveau de provenance que l'objet n'enregistre pas ; champ `level`). Les
+#' niveau de provenance que l'objet n'enregistre pas ; champ `level`) et
+#' `qesR_error_dependency` (package suggéré non installé dont une fonction a
+#' besoin, comme \pkg{survey} pour [qes_design()] ; champ `package`). Les
 #' avertissements héritent de `qesR_warning`, dont `qesR_warning_encoding`
 #' (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 #' contrôle après lecture ; `study`, `file_id`, `n`, `variables`) et

@@ -37,7 +37,9 @@ For \code{level = "cell"} (harmonized data), one row per study and target:
 \code{study}, \code{wave}, \code{target}, \code{source_var}, \code{rule}, \code{map_id}, \code{grade},
 \code{status} (of the crosswalk row: \code{stable}, or \code{review} and \code{draft} for
 rows not yet signed off), \code{instrument}, \code{weight_var} (the wave's
-recommended weight),
+recommended weight), \code{weight_status} (\code{reviewed}, or \code{needs_review}
+when the weight is not documented yet and is \code{NA} in the data),
+\code{weight_mean_raw} (the mean of the raw weight over the wave's members),
 \code{levels_not_offered} (structural zeros, \verb{;}-separated; empty when
 every level was offered, \code{NA} for targets without levels), \code{included}
 (\code{FALSE} when no row was applied), \code{excluded} (why not: \code{no_row}, the
@@ -46,7 +48,11 @@ yet signed off and \code{include_draft = FALSE}; \code{not_in_data}, the
 variable is not in the demonstration data; \code{below_grade}, its grade is
 below \code{min_grade}; \code{NA} when included), \code{n_valid}, one count
 \verb{n_<reason>} per NA reason (they sum with \code{n_valid} to the study's
-rows) and \code{note}.
+rows), \code{n_outside_universe} (for targets about an election: the
+wave's members who could not vote in it, \code{eligible_voter} \code{FALSE}; \code{NA}
+for other targets, and \code{NA} when eligibility is not available for any
+member of the wave, for example when its age rows are not signed off
+and \code{include_draft = FALSE}) and \code{note}.
 
 For \code{level = "spec"}, one row (one per \code{\link[=qes_harmonize]{qes_harmonize()}} call for
 results combined with \code{\link[=rbind]{rbind()}}): \code{spec_version}, \code{spec_hash},

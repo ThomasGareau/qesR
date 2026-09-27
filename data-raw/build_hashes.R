@@ -12,8 +12,9 @@
 # is loaded from the source tree with pkgload, so the output is the engine's
 # (R/hz-engine.R) on the same reader as get_qes().
 #
-# It harmonizes every study the spec covers, every target, every row of the
-# spec that is not documentation-only (include_draft = TRUE, so rows still in
+# It harmonizes every study the spec covers, every target (the rows of the
+# leading-column target survey_mode through the survey_mode column), every
+# row of the spec that is not documentation-only (include_draft = TRUE, so rows still in
 # review are covered too), with values = "code" and missing = "reasons", and
 #   1. checks V-L1 on marginals: among each wave's members, the count of
 #      every level and NA reason of every projectable row equals
@@ -48,7 +49,10 @@ cat_ <- .qes_catalog()
 shipped <- cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE]
 failed <- FALSE
 
-h <- qes_harmonize("all", targets = spec$tables$targets$target, values = "code",
+# every target except the leading columns (survey_mode), whose rows are
+# checked on the leading column below
+leading <- .qes_hz_leading_targets(spec)
+h <- qes_harmonize("all", targets = setdiff(spec$tables$targets$target, leading), values = "code",
                    missing = "reasons", include_draft = TRUE, spec = spec, quiet = TRUE)
 
 # ---- 1. V-L1 on marginals -------------------------------------------------------------
@@ -72,6 +76,25 @@ engine_marginals <- function(study) {
                na_reason = vapply(parts, function(p) if (length(p) > 1L && nzchar(p[2])) p[2] else NA_character_, character(1)),
                n = as.integer(n), stringsAsFactors = FALSE)
   })
+  # rows of the leading-column targets: the leading column (survey_mode)
+  # among the wave's members, as the value of the row's map
+  xw <- spec$tables$crosswalk
+  lead_rows <- which(xw$study == study & xw$target %in% leading & xw$rule %in% c("map", "numeric") &
+                       xw$status %in% c("stable", "review", "draft"))
+  for (k in lead_rows) {
+    t <- xw$target[k]
+    in_s <- h$study == study
+    member <- vapply(strsplit(ifelse(is.na(h$waves[in_s]), "", h$waves[in_s]), ";", fixed = TRUE),
+                     function(w) xw$wave[k] %in% w, logical(1))
+    v <- as.character(h[[t]][in_s][member])
+    n <- table(ifelse(is.na(v), "", v))
+    out[[length(out) + 1L]] <- data.frame(
+      study = study, wave = xw$wave[k], target = t, source_var = xw$source_var[k],
+      value = ifelse(nzchar(names(n)), names(n), NA_character_),
+      na_reason = ifelse(nzchar(names(n)), NA_character_, "sysmis"),
+      n = as.integer(n), stringsAsFactors = FALSE
+    )
+  }
   if (length(out) > 0L) do.call(rbind, out) else NULL
 }
 key_of <- function(x) paste(x$study, x$wave, x$target, x$source_var,
@@ -91,7 +114,7 @@ compare <- function(study, expected, what) {
     cat(sprintf("V-L1 marginals %s: %d cells equal.\n", what, length(keys)))
   }
 }
-for (study in unique(cell$study)) {
+for (study in unique(c(cell$study, spec$tables$crosswalk$study[spec$tables$crosswalk$target %in% leading]))) {
   if (study %in% shipped) {
     compare(study, spec$tables$expected[spec$tables$expected$study == study, , drop = FALSE],
             paste(study, "expected/marginals.csv"))

@@ -30,8 +30,8 @@ the Quebec Election Studies the spec covers, or the studies named in
 \item{targets}{Target, family or set names (see \code{\link[=qes_spec]{qes_spec()}}); the
 default \code{"core"} is the core set.}
 
-\item{layout}{\code{"respondent"}: one row per respondent of each study's file.
-The long layout (one row per respondent and wave) is not available yet.}
+\item{layout}{\code{"respondent"} (default): one row per respondent of each
+study's file. \code{"long"}: one row per respondent and wave (see \emph{Waves}).}
 
 \item{values}{How categorical targets are returned: \code{"factor"} (default;
 ordered for ordinal targets, with the target's levels in every study),
@@ -45,8 +45,9 @@ numbers.}
 \item{min_grade}{The lowest comparability grade kept: \code{"approximate"}
 (default, every graded cell), \code{"comparable"} or \code{"identical"}.}
 
-\item{weights}{Reserved for the weight columns, which are not produced
-yet; the value is checked but has no effect.}
+\item{weights}{\code{"normalized"} (default): each wave's recommended weight
+divided by its mean over the wave's members, so it has mean 1 in each
+study and wave. \code{"raw"}: as deposited. See \emph{Weights}.}
 
 \item{unmapped}{What a source code the spec does not map does: \code{"error"}
 (default) raises an error of class \code{qesR_error_unmapped}; \code{"warn"} and
@@ -77,17 +78,25 @@ do not depend on it.}
 }
 \value{
 A data frame of class \code{qes_harmonized}, returned visibly, one row
-per respondent of each study's file (no row is dropped). Leading
-columns: \code{study}, \code{year}, \code{election_date}, \code{family}, \code{study_design},
-\code{target_population}, \code{waves} (the waves the respondent belongs to,
-\verb{;}-separated), \code{qes_id} (\verb{<study>:<identifier>}, unique), \code{subsample}
-and \code{source_row} (the row in the study's file, for joining raw
-variables with \code{\link[=merge]{merge()}} on \code{study} and \code{source_row}). Then one column
-per target, carrying its label in \code{attr(, "label")}, then the
-\verb{__na} and \verb{__src} companions. Attributes: \code{qes_spec} (spec \code{version},
-\code{hash}, \code{custom}, \code{engine}), \code{qes_provenance} (see \code{\link[=qes_provenance]{qes_provenance()}},
-with levels \code{"study"}, \code{"cell"} and \code{"spec"}) and \code{failed_studies}
-(\code{study}, \code{class}, \code{message}, \code{parent_message}).
+per respondent of each study's file (no row is dropped), or per
+respondent and wave in the long layout. Leading columns: \code{study},
+\code{year}, \code{election_date}, \code{family}, \code{study_design}, \code{target_population},
+\code{waves} (the waves the respondent belongs to, \verb{;}-separated; in the
+long layout \code{wave}, \code{wave_timing} and \code{wave_design} instead), \code{qes_id}
+(\verb{<study>:<identifier>}, unique in the respondent layout), \code{subsample},
+\code{source_row} (the row in the study's file, for joining raw variables
+with \code{\link[=merge]{merge()}} on \code{study} and \code{source_row}), \code{survey_mode},
+\code{interview_date} (of the respondent's first wave in the respondent
+layout), \code{days_to_election} and \code{eligible_voter}. Then one column per
+target, carrying its label in \code{attr(, "label")}, then the \verb{__na} and
+\verb{__src} companions, then the weight columns: \code{weight_pre},
+\code{weight_post}, \code{weight_pre_var} and \code{weight_post_var} (respondent
+layout) or \code{weight} and \code{weight_var} (long layout). Attributes:
+\code{qes_spec} (spec \code{version}, \code{hash}, \code{custom}, \code{engine}),
+\code{qes_provenance} (see \code{\link[=qes_provenance]{qes_provenance()}}, with levels \code{"study"},
+\code{"cell"} and \code{"spec"}), \code{qes_weight_guide} (\code{target}, \code{study}, \code{wave},
+\code{target_timing}, \code{weight_column}, \code{weight_var}, \code{weight_status}) and
+\code{failed_studies} (\code{study}, \code{class}, \code{message}, \code{parent_message}).
 
 Results for different studies built with the same spec can be combined
 with \code{\link[=rbind]{rbind()}}, which also combines their provenance (an error if the
@@ -190,6 +199,71 @@ returns them (labelled codes, not factors). The synthetic study
 copies; targets it has no question for are \code{not_asked}.
 }
 
+\section{Waves}{
+
+Each study has one or more waves (a post-election survey, the waves of a
+panel, the campaign-period and post-election surveys of 2022), declared
+in the spec with the rule that says who took part in each: a
+disposition or date variable, never an answer. A question belongs to the
+wave that asked it, so a respondent outside that wave is \code{NA} with reason
+\code{not_in_wave}. The respondent layout has one row per respondent, and
+\code{waves} lists the waves each respondent took part in. The long layout
+(\code{layout = "long"}) has one row per respondent and wave (a respondent in
+no wave keeps one row, with \code{wave} \code{NA}): a value sits on the row of the
+wave that asked it and the respondent's other rows are \code{not_in_wave},
+except the time-invariant targets (year and month of birth), which are
+repeated on each of the respondent's rows.
+
+\code{interview_date} is the wave's interview date where the file has one
+(\code{NA} otherwise; the fieldwork dates of each wave are in
+\code{qes_spec("spec")$tables$waves}), and \code{days_to_election} the number of
+days from it to the election (negative after the election).
+\code{survey_mode} is \code{"web"}, \code{"phone"} or \code{"mixed"}: the wave's mode, or,
+where it varies by respondent (the 2018 panel's first wave), the
+respondent's own.
+}
+
+\section{Weights}{
+
+Each wave has at most one recommended weight in the spec's registry, and
+never one calibrated on the vote. The respondent layout has \code{weight_pre}
+and \code{weight_post}, the recommended weights of the respondent's
+pre-election and post-election waves (\code{NA} outside them), with the name
+of the source variable in \code{weight_pre_var} and \code{weight_post_var}; the
+long layout has \code{weight} and \code{weight_var}. \code{weights = "normalized"}
+(default) divides each wave's weight by its mean over the wave's members
+with a weight, so it has mean 1 in each study and wave; this fixes the
+scale only (it does not give studies equal shares when pooled: see
+\code{\link[=qes_design]{qes_design()}}). \code{weights = "raw"} keeps the weights as deposited. A
+weight whose method is not documented yet (registry status
+\code{needs_review}) is \code{NA}, with a message, until it is reviewed; the raw
+variables are still in the data read by \code{\link[=get_qes]{get_qes()}}, to join by
+\code{source_row}.
+
+A pre-election question (vote intention) is weighted with \code{weight_pre}
+and a post-election one (reported vote) with \code{weight_post}.
+\code{attr(, "qes_weight_guide")} gives, for each target and study, the wave
+that asked it and the weight column and variable that fit it, and a
+message says when the targets of a study need different weights.
+}
+
+\section{Eligibility}{
+
+\code{eligible_voter} says whether the respondent could vote in the study's
+election: 18 or older on election day and, where the study asked,
+a Canadian citizen. It comes from the age targets of the spec (year and
+month of birth, age, age group) and the citizenship target, read
+whatever \code{targets} and \code{min_grade} ask for (but, like any target, only
+from rows signed off by a reviewer, or with \code{include_draft = TRUE}).
+It is \code{TRUE} or \code{FALSE} only when the answers settle it: someone born
+18 years before the election year whose month of birth is unknown, or
+aged 17 when interviewed before the election, is \code{NA}, as is a
+respondent whose study has no age question in the spec yet. The 2018
+study sampled people aged 16 and over, so some of its respondents are
+\code{FALSE}. Its weights target the population aged 16 and over; keeping
+only eligible voters does not make them an 18-and-over calibration.
+}
+
 \section{En français}{
 
 \code{qes_harmonize()} (expérimental) construit un seul tableau à partir de
@@ -202,7 +276,15 @@ comparabilité (\code{identical}, \code{comparable}, \code{approximate}) ; \code
 écarte les cellules sous un niveau donné. Les options qu'une question
 n'offrait pas sont des zéros structurels, pas un appui nul. \code{lang = "fr"}
 donne les étiquettes des niveaux en français ; les codes sont les mêmes.
-Voir \code{vignette("fr-reference-harmonisation", package = "qesR")}.
+La disposition longue (\code{layout = "long"}) donne une ligne par personne et
+par vague. Les pondérations recommandées de chaque vague sont dans
+\code{weight_pre} et \code{weight_post} (ou \code{weight} en disposition longue),
+ramenées à une moyenne de 1 par étude et par vague ; une pondération
+non encore documentée vaut NA. \code{eligible_voter} indique si la personne
+pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
+citoyenneté canadienne) ; \code{interview_date}, \code{days_to_election} et
+\code{survey_mode} décrivent l'entrevue. \code{\link[=qes_design]{qes_design()}} en fait un plan de
+sondage. Voir \code{vignette("fr-reference-harmonisation", package = "qesR")}.
 }
 
 \examples{
@@ -223,14 +305,27 @@ cells[, c("study", "target", "source_var", "grade", "n_valid")]
 h_fr <- qes_harmonize("qes_demo", targets = "interest_4pt", lang = "fr",
                       include_draft = TRUE, quiet = TRUE)
 levels(h_fr$interest_4pt)
+
+# weights and eligibility: every question of the demonstration study was
+# asked after the election, so weight_post is its weight (mean 1)
+h <- qes_harmonize("qes_demo", targets = "sov_indep", include_draft = TRUE, quiet = TRUE)
+h[1:3, c("study", "waves", "eligible_voter", "sov_indep", "weight_post", "weight_post_var")]
+attr(h, "qes_weight_guide")
+
+# one row per respondent and wave
+l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long",
+                   include_draft = TRUE, quiet = TRUE)
+table(l$wave, l$wave_timing)
 }
 \seealso{
+\code{\link[=qes_design]{qes_design()}} to use the weights in a survey design,
 \code{\link[=qes_spec]{qes_spec()}} for the targets and the mapping of each study,
 \code{vignette("harmonization-reference", package = "qesR")} for the
 reference generated from the spec, \code{\link[=qes_provenance]{qes_provenance()}} for where each
 value came from.
 
 Other harmonization: 
+\code{\link{qes_design}()},
 \code{\link{qes_spec}()}
 }
 \concept{harmonization}

@@ -514,7 +514,18 @@ test_that("real-code regressions hold in the shipped spec", {
   expect_false(xw$primary[i])
   # 2012 panel: 98 and 99 reversed; "pays souverain" is not sov_indep
   expect_identical(c(reason("sov_qes2012p_intvoteref", "98"), reason("sov_qes2012p_intvoteref", "99")), c("refused", "dk"))
-  expect_identical(xw$target[xw$study == "qes2012_panel"], "sov_sovereign_country")
+  expect_identical(xw$target[xw$study == "qes2012_panel"], c("sov_sovereign_country", "age_group3"))
+  # age bands come from the six-band question, never the producers' recodes
+  expect_identical(xw$source_var[xw$study %in% c("qes2007_panel", "qes2012_panel") & xw$target == "age_group3"],
+                   c("age", "age"))
+  # the interview mode that varies by respondent is read through its
+  # survey_mode row (2018 panel, first wave: 1-2 telephone, 3 web)
+  expect_identical(t$waves$mode[t$waves$study == "qes2018_panel" & t$waves$wave == "pre"], "var:method")
+  expect_identical(c(code("mode_qes2018p_method", "1"), code("mode_qes2018p_method", "2"),
+                     code("mode_qes2018p_method", "3")),
+                   c(lvl("survey_mode", "phone"), lvl("survey_mode", "phone"), lvl("survey_mode", "web")))
+  # 2022 permanent residents and others are not citizens
+  expect_identical(code("citizen_qes2022_cps", "2"), lvl("yes_no", "no"))
   # a recommended weight is never vote-calibrated (OD6/V-S13), and qes2022 is untrimmed (OD10)
   wt <- t$weights
   expect_identical(wt$weight_var[wt$study == "qes2022" & wt$recommended], c("cps_weight_general", "pes_weight_general"))

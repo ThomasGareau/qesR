@@ -28,13 +28,15 @@
 #' | Métadonnées et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
 #' | Métadonnées et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
 #' | Harmonisation (expérimental) | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
-#' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement. |
+#' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
+#' | Harmonisation (expérimental) | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
 #' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 #' | Reproductibilité | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
 #'
 #' L'harmonisation entre études est expérimentale : [qes_spec()] montre la
-#' spécification révisée et [qes_harmonize()] l'applique ; la référence
+#' spécification révisée, [qes_harmonize()] l'applique et [qes_design()] en
+#' fait un plan de sondage ; la référence
 #' générée à partir de la spécification est
 #' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'

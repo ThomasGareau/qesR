@@ -182,3 +182,25 @@ sov_qes2012p_intvoteref,2,Non,,file,2,,,
 sov_qes2012p_intvoteref,97,Je n'irais pas voter/J'annulerais mon vote,,file,95,,,declared user-missing (range 97..99) but a substantive answer
 sov_qes2012p_intvoteref,98,Je préfère ne pas répondre,,file,,refused,,"reversed convention: 98 = refused, 99 = don't know"
 sov_qes2012p_intvoteref,99,Je ne sais pas,,file,,dk,,
+citizen_qes2022_cps,1,,e18f4738d0bef33c65ad60d4cf48f0bc,file,1,,,
+citizen_qes2022_cps,2,,74e0f5db02550e4e3621b77d88365bd9,file,2,,,permanent resident: not a citizen
+citizen_qes2022_cps,3,,795f3202b17cb6bc3d4b771d8c6c9eaf,file,2,,,other status: not a citizen
+age3_qes2018p_age,1,18-34,,file,1,,,
+age3_qes2018p_age,2,35-54,,file,2,,,
+age3_qes2018p_age,3,55+,,file,3,,,
+age3_qes2018p_age,4,Ne sais pas/Pas certain(e),,file,,dk_refused,,
+age3_qes2012p_age,1,18-24,,file,1,,,
+age3_qes2012p_age,2,25-34,,file,1,,,
+age3_qes2012p_age,3,35-44,,file,2,,,
+age3_qes2012p_age,4,45-54,,file,2,,,
+age3_qes2012p_age,5,55-64,,file,3,,,
+age3_qes2012p_age,6,65+,,file,3,,,
+age3_qes2007p_age,1,18-24 ans,,file,1,,,
+age3_qes2007p_age,2,25-34 ans,,file,1,,,
+age3_qes2007p_age,3,35-44 ans,,file,2,,,
+age3_qes2007p_age,4,45-54 ans,,file,2,,,
+age3_qes2007p_age,5,55-64 ans,,file,3,,,
+age3_qes2007p_age,6,ou 65 ans et plus?,,file,3,,,the question reads the last option as 55-64 ans ou 65 ans et plus?
+mode_qes2018p_method,1,CATI landline,,file,2,,,
+mode_qes2018p_method,2,CATI Cell,,file,2,,,
+mode_qes2018p_method,3,Web,,file,1,,,

@@ -25,8 +25,8 @@
 #   5. codes that no rule, map, range or na_code covers are "unmapped": an
 #      error by default, NA with reason unmapped under unmapped = "warn" or
 #      "na". A raw code never passes through.
-# Waves and weights (the long layout, weight columns, eligibility, interview
-# dates) come with slice HZ4.
+# Waves, weights, eligibility, interview dates and modes (slice HZ4) are in
+# R/hz-waves.R; the long layout is built here from the same per-study parts.
 #
 # The synthetic study qes_demo stands in for qes2014 (its variables are a
 # subset of the qes2014 file): it is harmonized with the qes2014 rows whose
@@ -99,8 +99,10 @@
 }
 
 # Target, family and set names (disjoint, V-S15) -> target names, in the
-# order of targets.csv. A retired target is included only when named.
-.qes_hz_resolve_targets <- function(targets, spec) {
+# order of targets.csv. A retired target is included only when named. The
+# targets of the id and design blocks are leading columns of harmonized data:
+# naming one is an error, unless `leading = TRUE` (the spec views).
+.qes_hz_resolve_targets <- function(targets, spec, leading = FALSE) {
   tg <- spec$tables$targets
   if (!is.character(targets) || length(targets) == 0L || anyNA(targets) || !all(nzchar(targets))) {
     .qes_abort("input_targets", class = "qesR_error_input", data = list(arg = "targets", value = targets))
@@ -117,6 +119,15 @@
     }
     hit <- hit | by_target | by_group
   }
+  named_leading <- intersect(unique(targets), .qes_hz_leading_targets(spec))
+  if (!leading && length(named_leading) > 0L) {
+    .qes_abort(
+      "input_targets_leading",
+      class = "qesR_error_input",
+      args = list(.qes_q(named_leading)),
+      data = list(arg = "targets", value = named_leading)
+    )
+  }
   if (length(unknown) > 0L) {
     names_ <- unique(c(tg$target, tg$family[!is.na(tg$family)], unlist(sets)))
     suggestions <- unique(unlist(lapply(unknown, .qes_suggest_codes, codes = names_)))
@@ -127,7 +138,17 @@
       data = list(arg = "targets", value = unknown, suggestions = suggestions %||% character(0))
     )
   }
-  tg$target[hit]
+  # targets of the id and design blocks are leading columns, never target
+  # columns (a family or set that names one does not add it)
+  if (leading) {
+    return(tg$target[hit])
+  }
+  lead_hit <- hit & tg$target %in% .qes_hz_leading_targets(spec)
+  if (!any(hit & !lead_hit)) {
+    .qes_abort("input_targets_leading", class = "qesR_error_input", args = list(.qes_q(tg$target[lead_hit])),
+               data = list(arg = "targets", value = targets))
+  }
+  tg$target[hit & !lead_hit]
 }
 
 # ---- study data -------------------------------------------------------------------
@@ -332,8 +353,34 @@
 
 # ---- one study ------------------------------------------------------------------------
 
+# The crosswalk row of target `t` in the study's rows `xw`, and why a target
+# has none: list(row, reason, excluded, note). `grades = FALSE` ignores
+# min_grade (the design inputs of the leading columns).
+.qes_hz_pick <- function(t, xw, d, ctx, stand_in, grades = TRUE) {
+  rank <- function(g) match(g, .qes_hz_grades)
+  rows <- which(xw$target == t & xw$primary %in% TRUE & !is.na(xw$rule) & xw$rule != "none")
+  if (length(rows) == 0L) {
+    return(list(row = NA_integer_, reason = "not_asked", excluded = "no_row",
+                note = "no row in the spec for this study"))
+  }
+  i <- rows[1]
+  vars <- stats::na.omit(c(xw$source_var[i], xw$gate_var[i]))
+  if (!xw$status[i] %in% .qes_hz_statuses(ctx$include_draft)) {
+    list(row = i, reason = "not_reviewed", excluded = "not_reviewed",
+         note = sprintf("row with status %s, not signed off by a reviewer: not applied (include_draft = FALSE)", xw$status[i]))
+  } else if (stand_in && !all(vars %in% names(d))) {
+    list(row = i, reason = "not_asked", excluded = "not_in_data", note = "not in the demonstration data")
+  } else if (grades && (is.na(rank(xw$grade[i])) || rank(xw$grade[i]) > rank(ctx$min_grade))) {
+    list(row = i, reason = "below_grade", excluded = "below_grade",
+         note = sprintf("grade %s is below min_grade = \"%s\"", xw$grade[i], ctx$min_grade))
+  } else {
+    list(row = i, reason = NA_character_, excluded = NA_character_, note = NA_character_)
+  }
+}
+
 # Harmonize one study: its leading columns, the values, reasons and source
-# codes of each target, and its cell and study provenance.
+# codes of each target, its wave membership and weights, and its cell and
+# study provenance.
 .qes_hz_study <- function(study, frame, ctx) {
   spec <- ctx$spec
   spec_study <- .qes_hz_spec_study(study)
@@ -359,33 +406,29 @@
   xw <- relabel(spec$tables$crosswalk)
   wv <- relabel(spec$tables$waves)
   wv <- wv[order(wv$wave_order), , drop = FALSE]
+  rownames(wv) <- NULL
   wt <- relabel(spec$tables$weights)
 
-  # the row of each target, and why a target has none
-  rank <- function(g) match(g, .qes_hz_grades)
-  pick <- list()
-  for (t in ctx$targets) {
-    rows <- which(xw$target == t & xw$primary %in% TRUE & !is.na(xw$rule) & xw$rule != "none")
-    if (length(rows) == 0L) {
-      pick[[t]] <- list(row = NA_integer_, reason = "not_asked", excluded = "no_row",
-                        note = "no row in the spec for this study")
-      next
-    }
-    i <- rows[1]
-    vars <- stats::na.omit(c(xw$source_var[i], xw$gate_var[i]))
-    if (!xw$status[i] %in% .qes_hz_statuses(ctx$include_draft)) {
-      pick[[t]] <- list(row = i, reason = "not_reviewed", excluded = "not_reviewed",
-                        note = sprintf("row with status %s, not signed off by a reviewer: not applied (include_draft = FALSE)", xw$status[i]))
-    } else if (stand_in && !all(vars %in% names(d))) {
-      pick[[t]] <- list(row = i, reason = "not_asked", excluded = "not_in_data",
-                        note = "not in the demonstration data")
-    } else if (is.na(rank(xw$grade[i])) || rank(xw$grade[i]) > rank(ctx$min_grade)) {
-      pick[[t]] <- list(row = i, reason = "below_grade", excluded = "below_grade", note = sprintf("grade %s is below min_grade = \"%s\"", xw$grade[i], ctx$min_grade))
-    } else {
-      pick[[t]] <- list(row = i, reason = NA_character_, excluded = NA_character_, note = NA_character_)
+  # the row of each requested target, and of each design input (age,
+  # citizenship, interview mode) that the leading columns read; design
+  # inputs follow the review status but not min_grade
+  pick <- lapply(ctx$targets, .qes_hz_pick, xw = xw, d = d, ctx = ctx, stand_in = stand_in)
+  names(pick) <- ctx$targets
+  inputs <- intersect(.qes_hz_design_inputs, spec$tables$targets$target)
+  pick_in <- lapply(inputs, .qes_hz_pick, xw = xw, d = d, ctx = ctx, stand_in = stand_in, grades = FALSE)
+  names(pick_in) <- inputs
+  # a frame given in `data` may leave out the variables of design inputs
+  # that were not requested: they are then not read (eligibility or the
+  # mode is NA), rather than failing the data checks
+  for (t in setdiff(inputs, ctx$targets)) {
+    p <- pick_in[[t]]
+    if (!verified && is.na(p$reason) && !all(stats::na.omit(c(xw$source_var[p$row], xw$gate_var[p$row])) %in% names(d))) {
+      pick_in[[t]]$reason <- "not_asked"
     }
   }
-  apply_rows <- unlist(lapply(pick, function(p) if (is.na(p$reason)) p$row else NULL), use.names = FALSE)
+  applied <- function(p) unlist(lapply(p, function(x) if (is.na(x$reason)) x$row else NULL), use.names = FALSE)
+  requested_rows <- applied(pick)
+  apply_rows <- unique(c(requested_rows, applied(pick_in)))
 
   sub <- spec
   sub$tables$crosswalk <- xw[apply_rows, , drop = FALSE]
@@ -394,34 +437,34 @@
   sub$tables$weights <- wt
   .qes_hz_check_study(sub, d, study, verified, stand_in)
 
-  members <- lapply(seq_len(nrow(wv)), function(w) .qes_wave_members(wv, w, d))
-  names(members) <- wv$wave
+  members <- .qes_hz_member_matrix(wv, d)
 
-  values <- list()
-  reasons <- list()
-  srcs <- list()
-  cells <- list()
+  # apply each row once
+  results <- list()
   unmapped <- list()
-  for (t in ctx$targets) {
-    p <- pick[[t]]
-    if (is.na(p$reason)) {
-      k <- match(p$row, apply_rows)
-      res <- .qes_hz_apply_row(sub, k, d, members[[xw$wave[p$row]]])
-      um <- res$reason %in% "unmapped"
-      if (any(um)) {
-        tab <- table(res$src[um], useNA = "ifany")
-        unmapped[[t]] <- data.frame(study = study, target = t, source_var = xw$source_var[p$row],
-                                    code = names(tab), n = as.integer(tab), stringsAsFactors = FALSE)
-      }
-    } else {
-      res <- list(value = rep(NA_character_, n), reason = rep(p$reason, n), src = rep(NA_character_, n))
+  for (k in seq_along(apply_rows)) {
+    i <- apply_rows[k]
+    res <- .qes_hz_apply_row(sub, k, d, members[, match(xw$wave[i], wv$wave)])
+    results[[as.character(i)]] <- res
+    # codes without a mapping are an error (or warning) for the requested
+    # targets only; a design input nobody asked for keeps them as NA
+    # (reason "unmapped"), so eligibility or the mode is NA for those rows
+    um <- res$reason %in% "unmapped"
+    if (any(um) && i %in% requested_rows) {
+      tab <- table(res$src[um], useNA = "ifany")
+      unmapped[[length(unmapped) + 1L]] <- data.frame(
+        study = study, target = xw$target[i], source_var = xw$source_var[i],
+        code = names(tab), n = as.integer(tab), stringsAsFactors = FALSE
+      )
     }
-    values[[t]] <- res$value
-    reasons[[t]] <- res$reason
-    srcs[[t]] <- res$src
-    cells[[t]] <- .qes_hz_cell_row(spec, study, t, xw, p, res, wt)
   }
-  unmapped <- if (length(unmapped) > 0L) do.call(rbind, unname(unmapped)) else NULL
+  result_of <- function(p) {
+    if (is.na(p$reason)) {
+      return(results[[as.character(p$row)]])
+    }
+    list(value = rep(NA_character_, n), reason = rep(p$reason, n), src = rep(NA_character_, n))
+  }
+  unmapped <- if (length(unmapped) > 0L) do.call(rbind, unmapped) else NULL
   if (!is.null(unmapped) && identical(ctx$unmapped, "error")) {
     first <- unmapped[unmapped$target == unmapped$target[1], , drop = FALSE]
     .qes_abort(
@@ -432,50 +475,168 @@
     )
   }
 
+  # the design inputs that were applied, with the timing of their wave
+  cat_ <- .qes_catalog(demo = TRUE)
+  s <- cat_$studies[match(study, cat_$studies$study), , drop = FALSE]
+  e_date <- cat_$elections$election_date[match(s$election_id, cat_$elections$election_id)]
+  design <- list()
+  for (t in inputs) {
+    p <- pick_in[[t]]
+    if (!is.na(p$reason)) next
+    r <- results[[as.character(p$row)]]
+    design[[t]] <- list(value = r$value, reason = r$reason, wave = xw$wave[p$row],
+                        timing = wv$wave_timing[match(xw$wave[p$row], wv$wave)])
+  }
+  eligible <- .qes_hz_eligible(design, n, e_date)
+
+  # per wave: dates, modes and weights over the rows
+  dates <- lapply(seq_len(nrow(wv)), function(w) .qes_hz_wave_dates(wv, w, d))
+  modes <- lapply(seq_len(nrow(wv)), function(w) .qes_hz_wave_modes(wv, w, n, design[["survey_mode"]]))
+  weights <- .qes_hz_wave_weights(wv, wt, d, members, normalize = identical(ctx$weights, "normalized"))
+
+  values <- list()
+  reasons <- list()
+  srcs <- list()
+  cells <- list()
+  for (t in ctx$targets) {
+    p <- pick[[t]]
+    res <- result_of(p)
+    values[[t]] <- res$value
+    reasons[[t]] <- res$reason
+    srcs[[t]] <- res$src
+    cells[[t]] <- .qes_hz_cell_row(spec, study, t, xw, p, res, wv, weights, members, eligible)
+  }
+
   list(
-    lead = .qes_hz_lead(study, d, wv, members, ids, ctx$lang),
+    study = study, n = n, s = s, e_date = e_date, wv = wv, members = members,
+    ids = ids, d_sub = .qes_hz_subsample(wv, d),
+    dates = dates, modes = modes, weights = weights, eligible = eligible,
+    cell_wave = vapply(ctx$targets, function(t) if (is.na(pick[[t]]$row)) NA_character_ else xw$wave[pick[[t]]$row],
+                       character(1)),
     values = values, reasons = reasons, srcs = srcs,
     cells = do.call(rbind, unname(cells)),
     provenance = prov,
     unmapped = unmapped,
     fingerprint = if (verified) NA_character_ else .qes_hz_fingerprint(d, .qes_hz_spec_vars(sub, study)),
-    ids = ids$id_vars
+    id_vars = ids$id_vars
   )
 }
 
-# The leading columns of one study (respondent layout).
-.qes_hz_lead <- function(study, d, wv, members, ids, lang) {
-  n <- nrow(d)
-  cat_ <- .qes_catalog(demo = TRUE)
-  s <- cat_$studies[match(study, cat_$studies$study), , drop = FALSE]
-  el <- cat_$elections
-  e_date <- el$election_date[match(s$election_id, el$election_id)]
-  in_wave <- if (length(members) > 0L) do.call(cbind, members) else matrix(FALSE, n, 0L)
-  waves <- if (ncol(in_wave) > 0L) {
-    apply(in_wave, 1L, function(m) if (any(m)) paste(wv$wave[m], collapse = ";") else NA_character_)
-  } else {
-    rep(NA_character_, n)
-  }
-  pop_col <- paste0("target_population_", lang)
-  default_pop <- s[[pop_col]]
-  first_wave <- if (ncol(in_wave) > 0L) apply(in_wave, 1L, function(m) if (any(m)) which(m)[1] else NA_integer_) else rep(NA_integer_, n)
-  pop <- wv[[pop_col]][first_wave]
-  pop[is.na(pop)] <- default_pop
+# The subsample of each row: the value of the waves' subsample variable, as
+# text; NA when the study has none.
+.qes_hz_subsample <- function(wv, d) {
   sub_var <- unique(stats::na.omit(wv$subsample_var))
-  subsample <- if (length(sub_var) > 0L && sub_var[1] %in% names(d)) .canon(d[[sub_var[1]]]) else rep(NA_character_, n)
-  data.frame(
-    study = rep(study, n),
-    year = rep(as.integer(s$year), n),
-    election_date = rep(e_date, n),
-    family = rep(s$family, n),
-    study_design = rep(s$study_design, n),
+  if (length(sub_var) > 0L && sub_var[1] %in% names(d)) .canon(d[[sub_var[1]]]) else rep(NA_character_, nrow(d))
+}
+
+# The leading columns of one study. Respondent layout: one row per row of
+# the file; the interview date and mode are those of the first wave the
+# respondent belongs to. Long layout: one row per respondent and wave the
+# respondent belongs to (a respondent in no wave keeps one row, with wave
+# NA); `rows` gives, for each output row, the row of the file and the wave
+# (index into the waves, NA for none).
+.qes_hz_lead <- function(part, layout, lang, rows) {
+  s <- part$s
+  n_out <- length(rows$row)
+  wv <- part$wv
+  w <- rows$wave
+  pop_col <- paste0("target_population_", lang)
+  pop <- if (nrow(wv) > 0L) wv[[pop_col]][w] else rep(NA_character_, n_out)
+  pop[is.na(pop)] <- s[[pop_col]]
+  pick_wave <- function(lst, empty) {
+    out <- empty
+    for (k in seq_along(lst)) {
+      at <- which(w %in% k)
+      out[at] <- lst[[k]][rows$row[at]]
+    }
+    out
+  }
+  interview <- pick_wave(part$dates, as.Date(rep(NA_character_, n_out)))
+  mode <- pick_wave(part$modes, rep(NA_character_, n_out))
+  lead <- data.frame(
+    study = rep(part$study, n_out),
+    year = rep(as.integer(s$year), n_out),
+    election_date = rep(part$e_date, n_out),
+    family = rep(s$family, n_out),
+    study_design = rep(s$study_design, n_out),
     target_population = pop,
-    waves = waves,
-    qes_id = paste0(study, ":", ids$key),
-    subsample = subsample,
-    source_row = seq_len(n),
     stringsAsFactors = FALSE
   )
+  if (identical(layout, "respondent")) {
+    m <- part$members
+    lead$waves <- if (ncol(m) > 0L) {
+      apply(m, 1L, function(x) if (any(x)) paste(wv$wave[x], collapse = ";") else NA_character_)
+    } else {
+      rep(NA_character_, n_out)
+    }
+  } else {
+    lead$wave <- wv$wave[w]
+    lead$wave_timing <- wv$wave_timing[w]
+    lead$wave_design <- wv$wave_design[w]
+  }
+  lead$qes_id <- if (n_out > 0L) paste0(part$study, ":", part$ids$key[rows$row]) else character(0)
+  lead$subsample <- part$d_sub[rows$row]
+  lead$source_row <- rows$row
+  lead$survey_mode <- mode
+  lead$interview_date <- interview
+  lead$days_to_election <- as.integer(part$e_date - interview)
+  lead$eligible_voter <- part$eligible[rows$row]
+  lead
+}
+
+# The output rows of one study: row of the file and wave index.
+.qes_hz_rows <- function(part, layout) {
+  n <- part$n
+  if (identical(layout, "respondent")) {
+    return(list(row = seq_len(n), wave = .qes_hz_first_wave(part$members)))
+  }
+  m <- part$members
+  if (ncol(m) == 0L) {
+    return(list(row = seq_len(n), wave = rep(NA_integer_, n)))
+  }
+  row <- integer(0)
+  wave <- integer(0)
+  hit <- which(m, arr.ind = TRUE)
+  none <- which(rowSums(m) == 0L)
+  row <- c(hit[, 1], none)
+  wave <- c(hit[, 2], rep(NA_integer_, length(none)))
+  o <- order(row, wave, na.last = TRUE)
+  list(row = row[o], wave = wave[o])
+}
+
+# The weight columns of one study: weight_pre, weight_post and their
+# variables (respondent layout), or weight and weight_var (long layout).
+.qes_hz_weight_cols <- function(part, layout, rows) {
+  n_out <- length(rows$row)
+  wv <- part$wv
+  ws <- part$weights
+  if (identical(layout, "long")) {
+    value <- rep(NA_real_, n_out)
+    var <- rep(NA_character_, n_out)
+    for (k in seq_along(ws)) {
+      at <- which(rows$wave %in% k)
+      if (!ws[[k]]$used) next
+      value[at] <- ws[[k]]$value[rows$row[at]]
+      var[at] <- ws[[k]]$var
+    }
+    return(list(weight = value, weight_var = var))
+  }
+  out <- list()
+  for (col in c("weight_pre", "weight_post")) {
+    ok <- vapply(wv$wave_timing, function(tm) col %in% .qes_hz_weight_columns(tm), logical(1))
+    first <- .qes_hz_first_wave(part$members, ok)
+    value <- rep(NA_real_, n_out)
+    var <- rep(NA_character_, n_out)
+    for (k in which(ok)) {
+      at <- which(first %in% k)
+      if (!ws[[k]]$used) next
+      value[at] <- ws[[k]]$value[rows$row[at]]
+      var[at] <- ws[[k]]$var
+    }
+    out[[col]] <- value
+    out[[paste0(col, "_var")]] <- var
+  }
+  out[c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var")]
 }
 
 # The reasons a harmonized value can be missing, in vocabulary order (the
@@ -487,9 +648,11 @@
 
 # One row of cell provenance (design.md section 5.9) for target `t` of a
 # study: the row applied (or why none was), its grade and instrument, the
-# levels its question did not offer, and the count of values and of each
-# NA reason over the study's rows.
-.qes_hz_cell_row <- function(spec, study, t, xw, p, res, wt) {
+# wave's recommended weight (variable, registry status, raw mean over the
+# wave's members), the levels its question did not offer, the count of
+# values and of each NA reason over the study's rows, and, for targets about
+# an election, the number of the wave's members who could not vote in it.
+.qes_hz_cell_row <- function(spec, study, t, xw, p, res, wv, weights, members, eligible) {
   i <- p$row
   has_row <- !is.na(i)
   get <- function(col) if (has_row) xw[[col]][i] else NA_character_
@@ -503,10 +666,13 @@
       not_offered <- paste(setdiff(set$name, offered), collapse = ";")
     }
   }
-  weight_var <- NA_character_
-  if (has_row) {
-    k <- which(wt$wave == xw$wave[i] & wt$recommended %in% TRUE)
-    if (length(k) > 0L) weight_var <- wt$weight_var[k[1]]
+  w <- if (has_row) match(xw$wave[i], wv$wave) else NA_integer_
+  wgt <- if (!is.na(w)) weights[[w]] else list(var = NA_character_, status = NA_character_, mean_raw = NA_real_)
+  outside <- NA_integer_
+  # NA when eligibility is unknown for every member of the wave (e.g. its
+  # age rows are not signed off), not 0
+  if (!is.na(w) && !tg$election_ref_rule[j] %in% c("none", NA) && !all(is.na(eligible[members[, w]]))) {
+    outside <- sum(members[, w] & eligible %in% FALSE)
   }
   levels <- .qes_hz_reason_levels()
   counts <- as.list(as.integer(table(factor(res$reason, levels = levels))))
@@ -514,7 +680,8 @@
   out <- data.frame(
     study = study, wave = get("wave"), target = t, source_var = get("source_var"),
     rule = get("rule"), map_id = get("map_id"), grade = get("grade"),
-    status = get("status"), instrument = get("instrument"), weight_var = weight_var,
+    status = get("status"), instrument = get("instrument"),
+    weight_var = wgt$var, weight_status = wgt$status, weight_mean_raw = wgt$mean_raw,
     levels_not_offered = not_offered,
     included = is.na(p$reason),
     excluded = p$excluded,
@@ -522,6 +689,7 @@
     stringsAsFactors = FALSE
   )
   out <- cbind(out, as.data.frame(counts, stringsAsFactors = FALSE))
+  out$n_outside_universe <- outside
   out$note <- p$note
   out
 }
@@ -556,44 +724,83 @@
   out
 }
 
-# Combine the studies into the respondent-layout data frame.
+# The value, reason and source of target `t` of one study on its output
+# rows. In the long layout a value sits on the row of the wave that asked
+# the question; the respondent's other waves have reason not_in_wave, except
+# for time-invariant (static) targets such as the year of birth, which are
+# repeated on every wave of the respondent.
+.qes_hz_target_rows <- function(part, t, rows, layout, static) {
+  v <- part$values[[t]][rows$row]
+  r <- part$reasons[[t]][rows$row]
+  s <- part$srcs[[t]][rows$row]
+  if (identical(layout, "long") && !static) {
+    cw <- part$cell_wave[[t]]
+    if (!is.na(cw)) {
+      other <- !(part$wv$wave[rows$wave] %in% cw)
+      v[other] <- NA_character_
+      r[other] <- "not_in_wave"
+      s[other] <- NA_character_
+    }
+  }
+  list(value = v, reason = r, src = s)
+}
+
+# Combine the studies into the result data frame.
 .qes_hz_assemble <- function(parts, ctx) {
-  lead <- do.call(rbind, lapply(parts, `[[`, "lead"))
+  rows <- lapply(parts, .qes_hz_rows, layout = ctx$layout)
+  lead <- do.call(rbind, Map(.qes_hz_lead, parts, rows, MoreArgs = list(layout = ctx$layout, lang = ctx$lang)))
+  rownames(lead) <- NULL
   cols <- as.list(lead)
+  tg <- ctx$spec$tables$targets
+  static <- tg$target[tg$target_timing %in% "static"]
+  per_target <- lapply(ctx$targets, function(t) {
+    x <- Map(.qes_hz_target_rows, parts, rows,
+             MoreArgs = list(t = t, layout = ctx$layout, static = t %in% static))
+    list(value = unlist(lapply(x, `[[`, "value"), use.names = FALSE),
+         reason = unlist(lapply(x, `[[`, "reason"), use.names = FALSE),
+         src = unlist(lapply(x, `[[`, "src"), use.names = FALSE))
+  })
+  names(per_target) <- ctx$targets
   for (t in ctx$targets) {
-    v <- unlist(lapply(parts, function(p) p$values[[t]]), use.names = FALSE)
-    cols[[t]] <- .qes_hz_encode(v, t, ctx$spec, ctx$values, ctx$lang)
+    cols[[t]] <- .qes_hz_encode(per_target[[t]]$value, t, ctx$spec, ctx$values, ctx$lang)
   }
   if (identical(ctx$missing, "reasons")) {
     levels <- .qes_hz_reason_levels()
     for (t in ctx$targets) {
-      r <- unlist(lapply(parts, function(p) p$reasons[[t]]), use.names = FALSE)
-      cols[[paste0(t, "__na")]] <- factor(r, levels = levels)
+      cols[[paste0(t, "__na")]] <- factor(per_target[[t]]$reason, levels = levels)
     }
   }
   if (isTRUE(ctx$keep_source)) {
     for (t in ctx$targets) {
-      cols[[paste0(t, "__src")]] <- unlist(lapply(parts, function(p) p$srcs[[t]]), use.names = FALSE)
+      cols[[paste0(t, "__src")]] <- per_target[[t]]$src
     }
+  }
+  wcols <- Map(.qes_hz_weight_cols, parts, rows, MoreArgs = list(layout = ctx$layout))
+  for (nm in names(wcols[[1]])) {
+    cols[[nm]] <- unlist(lapply(wcols, `[[`, nm), use.names = FALSE)
   }
   structure(cols, class = c("qes_harmonized", "data.frame"), row.names = c(NA_integer_, -nrow(lead)))
 }
 
 # An empty result (every study failed under on_fail = "skip").
 .qes_hz_empty <- function(ctx) {
-  lead <- data.frame(
-    study = character(0), year = integer(0), election_date = as.Date(character(0)),
-    family = character(0), study_design = character(0), target_population = character(0),
-    waves = character(0), qes_id = character(0), subsample = character(0),
-    source_row = integer(0), stringsAsFactors = FALSE
+  targets <- ctx$targets
+  empty_chr <- stats::setNames(rep(list(character(0)), length(targets)), targets)
+  part <- list(
+    study = character(0), n = 0L,
+    s = data.frame(year = NA_integer_, family = NA_character_, study_design = NA_character_,
+                   target_population_en = NA_character_, target_population_fr = NA_character_,
+                   stringsAsFactors = FALSE),
+    e_date = as.Date(NA_character_),
+    wv = data.frame(wave = character(0), wave_timing = character(0), wave_design = character(0),
+                    target_population_en = character(0), target_population_fr = character(0),
+                    stringsAsFactors = FALSE),
+    members = matrix(FALSE, 0L, 0L), ids = list(key = character(0)), d_sub = character(0),
+    dates = list(), modes = list(), weights = list(), eligible = logical(0),
+    cell_wave = stats::setNames(rep(NA_character_, length(targets)), targets),
+    values = empty_chr, reasons = empty_chr, srcs = empty_chr
   )
-  parts <- list(list(
-    lead = lead,
-    values = stats::setNames(rep(list(character(0)), length(ctx$targets)), ctx$targets),
-    reasons = stats::setNames(rep(list(character(0)), length(ctx$targets)), ctx$targets),
-    srcs = stats::setNames(rep(list(character(0)), length(ctx$targets)), ctx$targets)
-  ))
-  .qes_hz_assemble(parts, ctx)
+  .qes_hz_assemble(list(part), ctx)
 }
 
 # The call's arguments as text, for spec-level provenance.
@@ -678,6 +885,65 @@
 #' `"qes_demo"` is harmonized with the rows of `qes2014`, whose variables it
 #' copies; targets it has no question for are `not_asked`.
 #'
+#' @section Waves:
+#' Each study has one or more waves (a post-election survey, the waves of a
+#' panel, the campaign-period and post-election surveys of 2022), declared
+#' in the spec with the rule that says who took part in each: a
+#' disposition or date variable, never an answer. A question belongs to the
+#' wave that asked it, so a respondent outside that wave is `NA` with reason
+#' `not_in_wave`. The respondent layout has one row per respondent, and
+#' `waves` lists the waves each respondent took part in. The long layout
+#' (`layout = "long"`) has one row per respondent and wave (a respondent in
+#' no wave keeps one row, with `wave` `NA`): a value sits on the row of the
+#' wave that asked it and the respondent's other rows are `not_in_wave`,
+#' except the time-invariant targets (year and month of birth), which are
+#' repeated on each of the respondent's rows.
+#'
+#' `interview_date` is the wave's interview date where the file has one
+#' (`NA` otherwise; the fieldwork dates of each wave are in
+#' `qes_spec("spec")$tables$waves`), and `days_to_election` the number of
+#' days from it to the election (negative after the election).
+#' `survey_mode` is `"web"`, `"phone"` or `"mixed"`: the wave's mode, or,
+#' where it varies by respondent (the 2018 panel's first wave), the
+#' respondent's own.
+#'
+#' @section Weights:
+#' Each wave has at most one recommended weight in the spec's registry, and
+#' never one calibrated on the vote. The respondent layout has `weight_pre`
+#' and `weight_post`, the recommended weights of the respondent's
+#' pre-election and post-election waves (`NA` outside them), with the name
+#' of the source variable in `weight_pre_var` and `weight_post_var`; the
+#' long layout has `weight` and `weight_var`. `weights = "normalized"`
+#' (default) divides each wave's weight by its mean over the wave's members
+#' with a weight, so it has mean 1 in each study and wave; this fixes the
+#' scale only (it does not give studies equal shares when pooled: see
+#' [qes_design()]). `weights = "raw"` keeps the weights as deposited. A
+#' weight whose method is not documented yet (registry status
+#' `needs_review`) is `NA`, with a message, until it is reviewed; the raw
+#' variables are still in the data read by [get_qes()], to join by
+#' `source_row`.
+#'
+#' A pre-election question (vote intention) is weighted with `weight_pre`
+#' and a post-election one (reported vote) with `weight_post`.
+#' `attr(, "qes_weight_guide")` gives, for each target and study, the wave
+#' that asked it and the weight column and variable that fit it, and a
+#' message says when the targets of a study need different weights.
+#'
+#' @section Eligibility:
+#' `eligible_voter` says whether the respondent could vote in the study's
+#' election: 18 or older on election day and, where the study asked,
+#' a Canadian citizen. It comes from the age targets of the spec (year and
+#' month of birth, age, age group) and the citizenship target, read
+#' whatever `targets` and `min_grade` ask for (but, like any target, only
+#' from rows signed off by a reviewer, or with `include_draft = TRUE`).
+#' It is `TRUE` or `FALSE` only when the answers settle it: someone born
+#' 18 years before the election year whose month of birth is unknown, or
+#' aged 17 when interviewed before the election, is `NA`, as is a
+#' respondent whose study has no age question in the spec yet. The 2018
+#' study sampled people aged 16 and over, so some of its respondents are
+#' `FALSE`. Its weights target the population aged 16 and over; keeping
+#' only eligible voters does not make them an 18-and-over calibration.
+#'
 #' @section En français:
 #' `qes_harmonize()` (expérimental) construit un seul tableau à partir de
 #' plusieurs études, une colonne par variable harmonisée (« cible ») et une
@@ -689,15 +955,23 @@
 #' écarte les cellules sous un niveau donné. Les options qu'une question
 #' n'offrait pas sont des zéros structurels, pas un appui nul. `lang = "fr"`
 #' donne les étiquettes des niveaux en français ; les codes sont les mêmes.
-#' Voir `vignette("fr-reference-harmonisation", package = "qesR")`.
+#' La disposition longue (`layout = "long"`) donne une ligne par personne et
+#' par vague. Les pondérations recommandées de chaque vague sont dans
+#' `weight_pre` et `weight_post` (ou `weight` en disposition longue),
+#' ramenées à une moyenne de 1 par étude et par vague ; une pondération
+#' non encore documentée vaut NA. `eligible_voter` indique si la personne
+#' pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
+#' citoyenneté canadienne) ; `interview_date`, `days_to_election` et
+#' `survey_mode` décrivent l'entrevue. [qes_design()] en fait un plan de
+#' sondage. Voir `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
 #' @param studies Study codes (see [qes_studies()]). `NULL` (default) means
 #'   the Quebec Election Studies the spec covers, or the studies named in
 #'   `data` when it is given; `"all"` means every study the spec covers.
 #' @param targets Target, family or set names (see [qes_spec()]); the
 #'   default `"core"` is the core set.
-#' @param layout `"respondent"`: one row per respondent of each study's file.
-#'   The long layout (one row per respondent and wave) is not available yet.
+#' @param layout `"respondent"` (default): one row per respondent of each
+#'   study's file. `"long"`: one row per respondent and wave (see *Waves*).
 #' @param values How categorical targets are returned: `"factor"` (default;
 #'   ordered for ordinal targets, with the target's levels in every study),
 #'   `"labelled"` ([haven::labelled()] integer codes that are stable across
@@ -707,8 +981,9 @@
 #'   `<target>__na` giving the reason of each missing value.
 #' @param min_grade The lowest comparability grade kept: `"approximate"`
 #'   (default, every graded cell), `"comparable"` or `"identical"`.
-#' @param weights Reserved for the weight columns, which are not produced
-#'   yet; the value is checked but has no effect.
+#' @param weights `"normalized"` (default): each wave's recommended weight
+#'   divided by its mean over the wave's members, so it has mean 1 in each
+#'   study and wave. `"raw"`: as deposited. See *Weights*.
 #' @param unmapped What a source code the spec does not map does: `"error"`
 #'   (default) raises an error of class `qesR_error_unmapped`; `"warn"` and
 #'   `"na"` set it to `NA` with reason `unmapped`, with or without a warning.
@@ -730,17 +1005,25 @@
 #' @param quiet If `TRUE`, no progress or informational messages.
 #'
 #' @return A data frame of class `qes_harmonized`, returned visibly, one row
-#'   per respondent of each study's file (no row is dropped). Leading
-#'   columns: `study`, `year`, `election_date`, `family`, `study_design`,
-#'   `target_population`, `waves` (the waves the respondent belongs to,
-#'   `;`-separated), `qes_id` (`<study>:<identifier>`, unique), `subsample`
-#'   and `source_row` (the row in the study's file, for joining raw
-#'   variables with [merge()] on `study` and `source_row`). Then one column
-#'   per target, carrying its label in `attr(, "label")`, then the
-#'   `__na` and `__src` companions. Attributes: `qes_spec` (spec `version`,
-#'   `hash`, `custom`, `engine`), `qes_provenance` (see [qes_provenance()],
-#'   with levels `"study"`, `"cell"` and `"spec"`) and `failed_studies`
-#'   (`study`, `class`, `message`, `parent_message`).
+#'   per respondent of each study's file (no row is dropped), or per
+#'   respondent and wave in the long layout. Leading columns: `study`,
+#'   `year`, `election_date`, `family`, `study_design`, `target_population`,
+#'   `waves` (the waves the respondent belongs to, `;`-separated; in the
+#'   long layout `wave`, `wave_timing` and `wave_design` instead), `qes_id`
+#'   (`<study>:<identifier>`, unique in the respondent layout), `subsample`,
+#'   `source_row` (the row in the study's file, for joining raw variables
+#'   with [merge()] on `study` and `source_row`), `survey_mode`,
+#'   `interview_date` (of the respondent's first wave in the respondent
+#'   layout), `days_to_election` and `eligible_voter`. Then one column per
+#'   target, carrying its label in `attr(, "label")`, then the `__na` and
+#'   `__src` companions, then the weight columns: `weight_pre`,
+#'   `weight_post`, `weight_pre_var` and `weight_post_var` (respondent
+#'   layout) or `weight` and `weight_var` (long layout). Attributes:
+#'   `qes_spec` (spec `version`, `hash`, `custom`, `engine`),
+#'   `qes_provenance` (see [qes_provenance()], with levels `"study"`,
+#'   `"cell"` and `"spec"`), `qes_weight_guide` (`target`, `study`, `wave`,
+#'   `target_timing`, `weight_column`, `weight_var`, `weight_status`) and
+#'   `failed_studies` (`study`, `class`, `message`, `parent_message`).
 #'
 #'   Results for different studies built with the same spec can be combined
 #'   with [rbind()], which also combines their provenance (an error if the
@@ -748,7 +1031,8 @@
 #'   the studies in one call is simpler.
 #'
 #' @family harmonization
-#' @seealso [qes_spec()] for the targets and the mapping of each study,
+#' @seealso [qes_design()] to use the weights in a survey design,
+#'   [qes_spec()] for the targets and the mapping of each study,
 #'   `vignette("harmonization-reference", package = "qesR")` for the
 #'   reference generated from the spec, [qes_provenance()] for where each
 #'   value came from.
@@ -770,6 +1054,17 @@
 #' h_fr <- qes_harmonize("qes_demo", targets = "interest_4pt", lang = "fr",
 #'                       include_draft = TRUE, quiet = TRUE)
 #' levels(h_fr$interest_4pt)
+#'
+#' # weights and eligibility: every question of the demonstration study was
+#' # asked after the election, so weight_post is its weight (mean 1)
+#' h <- qes_harmonize("qes_demo", targets = "sov_indep", include_draft = TRUE, quiet = TRUE)
+#' h[1:3, c("study", "waves", "eligible_voter", "sov_indep", "weight_post", "weight_post_var")]
+#' attr(h, "qes_weight_guide")
+#'
+#' # one row per respondent and wave
+#' l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long",
+#'                    include_draft = TRUE, quiet = TRUE)
+#' table(l$wave, l$wave_timing)
 #' @export
 qes_harmonize <- function(studies = NULL, targets = "core", layout = c("respondent", "long"),
                           values = c("factor", "labelled", "code"), missing = c("na", "reasons"),
@@ -788,19 +1083,14 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   .qes_check_flag(keep_source, "keep_source")
   .qes_check_flag(include_draft, "include_draft")
   .qes_check_flag(quiet, "quiet")
-  if (identical(layout, "long")) {
-    .qes_abort("harmonize_later", class = "qesR_error_input",
-               args = list("qes_harmonize(layout = \"long\")"),
-               data = list(arg = "layout", value = layout))
-  }
   sp <- .qes_spec_get(spec, "error")
   if (!is.null(data)) {
     data <- .qes_spec_data_arg(data, demo = TRUE)
   }
   study_codes <- .qes_hz_resolve_studies(studies, data, sp)
   target_names <- .qes_hz_resolve_targets(targets, sp)
-  ctx <- list(spec = sp, targets = target_names, values = values, missing = missing,
-              min_grade = min_grade, unmapped = unmapped, include_draft = include_draft,
+  ctx <- list(spec = sp, targets = target_names, layout = layout, values = values, missing = missing,
+              min_grade = min_grade, weights = weights, unmapped = unmapped, include_draft = include_draft,
               keep_source = keep_source, lang = lang, quiet = quiet)
   if (!is.null(data)) {
     unverified <- names(data)
@@ -863,6 +1153,7 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   attr(out, "qes_spec") <- list(version = sp$version, hash = sp$hash, custom = isTRUE(sp$custom),
                                 engine = as.character(.qes_engine_version()))
   attr(out, "qes_provenance") <- study_prov
+  attr(out, "qes_weight_guide") <- .qes_hz_weight_guide(parts, ctx)
   attr(out, "failed_studies") <- failed
 
   # notices
@@ -902,7 +1193,91 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
                   quiet = quiet)
     }
   }
+  .qes_hz_weight_notices(parts, attr(out, "qes_weight_guide"), quiet, ctx$layout)
   out
+}
+
+# The weight guide (design.md section 5.3): for each requested target and
+# study, the weight column that matches the timing of the wave that asked
+# the question, and its variable. wave and weight_column are NA when no row
+# was applied for the target in the study; weight_var and weight_status are
+# NA when the wave has no recommended weight.
+.qes_hz_weight_guide <- function(parts, ctx) {
+  tg <- ctx$spec$tables$targets
+  rows <- list()
+  for (part in parts) {
+    for (t in ctx$targets) {
+      cw <- part$cell_wave[[t]]
+      included <- isTRUE(part$cells$included[match(t, part$cells$target)])
+      w <- if (is.na(cw) || !included) NA_integer_ else match(cw, part$wv$wave)
+      timing <- tg$target_timing[match(t, tg$target)]
+      column <- NA_character_
+      var <- NA_character_
+      status <- NA_character_
+      if (!is.na(w)) {
+        if (identical(ctx$layout, "long")) {
+          column <- "weight"
+        } else {
+          cols <- .qes_hz_weight_columns(part$wv$wave_timing[w])
+          column <- if (length(cols) == 2L) {
+            if (timing %in% "pre") "weight_pre" else "weight_post"
+          } else if (length(cols) == 1L) cols else NA_character_
+        }
+        var <- part$weights[[w]]$var
+        status <- part$weights[[w]]$status
+      }
+      rows[[length(rows) + 1L]] <- data.frame(
+        target = t, study = part$study, wave = if (is.na(w)) NA_character_ else cw, target_timing = timing,
+        weight_column = column, weight_var = var, weight_status = status,
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+  if (length(rows) == 0L) {
+    return(data.frame(target = character(0), study = character(0), wave = character(0),
+                      target_timing = character(0), weight_column = character(0),
+                      weight_var = character(0), weight_status = character(0), stringsAsFactors = FALSE))
+  }
+  out <- do.call(rbind, rows)
+  rownames(out) <- NULL
+  out
+}
+
+# Notices about weights: waves whose recommended weight still needs review
+# (their weights are NA), and, in the respondent layout, studies where the
+# requested targets (static ones aside) come from waves with different
+# weight columns (qesR_message_weight_timing), so that one weight column
+# cannot serve them all.
+.qes_hz_weight_notices <- function(parts, guide, quiet, layout = "respondent") {
+  review <- character(0)
+  for (part in parts) {
+    for (k in seq_along(part$weights)) {
+      w <- part$weights[[k]]
+      if (identical(w$status, "needs_review") && any(part$members[, k])) {
+        review <- c(review, sprintf("%s %s (%s)", part$study, part$wv$wave[k], w$var))
+      }
+    }
+  }
+  if (length(review) > 0L) {
+    .qes_inform("weight_review", class = "qesR_message_weight_review",
+                args = list(paste(review, collapse = ", ")), data = list(weights = review), quiet = quiet)
+  }
+  # in the long layout each row already carries its wave's weight; static
+  # targets do not count (as in qes_design())
+  if (identical(layout, "long") || !is.data.frame(guide) || nrow(guide) == 0L) {
+    return(invisible())
+  }
+  g <- guide[!is.na(guide$weight_column) & !guide$target_timing %in% "static", , drop = FALSE]
+  mixed <- character(0)
+  for (st in unique(g$study)) {
+    x <- g[g$study == st, , drop = FALSE]
+    if (length(unique(x$weight_column)) > 1L) mixed <- c(mixed, st)
+  }
+  if (length(mixed) > 0L) {
+    .qes_inform("weight_timing", class = "qesR_message_weight_timing",
+                args = list(.qes_q(mixed)), data = list(study = mixed), quiet = quiet)
+  }
+  invisible()
 }
 
 # "RemoteSha" of an installed GitHub build, else NA.
@@ -965,6 +1340,14 @@ print.qes_harmonized <- function(x, n = 6L, ...) {
       cat(.qes_msg("hz_print_unreviewed_skipped", list(skipped), lang), "\n", sep = "")
     }
   }
+  guide <- attr(x, "qes_weight_guide", exact = TRUE)
+  if (is.data.frame(guide) && "weight_status" %in% names(guide)) {
+    g <- unique(guide[guide$weight_status %in% "needs_review", c("study", "wave", "weight_var"), drop = FALSE])
+    if (nrow(g) > 0L) {
+      cat(.qes_msg("hz_print_weight_review", list(paste(sprintf("%s %s (%s)", g$study, g$wave, g$weight_var),
+                                                        collapse = ", ")), lang), "\n", sep = "")
+    }
+  }
   failed <- attr(x, "failed_studies", exact = TRUE)
   if (is.data.frame(failed) && nrow(failed) > 0L) {
     cat(.qes_msg("hz_print_failed", list(.qes_q(failed$study)), lang), "\n", sep = "")
@@ -992,11 +1375,20 @@ print.qes_harmonized <- function(x, n = 6L, ...) {
 rbind.qes_harmonized <- function(..., deparse.level = 1) {
   args <- list(...)
   args <- args[!vapply(args, is.null, logical(1))]
+  # the long layout has a `wave` column, the respondent layout `waves`
+  layouts <- unique(unlist(lapply(args, function(a) {
+    if (!inherits(a, "qes_harmonized") || !is.data.frame(a)) return(NULL)
+    if ("wave" %in% names(a)) "long" else if ("waves" %in% names(a)) "respondent" else NULL
+  })))
+  if (length(layouts) > 1L) {
+    .qes_abort("hz_rbind_layout", class = "qesR_error_input", data = list(layouts = layouts))
+  }
   strip <- function(a) {
     if (!is.data.frame(a)) return(a)
     class(a) <- "data.frame"
     attr(a, "qes_spec") <- NULL
     attr(a, "qes_provenance") <- NULL
+    attr(a, "qes_weight_guide") <- NULL
     attr(a, "failed_studies") <- NULL
     a
   }
@@ -1048,6 +1440,7 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
   class(out) <- c("qes_harmonized", "data.frame")
   attr(out, "qes_spec") <- specs[[1]]
   attr(out, "qes_provenance") <- study_prov
+  attr(out, "qes_weight_guide") <- bind(lapply(args, attr, "qes_weight_guide", exact = TRUE))
   attr(out, "failed_studies") <- failed
   out
 }

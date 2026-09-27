@@ -7,7 +7,6 @@ test_that("every export is one of the 27 planned names", {
 })
 
 test_that("exports equal the 27 names of design.md section 2.2", {
-  skip("complete when the 13 new exports have shipped (S1-HZ4)")
   expect_setequal(getNamespaceExports("qesR"), final_exports)
 })
 

@@ -185,6 +185,56 @@ estimation dans une seule étude : les études diffèrent par leur devis, leur
 population et le libellé de leurs questions, et leurs pondérations sont
 chacune sur leur propre échelle.
 
+## Données harmonisées entre études (expérimental)
+
+`qes_harmonize()` construit un seul tableau à partir de plusieurs études,
+une colonne par variable harmonisée (« cible »), selon la spécification
+révisée seulement. `qes_spec()` montre quelle question de chaque étude
+alimente une cible et à quel point elle est comparable à la question
+d'ancrage de la cible :
+
+```{r spec}
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw[, c("study", "wave", "source_var", "grade", "weight_var")]
+```
+
+Les lignes de cette première spécification sont vérifiées sur les fichiers
+originaux, mais pas encore approuvées par un réviseur : elles ne sont
+appliquées qu'avec `include_draft = TRUE`. Sur l'étude de démonstration, qui
+tient lieu de `qes2014` :
+
+```{r harmonize}
+h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
+                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
+                   lang = params$lang)
+h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
+attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
+```
+
+Chaque valeur manquante a un motif (`sov_indep__na`). `eligible_voter`
+indique si la personne pouvait voter à l'élection, et la pondération
+recommandée de chaque vague a une moyenne de 1 : ces questions ont été
+posées après l'élection, donc `weight_post` est leur pondération, comme
+l'indique le guide des pondérations. `qes_design()` transmet les données au
+package `survey` :
+
+```{r design}
+if (requireNamespace("survey", quietly = TRUE)) {
+  d <- qes_design(h, weight = "weight_post")
+  survey::svymean(~sov_indep, d, na.rm = TRUE)
+}
+```
+
+L'erreur type traite l'échantillon pondéré comme un échantillon
+probabiliste ; pour un panel à participation volontaire comme qes2014,
+lisez-la seulement comme un ordre de grandeur (voir `?qes_design`).
+
+Une question préélectorale (l'intention de vote) prend plutôt `weight_pre`,
+et les deux vagues d'une étude peuvent avoir des pondérations différentes :
+`qes_design()` demande de choisir quand les cibles en demandent de
+différentes. La référence de chaque cible, générée à partir de la
+spécification, est `vignette("fr-reference-harmonisation", package = "qesR")`.
+
 ## Provenance et citations
 
 Les données retournées par `get_qes()` indiquent de quel fichier elles

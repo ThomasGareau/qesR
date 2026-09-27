@@ -456,9 +456,10 @@ print.qes_crosswalk <- function(x, ...) {
   xw <- xw[!is.na(xw$rule) & xw$rule != "none", , drop = FALSE]
   items <- vapply(seq_len(nrow(tg)), function(j) {
     studies <- unique(xw$study[xw$target == tg$target[j]])
-    sprintf("\\item{\\code{%s}}{%s (family \\code{%s}; sets %s; %s). Studies: %s.}",
+    sets <- .qes_split_list(tg$sets[j])
+    sprintf("\\item{\\code{%s}}{%s (family \\code{%s}; %s; %s). Studies: %s.}",
             tg$target[j], tg$label_en[j], tg$family[j],
-            paste(sprintf("\\code{%s}", .qes_split_list(tg$sets[j])), collapse = ", "),
+            if (length(sets) == 0L) "no set" else paste("sets", paste(sprintf("\\code{%s}", sets), collapse = ", ")),
             tg$type[j], if (length(studies) == 0L) "none yet" else paste(studies, collapse = ", "))
   }, character(1))
   c(sprintf("@section Targets in the shipped spec (version %s):", spec$version),
