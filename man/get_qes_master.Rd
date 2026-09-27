@@ -82,7 +82,9 @@ and the same 30 harmonized columns for every study.
 \code{get_qes_master()} is the fixed legacy schema of qesR 0.4.4. It is kept
 stable, with the same arguments, columns and column types, so that code
 written for 0.4.4 keeps working; new work should use the study files
-themselves (\code{\link[=get_qes]{get_qes()}}) and, from qesR 0.6.0, the harmonization engine.
+themselves (\code{\link[=get_qes]{get_qes()}}) or the harmonization engine (\code{\link[=qes_harmonize]{qes_harmonize()}},
+experimental), which keeps intention and recall, and the sovereignty
+wordings, apart and gives every missing value a reason.
 Its values are those of 0.4.4 except where they were wrong: in qesR 0.5.0
 the master changes by deletion, apart from the reader changes listed
 (see \emph{What changed in 0.5.0}).

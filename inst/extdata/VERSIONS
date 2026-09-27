@@ -1,4 +1,4 @@
-catalog_version: 2.1.0
+catalog_version: 2.2.0
 dict_version: 1.0.1
 schema_version: 1
 built_from: 192422:a6ecbace0da2314d4c7065b8bdea81f7,
@@ -45,7 +45,7 @@ built_from: 192422:a6ecbace0da2314d4c7065b8bdea81f7,
  7449513:c51bafed57776ffa8d4c6f301f5c945b,
  7449514:42ad4bbe6eb0f8b4c7522ad376834334
 csv_md5: catalog/elections.csv:621553636c87b7faed39a4633d2c60e0,
- catalog/enums.csv:a0d8d39b98756223bc6945669b20d887,
+ catalog/enums.csv:f552d049dcde1240f1c6e994465d102a,
  catalog/files.csv:6fd1626f6a086a655f005d428751dd78,
  catalog/name_map.csv:e1a20d81b6c60704b39f06fe4fc19776,
  catalog/studies.csv:39f9f66dd015039abebd7923c9f9d222,

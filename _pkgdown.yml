@@ -60,6 +60,8 @@ navbar:
         href: articles/citations.html
       - text: Moving from qesR 0.4.4
         href: articles/migrating-0.5.html
+      - text: Harmonization reference
+        href: articles/harmonization-reference.html
       - text: Legacy merged file
         href: articles/merged-dataset.html
       - text: "-------"
@@ -84,6 +86,8 @@ navbar:
         href: articles/fr-citations.html
       - text: Passer de qesR 0.4.4 à 0.5.0
         href: articles/fr-migrer-0.5.html
+      - text: Référence de l'harmonisation
+        href: articles/fr-reference-harmonisation.html
       - text: Fichier fusionné hérité
         href: articles/fr-donnees-fusionnees.html
       - text: "-------"
@@ -135,14 +139,17 @@ reference:
   - qes_question
   - qes_search
   - qes_missing
-- title: Harmonization (experimental, qesR 0.6.0)
+- title: Harmonization (experimental)
   desc: >
-    Not in this version. A cross-study engine is planned for qesR 0.6.0,
-    marked experimental: `qes_harmonize()`, driven by a reviewed
-    specification that `qes_spec()` shows, with a comparability grade for
-    each study and question, and `qes_design()` for weighted estimates.
-    Until then, compare studies from their own variables (see *Metadata and
-    search*); `get_qes_master()` is kept for code written for qesR 0.4.4.
+    A cross-study engine driven by a reviewed specification: `qes_spec()`
+    shows which studies have which harmonized variable and how comparable
+    each study's question is; `qes_harmonize()` applies it, with a reason
+    for every missing value. The reference generated from the spec is the
+    article *Harmonization reference*. `get_qes_master()` is kept for code
+    written for qesR 0.4.4.
+  contents:
+  - qes_spec
+  - qes_harmonize
 - title: Reproducibility
   desc: >
     Which file a result was read from, and how to cite qesR and each dataset.
@@ -180,6 +187,7 @@ articles:
   - articles/studies
   - citations
   - migrating-0.5
+  - harmonization-reference
   - articles/merged-dataset
 - title: Examples
   desc: >
@@ -198,6 +206,7 @@ articles:
   - articles/fr-etudes
   - fr-citations
   - fr-migrer-0.5
+  - fr-reference-harmonisation
   - articles/fr-donnees-fusionnees
 - title: Exemples en français
   desc: >

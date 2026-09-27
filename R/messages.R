@@ -129,9 +129,33 @@
     en = "`%1$s` applies only to view %2$s.",
     fr = "`%1$s` ne s'applique qu'\u00e0 la vue %2$s."
   ),
-  spec_later = c(
-    en = "%1$s is not available yet: it arrives with the harmonization engine.",
-    fr = "%1$s n'est pas encore disponible\u00a0: cette fonctionnalit\u00e9 arrive avec le moteur d'harmonisation."
+  input_spec_retroharmonize = c(
+    en = "`format = \"retroharmonize\"` gives one row per code: use `level = \"code\"` (or leave `level` unset).",
+    fr = "`format = \"retroharmonize\"` donne une ligne par code\u00a0: utilisez `level = \"code\"` (ou laissez `level` par d\u00e9faut)."
+  ),
+  input_targets = c(
+    en = "`targets` must be a non-empty character vector of target, family or set names (qes_spec() lists them).",
+    fr = "`targets` doit \u00eatre un vecteur non vide de noms de cibles, de familles ou d'ensembles (qes_spec() les \u00e9num\u00e8re)."
+  ),
+  input_targets_unknown = c(
+    en = "Unknown target, family or set name(s) in `targets`: %1$s. qes_spec() lists the targets.",
+    fr = "Nom(s) de cible, de famille ou d'ensemble inconnu(s) dans `targets`\u00a0: %1$s. qes_spec() \u00e9num\u00e8re les cibles."
+  ),
+  input_targets_unknown_suggest = c(
+    en = "Unknown target, family or set name(s) in `targets`: %1$s. Did you mean %2$s?",
+    fr = "Nom(s) de cible, de famille ou d'ensemble inconnu(s) dans `targets`\u00a0: %1$s. Vouliez-vous dire %2$s\u00a0?"
+  ),
+  input_harmonize_study = c(
+    en = "The harmonization spec has no rows yet for %1$s. It covers %2$s.",
+    fr = "La sp\u00e9cification d'harmonisation n'a encore aucune ligne pour %1$s. Elle couvre %2$s."
+  ),
+  input_harmonize_data_names = c(
+    en = "`data` gives %1$s, which is not in `studies`.",
+    fr = "`data` fournit %1$s, qui ne fait pas partie de `studies`."
+  ),
+  harmonize_later = c(
+    en = "%1$s is not available yet: it arrives with the waves and weights of the harmonization engine.",
+    fr = "%1$s n'est pas encore disponible\u00a0: cette fonctionnalit\u00e9 arrive avec les vagues et les pond\u00e9rations du moteur d'harmonisation."
   ),
   input_path_dir = c(
     en = "`path` must be an existing directory. qesR writes only into a directory you have created.",
@@ -272,6 +296,18 @@
     en = "The harmonization spec in %1$s has schema version %2$s; this version of qesR reads schema version %3$s.",
     fr = "La sp\u00e9cification d'harmonisation de %1$s a la version de sch\u00e9ma %2$s\u00a0; cette version de qesR lit la version de sch\u00e9ma %3$s."
   ),
+  harmonize_data_invalid = c(
+    en = "The data of %1$s do not pass the checks of the harmonization spec (%2$s problem(s)); the `problems` field of this error lists them all.",
+    fr = "Les donn\u00e9es de %1$s ne passent pas les contr\u00f4les de la sp\u00e9cification d'harmonisation (%2$s probl\u00e8me(s))\u00a0; le champ `problems` de cette erreur les \u00e9num\u00e8re tous."
+  ),
+  unmapped = c(
+    en = "%1$s, target %2$s: code(s) %3$s of %4$s are not mapped by the spec (%5$s respondent(s)). qesR never passes a raw code through; unmapped = \"warn\" or \"na\" sets them to NA with reason unmapped.",
+    fr = "%1$s, cible %2$s\u00a0: le(s) code(s) %3$s de %4$s ne sont pas appari\u00e9s par la sp\u00e9cification (%5$s r\u00e9pondant(s)). qesR ne transmet jamais un code brut\u00a0; unmapped = \"warn\" ou \"na\" les met \u00e0 NA avec le motif unmapped."
+  ),
+  duplicate_id = c(
+    en = "%1$s: %2$s rows share an identifier (%3$s), for example rows %4$s.",
+    fr = "%1$s\u00a0: %2$s lignes partagent un identifiant (%3$s), par exemple les lignes %4$s."
+  ),
   spec_engine = c(
     en = "The harmonization spec in %1$s needs qesR %2$s or later; this is qesR %3$s.",
     fr = "La sp\u00e9cification d'harmonisation de %1$s demande qesR %2$s ou plus r\u00e9cent\u00a0; celle-ci est qesR %3$s."
@@ -330,6 +366,54 @@
   encoding = c(
     en = "File %2$s of study %1$s still has %3$s label(s) or text value(s) with a replacement or control character after decoding (in %4$s). Please report it.",
     fr = "Le fichier %2$s de l'\u00e9tude %1$s contient encore %3$s \u00e9tiquette(s) ou valeur(s) texte avec un caract\u00e8re de remplacement ou de contr\u00f4le apr\u00e8s d\u00e9codage (dans %4$s). Merci de le signaler."
+  ),
+
+  unverified_source = c(
+    en = "The data given in `data` for %1$s were not read by qesR from the pinned files, so their origin is not verified; qes_provenance() records md5_verified = FALSE.",
+    fr = "Les donn\u00e9es fournies dans `data` pour %1$s n'ont pas \u00e9t\u00e9 lues par qesR dans les fichiers retenus\u00a0: leur origine n'est pas v\u00e9rifi\u00e9e, et qes_provenance() indique md5_verified = FALSE."
+  ),
+  label_mismatch = c(
+    en = "%1$s: value labels in the data differ from those of the spec (%2$s). Check that the data come from the study's pinned file.",
+    fr = "%1$s\u00a0: des \u00e9tiquettes de valeurs des donn\u00e9es diff\u00e8rent de celles de la sp\u00e9cification (%2$s). V\u00e9rifiez que les donn\u00e9es viennent du fichier retenu de l'\u00e9tude."
+  ),
+  universe = c(
+    en = "%1$s: answers in the data do not follow the filter questions of the spec (%2$s). Check that the data come from the study's pinned file.",
+    fr = "%1$s\u00a0: des r\u00e9ponses des donn\u00e9es ne suivent pas les questions filtres de la sp\u00e9cification (%2$s). V\u00e9rifiez que les donn\u00e9es viennent du fichier retenu de l'\u00e9tude."
+  ),
+  unmapped_warn = c(
+    en = "Codes not mapped by the spec were set to NA with reason unmapped: %1$s.",
+    fr = "Des codes non appari\u00e9s par la sp\u00e9cification ont \u00e9t\u00e9 mis \u00e0 NA avec le motif unmapped\u00a0: %1$s."
+  ),
+  harmonize_partial = c(
+    en = "Harmonization failed for %1$s, left out (on_fail = \"skip\"); attr(, \"failed_studies\") gives the reasons.",
+    fr = "L'harmonisation a \u00e9chou\u00e9 pour %1$s, laiss\u00e9e de c\u00f4t\u00e9 (on_fail = \"skip\")\u00a0; attr(, \"failed_studies\") en donne les raisons."
+  ),
+
+  # ---- harmonization notices (silenced by quiet = TRUE) --------------------
+  approximate_cells = c(
+    en = "Cells graded approximate are included (min_grade = \"approximate\"): %1$s. Their question format is expected to move the shares; min_grade = \"comparable\" sets them to NA.",
+    fr = "Des cellules de niveau approximatif sont incluses (min_grade = \"approximate\")\u00a0: %1$s. Le format de leur question devrait modifier les proportions\u00a0; min_grade = \"comparable\" les met \u00e0 NA."
+  ),
+  structural_zeros = c(
+    en = "Levels a study's question did not offer are structural zeros, not an absence of support: %1$s. qes_provenance(x, level = \"cell\") lists them.",
+    fr = "Les niveaux que la question d'une \u00e9tude n'offrait pas sont des z\u00e9ros structurels, pas une absence d'appui\u00a0: %1$s. qes_provenance(x, level = \"cell\") les \u00e9num\u00e8re."
+  ),
+
+  hz_rbind_spec = c(
+    en = "Harmonized data built with different specs (content hashes %1$s) cannot be combined with rbind(). Harmonize every study with one spec, in one qes_harmonize() call.",
+    fr = "Des donn\u00e9es harmonis\u00e9es avec des sp\u00e9cifications diff\u00e9rentes (empreintes %1$s) ne peuvent pas \u00eatre combin\u00e9es avec rbind(). Harmonisez toutes les \u00e9tudes avec une seule sp\u00e9cification, en un seul appel \u00e0 qes_harmonize()."
+  ),
+  hz_rbind_study = c(
+    en = "rbind() of harmonized data would repeat the respondents of %1$s. Combine results for different studies only.",
+    fr = "rbind() de donn\u00e9es harmonis\u00e9es r\u00e9p\u00e9terait les r\u00e9pondants de %1$s. Combinez seulement des r\u00e9sultats portant sur des \u00e9tudes diff\u00e9rentes."
+  ),
+  unreviewed_cells = c(
+    en = "%1$s cell(s) use crosswalk rows not yet signed off by a reviewer (status review or draft), applied because include_draft = TRUE. qes_provenance(x, level = \"cell\") gives the status of each.",
+    fr = "%1$s cellule(s) utilisent des lignes de correspondance pas encore approuv\u00e9es par un r\u00e9viseur (statut review ou draft), appliqu\u00e9es parce que include_draft = TRUE. qes_provenance(x, level = \"cell\") donne le statut de chacune."
+  ),
+  unreviewed_skipped = c(
+    en = "%1$s cell(s) have crosswalk rows not yet signed off by a reviewer (status review or draft); they are NA (reason not_reviewed). include_draft = TRUE applies them.",
+    fr = "%1$s cellule(s) ont des lignes de correspondance pas encore approuv\u00e9es par un r\u00e9viseur (statut review ou draft)\u00a0; elles valent NA (motif not_reviewed). include_draft = TRUE les applique."
   ),
 
   # ---- once-per-session notices -------------------------------------------
@@ -525,6 +609,46 @@
   spec_print_unchecked = c(
     en = "Not checked (validate = \"none\").",
     fr = "Non v\u00e9rifi\u00e9e (validate = \"none\")."
+  ),
+  hz_print_head = c(
+    en = "qesR harmonized data (experimental): %1$s rows from %2$s; spec %3$s (content hash %4$s).",
+    fr = "Donn\u00e9es harmonis\u00e9es qesR (exp\u00e9rimental)\u00a0: %1$s lignes de %2$s\u00a0; sp\u00e9cification %3$s (empreinte du contenu %4$s)."
+  ),
+  hz_print_head_empty = c(
+    en = "qesR harmonized data (experimental): no rows, every study failed; spec %1$s (content hash %2$s).",
+    fr = "Donn\u00e9es harmonis\u00e9es qesR (exp\u00e9rimental)\u00a0: aucune ligne, toutes les \u00e9tudes ont \u00e9chou\u00e9\u00a0; sp\u00e9cification %1$s (empreinte du contenu %2$s)."
+  ),
+  hz_print_custom = c(
+    en = "Built with a spec other than the one shipped with qesR.",
+    fr = "Construites avec une autre sp\u00e9cification que celle fournie avec qesR."
+  ),
+  hz_print_approx = c(
+    en = "Approximate cells: %1$s.",
+    fr = "Cellules approximatives\u00a0: %1$s."
+  ),
+  hz_print_below = c(
+    en = "Below min_grade, set to NA: %1$s.",
+    fr = "Sous min_grade, mises \u00e0 NA\u00a0: %1$s."
+  ),
+  hz_print_zeros = c(
+    en = "Structural zeros (levels not offered): %1$s.",
+    fr = "Z\u00e9ros structurels (niveaux non offerts)\u00a0: %1$s."
+  ),
+  hz_print_failed = c(
+    en = "Failed and left out: %1$s (attr(, \"failed_studies\")).",
+    fr = "En \u00e9chec et laiss\u00e9es de c\u00f4t\u00e9\u00a0: %1$s (attr(, \"failed_studies\"))."
+  ),
+  hz_print_unreviewed = c(
+    en = "Cells from rows not yet signed off by a reviewer (include_draft = TRUE): %1$s.",
+    fr = "Cellules tir\u00e9es de lignes pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = TRUE)\u00a0: %1$s."
+  ),
+  hz_print_unreviewed_skipped = c(
+    en = "Cells left NA because their rows are not yet signed off by a reviewer (include_draft = FALSE): %1$s.",
+    fr = "Cellules laiss\u00e9es \u00e0 NA parce que leurs lignes ne sont pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = FALSE)\u00a0: %1$s."
+  ),
+  hz_print_licence = c(
+    en = "Licence: %1$s is released under CC BY-NC 4.0 (non-commercial use, with attribution; see qes_cite()).",
+    fr = "Licence\u00a0: %1$s est diffus\u00e9e sous CC BY-NC 4.0 (usage non commercial, avec attribution\u00a0; voir qes_cite())."
   ),
   prov_footer = c(
     en = "as.data.frame() gives every column.",

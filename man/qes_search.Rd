@@ -21,8 +21,9 @@ plain text; \code{|} separates alternative terms.}
 
 \item{fields}{Which fields to search: any of \code{"variable"} (names),
 \code{"label"} (variable labels), \code{"question"} (question text),
-\code{"values"} (value labels) and \code{"target"} (harmonized targets, not
-available yet).}
+\code{"values"} (value labels) and \code{"target"} (the names and labels, in
+the language(s) \code{lang} asks for, of the harmonized targets a variable
+feeds; see \code{\link[=qes_spec]{qes_spec()}}).}
 
 \item{regex}{If TRUE, \code{pattern} is a regular expression (Perl syntax),
 matched ignoring case and accents.}
@@ -34,7 +35,9 @@ searched). It also chooses the language of the \code{question} column.}
 \value{
 A data frame of class \code{qes_search}, one row per matching variable:
 \code{study}, \code{year}, \code{variable}, \code{label}, \code{question}, \code{question_lang},
-\code{values} (\code{"1=Oui | 2=Non"}), \code{targets} (\code{NA} for now) and \code{matched_in}
+\code{values} (\code{"1=Oui | 2=Non"}), \code{targets} (the harmonized targets the
+variable feeds in \code{\link[=qes_harmonize]{qes_harmonize()}}, \verb{;}-separated, \code{NA} for none) and
+\code{matched_in}
 (the fields that matched, separated by \verb{;}). Attributes:
 \code{not_searchable} (the requested studies whose description is not at
 hand) and \code{coverage} (per study: \code{n_variables}, \code{n_label},

@@ -68,7 +68,8 @@ of qesR 0.4.4, first and in that order), then \code{study}, \code{position} (in
 the data), \code{type} (\code{numeric}, \code{character}, \code{date}, \code{datetime} or
 \code{logical}), \code{question_lang}, \code{question_truncated}, \code{value_labels}
 (\code{"1=Oui | 2=Non"}), \code{missing_codes} (\code{"8=dk | 9=refused"}), \code{targets}
-(\code{NA} for now), \code{label_source} (\code{file}, \code{label_donor}, \code{supplement},
+(the harmonized targets the variable feeds in \code{\link[=qes_harmonize]{qes_harmonize()}},
+\verb{;}-separated, \code{NA} for none, as in \code{\link[=qes_search]{qes_search()}}), \code{label_source} (\code{file}, \code{label_donor}, \code{supplement},
 \code{file_malformed} or \code{none}), \code{question_source} and \code{doc_ref}.
 \code{layout = "wide"} has the same columns with \code{value_labels} as a list of
 named character vectors. \code{layout = "long"} has one row per value:

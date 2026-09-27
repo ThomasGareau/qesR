@@ -74,7 +74,7 @@ test_that("qes_spec(view = 'spec') returns the checked spec", {
   expect_identical(s$version, unname(read.dcf(file.path(spec_dir(), "SPEC"))[1, "Spec-Version"]))
   expect_false(s$custom)
   expect_setequal(names(s$tables), c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes",
-                                     "gates", "expected"))
+                                     "gates", "expected", "hashes"))
   chk <- attr(s, "check")
   expect_s3_class(chk, "data.frame")
   expect_identical(names(chk), c("rule", "severity", "table", "row", "key", "detail"))
@@ -153,9 +153,9 @@ test_that("qes_spec() checks its arguments", {
   expect_error(qes_spec("targets", data = list()), class = "qesR_error_input")
   expect_error(qes_spec("spec", validate = "maybe"), class = "qesR_error_input")
   expect_error(qes_spec("spec", lang = "de"), class = "qesR_error_input")
-  # the targets and crosswalk views come with the engine
-  expect_error(qes_spec(), class = "qesR_error_input")
-  expect_error(qes_spec("crosswalk"), class = "qesR_error_input")
+  # the targets and crosswalk views (test-hz-views.R)
+  expect_s3_class(qes_spec(), "data.frame")
+  expect_s3_class(qes_spec("crosswalk"), "qes_crosswalk")
 })
 
 test_that("V-S1 catches malformed cells", {
@@ -639,4 +639,20 @@ test_that("an edited qes_spec object gets a new hash and is custom", {
   expect_false(identical(e$hash, s$hash))
   chk <- attr(e, "check")
   expect_true("warning" %in% chk$severity[chk$rule == "V-P2"])
+})
+
+test_that("V-S1, V-S2 and V-S4 check the form of expected/hashes.csv", {
+  expect_identical(rules_after(identity), character(0))
+  expect_true("V-S1" %in% rules_after(function(t) {
+    t$hashes$md5[1] <- "not an md5"
+    t
+  }))
+  expect_true("V-S2" %in% rules_after(function(t) {
+    t$hashes <- rbind(t$hashes, t$hashes[1, ])
+    t
+  }))
+  expect_true("V-S4" %in% rules_after(function(t) {
+    t$hashes$source_var[1] <- "no_such_variable"
+    t
+  }))
 })

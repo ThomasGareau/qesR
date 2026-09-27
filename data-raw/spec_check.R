@@ -25,10 +25,15 @@
 #      only with QESR_REQUIRE_NC=true;
 #   3. V-P2 against the merge-base with origin/main: when the spec content
 #      changed, Spec-Version must be higher and have a CHANGES.csv row; and
-#      the MAJOR rule of section 5.11 on expected/marginals.csv: when a
-#      recorded marginal changed or disappeared, the major digit (the minor
-#      digit before 1.0.0) must be higher;
-#   4. the source grep: the calls that tests/testthat/test-forbidden-calls.R
+#      the MAJOR rule of section 5.11 on expected/marginals.csv and
+#      expected/hashes.csv: when a recorded marginal or column hash changed
+#      or disappeared, the major digit (the minor digit before 1.0.0) must be
+#      higher;
+#   4. V-P3, the generated documentation is current: the target list of
+#      man/qes_spec.Rd (roxygen @eval .rd_targets()) names the spec version
+#      and every target (re-run roxygen otherwise). The reference vignettes
+#      are generated when they are built, so they cannot be stale;
+#   5. the source grep: the calls that tests/testthat/test-forbidden-calls.R
 #      looks for in the installed namespace, searched in the code (comments
 #      excluded) of R/*.R.
 # It prints every problem and exits with status 1 when one is an error.
@@ -37,8 +42,8 @@
 # line endings). After any change: bump Spec-Version in SPEC by the rule of
 # design.md section 5.11, add a CHANGES.csv row, then run --write-hash.
 # When a change moves counts, rebuild the aggregates first
-# (data-raw/build_sources.R, then data-raw/project_marginals.R). Check still
-# to come: V-P3 on the generated reference (slice HZ3).
+# (data-raw/build_sources.R, then data-raw/project_marginals.R), and the
+# column hashes on the originals (data-raw/build_hashes.R).
 
 args <- commandArgs(trailingOnly = TRUE)
 pkgload::load_all(".", quiet = TRUE, export_all = TRUE)
@@ -133,13 +138,13 @@ if (length(base) == 1L &&
   } else {
     cat("V-P2: spec unchanged since the merge-base.\n")
   }
+  ov <- package_version(old_version)
+  nv <- package_version(spec$version)
+  # MAJOR: the major digit, or the minor digit before 1.0.0
+  bumped <- if (ov$major >= 1L) nv$major > ov$major else (nv$major > ov$major || nv$minor > ov$minor)
   old_marg <- file.path(old, "expected", "marginals.csv")
   if (file.exists(old_marg)) {
     change <- .qes_expected_change(.qes_read_csv(old_marg, "spec_expected"), spec$tables$expected)
-    ov <- package_version(old_version)
-    nv <- package_version(spec$version)
-    # MAJOR: the major digit, or the minor digit before 1.0.0
-    bumped <- if (ov$major >= 1L) nv$major > ov$major else (nv$major > ov$major || nv$minor > ov$minor)
     if (identical(as.character(change), "major") && !bumped) {
       cat(sprintf("MAJOR rule error: recorded marginals changed (%s) but Spec-Version %s -> %s is not a major bump.\n",
                   paste(utils::head(attr(change, "keys"), 5L), collapse = "; "), old_version, spec$version))
@@ -148,11 +153,45 @@ if (length(base) == 1L &&
       cat(sprintf("MAJOR rule: expected/marginals.csv change since the merge-base is '%s'.\n", change))
     }
   }
+  old_hash <- file.path(old, "expected", "hashes.csv")
+  if (file.exists(old_hash)) {
+    oh <- .qes_read_csv(old_hash, "spec_hashes")
+    nh <- spec$tables$hashes
+    key <- function(x) paste(x$study, x$wave, x$target, x$source_var, sep = "|")
+    moved <- key(oh)[is.na(match(paste(key(oh), oh$md5), paste(key(nh), nh$md5)))]
+    if (length(moved) > 0L && !bumped) {
+      cat(sprintf("MAJOR rule error: column hashes changed or disappeared (%s) but Spec-Version %s -> %s is not a major bump.\n",
+                  paste(utils::head(moved, 5L), collapse = "; "), old_version, spec$version))
+      failed <- TRUE
+    } else {
+      cat(sprintf("MAJOR rule: %d column hash(es) changed or disappeared since the merge-base.\n", length(moved)))
+    }
+  }
 } else {
   cat("V-P2: no spec at the merge-base with origin/main (or no git history); skipped.\n")
 }
 
-# ---- 4. the source grep --------------------------------------------------------------
+# ---- 4. V-P3: generated documentation ------------------------------------------------------
+rd_path <- file.path("man", "qes_spec.Rd")
+if (file.exists(rd_path)) {
+  rd <- paste(readLines(rd_path, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+  missing_targets <- spec$tables$targets$target[!vapply(spec$tables$targets$target, function(t) {
+    grepl(sprintf("\\code{%s}}", t), rd, fixed = TRUE)
+  }, logical(1))]
+  current <- grepl(sprintf("Targets in the shipped spec (version %s)", spec$version), rd, fixed = TRUE)
+  if (!current || length(missing_targets) > 0L) {
+    cat(sprintf("V-P3 error: %s is not current (spec %s%s); run roxygen2::roxygenise().\n", rd_path, spec$version,
+                if (length(missing_targets) > 0L) paste0(", missing ", paste(missing_targets, collapse = ", ")) else ""))
+    failed <- TRUE
+  } else {
+    cat("V-P3: the target list of ?qes_spec is current.\n")
+  }
+} else {
+  cat("V-P3 error: man/qes_spec.Rd is missing; run roxygen2::roxygenise().\n")
+  failed <- TRUE
+}
+
+# ---- 5. the source grep --------------------------------------------------------------
 # Same patterns as tests/testthat/test-forbidden-calls.R. `allow` names the
 # files where a pattern is expected; `pending` rules are reported, not failed,
 # until the slice that removes their last offender.

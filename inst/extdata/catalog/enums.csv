@@ -68,8 +68,9 @@ missing_type,not_mappable,12,m,spec;dictionary,Source category straddles target 
 missing_type,user_na,13,u,dictionary,Declared missing code of unknown meaning,Code manquant déclaré de sens inconnu
 missing_type,sysmis,14,,engine,System missing,Valeur manquante système
 missing_type,not_asked,15,,engine,Not asked in this study,Question non posée dans cette étude
-missing_type,below_grade,16,,engine,Below the requested grade,Sous le niveau de comparabilité demandé
-missing_type,unmapped,17,,engine,Code not mapped,Code non apparié
+missing_type,not_reviewed,16,,engine,Crosswalk row not yet signed off by a reviewer,Ligne de correspondance pas encore approuvée par un réviseur
+missing_type,below_grade,17,,engine,Below the requested grade,Sous le niveau de comparabilité demandé
+missing_type,unmapped,18,,engine,Code not mapped,Code non apparié
 grade,identical,1,,,Identical,Identique
 grade,comparable,2,,,Comparable,Comparable
 grade,approximate,3,,,Approximate,Approximatif

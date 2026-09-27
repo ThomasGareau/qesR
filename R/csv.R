@@ -153,6 +153,13 @@
     study = "chr", wave = "chr", target = "chr", source_var = "chr",
     value = "chr", na_reason = "chr", n = "int"
   ),
+  # the md5 of each harmonized column on the pinned file (V-L1): the value
+  # or NA reason of every row of the study, in file order (R/hz-engine.R,
+  # .qes_hz_column_md5())
+  spec_hashes = c(
+    study = "chr", wave = "chr", target = "chr", source_var = "chr",
+    n = "int", md5 = "chr"
+  ),
   # the same aggregates for a study whose metadata cannot ship (OD3), kept in
   # the build-ignored data-raw/nc/ for CI: variable types and missing-code
   # declarations, and per-code counts with label hashes instead of labels

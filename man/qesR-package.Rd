@@ -22,23 +22,27 @@ Grouped as in the reference index of the website.\tabular{lll}{
    Metadata and search \tab \code{\link[=qes_question]{qes_question()}} \tab The exact wording of one or more questions, in English or French. \cr
    Metadata and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
    Metadata and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
-   Reproducibility \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Which file the data came from: DOI, version, file, md5, date. \cr
+   Harmonization (experimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
+   Harmonization (experimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only. \cr
+   Reproducibility \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. \cr
    Reproducibility \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation of qesR and of each dataset, as text, BibTeX or \code{bibentry}. \cr
    Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Lists or deletes the files kept in the download cache. \cr
 }
 
 
-Harmonization across studies (\code{qes_harmonize()}, \code{qes_spec()},
-\code{qes_design()}) is planned for qesR 0.6.0, marked experimental; it is not
-part of this version.
+Harmonization across studies is experimental: \code{\link[=qes_spec]{qes_spec()}} shows the
+reviewed spec and \code{\link[=qes_harmonize]{qes_harmonize()}} applies it; the reference generated
+from the spec is \code{vignette("harmonization-reference", package = "qesR")}.
 
 The functions of qesR 0.4.4 (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) keep working and will not be
 removed; \link{qesR-deprecated} gives the replacement of each one.
 
 Guides: \code{vignette("get-started", package = "qesR")} (from a study code to a
-weighted estimate), \code{vignette("citations", package = "qesR")} and
-\code{vignette("migrating-0.5", package = "qesR")}. The website,
+weighted estimate), \code{vignette("citations", package = "qesR")},
+\code{vignette("migrating-0.5", package = "qesR")} and
+\code{vignette("harmonization-reference", package = "qesR")} (the reference
+generated from the harmonization spec). The website,
 \url{https://thomasgareau.github.io/qesR/}, also has the study catalog and
 analysis examples built from the full data files, in English and French.
 }

@@ -29,15 +29,18 @@ Les fonctions sont regroupées comme dans la référence du site web.\tabular{ll
    Métadonnées et recherche \tab \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
    Métadonnées et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr
    Métadonnées et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
-   Reproductibilité \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. \cr
+   Harmonisation (expérimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. \cr
+   Harmonisation (expérimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement. \cr
+   Reproductibilité \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. \cr
    Reproductibilité \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation de qesR et de chaque jeu de données, en texte, BibTeX ou \code{bibentry}. \cr
    Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Liste ou supprime les fichiers gardés dans le cache de téléchargement. \cr
 }
 
 
-L'harmonisation entre études (\code{qes_harmonize()}, \code{qes_spec()},
-\code{qes_design()}) est prévue pour qesR 0.6.0, à titre expérimental ; elle ne
-fait pas partie de cette version.
+L'harmonisation entre études est expérimentale : \code{\link[=qes_spec]{qes_spec()}} montre la
+spécification révisée et \code{\link[=qes_harmonize]{qes_harmonize()}} l'applique ; la référence
+générée à partir de la spécification est
+\code{vignette("fr-reference-harmonisation", package = "qesR")}.
 
 Les fonctions de qesR 0.4.4 (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) continuent de fonctionner et ne
@@ -64,8 +67,10 @@ valeur ne vient d'un vrai répondant.
 
 \code{vignette("fr-demarrage", package = "qesR")} (démarrage : du code d'étude
 à une estimation pondérée), \code{vignette("fr-citations", package = "qesR")}
-(citations) et \code{vignette("fr-migrer-0.5", package = "qesR")} (passer de
-qesR 0.4.4 à 0.5.0). Le site web, \url{https://thomasgareau.github.io/qesR/},
+(citations), \code{vignette("fr-migrer-0.5", package = "qesR")} (passer de
+qesR 0.4.4 à 0.5.0) et
+\code{vignette("fr-reference-harmonisation", package = "qesR")} (référence de
+l'harmonisation, générée à partir de la spécification). Le site web, \url{https://thomasgareau.github.io/qesR/},
 offre aussi en français le catalogue des études et des exemples
 d'analyse construits à partir des fichiers complets (menu « Guides
 (FR) »).

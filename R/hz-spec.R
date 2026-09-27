@@ -21,7 +21,11 @@
 #                  (built by data-raw/build_sources.R from the pinned files);
 #   expected/marginals.csv
 #                  the projected unweighted marginals of every projectable
-#                  row (data-raw/project_marginals.R), checked by V-P1.
+#                  row (data-raw/project_marginals.R), checked by V-P1;
+#   expected/hashes.csv
+#                  the md5 of each harmonized column (study, target) that the
+#                  engine gives on the pinned file (data-raw/build_hashes.R),
+#                  checked on the originals by V-L1 (live tests).
 # gates.csv and expected/ describe the shipped studies; a spec directory
 # without them loads with empty tables. Slice HZ6 adds legacy.csv; the content
 # hash covers every CSV of the directory, so it is hashed without code
@@ -42,11 +46,13 @@
   changes = "CHANGES.csv"
 )
 # Optional files (a spec directory may lack them) and their schemas.
-.qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv")
+.qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv",
+                              hashes = "expected/hashes.csv")
 .qes_spec_table_schema <- c(
   targets = "spec_targets", levels = "spec_levels", crosswalk = "spec_crosswalk",
   valuemaps = "spec_valuemaps", waves = "spec_waves", weights = "spec_weights",
-  changes = "spec_changes", gates = "spec_gates", expected = "spec_expected"
+  changes = "spec_changes", gates = "spec_gates", expected = "spec_expected",
+  hashes = "spec_hashes"
 )
 .qes_spec_fields <- c("Spec-Version", "Spec-Date", "Schema-Version", "Engine-Min", "Hash", "Licence")
 
@@ -223,6 +229,16 @@
   utils::packageVersion("qesR")
 }
 
+# The catalog the checks read (studies, files and their pins): part of the
+# session cache key, since V-S4 and V-D8 depend on it (tests replace the
+# catalog with a fixture).
+.qes_catalog_fingerprint <- function() {
+  cat_ <- .qes_catalog()
+  f <- cat_$files
+  .qes_md5_text(paste(c(cat_$studies$study, f$file_id, f$md5, f$n_rows, cat_$elections$election_id),
+                      collapse = ";"))
+}
+
 # md5 of every file of a directory, as one string: the session cache key.
 .qes_spec_fingerprint <- function(dir) {
   files <- sort(list.files(dir, recursive = TRUE, all.files = FALSE), method = "radix")
@@ -246,7 +262,7 @@
     }
   } else {
     dir <- .qes_spec_dir(spec)
-    key <- paste(dir, .qes_spec_fingerprint(dir), sep = "|")
+    key <- paste(dir, .qes_spec_fingerprint(dir), .qes_catalog_fingerprint(), sep = "|")
     hit <- .qes_spec_cache[[key]]
     if (is.null(hit)) {
       obj <- .qes_spec_load(dir)
@@ -356,39 +372,107 @@
 
 # ---- qes_spec() -----------------------------------------------------------------
 
-#' The harmonization spec
+#' The harmonization spec (experimental)
 #'
 #' `qes_spec()` is the one entry point to the harmonization specification: the
-#' reviewed rules that say, study by study, which source question feeds each
-#' harmonized variable ("target"), how its codes map to the target's levels,
-#' why each missing value is missing and how comparable each study's question
-#' is to the target's anchor question.
+#' reviewed rules that say, study by study, which question feeds each
+#' harmonized variable ("target") of [qes_harmonize()], how its codes map to
+#' the target's levels, why each missing value is missing and how comparable
+#' each study's question is to the target's anchor question.
 #'
-#' Slices HZ1 and HZ2 implement `view = "spec"`: the spec as tables, checked
-#' by the validator (rules V-S1 to V-S17) and by the data checks (V-D1 to
-#' V-D4, V-D7 and V-D8) against the shipped dictionary and `gates.csv`, and,
-#' with `data`, against data frames (V-D1 to V-D5, V-D7, V-D8). The
-#' `"targets"` and `"crosswalk"` views and the export of this function arrive
-#' with the harmonization engine.
+#' * `view = "targets"` (default): one row per target, with its definition
+#'   and levels, and one column per study giving the best comparability grade
+#'   of that study's question (`NA`: no question for the target).
+#' * `view = "crosswalk"`: one row per crosswalk row (`level = "row"`): the
+#'   source variable, grade and its reason, instrument, offered levels and
+#'   the levels not offered (structural zeros), filter question, wording (or
+#'   the document that gives it), recommended weight and review status. With
+#'   `level = "code"`, one row per source code, with the level or NA reason it
+#'   maps to; `format = "retroharmonize"` gives that table under the column
+#'   names of the retroharmonize package's crosswalk tables. Printing the
+#'   view of a single target shows its section of the generated reference.
+#' * `view = "spec"`: the spec itself, as an object of class `qes_spec`
+#'   (tables, version and content hash), checked by the validator and the
+#'   data checks; this is what `spec =` of [qes_harmonize()] accepts.
+#'
+#' The spec is loaded and checked once per session. The shipped spec passes
+#' every check; a spec directory of your own is checked the same way.
+#'
+#' @section Experimental:
+#' The spec is experimental: targets, grades and mappings are reviewed study
+#' by study and may change. Its version and content hash are recorded in every
+#' result of [qes_harmonize()].
+#'
+#' @section En français:
+#' `qes_spec()` (expérimental) montre la spécification d'harmonisation : la
+#' vue `"targets"` donne une ligne par cible et, pour chaque étude, son niveau
+#' de comparabilité ; la vue `"crosswalk"` donne la question source, la
+#' raison du niveau, les niveaux offerts et non offerts, la question filtre et
+#' le libellé ; la vue `"spec"` renvoie la spécification vérifiée.
+#' `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+#' `vignette("fr-reference-harmonisation", package = "qesR")` en est la
+#' référence complète.
 #'
 #' @param view `"targets"`, `"crosswalk"` or `"spec"`.
-#' @param targets,studies Filters of the `"targets"` and `"crosswalk"` views.
-#' @param level,format Options of the `"crosswalk"` view.
+#' @param targets Target, family or set names (views `"targets"` and
+#'   `"crosswalk"`); `NULL` (default) is every target.
+#' @param studies Study codes (views `"targets"` and `"crosswalk"`); `NULL`
+#'   (default) is every study the spec covers.
+#' @param level `"row"` (default) or `"code"` (view `"crosswalk"` only).
+#' @param format `"qesR"` (default) or `"retroharmonize"` (view
+#'   `"crosswalk"` only; always one row per code).
 #' @param spec `NULL` (the spec shipped with qesR), the path of a spec
 #'   directory (for example one copied from a release), or a `qes_spec` object.
-#' @param validate What a problem found by the validator does: `"error"`
-#'   raises `qesR_error_spec`, `"report"` returns the spec with the problems
-#'   in `attr(, "check")`, `"none"` skips the check.
+#' @param validate What a problem found by the checks does: `"error"`
+#'   (default) raises `qesR_error_spec`, `"report"` returns the result with the
+#'   problems in `attr(, "check")` (view `"spec"`), `"none"` skips the checks.
 #' @param data A named list of data frames, one per study, named by study
-#'   code, as [get_qes()] returns them: the data checks then also run on them
-#'   (view `"spec"` only). Their problems are added to `attr(, "check")`.
-#' @param lang Language of returned text, `"en"` or `"fr"`.
-#' @return For `view = "spec"`, an object of class `qes_spec`: a list with the
-#'   spec `version`, its content `hash`, `custom` (`TRUE` when it is not the
-#'   shipped spec) and `tables` (targets, levels, crosswalk, valuemaps, waves,
-#'   weights, changes, gates, expected); `attr(, "check")` holds the problems
-#'   table (`rule`, `severity`, `table`, `row`, `key`, `detail`).
-#' @noRd
+#'   code, as [get_qes()] returns them (view `"spec"` only): the data checks
+#'   then also run on them, and their problems are added to `attr(, "check")`.
+#' @param lang Language of returned text (labels, definitions, grade reasons,
+#'   notes): `"en"` (default) or `"fr"`.
+#' @return By `view`:
+#'   * `"targets"`: a data frame with columns `target`, `family`, `type`,
+#'     `target_timing`, `label`, `definition`, `levels` (`code=label`),
+#'     `status`, `added_in`, then one column per study.
+#'   * `"crosswalk"`: a data frame of class `qes_crosswalk`. With
+#'     `level = "row"`: `study`, `wave`, `target`, `source_var`, `rule`,
+#'     `map_id`, `args`, `na_codes`, `gate`, `primary`, `grade`,
+#'     `grade_reason`, `instrument`, `election_ref`, `mode`, `dk_offered`,
+#'     `levels_offered`, `levels_not_offered`, `wording`, `wording_ref`,
+#'     `weight_var`, `status`, `evidence`, `notes`. With `level = "code"`:
+#'     `study`, `wave`, `target`, `variable`, `source_code`, `source_label`,
+#'     `origin` (`map`, `na_codes`, `range` or `gate`), `target_code`,
+#'     `target_level`, `target_label`, `na_reason`, `note`.
+#'   * `"spec"`: an object of class `qes_spec`: a list with the spec
+#'     `version`, its content `hash`, `custom` (`TRUE` when it is not the
+#'     shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,
+#'     waves, weights, changes, gates, expected, hashes); `attr(, "check")`
+#'     holds the problems table (`rule`, `severity`, `table`, `row`, `key`,
+#'     `detail`).
+#'
+#' @eval .rd_targets()
+#' @family harmonization
+#' @seealso [qes_harmonize()], and
+#'   `vignette("harmonization-reference", package = "qesR")`, the reference
+#'   generated from the spec.
+#' @examples
+#' # which studies have which target, and how comparable they are
+#' qes_spec()
+#'
+#' # how each study's question maps to one target
+#' xw <- qes_spec("crosswalk", targets = "vote_prov_recall")
+#' xw[, c("study", "source_var", "grade", "levels_not_offered")]
+#' xw # prints the target's section of the reference
+#'
+#' # code by code, in French
+#' qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",
+#'          level = "code", lang = "fr")
+#'
+#' # the checked spec itself
+#' s <- qes_spec("spec")
+#' s
+#' @export
 qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, studies = NULL,
                      level = c("row", "code"), format = c("qesR", "retroharmonize"),
                      spec = NULL, validate = c("error", "report", "none"), data = NULL,
@@ -413,10 +497,22 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
   if (view == "spec" && !is.null(targets)) wrong_view("targets", c("targets", "crosswalk"))
   if (view == "spec" && !is.null(studies)) wrong_view("studies", c("targets", "crosswalk"))
   if (view != "spec" && !is.null(data)) wrong_view("data", "spec")
+  if (identical(format, "retroharmonize") && level_given && identical(level, "row")) {
+    .qes_abort("input_spec_retroharmonize", class = "qesR_error_input",
+               data = list(arg = "level", value = level))
+  }
   if (view != "spec") {
-    .qes_abort("spec_later", class = "qesR_error_input",
-               args = list(sprintf("qes_spec(view = \"%s\")", view)),
-               data = list(arg = "view", value = view))
+    obj <- .qes_spec_get(spec, validate)
+    tsel <- if (is.null(targets)) NULL else .qes_hz_resolve_targets(targets, obj)
+    ssel <- .qes_view_studies(studies)
+    out <- if (view == "targets") {
+      .qes_spec_targets_view(obj, tsel, ssel, lang)
+    } else {
+      .qes_spec_crosswalk_view(obj, tsel, ssel, if (identical(format, "retroharmonize")) "code" else level,
+                               format, lang)
+    }
+    attr(out, "check") <- attr(obj, "check", exact = TRUE)
+    return(out)
   }
   if (is.null(data)) {
     return(.qes_spec_get(spec, validate))
@@ -444,9 +540,10 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
   obj
 }
 
-# The `data` argument of qes_spec(): a named list of data frames whose names
-# are study codes (canonicalized; any case and spacing).
-.qes_spec_data_arg <- function(data) {
+# The `data` argument of qes_spec() and qes_harmonize(): a named list of data
+# frames whose names are study codes (canonicalized; any case and spacing).
+# `demo = TRUE` also accepts the synthetic study qes_demo.
+.qes_spec_data_arg <- function(data, demo = FALSE) {
   bad <- function() {
     .qes_abort("input_spec_data", class = "qesR_error_input", data = list(arg = "data", value = NULL))
   }
@@ -455,7 +552,7 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
       !all(vapply(data, is.data.frame, logical(1)))) {
     bad()
   }
-  matched <- .qes_match_codes(names(data), .qes_catalog()$studies)
+  matched <- .qes_match_codes(names(data), .qes_catalog(demo = demo)$studies)
   if (anyNA(matched)) {
     .qes_unknown_study(names(data)[is.na(matched)])
   }

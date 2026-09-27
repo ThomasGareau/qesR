@@ -14,15 +14,19 @@
   url = "https://github.com/ThomasGareau/qesR"
 )
 
-.qes_cite_package <- function(version = as.character(utils::packageVersion("qesR"))) {
+.qes_cite_package <- function(version = as.character(utils::packageVersion("qesR")), spec = NULL) {
   f <- .qes_citation_fields
+  note <- paste("R package version", version)
+  if (!is.null(spec)) {
+    note <- paste0(note, "; ", .qes_cite_spec_text(spec, "en"))
+  }
   utils::bibentry(
     bibtype = "Manual",
     key = f$key,
     title = f$title,
     author = utils::person(f$given, f$family),
     year = f$year,
-    note = paste("R package version", version),
+    note = note,
     url = f$url
   )
 }
@@ -95,20 +99,38 @@
 .qes_cite_word <- function(word, lang) {
   words <- list(
     file = c(en = "file: ", fr = "fichier\u00a0: "),
-    package = c(en = "R package version ", fr = "package R, version ")
+    package = c(en = "R package version ", fr = "package R, version "),
+    spec = c(en = "harmonization spec %s (content hash %s)",
+             fr = "sp\u00e9cification d'harmonisation %s (empreinte du contenu %s)")
   )
   words[[word]][[lang]]
 }
 
-.qes_cite_package_text <- function(lang, version = as.character(utils::packageVersion("qesR"))) {
+.qes_cite_package_text <- function(lang, version = as.character(utils::packageVersion("qesR")), spec = NULL) {
   f <- .qes_citation_fields
-  sprintf(
+  text <- sprintf(
     "%s, %s, %s, \"%s\", %s%s, %s",
     f$family, f$given, f$year,
     gsub("[{}]", "", f$title),
     .qes_cite_word("package", lang), version,
     f$url
   )
+  if (!is.null(spec)) {
+    text <- paste0(text, "; ", .qes_cite_spec_text(spec, lang))
+  }
+  text
+}
+
+# "harmonization spec 0.1.2 (content hash ...)", for data from
+# qes_harmonize(), whose values depend on the spec version and content.
+.qes_cite_spec_text <- function(spec, lang) {
+  sprintf(.qes_cite_word("spec", lang), spec$version, spec$hash)
+}
+
+# The spec record of harmonized data (attr qes_spec), or NULL.
+.qes_cite_spec <- function(x) {
+  sp <- if (is.null(x) || is.character(x)) NULL else attr(x, "qes_spec", exact = TRUE)
+  if (is.list(sp) && length(sp$version) == 1L && length(sp$hash) == 1L) sp else NULL
 }
 
 # Study codes named by `x`: a character vector of codes, or an object that
@@ -148,10 +170,13 @@
 #' The three 1998 surveys (`qes1998`, `qes1998_crop`, `qes1998_createc`)
 #' share one deposit, so their citations add the data file used.
 #'
+#' For data from [qes_harmonize()], the qesR citation also gives the
+#' harmonization spec version and content hash the values depend on.
+#'
 #' @param x `NULL` to cite qesR only; a character vector of study codes (see
-#'   [qes_studies()]); a data frame returned by [get_qes()], or the result of
-#'   [qes_download()] or [qes_provenance()], whose studies are read from its
-#'   provenance record. A data frame that has lost those attributes
+#'   [qes_studies()]); a data frame returned by [get_qes()] or
+#'   [qes_harmonize()], or the result of [qes_download()] or
+#'   [qes_provenance()], whose studies are read from its provenance record. A data frame that has lost those attributes
 #'   (for example after [merge()]) is an error of class
 #'   `qesR_error_no_provenance`. The synthetic study `qes_demo` has no
 #'   deposit and adds nothing.
@@ -189,8 +214,9 @@ qes_cite <- function(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "
   catalog <- .qes_catalog()
   codes <- codes[codes %in% catalog$studies$study]
 
+  spec <- .qes_cite_spec(x)
   datasets <- lapply(codes, .qes_cite_dataset, catalog = catalog)
-  entries <- c(list(.qes_cite_package()), datasets)
+  entries <- c(list(.qes_cite_package(spec = spec)), datasets)
 
   if (identical(style, "bibentry")) {
     out <- do.call(c, entries)
@@ -208,5 +234,5 @@ qes_cite <- function(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "
     file <- .qes_shared_deposit_file(code, catalog)
     .qes_cite_dataset_text(s, .qes_split_list(s$authors), if (is.na(file)) NULL else file, lang)
   }, character(1), USE.NAMES = FALSE)
-  c(.qes_cite_package_text(lang), texts)
+  c(.qes_cite_package_text(lang, spec = spec), texts)
 }

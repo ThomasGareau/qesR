@@ -514,8 +514,14 @@
 # `sources`; default all). With `data`, the named list of data frames that
 # `sources` was built from, V-D5 runs too and V-D8 counts members in the
 # data. `offline_severity` is the severity of a check that the aggregates
-# cannot answer (a row without cells in gates.csv). Returns a problems table.
-.qes_data_check <- function(spec, sources, studies = NULL, data = NULL, offline_severity = "error") {
+# cannot answer (a row without cells in gates.csv). The engine (slice HZ3)
+# turns off two checks it does itself or cannot apply: `unmapped_codes =
+# FALSE` skips the V-D2 report of observed codes with no outcome (the engine
+# reports them under its `unmapped` argument), and `member_counts = FALSE`
+# skips V-D8 (data given by the user may hold a subset of the rows). Returns
+# a problems table.
+.qes_data_check <- function(spec, sources, studies = NULL, data = NULL, offline_severity = "error",
+                            unmapped_codes = TRUE, member_counts = TRUE) {
   xw <- spec$tables$crosswalk
   vm <- spec$tables$valuemaps
   wv <- spec$tables$waves
@@ -586,7 +592,7 @@
     if (length(codes) > 0L) {
       oc <- .qes_hz_outcome(r, codes, ln)
       bad <- codes[oc$na_reason %in% "unmapped"]
-      if (length(bad) > 0L) {
+      if (length(bad) > 0L && isTRUE(unmapped_codes)) {
         add("V-D2", "crosswalk", i, xkey(i), sprintf("observed code(s) %s have no outcome (not in the value map, the range or na_codes)", paste(utils::head(bad, 10L), collapse = ", ")))
       }
       # a code the dictionary types as missing must not become a value
@@ -670,7 +676,7 @@
   }
 
   # ---- V-D8: wave membership counts -------------------------------------------------------
-  for (w in which(wv$study %in% studies)) {
+  for (w in which(wv$study %in% studies & isTRUE(member_counts))) {
     study <- wv$study[w]
     rule <- .qes_member_rule(wv, w)
     wkey <- paste(study, wv$wave[w], sep = "/")

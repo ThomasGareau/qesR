@@ -43,6 +43,38 @@
   index
 }
 
+# The harmonized targets each variable of `study` feeds, from the shipped
+# spec (mapped crosswalk rows; the demo study uses the rows it stands in
+# for): variable -> "target;target", and the folded names and labels of
+# those targets, English (text_en) and French (text_fr), for fields =
+# "target" (searched in the language(s) `lang` asks for).
+.qes_search_targets <- function(study, variables) {
+  spec <- tryCatch(.qes_spec_get(NULL, "none"), error = function(e) NULL)
+  na <- rep(NA_character_, length(variables))
+  none <- list(targets = na, text_en = na, text_fr = na)
+  if (is.null(spec)) {
+    return(none)
+  }
+  xw <- spec$tables$crosswalk
+  xw <- xw[xw$study %in% .qes_hz_spec_study(study) & !is.na(xw$rule) & xw$rule != "none", , drop = FALSE]
+  if (nrow(xw) == 0L) {
+    return(none)
+  }
+  tg <- spec$tables$targets
+  targets <- vapply(variables, function(v) {
+    t <- unique(xw$target[xw$source_var %in% v])
+    if (length(t) == 0L) NA_character_ else paste(t, collapse = ";")
+  }, character(1), USE.NAMES = FALSE)
+  text <- function(label) {
+    text_of <- stats::setNames(paste(tg$target, label, sep = " | "), tg$target)
+    out <- vapply(targets, function(t) {
+      if (is.na(t)) NA_character_ else paste(text_of[.qes_split_list(t)], collapse = " | ")
+    }, character(1), USE.NAMES = FALSE)
+    .qes_fold(out)
+  }
+  list(targets = targets, text_en = text(tg$label_en), text_fr = text(tg$label_fr))
+}
+
 #' Search variables across studies, in English and French
 #'
 #' `qes_search()` finds the variables whose name, label, question text or
@@ -72,8 +104,9 @@
 #'   [qes_studies()]); `NULL` or `"all"` searches every study.
 #' @param fields Which fields to search: any of `"variable"` (names),
 #'   `"label"` (variable labels), `"question"` (question text),
-#'   `"values"` (value labels) and `"target"` (harmonized targets, not
-#'   available yet).
+#'   `"values"` (value labels) and `"target"` (the names and labels, in
+#'   the language(s) `lang` asks for, of the harmonized targets a variable
+#'   feeds; see [qes_spec()]).
 #' @param regex If TRUE, `pattern` is a regular expression (Perl syntax),
 #'   matched ignoring case and accents.
 #' @param lang `"both"` (default) searches English and French text; `"en"`
@@ -82,7 +115,9 @@
 #'
 #' @return A data frame of class `qes_search`, one row per matching variable:
 #'   `study`, `year`, `variable`, `label`, `question`, `question_lang`,
-#'   `values` (`"1=Oui | 2=Non"`), `targets` (`NA` for now) and `matched_in`
+#'   `values` (`"1=Oui | 2=Non"`), `targets` (the harmonized targets the
+#'   variable feeds in [qes_harmonize()], `;`-separated, `NA` for none) and
+#'   `matched_in`
 #'   (the fields that matched, separated by `;`). Attributes:
 #'   `not_searchable` (the requested studies whose description is not at
 #'   hand) and `coverage` (per study: `n_variables`, `n_label`,
@@ -177,7 +212,13 @@ qes_search <- function(pattern, studies = NULL,
       if (lang != "fr") m_val <- m_val | hit_fn(ix$f_values_en)
       if (lang != "en") m_val <- m_val | hit_fn(ix$f_values_fr)
     }
-    any_hit <- m_variable | m_label | m_q_en | m_q_fr | m_val
+    tgt <- .qes_search_targets(study, v$variable)
+    m_target <- rep(FALSE, nrow(v))
+    if ("target" %in% fields) {
+      if (lang != "fr") m_target <- m_target | hit_fn(tgt$text_en)
+      if (lang != "en") m_target <- m_target | hit_fn(tgt$text_fr)
+    }
+    any_hit <- m_variable | m_label | m_q_en | m_q_fr | m_val | m_target
     if (!any(any_hit)) {
       next
     }
@@ -193,8 +234,8 @@ qes_search <- function(pattern, studies = NULL,
     q$lang[only_fr] <- "fr"
     matched <- vapply(seq_along(i), function(k) {
       j <- i[k]
-      paste(c("variable", "label", "question", "values")[c(
-        m_variable[j], m_label[j], m_q_en[j] || m_q_fr[j], m_val[j]
+      paste(c("variable", "label", "question", "values", "target")[c(
+        m_variable[j], m_label[j], m_q_en[j] || m_q_fr[j], m_val[j], m_target[j]
       )], collapse = ";")
     }, character(1))
     rows[[study]] <- data.frame(
@@ -205,7 +246,7 @@ qes_search <- function(pattern, studies = NULL,
       question = q$text,
       question_lang = q$lang,
       values = ix$values_text[i],
-      targets = NA_character_,
+      targets = tgt$targets[i],
       matched_in = matched,
       stringsAsFactors = FALSE
     )

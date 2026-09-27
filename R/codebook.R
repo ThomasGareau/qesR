@@ -6,8 +6,9 @@
 #   compact  one row per variable: the columns of qesR 0.4.4 (variable, label,
 #            question, n_value_labels), then study, position, type,
 #            question_lang, question_truncated, value_labels ("1=Oui | 2=Non"),
-#            missing_codes ("8=dk | 9=refused"), targets (NA until the
-#            harmonization spec), label_source, question_source, doc_ref;
+#            missing_codes ("8=dk | 9=refused"), targets (the harmonized
+#            targets the variable feeds in the shipped spec, as in
+#            qes_search()), label_source, question_source, doc_ref;
 #   wide     the same, with value_labels as a list of named character vectors
 #            (the 0.4.4 wide layout);
 #   long     one row per value (and one row with value NA for a variable
@@ -143,7 +144,7 @@
     out$value_labels <- value_text
   }
   out$missing_codes <- missing_codes
-  out$targets <- NA_character_
+  out$targets <- .qes_search_targets(v$study[1], v$variable)$targets
   out$label_source <- v$label_source
   out$question_source <- v$question_source
   out$doc_ref <- v$doc_ref
@@ -462,7 +463,8 @@
 #'   the data), `type` (`numeric`, `character`, `date`, `datetime` or
 #'   `logical`), `question_lang`, `question_truncated`, `value_labels`
 #'   (`"1=Oui | 2=Non"`), `missing_codes` (`"8=dk | 9=refused"`), `targets`
-#'   (`NA` for now), `label_source` (`file`, `label_donor`, `supplement`,
+#'   (the harmonized targets the variable feeds in [qes_harmonize()],
+#'   `;`-separated, `NA` for none, as in [qes_search()]), `label_source` (`file`, `label_donor`, `supplement`,
 #'   `file_malformed` or `none`), `question_source` and `doc_ref`.
 #'   `layout = "wide"` has the same columns with `value_labels` as a list of
 #'   named character vectors. `layout = "long"` has one row per value:

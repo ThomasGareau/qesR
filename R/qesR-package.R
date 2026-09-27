@@ -17,21 +17,25 @@
 #' | Metadata and search | [qes_question()] | The exact wording of one or more questions, in English or French. |
 #' | Metadata and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
 #' | Metadata and search | [qes_missing()] | Sets "don't know", "refused" and declared missing codes to `NA`. |
-#' | Reproducibility | [qes_provenance()] | Which file the data came from: DOI, version, file, md5, date. |
+#' | Harmonization (experimental) | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
+#' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only. |
+#' | Reproducibility | [qes_provenance()] | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 #' | Reproducibility | [qes_cite()] | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Lists or deletes the files kept in the download cache. |
 #'
-#' Harmonization across studies (`qes_harmonize()`, `qes_spec()`,
-#' `qes_design()`) is planned for qesR 0.6.0, marked experimental; it is not
-#' part of this version.
+#' Harmonization across studies is experimental: [qes_spec()] shows the
+#' reviewed spec and [qes_harmonize()] applies it; the reference generated
+#' from the spec is `vignette("harmonization-reference", package = "qesR")`.
 #'
 #' The functions of qesR 0.4.4 (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) keep working and will not be
 #' removed; [qesR-deprecated] gives the replacement of each one.
 #'
 #' Guides: `vignette("get-started", package = "qesR")` (from a study code to a
-#' weighted estimate), `vignette("citations", package = "qesR")` and
-#' `vignette("migrating-0.5", package = "qesR")`. The website,
+#' weighted estimate), `vignette("citations", package = "qesR")`,
+#' `vignette("migrating-0.5", package = "qesR")` and
+#' `vignette("harmonization-reference", package = "qesR")` (the reference
+#' generated from the harmonization spec). The website,
 #' <https://thomasgareau.github.io/qesR/>, also has the study catalog and
 #' analysis examples built from the full data files, in English and French.
 #'

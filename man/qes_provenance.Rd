@@ -15,11 +15,12 @@ would read: nothing has been retrieved or checked yet, so
 \code{label_source} are \code{NA}.}
 
 \item{level}{\code{"study"} (default): one row per file. \code{"cell"} and
-\code{"spec"} describe harmonized data, which qesR does not produce yet; for
-other objects they are an error of class \code{qesR_error_no_provenance}.}
+\code{"spec"} describe data harmonized by \code{\link[=qes_harmonize]{qes_harmonize()}}; for other
+objects they are an error of class \code{qesR_error_no_provenance}.}
 }
 \value{
-A data frame of class \code{qes_provenance}, one row per file, with
+A data frame of class \code{qes_provenance}. For \code{level = "study"},
+one row per file, with
 the columns \code{study}, \code{doi}, \code{dataset_version}, \code{file_id}, \code{file_name},
 \code{format}, \code{md5_expected}, \code{md5_observed}, \code{md5_verified}, \code{unf},
 \code{n_rows}, \code{n_cols}, \code{pinned}, \code{retrieved_via} (\code{"network"},
@@ -28,7 +29,30 @@ study, or \code{"user_data"} for a file \code{\link[=qes_download]{qes_download(
 place), \code{retrieved_at} (UTC), \code{licence}, \code{label_source},
 \code{label_file_id}, \code{name_map_applied}, \code{reader}, \code{haven_version},
 \code{catalog_version} and \code{dict_version}. Columns that do not apply (the
-reader of a document, say) are \code{NA}.
+reader of a document, say) are \code{NA}. For data read from frames given
+to \code{\link[=qes_harmonize]{qes_harmonize()}} in \code{data}, \code{md5_verified} is \code{FALSE} and
+\code{retrieved_via} is \code{"user_data"}.
+
+For \code{level = "cell"} (harmonized data), one row per study and target:
+\code{study}, \code{wave}, \code{target}, \code{source_var}, \code{rule}, \code{map_id}, \code{grade},
+\code{status} (of the crosswalk row: \code{stable}, or \code{review} and \code{draft} for
+rows not yet signed off), \code{instrument}, \code{weight_var} (the wave's
+recommended weight),
+\code{levels_not_offered} (structural zeros, \verb{;}-separated; empty when
+every level was offered, \code{NA} for targets without levels), \code{included}
+(\code{FALSE} when no row was applied), \code{excluded} (why not: \code{no_row}, the
+study has no question for the target; \code{not_reviewed}, its row is not
+yet signed off and \code{include_draft = FALSE}; \code{not_in_data}, the
+variable is not in the demonstration data; \code{below_grade}, its grade is
+below \code{min_grade}; \code{NA} when included), \code{n_valid}, one count
+\verb{n_<reason>} per NA reason (they sum with \code{n_valid} to the study's
+rows) and \code{note}.
+
+For \code{level = "spec"}, one row (one per \code{\link[=qes_harmonize]{qes_harmonize()}} call for
+results combined with \code{\link[=rbind]{rbind()}}): \code{spec_version}, \code{spec_hash},
+\code{spec_custom}, \code{qesR_version}, \code{qesR_sha} (the commit of a GitHub
+installation, else \code{NA}), \code{args} (the arguments of the call, with a
+fingerprint of any data given in \code{data}) and \code{created} (UTC).
 }
 \description{
 \code{qes_provenance()} returns the record of which file a result was read

@@ -77,3 +77,21 @@ test_that("qes_cite() is served by the .qes_catalog() seam", {
   txt <- qes_cite("qes_fixture_b")
   expect_match(txt[2], "^Doe, Jane, 2024, \"Fixture study B\", https://doi.org/10.9999/FIX/BBBBBB, Example Dataverse, V2.1, UNF:6:fixtureB==$")
 })
+
+test_that("qes_cite() of harmonized data gives the spec version and content hash", {
+  testthat::local_mocked_bindings(.qes_transport = function(...) stop("no request expected"), .package = "qesR")
+  h <- suppressWarnings(qes_harmonize("qes2014", data = list(qes2014 = .qes_synthetic("qes2014")$qes2014),
+                                      include_draft = TRUE, quiet = TRUE))
+  sp <- attr(h, "qes_spec")
+  txt <- qes_cite(h)
+  expect_length(txt, 2L)
+  expect_match(txt[1], sprintf("harmonization spec %s (content hash %s)", sp$version, sp$hash), fixed = TRUE)
+  expect_identical(txt[2], qes_cite("qes2014")[2])
+  fr <- qes_cite(h, lang = "fr")
+  expect_match(fr[1], sprintf("spécification d'harmonisation %s", sp$version), fixed = TRUE)
+  bib <- qes_cite(h, style = "bibentry")
+  expect_match(bib[[1]]$note, sp$hash, fixed = TRUE)
+  expect_match(qes_cite(h, style = "bibtex")[1], sp$hash, fixed = TRUE)
+  # without harmonized data, qesR alone, as citation("qesR")
+  expect_false(grepl("spec", qes_cite()[1], fixed = TRUE))
+})

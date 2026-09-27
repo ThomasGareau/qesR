@@ -27,13 +27,16 @@
 #' | Métadonnées et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
 #' | Métadonnées et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
 #' | Métadonnées et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
-#' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. |
+#' | Harmonisation (expérimental) | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
+#' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement. |
+#' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 #' | Reproductibilité | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
 #'
-#' L'harmonisation entre études (`qes_harmonize()`, `qes_spec()`,
-#' `qes_design()`) est prévue pour qesR 0.6.0, à titre expérimental ; elle ne
-#' fait pas partie de cette version.
+#' L'harmonisation entre études est expérimentale : [qes_spec()] montre la
+#' spécification révisée et [qes_harmonize()] l'applique ; la référence
+#' générée à partir de la spécification est
+#' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
 #' Les fonctions de qesR 0.4.4 (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) continuent de fonctionner et ne
@@ -54,8 +57,10 @@
 #' @section Guides:
 #' `vignette("fr-demarrage", package = "qesR")` (démarrage : du code d'étude
 #' à une estimation pondérée), `vignette("fr-citations", package = "qesR")`
-#' (citations) et `vignette("fr-migrer-0.5", package = "qesR")` (passer de
-#' qesR 0.4.4 à 0.5.0). Le site web, <https://thomasgareau.github.io/qesR/>,
+#' (citations), `vignette("fr-migrer-0.5", package = "qesR")` (passer de
+#' qesR 0.4.4 à 0.5.0) et
+#' `vignette("fr-reference-harmonisation", package = "qesR")` (référence de
+#' l'harmonisation, générée à partir de la spécification). Le site web, <https://thomasgareau.github.io/qesR/>,
 #' offre aussi en français le catalogue des études et des exemples
 #' d'analyse construits à partir des fichiers complets (menu « Guides
 #' (FR) »).

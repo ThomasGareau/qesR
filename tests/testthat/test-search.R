@@ -41,7 +41,8 @@ test_that("qes_search() is offline, case- and accent-insensitive, in both langua
     c("study", "year", "variable", "label", "question", "question_lang", "values", "targets", "matched_in")
   )
   expect_gt(nrow(hits), 10L)
-  expect_true(all(is.na(hits$targets)))
+  # the harmonized targets a variable feeds (test-hz-views.R)
+  expect_type(hits$targets, "character")
   # accents and case do not matter
   a <- qes_search(paste0("IND", intToUtf8(0xC9), "PENDANT"), studies = "qes2014")
   b <- qes_search("independant", studies = "qes2014")

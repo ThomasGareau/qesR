@@ -5,7 +5,9 @@
 # (R/read.R). qes_provenance() returns it with class "qes_provenance", whose
 # print() method writes a citable paragraph per file. For study codes it
 # shows what get_qes() would read, before anything is downloaded.
-# Cell- and spec-level provenance belong to harmonized data (slice HZ3).
+# Data harmonized by qes_harmonize() (slice HZ3) also carry cell- and
+# spec-level records, as attributes "cell" and "spec" of the study-level
+# table (design.md section 5.9).
 
 .qes_provenance_levels <- c("study", "cell", "spec")
 
@@ -68,10 +70,11 @@
 #'   `md5_observed`, `md5_verified`, `retrieved_via`, `retrieved_at` and
 #'   `label_source` are `NA`.
 #' @param level `"study"` (default): one row per file. `"cell"` and
-#'   `"spec"` describe harmonized data, which qesR does not produce yet; for
-#'   other objects they are an error of class `qesR_error_no_provenance`.
+#'   `"spec"` describe data harmonized by [qes_harmonize()]; for other
+#'   objects they are an error of class `qesR_error_no_provenance`.
 #'
-#' @return A data frame of class `qes_provenance`, one row per file, with
+#' @return A data frame of class `qes_provenance`. For `level = "study"`,
+#'   one row per file, with
 #'   the columns `study`, `doi`, `dataset_version`, `file_id`, `file_name`,
 #'   `format`, `md5_expected`, `md5_observed`, `md5_verified`, `unf`,
 #'   `n_rows`, `n_cols`, `pinned`, `retrieved_via` (`"network"`,
@@ -80,7 +83,30 @@
 #'   place), `retrieved_at` (UTC), `licence`, `label_source`,
 #'   `label_file_id`, `name_map_applied`, `reader`, `haven_version`,
 #'   `catalog_version` and `dict_version`. Columns that do not apply (the
-#'   reader of a document, say) are `NA`.
+#'   reader of a document, say) are `NA`. For data read from frames given
+#'   to [qes_harmonize()] in `data`, `md5_verified` is `FALSE` and
+#'   `retrieved_via` is `"user_data"`.
+#'
+#'   For `level = "cell"` (harmonized data), one row per study and target:
+#'   `study`, `wave`, `target`, `source_var`, `rule`, `map_id`, `grade`,
+#'   `status` (of the crosswalk row: `stable`, or `review` and `draft` for
+#'   rows not yet signed off), `instrument`, `weight_var` (the wave's
+#'   recommended weight),
+#'   `levels_not_offered` (structural zeros, `;`-separated; empty when
+#'   every level was offered, `NA` for targets without levels), `included`
+#'   (`FALSE` when no row was applied), `excluded` (why not: `no_row`, the
+#'   study has no question for the target; `not_reviewed`, its row is not
+#'   yet signed off and `include_draft = FALSE`; `not_in_data`, the
+#'   variable is not in the demonstration data; `below_grade`, its grade is
+#'   below `min_grade`; `NA` when included), `n_valid`, one count
+#'   `n_<reason>` per NA reason (they sum with `n_valid` to the study's
+#'   rows) and `note`.
+#'
+#'   For `level = "spec"`, one row (one per [qes_harmonize()] call for
+#'   results combined with [rbind()]): `spec_version`, `spec_hash`,
+#'   `spec_custom`, `qesR_version`, `qesR_sha` (the commit of a GitHub
+#'   installation, else `NA`), `args` (the arguments of the call, with a
+#'   fingerprint of any data given in `data`) and `created` (UTC).
 #'
 #' @family reproducibility
 #' @seealso [qes_cite()] to cite the studies, [qes_studies()] for the pinned
@@ -123,6 +149,12 @@ qes_provenance <- function(x, level = c("study", "cell", "spec")) {
       data = list(arg = "x")
     )
   }
+  # harmonized data (qes_harmonize()) also carry cell- and spec-level records
+  if (!identical(level, "study") && is.data.frame(attr(prov, level, exact = TRUE))) {
+    out <- as.data.frame(attr(prov, level, exact = TRUE), stringsAsFactors = FALSE)
+    rownames(out) <- NULL
+    return(structure(out, class = c("qes_provenance", "data.frame")))
+  }
   if (!identical(level, "study")) {
     .qes_abort(
       "no_provenance_level",
@@ -133,6 +165,8 @@ qes_provenance <- function(x, level = c("study", "cell", "spec")) {
   }
   prov <- as.data.frame(prov, stringsAsFactors = FALSE)
   rownames(prov) <- NULL
+  attr(prov, "cell") <- NULL
+  attr(prov, "spec") <- NULL
   structure(prov, class = c("qes_provenance", "data.frame"))
 }
 

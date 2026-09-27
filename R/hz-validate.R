@@ -5,8 +5,9 @@
 # session), in the offline tests, in CI (data-raw/spec_check.R, with
 # `release = TRUE` on tags) and, with the data checks V-D* of R/hz-data.R,
 # on the original files (data-raw/build_sources.R). It never reads data: the
-# tables gates.csv and expected/marginals.csv are checked here for their form
-# only (V-S1, V-S2, V-S4); their content is checked by V-D7, V-D8 and V-P1.
+# tables gates.csv, expected/marginals.csv and expected/hashes.csv are
+# checked here for their form only (V-S1, V-S2, V-S4); their content is
+# checked by V-D7, V-D8, V-P1 and, on the originals, V-L1.
 #
 # .qes_spec_check() returns a problems table: rule, severity ("error",
 # "warning" or "note"), table, row (the data row of the CSV, 1-based), key and
@@ -229,6 +230,13 @@
     bad <- which(has(ex$value) == has(ex$na_reason))
     add("V-S1", "expected", bad, ekeys[bad], "exactly one of value and na_reason is set")
   }
+  hs <- spec$tables$hashes
+  if (!is.null(hs) && nrow(hs) > 0L) {
+    hkeys <- paste(hs$study, hs$wave, hs$target, hs$source_var, sep = "/")
+    bad <- which(is.na(hs$study) | is.na(hs$wave) | is.na(hs$target) | is.na(hs$source_var) |
+                   is.na(hs$n) | hs$n < 0L | !grepl("^[0-9a-f]{32}$", hs$md5))
+    add("V-S1", "hashes", bad, hkeys[bad], "study, wave, target, source_var, a count of 0 or more and an md5 are required")
+  }
 
   # ---- V-S2: unique keys ------------------------------------------------------------
   # `rows`: the table rows of `keys` (when the keys are a subset of the table)
@@ -278,6 +286,9 @@
   if (!is.null(ex) && nrow(ex) > 0L) {
     dup("expected", list(ex$study, ex$wave, ex$target, ex$source_var, ex$value, ex$na_reason),
         "(study, wave, target, source_var, value, na_reason)")
+  }
+  if (!is.null(hs) && nrow(hs) > 0L) {
+    dup("hashes", list(hs$study, hs$target), "(study, target)")
   }
   for (i in seq_len(nrow(xw))) {
     nac <- names(.qes_parse_kv(xw$na_codes[i]) %||% character(0))
@@ -445,6 +456,11 @@
   if (!is.null(ex) && nrow(ex) > 0L) {
     bad <- which(!paste(ex$study, ex$wave, ex$target, ex$source_var) %in% paste(xw$study, xw$wave, xw$target, xw$source_var))
     add("V-S4", "expected", bad, ekeys[bad], "(study, wave, target, source_var) is not a crosswalk row")
+  }
+  if (!is.null(hs) && nrow(hs) > 0L) {
+    bad <- which(!paste(hs$study, hs$wave, hs$target, hs$source_var) %in%
+                   paste(xw$study, xw$wave, xw$target, xw$source_var)[xw$primary %in% TRUE])
+    add("V-S4", "hashes", bad, hkeys[bad], "(study, wave, target, source_var) is not a primary crosswalk row")
   }
 
   # ---- V-S5: one primary row per (study, target) -----------------------------------------

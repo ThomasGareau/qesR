@@ -39,7 +39,8 @@ taken from the deposited data files and documents:
     data files: in the text of its rows, in gates.csv (how many respondents
     of a wave gave each answer to a question and to the question that
     filters it) and in expected/marginals.csv (how many fall in each
-    harmonized category).
+    harmonized category); expected/hashes.csv holds md5 hashes of the
+    harmonized columns.
 
 CC0 requires no attribution. qesR names the source of each study anyway, as
 the authors ask users to cite the data (qes_cite() gives the full citation):
@@ -98,7 +99,10 @@ weights that the codebook publishes (pp. 5 and 7): the size of each wave,
 its fieldwork dates and mode, and the weighting method (raking on age,
 gender, education and language, the trimming bounds). No count from its
 data file ships (gates.csv and expected/marginals.csv have no qes2022
-row). Its codebook
+row). expected/hashes.csv holds, for each of its harmonized columns, the
+md5 hash of the column that qesR computes from the pinned file (used to
+check that the harmonization gives the same result on your copy); a hash
+cannot be turned back into answers or counts. Its codebook
 is built on your computer from your own copy of the data file. When you use
 this study, the licence requires attribution (qes_cite("qes2022")) and rules
 out commercial use.

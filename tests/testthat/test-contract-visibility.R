@@ -27,7 +27,23 @@ export_calls <- function() {
     qes_cache_clear = quote(qes_cache_clear()),
     qes_question = quote(qes_question("qes2018", "q26")),
     qes_search = quote(qes_search("souverain")),
-    qes_missing = quote(qes_missing(get_qes("qes2018", quiet = TRUE)))
+    qes_missing = quote(qes_missing(get_qes("qes2018", quiet = TRUE))),
+    # the harmonization spec describes the real files: its checks run
+    # against the shipped catalog, not the fake one (the demo study is read
+    # from the package, with no request)
+    qes_spec = quote(with_shipped_catalog(qes_spec())),
+    qes_harmonize = quote(with_shipped_catalog(qes_harmonize("qes_demo", include_draft = TRUE)))
+  )
+}
+
+with_shipped_catalog <- function(code) {
+  load <- getFromNamespace(".qes_load_catalog", "qesR")
+  main <- load(catalog_dir())
+  with_demo <- load(catalog_dir(), demo_dir = system.file("extdata", "demo", "catalog", package = "qesR"))
+  testthat::with_mocked_bindings(
+    code,
+    .qes_catalog = function(demo = FALSE) if (isTRUE(demo)) with_demo else main,
+    .package = "qesR"
   )
 }
 

@@ -8,9 +8,9 @@ qes_cite(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "en")
 }
 \arguments{
 \item{x}{\code{NULL} to cite qesR only; a character vector of study codes (see
-\code{\link[=qes_studies]{qes_studies()}}); a data frame returned by \code{\link[=get_qes]{get_qes()}}, or the result of
-\code{\link[=qes_download]{qes_download()}} or \code{\link[=qes_provenance]{qes_provenance()}}, whose studies are read from its
-provenance record. A data frame that has lost those attributes
+\code{\link[=qes_studies]{qes_studies()}}); a data frame returned by \code{\link[=get_qes]{get_qes()}} or
+\code{\link[=qes_harmonize]{qes_harmonize()}}, or the result of \code{\link[=qes_download]{qes_download()}} or
+\code{\link[=qes_provenance]{qes_provenance()}}, whose studies are read from its provenance record. A data frame that has lost those attributes
 (for example after \code{\link[=merge]{merge()}}) is an error of class
 \code{qesR_error_no_provenance}. The synthetic study \code{qes_demo} has no
 deposit and adds nothing.}
@@ -39,6 +39,9 @@ shipped with qesR; no network request is made.
 \details{
 The three 1998 surveys (\code{qes1998}, \code{qes1998_crop}, \code{qes1998_createc})
 share one deposit, so their citations add the data file used.
+
+For data from \code{\link[=qes_harmonize]{qes_harmonize()}}, the qesR citation also gives the
+harmonization spec version and content hash the values depend on.
 }
 \examples{
 qes_cite()

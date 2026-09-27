@@ -1,0 +1,26 @@
+---
+title: "Référence de l'harmonisation"
+output: rmarkdown::html_vignette
+params:
+  lang: "fr"
+vignette: >
+  %\VignetteIndexEntry{Référence de l'harmonisation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+*[English version](harmonization-reference.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+options(qesR.lang = params$lang)
+```
+
+Les variables harmonisées (« cibles ») de `qes_harmonize()`, étude par
+étude. Toute la page ci-dessous est générée à partir de la spécification
+fournie avec qesR : elle décrit donc toujours les règles que la version
+installée applique.
+
+```{r reference, echo = FALSE, results = "asis"}
+cat(qesR:::.spec_reference_md(lang = params$lang))
+```
