@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{qes_codebook}
 \alias{qes_codebook}
-\title{Get a Quebec Election Study Codebook}
+\title{The codebook of a study}
 \usage{
 qes_codebook(
   srvy,
@@ -10,14 +10,30 @@ qes_codebook(
   assign_global = FALSE,
   quiet = FALSE,
   refresh = FALSE,
-  layout = c("compact", "wide", "long")
+  layout = c("compact", "wide", "long"),
+  variables = NULL,
+  lang = NULL
 )
 }
 \arguments{
-\item{srvy}{A qesR survey code from \code{qes_studies()}. Codes are trimmed and
-case-insensitive.}
+\item{srvy}{A study code from \code{\link[=qes_studies]{qes_studies()}} (trimmed and
+case-insensitive), or an object to describe again: a codebook returned
+by \code{qes_codebook()} (laid out again with \code{layout}), or a data frame
+returned by \code{\link[=get_qes]{get_qes()}}, whose codebook is limited to the columns it
+still has (base R's \code{[} drops the attributes that record the study; a
+subset made with it is a plain data frame). A plain data frame (for example a codebook read back from a
+CSV file, which has lost its class) is an error of class
+\code{qesR_error_input}: rebuild it with \code{qes_codebook("<code>")}.}
 
-\item{file}{Optional regular expression for choosing one file in multi-file datasets.}
+\item{file}{Optional regular expression choosing which data file of the
+study the codebook describes, as in \code{\link[=get_qes]{get_qes()}}. The description is
+that of the pinned file, with the pinned file's variable names (the
+attribute \code{variable_names_file} names that file): the twin files of a
+deposit hold the same variables, but their names can differ in case
+(\code{qes2012}'s SPSS twin has \code{Q0QC} where the pinned Stata file has
+\code{q0qc}). For a codebook whose names match data read with
+\code{get_qes(file = )}, describe that data: \verb{qes_codebook(<data>)}, or use
+the codebook \code{\link[=get_qes]{get_qes()}} attaches.}
 
 \item{assign_global}{If TRUE, also assign the returned codebook as
 \code{<code>_codebook} into the environment the function was called from
@@ -26,21 +42,111 @@ the canonical study code. Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
-\item{refresh}{If TRUE, force a fresh download instead of using cache.}
+\item{refresh}{Ignored: the description is shipped with qesR (or kept in
+the cache). Setting it prints a one-time note.}
 
-\item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
+\item{layout}{\code{"compact"} (default: one row per variable), \code{"wide"} (the
+same, with the value labels as a list column) or \code{"long"} (one row per
+value).}
+
+\item{variables}{Optional character vector of variable names (exact
+match) to describe; an unknown name is an error of class
+\code{qesR_error_unknown_variable} that suggests near matches.}
+
+\item{lang}{Language of the question text: \code{NULL} (default) gives the
+study's own language (French for most studies, English for \code{qes2012} and
+\code{qes2022}), or the other language when only that one is known; \code{"en"} or
+\code{"fr"} gives that language only (\code{NA} where it is unknown). Labels are
+always those of the file.}
 }
 \value{
-A \code{qes_codebook} data frame, returned visibly.
+A data frame of class \code{qes_codebook}, returned visibly.
+
+With \code{layout = "compact"}, one row per variable: \code{variable}, \code{label}
+(the file's variable label), \code{question}, \code{n_value_labels} (the columns
+of qesR 0.4.4, first and in that order), then \code{study}, \code{position} (in
+the data), \code{type} (\code{numeric}, \code{character}, \code{date}, \code{datetime} or
+\code{logical}), \code{question_lang}, \code{question_truncated}, \code{value_labels}
+(\code{"1=Oui | 2=Non"}), \code{missing_codes} (\code{"8=dk | 9=refused"}), \code{targets}
+(\code{NA} for now), \code{label_source} (\code{file}, \code{label_donor}, \code{supplement},
+\code{file_malformed} or \code{none}), \code{question_source} and \code{doc_ref}.
+\code{layout = "wide"} has the same columns with \code{value_labels} as a list of
+named character vectors. \code{layout = "long"} has one row per value:
+\code{variable}, \code{value}, \code{value_label}, \code{label}, \code{question}, then \code{study},
+\code{missing_type} and \code{is_declared_na} (the code is declared missing in the
+SPSS file); a variable with no value labels keeps one row whose \code{value}
+is \code{NA}.
+
+Every layout has the attributes \code{survey_code}, \code{doi}, \code{doi_url},
+\code{selected_data_file}, \code{variable_names_file} (the data file whose
+variable names the codebook uses), \code{files} (the study's files),
+\code{codebook_files} (its documents, as \code{\link[=qes_docs]{qes_docs()}} lists them) and
+\code{qes_provenance}.
 }
 \description{
-Returns the codebook of a study: one row per variable, with its label,
-question text and value labels, plus a manifest of the study's
-documentation files. Results are cached per session.
+\code{qes_codebook()} describes every variable of a study: its label, the
+question asked (in English or French), its value labels and which codes
+mean "don't know", "refused" or another reason for a missing answer. For
+the studies released under CC0 (every study except \code{qes2022}), the
+description ships with qesR, so the codebook needs no download and no
+network.
 }
+\section{Where the description comes from}{
+
+Variable and value labels are those of the study's pinned data file, as
+\code{\link[=get_qes]{get_qes()}} reads it (the complete labels of the SPSS twin for \code{qes2012}).
+A label that only repeats the variable's name is not a label: \code{label} is
+then \code{NA}. Question text comes from the questionnaires deposited with the
+study (\code{question_source = "questionnaire"}; \code{doc_ref} holds one or more
+\verb{<file_id>:<question>} references separated by \verb{;}, e.g.
+\code{"352010:Q19;352009:Q19"}); \code{question} is \code{NA} when the questionnaire does not
+give it, never a copy of the variable name or of \code{label}, and never a
+machine translation. \code{qes2018}'s data file has no value labels for most
+variables: they come from the study's French questionnaire with its
+programmed answer codes (\code{label_source = "supplement"}).
+
+\code{qes2022} is licensed CC BY-NC 4.0, so qesR ships none of its metadata. Its
+codebook is built the first time you ask for it, from your own copy of the
+data file (downloaded into the cache like \code{\link[=get_qes]{get_qes()}} does), and kept in
+the cache (see \code{\link[=qes_cache_info]{qes_cache_info()}}). Its question text is the file's
+variable label, which the Stata format cuts at 80 characters: such
+questions have \code{question_truncated = TRUE}, and the full wording is in
+the codebook document named in \code{doc_ref} (see \code{\link[=qes_docs]{qes_docs()}}).
+}
+
+\section{En français}{
+
+\code{qes_codebook()} décrit chaque variable d'une étude : son étiquette, la
+question posée (en anglais ou en français), ses étiquettes de valeurs et
+les codes qui signifient « ne sait pas », « refus » ou une autre raison de
+non-réponse. Pour les études sous licence CC0 (toutes sauf \code{qes2022}), la
+description est livrée avec qesR : aucun téléchargement n'est nécessaire.
+Le texte des questions vient des questionnaires déposés (\code{doc_ref} : une
+ou plusieurs références \verb{<file_id>:<question>} séparées par \verb{;}) ; il vaut \code{NA}
+lorsqu'il est inconnu, sans traduction automatique. \code{lang = "fr"} donne
+le texte français. Pour \code{qes2022} (CC BY-NC 4.0), le codebook est construit
+à partir de votre copie du fichier de données et conservé dans le cache.
+}
+
 \examples{
-\donttest{
-  cb <- qes_codebook("qes2022")
-  head(cb)
+cb <- qes_codebook("qes2014")
+head(cb[, c("variable", "label", "question", "value_labels")])
+
+# one row per value, for two variables, with the English question text
+qes_codebook("qes2014", layout = "long", variables = c("Q2", "Q19"), lang = "en")
+
+# the codebook of data you have read
+demo <- get_qes("qes_demo", quiet = TRUE)
+qes_codebook(demo, variables = c("Q19", "Q28"))
 }
+\seealso{
+\code{\link[=qes_question]{qes_question()}} for the exact wording of some variables,
+\code{\link[=qes_search]{qes_search()}} to find variables across studies, \code{\link[=qes_missing]{qes_missing()}} to set
+the missing codes to \code{NA}.
+
+Other codebooks and search: 
+\code{\link{qes_missing}()},
+\code{\link{qes_question}()},
+\code{\link{qes_search}()}
 }
+\concept{codebooks and search}

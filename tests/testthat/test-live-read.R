@@ -220,3 +220,42 @@ test_that("get_decon() keeps the column types of 0.4.4 (live)", {
   q22 <- live_data("qes2022")
   expect_identical(mean(d22$age), mean(plain_values(q22$cps_age_in_years)))
 })
+
+test_that("the shipped dictionary describes the pinned files as the reader reads them (live, S3)", {
+  local_live_originals()
+  local_qes_notices_shown()
+  build <- getFromNamespace(".qes_dict_build", "qesR")
+  shipped <- getFromNamespace(".qes_dict_shipped", "qesR")()
+  st <- shipped_catalog()$studies
+  for (s in st$study[st$metadata_shipped %in% TRUE]) {
+    file_row <- qesR:::.qes_default_data_file(s)
+    data <- qesR:::.qes_read(s, file_row$file_id)
+    fresh <- build(data, qesR:::.qes_study_row(s), file_row)
+    v <- shipped$variables[shipped$variables$study == s, ]
+    expect_identical(v$variable, fresh$variables$variable, info = s)
+    from_file <- v$label_source != "supplement"
+    expect_identical(v$label[from_file], fresh$variables$label[from_file], info = s)
+    expect_identical(v$na_values, fresh$variables$na_values, info = s)
+    x <- shipped$values[shipped$values$study == s & shipped$values$label_source != "supplement", ]
+    key <- paste(fresh$values$variable, fresh$values$value)
+    i <- match(paste(x$variable, x$value), key)
+    expect_false(anyNA(i), info = s)
+    expect_identical(x$label, fresh$values$label[i], info = s)
+    expect_identical(x$n, fresh$values$n[i], info = s)
+  }
+})
+
+test_that("the qes2022 shard describes the pinned file, and flags cut labels (live, S3)", {
+  local_live_originals()
+  local_qes_notices_shown()
+  cb <- qes_codebook("qes2022", quiet = TRUE)
+  expect_identical(nrow(cb), 718L)
+  expect_identical(sum(cb$label_source == "file"), 716L)
+  expect_gt(sum(cb$question_truncated, na.rm = TRUE), 360L)
+  age <- cb[cb$variable == "cps_age_in_years", ]
+  expect_true(age$question_truncated)
+  expect_identical(age$doc_ref, "7449514")
+  expect_identical(cb$missing_codes[cb$variable == "cps_lang_2"], "-99=not_selected")
+  expect_match(cb$missing_codes[cb$variable == "cps_votechoice1"], "10=dk", fixed = TRUE)
+  expect_true("cps_qc_referendum" %in% qes_search("referendum", studies = "qes2022")$variable)
+})

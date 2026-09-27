@@ -24,7 +24,10 @@ export_calls <- function() {
     qes_download = quote(qes_download("qes2018", path = tempdir(), what = c("data", "docs"))),
     qes_provenance = quote(qes_provenance(get_qes("qes2018", quiet = TRUE))),
     qes_cache_info = quote(qes_cache_info()),
-    qes_cache_clear = quote(qes_cache_clear())
+    qes_cache_clear = quote(qes_cache_clear()),
+    qes_question = quote(qes_question("qes2018", "q26")),
+    qes_search = quote(qes_search("souverain")),
+    qes_missing = quote(qes_missing(get_qes("qes2018", quiet = TRUE)))
   )
 }
 

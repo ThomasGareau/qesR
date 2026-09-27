@@ -143,6 +143,7 @@ test_that("every message get_qes() and get_qes_master() emit has a documented su
 })
 
 test_that("get_question() warns with a qesR_warning and its variable", {
+  local_qes_notices_shown()
   dat <- data.frame(x = 1:3)
   w <- expect_warning(get_question(dat, "x"), class = "qesR_warning")
   expect_identical(w$variable, "x")

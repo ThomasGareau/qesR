@@ -32,8 +32,10 @@ Core calls:
 
 - `get_qes(srvy)` download a survey by code
 - `qes_studies()` list the available studies (offline catalog)
-- `get_question(data, variable)` retrieve survey question text
-- `qes_codebook(srvy)` retrieve codebook
+- `qes_codebook(srvy)` retrieve the codebook (offline)
+- `qes_question(srvy, variables)` the exact wording of questions, EN or FR
+- `qes_search(pattern)` find variables across studies, EN and FR
+- `qes_missing(data)` set "don't know" and "refused" codes to `NA`
 - `get_qes_master()` build merged harmonized data
 - `qes_download(studies, path)` save the original files, md5-checked
 - `qes_provenance(data)` record which file the data came from
@@ -56,20 +58,14 @@ qes2022 <- get_qes("qes2022")
 names(qes2022)[1:20]
 ```
 
-## Retrieve the codebook in different layouts
+## Codebooks, questions and search
 
 ```{r, eval = FALSE}
-cb_compact <- qes_codebook("qes2022", layout = "compact")
-cb_wide <- qes_codebook("qes2022", layout = "wide")
-cb_long <- qes_codebook("qes2022", layout = "long")
-```
-
-## Get a preview and question text
-
-```{r, eval = FALSE}
-head(qes2022, 10)
-get_question(qes2022, "cps_age_in_years")
-get_question(qes2022, "cps_age_in_years", full = TRUE)
+cb <- qes_codebook("qes2014")
+cb_long <- qes_codebook("qes2014", layout = "long", variables = c("Q2", "Q19"))
+qes_question("qes2014", "Q19", lang = "en")
+qes_search("souverain|sovereign")
+qes2014 <- qes_missing(get_qes("qes2014"))
 ```
 
 ## Keep the original files and their provenance
@@ -122,7 +118,7 @@ tryCatch(
 )
 ```
 
-The older helpers `get_codebook()`, `get_qes_codebook()` and `get_preview()`
+The older helpers (`get_codebook()`, `get_question()`, `get_preview()`, ...)
 still work and print a one-time notice naming their replacement
 (`?qesR-deprecated`).
 

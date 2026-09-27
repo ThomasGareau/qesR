@@ -189,24 +189,25 @@ test_that("`file` naming another study of the same deposit reads that study, wit
   expect_error(select("qes2012", file = "2014"), class = "qesR_error_ambiguous_file")
 })
 
-test_that("the interim codebook takes the DDI of the pinned data file only ([A:D2])", {
-  # The shared 1998 deposit: the CREATEC DDI describes more variables, so
-  # scoring every DDI would attach it to the CROP data.
-  requested <- character(0)
+test_that("a codebook describes the pinned data file of its own study only ([A:D2])", {
+  # The shared 1998 deposit: each of its three studies has its own metadata,
+  # built from its own data file, offline.
   local_mocked_bindings(
-    .fetch_qes_ddi = function(study, file_id, quiet = TRUE) {
-      requested <<- c(requested, file_id)
-      vars <- sprintf("<var ID=\"c%02d\" name=\"c%02d\"><labl>v</labl></var>", 1:37, 1:37)
-      xml2::read_xml(paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>"))
-    },
     .qes_transport = function(...) stop("no request expected"),
     .package = "qesR"
   )
-  study <- getFromNamespace(".get_qes_study", "qesR")("qes1998_crop")
-  payload <- getFromNamespace(".download_and_read_qes", "qesR")(study, read_data = FALSE, quiet = TRUE)
-  expect_identical(requested, "286331")
-  expect_identical(payload$study, "qes1998_crop")
-  expect_identical(nrow(payload$codebook), 37L)
+  crop <- qes_codebook("qes1998_crop")
+  createc <- qes_codebook("qes1998_createc")
+  files <- shipped_catalog()$files
+  expect_identical(nrow(crop), files$n_cols[files$file_id == "286331"])
+  expect_identical(nrow(createc), files$n_cols[files$file_id == "316121"])
+  expect_identical(attr(crop, "survey_code"), "qes1998_crop")
+  expect_identical(attr(crop, "selected_data_file"), files$file_name[files$file_id == "286331"])
   # the file list comes from the catalog: no dataset listing request
-  expect_true(all(attr(payload$codebook, "files")$file_id %in% shipped_catalog()$files$file_id))
+  expect_true(all(attr(crop, "files")$file_id %in% files$file_id))
+  # `file` naming a sibling's data file describes that sibling
+  expect_identical(
+    attr(suppressMessages(qes_codebook("qes1998", file = "CROP")), "survey_code"),
+    "qes1998_crop"
+  )
 })

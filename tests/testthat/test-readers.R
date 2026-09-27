@@ -301,18 +301,10 @@ test_that("the reader's output does not depend on the locale or the message lang
 
 # ---- get_qes() on the reader ------------------------------------------------------
 
-test_that("get_qes() returns the reader's data as a base data frame, without DDI labels", {
+test_that("get_qes() returns the reader's data as a base data frame, with an offline codebook", {
   local_qes_notices_shown()
   d <- data.frame(q1 = haven::labelled(c(1, 2), labels = c("Oui" = 1, "Non" = 2), label = "Question du fichier"))
-  local_reader_catalog(list(reader_file("qes_fx", "920", d)))
-  ddi <- paste0(
-    "<codeBook><dataDscr><var ID=\"q1\" name=\"q1\"><labl>DDI label</labl>",
-    "<catgry><catValu>1</catValu><labl>DDI yes</labl></catgry></var></dataDscr></codeBook>"
-  )
-  local_mocked_bindings(
-    .fetch_qes_ddi = function(study, file_id, quiet = TRUE) xml2::read_xml(ddi),
-    .package = "qesR"
-  )
+  log <- local_reader_catalog(list(reader_file("qes_fx", "920", d)))
   out <- get_qes("qes_fx", quiet = TRUE)
   expect_identical(class(out), "data.frame")
   expect_identical(attr(out$q1, "label", exact = TRUE), "Question du fichier")
@@ -320,9 +312,11 @@ test_that("get_qes() returns the reader's data as a base data frame, without DDI
   expect_identical(attr(out, "qes_survey_code"), "qes_fx")
   expect_s3_class(attr(out, "qes_provenance"), "data.frame")
   expect_null(attr(out, "qes_label_source", exact = TRUE))
-  # the interim codebook takes the data's labels too
+  # the codebook takes the data's labels; no metadata request is made
   cb <- attr(out, "qes_codebook")
   expect_identical(cb$label[cb$variable == "q1"], "Question du fichier")
+  expect_identical(cb$value_labels[cb$variable == "q1"], "1=Oui | 2=Non")
+  expect_false(any(grepl("metadata|ddi", log$urls)))
 })
 
 test_that("get_qes('qes_demo') reads the shipped demo file offline, md5-checked", {
@@ -432,23 +426,21 @@ test_that("clearing the memo by md5 drops data read with a label donor", {
   expect_length(qesR:::.qes_memo_clear(md5 = "0123456789abcdef0123456789abcdef"), 0L)
 })
 
-test_that("a repeated get_qes() with its codebook makes no request (data and metadata memo)", {
+test_that("a repeated get_qes() with its codebook makes no request (data memo)", {
   local_qes_notices_shown()
   log <- local_fake_dataverse()
   withr::local_options(qesR.memo = TRUE)
   local_clean_memo()
   get_qes("qes2018", quiet = TRUE)
-  expect_identical(log$urls, c(
-    "https://borealisdata.ca/api/access/datafile/425914?format=original",
-    "https://borealisdata.ca/api/access/datafile/425914/metadata/ddi"
-  ))
+  # the codebook is built offline: the data file is the only request
+  expect_identical(log$urls, "https://borealisdata.ca/api/access/datafile/425914?format=original")
   get_qes("qes2018", quiet = TRUE)
   getFromNamespace(".get_preview_impl", "qesR")("qes2018", obs = 2L)
-  expect_length(log$urls, 2L)
-  # qes_cache_clear() forgets the metadata too
+  expect_length(log$urls, 1L)
+  # qes_cache_clear() forgets the parsed data
   suppressMessages(qes_cache_clear())
   get_qes("qes2018", quiet = TRUE)
-  expect_length(log$urls, 4L)
+  expect_length(log$urls, 2L)
 })
 
 test_that("the banner and the codebook follow a `file` that names another study", {
@@ -483,7 +475,7 @@ test_that("qes_codebook() reads the demo study, like get_qes()", {
     .qes_transport = function(...) stop("no request expected"),
     .package = "qesR"
   )
-  local_clear_codebook_cache()
+  local_clear_dict_memo()
   cb <- qes_codebook("qes_demo", quiet = TRUE)
   expect_s3_class(cb, "data.frame")
   expect_gt(nrow(cb), 0L)

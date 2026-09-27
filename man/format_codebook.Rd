@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{format_codebook}
 \alias{format_codebook}
-\title{Reformat a qesR Codebook}
+\title{Reformat a qesR codebook (legacy)}
 \usage{
 format_codebook(codebook, layout = c("compact", "wide", "long"))
 }
@@ -12,17 +12,33 @@ format_codebook(codebook, layout = c("compact", "wide", "long"))
 \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{
-A reformatted codebook data frame.
+The codebook in the requested layout (see \code{\link[=qes_codebook]{qes_codebook()}}).
 }
 \description{
-Reformats a \code{qes_codebook} object into compact, wide, or long layout.
+Soft-deprecated: use \code{qes_codebook(codebook, layout = )}, which lays a
+codebook out again. \code{format_codebook()} keeps working and will not be
+removed; it prints a one-time notice (see \link{qesR-deprecated}).
+}
+\details{
+The long layout keeps the variables that have no value labels, with one
+row whose \code{value} is \code{NA}. A plain data frame, for example a codebook
+read back from a CSV file (which loses its class and attributes), is an
+error of class \code{qesR_error_input}: rebuild it with
+\code{qes_codebook("<code>")}.
 }
 \examples{
-\donttest{
-  cb <- qes_codebook("qes2022")
-  format_codebook(cb, layout = "long")
-}
+cb <- qes_codebook("qes2014", variables = c("Q2", "Q19"))
+format_codebook(cb, layout = "long")
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_codebook]{qes_codebook()}}, and \link{qesR-deprecated} for the legacy functions
+and their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

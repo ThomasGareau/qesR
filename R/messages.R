@@ -36,6 +36,18 @@
     en = "`codebook` must be a data.frame returned by qes_codebook().",
     fr = "`codebook` doit \u00eatre un data.frame renvoy\u00e9 par qes_codebook()."
   ),
+  input_codebook_plain = c(
+    en = "`%1$s` is a plain data frame, not a qesR codebook or data read by get_qes() (a codebook read back from a file loses its class). Rebuild it with qes_codebook(\"<study code>\").",
+    fr = "`%1$s` est un simple data.frame, et non un codebook de qesR ni des donn\u00e9es lues par get_qes() (un codebook relu depuis un fichier perd sa classe). Reconstruisez-le avec qes_codebook(\"<code d'\u00e9tude>\")."
+  ),
+  input_codebook_srvy = c(
+    en = "`%1$s` must be a study code, a codebook returned by qes_codebook() or a data frame returned by get_qes().",
+    fr = "`%1$s` doit \u00eatre un code d'\u00e9tude, un codebook renvoy\u00e9 par qes_codebook() ou un data.frame renvoy\u00e9 par get_qes()."
+  ),
+  input_missing_data = c(
+    en = "`%1$s` must be a data frame returned by get_qes().",
+    fr = "`%1$s` doit \u00eatre un data.frame renvoy\u00e9 par get_qes()."
+  ),
   input_srvy_or_codebook = c(
     en = "Provide `srvy` or `codebook`.",
     fr = "Indiquez `srvy` ou `codebook`."
@@ -43,6 +55,10 @@
   input_codes = c(
     en = "`%1$s` must be a non-empty character vector of study codes.",
     fr = "`%1$s` doit \u00eatre un vecteur non vide de codes d'\u00e9tude."
+  ),
+  input_variables = c(
+    en = "`%1$s` must be a non-empty character vector of variable names.",
+    fr = "`%1$s` doit \u00eatre un vecteur non vide de noms de variables."
   ),
   input_all_mixed = c(
     en = "`%1$s`: \"all\" must be used on its own, not together with study codes.",
@@ -126,6 +142,14 @@
   unknown_variable_suggest = c(
     en = "Column %1$s was not found in the data. Close matches: %2$s.",
     fr = "La colonne %1$s est introuvable dans les donn\u00e9es. Correspondances proches\u00a0: %2$s."
+  ),
+  unknown_variable_study = c(
+    en = "Variable %1$s is not in study %2$s.",
+    fr = "La variable %1$s ne fait pas partie de l'\u00e9tude %2$s."
+  ),
+  unknown_variable_study_suggest = c(
+    en = "Variable %1$s is not in study %2$s. Close matches: %3$s.",
+    fr = "La variable %1$s ne fait pas partie de l'\u00e9tude %2$s. Correspondances proches\u00a0: %3$s."
   ),
   file_no_match = c(
     en = "No data file of %1$s matches %2$s. Its data files: %3$s.",
@@ -254,6 +278,10 @@
     en = "No question label was found for %1$s.",
     fr = "Aucun libell\u00e9 de question trouv\u00e9 pour %1$s."
   ),
+  question_truncated = c(
+    en = "The question text of %1$s was cut at 80 characters in its source file; the full wording is in document %2$s (see qes_docs()).",
+    fr = "Le texte de la question %1$s a \u00e9t\u00e9 coup\u00e9 \u00e0 80 caract\u00e8res dans son fichier source\u00a0; le libell\u00e9 complet se trouve dans le document %2$s (voir qes_docs())."
+  ),
   unpinned = c(
     en = "qes_download(version = \"latest\") saved files that the qesR catalog does not pin, for %1$s. They were checked against the md5 given by Dataverse, not by qesR, and get_qes() keeps reading the pinned files.",
     fr = "qes_download(version = \"latest\") a enregistr\u00e9 des fichiers que le catalogue de qesR ne retient pas, pour %1$s. Ils ont \u00e9t\u00e9 v\u00e9rifi\u00e9s par la somme md5 donn\u00e9e par Dataverse, et non par qesR, et get_qes() continue de lire les fichiers retenus."
@@ -284,6 +312,23 @@
   arg_ignored = c(
     en = "In %1$s(), `%2$s` no longer changes the result and is ignored. This note is shown once per session.",
     fr = "Dans %1$s(), `%2$s` ne change plus le r\u00e9sultat et est ignor\u00e9. Cette note s'affiche une fois par session."
+  ),
+
+  missing_untyped = c(
+    en = "%1$s of %2$s variable(s) have no missing codes in the codebook and were left unchanged.",
+    fr = "%1$s variable(s) sur %2$s n'ont aucun code manquant dans le codebook et n'ont pas \u00e9t\u00e9 modifi\u00e9es."
+  ),
+  search_none = c(
+    en = "No variable matches.",
+    fr = "Aucune variable ne correspond."
+  ),
+  search_more = c(
+    en = "... and %1$s more row(s).",
+    fr = "... et %1$s ligne(s) de plus."
+  ),
+  search_not_searchable = c(
+    en = "Not searchable yet: %1$s (its metadata is built from your copy of the data by qes_codebook() or get_qes()).",
+    fr = "Pas encore consultable\u00a0: %1$s (ses m\u00e9tadonn\u00e9es sont construites \u00e0 partir de votre copie des donn\u00e9es par qes_codebook() ou get_qes())."
   ),
 
   # ---- progress (silenced by quiet = TRUE) ---------------------------------

@@ -2,9 +2,18 @@
 % Please edit documentation in R/docs.R
 \name{get_codebook_files}
 \alias{get_codebook_files}
-\title{Get Codebook Files}
+\alias{get_qes_codebook_files}
+\title{Get codebook files (legacy)}
 \usage{
 get_codebook_files(
+  srvy = NULL,
+  codebook = NULL,
+  file = NULL,
+  quiet = FALSE,
+  refresh = FALSE
+)
+
+get_qes_codebook_files(
   srvy = NULL,
   codebook = NULL,
   file = NULL,
@@ -29,14 +38,15 @@ A data frame of codebook/support files with the columns \code{file_id},
 \code{filename}, \code{extension}, \code{size} and \code{download_url}.
 }
 \description{
-Returns codebook/support files (PDFs, questionnaires, metadata files) associated with a study.
+Returns the documentation files (codebooks, questionnaires and reports)
+deposited with a study.
 }
 \details{
-Soft-deprecated: use \code{\link[=qes_docs]{qes_docs()}}. \code{get_codebook_files()} keeps working and
-will not be removed; it prints a one-time notice (see \link{qesR-deprecated}).
-It now returns every document deposited with the study (codebooks,
-questionnaires and reports) from the offline catalog, with the qesR 0.4.4
-columns, and makes no network request. \code{file} and \code{refresh} no longer
+Soft-deprecated: use \code{\link[=qes_docs]{qes_docs()}}. \code{get_codebook_files()} and
+\code{get_qes_codebook_files()} keep working and will not be removed; each
+prints a one-time notice (see \link{qesR-deprecated}). They return every
+document deposited with the study from the offline catalog, with the qesR
+0.4.4 columns, and make no network request. \code{file} and \code{refresh} no longer
 change the result.
 }
 \examples{
@@ -45,4 +55,12 @@ get_codebook_files(srvy = "qes2022")
 \seealso{
 \code{\link[=qes_docs]{qes_docs()}}, and \link{qesR-deprecated} for the legacy functions and
 their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{format_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

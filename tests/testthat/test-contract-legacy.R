@@ -72,13 +72,16 @@ test_that("get_decon() keeps the 19 v0.4.4 columns", {
   expect_identical(nrow(decon), nrow(fake_study_data("qes2018")))
 })
 
-test_that("codebook layouts keep the v0.4.4 columns", {
+test_that("codebook layouts keep the v0.4.4 columns first, in order", {
+  # slice S3 appends columns after those of v0.4.4 (design.md sections 2.3
+  # and 6.2), so positional code keeps working
   local_qes_notices_shown()
   local_fake_dataverse()
   for (layout in names(v044_codebook_cols)) {
     cb <- get_codebook("qes2018", quiet = TRUE, layout = layout)
     expect_s3_class(cb, "qes_codebook")
-    expect_identical(names(cb), v044_codebook_cols[[layout]], info = layout)
+    want <- v044_codebook_cols[[layout]]
+    expect_identical(names(cb)[seq_along(want)], want, info = layout)
   }
   cb <- get_codebook("qes2018", quiet = TRUE)
   expect_identical(names(get_value_labels(cb, long = TRUE)), v044_value_labels_long_cols)

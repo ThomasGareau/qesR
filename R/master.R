@@ -1639,7 +1639,7 @@
 #
 # get_qes_master() and get_decon() turn labelled columns into their labels.
 # qesR 0.4.4 labelled a few source columns that the original files leave
-# unlabelled, from the hand-typed maps of .study_codebook_overrides(); the
+# unlabelled, from hand-typed maps (.qes_legacy_label_maps below); the
 # reader no longer does (labels come from the files, R/read.R), so until the
 # interim legacy builder freezes its sources (slice S4) these builders put the
 # 0.4.4 labels back on exactly the columns whose harmonized values depend on
@@ -1664,13 +1664,49 @@
 )
 .qes_legacy_unlabelled <- list(qes2018 = "q2_96_other")
 
+# The 0.4.4 label maps of those columns, frozen as qesR 0.4.4 typed them
+# (without accents) in its hand-made codebook overrides, which slice S3
+# replaced by the dictionary; these legacy builders still need them until
+# slice S4 freezes their sources.
+.qes_legacy_label_maps <- list(
+  qes2018 = list(
+    qsexe = c("1" = "Masculin", "2" = "Feminin"),
+    qscol = c(
+      "1" = "Aucune scolarite",
+      "2" = "Cours primaire (pas fini)",
+      "3" = "Cours primaire (complete)",
+      "4" = "Secondaire 1",
+      "5" = "Secondaire 2",
+      "6" = "Secondaire 3",
+      "7" = "Secondaire 4",
+      "8" = "Secondaire 5 (DES)",
+      "9" = "Secondaire 5 (DEP)",
+      "10" = "CEGEP (pas fini)",
+      "11" = "CEGEP (avec DEC)",
+      "12" = "CEGEP (programme technique)",
+      "13" = "Universite non completee",
+      "14" = "Baccalaureat",
+      "15" = "Maitrise ou doctorat",
+      "99" = "Je prefere ne pas repondre"
+    )
+  ),
+  qes1998 = list(
+    scol = c(
+      "1" = "1-9 ans",
+      "2" = "10-15 ans",
+      "3" = "Universite+",
+      "9" = "Refus / pas de reponse"
+    )
+  )
+)
+
 .qes_legacy_label_fills <- function(srvy, consumer = c("master", "decon")) {
   consumer <- match.arg(consumer)
   vars <- .qes_legacy_label_vars[[consumer]][[srvy]]
   if (length(vars) == 0L) {
     return(list())
   }
-  maps <- .study_codebook_overrides(srvy)$value_labels
+  maps <- .qes_legacy_label_maps[[srvy]] %||% list()
   if (identical(srvy, "qes1998")) {
     maps$age <- c("6" = "65+", "9" = "Refus/pas de reponse")
   }

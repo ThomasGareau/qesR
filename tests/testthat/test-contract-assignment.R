@@ -135,22 +135,27 @@ test_that("get_qes_master(save_path =) sets saved_to before assigning", {
 
 # Calls for the 11 legacy wrappers, with `quiet = TRUE` wherever the formals
 # allow it (to show that quiet does not silence the notice), and the legacy
-# column names each must return (NULL: an unnamed character(1)). Inputs that
+# column names each must return (NULL: an unnamed character(1); with
+# `prefix = TRUE`, the first columns, since slice S3 appends columns to the
+# codebook after those of v0.4.4, design.md section 2.3). Inputs that
 # are themselves codebooks are built with the canonical qes_codebook(), so
 # only the wrapper under test can emit a deprecation notice.
 legacy_calls <- function() {
   list(
     get_codebook = list(
       call = quote(get_codebook("qes2018", quiet = TRUE)),
-      names = v044_codebook_cols$compact
+      names = v044_codebook_cols$compact,
+      prefix = TRUE
     ),
     get_qes_codebook = list(
       call = quote(get_qes_codebook("qes2018", quiet = TRUE)),
-      names = v044_codebook_cols$compact
+      names = v044_codebook_cols$compact,
+      prefix = TRUE
     ),
     format_codebook = list(
       call = quote(format_codebook(qes_codebook("qes2018", quiet = TRUE), layout = "long")),
-      names = v044_codebook_cols$long
+      names = v044_codebook_cols$long,
+      prefix = TRUE
     ),
     get_value_labels = list(
       call = quote(get_value_labels(qes_codebook("qes2018", quiet = TRUE), long = TRUE)),
@@ -237,6 +242,8 @@ test_that("legacy wrappers emit qesR_message_deprecated once per session", {
     }
     if (is.null(case$names)) {
       expect_true(is.character(first$value) && length(first$value) == 1L, info = f)
+    } else if (isTRUE(case$prefix)) {
+      expect_identical(names(first$value)[seq_along(case$names)], case$names, info = f)
     } else {
       expect_identical(names(first$value), case$names, info = f)
     }

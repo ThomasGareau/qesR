@@ -206,24 +206,8 @@ for (nm in names(out)) {
 
 # ---- VERSIONS ----------------------------------------------------------------
 
-versions_path <- file.path(root, "inst", "extdata", "VERSIONS")
-old <- if (file.exists(versions_path)) read.dcf(versions_path) else NULL
-catalog_version <- if (!is.null(old) && "catalog_version" %in% colnames(old)) {
-  unname(old[1, "catalog_version"])
-} else {
-  "1.0.0"
-}
-csvs <- sort(list.files(cat_dir, pattern = "\\.csv$"))
-md5s <- unname(tools::md5sum(file.path(cat_dir, csvs)))
-built_from <- unique(sprintf("%s:%s", files$file_id, files$md5))
-fields <- c(
-  catalog_version = catalog_version,
-  schema_version = "1",
-  built_from = paste(sort(built_from), collapse = ",\n "),
-  csv_md5 = paste(sprintf("catalog/%s:%s", csvs, md5s), collapse = ",\n ")
-)
-write_utf8(
-  paste0(paste(sprintf("%s: %s", names(fields), fields), collapse = "\n"), "\n"),
-  versions_path
-)
+# catalog_version and dict_version are kept (bumped by hand); built_from and
+# the md5 of every catalog and dictionary table are recomputed.
+source(file.path(root, "data-raw", "versions.R"))
+write_versions(root)
 cat(sprintf("Wrote %d studies and %d files; VERSIONS updated.\n", nrow(studies), nrow(files)))

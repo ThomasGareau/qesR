@@ -83,8 +83,12 @@ a provenance level the object does not record (field \code{level}).}
 Warnings inherit from \code{qesR_warning}, among them \code{qesR_warning_encoding}
 (a label or text value that still holds a replacement or control
 character after reading; fields \code{study}, \code{file_id}, \code{n}, \code{variables}) and
-\code{qesR_warning_unpinned} (files saved by \code{qes_download(version = "latest")}, which the catalog does not pin; fields \code{study}, \code{file_id}).
-Messages inherit from \code{qesR_message}.
+\code{qesR_warning_unpinned} (files saved by \code{qes_download(version = "latest")}, which the catalog does not pin; fields \code{study}, \code{file_id}) and
+\code{qesR_warning_truncated} (a question text that its source file cut at 80
+characters, from \code{\link[=get_question]{get_question()}}; fields \code{variable}, \code{doc_ref}).
+Messages inherit from \code{qesR_message}; \code{\link[=qes_missing]{qes_missing()}} counts the variables
+it left unchanged in a \code{qesR_message_missing_untyped} (silenced by
+\code{quiet = TRUE}).
 Progress messages (classes \code{qesR_message_download} and
 \code{qesR_message_cached}) are silenced by \code{quiet = TRUE}, as is the one-time
 tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}). Three notices are shown at most once per session and are
@@ -117,6 +121,18 @@ attributes \code{qes_na_values} and \code{qes_na_range}. The attribute
 it and prints it as a paragraph for a replication log.
 \code{\link[=qes_download]{qes_download()}} saves the original files themselves (data file and
 documents), md5-checked, in a directory you choose.
+}
+
+\section{Codebooks and search}{
+
+The description of every variable (label, question text in English and
+French, value labels, missing codes) ships with qesR for the studies
+released under CC0, so \code{\link[=qes_codebook]{qes_codebook()}}, \code{\link[=qes_question]{qes_question()}} and
+\code{\link[=qes_search]{qes_search()}} work offline. Question text comes from the deposited
+questionnaires. \code{qes2022} (CC BY-NC 4.0) ships no metadata: its codebook
+is built from your own copy of the data file and kept in the download
+cache. \code{\link[=qes_missing]{qes_missing()}} sets "don't know", "refused" and declared missing
+codes to \code{NA}.
 }
 
 \section{Network use}{
@@ -192,8 +208,12 @@ niveau de provenance que l'objet n'enregistre pas ; champ \code{level}). Les
 avertissements héritent de \code{qesR_warning}, dont \code{qesR_warning_encoding}
 (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 contrôle après lecture ; \code{study}, \code{file_id}, \code{n}, \code{variables}) et
-\code{qesR_warning_unpinned} (fichiers enregistrés par \code{qes_download(version = "latest")}, que le catalogue ne retient pas ; \code{study}, \code{file_id}), et les
-messages de \code{qesR_message}. Les messages
+\code{qesR_warning_unpinned} (fichiers enregistrés par \code{qes_download(version = "latest")}, que le catalogue ne retient pas ; \code{study}, \code{file_id}) et
+\code{qesR_warning_truncated} (texte de question coupé à 80 caractères dans
+son fichier source, signalé par \code{\link[=get_question]{get_question()}} ; \code{variable},
+\code{doc_ref}), et les messages de \code{qesR_message} ; \code{\link[=qes_missing]{qes_missing()}} compte
+les variables laissées inchangées dans un
+\code{qesR_message_missing_untyped} (masqué par \code{quiet = TRUE}). Les messages
 de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le
 conseil unique sur le cache disque (\code{qesR_message_disk_cache_tip}) sont
 masqués par \code{quiet = TRUE}.
@@ -223,6 +243,16 @@ L'attribut \code{qes_provenance} indique quel fichier a été lu ;
 journal de réplication. \code{\link[=qes_download]{qes_download()}} enregistre les fichiers originaux
 eux-mêmes (fichier de données et documents), vérifiés par somme md5, dans
 un dossier de votre choix.
+
+\strong{Codebooks et recherche.} La description de chaque variable
+(étiquette, texte de la question en anglais et en français, étiquettes de
+valeurs, codes manquants) est livrée avec qesR pour les études sous
+licence CC0 : \code{\link[=qes_codebook]{qes_codebook()}}, \code{\link[=qes_question]{qes_question()}} et \code{\link[=qes_search]{qes_search()}}
+fonctionnent sans réseau. Le texte des questions vient des questionnaires
+déposés. Pour \code{qes2022} (CC BY-NC 4.0), aucune métadonnée n'est livrée :
+le codebook est construit à partir de votre copie du fichier et conservé
+dans le cache. \code{\link[=qes_missing]{qes_missing()}} remplace par \code{NA} les codes « ne sait
+pas », « refus » et les codes manquants déclarés.
 
 \strong{Réseau.} Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 fois et à au moins une seconde d'intervalle par serveur. Elles portent

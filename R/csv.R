@@ -52,11 +52,34 @@
   enums = c(
     enum = "chr", value = "chr", order = "int", code = "chr", scope = "chr",
     label_en = "chr", label_fr = "chr"
+  ),
+  # the dictionary (design.md section 6.1): inst/extdata/dict/*.csv.gz for the
+  # shipped studies, and the same tables for a metadata shard in the cache
+  dict_variables = c(
+    study = "chr", variable = "chr", position = "int", source_name = "chr",
+    type = "chr", measure = "chr", var_timing = "chr", label = "chr",
+    question_en = "chr", question_fr = "chr", question_truncated = "lgl",
+    universe_en = "chr", universe_fr = "chr", na_values = "chr",
+    derived_from = "chr", label_source = "chr", question_source = "chr",
+    doc_ref = "chr", reviewed = "lgl"
+  ),
+  dict_values = c(
+    study = "chr", variable = "chr", value = "chr", label = "chr",
+    label_source = "chr", label_lang = "chr", label_en = "chr",
+    label_fr = "chr", missing_type = "chr", n = "int", label_flag = "chr"
+  ),
+  # missing-code rules for studies whose metadata is built at runtime (OD3):
+  # no label text, only (study, variable, value) keys; variable "*" is any
+  dict_shard_rules = c(
+    study = "chr", variable = "chr", value = "chr", missing_type = "chr",
+    evidence = "chr"
   )
 )
 
-# Columns whose "" is a real value, not a missing one (per table).
-.qes_keep_empty <- list()
+# Columns whose "" is a real value, not a missing one (per table). A value
+# label may be "" in its file (qes2012 q64 = 96); an unlabelled code has
+# label_source "none" and its label is set to NA after reading.
+.qes_keep_empty <- list(dict_values = "label")
 
 .qes_csv_error <- function(path, reason) {
   .qes_abort(
@@ -151,4 +174,43 @@
     return(character(0))
   }
   strsplit(x, ";", fixed = TRUE)[[1]]
+}
+
+# Write a table as UTF-8 CSV with LF line endings, whatever the locale: every
+# field is written as text, quoted when it is character, NA as "" (the reader
+# turns "" back into NA except in keep_empty columns). `path` ending in ".gz"
+# is gzip-compressed. The file is written under a temporary name and renamed,
+# so a reader never sees a partial file.
+.qes_write_csv <- function(x, path) {
+  field <- function(v) {
+    if (is.logical(v)) {
+      out <- ifelse(v, "TRUE", "FALSE")
+    } else if (is.numeric(v)) {
+      out <- .qes_code_chr(v)
+    } else {
+      out <- enc2utf8(as.character(v))
+      out <- paste0("\"", gsub("\"", "\"\"", out, fixed = TRUE), "\"")
+      out[is.na(v)] <- ""
+      return(out)
+    }
+    out[is.na(v)] <- ""
+    out
+  }
+  cols <- lapply(x, field)
+  header <- paste0("\"", enc2utf8(names(x)), "\"", collapse = ",")
+  body <- if (nrow(x) > 0L) do.call(paste, c(cols, sep = ",")) else character(0)
+  text <- paste0(paste(c(header, body), collapse = "\n"), "\n")
+  tmp <- tempfile(tmpdir = dirname(path), fileext = ".part")
+  con <- if (grepl("\\.gz$", path)) gzfile(tmp, open = "wb", compression = 9) else file(tmp, open = "wb")
+  ok <- FALSE
+  on.exit(if (!ok) unlink(tmp), add = TRUE)
+  writeBin(charToRaw(text), con)
+  close(con)
+  if (!file.rename(tmp, path)) {
+    ok <- file.copy(tmp, path, overwrite = TRUE)
+    unlink(tmp)
+  } else {
+    ok <- TRUE
+  }
+  invisible(ok)
 }

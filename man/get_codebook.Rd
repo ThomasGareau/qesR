@@ -2,9 +2,19 @@
 % Please edit documentation in R/codebook.R
 \name{get_codebook}
 \alias{get_codebook}
-\title{Get a Quebec Election Study Codebook}
+\alias{get_qes_codebook}
+\title{Get a Quebec Election Study codebook (legacy)}
 \usage{
 get_codebook(
+  srvy,
+  file = NULL,
+  assign_global = FALSE,
+  quiet = FALSE,
+  refresh = FALSE,
+  layout = c("compact", "wide", "long")
+)
+
+get_qes_codebook(
   srvy,
   file = NULL,
   assign_global = FALSE,
@@ -26,28 +36,38 @@ the canonical study code. Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
-\item{refresh}{If TRUE, force a fresh download instead of using cache.}
+\item{refresh}{Ignored (the codebook is built offline); setting it prints
+a one-time note.}
 
 \item{layout}{One of \code{"compact"}, \code{"wide"}, or \code{"long"}.}
 }
 \value{
-A \code{qes_codebook} data frame with variable metadata and codebook file
-manifest attributes, returned visibly.
+A \code{qes_codebook} data frame, returned visibly (see
+\code{\link[=qes_codebook]{qes_codebook()}}).
 }
 \description{
-Downloads and returns study codebook metadata; results are cached per session.
-}
-\details{
 Soft-deprecated: use \code{\link[=qes_codebook]{qes_codebook()}}, which takes the same arguments.
-\code{get_codebook()} keeps working and will not be removed; it prints a
-one-time notice (see \link{qesR-deprecated}).
+\code{get_codebook()} and \code{get_qes_codebook()} keep working and will not be
+removed; each prints a one-time notice (see \link{qesR-deprecated}). They
+return what \code{qes_codebook()} returns: the codebook is built offline from
+the metadata shipped with qesR (see \code{\link[=qes_codebook]{qes_codebook()}}), the columns of
+qesR 0.4.4 come first and new columns follow, and the attributes
+(\code{survey_code}, \code{doi}, \code{files}, \code{codebook_files}, ...) are kept in every
+layout. \code{refresh} no longer changes the result.
 }
 \examples{
-\donttest{
-  cb <- qes_codebook("qes2022")
-  head(cb)
-}
+cb <- get_codebook("qes2014")
+head(cb[, 1:4])
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_codebook]{qes_codebook()}}, and \link{qesR-deprecated} for the legacy functions
+and their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{format_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

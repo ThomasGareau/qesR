@@ -80,15 +80,16 @@ qes_docs <- function(studies = NULL, role = NULL, lang = NULL) {
 
 # ---- get_codebook_files() / get_qes_codebook_files() (legacy) ----------------
 
-#' Get Codebook Files
+#' Get codebook files (legacy)
 #'
-#' Returns codebook/support files (PDFs, questionnaires, metadata files) associated with a study.
+#' Returns the documentation files (codebooks, questionnaires and reports)
+#' deposited with a study.
 #'
-#' Soft-deprecated: use [qes_docs()]. `get_codebook_files()` keeps working and
-#' will not be removed; it prints a one-time notice (see [qesR-deprecated]).
-#' It now returns every document deposited with the study (codebooks,
-#' questionnaires and reports) from the offline catalog, with the qesR 0.4.4
-#' columns, and makes no network request. `file` and `refresh` no longer
+#' Soft-deprecated: use [qes_docs()]. `get_codebook_files()` and
+#' `get_qes_codebook_files()` keep working and will not be removed; each
+#' prints a one-time notice (see [qesR-deprecated]). They return every
+#' document deposited with the study from the offline catalog, with the qesR
+#' 0.4.4 columns, and make no network request. `file` and `refresh` no longer
 #' change the result.
 #'
 #' @param srvy A qesR survey code. Required if `codebook` is NULL.
@@ -100,6 +101,7 @@ qes_docs <- function(studies = NULL, role = NULL, lang = NULL) {
 #'
 #' @return A data frame of codebook/support files with the columns `file_id`,
 #'   `filename`, `extension`, `size` and `download_url`.
+#' @family legacy
 #' @seealso [qes_docs()], and [qesR-deprecated] for the legacy functions and
 #'   their replacements.
 #' @examples
@@ -113,20 +115,7 @@ get_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet 
   )
 }
 
-#' Alias for get_codebook_files
-#'
-#' Backward-compatible alias for `get_codebook_files()`.
-#'
-#' Soft-deprecated: use [qes_docs()]. It keeps working and will not be
-#' removed; it prints a one-time notice (see [qesR-deprecated]).
-#'
-#' @inheritParams get_codebook_files
-#'
-#' @return A data frame of codebook/support files.
-#' @seealso [qes_docs()], and [qesR-deprecated] for the legacy functions and
-#'   their replacements.
-#' @examples
-#' get_qes_codebook_files(srvy = "qes2022")
+#' @rdname get_codebook_files
 #' @export
 get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, quiet = FALSE, refresh = FALSE) {
   .qes_deprecate("get_qes_codebook_files")
@@ -202,9 +191,9 @@ get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, qu
   unique(c(code, shared))
 }
 
-# The file manifest attached to a codebook built by the DDI path
-# (attr "codebook_files"), for get_codebook_files(codebook = ) on a codebook
-# that does not record its study.
+# The file manifest attached to a codebook (attr "codebook_files"), for
+# get_codebook_files(codebook = ) on a codebook that does not record its
+# study (one made by hand, or by qesR 0.4.4).
 .qes_codebook_attr_files <- function(codebook) {
   files <- attr(codebook, "codebook_files", exact = TRUE)
   if (is.null(files)) {

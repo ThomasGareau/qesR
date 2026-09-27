@@ -26,8 +26,7 @@ Depends: R (>= 4.1)
 Imports:
     curl (>= 6.0.0),
     haven,
-    jsonlite,
-    xml2
+    jsonlite
 Suggests:
     dplyr,
     ggplot2,

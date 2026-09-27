@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{download_codebook}
 \alias{download_codebook}
-\title{Download Codebook Files}
+\title{Download codebook files (legacy)}
 \usage{
 download_codebook(
   srvy,
@@ -60,4 +60,12 @@ tryCatch(
 \seealso{
 \code{\link[=qes_download]{qes_download()}}, \code{\link[=qes_docs]{qes_docs()}}, and \link{qesR-deprecated} for the
 legacy functions and their replacements.
+
+Other legacy: 
+\code{\link{format_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

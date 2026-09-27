@@ -2,29 +2,48 @@
 % Please edit documentation in R/codebook.R
 \name{get_value_labels}
 \alias{get_value_labels}
-\title{Get Value Labels from a Codebook}
+\title{Get value labels from a codebook (legacy)}
 \usage{
 get_value_labels(codebook, variable = NULL, long = FALSE)
 }
 \arguments{
 \item{codebook}{A \code{qes_codebook} object from \code{qes_codebook()}.}
 
-\item{variable}{Optional variable name. If \code{NULL}, returns mappings for all variables.}
+\item{variable}{Optional variable name. If \code{NULL}, returns mappings for all
+variables that have value labels.}
 
-\item{long}{If TRUE, return a long data frame with \code{variable}, \code{value}, and \code{value_label} columns.}
+\item{long}{If TRUE, return a long data frame with \code{variable}, \code{value}, and
+\code{value_label} columns.}
 }
 \value{
-A named list of value-label vectors, or a long data frame when \code{long = TRUE}.
+A named list of value-label vectors (named by code), or a long
+data frame when \code{long = TRUE}.
 }
 \description{
-Extracts value-label mappings from a \code{qes_codebook} object.
+Soft-deprecated: use \code{qes_codebook(layout = "long")}, which has one row per
+value with its label and missing type. \code{get_value_labels()} keeps working
+and will not be removed; it prints a one-time notice (see
+\link{qesR-deprecated}).
+}
+\details{
+A variable that is not in the codebook is an error of class
+\code{qesR_error_unknown_variable} that suggests near matches (qesR 0.4.4
+returned an empty list). A label that is an empty string in the file is
+kept as \code{""}.
 }
 \examples{
-\donttest{
-  cb <- qes_codebook("qes2022")
-  get_value_labels(cb)
-}
+cb <- qes_codebook("qes2014", variables = c("Q2", "Q19"))
+get_value_labels(cb, "Q19")
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_codebook]{qes_codebook()}}, and \link{qesR-deprecated} for the legacy functions
+and their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{format_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_question}()}
 }
+\concept{legacy}

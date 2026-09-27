@@ -32,7 +32,9 @@
 #     vector, e.g. qes2007_panel `ininum`) keeps its first element and is
 #     recorded as "file_malformed";
 #   * a reviewed supplement for files that have no labels at all (qes2018
-#     value labels) comes with the shipped dictionary (slice S3);
+#     value labels, from its questionnaire) is part of the shipped
+#     dictionary (R/metadata.R): it describes the data in the codebook and
+#     is never written onto the data;
 #   * else none. Labels never come from DDI metadata or a variable name.
 # The label source of each column is kept in the internal attribute
 # qes_label_source (get_qes() drops it).

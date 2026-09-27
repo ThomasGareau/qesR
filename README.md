@@ -83,24 +83,29 @@ qes2018 <- get_qes("qes2018")
 cb <- attr(qes2018, "qes_codebook")
 head(cb)
 
-# you can also fetch the codebook directly
+# codebooks, question text and search work offline (the metadata of every
+# CC0 study ships with qesR; qes2022's is built from your copy of its data)
 qes2018_codebook <- qes_codebook("qes2018")
-# compact layout (default): variable, label, question, n_value_labels
+# compact layout (default): variable, label, question, n_value_labels, then
+# study, position, type, question_lang, value_labels, missing_codes, ...
 
-# wide layout: adds list-column with value labels
-qes2018_codebook_wide <- qes_codebook("qes2018", layout = "wide")
+# long layout: one row per value, with its missing type
+qes_codebook("qes2018", layout = "long", variables = c("q26", "q27"))
 
-# long layout: one row per value label
-qes2018_codebook_long <- qes_codebook("qes2018", layout = "long")
+# the exact wording of a question, in French or English
+qes_question("qes2018", "q26", lang = "en")
 
-# reformat an existing codebook object
-format_codebook(qes2018_codebook, layout = "wide")
-get_value_labels(qes2018_codebook, long = TRUE)
+# find variables across studies, ignoring case and accents
+qes_search("souverain|sovereign")
 
-# soft-deprecated aliases of qes_codebook(): they keep working and print a
-# one-time notice (see ?qesR-deprecated)
+# set "don't know", "refused" and declared missing codes to NA
+qes2018_clean <- qes_missing(qes2018)
+
+# soft-deprecated helpers keep working and print a one-time notice
+# (see ?qesR-deprecated)
 qes2018_codebook <- get_codebook("qes2018")
-qes2018_codebook <- get_qes_codebook("qes2018")
+get_value_labels(qes2018_codebook, "q26")
+get_question(qes2018, "q26")
 
 # save the original files (data file and documents), md5-checked,
 # in a folder you have created
@@ -112,13 +117,6 @@ qes_provenance(qes2018)
 
 # preview first 10 rows
 head(qes2018, 10)
-
-# retrieve question text from labels/codebook
-get_question(qes2018, "some_variable")
-
-# attempt fuller question recovery if metadata appears truncated
-get_question(qes2018, "some_variable", full = TRUE)
-# (uses `pdftotext` or `gs` when available)
 
 # cesR-like prepared non-exhaustive dataset
 decon <- get_decon("qes2022")

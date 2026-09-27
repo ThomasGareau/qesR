@@ -26,7 +26,8 @@ test_that("every catalog CSV is UTF-8 with LF line endings and no BOM", {
 test_that("the catalog tables match their schemas and keys are unique", {
   cat <- shipped_catalog()
   schemas <- getFromNamespace(".qes_schemas", "qesR")
-  for (tab in names(schemas)) {
+  # the dictionary tables are checked in test-dictionary.R
+  for (tab in getFromNamespace(".qes_catalog_tables", "qesR")) {
     expect_identical(setdiff(names(cat[[tab]]), "demo"), names(schemas[[tab]]), info = tab)
   }
   expect_false(anyDuplicated(cat$studies$study) > 0L)
@@ -184,16 +185,19 @@ test_that("id_vars and name_map targets exist in the v0.4.4 name manifest", {
 test_that("VERSIONS records the catalog version and the md5 of every CSV", {
   path <- system.file("extdata", "VERSIONS", package = "qesR", mustWork = TRUE)
   v <- read.dcf(path)
-  expect_true(all(c("catalog_version", "schema_version", "built_from", "csv_md5") %in% colnames(v)))
+  expect_true(all(c("catalog_version", "dict_version", "schema_version", "built_from", "csv_md5") %in% colnames(v)))
   expect_match(v[1, "catalog_version"], "^[0-9]+\\.[0-9]+\\.[0-9]+$")
   split <- function(x) trimws(strsplit(x, ",", fixed = TRUE)[[1]])
 
   recorded <- split(v[1, "csv_md5"])
-  csvs <- sort(list.files(catalog_dir(), pattern = "\\.csv$"))
-  expected <- sprintf(
-    "catalog/%s:%s", csvs, unname(tools::md5sum(file.path(catalog_dir(), csvs)))
+  ext <- system.file("extdata", package = "qesR", mustWork = TRUE)
+  tables <- c(
+    file.path("catalog", sort(list.files(file.path(ext, "catalog"), pattern = "\\.csv$"))),
+    file.path("dict", sort(list.files(file.path(ext, "dict"), pattern = "\\.csv(\\.gz)?$")))
   )
+  expected <- sprintf("%s:%s", tables, unname(tools::md5sum(file.path(ext, tables))))
   expect_identical(recorded, expected)
+  expect_match(v[1, "dict_version"], "^[0-9]+\\.[0-9]+\\.[0-9]+$")
 
   f <- shipped_catalog()$files
   expect_setequal(split(v[1, "built_from"]), unique(sprintf("%s:%s", f$file_id, f$md5)))

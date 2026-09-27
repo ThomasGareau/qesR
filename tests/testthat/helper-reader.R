@@ -109,6 +109,7 @@ local_reader_catalog <- function(files, name_map = NULL, text_fixes = NULL,
   }
 
   withr::local_options(qesR.cache = "none", qesR.memo = isTRUE(memo), .local_envir = .env)
+  local_clear_dict_memo(.env = .env)
   if (isTRUE(memo)) {
     local_clean_memo(.env = .env)
   }

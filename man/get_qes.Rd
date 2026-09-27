@@ -37,8 +37,10 @@ called at top level), where \verb{<code>} is the canonical study code. With
 \code{with_codebook = TRUE}, the codebook is assigned as \verb{<code>_codebook} too.
 Defaults to FALSE. The data is returned either way.}
 
-\item{with_codebook}{If TRUE, attach codebook metadata as the \code{qes_codebook}
-attribute (and assign \code{<code>_codebook} when \code{assign_global = TRUE}).}
+\item{with_codebook}{If TRUE, attach the study's codebook for the columns
+read (see \code{\link[=qes_codebook]{qes_codebook()}}; built offline, with no request) as the
+\code{qes_codebook} attribute (and assign \code{<code>_codebook} when
+\code{assign_global = TRUE}).}
 
 \item{quiet}{If TRUE, suppress informational output.}
 }
@@ -71,9 +73,9 @@ package catalog. A file that fails the check is an error (class
 \code{qesR_error_checksum}) and is never used; so is a file whose number of
 rows or columns differs from the catalog (\code{qesR_error_rowcount}). The
 file is downloaded once and kept in the download cache (see
-\code{\link[=qes_cache_info]{qes_cache_info()}}); within a session the parsed data, and the Dataverse
-metadata used for the codebook, are also kept in memory, so a second call
-makes no request (\code{options(qesR.memo = FALSE)} turns this off).
+\code{\link[=qes_cache_info]{qes_cache_info()}}); within a session the parsed data is also kept in
+memory, so a second call makes no request (\code{options(qesR.memo = FALSE)}
+turns this off).
 
 The data is returned as deposited: column names, codes and missing values
 (\code{NA}) are those of the file, and no row is dropped or recoded. For qesR
@@ -93,11 +95,19 @@ names) has labels that Stata lowercased and cut at 80 characters, the
 complete labels of the SPSS twin of the same data are used. A few labels
 of the CROP files typed in another character set are corrected (for
 example "RESTE DU QUÉBEC"). \code{qes2018}'s data file has value labels for
-only a few variables.
+only a few variables; the codebook (see \code{\link[=qes_codebook]{qes_codebook()}}) gives the others,
+from the study's questionnaire, without changing the data.
 
 Codes that an SPSS file declares as user-missing (such as 8 or 9 for "Don't
 know") are kept as values, as in qesR 0.4.4; the declaration is kept in
-the column attributes \code{qes_na_values} and \code{qes_na_range}.
+the column attributes \code{qes_na_values} and \code{qes_na_range}. \code{\link[=qes_missing]{qes_missing()}}
+sets these codes, and the "don't know" and "refused" codes the codebook
+types, to \code{NA}.
+
+The \code{qes_codebook} attribute is built offline from the metadata shipped
+with qesR. \code{qes2022}'s metadata is not shipped (CC BY-NC 4.0): it is
+built from the file just read and kept in the download cache, so that
+\code{\link[=qes_codebook]{qes_codebook()}} and \code{\link[=qes_search]{qes_search()}} can use it later.
 }
 
 \examples{

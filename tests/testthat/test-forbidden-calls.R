@@ -50,7 +50,6 @@ test_that("no shell-out to curl or wget", {
 })
 
 test_that("no shell-out", {
-  skip("fixed in S3 (PDF/DOC text extraction)")
   expect_no_offender("\\bsystem2?\\s*\\(")
 })
 
@@ -63,6 +62,6 @@ test_that("readRDS() is never called", {
 })
 
 test_that("no iconv() transliteration", {
-  skip("fixed in S3 (DDI label tokens) and HZ6 (legacy master text)")
+  skip("fixed in HZ6 (legacy master text; the DDI label tokens went in S3)")
   expect_no_offender("iconv\\s*\\([^)]*TRANSLIT")
 })

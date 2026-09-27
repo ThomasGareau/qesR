@@ -26,3 +26,7 @@ Images/
 
 # Local Claude Code settings
 .claude/
+
+# Third-party codebooks and questionnaires (kept locally as data-raw source
+# material; listed by qes_docs() and fetched from Dataverse by qes_download())
+/codebooks/

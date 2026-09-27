@@ -103,9 +103,16 @@ reference:
   - get_qes
   - qes_download
   - get_qes_master
-- title: Codebooks
+- title: Codebooks and search
+  desc: >
+    What each variable measures, the exact question asked, in English and
+    French, and which codes mean "don't know" or "refused". Offline for every
+    study released under CC0.
   contents:
   - qes_codebook
+  - qes_question
+  - qes_search
+  - qes_missing
 - title: Cache
   desc: >
     Where downloaded files are kept, and how to list or delete them.
@@ -121,12 +128,10 @@ reference:
   - get_qescodes
   - get_preview
   - get_codebook
-  - get_qes_codebook
   - format_codebook
   - get_value_labels
   - get_question
   - get_codebook_files
-  - get_qes_codebook_files
   - download_codebook
   - get_decon
 

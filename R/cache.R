@@ -370,8 +370,9 @@
 # Parsed data kept in memory for the session, keyed by the md5 of its source
 # file (option qesR.memo, default TRUE). Never written to disk. A key may join
 # several parts with "+": "<md5>+<donor md5>" for data read with a label
-# donor, "ddi+<md5>" for the parsed DDI metadata of a data file. Clearing by
-# md5 drops every entry that has that md5 as one of its parts.
+# donor. Clearing by md5 drops every entry that has that md5 as one of its
+# parts. (Metadata built in the session, such as a qes2022 shard, has its own
+# memo in R/metadata.R; qes_cache_clear() empties both.)
 .qes_memo_get <- function(md5) {
   if (!isTRUE(getOption("qesR.memo", TRUE))) {
     return(NULL)
@@ -596,14 +597,12 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
   if (is.null(codes) && is.null(cutoff)) {
     .qes_memo_clear()
     rm(list = ls(.qes_latest_memo, all.names = TRUE), envir = .qes_latest_memo)
-    rm(list = ls(.qes_codebook_cache, all.names = TRUE), envir = .qes_codebook_cache)
+    .qes_dict_forget()
   } else {
     removed_md5 <- sub("^[0-9]+-([0-9a-f]{32})\\..*$", "\\1", basename(removed))
     .qes_memo_clear(studies = codes, md5 = removed_md5)
     if (!is.null(codes)) {
-      keys <- ls(.qes_codebook_cache, all.names = TRUE)
-      drop <- keys[sub("::.*$", "", keys) %in% codes]
-      rm(list = drop, envir = .qes_codebook_cache)
+      .qes_dict_forget(codes)
     }
   }
   invisible(removed)

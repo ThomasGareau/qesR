@@ -73,8 +73,12 @@
 #' (a label or text value that still holds a replacement or control
 #' character after reading; fields `study`, `file_id`, `n`, `variables`) and
 #' `qesR_warning_unpinned` (files saved by `qes_download(version =
-#' "latest")`, which the catalog does not pin; fields `study`, `file_id`).
-#' Messages inherit from `qesR_message`.
+#' "latest")`, which the catalog does not pin; fields `study`, `file_id`) and
+#' `qesR_warning_truncated` (a question text that its source file cut at 80
+#' characters, from [get_question()]; fields `variable`, `doc_ref`).
+#' Messages inherit from `qesR_message`; [qes_missing()] counts the variables
+#' it left unchanged in a `qesR_message_missing_untyped` (silenced by
+#' `quiet = TRUE`).
 #' Progress messages (classes `qesR_message_download` and
 #' `qesR_message_cached`) are silenced by `quiet = TRUE`, as is the one-time
 #' tip suggesting the disk cache (`qesR_message_disk_cache_tip`). Three notices are shown at most once per session and are
@@ -103,6 +107,16 @@
 #' it and prints it as a paragraph for a replication log.
 #' [qes_download()] saves the original files themselves (data file and
 #' documents), md5-checked, in a directory you choose.
+#'
+#' @section Codebooks and search:
+#' The description of every variable (label, question text in English and
+#' French, value labels, missing codes) ships with qesR for the studies
+#' released under CC0, so [qes_codebook()], [qes_question()] and
+#' [qes_search()] work offline. Question text comes from the deposited
+#' questionnaires. `qes2022` (CC BY-NC 4.0) ships no metadata: its codebook
+#' is built from your own copy of the data file and kept in the download
+#' cache. [qes_missing()] sets "don't know", "refused" and declared missing
+#' codes to `NA`.
 #'
 #' @section Network use:
 #' Requests go to the Dataverse servers listed in the catalog, one at a time
@@ -175,8 +189,12 @@
 #' (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 #' contrôle après lecture ; `study`, `file_id`, `n`, `variables`) et
 #' `qesR_warning_unpinned` (fichiers enregistrés par `qes_download(version =
-#' "latest")`, que le catalogue ne retient pas ; `study`, `file_id`), et les
-#' messages de `qesR_message`. Les messages
+#' "latest")`, que le catalogue ne retient pas ; `study`, `file_id`) et
+#' `qesR_warning_truncated` (texte de question coupé à 80 caractères dans
+#' son fichier source, signalé par [get_question()] ; `variable`,
+#' `doc_ref`), et les messages de `qesR_message` ; [qes_missing()] compte
+#' les variables laissées inchangées dans un
+#' `qesR_message_missing_untyped` (masqué par `quiet = TRUE`). Les messages
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 #' masqués par `quiet = TRUE`.
@@ -206,6 +224,16 @@
 #' journal de réplication. [qes_download()] enregistre les fichiers originaux
 #' eux-mêmes (fichier de données et documents), vérifiés par somme md5, dans
 #' un dossier de votre choix.
+#'
+#' **Codebooks et recherche.** La description de chaque variable
+#' (étiquette, texte de la question en anglais et en français, étiquettes de
+#' valeurs, codes manquants) est livrée avec qesR pour les études sous
+#' licence CC0 : [qes_codebook()], [qes_question()] et [qes_search()]
+#' fonctionnent sans réseau. Le texte des questions vient des questionnaires
+#' déposés. Pour `qes2022` (CC BY-NC 4.0), aucune métadonnée n'est livrée :
+#' le codebook est construit à partir de votre copie du fichier et conservé
+#' dans le cache. [qes_missing()] remplace par `NA` les codes « ne sait
+#' pas », « refus » et les codes manquants déclarés.
 #'
 #' **Réseau.** Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 #' fois et à au moins une seconde d'intervalle par serveur. Elles portent

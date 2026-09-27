@@ -31,8 +31,10 @@ library(qesR)
 
 - `qes_studies()` : liste des études disponibles (catalogue hors ligne)
 - `get_qes("qes2022")` : téléchargement d'une étude
-- `qes_codebook("qes2022")` : codebook
-- `get_question(obj, variable)` : texte de question
+- `qes_codebook("qes2014")` : codebook (hors ligne)
+- `qes_question("qes2014", variables)` : libellé exact des questions, en français ou en anglais
+- `qes_search(motif)` : recherche de variables dans toutes les études, en français et en anglais
+- `qes_missing(donnees)` : codes « ne sait pas » et « refus » remplacés par `NA`
 - `get_qes_master()` : données fusionnées harmonisées
 - `qes_download(studies, path)` : fichiers originaux, vérifiés par somme md5
 - `qes_provenance(donnees)` : fichier dont proviennent les données
@@ -52,9 +54,18 @@ studies[, c("study", "year", "title_en", "title_fr")]
 
 ```{r, eval = FALSE}
 qes2022 <- get_qes("qes2022")
-cb <- qes_codebook("qes2022")
 head(qes2022, 10)
 master <- get_qes_master(strict = FALSE)
+```
+
+## Codebooks, questions et recherche
+
+```{r, eval = FALSE}
+cb <- qes_codebook("qes2014")
+cb_long <- qes_codebook("qes2014", layout = "long", variables = c("Q2", "Q19"))
+qes_question("qes2014", "Q19", lang = "en")
+qes_search("souverain|sovereign")
+qes2014 <- qes_missing(get_qes("qes2014"))
 ```
 
 ## Fichiers originaux et provenance
@@ -90,9 +101,9 @@ tryCatch(
 )
 ```
 
-Les anciennes fonctions `get_codebook()`, `get_qes_codebook()` et
-`get_preview()` fonctionnent toujours et affichent une fois par session une
-note qui nomme leur remplacement (`?qesR-deprecated`).
+Les anciennes fonctions (`get_codebook()`, `get_question()`, `get_preview()`,
+...) fonctionnent toujours et affichent une fois par session une note qui
+nomme leur remplacement (`?qesR-deprecated`).
 
 ## Version française complète
 

@@ -11,9 +11,9 @@
 #' | `get_codebook()` | `qes_codebook()` | yes |
 #' | `get_qes_codebook()` | `qes_codebook()` | yes |
 #' | `get_preview()` | `head(get_qes(srvy), obs)` | yes |
-#' | `format_codebook()` | `qes_codebook(codebook, layout = )` | when the replacement ships |
-#' | `get_value_labels()` | `qes_codebook(layout = "long")` | when the replacement ships |
-#' | `get_question()` | `qes_question()` | when the replacement ships |
+#' | `format_codebook()` | `qes_codebook(codebook, layout = )` | yes |
+#' | `get_value_labels()` | `qes_codebook(layout = "long")` | yes |
+#' | `get_question()` | `qes_question()` | yes |
 #' | `get_codebook_files()` | `qes_docs()` | yes |
 #' | `get_qes_codebook_files()` | `qes_docs()` | yes |
 #' | `download_codebook()` | `qes_download(what = "docs")` | yes |
@@ -73,7 +73,7 @@ NULL
   ),
   shipped = c(
     TRUE, TRUE, TRUE,
-    FALSE, FALSE, FALSE,
+    TRUE, TRUE, TRUE,
     TRUE, TRUE, TRUE,
     TRUE, FALSE
   ),

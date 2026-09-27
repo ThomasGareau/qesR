@@ -12,7 +12,6 @@
 #     reads it through the real reader;
 #   * the fake server answers the requests qesR makes:
 #       <server>/api/access/datafile/<id>?format=original   a data file
-#       <server>/api/access/datafile/<id>/metadata/ddi      its DDI XML
 #       <server>/api/access/datafile/<id>                   a document
 #     (a short synthetic text, whose size and md5 the fixture catalog pins)
 #     Any other URL is an error, so a test that reaches the network by
@@ -36,34 +35,6 @@ fake_study_data <- function(code) {
   attr(out$q1, "label") <- "Intention de vote"
   attr(out$poids, "label") <- "Ponderation"
   out
-}
-
-.fake_xml_escape <- function(x) {
-  x <- gsub("&", "&amp;", x, fixed = TRUE)
-  x <- gsub("<", "&lt;", x, fixed = TRUE)
-  gsub(">", "&gt;", x, fixed = TRUE)
-}
-
-.fake_ddi <- function(data) {
-  vars <- vapply(names(data), function(nm) {
-    x <- data[[nm]]
-    label <- attr(x, "label", exact = TRUE) %||% nm
-    labels <- attr(x, "labels", exact = TRUE)
-    cats <- if (length(labels) > 0L) {
-      paste0(
-        "<catgry><catValu>", unname(labels), "</catValu><labl>",
-        .fake_xml_escape(names(labels)), "</labl></catgry>",
-        collapse = ""
-      )
-    } else {
-      ""
-    }
-    sprintf(
-      "<var ID=\"%s\" name=\"%s\"><labl>%s</labl><qstn><qstnLit>%s?</qstnLit></qstn>%s</var>",
-      nm, nm, .fake_xml_escape(label), .fake_xml_escape(label), cats
-    )
-  }, character(1))
-  paste0("<codeBook><dataDscr>", paste(vars, collapse = ""), "</dataDscr></codeBook>")
 }
 
 # The body the fake server sends for a document of `study`.
@@ -145,7 +116,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
 
   transport <- function(url, dest = NULL, handle = NULL) {
     log$urls <- c(log$urls, url)
-    m <- regmatches(url, regexec("/api/access/datafile/([0-9]+)(/metadata/ddi|\\?format=original)?$", url))[[1]]
+    m <- regmatches(url, regexec("/api/access/datafile/([0-9]+)(\\?format=original)?$", url))[[1]]
     if (length(m) == 0L) {
       stop(sprintf("fake Dataverse: unexpected request '%s'", url), call. = FALSE)
     }
@@ -157,13 +128,6 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
     if (is_data && row$study %in% fail) {
       stop(sprintf("fake Dataverse: '%s' is unavailable", row$study), call. = FALSE)
     }
-    if (identical(m[3], "/metadata/ddi")) {
-      if (!is_data) {
-        stop("fake Dataverse: no DDI for a document", call. = FALSE)
-      }
-      d <- haven::read_sav(fake$paths[[row$file_id]], user_na = TRUE)
-      return(fake_response(url, dest, write = function(path) writeLines(.fake_ddi(d), path, useBytes = TRUE)))
-    }
     if (is_data) {
       if (!identical(m[3], "?format=original")) {
         stop("fake Dataverse: a data file must be requested as its original", call. = FALSE)
@@ -173,7 +137,7 @@ local_fake_dataverse <- function(data = list(), fail = character(0), .env = pare
     fake_response(url, dest, write = function(path) fake_document(path, row$study))
   }
 
-  local_clear_codebook_cache(.env = .env)
+  local_clear_dict_memo(.env = .env)
   withr::local_options(qesR.cache = "none", qesR.memo = FALSE, .local_envir = .env)
   testthat::local_mocked_bindings(
     .qes_transport = transport,
@@ -216,12 +180,13 @@ fake_curl_error <- function(curl_class, message = "fake transport failure") {
   )
 }
 
-# The session codebook cache is package state; clear it before and after a test
-# so results never depend on test order.
-local_clear_codebook_cache <- function(.env = parent.frame()) {
-  cache <- qesR:::.qes_codebook_cache
-  rm(list = ls(cache, all.names = TRUE), envir = cache)
-  withr::defer(rm(list = ls(cache, all.names = TRUE), envir = cache), envir = .env)
+# Metadata built in the session (shards, tables built from data, search
+# indexes) is package state; clear it before and after a test so results
+# never depend on test order. The shipped dictionary stays.
+local_clear_dict_memo <- function(.env = parent.frame()) {
+  forget <- getFromNamespace(".qes_dict_forget", "qesR")
+  forget()
+  withr::defer(forget(), envir = .env)
 }
 
 # Once-per-session message state (.qes_once, slice S0c). Reset it before and
