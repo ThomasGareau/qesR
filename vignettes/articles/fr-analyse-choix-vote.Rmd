@@ -26,10 +26,12 @@ estimation ponctuelle qui ne tient pas compte du plan de sondage. Les Études
 électorales québécoises et les panels Durand sont présentés séparément, car
 leurs devis diffèrent.
 
-```{r data, message = FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
 library(ggplot2)
+```
 
+```{r data, message = FALSE}
 tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
 
 master <- get_qes_master(quiet = TRUE)

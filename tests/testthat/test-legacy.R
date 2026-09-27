@@ -36,7 +36,7 @@ test_that("every column of every legacy study has exactly one frozen source", {
   expect_true(all(src$column[src$source_variable %in% "(synthetic_rowid)"] == "respondent_id"))
   # the demo reads only variables its file has, with qes2014's choices
   demo <- src[src$study == "qes_demo" & !is.na(src$source_variable) & src$source_variable != "(synthetic_rowid)", ]
-  demo_names <- names(get_qes("qes_demo", quiet = TRUE, with_codebook = FALSE))
+  demo_names <- names(get_qes("qes_demo", assign_global = FALSE, quiet = TRUE, with_codebook = FALSE))
   expect_true(all(demo$source_variable %in% demo_names))
   q14 <- src[src$study == "qes2014", ]
   expect_identical(

@@ -89,13 +89,29 @@
   "'", "'", "\"", "\"", "\"", "\"", " ", " ", "-", "-", "..."
 )
 
-.qes_fold <- function(x) {
+# User input in UTF-8. In a UTF-8 locale this is enc2utf8(). In a C or other
+# non-UTF-8, non-Latin-1 locale, a string typed or pasted at the console
+# arrives as unmarked ("unknown") bytes that are usually UTF-8, and
+# enc2utf8() would turn "\u00e9" into the text "<c3><a9>"; such bytes are
+# marked as UTF-8 when validUTF8() accepts them. In a Latin-1 locale unmarked
+# bytes are Latin-1 and are translated as usual.
+.qes_as_utf8 <- function(x) {
   x <- as.character(x)
+  unmarked <- !is.na(x) & Encoding(x) == "unknown"
+  if (any(unmarked) && !isTRUE(l10n_info()[["UTF-8"]]) && !isTRUE(l10n_info()[["Latin-1"]])) {
+    utf8 <- unmarked & validUTF8(x)
+    Encoding(x[utf8]) <- "UTF-8"
+  }
+  enc2utf8(x)
+}
+
+.qes_fold <- function(x) {
+  x <- .qes_as_utf8(x)
   out <- vapply(x, function(s) {
     if (is.na(s)) {
       return(NA_character_)
     }
-    cp <- utf8ToInt(enc2utf8(s))
+    cp <- utf8ToInt(s)
     if (length(cp) == 0L || anyNA(cp)) {
       return(if (length(cp) == 0L) "" else NA_character_)
     }
@@ -114,12 +130,12 @@
 
 # Accents only (for regex patterns, whose escapes must keep their case).
 .qes_unaccent <- function(x) {
-  x <- as.character(x)
+  x <- .qes_as_utf8(x)
   vapply(x, function(s) {
     if (is.na(s)) {
       return(NA_character_)
     }
-    cp <- utf8ToInt(enc2utf8(s))
+    cp <- utf8ToInt(s)
     if (length(cp) == 0L || anyNA(cp)) {
       return(s)
     }

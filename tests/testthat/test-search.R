@@ -92,3 +92,27 @@ test_that("search results do not depend on the locale or the message language", 
   local_fresh_dict()
   expect_identical(qes_search(pattern, studies = c("qes2014", "qes2018")), default)
 })
+
+test_that("unmarked UTF-8 bytes typed in a C locale are searched as UTF-8", {
+  # A pattern typed at the console in a C (ASCII) locale reaches R as
+  # unmarked bytes; qes_search() must read them as UTF-8, not as "<c3><a9>".
+  typed <- rawToChar(as.raw(c(0xC3, 0xA9, 0x6C, 0x65, 0x63, 0x74, 0x65, 0x75, 0x72)))
+  expect_identical(Encoding(typed), "unknown")
+  expected <- qes_search("electeur")
+  expect_gt(nrow(expected), 0L)
+  withr::local_locale(c(LC_CTYPE = "C", LC_COLLATE = "C"))
+  local_fresh_dict()
+  skip_if(
+    isTRUE(l10n_info()[["UTF-8"]]) || isTRUE(l10n_info()[["Latin-1"]]),
+    "C locale is not ASCII here"
+  )
+  expect_identical(fold(typed), "electeur")
+  expect_identical(qes_search(typed), expected)
+  expect_identical(qes_search(typed, regex = TRUE), expected)
+  # bytes that are not UTF-8 are not guessed at, and do not fail; how native
+  # bytes translate in a C locale is platform-specific on Windows
+  skip_on_os("windows")
+  latin1 <- rawToChar(as.raw(c(0xE9, 0x6C, 0x65, 0x63, 0x74, 0x65, 0x75, 0x72)))
+  expect_false(validUTF8(latin1))
+  expect_identical(nrow(qes_search(latin1)), 0L)
+})

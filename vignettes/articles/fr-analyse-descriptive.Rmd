@@ -27,10 +27,12 @@ calculée à l'intérieur d'une étude, avec la pondération propre à cette ét
 estimations ponctuelles : elles ne tiennent pas compte du plan de sondage de
 chaque enquête, et aucun intervalle de confiance n'est donné.
 
-```{r data, message = FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
 library(ggplot2)
+```
 
+```{r data, message = FALSE}
 tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
 
 master <- get_qes_master(quiet = TRUE)

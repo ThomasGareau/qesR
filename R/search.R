@@ -104,6 +104,7 @@ qes_search <- function(pattern, studies = NULL,
                        fields = c("variable", "label", "question", "values", "target"),
                        regex = FALSE, lang = c("both", "en", "fr")) {
   .assert_single_string(pattern, "pattern")
+  pattern <- .qes_as_utf8(pattern)
   .qes_check_flag(regex, "regex")
   lang <- .qes_check_one(lang, "lang", c("both", "en", "fr"))
   if (!is.character(fields) || length(fields) == 0L || anyNA(fields) || !all(fields %in% .qes_search_fields)) {

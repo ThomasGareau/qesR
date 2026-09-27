@@ -25,10 +25,12 @@ study's own weight (`survey_weight`), and never pooled across studies. The
 estimates are point estimates: they ignore each survey's design, so no
 confidence interval is shown.
 
-```{r data, message = FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
 library(ggplot2)
+```
 
+```{r data, message = FALSE}
 tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
 
 master <- get_qes_master(quiet = TRUE)

@@ -28,10 +28,12 @@ calculée à l'intérieur d'une étude, avec la pondération propre à cette ét
 (`survey_weight`) ; c'est une estimation ponctuelle qui ne tient pas compte du
 plan de sondage.
 
-```{r data, message = FALSE}
+```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
 library(ggplot2)
+```
 
+```{r data, message = FALSE}
 tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
 
 master <- get_qes_master(quiet = TRUE)

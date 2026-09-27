@@ -154,6 +154,7 @@ test_that("get_question() warns with a qesR_warning and its variable", {
 })
 
 test_that("get_qes_master() records failures in English whatever the language", {
+  local_qes_notices_shown()
   local_fake_dataverse(fail = "qes2008")
   withr::local_options(qesR.lang = "fr")
   master <- get_qes_master(surveys = c("qes2018", "qes2008"), assign_global = FALSE, quiet = TRUE)
