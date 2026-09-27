@@ -40,6 +40,10 @@
     en = "`%1$s` is a plain data frame, not a qesR codebook or data read by get_qes() (a codebook read back from a file loses its class). Rebuild it with qes_codebook(\"<study code>\").",
     fr = "`%1$s` est un simple data.frame, et non un codebook de qesR ni des donn\u00e9es lues par get_qes() (un codebook relu depuis un fichier perd sa classe). Reconstruisez-le avec qes_codebook(\"<code d'\u00e9tude>\")."
   ),
+  input_codebook_data = c(
+    en = "`%1$s` is data read by get_qes(), not a codebook. Build its codebook with qes_codebook(<data>, layout = ...).",
+    fr = "`%1$s` contient des donn\u00e9es lues par get_qes(), et non un codebook. Construisez son codebook avec qes_codebook(<donn\u00e9es>, layout = ...)."
+  ),
   input_codebook_srvy = c(
     en = "`%1$s` must be a study code, a codebook returned by qes_codebook() or a data frame returned by get_qes().",
     fr = "`%1$s` doit \u00eatre un code d'\u00e9tude, un codebook renvoy\u00e9 par qes_codebook() ou un data.frame renvoy\u00e9 par get_qes()."

@@ -59,7 +59,9 @@ with its labels.
 \details{
 \code{get_qes()} returns the data. It does not write anything into your
 workspace unless you ask for it with \code{assign_global = TRUE}: write
-\code{qes2018 <- get_qes("qes2018")}. The first call in a session that leaves
+\code{qes2018 <- get_qes("qes2018")}. A real study is downloaded once per
+session, or kept between sessions with \code{options(qesR.cache = "disk")}
+(see \code{\link[=qes_cache_info]{qes_cache_info()}}). The first call in a session that leaves
 \code{assign_global} unset prints a one-time note about this change from qesR
 0.4.4; passing \code{assign_global} explicitly (TRUE or FALSE) avoids it.
 }
@@ -115,11 +117,6 @@ built from the file just read and kept in the download cache, so that
 demo <- get_qes("qes_demo", quiet = TRUE)
 dim(demo)
 attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
-
-\donttest{
-  qes2022 <- get_qes("qes2022")
-  names(qes2022)[1:10]
-}
 }
 \seealso{
 \code{\link[=qes_studies]{qes_studies()}} for the study codes and their pinned files,

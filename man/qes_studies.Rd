@@ -60,8 +60,14 @@ qes_studies(family = "qes")$study
 
 \donttest{
 # Ask Dataverse whether the pinned versions are still current (one
-# metadata request per deposit). Offline, every status is "unreachable".
-qes_studies(check_updates = TRUE)[, c("study", "status")]
+# metadata request per deposit). A deposit that cannot be reached is
+# reported as "unreachable", never as an error.
+if (curl::has_internet()) {
+  tryCatch(
+    qes_studies(check_updates = TRUE, quiet = TRUE)[, c("study", "status")],
+    qesR_error_network = function(e) conditionMessage(e)
+  )
+}
 }
 }
 \seealso{

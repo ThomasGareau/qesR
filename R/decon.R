@@ -157,11 +157,7 @@
 #' # the synthetic demonstration study, offline
 #' decon <- get_decon("qes_demo", quiet = TRUE)
 #' head(decon)
-#'
-#' \donttest{
-#'   decon <- get_decon("qes2022")
-#'   attr(decon, "timing")
-#' }
+#' attr(decon, "source_map")[, c("column", "source_variable")]
 #' @export
 get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
   .qes_deprecate("get_decon")

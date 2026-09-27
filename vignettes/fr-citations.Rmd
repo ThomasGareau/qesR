@@ -9,17 +9,19 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-*[English version](study-citations.html)*
+*[English version](citations.html)*
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 Lorsque vous publiez des résultats obtenus avec qesR, citez le package et
 chacun des jeux de données utilisés. `qes_cite()` produit ces citations à
 partir du catalogue fourni avec qesR : cette page n'a donc besoin d'aucun
 accès au réseau. La version anglaise de cette page est
-`vignette("study-citations", package = "qesR")`.
+`vignette("citations", package = "qesR")`.
 
 ```{r load}
 library(qesR)
@@ -41,7 +43,7 @@ DOI, le dépôt, la version et l'UNF du jeu de données (une somme de contrôle 
 ses données). Les trois sondages de 1998 partagent un même dépôt : leur
 citation nomme donc aussi le fichier de données.
 
-```{r table, echo = FALSE}
+```{r table, echo = FALSE, warning = FALSE}
 studies <- qes_studies()
 title <- if (identical(params$lang, "fr")) studies$title_fr else studies$title_en
 table <- data.frame(

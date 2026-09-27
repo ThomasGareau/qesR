@@ -48,9 +48,6 @@ the catalog.
 info <- qes_cache_info()
 attr(info, "mode")
 attr(info, "dir")
-
-# To keep downloads between sessions, opt in to the disk cache:
-# options(qesR.cache = "disk")
 }
 \seealso{
 \code{\link[=qes_cache_clear]{qes_cache_clear()}} to delete cached files.

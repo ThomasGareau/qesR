@@ -43,7 +43,9 @@ navbar:
       - text: Study catalog
         href: articles/studies.html
       - text: Study citations
-        href: articles/study-citations.html
+        href: articles/citations.html
+      - text: Moving from qesR 0.4.4
+        href: articles/migrating-0.5.html
       - text: Merged dataset
         href: articles/merged-dataset.html
       - text: "-------"
@@ -62,7 +64,9 @@ navbar:
       - text: Catalogue des études
         href: articles/fr-etudes.html
       - text: Citations des études
-        href: articles/fr-citations-etudes.html
+        href: articles/fr-citations.html
+      - text: Passer de qesR 0.4.4 à 0.5.0
+        href: articles/fr-migrer-0.5.html
       - text: Données fusionnées
         href: articles/fr-donnees-fusionnees.html
       - text: "-------"
@@ -85,6 +89,7 @@ reference:
 - title: Package
   contents:
   - qesR-package
+  - qesR-fr
 - title: Studies, documents and citations
   desc: >
     The offline catalog: which studies qesR can load, their documents, how
@@ -141,24 +146,26 @@ articles:
   contents:
   - get-started
   - articles/studies
-  - study-citations
-  - merged-dataset
+  - citations
+  - migrating-0.5
+  - articles/merged-dataset
 - title: Examples
   navbar: ~
   contents:
-  - analysis-descriptive
-  - analysis-sovereignty
-  - analysis-vote-choice
+  - articles/analysis-descriptive
+  - articles/analysis-sovereignty
+  - articles/analysis-vote-choice
 - title: Guides en français
   navbar: ~
   contents:
   - fr-demarrage
   - articles/fr-etudes
-  - fr-citations-etudes
-  - fr-donnees-fusionnees
+  - fr-citations
+  - fr-migrer-0.5
+  - articles/fr-donnees-fusionnees
 - title: Exemples en français
   navbar: ~
   contents:
-  - fr-analyse-descriptive
-  - fr-analyse-souverainete
-  - fr-analyse-choix-vote
+  - articles/fr-analyse-descriptive
+  - articles/fr-analyse-souverainete
+  - articles/fr-analyse-choix-vote

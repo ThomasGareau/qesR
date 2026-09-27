@@ -73,3 +73,10 @@ jobs:
       - name: Spec and source checks
         if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' && hashFiles('data-raw/spec_check.R') != ''
         run: Rscript data-raw/spec_check.R
+
+      # EN/FR vignette pairs: every page has a partner that links back, and
+      # the shipped pairs run identical code (design.md sections 1.2 and 9).
+      # Vignette sources are not installed, so R CMD check cannot test this.
+      - name: EN/FR vignette pairs
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        run: Rscript data-raw/check_vignette_pairs.R

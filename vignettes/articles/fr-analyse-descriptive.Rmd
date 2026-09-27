@@ -1,0 +1,154 @@
+---
+title: "Exemple de cas d'usage : statistiques descriptives"
+params:
+  lang: "fr"
+---
+
+*[English version](analysis-descriptive.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+```
+
+Cette page décrit les répondants des études du fichier fusionné hérité,
+`get_qes_master()`, étude par étude. Elle est construite en même temps que le
+site : les fichiers de données sont téléchargés de leurs dépôts Dataverse par
+le cache de qesR, et les nombres sont donc ceux des fichiers complets, pas
+d'un échantillon.
+
+Les études n'ont pas été conçues de la même façon : les Études électorales
+québécoises (famille `qes`), les panels Durand (`durand_panel`), les sondages
+CROP (`crop_polls`) et les sondages de 1998 (`polls_1998`) diffèrent par le
+mode, la population cible et les questions. Chaque estimation ci-dessous est
+calculée à l'intérieur d'une étude, avec la pondération propre à cette étude
+(`survey_weight`), et n'est jamais regroupée entre études. Ce sont des
+estimations ponctuelles : elles ne tiennent pas compte du plan de sondage de
+chaque enquête, et aucun intervalle de confiance n'est donné.
+
+```{r data}
+library(qesR)
+library(ggplot2)
+
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+
+master <- get_qes_master(quiet = TRUE)
+studies <- qes_studies()
+master$family <- studies$family[match(master$qes_code, studies$study)]
+master$year <- as.integer(master$qes_year)
+
+# Weighted share of each value of x, within one study (or one CROP year)
+wshare <- function(x, w) {
+  ok <- !is.na(x) & !is.na(w)
+  if (!any(ok)) return(NULL)
+  tapply(w[ok], x[ok], sum) / sum(w[ok])
+}
+cells <- split(master, list(master$qes_code, master$year), drop = TRUE)
+```
+
+## Tableau 1 : répondants par étude
+
+Tous les répondants de chaque fichier de données sont gardés. Les sondages
+CROP sont des sondages mensuels de 2007 à 2010, présentés par année.
+
+```{r sizes}
+sizes <- do.call(rbind, lapply(cells, function(d) {
+  data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1], n = nrow(d))
+}))
+sizes <- sizes[order(sizes$year, sizes$study), ]
+knitr::kable(
+  sizes, row.names = FALSE,
+  col.names = tr(c("Study", "Year", "Family", "Respondents"),
+                 c("Étude", "Année", "Famille", "Répondants"))
+)
+```
+
+## Tableau 2 : groupes d'âge
+
+Les études n'enregistrent pas l'âge avec les mêmes tranches : six tranches
+dans la plupart des études, trois (18-34, 35-54, 55+) dans les panels Durand.
+Les six tranches s'emboîtent dans les trois ; le tableau utilise donc trois
+tranches. Les populations cibles diffèrent aussi : `qes2018` couvre les
+personnes de 16 ans et plus, les sondages de 1998 les francophones seulement
+(voir `qes_studies()$target_population_fr`).
+
+```{r age}
+band3 <- c("18-24" = "18-34", "25-34" = "18-34", "18-34" = "18-34",
+           "35-44" = "35-54", "45-54" = "35-54", "35-54" = "35-54",
+           "55-64" = "55+", "65+" = "55+", "55+" = "55+")
+master$age3 <- unname(band3[master$age_group])
+cells <- split(master, list(master$qes_code, master$year), drop = TRUE)
+
+age <- do.call(rbind, lapply(cells, function(d) {
+  s <- wshare(d$age3, d$survey_weight)
+  if (is.null(s)) return(NULL)
+  data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1],
+             age3 = names(s), pct = round(100 * as.numeric(s), 1))
+}))
+age_wide <- reshape(age, idvar = c("study", "year", "family"), timevar = "age3",
+                    direction = "wide")
+age_wide <- age_wide[order(age_wide$year, age_wide$study), ]
+knitr::kable(
+  age_wide, row.names = FALSE,
+  col.names = c(tr(c("Study", "Year", "Family"), c("Étude", "Année", "Famille")),
+                "18-34 (%)", "35-54 (%)", "55+ (%)")
+)
+```
+
+```{r age-plot, fig.alt = "Weighted share of each age group in each study, by year of the study."}
+ggplot(age, aes(x = year, y = pct, colour = age3, shape = family)) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(
+    x = tr("Year of the study", "Année de l'étude"),
+    y = tr("Weighted share (%)", "Part pondérée (%)"),
+    colour = tr("Age group", "Groupe d'âge"),
+    shape = tr("Family", "Famille")
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Tableau 3 : participation déclarée
+
+`turnout` est le vote déclaré après l'élection (1 a voté, 0 n'a pas voté).
+Il vaut `NA` dans les sondages CROP, qui n'ont pas cette question, et dans
+`qes2022`, dont la source dans 0.4.4 était la probabilité d'aller voter
+pendant la campagne (voir `attr(master, "legacy_na_columns")`). Les enquêtes
+surestiment la participation : les personnes qui votent répondent plus
+volontiers, et certaines qui n'ont pas voté disent l'avoir fait.
+
+```{r turnout}
+turnout <- do.call(rbind, lapply(cells, function(d) {
+  s <- wshare(d$turnout, d$survey_weight)
+  if (is.null(s) || !"1" %in% names(s)) return(NULL)
+  data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1],
+             n = sum(!is.na(d$turnout)), pct = round(100 * s[["1"]], 1))
+}))
+turnout <- turnout[order(turnout$year, turnout$study), ]
+knitr::kable(
+  turnout, row.names = FALSE,
+  col.names = tr(c("Study", "Year", "Family", "N answering", "Reported turnout (%)"),
+                 c("Étude", "Année", "Famille", "N répondants",
+                   "Participation déclarée (%)"))
+)
+```
+
+```{r turnout-plot, fig.alt = "Weighted reported turnout in each study, by year of the study."}
+ggplot(turnout, aes(x = year, y = pct, colour = family)) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(
+    x = tr("Year of the study", "Année de l'étude"),
+    y = tr("Reported turnout, weighted (%)", "Participation déclarée, pondérée (%)"),
+    colour = tr("Family", "Famille")
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Remarques
+
+- `survey_weight` est la variable de pondération que qesR 0.4.4 lisait pour
+  chaque étude, sur l'échelle propre à cette étude ;
+  `attr(master, "legacy_column_map")` la décrit.
+- Le fichier fusionné hérité est gardé pour le code écrit pour qesR 0.4.4.
+  Ce qui a changé dans 0.5.0 est expliqué dans
+  `vignette("fr-migrer-0.5", package = "qesR")`.

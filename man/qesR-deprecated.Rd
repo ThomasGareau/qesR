@@ -19,7 +19,7 @@ replacement has shipped. Until then it works silently.\tabular{lll}{
    \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
    \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab yes \cr
    \code{get_qescodes()} \tab \code{qes_studies()} \tab yes \cr
-   \code{get_decon()} \tab \code{qes_harmonize(targets = "decon")} \tab from qesR 0.7.0 \cr
+   \code{get_decon()} \tab none yet (a replacement is planned for qesR 0.7.0) \tab no \cr
 }
 }
 \section{Notices}{
@@ -44,3 +44,15 @@ remplacement est disponible. La note est un message de classe
 français avec \code{options(qesR.lang = "fr")}.
 }
 
+\examples{
+# a legacy function and its replacement give the same rows
+old_rows <- get_preview("qes_demo", obs = 2)
+new_rows <- head(get_qes("qes_demo", assign_global = FALSE, quiet = TRUE), 2)
+identical(dim(old_rows), dim(new_rows))
+
+# hide the notices of every legacy function
+op <- options(qesR.quiet_deprecated = TRUE)
+head(get_qescodes(), 3)
+options(op)
+
+}

@@ -1,0 +1,97 @@
+qesR copyright and third-party content
+======================================
+
+The qesR code, documentation and the files it generates are Copyright (c)
+2026 Thomas Gareau-Paquette and are licensed under the MIT licence (see the
+LICENSE file). This file lists the content in the package that comes from
+the deposits of the studies qesR reads, and its licence.
+
+No survey data ship with qesR. The package contains no respondent rows from
+any study: get_qes() downloads each data file from its Dataverse deposit when
+you ask for it. The demonstration study "qes_demo" (inst/extdata/demo/) is
+synthetic: 60 respondents drawn at random by data-raw/make_demo.R. Its
+variable names and labels are a subset of those of the Quebec Election Study
+2014 SPSS file (CC0 1.0, doi:10.5683/SP3/64F7WR); no value comes from a real
+respondent.
+
+
+1. Study metadata released under CC0 1.0
+----------------------------------------
+
+For the studies below, released by their authors under the Creative Commons
+CC0 1.0 Universal public domain dedication
+(https://creativecommons.org/publicdomain/zero/1.0/), qesR ships metadata
+taken from the deposited data files and documents:
+
+  - inst/extdata/dict/variables.csv.gz: variable names and labels from the
+    pinned data file, and question text in English and French from the
+    deposited questionnaires and codebooks (column doc_ref names the
+    document and question of each text);
+  - inst/extdata/dict/values.csv.gz: value labels from the data file (for
+    qes2018, from its French questionnaire) and the unweighted count of each
+    code;
+  - inst/extdata/catalog/: deposit titles, author lists, dataset versions,
+    file names, sizes and checksums, as published on each deposit, and short
+    descriptions of each study that quote its codebook.
+
+CC0 requires no attribution. qesR names the source of each study anyway, as
+the authors ask users to cite the data (qes_cite() gives the full citation):
+
+  Study code          Study and authors                                   DOI
+  qes2007             Quebec Election Study 2007. Bélanger, Nadeau,       10.5683/SP2/6XGOKA
+                      Crête, Stephenson, Tanguay
+  qes2008             Quebec Election Study 2008. Bélanger, Nadeau        10.5683/SP2/8KEYU3
+  qes2012             Quebec Election Study 2012. Bélanger, Nadeau,       10.5683/SP2/WXUPXT
+                      Henderson, Hepburn
+  qes2014             Quebec Election Study 2014. Bélanger, Nadeau        10.5683/SP3/64F7WR
+  qes2018             Quebec Election Study 2018. Bélanger, Nadeau,       10.5683/SP3/NWTGWS
+                      Mahéo, Daoust
+  qes2007_panel       Panel Survey on the 2007 Quebec Election. Durand,   10.5683/SP3/NDS6VT
+                      Goyder
+  qes2012_panel       Panel Survey on the 2012 Quebec Election. Durand,   10.5683/SP3/RKHPVL
+                      Goyder
+  qes2018_panel       Panel Survey on the 2018 Quebec Election. Durand,   10.5683/SP3/XDDMMR
+                      Blais
+  qes_crop_2007_2010  CROP Polls on Quebec Provincial Vote Intentions,    10.5683/SP3/IRZ1PF
+                      2007-2010. Durand
+  qes1998,            1998 Quebec General Election Polls (CROP-CREATEC    10.5683/SP2/QFUAWG
+  qes1998_crop,       panel, CROP, CREATEC). Durand
+  qes1998_createc
+
+All these deposits are on Borealis (https://borealisdata.ca).
+
+The three 1998 surveys cover francophones only. The codebook of the deposit
+says it was decided to keep only francophones ("retenir uniquement les
+francophones"); the CROP file kept respondents whose language of use is
+French, and the CREATEC file respondents whose mother tongue is French. The
+definition used for the combined qes1998 panel file is pending: the deposit
+does not state it.
+
+
+2. The 2022 study (CC BY-NC 4.0): nothing ships
+------------------------------------------------
+
+  qes2022             2022 Quebec Election Study. Mahéo, Bélanger,        10.7910/DVN/PAQBDR
+                      Stephenson, Harell (Harvard Dataverse)
+
+This study is licensed under Creative Commons Attribution-NonCommercial 4.0
+(https://creativecommons.org/licenses/by-nc/4.0/). Until its authors agree
+in writing, qesR ships none of its value labels, question text or counts.
+The package holds only its catalog entry (title, authors, version, file
+names, sizes and checksums, as published on the deposit), the names of the
+variables that get_qes_master() and get_decon() read
+(inst/extdata/legacy/sources.csv), and rules written for qesR that say which
+codes mark item nonresponse (inst/extdata/dict/shard_rules.csv). Its codebook
+is built on your computer from your own copy of the data file. When you use
+this study, the licence requires attribution (qes_cite("qes2022")) and rules
+out commercial use.
+
+
+3. Other sources
+----------------
+
+  - inst/extdata/catalog/elections.csv: election dates, from the official
+    results published by Élections Québec (each row gives its source URL).
+  - inst/extdata/legacy/: which variable each column of get_qes_master() and
+    get_decon() read in qesR 0.4.4, and the labels 0.4.4 attached by hand;
+    part of qesR (MIT).

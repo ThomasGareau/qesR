@@ -602,6 +602,15 @@ format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
   .qes_deprecate("format_codebook")
   if (!inherits(codebook, "qes_codebook")) {
     if (is.data.frame(codebook)) {
+      if (!is.null(.qes_data_study(codebook)) ||
+          inherits(attr(codebook, "qes_codebook", exact = TRUE), "qes_codebook")) {
+        .qes_abort(
+          "input_codebook_data",
+          class = "qesR_error_input",
+          args = list("codebook"),
+          data = list(arg = "codebook", value = class(codebook))
+        )
+      }
       .qes_abort_plain_codebook(codebook, "codebook")
     }
     .qes_abort_not_codebook(codebook)
@@ -705,14 +714,13 @@ get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
 #' @seealso [qes_download()], [qes_docs()], and [qesR-deprecated] for the
 #'   legacy functions and their replacements.
 #' @examples
-#' \donttest{
-#' # one small document (the 2018 English questionnaire, from Borealis);
-#' # a network failure gives its message instead of an error
-#' tryCatch(
-#'   download_codebook("qes2018", dest_dir = tempdir(), file = "EN\\.doc$"),
-#'   qesR_error_network = function(e) conditionMessage(e)
-#' )
-#' }
+#' # the documents it would download for a study, offline
+#' get_codebook_files("qes2018")[, c("filename", "size")]
+#'
+#' # a `file` pattern that matches no document: nothing is downloaded and
+#' # no folder is created
+#' download_codebook("qes2018", dest_dir = file.path(tempdir(), "qes_docs"),
+#'                   file = "^no such document$")
 #' @export
 download_codebook <- function(
   srvy,

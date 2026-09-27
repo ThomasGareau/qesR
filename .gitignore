@@ -30,3 +30,9 @@ Images/
 # Third-party codebooks and questionnaires (kept locally as data-raw source
 # material; listed by qes_docs() and fetched from Dataverse by qes_download())
 /codebooks/
+
+# Locally built legacy master files and package tarballs (kept on disk, not
+# tracked; get_qes_master(save_path =) rebuilds them)
+/qes_master*.csv
+/qes_master*.rds
+qesR_*.tar.gz

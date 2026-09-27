@@ -5,7 +5,9 @@
 #'
 #' `get_qes()` returns the data. It does not write anything into your
 #' workspace unless you ask for it with `assign_global = TRUE`: write
-#' `qes2018 <- get_qes("qes2018")`. The first call in a session that leaves
+#' `qes2018 <- get_qes("qes2018")`. A real study is downloaded once per
+#' session, or kept between sessions with `options(qesR.cache = "disk")`
+#' (see [qes_cache_info()]). The first call in a session that leaves
 #' `assign_global` unset prints a one-time note about this change from qesR
 #' 0.4.4; passing `assign_global` explicitly (TRUE or FALSE) avoids it.
 #'
@@ -93,11 +95,6 @@
 #' demo <- get_qes("qes_demo", quiet = TRUE)
 #' dim(demo)
 #' attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
-#'
-#' \donttest{
-#'   qes2022 <- get_qes("qes2022")
-#'   names(qes2022)[1:10]
-#' }
 #' @export
 get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE, quiet = FALSE) {
   .get_qes_impl(
@@ -187,9 +184,11 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 #'   `qes_codebook`).
 #' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
-#' \donttest{
-#'   get_preview("qes2022", obs = 3)
-#' }
+#' # the synthetic demonstration study, offline
+#' get_preview("qes_demo", obs = 3)
+#'
+#' # the same rows, with the current function
+#' head(get_qes("qes_demo", quiet = TRUE), 3)
 #' @export
 get_preview <- function(srvy, obs = 6L, file = NULL) {
   .qes_deprecate("get_preview")

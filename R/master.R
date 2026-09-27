@@ -1361,11 +1361,6 @@
 #' demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 #' head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
 #' attr(demo_master, "legacy_na_columns")[, c("column", "reason", "cause")]
-#'
-#' \donttest{
-#'   master <- get_qes_master(surveys = "qes2022")
-#'   head(master)
-#' }
 #' @export
 get_qes_master <- function(
   surveys = NULL,

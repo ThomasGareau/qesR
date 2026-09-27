@@ -1,6 +1,8 @@
 ---
 title: "Getting Started with qesR"
 output: rmarkdown::html_vignette
+params:
+  lang: "en"
 vignette: >
   %\VignetteIndexEntry{Getting Started with qesR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -9,100 +11,129 @@ vignette: >
 
 *[Version française](fr-demarrage.html)*
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
-`qesR` helps you access Quebec Election Study data by survey code, plus metadata, codebooks, and a merged harmonized dataset.
+qesR loads the Quebec Election Studies and related Quebec election surveys
+into R by study code. Each code points to one Dataverse deposit, pinned to a
+dataset version and to one original data file that is checked against its
+md5 checksum before use. The catalog of studies, their documents, their
+citations and the description of every variable of the studies released
+under CC0 ship with the package.
+
+Every chunk on this page runs without a network connection: it uses the
+catalog, the shipped metadata and `qes_demo`, a small synthetic study that
+ships with qesR. The chunks that would download a real study are shown but
+not run.
 
 ## Install
 
-```{r, eval = FALSE}
-if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-remotes::install_github("ThomasGareau/qesR")
+```{r install, eval = FALSE}
+install.packages("qesR")
+# or the development version:
+# remotes::install_github("ThomasGareau/qesR")
 ```
 
-```{r}
+```{r load}
 library(qesR)
 ```
 
-## Using the package
+## Which studies are there?
 
-Core calls:
+`qes_studies()` lists every study, with its year, family, design, target
+population, licence, DOI and the dataset version it is pinned to.
 
-- `get_qes(srvy)` download a survey by code
-- `qes_studies()` list the available studies (offline catalog)
-- `qes_codebook(srvy)` retrieve the codebook (offline)
-- `qes_question(srvy, variables)` the exact wording of questions, EN or FR
-- `qes_search(pattern)` find variables across studies, EN and FR
-- `qes_missing(data)` set "don't know" and "refused" codes to `NA`
-- `get_qes_master()` build merged harmonized data
-- `qes_download(studies, path)` save the original files, md5-checked
-- `qes_provenance(data)` record which file the data came from
-
-Every function returns its result. Nothing is written into your workspace
-unless you ask for it with `assign_global = TRUE`, so assign the result
-yourself: `qes2022 <- get_qes("qes2022")`.
-
-## List available studies
-
-```{r}
+```{r studies}
 studies <- qes_studies()
-studies[, c("study", "year", "title_en", "title_fr")]
+studies[, c("study", "year", "family", "study_design", "licence")]
 ```
 
-## Download one study
+Not every study is a Quebec Election Study (family `qes`): the Durand panels,
+the CROP polls and the 1998 polls have their own designs and populations.
+`qes_docs()` lists the codebooks, questionnaires and reports of each study.
 
-```{r, eval = FALSE}
-qes2022 <- get_qes("qes2022")
-names(qes2022)[1:20]
+```{r docs}
+qes_docs("qes2014")[, c("role", "lang", "file_name")]
 ```
 
-## Codebooks, questions and search
+## Load a study
 
-```{r, eval = FALSE}
+`get_qes()` returns the data. It writes nothing into your workspace, so
+assign the result yourself. The demonstration study is read from the
+package; a real study is downloaded once per session (or kept between
+sessions with `options(qesR.cache = "disk")`).
+
+```{r demo}
+demo <- get_qes("qes_demo", quiet = TRUE)
+dim(demo)
+head(demo[, c("QSEXE", "Q2", "Q3", "Q19")])
+```
+
+```{r real, eval = FALSE}
+qes2014 <- get_qes("qes2014")
+```
+
+Columns keep the codes and labels of the file (`haven` labelled columns).
+Codes such as "don't know" and "refused" are values until you ask
+`qes_missing()` to set them to `NA`; it records what it changed.
+
+```{r missing}
+demo_clean <- qes_missing(demo, quiet = TRUE)
+attr(demo_clean, "qes_missing_log")
+```
+
+## Codebooks, questions and search, offline
+
+The codebook of every study released under CC0 ships with qesR: variable
+labels, question text in English and French from the deposited
+questionnaires, value labels and missing codes.
+
+```{r codebook}
 cb <- qes_codebook("qes2014")
-cb_long <- qes_codebook("qes2014", layout = "long", variables = c("Q2", "Q19"))
-qes_question("qes2014", "Q19", lang = "en")
-qes_search("souverain|sovereign")
-qes2014 <- qes_missing(get_qes("qes2014"))
+head(cb[, c("variable", "label", "n_value_labels")])
+qes_codebook("qes2014", layout = "long", variables = "Q19")
 ```
 
-## Keep the original files and their provenance
+`qes_question()` gives the exact wording, in either language:
 
-`qes_download()` saves a study's original files in a folder you choose: the
-data file as its authors deposited it and, with `what = "docs"`, the
-codebooks, questionnaires and reports. Each file is checked against the md5
-checksum in the qesR catalog before it gets its final name, and nothing is
-written outside that folder. `qes_provenance()` records which file a data
-frame was read from (DOI, dataset version, file, md5, when and how it was
-retrieved); printed, it gives a paragraph for a replication log.
-
-```{r, eval = FALSE}
-dir.create("originals")
-qes_download("qes2018", path = "originals", what = c("data", "docs"))
-qes2018 <- get_qes("qes2018")
-qes_provenance(qes2018)
-qes_cite(qes2018)
+```{r question}
+qes_question("qes2014", "Q19", lang = "en")$question
+qes_question("qes2014", "Q19", lang = "fr")$question
 ```
 
-## Build the legacy master dataset
+`qes_search()` searches every study at once, ignoring case and accents:
 
-```{r, eval = FALSE}
-master <- get_qes_master(
-  surveys = c("qes2022", "qes2018", "qes2014", "qes2007", "qes1998"),
-  strict = FALSE
-)
-
-dim(master)
-head(master)
+```{r search}
+hits <- qes_search("souverain|sovereign")
+head(hits[, c("study", "variable", "label")])
 ```
 
-## Details
+The 2022 study is licensed CC BY-NC 4.0, so qesR ships none of its
+metadata: its codebook is built from your own copy of the data file the
+first time you ask for it.
 
-- Surveys are loaded in labelled form with available variable/value labels.
-- Codebook metadata can be inspected in compact, wide, or long layout.
-- The merged data keeps the harmonized columns of qesR 0.4.4, every respondent of every file, and the source of every column (`attr(master, "source_map")`); values verified to be wrong are `NA` (`attr(master, "legacy_na_columns")`).
+## Provenance and citations
+
+Data returned by `get_qes()` records which file it was read from.
+`qes_provenance()` returns that record, and `qes_cite()` cites qesR and the
+datasets you used (see `vignette("citations", package = "qesR")`).
+
+```{r provenance}
+qes_provenance(demo)
+qes_cite("qes2014")
+```
+
+`qes_download()` saves the original files themselves (data file and
+documents), md5-checked, in a folder you choose:
+
+```{r download, eval = FALSE}
+dir <- file.path(tempdir(), "qes_originals")
+dir.create(dir)
+qes_download("qes2014", path = dir, what = c("data", "docs"))
+```
 
 ## Messages and errors
 
@@ -111,20 +142,15 @@ Messages, warnings and errors can be shown in French with
 languages. Errors have classes, so a script can react to them without
 reading their text:
 
-```{r}
+```{r errors}
 tryCatch(
-  get_qes("QES 2022"),
+  get_qes("QES 2014"),
   qesR_error_unknown_study = function(e) e$suggestions
 )
 ```
 
-The older helpers (`get_codebook()`, `get_question()`, `get_preview()`, ...)
-still work and print a one-time notice naming their replacement
-(`?qesR-deprecated`).
+## Coming from qesR 0.4.4
 
-## Save the master dataset
-
-```{r, eval = FALSE}
-get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)
-get_qes_master(save_path = file.path(tempdir(), "qes_master.rds"), strict = FALSE)
-```
+`get_qes_master()` and the other functions of qesR 0.4.4 keep working. What
+changed, and how to keep results reproducible, is in
+`vignette("migrating-0.5", package = "qesR")`.

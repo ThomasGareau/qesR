@@ -1,45 +1,55 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.4.4
+Version: 0.5.0
 Maintainer: Thomas Gareau-Paquette <tg454@cornell.edu>
-Authors@R: c(
+Authors@R:
     person(
       given = "Thomas",
       family = "Gareau-Paquette",
-      role = c("aut", "cre"),
+      role = c("aut", "cre", "cph"),
       email = "tg454@cornell.edu"
-    ),
-    person(
-      given = "Quebec Election Study",
-      role = "cph"
     )
-    )
-Description: Download and load Quebec Election Study ('QES') datasets from
-    Dataverse repositories through a simple survey-code interface. Studies
-    are cataloged by the Centre for the Study of Democratic Citizenship
+Description: Load the Quebec Election Studies and related Quebec election
+    surveys from their 'Dataverse' deposits ('Borealis' and the 'Harvard
+    Dataverse') by study code. Each study is pinned to one dataset version
+    and one original 'SPSS' or 'Stata' data file, checked by its 'MD5'
+    checksum before use. An offline catalog lists the studies, their
+    documents and their citations, and shipped metadata give codebooks,
+    question wording and search in English and French without network
+    access. Data come from the Quebec Election Studies of 2007 (Bélanger et
+    al. 2023) <doi:10.5683/SP2/6XGOKA>, 2008 (Bélanger and Nadeau 2023)
+    <doi:10.5683/SP2/8KEYU3>, 2012 (Bélanger et al. 2023)
+    <doi:10.5683/SP2/WXUPXT>, 2014 (Bélanger and Nadeau 2023)
+    <doi:10.5683/SP3/64F7WR>, 2018 (Bélanger et al. 2023)
+    <doi:10.5683/SP3/NWTGWS> and 2022 (Mahéo et al. 2023)
+    <doi:10.7910/DVN/PAQBDR>; the panel surveys on the 2007 and 2012
+    Quebec elections (Durand and Goyder 2023) <doi:10.5683/SP3/NDS6VT>
+    <doi:10.5683/SP3/RKHPVL> and on the 2018 election (Durand and Blais
+    2023) <doi:10.5683/SP3/XDDMMR>; the 'CROP' polls of 2007-2010 (Durand 2023)
+    <doi:10.5683/SP3/IRZ1PF>; and the 1998 election polls (Durand 2023)
+    <doi:10.5683/SP2/QFUAWG>. The studies are catalogued by the Centre for
+    the Study of Democratic Citizenship
     <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>.
 License: MIT + file LICENSE
+Copyright: See file COPYRIGHTS for the third-party (CC0) study metadata
+    shipped in inst/extdata.
 Encoding: UTF-8
-LazyData: false
 Depends: R (>= 4.1)
 Imports:
     curl (>= 6.0.0),
     haven,
     jsonlite
 Suggests:
-    dplyr,
-    ggplot2,
     knitr,
-    pkgdown,
     rmarkdown,
     testthat (>= 3.1.7),
     withr (>= 2.5.0)
+Config/Needs/website: ggplot2, pkgdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://thomasgareau.github.io/qesR/,
-    https://github.com/ThomasGareau/qesR,
-    https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/
+    https://github.com/ThomasGareau/qesR
 BugReports: https://github.com/ThomasGareau/qesR/issues
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

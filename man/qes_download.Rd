@@ -64,6 +64,9 @@ or Stata), and, with \code{what = "docs"}, the codebooks, questionnaires and
 reports. Every file is checked against the md5 checksum recorded in the
 qesR catalog before it gets its final name. Use it to keep a copy of the
 exact files behind an analysis; to load a study into R, use \code{\link[=get_qes]{get_qes()}}.
+For example, \code{qes_download("qes2018", path = dir, what = c("data", "docs"), lang = "fr")}
+saves the 2018 data file and its French documents into \code{dir}, a folder
+you have created.
 }
 \section{What is written}{
 
@@ -139,9 +142,6 @@ files <- qes_download("qes_demo", path = dir)
 files[, c("study", "file_name", "md5", "downloaded")]
 qes_provenance(files)
 unlink(dir, recursive = TRUE)
-
-# the data file and the French documents of the 2018 study:
-# qes_download("qes2018", path = "originals", what = c("data", "docs"), lang = "fr")
 }
 \seealso{
 \code{\link[=qes_docs]{qes_docs()}} to list the documents, \code{\link[=get_qes]{get_qes()}} to load a study,

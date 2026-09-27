@@ -266,7 +266,8 @@
 #'   qesR_error_unknown_study = function(e) e$suggestions
 #' )
 #' options(old)
-#' \donttest{
-#'   qes2022 <- get_qes("qes2022")
-#' }
+#'
+#' # the synthetic demonstration study ships with qesR: no download
+#' demo <- get_qes("qes_demo", quiet = TRUE)
+#' qes_provenance(demo)
 "_PACKAGE"

@@ -457,6 +457,9 @@
 #' reports. Every file is checked against the md5 checksum recorded in the
 #' qesR catalog before it gets its final name. Use it to keep a copy of the
 #' exact files behind an analysis; to load a study into R, use [get_qes()].
+#' For example, `qes_download("qes2018", path = dir, what = c("data", "docs"), lang = "fr")`
+#' saves the 2018 data file and its French documents into `dir`, a folder
+#' you have created.
 #'
 #' @section What is written:
 #' Apart from the download cache (see [qes_cache_info()]; by default in
@@ -562,9 +565,6 @@
 #' files[, c("study", "file_name", "md5", "downloaded")]
 #' qes_provenance(files)
 #' unlink(dir, recursive = TRUE)
-#'
-#' # the data file and the French documents of the 2018 study:
-#' # qes_download("qes2018", path = "originals", what = c("data", "docs"), lang = "fr")
 #' @export
 qes_download <- function(studies, path, what = c("data", "docs"), role = NULL,
                          version = c("pinned", "latest"), overwrite = FALSE,

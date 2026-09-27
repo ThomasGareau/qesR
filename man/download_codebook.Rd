@@ -48,14 +48,13 @@ qesR 0.4.4 it selected a data file. \code{refresh} no longer changes the result.
 file already in \code{dest_dir} is kept as it is unless \code{overwrite = TRUE}.
 }
 \examples{
-\donttest{
-# one small document (the 2018 English questionnaire, from Borealis);
-# a network failure gives its message instead of an error
-tryCatch(
-  download_codebook("qes2018", dest_dir = tempdir(), file = "EN\\\\.doc$"),
-  qesR_error_network = function(e) conditionMessage(e)
-)
-}
+# the documents it would download for a study, offline
+get_codebook_files("qes2018")[, c("filename", "size")]
+
+# a `file` pattern that matches no document: nothing is downloaded and
+# no folder is created
+download_codebook("qes2018", dest_dir = file.path(tempdir(), "qes_docs"),
+                  file = "^no such document$")
 }
 \seealso{
 \code{\link[=qes_download]{qes_download()}}, \code{\link[=qes_docs]{qes_docs()}}, and \link{qesR-deprecated} for the

@@ -44,8 +44,10 @@ codebook gives each variable's label and question text.
 - [Study catalog](articles/studies.html): every study code, with its design,
   population, size, licence, DOI and documents. The page is generated from the
   catalog that ships with the package, the same data as `qes_studies()`.
-- [Study citations](articles/study-citations.html): how to cite qesR and each
+- [Study citations](articles/citations.html): how to cite qesR and each
   dataset you use.
+- [Moving from qesR 0.4.4](articles/migrating-0.5.html): what changed in
+  0.5.0 and how to keep results reproducible.
 - [Merged dataset](articles/merged-dataset.html): `get_qes_master()` stacks
   the studies of qesR 0.4.4 into one harmonized file.
 - [Reference](reference/index.html): every function. The functions of qesR
@@ -59,11 +61,13 @@ study's design and population in the catalog before comparing them.
 
 qesR charge les Études électorales québécoises et d'autres enquêtes
 électorales québécoises dans R à partir d'un code d'étude. Les messages et
-les erreurs sont aussi offerts en français avec `options(qesR.lang = "fr")`.
+les erreurs sont aussi offerts en français avec `options(qesR.lang = "fr")`,
+et `?qesR-fr` présente les fonctions en français.
 
 - [Démarrage](articles/fr-demarrage.html)
 - [Catalogue des études](articles/fr-etudes.html)
-- [Citations des études](articles/fr-citations-etudes.html)
+- [Citations des études](articles/fr-citations.html)
+- [Passer de qesR 0.4.4 à 0.5.0](articles/fr-migrer-0.5.html)
 - [Données fusionnées](articles/fr-donnees-fusionnees.html)
 
 ## Data licences

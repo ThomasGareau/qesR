@@ -131,3 +131,14 @@ as_utf8 <- function(x) {
   Encoding(x) <- "UTF-8"
   x
 }
+
+# The package's Rd pages: from man/ when the tests run on the source tree
+# (devtools::test()), else from the installed package (R CMD check).
+qesR_rd_db <- function() {
+  path <- getNamespaceInfo("qesR", "path")
+  if (dir.exists(file.path(path, "man"))) {
+    tools::Rd_db(dir = path)
+  } else {
+    tools::Rd_db("qesR", lib.loc = dirname(path))
+  }
+}

@@ -89,11 +89,7 @@ sont mesurés pendant la campagne (\code{"pre"}).
 # the synthetic demonstration study, offline
 decon <- get_decon("qes_demo", quiet = TRUE)
 head(decon)
-
-\donttest{
-  decon <- get_decon("qes2022")
-  attr(decon, "timing")
-}
+attr(decon, "source_map")[, c("column", "source_variable")]
 }
 \seealso{
 \link{qesR-deprecated} for the legacy functions and their replacements.

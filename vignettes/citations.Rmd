@@ -9,16 +9,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-*[Version française](fr-citations-etudes.html)*
+*[Version française](fr-citations.html)*
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 When you publish results computed with qesR, cite both the package and each
 dataset you used. `qes_cite()` writes these citations from the catalog that
 ships with qesR, so this page needs no network access. The French version of
-this page is `vignette("fr-citations-etudes", package = "qesR")`.
+this page is `vignette("fr-citations", package = "qesR")`.
 
 ```{r load}
 library(qesR)
@@ -40,7 +42,7 @@ DOI, the repository, the version and the dataset's UNF (a checksum of its
 data). The three 1998 surveys share one deposit, so their citations also name
 the data file.
 
-```{r table, echo = FALSE}
+```{r table, echo = FALSE, warning = FALSE}
 studies <- qes_studies()
 title <- if (identical(params$lang, "fr")) studies$title_fr else studies$title_en
 table <- data.frame(

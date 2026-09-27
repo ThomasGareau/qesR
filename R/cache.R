@@ -508,9 +508,6 @@
 #' info <- qes_cache_info()
 #' attr(info, "mode")
 #' attr(info, "dir")
-#'
-#' # To keep downloads between sessions, opt in to the disk cache:
-#' # options(qesR.cache = "disk")
 #' @export
 qes_cache_info <- function() {
   mode <- .qes_cache_mode()

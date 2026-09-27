@@ -1,6 +1,8 @@
 ---
 title: "Démarrage avec qesR"
 output: rmarkdown::html_vignette
+params:
+  lang: "fr"
 vignette: >
   %\VignetteIndexEntry{Démarrage avec qesR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -9,106 +11,153 @@ vignette: >
 
 *[English version](get-started.html)*
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
-`qesR` permet de télécharger les études électorales québécoises, leurs codebooks
-et un fichier fusionné harmonisé.
+qesR charge dans R les Études électorales québécoises et d'autres enquêtes
+électorales québécoises à partir d'un code d'étude. Chaque code désigne un
+dépôt Dataverse, fixé à une version du jeu de données et à un fichier de
+données original dont la somme de contrôle md5 est vérifiée avant usage. Le
+catalogue des études, leurs documents, leurs citations et la description de
+chaque variable des études sous licence CC0 sont livrés avec le package.
+
+Tous les blocs de code de cette page s'exécutent sans connexion réseau : ils
+utilisent le catalogue, les métadonnées livrées et `qes_demo`, une petite
+étude synthétique fournie avec qesR. Les blocs qui téléchargeraient une
+vraie étude sont montrés, mais pas exécutés.
 
 ## Installation
 
-```{r, eval = FALSE}
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("ThomasGareau/qesR")
+```{r install, eval = FALSE}
+install.packages("qesR")
+# or the development version:
+# remotes::install_github("ThomasGareau/qesR")
 ```
 
-```{r}
+```{r load}
 library(qesR)
 ```
 
-## Fonctions principales
+## Quelles études sont offertes ?
 
-- `qes_studies()` : liste des études disponibles (catalogue hors ligne)
-- `get_qes("qes2022")` : téléchargement d'une étude
-- `qes_codebook("qes2014")` : codebook (hors ligne)
-- `qes_question("qes2014", variables)` : libellé exact des questions, en français ou en anglais
-- `qes_search(motif)` : recherche de variables dans toutes les études, en français et en anglais
-- `qes_missing(donnees)` : codes « ne sait pas » et « refus » remplacés par `NA`
-- `get_qes_master()` : données fusionnées harmonisées
-- `qes_download(studies, path)` : fichiers originaux, vérifiés par somme md5
-- `qes_provenance(donnees)` : fichier dont proviennent les données
+`qes_studies()` énumère les études, avec leur année, leur famille, leur
+devis, leur population cible, leur licence, leur DOI et la version du jeu de
+données à laquelle chacune est fixée.
 
-Chaque fonction renvoie son résultat. Rien n'est écrit dans votre espace de
-travail, sauf si vous le demandez avec `assign_global = TRUE` : assignez
-donc le résultat vous-même, `qes2022 <- get_qes("qes2022")`.
-
-## Codes disponibles
-
-```{r}
+```{r studies}
 studies <- qes_studies()
-studies[, c("study", "year", "title_en", "title_fr")]
+studies[, c("study", "year", "family", "study_design", "licence")]
 ```
 
-## Exemple rapide
+Toutes ne sont pas des Études électorales québécoises (famille `qes`) : les
+panels Durand, les sondages CROP et les sondages de 1998 ont leurs propres
+devis et populations. `qes_docs()` énumère les livres de codes,
+questionnaires et rapports de chaque étude.
 
-```{r, eval = FALSE}
-qes2022 <- get_qes("qes2022")
-head(qes2022, 10)
-master <- get_qes_master(strict = FALSE)
+```{r docs}
+qes_docs("qes2014")[, c("role", "lang", "file_name")]
 ```
 
-## Codebooks, questions et recherche
+## Charger une étude
 
-```{r, eval = FALSE}
+`get_qes()` retourne les données. Elle n'écrit rien dans votre espace de
+travail : assignez vous-même le résultat. L'étude de démonstration est lue
+dans le package ; une vraie étude est téléchargée une fois par session (ou
+gardée d'une session à l'autre avec `options(qesR.cache = "disk")`).
+
+```{r demo}
+demo <- get_qes("qes_demo", quiet = TRUE)
+dim(demo)
+head(demo[, c("QSEXE", "Q2", "Q3", "Q19")])
+```
+
+```{r real, eval = FALSE}
+qes2014 <- get_qes("qes2014")
+```
+
+Les colonnes gardent les codes et les étiquettes du fichier (colonnes
+`labelled` de haven). Les codes « ne sait pas » et « refus » restent des
+valeurs tant que vous ne demandez pas à `qes_missing()` de les remplacer par
+`NA` ; la fonction consigne ce qu'elle a changé.
+
+```{r missing}
+demo_clean <- qes_missing(demo, quiet = TRUE)
+attr(demo_clean, "qes_missing_log")
+```
+
+## Codebooks, questions et recherche, sans réseau
+
+Le codebook de chaque étude sous licence CC0 est livré avec qesR :
+étiquettes des variables, texte des questions en français et en anglais
+tiré des questionnaires déposés, étiquettes de valeurs et codes manquants.
+
+```{r codebook}
 cb <- qes_codebook("qes2014")
-cb_long <- qes_codebook("qes2014", layout = "long", variables = c("Q2", "Q19"))
-qes_question("qes2014", "Q19", lang = "en")
-qes_search("souverain|sovereign")
-qes2014 <- qes_missing(get_qes("qes2014"))
+head(cb[, c("variable", "label", "n_value_labels")])
+qes_codebook("qes2014", layout = "long", variables = "Q19")
 ```
 
-## Fichiers originaux et provenance
+`qes_question()` donne le libellé exact, dans l'une ou l'autre langue :
 
-`qes_download()` enregistre les fichiers originaux d'une étude dans un
-dossier de votre choix : le fichier de données tel que ses auteurs l'ont
-déposé et, avec `what = "docs"`, les livres de codes, questionnaires et
-rapports. Chaque fichier est vérifié par la somme md5 du catalogue de qesR
-avant de recevoir son nom définitif, et rien n'est écrit hors de ce dossier.
-`qes_provenance()` indique de quel fichier proviennent des données (DOI,
-version du jeu de données, fichier, somme md5, date et mode d'obtention) ;
-affiché, il donne un paragraphe pour un journal de réplication.
+```{r question}
+qes_question("qes2014", "Q19", lang = "en")$question
+qes_question("qes2014", "Q19", lang = "fr")$question
+```
 
-```{r, eval = FALSE}
-dir.create("originals")
-qes_download("qes2018", path = "originals", what = c("data", "docs"))
-qes2018 <- get_qes("qes2018")
-qes_provenance(qes2018)
-qes_cite(qes2018)
+`qes_search()` cherche dans toutes les études à la fois, sans tenir compte
+de la casse ni des accents :
+
+```{r search}
+hits <- qes_search("souverain|sovereign")
+head(hits[, c("study", "variable", "label")])
+```
+
+L'étude de 2022 est sous licence CC BY-NC 4.0 : qesR ne livre aucune de ses
+métadonnées, et son codebook est construit à partir de votre propre copie du
+fichier de données la première fois que vous le demandez.
+
+## Provenance et citations
+
+Les données retournées par `get_qes()` indiquent de quel fichier elles
+viennent. `qes_provenance()` renvoie cette information, et `qes_cite()` cite
+qesR et les jeux de données utilisés (voir
+`vignette("fr-citations", package = "qesR")`).
+
+```{r provenance}
+qes_provenance(demo)
+qes_cite("qes2014")
+```
+
+`qes_download()` enregistre les fichiers originaux eux-mêmes (fichier de
+données et documents), vérifiés par somme md5, dans un dossier de votre
+choix :
+
+```{r download, eval = FALSE}
+dir <- file.path(tempdir(), "qes_originals")
+dir.create(dir)
+qes_download("qes2014", path = dir, what = c("data", "docs"))
 ```
 
 ## Messages et erreurs
 
 Les messages, avertissements et erreurs s'affichent en français avec
-`options(qesR.lang = "fr")` ; les données renvoyées sont les mêmes dans les
-deux langues. Les erreurs ont des classes, ce qui permet à un script d'y
-réagir sans lire leur texte :
+`options(qesR.lang = "fr")` ; les données retournées sont les mêmes dans les
+deux langues. Les erreurs ont des classes : un script peut y réagir sans lire
+leur texte.
 
-```{r}
+```{r errors}
 tryCatch(
-  get_qes("QES 2022"),
+  get_qes("QES 2014"),
   qesR_error_unknown_study = function(e) e$suggestions
 )
 ```
 
-Les anciennes fonctions (`get_codebook()`, `get_question()`, `get_preview()`,
-...) fonctionnent toujours et affichent une fois par session une note qui
-nomme leur remplacement (`?qesR-deprecated`).
+## Si vous utilisiez qesR 0.4.4
 
-## Version française complète
-
-Voir aussi :
-
-- Données fusionnées : `fr-donnees-fusionnees`
-- Citations : `fr-citations-etudes`
-- Exemples de cas d'usage : `fr-analyse-souverainete`, `fr-analyse-descriptive`
+`get_qes_master()` et les autres fonctions de qesR 0.4.4 continuent de
+fonctionner. Ce qui a changé, et comment garder des résultats
+reproductibles, est expliqué dans
+`vignette("fr-migrer-0.5", package = "qesR")`.

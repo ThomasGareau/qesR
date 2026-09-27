@@ -169,11 +169,6 @@ pondérations, dates de \code{qes2022}, \code{turnout} de \code{qes2018} : voir 
 demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
 attr(demo_master, "legacy_na_columns")[, c("column", "reason", "cause")]
-
-\donttest{
-  master <- get_qes_master(surveys = "qes2022")
-  head(master)
-}
 }
 \seealso{
 \code{\link[=get_qes]{get_qes()}} for the study files, \code{\link[=qes_provenance]{qes_provenance()}} and

@@ -27,8 +27,8 @@ test_that("print.qes_codebook is registered", {
 })
 
 test_that("every canonical export is mentioned on ?qesR-fr", {
-  skip("?qesR-fr is written with the 0.5.0 docs (S5)")
-  rd <- tools::Rd_db("qesR")[["qesR-fr.Rd"]]
+  rd <- qesR_rd_db()[["qesR-fr.Rd"]]
+  expect_false(is.null(rd))
   text <- paste(as.character(rd), collapse = "")
   canonical <- intersect(c(canonical_existing_exports, new_exports), getNamespaceExports("qesR"))
   for (f in canonical) {

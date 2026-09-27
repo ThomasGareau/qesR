@@ -18,7 +18,7 @@
 #' | `get_qes_codebook_files()` | `qes_docs()` | yes |
 #' | `download_codebook()` | `qes_download(what = "docs")` | yes |
 #' | `get_qescodes()` | `qes_studies()` | yes |
-#' | `get_decon()` | `qes_harmonize(targets = "decon")` | from qesR 0.7.0 |
+#' | `get_decon()` | none yet (a replacement is planned for qesR 0.7.0) | no |
 #'
 #' @section Notices:
 #' The notice is a message of class `qesR_message_deprecated`, not a warning,
@@ -37,6 +37,17 @@
 #' `qesR_message_deprecated` ; `quiet = TRUE` ne la masque pas, mais
 #' `options(qesR.quiet_deprecated = TRUE)` la masque. Elle s'affiche en
 #' français avec `options(qesR.lang = "fr")`.
+#'
+#' @examples
+#' # a legacy function and its replacement give the same rows
+#' old_rows <- get_preview("qes_demo", obs = 2)
+#' new_rows <- head(get_qes("qes_demo", assign_global = FALSE, quiet = TRUE), 2)
+#' identical(dim(old_rows), dim(new_rows))
+#'
+#' # hide the notices of every legacy function
+#' op <- options(qesR.quiet_deprecated = TRUE)
+#' head(get_qescodes(), 3)
+#' options(op)
 #'
 #' @name qesR-deprecated
 #' @aliases qesR-deprecated

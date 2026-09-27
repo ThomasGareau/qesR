@@ -1,0 +1,126 @@
+---
+title: "Exemple de cas d'usage : l'appui à la souveraineté"
+params:
+  lang: "fr"
+---
+
+*[English version](analysis-sovereignty.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+```
+
+Cette page estime l'appui à l'indépendance du Québec dans les études du
+fichier fusionné hérité, `get_qes_master()`. Elle est construite en même
+temps que le site : les fichiers de données sont téléchargés de leurs dépôts
+Dataverse par le cache de qesR.
+
+Une question sur la souveraineté n'est comparable d'une étude à l'autre que
+si elle demande la même chose. Depuis qesR 0.5.0, `sovereignty_support` ne
+contient qu'une question : le vote du répondant à un référendum sur un Québec
+pays indépendant. Les études qui posaient une autre question (la question de
+1995 sur la souveraineté assortie d'une offre de partenariat, un « pays
+souverain », des questions de relance posées aux indécis, ou une échelle
+favorable/opposé) ont `NA` dans cette colonne. Chaque estimation est
+calculée à l'intérieur d'une étude, avec la pondération propre à cette étude
+(`survey_weight`) ; c'est une estimation ponctuelle qui ne tient pas compte du
+plan de sondage.
+
+```{r data}
+library(qesR)
+library(ggplot2)
+
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+
+master <- get_qes_master(quiet = TRUE)
+studies <- qes_studies()
+master$family <- studies$family[match(master$qes_code, studies$study)]
+master$year <- as.integer(master$qes_year)
+
+# Weighted share of each value of x, within one study
+wshare <- function(x, w) {
+  ok <- !is.na(x) & !is.na(w)
+  if (!any(ok)) return(NULL)
+  tapply(w[ok], x[ok], sum) / sum(w[ok])
+}
+```
+
+## Tableau 1 : les études qui posent la question sur l'indépendance
+
+`attr(master, "legacy_na_columns")` indique pourquoi une colonne vaut `NA`
+dans une étude ; `attr(master, "source_map")` nomme la variable que lit la
+colonne de chaque étude.
+
+```{r items}
+sources <- attr(master, "source_map")
+sources <- sources[sources$harmonized_variable == "sovereignty_support",
+                   c("qes_code", "source_variable")]
+blanked <- attr(master, "legacy_na_columns")
+blanked <- blanked[blanked$column == "sovereignty_support", c("study", "cause")]
+items <- merge(sources, blanked, by.x = "qes_code", by.y = "study", all.x = TRUE)
+items$year <- studies$year[match(items$qes_code, studies$study)]
+items$in_column <- ifelse(is.na(items$cause), tr("yes", "oui"), tr("no", "non"))
+items <- items[order(items$year, items$qes_code), c("qes_code", "year", "source_variable", "in_column")]
+knitr::kable(
+  items, row.names = FALSE,
+  col.names = tr(c("Study", "Year", "Source variable", "Independence question"),
+                 c("Étude", "Année", "Variable source", "Question sur l'indépendance"))
+)
+```
+
+Le libellé dans les quatre études qui la posent :
+
+```{r wording}
+asked <- items$qes_code[items$in_column == tr("yes", "oui")]
+wording <- do.call(rbind, lapply(asked, function(s) {
+  q <- qes_question(s, items$source_variable[items$qes_code == s], lang = params$lang)
+  q[, c("study", "variable", "question", "truncated")]
+}))
+knitr::kable(wording, row.names = FALSE)
+```
+
+## Tableau 2 : l'appui à l'indépendance
+
+La part qui voterait OUI parmi les répondants qui ont répondu OUI ou NON.
+Les « ne sait pas » et les refus sont exclus.
+
+```{r support}
+sov <- do.call(rbind, lapply(split(master, master$qes_code), function(d) {
+  s <- wshare(d$sovereignty_support, d$survey_weight)
+  if (is.null(s) || !"1" %in% names(s)) return(NULL)
+  data.frame(study = d$qes_code[1], year = d$year[1],
+             n = sum(!is.na(d$sovereignty_support)), pct = round(100 * s[["1"]], 1))
+}))
+sov <- sov[order(sov$year), ]
+knitr::kable(
+  sov, row.names = FALSE,
+  col.names = tr(c("Study", "Year", "N answering", "YES (%)"),
+                 c("Étude", "Année", "N répondants", "OUI (%)"))
+)
+```
+
+```{r support-plot, fig.alt = "Weighted share who would vote YES in a referendum on independence, in the 2012, 2014, 2018 and 2022 Quebec Election Studies."}
+ggplot(sov, aes(x = year, y = pct)) +
+  geom_line(colour = "#12355b") +
+  geom_point(size = 2.5, colour = "#12355b") +
+  scale_x_continuous(breaks = sov$year) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(
+    x = tr("Year of the study", "Année de l'étude"),
+    y = tr("Would vote YES, weighted (%)", "Voterait OUI, pondéré (%)")
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Remarques
+
+- Les quatre études sont des Études électorales québécoises, mais leur mode
+  et leur population diffèrent : `qes2018` couvre les personnes de 16 ans et
+  plus, et `qes2022` est un panel en ligne de citoyens de 18 ans et plus
+  (`qes_studies()`).
+- Le texte de la question de `qes2022` est l'étiquette de sa variable, que
+  son fichier de données a coupée à 80 caractères (`truncated`) ; le libellé
+  complet est dans son questionnaire (`qes_docs("qes2022")`).
+- Pour les autres études, lisez leur propre question avec `get_qes()` et
+  `qes_question()` ; la comparer à la question sur l'indépendance demande de
+  la prudence, car le libellé diffère.

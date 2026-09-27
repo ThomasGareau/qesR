@@ -146,6 +146,15 @@ test_that("a codebook can be laid out again; a plain data frame is an error ([A:
   expect_error(qes_codebook(42), class = "qesR_error_input")
 })
 
+test_that("format_codebook() on get_qes() data says it is data, not a codebook", {
+  local_qes_notices_shown()
+  withr::local_options(qesR.lang = "en")
+  demo <- get_qes("qes_demo", quiet = TRUE)
+  err <- expect_error(format_codebook(demo), class = "qesR_error_input")
+  expect_match(conditionMessage(err), "is data read by get_qes()", fixed = TRUE)
+  expect_no_match(conditionMessage(err), "plain data frame", fixed = TRUE)
+})
+
 test_that("the codebook of get_qes() data describes its columns", {
   local_qes_notices_shown()
   demo <- get_qes("qes_demo", quiet = TRUE)

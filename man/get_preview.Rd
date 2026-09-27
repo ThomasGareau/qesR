@@ -31,9 +31,11 @@ download cache when the study was read before in the session, and keeps
 the attributes \code{qes_survey_code}, \code{qes_provenance} and \code{qes_codebook}.
 }
 \examples{
-\donttest{
-  get_preview("qes2022", obs = 3)
-}
+# the synthetic demonstration study, offline
+get_preview("qes_demo", obs = 3)
+
+# the same rows, with the current function
+head(get_qes("qes_demo", quiet = TRUE), 3)
 }
 \seealso{
 \link{qesR-deprecated} for the legacy functions and their replacements.

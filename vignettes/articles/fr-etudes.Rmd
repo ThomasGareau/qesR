@@ -96,4 +96,4 @@ knitr::kable(data.frame(
 ## Citer
 
 `qes_cite()` donne la citation de chaque étude ; voir
-[Citations des études](fr-citations-etudes.html).
+[Citations des études](fr-citations.html).

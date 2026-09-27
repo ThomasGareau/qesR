@@ -1,0 +1,108 @@
+---
+title: "Exemple de cas d'usage : le vote déclaré au fil du temps"
+params:
+  lang: "fr"
+---
+
+*[English version](analysis-vote-choice.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 5)
+```
+
+Cette page présente le vote provincial déclaré dans les études du fichier
+fusionné hérité, `get_qes_master()`. Elle est construite en même temps que
+le site : les fichiers de données sont téléchargés de leurs dépôts
+Dataverse par le cache de qesR.
+
+Depuis qesR 0.5.0, `vote_choice` ne contient que le vote déclaré après
+l'élection (`vote_choice_timing` vaut `"post"`). Il vaut `NA` dans les
+études dont la source était une intention de vote : `qes2022`, les sondages
+CROP et `qes1998`. Chaque estimation est calculée à l'intérieur d'une étude,
+avec la pondération propre à cette étude (`survey_weight`) ; c'est une
+estimation ponctuelle qui ne tient pas compte du plan de sondage. Les Études
+électorales québécoises et les panels Durand sont présentés séparément, car
+leurs devis diffèrent.
+
+```{r data}
+library(qesR)
+library(ggplot2)
+
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+
+master <- get_qes_master(quiet = TRUE)
+studies <- qes_studies()
+master$family <- studies$family[match(master$qes_code, studies$study)]
+master$year <- as.integer(master$qes_year)
+
+# Weighted share of each value of x, within one study
+wshare <- function(x, w) {
+  ok <- !is.na(x) & !is.na(w)
+  if (!any(ok)) return(NULL)
+  tapply(w[ok], x[ok], sum) / sum(w[ok])
+}
+```
+
+## Tableau 1 : vote déclaré par étude
+
+Les parts sont calculées parmi les répondants qui ont déclaré avoir voté
+pour un parti, « Other party » (autre parti) compris. Les répondants qui
+n'ont pas voté, ne savent pas ou refusent de répondre sont exclus du
+dénominateur. Une cellule vide signifie qu'aucun répondant de l'étude n'a
+déclaré ce parti ; l'ADQ s'est fusionnée à la CAQ en 2012 : l'ADQ n'a donc
+aucun électeur après 2008, et la CAQ aucun avant 2012.
+
+```{r vote}
+options(knitr.kable.NA = "")
+parties <- c("PLQ", "PQ", "ADQ", "CAQ", "QS", "PVQ", "ON", "Other party")
+voters <- master[master$vote_choice %in% parties, ]
+vote <- do.call(rbind, lapply(split(voters, voters$qes_code), function(d) {
+  s <- wshare(d$vote_choice, d$survey_weight)
+  data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1],
+             n = nrow(d), party = names(s), pct = round(100 * as.numeric(s), 1))
+}))
+vote_wide <- reshape(vote, idvar = c("study", "year", "family", "n"),
+                     timevar = "party", direction = "wide")
+names(vote_wide) <- sub("^pct\\.", "", names(vote_wide))
+vote_wide <- vote_wide[order(vote_wide$family, vote_wide$year),
+                       c("study", "year", "family", "n", intersect(parties, names(vote_wide)))]
+knitr::kable(
+  vote_wide, row.names = FALSE,
+  col.names = c(tr(c("Study", "Year", "Family", "N voters"),
+                   c("Étude", "Année", "Famille", "N votants")),
+                intersect(parties, names(vote_wide)))
+)
+```
+
+## Figure 1 : les principaux partis
+
+```{r vote-plot, fig.alt = "Weighted reported vote share of the PLQ, PQ, ADQ, CAQ and QS in each study, by year, with Quebec Election Studies and Durand panels in separate panels."}
+main <- vote[vote$party %in% c("PLQ", "PQ", "ADQ", "CAQ", "QS"), ]
+main$family <- ifelse(main$family == "qes",
+                      tr("Quebec Election Studies", "Études électorales québécoises"),
+                      tr("Durand panels", "Panels Durand"))
+ggplot(main, aes(x = year, y = pct, colour = party)) +
+  geom_line() +
+  geom_point(size = 2.2) +
+  facet_wrap(~family, ncol = 1) +
+  scale_colour_manual(values = c(PLQ = "#d71920", PQ = "#004c9d", ADQ = "#6d9eeb",
+                                 CAQ = "#00a3c7", QS = "#ff6f00")) +
+  scale_y_continuous(limits = c(0, NA)) +
+  labs(
+    x = tr("Year of the study", "Année de l'étude"),
+    y = tr("Share of reported votes, weighted (%)", "Part des votes déclarés, pondérée (%)"),
+    colour = tr("Party", "Parti")
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+## Remarques
+
+- Une ligne ne relie que des études de la même famille ; l'ADQ et la CAQ
+  sont des partis distincts, et leurs lignes ne sont pas reliées.
+- « Don't know / Refused » est une catégorie que qesR 0.4.4 codait
+  volontairement ; elle reste telle quelle dans `vote_choice` jusqu'aux
+  variables harmonisées de qesR 0.7.0.
+- Les votes déclarés diffèrent des résultats officiels : comparez-les aux
+  résultats publiés par Élections Québec, et non entre eux d'un devis à
+  l'autre.

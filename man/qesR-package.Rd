@@ -286,26 +286,21 @@ tryCatch(
   qesR_error_unknown_study = function(e) e$suggestions
 )
 options(old)
-\donttest{
-  qes2022 <- get_qes("qes2022")
-}
+
+# the synthetic demonstration study ships with qesR: no download
+demo <- get_qes("qes_demo", quiet = TRUE)
+qes_provenance(demo)
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://thomasgareau.github.io/qesR/}
   \item \url{https://github.com/ThomasGareau/qesR}
-  \item \url{https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/}
   \item Report bugs at \url{https://github.com/ThomasGareau/qesR/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Thomas Gareau-Paquette \email{tg454@cornell.edu}
-
-Other contributors:
-\itemize{
-  \item Quebec Election Study [copyright holder]
-}
+\strong{Maintainer}: Thomas Gareau-Paquette \email{tg454@cornell.edu} [copyright holder]
 
 }

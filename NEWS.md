@@ -1,21 +1,16 @@
-# qesR (development version)
+# qesR 0.5.0
 
-- Help pages are now generated with roxygen2 from comments in `R/`. Their content is unchanged: same topics, arguments, defaults and examples. The package help page is also available as `?qesR` and now lists the authors and project links.
-- The test suite is back (testthat 3rd edition). It restores the tests removed before 0.4.4, except one that required the insecure TLS retry, and adds contract tests for the 14 exported functions: their arguments, visible return values, no writes outside `tempdir()` or into your workspace by default, opt-in assignment, and the column names that `get_qes()`, `get_qes_master()`, `get_decon()` and the codebook helpers return. Tests run offline against a simulated Dataverse; the live check against Dataverse runs only when `QESR_LIVE=true`.
-- `R CMD check --as-cran` now runs on GitHub Actions for every push and pull request on macOS, Windows and Ubuntu (R devel, release, oldrel-1 and 4.1).
+qesR 0.5.0 reads each study from its original data file, pinned and checked
+by md5, and ships an offline catalog, codebooks, question text and search in
+English and French. Every function of 0.4.4 keeps its name and its
+arguments, and `get_qes()` returns the same codes as before. Three changes
+alter what 0.4.4 code produces: functions no longer write into your
+workspace by default; text that the old reader damaged is repaired; and
+`get_qes_master()` and `get_decon()` keep every respondent and set values
+verified to be wrong to `NA`. `vignette("migrating-0.5", package = "qesR")`
+walks through the changes.
 
-## Study catalog, documents and citations
-
-- New `qes_studies()` lists every study from a catalog shipped with the package, with no network request: code, family, deposit title and authors, English and French display names, year, design, target population, server, DOI, the pinned dataset version and data file, source language, licence and the dataset UNF. `qes_studies(check_updates = TRUE)` asks Dataverse, one metadata request per deposit, whether a newer version exists or the pinned data file changed; a study that cannot be checked is reported as `"unreachable"` instead of failing.
-- New `qes_docs()` lists the codebooks, questionnaires and technical or methodological reports of each study, with their role, language, size, md5 and download URL, offline.
-- New `qes_cite()` returns the citation of qesR and of each dataset (authors, year, verbatim deposit title, DOI, repository, pinned version and UNF) as text, BibTeX or `bibentry`. `citation("qesR")` now works (static `inst/CITATION`). The citation vignettes are generated from the catalog; the hand-copied tables, which carried a stray `[fileUNF]` token and non-DOI links, are gone from the README and vignettes.
-- The 1998 deposit is split into its three surveys: `qes1998` still reads the combined CROP-CREATEC panel file (1,483 rows, as in 0.4.4), and the new codes `qes1998_crop` (450 rows) and `qes1998_createc` (1,057 rows) read the two firms' files. All three cover francophones only, each with the definition its codebook gives.
-- The Durand panels, the CROP polls and the 1998 polls are no longer presented as "Quebec Election Study" panels: `get_qescodes(detailed = TRUE)` and the `get_qes()` banner use their own titles (for example "Panel Survey on the 2018 Quebec Election"), and the same names now appear in the `qes_name_en` column of `get_qes_master()` for those studies. French names carry their accents. `documentation` is the doi.org link.
-- `get_qes_master()` keeps building the 11 studies of 0.4.4 by default, and `surveys = "all"` keeps meaning those 11. The new 1998 codes are not in the master yet: naming them is an error (class `qesR_error_input`), because the `qes1998` panel file already holds their respondents. Read them with `get_qes()`.
-- The website has a Study catalog page (EN and FR), generated from the shipped catalog when the site is built, in place of the hand-written survey code table, which still carried the old study names. Guides are grouped in English and French menus, each guide links to its translation, the 0.4.4 functions are grouped under *Legacy functions* in the reference, and the site has a dark mode.
-- The catalog is versioned (`inst/extdata/VERSIONS`), and a synthetic demonstration study, `qes_demo`, ships in its own tree for offline examples and tests. `get_qes("qes_demo")` reads it with no download.
-
-## Workspace assignment
+## Breaking default: workspace assignment
 
 - `get_qes()`, `get_qes_master()` and `get_decon()` no longer write into your workspace by default (`assign_global` now defaults to `FALSE`; it was `TRUE` in 0.4.4). They always return the data, visibly: write `qes2018 <- get_qes("qes2018")`. The first call in a session that leaves `assign_global` unset prints a one-time note (class `qesR_message_assign_default`); passing `assign_global` explicitly avoids it.
 - With `assign_global = TRUE`, every function now assigns into the environment it was called from: the global environment at top level, the function's own frame when called inside a function. `get_qes_codebook()` and `qes_codebook()` previously assigned into a frame of their own, so the object never reached you.
@@ -24,26 +19,69 @@
 - `get_codebook(assign_global = TRUE)` and its aliases now assign exactly the object they return, in the requested `layout` (0.4.4 assigned the compact codebook whatever the layout).
 - `get_qes_master(save_path =, assign_global = TRUE)` now sets `saved_to` before assigning, so the assigned and returned objects are identical.
 
-## Messages and errors
+## Results change: what this means for code written for 0.4.4
 
-- Every error, warning and message that qesR itself raises now has a class, so scripts can handle them with `tryCatch()` without matching text. Errors inherit from `qesR_error` (`qesR_error_input`, `qesR_error_unknown_study`, `qesR_error_unknown_variable`, `qesR_error_ambiguous_file`, `qesR_error_network`, `qesR_error_source`), warnings from `qesR_warning` and messages from `qesR_message`. Conditions carry data fields such as `study`, `suggestions`, `url` and the root cause in `parent`. See `?qesR`.
-- Messages, warnings and errors are available in English and French. qesR follows `options(qesR.lang =)`, then the `QESR_LANG` and `LANGUAGE` environment variables, then the messages locale. The language never changes what functions return: qesR's own part of the reasons recorded in `attr(get_qes_master(), "failed_surveys")` is always in English (a root cause reported by R itself, such as a download error, keeps R's text).
-- Unknown study codes suggest near matches.
+Scripts written for 0.4.4, such as the analyses of a paper that installed
+v0.4.4, keep running, but some of their results change. What changes depends
+on what they use:
 
-## Downloads
+- **Raw codes from `get_qes()`: unchanged.** Codes, column names and
+  `is.na()` counts are those of 0.4.4 for all 11 studies (checked against
+  0.4.4 output). Code that works on codes, such as `as.numeric()` with
+  windows of valid codes, gives the same numbers.
+- **Label text, factors and types from `get_qes()`: some change.**
+  `haven::as_factor()` and anything else built from label text sees the
+  repaired accents, the `qes2012` labels in their original case and up to
+  256 characters (0.4.4 lowercased them and cut them at 80), the `qes1998`
+  panel file's own labels and the corrected CROP letters; `qes2022` dates
+  are date-times, and codes are doubles instead of integers (see *Changed
+  outputs: reading data*).
+- **`get_qes_master()` and `get_decon()`: values change.** The master has
+  40,987 rows instead of 40,606, drops the 70 stacked columns and sets the
+  cells listed under *Changed outputs: legacy master and `get_decon()`* to
+  `NA`. Any estimate that uses `vote_choice`, `turnout`,
+  `sovereignty_support`, `political_interest`, `ideology`, `language`,
+  `income`, `religion`, `born_canada`, `education`, `party_best` or
+  `party_lean` can change. Under French messages (for example with
+  `LANG=fr_CA.UTF-8`), 0.4.4 also lost 1,208 of the 2,442 `qes2007_panel`
+  rows and 616 of the 1,250 `qes2018_panel` rows while reading them (a
+  master of 39,132 rows); 0.5.0 reads every row whatever the language.
+- **Codebooks** come from the shipped dictionary, not from Dataverse's DDI:
+  labels and question text differ where 0.4.4 used the variable name, a
+  lowercased label or a question guessed from a PDF.
 
-- Removed the insecure download fallback. qesR 0.4.4 retried a failed download with TLS certificate verification turned off (for `qes2022` always, and for any study whose first error mentioned SSL), first through `download.file()` and then by running the `curl --insecure` command. A failed download is now an error of class `qesR_error_network` that keeps the original error; qesR never disables certificate checks and never runs external download programs.
-- Requests now identify themselves only as `qesR/<version> R/<version>` and are spaced at least one second apart per server.
-- qesR no longer reads `.rds` files from Dataverse: `readRDS()` is never applied to downloaded content.
-- Downloads now use the `curl` package (new in Imports) instead of `download.file()`. `curl` gives the HTTP status, the response headers (needed to honour `Retry-After` and to recognise a server that refuses automated requests) and the body from one request, has per-transfer stall timeouts, needs no external program and has no R dependencies.
-- A request that fails for a passing reason (a timeout, a dropped connection, HTTP 408, 429, 500, 502, 503 or 504) is tried again, up to 4 attempts (`options(qesR.max_tries =)`), after a growing pause or the delay the server asks for in `Retry-After` (at most two minutes; a longer delay is an error of class `qesR_error_http`). Other errors fail at once. Connections time out after 30 s, and a download slower than 1 KB/s for 60 s (`options(qesR.stall_timeout =)`) is abandoned.
-- Network errors have subclasses: `qesR_error_http` (fields `status`, `retry_after`, `server_message`), `qesR_error_http_refused` (a Harvard Dataverse bot challenge or a 403: never retried or worked around; the message explains how to download the file by hand), `qesR_error_tls` and `qesR_error_offline`. A file is written under a temporary `.part` name and renamed only once complete, so an interrupted download never leaves a truncated file behind.
-- New `qes_cache_info()` and `qes_cache_clear()` list and delete the files in qesR's download cache. The cache keeps each catalog file under its file id and md5 and checks the md5 before keeping it (`qesR_error_checksum` otherwise). By default it lives in the session's temporary directory and disappears when R exits; `options(qesR.cache = "disk")` keeps files between sessions in `tools::R_user_dir("qesR", "cache")`, and `options(qesR.cache_dir =)` in a directory of your choice (qesR works only in a `qesR` subfolder that it creates and marks, and `qes_cache_clear()` refuses any folder without that mark). `get_qes()` reads its data files through this cache (see *Reading data*).
-- `qes_studies(check_updates = TRUE)` remembers each answer for the session (`qes_cache_clear()` forgets it) and tries each deposit at most twice.
-- New `qes_download(studies, path)` saves the original files of one or more studies in a directory you name: the data file as deposited (`what = "data"`, the default) and the codebooks, questionnaires and reports (`what = "docs"`, filtered by `role` and `lang`). `path` must already exist, nothing is written outside it, and nothing at all when no file matches. Before anything is written, a file already there with the expected md5 is kept, and one that differs is an error (class `qesR_error_input`) unless `overwrite = TRUE`. Each file comes through the download cache, is copied under a temporary `.part` name, checked against its catalog md5 and only then renamed. It returns, invisibly, one row per file (`study`, `file_id`, `file_name`, `role`, `lang`, `md5`, `local_path`, `from_cache`, `downloaded`, `pinned`) with a `qes_provenance` attribute.
-- `qes_download(version = "latest")` is the only way qesR fetches files it does not pin: it asks Dataverse for the latest published version of each deposit, follows a replaced file to its replacement, checks each file against the md5 Dataverse gives, warns (class `qesR_warning_unpinned`) and records `pinned = FALSE`. `get_qes()` keeps reading the pinned files.
+`dev/legacy-diff.md` in the source repository (generated by
+`data-raw/compare_legacy.R` against a clean 0.4.4 build) gives, column by
+column and study by study, how many cells changed and why; every
+difference is an intended deletion, a blanked value or one of the reader
+changes listed here. To reproduce a 0.4.4 result exactly, install that
+version, for example in a separate library or an renv project:
+`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")` (the same
+code as the d1faad6 baseline of `dev/legacy-diff.md`), and record
+`packageDescription("qesR")$RemoteSha` with the results.
 
-## Reading data
+## Changed outputs: legacy master and `get_decon()`
+
+`get_qes_master()` keeps its arguments, its 30 documented columns in the same order and types, and its attributes; `get_decon()` keeps its 19 columns. Their values change by deletion, apart from the reader changes listed under *Changed outputs: reading data* (for example `qes2018` `turnout`): each column reads the variable 0.4.4 read, converted as 0.4.4 converted it, and values verified to be wrong are set to `NA`. A message says so once per session (classes `qesR_message_values_changed` and `qesR_message_legacy_columns`). Results from 0.4.4 can be reproduced only by installing it (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`). `dev/legacy-diff.md` in the source repository gives the counts, column by column and study by study, against a clean 0.4.4 build.
+
+- **Frozen sources.** The source variable of every column of every study is the one qesR 0.4.4 chose, frozen from a clean 0.4.4 build (`inst/extdata/legacy/sources.csv`); nothing is matched by name at run time, so a label or name read differently can never change which variable a column reads. `attr(, "source_map")` gives them, with the md5 of each file read; `get_decon()` now has one too.
+- **No row is dropped.** There is no de-duplication and no removal of empty rows: every study contributes exactly the rows of its file, which is checked. 0.4.4 dropped 380 `qes2007_panel` respondents (its `quest` number repeats across the two subsamples) and 1 `qes_crop_2007_2010` respondent as duplicates; the master now has 40,987 rows (40,606 in 0.4.4). `duplicates_removed` and `empty_rows_removed` are always 0. `respondent_id` still repeats in `qes2007_panel`.
+- **Columns removed.** The 70 columns 0.4.4 appended after the 30 documented ones, by stacking raw variables that share a name across studies and renaming them from the 2007 questionnaire, are gone: they held different questions in different studies (`vote_federal_2006` was satisfaction with democracy in `qes2012`, `feeling_david_0_100` an abortion item in `qes2018`, `provincial_pid_item` the home language). `attr(, "removed_columns")` lists them; `crossstudy_variables_added` is empty and `variable_name_map` has no rows. Read those items from each study with `get_qes()`. `save_path` no longer writes `<stem>_variable_name_map.csv`, and `attr(, "variable_name_map_path")` is `NULL`; the provenance sidecar `<stem>_provenance.csv` replaces it.
+- **Values set to `NA` in `get_qes_master()`**, each listed with its number of cells and reason in the new attribute `legacy_na_columns`:
+  - `party_best` and `party_lean` in every study (each study's source was another question or construct);
+  - `vote_choice` and `turnout` where the source is a vote intention or likelihood: `qes2022` (`cps_votechoice1`, `cps_turnout`), `qes_crop_2007_2010` and `qes1998` (`vote_choice` only; `qes1998` `turnout` is the reported vote); `vote_choice` of the 387 `qes2007_panel` respondents not reached after the election (code 10, which 0.4.4 counted as "did not vote"); `vote_choice_text` of `qes2022` (the text of the intention item) and `qes2018` (the text of the most important issue);
+  - `sovereignty_support` and `sovereignty` wherever the question is not the referendum on Quebec becoming an independent country: `qes2007`, `qes2008` and `qes1998` (the 1995 partnership question), `qes2012_panel` (a sovereign country), `qes2007_panel` and `qes_crop_2007_2010` (follow-up push questions), `qes2018_panel` (a favourable/opposed scale). They keep `qes2012`, `qes2014`, `qes2018` and `qes2022`;
+  - `language` of `qes2014` and `qes2022`, which held the interview or interface language, not the mother tongue;
+  - `political_interest` of `qes2018` (raw 1-4 codes in reverse order on the 0-10 column; filled in 0.7.0) and `qes2012_panel` (a 0-3 index derived from debate viewing); `ideology` of `qes2014`, whose 0 and 10 answers were lost;
+  - `born_canada` of `qes2018` (people born elsewhere in Canada coded No, raw codes left in); `income` and `religion` of `qes2018` (raw codes) and the `-99` codes of `qes2022`; `education` of `qes1998` (10-15 years of schooling coded as college);
+  - "don't know" and refusal labels left as values: `born_canada` in `qes2012` and `qes2014`, `language` and `education` in `qes2018_panel`, `education` in `qes2007`, `income` in `qes2014`, `qes2018_panel`, `qes_crop_2007_2010`, `qes2008`, `qes2007` and `qes2007_panel`, `religion` in `qes2014` and `qes2012`. `vote_choice` keeps its 0.4.4 category "Don't know / Refused", a category 0.4.4 coded on purpose, until the harmonized `vote_choice` of 0.7.0.
+- **Columns appended.** `vote_choice_timing` (`"post"`: the vote reported after the election) and `sovereignty_item` (`"sov_indep"`: the independent-country referendum question) say what `vote_choice` and `sovereignty_support` hold in each study, with one value per study; they are `NA` in the studies where those columns are blanked. Appended columns are never removed.
+- **New attributes** of `get_qes_master()`: `legacy_na_columns`, `legacy_column_map` (what each column means, the harmonized target that will fill it, the studies whose values changed, and a flag for the columns that mix instruments: `political_interest`, `age_group`, `education`), `removed_columns`, `qes_provenance` (the file read for each study, so `qes_provenance()` and `qes_cite()` accept the master) and `qes_spec`. `save_path` writes UTF-8 (CSV) and, next to the file, `<stem>_provenance.csv`.
+- Each study's rows are converted on their own, the way the full 11-study build of 0.4.4 converted them (0.4.4 converted the stacked columns, so a study's values could depend on the studies built with it): `get_qes_master(surveys = "qes2018")` gives exactly the `qes2018` rows of the full master.
+- `get_qes_master(surveys = "qes_demo")` and `get_decon("qes_demo")` build the synthetic demonstration study, offline; the help pages' examples use it.
+- **`get_decon()`**: `turnout` and `votechoice` are `NA` in every study but `qes2022`, because 0.4.4 read other questions for them (`q1` and `q2`: for `qes2018`, satisfaction with democracy and the most important issue); `party_best` and `partylean` are `NA` everywhere; the `-99` item nonresponse codes of `qes2022` are `NA` in every column (the mean of `ideology` is about 4.96, not 2.64). `qes2022` `turnout` and `votechoice` stay the campaign-period likelihood and intention of 0.4.4, and the new attribute `timing` says so (`"pre"`). `get_decon()` now refuses the studies added since 0.4.4 (`qes1998_crop`, `qes1998_createc`) with an error of class `qesR_error_input`.
+
+## Changed outputs: reading data
 
 - `get_qes()` now reads the original upload of each study's pinned data file (SPSS `.sav` or Stata `.dta`), not the tab-delimited copy Dataverse makes of it. The file is checked against the md5 in the catalog (`qesR_error_checksum`) and its rows and columns against the catalog (`qesR_error_rowcount`) before use, and is kept in the download cache. Within a session the parsed data, and the Dataverse metadata used for the codebook, are also kept in memory, so a second call (or `get_preview()`) makes no request (`options(qesR.memo = FALSE)` turns this off; `qes_cache_clear()` empties it). qesR no longer reads text, CSV or zip files, and never guesses which file to read.
 - Column names, codes and `is.na()` counts are those of 0.4.4 for all 11 studies (checked against 0.4.4 output), except in the columns listed here:
@@ -65,33 +103,50 @@
 - `get_preview()` is exactly `head()` of `get_qes()`: it keeps the `qes_survey_code`, `qes_provenance` and `qes_codebook` attributes and is served from memory when the study was read before in the session.
 - `get_qes(file =)` chooses among the study's data files only (0.4.4 took the first match among all files, documentation included), and a pattern that matches several is an error (class `qesR_error_ambiguous_file`); a pattern that is not a valid regular expression is an error of class `qesR_error_input`. `get_qes("qes2012", file = "SPSS")` still reads the SPSS twin. `get_qes("qes1998", file = "CROP")` reads the study `qes1998_crop`, with a message, and its banner, assigned names and codebook are those of `qes1998_crop` (so is `qes_codebook("qes1998", file = "CROP")`).
 - A label or text value still holding a replacement or control character after reading raises a warning of class `qesR_warning_encoding`.
-- The codebook attached by `get_qes()` is built offline (see *Codebooks, questions and search*): `get_qes()` makes one request per study, for its data file.
-- `get_qes_master()` and `get_decon()` read through the new reader. Where the original files leave a column unlabelled that 0.4.4 labelled by hand (`qes2018` education and, in `get_decon()`, gender; `qes1998` age group 65+ and education code 9), they keep the 0.4.4 labels, so these columns are unchanged. Changes that come from the reader, compared with 0.4.4 on the same rows (see *Legacy master and `get_decon()`* for the rest):
+- The codebook attached by `get_qes()` is built offline (see *New: codebooks, questions and search*): `get_qes()` makes one request per study, for its data file.
+- `get_qes_master()` and `get_decon()` read through the new reader. Where the original files leave a column unlabelled that 0.4.4 labelled by hand (`qes2018` education and, in `get_decon()`, gender; `qes1998` age group 65+ and education code 9), they keep the 0.4.4 labels, so these columns are unchanged. Changes that come from the reader, compared with 0.4.4 on the same rows (see *Changed outputs: legacy master and `get_decon()`* for the rest):
   - `get_qes_master()`: `qes2012` `religion` labels in their original case; `qes_crop_2007_2010` `income` reads "20 000 $ à 39 999 $" instead of "20 000 $ … 39 999 $", and `province_territory` reads "Quebec" for the 7,203 respondents whose region was typed in the DOS character set; `qes2018` `turnout` is 0 instead of `NA` for the 336 respondents who said they did not vote (`q5` codes 1 and 3), as its coding intends; `survey_weight` keeps its stored precision; the `interview_*` columns of `qes2022` lose their trailing `.000`.
   - `get_decon()`: `qes2012` `province_territory` labels in their original case; `qes1998` `age` holds the panel file's labels ("18-24" ... "55-64", with "65+") instead of another file's ("DE 18 A 24 ANS" ...); `qes2022` `votechoice_text` loses 4 replacement characters, and its numeric columns (`age`, `political_interest`, `ideology`, `income`) are doubles instead of integers. `qes2022` `age` stays a number (a column whose labels only repeat its codes is not turned into a factor).
 
-## Legacy master and `get_decon()`
+## Soft-deprecated names (kept indefinitely)
 
-`get_qes_master()` keeps its arguments, its 30 documented columns in the same order and types, and its attributes; `get_decon()` keeps its 19 columns. Their values change by deletion, apart from the reader changes listed above (for example `qes2018` `turnout`): each column reads the variable 0.4.4 read, converted as 0.4.4 converted it, and values verified to be wrong are set to `NA`. A message says so once per session (classes `qesR_message_values_changed` and `qesR_message_legacy_columns`). Results from 0.4.4 can be reproduced only by installing it (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`). `dev/legacy-diff.md` in the source repository gives the counts, column by column and study by study, against a clean 0.4.4 build.
+| 0.4.4 function | Use instead | Notice from | What changed in 0.5.0 |
+|---|---|---|---|
+| `get_codebook()` | `qes_codebook()` | 0.5.0 | offline; columns appended; `refresh` ignored |
+| `get_qes_codebook()` | `qes_codebook()` | 0.5.0 | as `get_codebook()` |
+| `format_codebook()` | `qes_codebook(codebook, layout = )` | 0.5.0 | a plain data frame is an error; long layout keeps unlabelled variables |
+| `get_value_labels()` | `qes_codebook(layout = "long")` | 0.5.0 | an unknown variable is an error; `""` labels kept |
+| `get_question()` | `qes_question()` | 0.5.0 | exact match; `full = FALSE` no longer changes the result (no-op, with a note) |
+| `get_codebook_files()` | `qes_docs()` | 0.5.0 | lists every document, offline; `file` and `refresh` ignored |
+| `get_qes_codebook_files()` | `qes_docs()` | 0.5.0 | as `get_codebook_files()` |
+| `download_codebook()` | `qes_download(what = "docs")` | 0.5.0 | `file` now selects documents (it selected a data file); md5-checked; `refresh` ignored |
+| `get_preview()` | `head(get_qes(srvy), obs)` | 0.5.0 | exactly `head()` of `get_qes()`; `obs` must be a whole number of at least 1 |
+| `get_qescodes()` | `qes_studies()` | 0.5.0 | accented French names; doi.org links; 1998 firm codes appended |
+| `get_decon()` | none yet (a replacement is planned for 0.7.0) | none | kept as it is; values changed (see above) |
 
-- **Frozen sources.** The source variable of every column of every study is the one qesR 0.4.4 chose, frozen from a clean 0.4.4 build (`inst/extdata/legacy/sources.csv`); nothing is matched by name at run time, so a label or name read differently can never change which variable a column reads. `attr(, "source_map")` gives them, with the md5 of each file read; `get_decon()` now has one too.
-- **No row is dropped.** There is no de-duplication and no removal of empty rows: every study contributes exactly the rows of its file, which is checked. 0.4.4 dropped 380 `qes2007_panel` respondents (its `quest` number repeats across the two subsamples) and 1 `qes_crop_2007_2010` respondent as duplicates; the master now has 40,987 rows (40,606 in 0.4.4). `duplicates_removed` and `empty_rows_removed` are always 0. `respondent_id` still repeats in `qes2007_panel`.
-- **Columns removed.** The 70 columns 0.4.4 appended after the 30 documented ones, by stacking raw variables that share a name across studies and renaming them from the 2007 questionnaire, are gone: they held different questions in different studies (`vote_federal_2006` was satisfaction with democracy in `qes2012`, `feeling_david_0_100` an abortion item in `qes2018`, `provincial_pid_item` the home language). `attr(, "removed_columns")` lists them; `crossstudy_variables_added` is empty and `variable_name_map` has no rows. Read those items from each study with `get_qes()`. `save_path` no longer writes `<stem>_variable_name_map.csv`.
-- **Values set to `NA` in `get_qes_master()`**, each listed with its number of cells and reason in the new attribute `legacy_na_columns`:
-  - `party_best` and `party_lean` in every study (each study's source was another question or construct);
-  - `vote_choice` and `turnout` where the source is a vote intention or likelihood: `qes2022` (`cps_votechoice1`, `cps_turnout`), `qes_crop_2007_2010` and `qes1998` (`vote_choice` only; `qes1998` `turnout` is the reported vote); `vote_choice` of the 387 `qes2007_panel` respondents not reached after the election (code 10, which 0.4.4 counted as "did not vote"); `vote_choice_text` of `qes2022` (the text of the intention item) and `qes2018` (the text of the most important issue);
-  - `sovereignty_support` and `sovereignty` wherever the question is not the referendum on Quebec becoming an independent country: `qes2007`, `qes2008` and `qes1998` (the 1995 partnership question), `qes2012_panel` (a sovereign country), `qes2007_panel` and `qes_crop_2007_2010` (follow-up push questions), `qes2018_panel` (a favourable/opposed scale). They keep `qes2012`, `qes2014`, `qes2018` and `qes2022`;
-  - `language` of `qes2014` and `qes2022`, which held the interview or interface language, not the mother tongue;
-  - `political_interest` of `qes2018` (raw 1-4 codes in reverse order on the 0-10 column; filled in 0.7.0) and `qes2012_panel` (a 0-3 index derived from debate viewing); `ideology` of `qes2014`, whose 0 and 10 answers were lost;
-  - `born_canada` of `qes2018` (people born elsewhere in Canada coded No, raw codes left in); `income` and `religion` of `qes2018` (raw codes) and the `-99` codes of `qes2022`; `education` of `qes1998` (10-15 years of schooling coded as college);
-  - "don't know" and refusal labels left as values: `born_canada` in `qes2012` and `qes2014`, `language` and `education` in `qes2018_panel`, `education` in `qes2007`, `income` in `qes2014`, `qes2018_panel`, `qes_crop_2007_2010`, `qes2008`, `qes2007` and `qes2007_panel`, `religion` in `qes2014` and `qes2012`. `vote_choice` keeps its 0.4.4 category "Don't know / Refused", a category 0.4.4 coded on purpose, until the harmonized `vote_choice` of 0.7.0.
-- **Columns appended.** `vote_choice_timing` (`"post"`: the vote reported after the election) and `sovereignty_item` (`"sov_indep"`: the independent-country referendum question) say what `vote_choice` and `sovereignty_support` hold in each study, with one value per study; they are `NA` in the studies where those columns are blanked. Appended columns are never removed.
-- **New attributes** of `get_qes_master()`: `legacy_na_columns`, `legacy_column_map` (what each column means, the harmonized target that will fill it, the studies whose values changed, and a flag for the columns that mix instruments: `political_interest`, `age_group`, `education`), `removed_columns`, `qes_provenance` (the file read for each study, so `qes_provenance()` and `qes_cite()` accept the master) and `qes_spec`. `save_path` writes UTF-8 (CSV) and, next to the file, `<stem>_provenance.csv`.
-- Each study's rows are converted on their own, the way the full 11-study build of 0.4.4 converted them (0.4.4 converted the stacked columns, so a study's values could depend on the studies built with it): `get_qes_master(surveys = "qes2018")` gives exactly the `qes2018` rows of the full master.
-- `get_qes_master(surveys = "qes_demo")` and `get_decon("qes_demo")` build the synthetic demonstration study, offline; the help pages' examples use it.
-- **`get_decon()`**: `turnout` and `votechoice` are `NA` in every study but `qes2022`, because 0.4.4 read other questions for them (`q1` and `q2`: for `qes2018`, satisfaction with democracy and the most important issue); `party_best` and `partylean` are `NA` everywhere; the `-99` item nonresponse codes of `qes2022` are `NA` in every column (the mean of `ideology` is about 4.96, not 2.64). `qes2022` `turnout` and `votechoice` stay the campaign-period likelihood and intention of 0.4.4, and the new attribute `timing` says so (`"pre"`). `get_decon()` now refuses the studies added since 0.4.4 (`qes1998_crop`, `qes1998_createc`) with an error of class `qesR_error_input`.
+- Eleven 0.4.4 helpers become legacy wrappers. They keep their arguments and output, keep working and will not be removed. Each prints a one-time notice (class `qesR_message_deprecated`) naming its replacement, but only once that replacement exists. `quiet = TRUE` does not hide the notice; `options(qesR.quiet_deprecated = TRUE)` does. The table is in `?qesR-deprecated`.
+- Notices: `get_codebook()` and `get_qes_codebook()` (use `qes_codebook()`, same arguments) and `get_preview()` (use `head(get_qes(srvy), obs)`).
+- Notices: `get_qescodes()` (use `qes_studies()`), and `get_codebook_files()` and `get_qes_codebook_files()` (use `qes_docs()`). These two now return every document of the study from the offline catalog, with the 0.4.4 columns, and no longer download metadata; their `file` and `refresh` arguments are ignored, with a one-time note (class `qesR_message_arg_ignored`).
+- Notice: `download_codebook()` (use `qes_download(what = "docs")`). It now downloads the documents listed in the offline catalog, the same files `get_codebook_files()` lists, checks each against its md5 before giving it its final name, and makes no metadata request. Its `file` argument now selects documents by name (in 0.4.4 it selected a data file), `refresh` is ignored with a one-time note, and `dest_dir` is created only when there is a file to download. A file already in `dest_dir` is still kept unless `overwrite = TRUE`.
+- Notices: `format_codebook()` (use `qes_codebook(codebook, layout = )`), `get_value_labels()` (use `qes_codebook(layout = "long")`) and `get_question()` (use `qes_question()`). Their behaviour changes:
+  - `format_codebook()` on a plain data frame (for example a codebook read back from a CSV file, which has lost its class) is now an error of class `qesR_error_input` that names the fix, `qes_codebook("<code>")`; 0.4.4 accepted any data frame. Its long layout keeps the variables that have no value labels (one row with `value` `NA`), where 0.4.4 dropped them.
+  - `get_value_labels(codebook, variable)` with a variable that is not in the codebook is an error of class `qesR_error_unknown_variable` that suggests near matches; 0.4.4 returned an empty list. A value label that is `""` in its file is kept.
+  - `get_question(do, q)` matches `q` exactly (ignoring case only when that names a single column): `get_question(d, "q1")` no longer answers for `q10`, and `"q36"` no longer for `q36_1`; an unknown name is an error of class `qesR_error_unknown_variable` that suggests near matches. It returns the questionnaire wording of `qes_question()` when the study is known, else the variable label; a label that only repeats the variable's name is no label, and the result is then `NA` with a warning (0.4.4 returned the name, for example `"responseid"` in `qes2018`). `full` no longer changes the result (the text is always the most complete one qesR has; `full = FALSE` prints a one-time note), and a question its source file cut at 80 characters (`qes2022`) is returned as is with a warning of class `qesR_warning_truncated`, instead of being completed from a downloaded PDF.
+  - `get_codebook()` and `get_qes_codebook()` return what `qes_codebook()` returns: the 0.4.4 columns first and in the same order, then new columns (see *New: codebooks, questions and search*); `refresh` is ignored with a one-time note.
+- `get_decon()` stays stable until 0.7.0.
 
-## Codebooks, questions and search
+## New: study catalog, documents and citations
+
+- New `qes_studies()` lists every study from a catalog shipped with the package, with no network request: code, family, deposit title and authors, English and French display names, year, design, target population, server, DOI, the pinned dataset version and data file, source language, licence and the dataset UNF. `qes_studies(check_updates = TRUE)` asks Dataverse, one metadata request per deposit, whether a newer version exists or the pinned data file changed; a study that cannot be checked is reported as `"unreachable"` instead of failing.
+- New `qes_docs()` lists the codebooks, questionnaires and technical or methodological reports of each study, with their role, language, size, md5 and download URL, offline.
+- New `qes_cite()` returns the citation of qesR and of each dataset (authors, year, verbatim deposit title, DOI, repository, pinned version and UNF) as text, BibTeX or `bibentry`. `citation("qesR")` now works (static `inst/CITATION`). The citation vignettes are generated from the catalog; the hand-copied tables, which carried a stray `[fileUNF]` token and non-DOI links, are gone from the README and vignettes.
+- The 1998 deposit is split into its three surveys: `qes1998` still reads the combined CROP-CREATEC panel file (1,483 rows, as in 0.4.4), and the new codes `qes1998_crop` (450 rows) and `qes1998_createc` (1,057 rows) read the two firms' files. All three cover francophones only, each with the definition its codebook gives.
+- The Durand panels, the CROP polls and the 1998 polls are no longer presented as "Quebec Election Study" panels: `get_qescodes(detailed = TRUE)` and the `get_qes()` banner use their own titles (for example "Panel Survey on the 2018 Quebec Election"), and the same names now appear in the `qes_name_en` column of `get_qes_master()` for those studies. French names carry their accents. `documentation` is the doi.org link.
+- `get_qes_master()` keeps building the 11 studies of 0.4.4 by default, and `surveys = "all"` keeps meaning those 11. The new 1998 codes are not in the master yet: naming them is an error (class `qesR_error_input`), because the `qes1998` panel file already holds their respondents. Read them with `get_qes()`.
+- The website has a Study catalog page (EN and FR), generated from the shipped catalog when the site is built, in place of the hand-written survey code table, which still carried the old study names. Guides are grouped in English and French menus, each guide links to its translation, the 0.4.4 functions are grouped under *Legacy functions* in the reference, and the site has a dark mode.
+- The catalog is versioned (`inst/extdata/VERSIONS`), and a synthetic demonstration study, `qes_demo`, ships in its own tree for offline examples and tests. `get_qes("qes_demo")` reads it with no download.
+
+## New: codebooks, questions and search
 
 - Codebooks are built offline. qesR now ships the description of every variable of every study released under CC0, that is all but `qes2022` (`inst/extdata/dict/`, 165 KB): the variable label of the pinned data file, the question text in English and French from the deposited questionnaires (with a reference to each document that gives it: one or more `<file_id>:<question>` separated by `;`, e.g. `352010:Q19;352009:Q19` for the English and French questionnaires), the value labels, the unweighted count of each code, and the missing type of each "don't know", "refused" or declared missing code. A code an SPSS file declares missing but whose label is an answer ("Un autre parti", "ne voterait pas/annulerait" in a voting-intention item) gets no missing type; "did not vote", "spoiled" and "not reached in this wave" codes get their own type instead of `user_na`. `qes_codebook()` and `get_qes(with_codebook = TRUE)` no longer download Dataverse's DDI metadata or any PDF or Word document, and no longer run external programs (`pdftotext`, `gs`, `python3`, `textutil`) to read them. The `xml2` package is no longer needed.
 - `qes2022` is licensed CC BY-NC 4.0, so qesR ships none of its labels, question text or counts. Its codebook is built the first time you ask for it, from your own md5-verified copy of the data file, and kept in the download cache as two CSV files (listed by `qes_cache_info()` with `kind = "shard"`, deleted by `qes_cache_clear()`). Its question text is the file's variable label, which Stata cut at 80 characters: those questions are flagged `question_truncated = TRUE`, with the codebook document to read in `doc_ref`.
@@ -107,18 +162,77 @@
 - New `qes_search(pattern)` searches variable names, labels, question text (English and French) and value labels of every study, offline, ignoring case and accents (`qes_search("souverain|sovereign")`). `qes2022` is searchable once its codebook has been built. The result reports, per study, how many variables have question text and how many were checked by hand.
 - New `qes_missing(x)` sets the codes the codebook types as missing ("don't know", "refused", declared SPSS missing values, `qes2022`'s `-99` item nonresponse) to `NA` in `get_qes()` data, or with `action = "tagged"` to tagged `NA` values that keep the reason (`haven::na_tag()`). Spoiled ballots, options not ticked in a multiple-choice question, "did not vote" and "not registered" are left alone unless asked for (`types =`). A code that the file declares missing but that the codebook records as an answer is never changed. It records what it did in the attribute `qes_missing_log`. It works from the codebook `get_qes()` attached or from the labels on the columns, and never downloads anything.
 
-## Soft-deprecated names (kept indefinitely)
+## New: downloads, cache and provenance
 
-- Eleven 0.4.4 helpers become legacy wrappers. They keep their arguments and output, keep working and will not be removed. Each prints a one-time notice (class `qesR_message_deprecated`) naming its replacement, but only once that replacement exists. `quiet = TRUE` does not hide the notice; `options(qesR.quiet_deprecated = TRUE)` does. The table is in `?qesR-deprecated`.
-- Notices shown now: `get_codebook()` and `get_qes_codebook()` (use `qes_codebook()`, same arguments) and `get_preview()` (use `head(get_qes(srvy), obs)`).
-- Notices shown from this version: `get_qescodes()` (use `qes_studies()`), and `get_codebook_files()` and `get_qes_codebook_files()` (use `qes_docs()`). These two now return every document of the study from the offline catalog, with the 0.4.4 columns, and no longer download metadata; their `file` and `refresh` arguments are ignored, with a one-time note (class `qesR_message_arg_ignored`).
-- Notice shown from this version: `download_codebook()` (use `qes_download(what = "docs")`). It now downloads the documents listed in the offline catalog, the same files `get_codebook_files()` lists, checks each against its md5 before giving it its final name, and makes no metadata request. Its `file` argument now selects documents by name (in 0.4.4 it selected a data file), `refresh` is ignored with a one-time note, and `dest_dir` is created only when there is a file to download. A file already in `dest_dir` is still kept unless `overwrite = TRUE`.
-- Notices shown from this version: `format_codebook()` (use `qes_codebook(codebook, layout = )`), `get_value_labels()` (use `qes_codebook(layout = "long")`) and `get_question()` (use `qes_question()`). Their behaviour changes:
-  - `format_codebook()` on a plain data frame (for example a codebook read back from a CSV file, which has lost its class) is now an error of class `qesR_error_input` that names the fix, `qes_codebook("<code>")`; 0.4.4 accepted any data frame. Its long layout keeps the variables that have no value labels (one row with `value` `NA`), where 0.4.4 dropped them.
-  - `get_value_labels(codebook, variable)` with a variable that is not in the codebook is an error of class `qesR_error_unknown_variable` that suggests near matches; 0.4.4 returned an empty list. A value label that is `""` in its file is kept.
-  - `get_question(do, q)` matches `q` exactly (ignoring case only when that names a single column): `get_question(d, "q1")` no longer answers for `q10`, and `"q36"` no longer for `q36_1`; an unknown name is an error of class `qesR_error_unknown_variable` that suggests near matches. It returns the questionnaire wording of `qes_question()` when the study is known, else the variable label; a label that only repeats the variable's name is no label, and the result is then `NA` with a warning (0.4.4 returned the name, for example `"responseid"` in `qes2018`). `full` no longer changes the result (the text is always the most complete one qesR has; `full = FALSE` prints a one-time note), and a question its source file cut at 80 characters (`qes2022`) is returned as is with a warning of class `qesR_warning_truncated`, instead of being completed from a downloaded PDF.
-  - `get_codebook()` and `get_qes_codebook()` return what `qes_codebook()` returns: the 0.4.4 columns first and in the same order, then new columns (below); `refresh` is ignored with a one-time note.
-- `get_decon()` stays stable until 0.7.0.
+- Downloads now use the `curl` package (new in Imports) instead of `download.file()`. `curl` gives the HTTP status, the response headers (needed to honour `Retry-After` and to recognise a server that refuses automated requests) and the body from one request, has per-transfer stall timeouts, needs no external program and has no R dependencies.
+- A request that fails for a passing reason (a timeout, a dropped connection, HTTP 408, 429, 500, 502, 503 or 504) is tried again, up to 4 attempts (`options(qesR.max_tries =)`), after a growing pause or the delay the server asks for in `Retry-After` (at most two minutes; a longer delay is an error of class `qesR_error_http`). Other errors fail at once. Connections time out after 30 s, and a download slower than 1 KB/s for 60 s (`options(qesR.stall_timeout =)`) is abandoned.
+- Network errors have subclasses: `qesR_error_http` (fields `status`, `retry_after`, `server_message`), `qesR_error_http_refused` (a Harvard Dataverse bot challenge or a 403: never retried or worked around; the message explains how to download the file by hand), `qesR_error_tls` and `qesR_error_offline`. A file is written under a temporary `.part` name and renamed only once complete, so an interrupted download never leaves a truncated file behind.
+- New `qes_cache_info()` and `qes_cache_clear()` list and delete the files in qesR's download cache. The cache keeps each catalog file under its file id and md5 and checks the md5 before keeping it (`qesR_error_checksum` otherwise). By default it lives in the session's temporary directory and disappears when R exits; `options(qesR.cache = "disk")` keeps files between sessions in `tools::R_user_dir("qesR", "cache")`, and `options(qesR.cache_dir =)` in a directory of your choice (qesR works only in a `qesR` subfolder that it creates and marks, and `qes_cache_clear()` refuses any folder without that mark). `get_qes()` reads its data files through this cache (see *Changed outputs: reading data*).
+- `qes_studies(check_updates = TRUE)` remembers each answer for the session (`qes_cache_clear()` forgets it) and tries each deposit at most twice.
+- New `qes_download(studies, path)` saves the original files of one or more studies in a directory you name: the data file as deposited (`what = "data"`, the default) and the codebooks, questionnaires and reports (`what = "docs"`, filtered by `role` and `lang`). `path` must already exist, nothing is written outside it, and nothing at all when no file matches. Before anything is written, a file already there with the expected md5 is kept, and one that differs is an error (class `qesR_error_input`) unless `overwrite = TRUE`. Each file comes through the download cache, is copied under a temporary `.part` name, checked against its catalog md5 and only then renamed. It returns, invisibly, one row per file (`study`, `file_id`, `file_name`, `role`, `lang`, `md5`, `local_path`, `from_cache`, `downloaded`, `pinned`) with a `qes_provenance` attribute.
+- `qes_download(version = "latest")` is the only way qesR fetches files it does not pin: it asks Dataverse for the latest published version of each deposit, follows a replaced file to its replacement, checks each file against the md5 Dataverse gives, warns (class `qesR_warning_unpinned`) and records `pinned = FALSE`. `get_qes()` keeps reading the pinned files.
+
+## Security
+
+- Removed the insecure download fallback. qesR 0.4.4 retried a failed download with TLS certificate verification turned off (for `qes2022` always, and for any study whose first error mentioned SSL), first through `download.file()` and then by running the `curl --insecure` command. A failed download is now an error of class `qesR_error_network` that keeps the original error; qesR never disables certificate checks and never runs external download programs.
+- Requests now identify themselves only as `qesR/<version> R/<version>` and are spaced at least one second apart per server.
+- qesR no longer reads `.rds` files from Dataverse: `readRDS()` is never applied to downloaded content.
+- qesR no longer runs external programs (0.4.4 ran `curl`, `pdftotext`,
+  `gs`, `python3` and `textutil`) and never calls `load()`, `eval()` or
+  `parse()`; a test scans the installed namespace for these calls and for
+  any TLS option.
+
+## Messages and errors
+
+- Every error, warning and message that qesR itself raises now has a class, so scripts can handle them with `tryCatch()` without matching text. Errors inherit from `qesR_error` (`qesR_error_input`, `qesR_error_unknown_study`, `qesR_error_unknown_variable`, `qesR_error_ambiguous_file`, `qesR_error_network`, `qesR_error_source`), warnings from `qesR_warning` and messages from `qesR_message`. Conditions carry data fields such as `study`, `suggestions`, `url` and the root cause in `parent`. See `?qesR`.
+- Messages, warnings and errors are available in English and French. qesR follows `options(qesR.lang =)`, then the `QESR_LANG` and `LANGUAGE` environment variables, then the messages locale. The language never changes what functions return: qesR's own part of the reasons recorded in `attr(get_qes_master(), "failed_surveys")` is always in English (a root cause reported by R itself, such as a download error, keeps R's text).
+- Unknown study codes suggest near matches.
+
+## Documentation, licence and package
+
+- Help pages are now generated with roxygen2 from comments in `R/`, with the same topics, arguments and defaults as 0.4.4; their examples now run offline, and new topics document the new functions (see below). The package help page is also available as `?qesR` and now lists the authors and project links.
+- The test suite is back (testthat 3rd edition). It restores the tests removed before 0.4.4, except one that required the insecure TLS retry, and adds contract tests for the 14 exported functions: their arguments, visible return values, no writes outside `tempdir()` or into your workspace by default, opt-in assignment, and the column names that `get_qes()`, `get_qes_master()`, `get_decon()` and the codebook helpers return. Tests run offline against a simulated Dataverse; the live check against Dataverse runs only when `QESR_LIVE=true`.
+- `R CMD check --as-cran` now runs on GitHub Actions for every push and pull request on macOS, Windows and Ubuntu (R devel, release, oldrel-1 and 4.1).
+- Copyright and licence: the MIT licence now names the author, Thomas
+  Gareau-Paquette, as copyright holder in `LICENSE` and `LICENSE.md` (it
+  named "Quebec Election Study/Étude électorale québécoise rightful
+  owners"), and the "Quebec Election Study" copyright-holder entry is
+  removed from `Authors@R`: it is not a legal person, and no data of the
+  studies ship with the package. The new file `COPYRIGHTS` lists the
+  metadata of each study that ships (CC0 labels and question text) with its
+  DOI.
+- `inst/extdata/qes_master.csv` is removed. It held a 300-row sample per
+  study of an old master build, including rows derived from the 2022 study
+  (CC BY-NC 4.0), and the analysis vignettes read it when installed, so
+  they showed different numbers from the website. No respondent data ship
+  any more; the demonstration study `qes_demo` is synthetic.
+- Vignettes: the vignettes that ship with the package run their code
+  offline, on the catalog, the shipped metadata and `qes_demo`: *Getting
+  started* (`get-started`, `fr-demarrage`), *Study citations* (renamed
+  `citations`, `fr-citations`) and the new *Moving from qesR 0.4.4 to 0.5.0*
+  (`migrating-0.5`, `fr-migrer-0.5`). Each French vignette runs the same
+  code as its English partner.
+- The analysis examples (descriptive statistics, sovereignty, vote choice)
+  and the merged-dataset guide are now website-only articles. They read
+  `get_qes_master()` when the site is built, instead of a CSV file found in
+  the working directory or in the package, compute each estimate within one
+  study with that study's weight, show their code, and correct three
+  statements: the vote shares are among respondents who reported voting for
+  a party, the CROP polls do have a year for each respondent, and only the
+  independent-country question is used for sovereignty.
+- Examples run offline, on `qes_demo` and the shipped metadata. The only
+  example that uses the network is `qes_studies(check_updates = TRUE)`, run
+  only when a connection is available.
+- New help page `?qesR-fr`: an overview of the package in French, with a
+  table of its functions.
+- DESCRIPTION: the Description cites each study's dataset DOI; `LazyData`
+  is dropped; `dplyr`, `ggplot2` and `pkgdown` are no longer suggested (the
+  website lists `ggplot2` and `pkgdown` in `Config/Needs/website`; `dplyr`
+  is not used); a `Copyright` field points to `COPYRIGHTS`; `xml2` is no longer
+  imported, and `curl` is (see *New: downloads, cache and provenance*).
+- `scripts/build_qes_master.R` moved to `data-raw/legacy_build_master.R`;
+  it now needs an explicit `--out-dir`. The repository no longer tracks the
+  locally built `qes_master.*` files.
 
 # qesR 0.4.4
 
