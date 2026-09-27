@@ -18,23 +18,6 @@
 # twin or the label donor) must not hold whole-number codes as text where
 # 0.4.4 had numbers, and get_decon() keeps the 0.4.4 column types.
 
-local_live_originals <- function(.env = parent.frame()) {
-  skip_on_cran()
-  dir <- Sys.getenv("QESR_TEST_DATA_DIR")
-  if (nzchar(dir)) {
-    withr::local_options(qesR.cache_dir = dir, qesR.cache = "disk", .local_envir = .env)
-    testthat::local_mocked_bindings(
-      .qes_transport = function(...) stop("QESR_TEST_DATA_DIR is set: no request expected"),
-      .package = "qesR",
-      .env = .env
-    )
-  } else {
-    skip_if_not(identical(Sys.getenv("QESR_LIVE"), "true"), "set QESR_LIVE=true or QESR_TEST_DATA_DIR to run live tests")
-    skip_if_offline()
-  }
-  invisible()
-}
-
 # haven's own reading of an original, as the reference.
 haven_original <- function(file_row) {
   path <- qesR:::.qes_cache_fetch(file_row, qesR:::.qes_study_row(file_row$study)$server, quiet = TRUE)

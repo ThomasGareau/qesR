@@ -15,14 +15,24 @@
 #                  of its normalized text);
 #   waves.csv      study x wave membership, timing, dates and mode;
 #   weights.csv    the weights registry;
-#   CHANGES.csv    the spec changelog (EN/FR).
-# Later slices add gates.csv, expected/ and legacy.csv; the content hash
-# covers every CSV of the directory, so they are hashed without code changes.
+#   CHANGES.csv    the spec changelog (EN/FR);
+#   gates.csv      joint counts of gate code and source code among a wave's
+#                  members, for the rows the dictionary alone cannot project
+#                  (built by data-raw/build_sources.R from the pinned files);
+#   expected/marginals.csv
+#                  the projected unweighted marginals of every projectable
+#                  row (data-raw/project_marginals.R), checked by V-P1.
+# gates.csv and expected/ describe the shipped studies; a spec directory
+# without them loads with empty tables. Slice HZ6 adds legacy.csv; the content
+# hash covers every CSV of the directory, so it is hashed without code
+# changes.
 #
 # .qes_spec_load() reads a directory through the one CSV loader and types it;
 # .qes_spec_check() (R/hz-validate.R) runs the validator V-S1 to V-S17 on the
-# loaded tables. qes_spec() is the entry point; the loaded and validated spec
-# is kept for the session, keyed by the directory and the md5 of its files.
+# loaded tables and .qes_data_check() (R/hz-data.R) the data checks V-D* on
+# the shipped dictionary. qes_spec() is the entry point; the loaded and
+# validated spec is kept for the session, keyed by the directory and the md5
+# of its files.
 
 # Schema version this engine reads, and the files of a spec directory.
 .qes_spec_schema_version <- "1"
@@ -30,6 +40,13 @@
   targets = "targets.csv", levels = "levels.csv", crosswalk = "crosswalk.csv",
   valuemaps = "valuemaps.csv", waves = "waves.csv", weights = "weights.csv",
   changes = "CHANGES.csv"
+)
+# Optional files (a spec directory may lack them) and their schemas.
+.qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv")
+.qes_spec_table_schema <- c(
+  targets = "spec_targets", levels = "spec_levels", crosswalk = "spec_crosswalk",
+  valuemaps = "spec_valuemaps", waves = "spec_waves", weights = "spec_weights",
+  changes = "spec_changes", gates = "spec_gates", expected = "spec_expected"
 )
 .qes_spec_fields <- c("Spec-Version", "Spec-Date", "Schema-Version", "Engine-Min", "Hash", "Licence")
 
@@ -94,9 +111,13 @@
   dir <- tempfile("qes_spec_")
   dir.create(dir)
   on.exit(unlink(dir, recursive = TRUE), add = TRUE)
+  files <- c(.qes_spec_files, .qes_spec_optional_files)
   for (tab in names(tables)) {
-    file <- .qes_spec_files[tab]
+    file <- files[tab]
     if (is.na(file) || !is.data.frame(tables[[tab]])) next
+    # an optional table that the directory did not have stays absent
+    if (tab %in% names(.qes_spec_optional_files) && isTRUE(attr(tables[[tab]], "absent"))) next
+    dir.create(dirname(file.path(dir, file)), recursive = TRUE, showWarnings = FALSE)
     .qes_write_csv(tables[[tab]], file.path(dir, file))
   }
   .qes_spec_hash(dir)
@@ -153,13 +174,24 @@
   }
   tables <- list()
   problems <- .qes_spec_problems()
-  for (tab in names(.qes_spec_files)) {
-    path <- file.path(dir, .qes_spec_files[[tab]])
+  files <- c(.qes_spec_files, .qes_spec_optional_files)
+  for (tab in names(files)) {
+    path <- file.path(dir, files[[tab]])
+    schema <- .qes_spec_table_schema[[tab]]
+    if (!file.exists(path)) {
+      # only optional files can be absent (required ones were checked above)
+      tables[[tab]] <- structure(.qes_apply_schema(
+        as.data.frame(stats::setNames(rep(list(character(0)), length(.qes_schemas[[schema]])),
+                                      names(.qes_schemas[[schema]])), stringsAsFactors = FALSE),
+        schema
+      ), absent = TRUE)
+      next
+    }
     tables[[tab]] <- tryCatch(
-      .qes_read_csv(path, paste0("spec_", tab)),
+      .qes_read_csv(path, schema),
       qesR_error_source = function(e) {
         problems <<- rbind(problems, .qes_spec_problems(
-          "V-S1", "error", tab, NA_integer_, .qes_spec_files[[tab]], e$reason %||% conditionMessage(e)
+          "V-S1", "error", tab, NA_integer_, files[[tab]], e$reason %||% conditionMessage(e)
         ))
         NULL
       }
@@ -238,11 +270,18 @@
   obj
 }
 
-# Run the validator; an unexpected R error inside it (a bug the rules did not
-# foresee) becomes qesR_error_spec rather than a bare error.
+# Run the validator and the data checks on the shipped dictionary (R/hz-data.R);
+# an unexpected R error inside them (a bug the rules did not foresee) becomes
+# qesR_error_spec rather than a bare error. A custom spec whose gates.csv
+# lacks the cells of a row cannot be checked offline for it: a warning, since
+# its author checks it on the data with qes_spec(data = ).
 .qes_spec_check_safely <- function(spec, where) {
   tryCatch(
-    .qes_spec_check(spec),
+    rbind(
+      .qes_spec_check(spec),
+      .qes_data_check(spec, .qes_hz_sources_shipped(spec),
+                      offline_severity = if (isTRUE(spec$custom)) "warning" else "error")
+    ),
     error = function(e) {
       if (inherits(e, "qesR_error")) stop(e)
       .qes_spec_abort(.qes_spec_problems(
@@ -325,9 +364,12 @@
 #' why each missing value is missing and how comparable each study's question
 #' is to the target's anchor question.
 #'
-#' Slice HZ1 implements `view = "spec"`: the spec as tables, checked by the
-#' validator. The `"targets"` and `"crosswalk"` views, the `data` checks and
-#' the export of this function arrive with the harmonization engine.
+#' Slices HZ1 and HZ2 implement `view = "spec"`: the spec as tables, checked
+#' by the validator (rules V-S1 to V-S17) and by the data checks (V-D1 to
+#' V-D4, V-D7 and V-D8) against the shipped dictionary and `gates.csv`, and,
+#' with `data`, against data frames (V-D1 to V-D5, V-D7, V-D8). The
+#' `"targets"` and `"crosswalk"` views and the export of this function arrive
+#' with the harmonization engine.
 #'
 #' @param view `"targets"`, `"crosswalk"` or `"spec"`.
 #' @param targets,studies Filters of the `"targets"` and `"crosswalk"` views.
@@ -337,13 +379,15 @@
 #' @param validate What a problem found by the validator does: `"error"`
 #'   raises `qesR_error_spec`, `"report"` returns the spec with the problems
 #'   in `attr(, "check")`, `"none"` skips the check.
-#' @param data Data frames to check the spec against (data checks).
+#' @param data A named list of data frames, one per study, named by study
+#'   code, as [get_qes()] returns them: the data checks then also run on them
+#'   (view `"spec"` only). Their problems are added to `attr(, "check")`.
 #' @param lang Language of returned text, `"en"` or `"fr"`.
 #' @return For `view = "spec"`, an object of class `qes_spec`: a list with the
 #'   spec `version`, its content `hash`, `custom` (`TRUE` when it is not the
 #'   shipped spec) and `tables` (targets, levels, crosswalk, valuemaps, waves,
-#'   weights, changes); `attr(, "check")` holds the problems table (`rule`,
-#'   `severity`, `table`, `row`, `key`, `detail`).
+#'   weights, changes, gates, expected); `attr(, "check")` holds the problems
+#'   table (`rule`, `severity`, `table`, `row`, `key`, `detail`).
 #' @noRd
 qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, studies = NULL,
                      level = c("row", "code"), format = c("qesR", "retroharmonize"),
@@ -374,11 +418,52 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
                args = list(sprintf("qes_spec(view = \"%s\")", view)),
                data = list(arg = "view", value = view))
   }
-  if (!is.null(data)) {
-    .qes_abort("spec_later", class = "qesR_error_input",
-               args = list("qes_spec(data = )"), data = list(arg = "data", value = NULL))
+  if (is.null(data)) {
+    return(.qes_spec_get(spec, validate))
   }
-  .qes_spec_get(spec, validate)
+  data <- .qes_spec_data_arg(data)
+  obj <- .qes_spec_get(spec, if (identical(validate, "none")) "none" else "report")
+  if (identical(validate, "none")) {
+    return(obj)
+  }
+  check <- rbind(attr(obj, "check"), tryCatch(
+    .qes_data_check_frames(obj, data),
+    error = function(e) {
+      if (inherits(e, "qesR_error")) stop(e)
+      .qes_spec_abort(.qes_spec_problems(
+        "internal", "error", NA_character_, NA_integer_, NA_character_,
+        paste("the data checks stopped:", conditionMessage(e))
+      ), obj$dir %||% "<qes_spec object>")
+    }
+  ))
+  rownames(check) <- NULL
+  attr(obj, "check") <- check
+  if (identical(validate, "error") && any(check$severity == "error")) {
+    .qes_spec_abort(check, obj$dir %||% "<qes_spec object>")
+  }
+  obj
+}
+
+# The `data` argument of qes_spec(): a named list of data frames whose names
+# are study codes (canonicalized; any case and spacing).
+.qes_spec_data_arg <- function(data) {
+  bad <- function() {
+    .qes_abort("input_spec_data", class = "qesR_error_input", data = list(arg = "data", value = NULL))
+  }
+  if (is.data.frame(data) || !is.list(data) || length(data) == 0L || is.null(names(data)) ||
+      anyNA(names(data)) || !all(nzchar(names(data))) ||
+      !all(vapply(data, is.data.frame, logical(1)))) {
+    bad()
+  }
+  matched <- .qes_match_codes(names(data), .qes_catalog()$studies)
+  if (anyNA(matched)) {
+    .qes_unknown_study(names(data)[is.na(matched)])
+  }
+  names(data) <- matched
+  if (anyDuplicated(names(data)) > 0L) {
+    bad()
+  }
+  data
 }
 
 #' @export

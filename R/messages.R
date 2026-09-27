@@ -117,6 +117,14 @@
     en = "`spec` must be NULL (the spec shipped with qesR), the path of an existing spec directory or a qes_spec object.",
     fr = "`spec` doit valoir NULL (la sp\u00e9cification fournie avec qesR), le chemin d'un dossier de sp\u00e9cification existant ou un objet qes_spec."
   ),
+  input_spec_data = c(
+    en = "`data` must be a named list of data frames, one per study, named by study code (for example `list(qes2018 = get_qes(\"qes2018\"))`).",
+    fr = "`data` doit \u00eatre une liste nomm\u00e9e de data frames, un par \u00e9tude, nomm\u00e9s par code d'\u00e9tude (par exemple `list(qes2018 = get_qes(\"qes2018\"))`)."
+  ),
+  input_spec_data_factor = c(
+    en = "`data$%1$s` has factor column(s) %2$s. The checks read the codes: pass the labelled columns as get_qes() returns them, before haven::as_factor().",
+    fr = "`data$%1$s` a des colonnes de type facteur\u00a0: %2$s. Les contr\u00f4les lisent les codes\u00a0: passez les colonnes \u00e9tiquet\u00e9es telles que get_qes() les renvoie, avant haven::as_factor()."
+  ),
   input_spec_view = c(
     en = "`%1$s` applies only to view %2$s.",
     fr = "`%1$s` ne s'applique qu'\u00e0 la vue %2$s."

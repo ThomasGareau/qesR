@@ -1,0 +1,32 @@
+map_id,source_code,source_label,source_label_hash,source_label_origin,target_code,na_reason,alias_exception,note
+legacy_party_qes2012_q8,1,Quebec Liberal Party,,label_donor,1,,,
+legacy_party_qes2012_q8,2,Parti Québécois,,label_donor,2,,,
+legacy_party_qes2012_q8,3,Coalition avenir Québec,,label_donor,3,,,
+legacy_party_qes2012_q8,4,Québec Solidaire,,label_donor,4,,,
+legacy_party_qes2012_q8,5,Parti Vert du Québec,,label_donor,5,,,
+legacy_party_qes2012_q8,6,Option Nationale,,label_donor,7,,,
+legacy_party_qes2012_q8,96,Another party,,label_donor,90,,,
+legacy_party_qes2012_q8,98,I don't know,,label_donor,,dk,,
+legacy_party_qes2012_q8,99,I prefer not to answer,,label_donor,,refused,,
+legacy_party_qes2018_q8,1,Parti libéral du Québec,,supplement,,dk,,bare numeric code read as don't know
+legacy_party_qes2018_q8,2,Parti québécois,,supplement,,dk,,bare numeric code read as don't know
+legacy_party_qes2018_q8,3,Coalition avenir Québec,,supplement,,dk,,bare numeric code read as don't know
+legacy_party_qes2018_q8,4,Québec solidaire,,supplement,,dk,,bare numeric code read as don't know
+legacy_party_qes2018_q8,96,Un autre parti,,supplement,,dk,,bare numeric code read as don't know
+legacy_party_qes2018_q8,99,Je préfère ne pas répondre,,supplement,,refused,,
+legacy_born_qes2018_q69,1,Oui,,supplement,1,,,
+legacy_born_qes2018_q69,2,Non,,supplement,2,,,
+legacy_vote_qes2022_cps,1,,efca7c6a0a804cb3314179961a4a7837,file,1,,,
+legacy_vote_qes2022_cps,2,,83d63ca9d74444b6b703b53b355d8a5f,file,2,,,
+legacy_vote_qes2022_cps,3,,993ac46dff8fba8b5bfb525f4156fe38,file,3,,,
+legacy_vote_qes2022_cps,4,,edd9bc3e344810721746df356f171ab5,file,4,,,
+legacy_vote_qes2022_cps,5,,c13233be77f1eca8b73432d69a5dd291,file,6,,,
+legacy_vote_qes2022_cps,8,,f056a4e46899b46b5df37c7c285f5fee,file,90,,,
+legacy_vote_qes2022_cps,9,,c51f4753e9d6b3eb96d0da46f8bb078c,file,,refused,,
+legacy_vote_qes2022_cps,10,,53a389b3ee87145e930313f547d4610a,file,,dk,,
+legacy_vote_qes2007p_vote,0,n'a pas voté,,file,,not_voted,,
+legacy_vote_qes2007p_vote,1,L'Action Démocratique du Québec/ADQ,,file,8,,,
+legacy_vote_qes2007p_vote,2,Le Parti libéral du Québec,,file,1,,,
+legacy_vote_qes2007p_vote,3,Le Parti Québecois,,file,2,,,
+legacy_vote_qes2007p_vote,4,Québec Solidaire,,file,4,,,
+legacy_vote_qes2007p_vote,5,Le Parti Vert,,file,5,,,

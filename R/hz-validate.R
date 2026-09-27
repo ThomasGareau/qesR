@@ -3,8 +3,10 @@
 #
 # One implementation, run in four places: at runtime by qes_spec() (once per
 # session), in the offline tests, in CI (data-raw/spec_check.R, with
-# `release = TRUE` on tags) and, with the data checks V-D* added in slice
-# HZ2, on the original files. It never reads data.
+# `release = TRUE` on tags) and, with the data checks V-D* of R/hz-data.R,
+# on the original files (data-raw/build_sources.R). It never reads data: the
+# tables gates.csv and expected/marginals.csv are checked here for their form
+# only (V-S1, V-S2, V-S4); their content is checked by V-D7, V-D8 and V-P1.
 #
 # .qes_spec_check() returns a problems table: rule, severity ("error",
 # "warning" or "note"), table, row (the data row of the CSV, 1-based), key and
@@ -207,6 +209,27 @@
     }
   }
 
+  gt <- spec$tables$gates
+  ex <- spec$tables$expected
+  if (!is.null(gt) && nrow(gt) > 0L) {
+    gkeys <- paste(gt$study, gt$wave, gt$source_var, gt$gate_var, gt$gate_code, gt$source_code, sep = "/")
+    bad <- which(is.na(gt$study) | is.na(gt$wave) | is.na(gt$source_var) | is.na(gt$source_code) | is.na(gt$n) | gt$n < 0L)
+    add("V-S1", "gates", bad, gkeys[bad], "study, wave, source_var, source_code and a count of 0 or more are required")
+    bad <- which(!is.na(gt$source_code) & !.qes_is_canon_code(gt$source_code))
+    add("V-S1", "gates", bad, gkeys[bad], "source_code is not in canonical form")
+    bad <- which(has(gt$gate_code) & !.qes_is_canon_code(gt$gate_code))
+    add("V-S1", "gates", bad, gkeys[bad], "gate_code is not in canonical form")
+    bad <- which(has(gt$gate_var) != has(gt$gate_code))
+    add("V-S1", "gates", bad, gkeys[bad], "gate_var and gate_code go together")
+  }
+  if (!is.null(ex) && nrow(ex) > 0L) {
+    ekeys <- paste(ex$study, ex$wave, ex$target, ex$source_var, ex$value, ex$na_reason, sep = "/")
+    bad <- which(is.na(ex$study) | is.na(ex$wave) | is.na(ex$target) | is.na(ex$source_var) | is.na(ex$n) | ex$n < 0L)
+    add("V-S1", "expected", bad, ekeys[bad], "study, wave, target, source_var and a count of 0 or more are required")
+    bad <- which(has(ex$value) == has(ex$na_reason))
+    add("V-S1", "expected", bad, ekeys[bad], "exactly one of value and na_reason is set")
+  }
+
   # ---- V-S2: unique keys ------------------------------------------------------------
   # `rows`: the table rows of `keys` (when the keys are a subset of the table)
   dup <- function(table, keys, label, rows = seq_along(keys[[1]])) {
@@ -248,6 +271,14 @@
   dup("waves", list(wv$study, wv$wave), "(study, wave)")
   dup("waves", list(wv$study, wv$wave_order), "(study, wave_order)")
   dup("weights", list(wt$study, wt$wave, wt$weight_var), "(study, wave, weight_var)")
+  if (!is.null(gt) && nrow(gt) > 0L) {
+    dup("gates", list(gt$study, gt$wave, gt$source_var, gt$gate_var, gt$gate_code, gt$source_code),
+        "(study, wave, source_var, gate_var, gate_code, source_code)")
+  }
+  if (!is.null(ex) && nrow(ex) > 0L) {
+    dup("expected", list(ex$study, ex$wave, ex$target, ex$source_var, ex$value, ex$na_reason),
+        "(study, wave, target, source_var, value, na_reason)")
+  }
   for (i in seq_len(nrow(xw))) {
     nac <- names(.qes_parse_kv(xw$na_codes[i]) %||% character(0))
     mapped <- if (has(xw$map_id[i])) vm$source_code[vm$map_id == xw$map_id[i]] else character(0)
@@ -391,6 +422,30 @@
   add("V-S4", "waves", bad, wkeys[bad], "election_ref is not in catalog/elections.csv")
   bad <- which(!paste(wt$study, wt$wave) %in% paste(wv$study, wv$wave))
   add("V-S4", "weights", bad, tkeys[bad], "(study, wave) is not in waves.csv")
+  if (!is.null(gt) && nrow(gt) > 0L) {
+    # the gate is part of the match: cells counted under a gate the row no
+    # longer has are never read (.qes_hz_cells() filters on gate_var)
+    gate_or_empty <- function(x) ifelse(is.na(x), "", x)
+    xw_keys <- paste(xw$study, xw$wave, xw$source_var, gate_or_empty(xw$gate_var), sep = "\x1f")
+    gt_keys <- paste(gt$study, gt$wave, gt$source_var, gate_or_empty(gt$gate_var), sep = "\x1f")
+    bad <- which(!gt_keys %in% xw_keys)
+    add("V-S4", "gates", bad, gkeys[bad], "(study, wave, source_var, gate_var) is not a crosswalk row")
+    # cells counted under another membership rule than the wave's are stale
+    w_rule <- vapply(seq_len(nrow(gt)), function(k) {
+      w <- which(wv$study == gt$study[k] & wv$wave == gt$wave[k])
+      if (length(w) == 1L) .qes_member_rule(wv, w) else NA_character_
+    }, character(1))
+    bad <- which(!is.na(w_rule) & gate_or_empty(gt$member_rule) != w_rule)
+    bad <- bad[!duplicated(gt_keys[bad])]
+    add("V-S4", "gates", bad, gkeys[bad], sprintf(
+      "counted under membership rule '%s', the wave has '%s'; run data-raw/build_sources.R",
+      gate_or_empty(gt$member_rule[bad]), w_rule[bad]
+    ))
+  }
+  if (!is.null(ex) && nrow(ex) > 0L) {
+    bad <- which(!paste(ex$study, ex$wave, ex$target, ex$source_var) %in% paste(xw$study, xw$wave, xw$target, xw$source_var))
+    add("V-S4", "expected", bad, ekeys[bad], "(study, wave, target, source_var) is not a crosswalk row")
+  }
 
   # ---- V-S5: one primary row per (study, target) -----------------------------------------
   prim <- which(xw$primary %in% TRUE)

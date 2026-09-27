@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
 # Spec and source checks for CI and maintainers (design.md sections 5.10,
-# 5.11 and 8.4, slice HZ1). CI runs it on ubuntu-release; locally, from the
-# package root:
+# 5.11 and 8.4, slices HZ1 and HZ2). CI runs it on ubuntu-release; locally,
+# from the package root:
 #
 #   Rscript data-raw/spec_check.R              # check
 #   Rscript data-raw/spec_check.R --release    # check as for a release tag
@@ -16,9 +16,19 @@
 #      fn: rule has tests/testthat/test-hz-fn-<name>.R) and, with --release,
 #      the release rules of V-S11 and V-S13 (no draft row; no stable row on a
 #      study-wave whose recommended weight needs review);
-#   2. V-P2 against the merge-base with origin/main: when the spec content
-#      changed, Spec-Version must be higher and have a CHANGES.csv row;
-#   3. the source grep: the calls that tests/testthat/test-forbidden-calls.R
+#   2. the data checks V-D1 to V-D4, V-D7 and V-D8 (R/hz-data.R) and V-P1,
+#      the projected marginals against expected/marginals.csv, on the shipped
+#      dictionary and gates.csv, and on the aggregates of the studies whose
+#      metadata cannot ship (qes2022, OD3) in the build-ignored data-raw/nc/
+#      (sources_*.csv, gates_*.csv, against marginals_*.csv). When those
+#      files are absent the check is skipped with a note, and is an error
+#      only with QESR_REQUIRE_NC=true;
+#   3. V-P2 against the merge-base with origin/main: when the spec content
+#      changed, Spec-Version must be higher and have a CHANGES.csv row; and
+#      the MAJOR rule of section 5.11 on expected/marginals.csv: when a
+#      recorded marginal changed or disappeared, the major digit (the minor
+#      digit before 1.0.0) must be higher;
+#   4. the source grep: the calls that tests/testthat/test-forbidden-calls.R
 #      looks for in the installed namespace, searched in the code (comments
 #      excluded) of R/*.R.
 # It prints every problem and exits with status 1 when one is an error.
@@ -26,8 +36,9 @@
 # The spec is edited by hand (in R or LibreOffice, saved as UTF-8 CSV with LF
 # line endings). After any change: bump Spec-Version in SPEC by the rule of
 # design.md section 5.11, add a CHANGES.csv row, then run --write-hash.
-# Checks still to come: V-P1 and the MAJOR rule on expected/ (slice HZ2),
-# V-P3 on the generated reference (slice HZ3).
+# When a change moves counts, rebuild the aggregates first
+# (data-raw/build_sources.R, then data-raw/project_marginals.R). Check still
+# to come: V-P3 on the generated reference (slice HZ3).
 
 args <- commandArgs(trailingOnly = TRUE)
 pkgload::load_all(".", quiet = TRUE, export_all = TRUE)
@@ -60,7 +71,39 @@ cat(sprintf("Spec %s, hash %s: %d error(s), %d warning(s), %d note(s).\n",
             sum(problems$severity == "note")))
 failed <- failed || n_err > 0L
 
-# ---- 2. V-P2 against the merge-base ---------------------------------------------------
+# ---- 2. data checks and V-P1 --------------------------------------------------------------
+report <- function(p, what) {
+  if (nrow(p) > 0L) {
+    print(p, right = FALSE)
+  }
+  n <- sum(p$severity == "error")
+  cat(sprintf("%s: %d error(s), %d warning(s).\n", what, n, sum(p$severity == "warning")))
+  n > 0L
+}
+sources <- .qes_hz_sources_shipped(spec)
+failed <- report(.qes_data_check(spec, sources), "Data checks (dictionary, gates.csv)") || failed
+failed <- report(.qes_projection_check(spec, sources), "V-P1 (expected/marginals.csv)") || failed
+cat_ <- .qes_catalog()
+closed <- setdiff(unique(spec$tables$crosswalk$study),
+                  cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE])
+for (study in closed) {
+  nc <- .qes_hz_sources_read(file.path("data-raw", "nc"), study)
+  marg <- file.path("data-raw", "nc", sprintf("marginals_%s.csv", study))
+  if (is.null(nc) || !file.exists(marg)) {
+    # the owner may keep these aggregates out of the repository (OD3): the
+    # check is then skipped, unless QESR_REQUIRE_NC=true asks for it
+    required <- identical(Sys.getenv("QESR_REQUIRE_NC"), "true")
+    cat(sprintf("V-D/V-P1 %s: no aggregates in data-raw/nc (run data-raw/build_sources.R and data-raw/project_marginals.R); %s.\n",
+                study, if (required) "required, error" else "skipped"))
+    failed <- failed || required
+    next
+  }
+  failed <- report(.qes_data_check(spec, nc, studies = study), sprintf("Data checks (%s, data-raw/nc)", study)) || failed
+  failed <- report(.qes_projection_check(spec, nc, .qes_read_csv(marg, "spec_expected"), studies = study),
+                   sprintf("V-P1 (%s, data-raw/nc)", study)) || failed
+}
+
+# ---- 3. V-P2 and the MAJOR rule against the merge-base -------------------------------------
 git <- function(...) {
   out <- tryCatch(suppressWarnings(system2("git", c(...), stdout = TRUE, stderr = FALSE)),
                   error = function(e) character(0))
@@ -90,11 +133,26 @@ if (length(base) == 1L &&
   } else {
     cat("V-P2: spec unchanged since the merge-base.\n")
   }
+  old_marg <- file.path(old, "expected", "marginals.csv")
+  if (file.exists(old_marg)) {
+    change <- .qes_expected_change(.qes_read_csv(old_marg, "spec_expected"), spec$tables$expected)
+    ov <- package_version(old_version)
+    nv <- package_version(spec$version)
+    # MAJOR: the major digit, or the minor digit before 1.0.0
+    bumped <- if (ov$major >= 1L) nv$major > ov$major else (nv$major > ov$major || nv$minor > ov$minor)
+    if (identical(as.character(change), "major") && !bumped) {
+      cat(sprintf("MAJOR rule error: recorded marginals changed (%s) but Spec-Version %s -> %s is not a major bump.\n",
+                  paste(utils::head(attr(change, "keys"), 5L), collapse = "; "), old_version, spec$version))
+      failed <- TRUE
+    } else {
+      cat(sprintf("MAJOR rule: expected/marginals.csv change since the merge-base is '%s'.\n", change))
+    }
+  }
 } else {
   cat("V-P2: no spec at the merge-base with origin/main (or no git history); skipped.\n")
 }
 
-# ---- 3. the source grep --------------------------------------------------------------
+# ---- 4. the source grep --------------------------------------------------------------
 # Same patterns as tests/testthat/test-forbidden-calls.R. `allow` names the
 # files where a pattern is expected; `pending` rules are reported, not failed,
 # until the slice that removes their last offender.

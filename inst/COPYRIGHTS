@@ -35,8 +35,11 @@ taken from the deposited data files and documents:
     descriptions of each study that quote its codebook;
   - inst/extdata/harmonize/: the harmonization spec written for qesR (MIT),
     which quotes the question text of the items it maps (the same text as
-    the dictionary), their value labels, and unweighted counts checked in
-    the data files.
+    the dictionary), their value labels, and unweighted counts from the
+    data files: in the text of its rows, in gates.csv (how many respondents
+    of a wave gave each answer to a question and to the question that
+    filters it) and in expected/marginals.csv (how many fall in each
+    harmonized category).
 
 CC0 requires no attribution. qesR names the source of each study anyway, as
 the authors ask users to cite the data (qes_cite() gives the full citation):
@@ -93,7 +96,9 @@ labels of your copy are the ones the spec was written for, without shipping
 them), page references to its codebook, and the facts about its waves and
 weights that the codebook publishes (pp. 5 and 7): the size of each wave,
 its fieldwork dates and mode, and the weighting method (raking on age,
-gender, education and language, the trimming bounds). Its codebook
+gender, education and language, the trimming bounds). No count from its
+data file ships (gates.csv and expected/marginals.csv have no qes2022
+row). Its codebook
 is built on your computer from your own copy of the data file. When you use
 this study, the licence requires attribution (qes_cite("qes2022")) and rules
 out commercial use.

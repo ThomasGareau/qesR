@@ -21,7 +21,7 @@ rules_after <- function(edit, release = FALSE) {
 # A copy of the shipped spec directory in a temporary folder.
 local_spec_copy <- function(env = parent.frame()) {
   dir <- withr::local_tempdir(.local_envir = env)
-  file.copy(list.files(spec_dir(), full.names = TRUE), dir)
+  file.copy(list.files(spec_dir(), full.names = TRUE), dir, recursive = TRUE)
   dir
 }
 
@@ -73,7 +73,8 @@ test_that("qes_spec(view = 'spec') returns the checked spec", {
   expect_s3_class(s, "qes_spec")
   expect_identical(s$version, unname(read.dcf(file.path(spec_dir(), "SPEC"))[1, "Spec-Version"]))
   expect_false(s$custom)
-  expect_setequal(names(s$tables), c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes"))
+  expect_setequal(names(s$tables), c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes",
+                                     "gates", "expected"))
   chk <- attr(s, "check")
   expect_s3_class(chk, "data.frame")
   expect_identical(names(chk), c("rule", "severity", "table", "row", "key", "detail"))
@@ -152,10 +153,9 @@ test_that("qes_spec() checks its arguments", {
   expect_error(qes_spec("targets", data = list()), class = "qesR_error_input")
   expect_error(qes_spec("spec", validate = "maybe"), class = "qesR_error_input")
   expect_error(qes_spec("spec", lang = "de"), class = "qesR_error_input")
-  # the targets and crosswalk views and the data checks come with the engine
+  # the targets and crosswalk views come with the engine
   expect_error(qes_spec(), class = "qesR_error_input")
   expect_error(qes_spec("crosswalk"), class = "qesR_error_input")
-  expect_error(qes_spec("spec", data = list(qes2018 = data.frame())), class = "qesR_error_input")
 })
 
 test_that("V-S1 catches malformed cells", {

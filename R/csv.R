@@ -140,6 +140,28 @@
   spec_changes = c(
     spec_version = "chr", date = "date", kind = "chr", targets = "chr",
     studies = "chr", change_en = "chr", change_fr = "chr"
+  ),
+  # aggregates of the pinned files that the offline checks read with the
+  # dictionary (R/hz-data.R): joint counts of gate code and source code among
+  # a wave's members, and the projected marginals (V-P1). gate_code and
+  # source_code are code text ("NA" is system missing).
+  spec_gates = c(
+    study = "chr", wave = "chr", source_var = "chr", member_rule = "chr",
+    gate_var = "chr", gate_code = "chr", source_code = "chr", n = "int"
+  ),
+  spec_expected = c(
+    study = "chr", wave = "chr", target = "chr", source_var = "chr",
+    value = "chr", na_reason = "chr", n = "int"
+  ),
+  # the same aggregates for a study whose metadata cannot ship (OD3), kept in
+  # the build-ignored data-raw/nc/ for CI: variable types and missing-code
+  # declarations, and per-code counts with label hashes instead of labels
+  hz_variables = c(
+    study = "chr", variable = "chr", type = "chr", na_values = "chr"
+  ),
+  hz_values = c(
+    study = "chr", variable = "chr", value = "chr", label_hash = "chr",
+    label_number = "num", missing_type = "chr", n = "int"
   )
 )
 
