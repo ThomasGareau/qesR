@@ -222,7 +222,9 @@ test_that("the coverage grid gives each target's grade in each study, as qes_spe
       }
       expect_true(startsWith(cell, .qes_enum_label("grade", g, "en")), label = paste(t, studies[k]))
       row <- xw[xw$study == studies[k] & xw$target == t & xw$rule != "none", , drop = FALSE]
-      if (studies[k] %in% multi) expect_true(grepl(sprintf("(%s)", row$wave), cell, fixed = TRUE))
+      if (studies[k] %in% multi) {
+        expect_true(grepl(sprintf("(%s)", .qes_wave_label(row$wave, "en")), cell, fixed = TRUE))
+      }
       zero <- .qes_not_offered(s, row)
       expect_identical(endsWith(cell, "\\*"), !is.na(zero) && nzchar(zero), label = paste(t, studies[k]))
     }

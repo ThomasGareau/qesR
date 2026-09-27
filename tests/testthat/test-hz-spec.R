@@ -514,7 +514,8 @@ test_that("real-code regressions hold in the shipped spec", {
   expect_false(xw$primary[i])
   # 2012 panel: 98 and 99 reversed; "pays souverain" is not sov_indep
   expect_identical(c(reason("sov_qes2012p_intvoteref", "98"), reason("sov_qes2012p_intvoteref", "99")), c("refused", "dk"))
-  expect_identical(xw$target[xw$study == "qes2012_panel"], c("sov_sovereign_country", "age_group3"))
+  expect_identical(xw$target[xw$study == "qes2012_panel" & xw$source_var == "intvoteref"], "sov_sovereign_country")
+  expect_false("sov_indep" %in% xw$target[xw$study == "qes2012_panel"])
   # age bands come from the six-band question, never the producers' recodes
   expect_identical(xw$source_var[xw$study %in% c("qes2007_panel", "qes2012_panel") & xw$target == "age_group3"],
                    c("age", "age"))

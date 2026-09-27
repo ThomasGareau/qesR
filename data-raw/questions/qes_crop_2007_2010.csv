@@ -1,0 +1,4 @@
+"variable","label","question_en","question_fr","question_truncated","universe_en","universe_fr","question_source","doc_ref","measure","var_timing","derived_from","reviewed","notes"
+"intvoteprova","","","S'il y avait des élections provinciales aujourd'hui...","TRUE","","","questionnaire","341537:intvoteprova","","","","TRUE","the codebook (file 341537) gives only the variable label, cut after a few words; no questionnaire is deposited"
+"intvoteprovb","","","Peut-être n'êtes-vous pas complètement décidé(e), mais","TRUE","","","questionnaire","341537:intvoteprovb","","","","TRUE","asked of intvoteprova = 7 or 9 (crosstab); the codebook (file 341537) gives only the variable label, cut after a few words; no questionnaire is deposited"
+"QAGE","","","Auquel des groupes d'àges suivants appartenez-vous?","","","","questionnaire","341537:QAGE","","","","TRUE","variable label, as in the codebook (file 341537, with its typo d'àges); no questionnaire is deposited"

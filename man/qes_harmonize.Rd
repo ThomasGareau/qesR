@@ -80,11 +80,14 @@ do not depend on it.}
 A data frame of class \code{qes_harmonized}, returned visibly, one row
 per respondent of each study's file (no row is dropped), or per
 respondent and wave in the long layout. Leading columns: \code{study},
-\code{year}, \code{election_date}, \code{family}, \code{study_design}, \code{target_population},
+\code{year} (the study's year; for pooled polls, the year the respondent's
+poll began), \code{election_date}, \code{family}, \code{study_design}, \code{target_population},
 \code{waves} (the waves the respondent belongs to, \verb{;}-separated; in the
 long layout \code{wave}, \code{wave_timing} and \code{wave_design} instead), \code{qes_id}
 (\verb{<study>:<identifier>}, unique in the respondent layout), \code{subsample},
-\code{source_row} (the row in the study's file, for joining raw variables
+\code{stratum} (the independent sample within the study, see \emph{Waves}: the
+poll's wave name for pooled polls, \code{"1"} = CREATEC and \code{"2"} = CROP
+for \code{qes1998}; \code{NA} for a study drawn as one sample), \code{source_row} (the row in the study's file, for joining raw variables
 with \code{\link[=merge]{merge()}} on \code{study} and \code{source_row}), \code{survey_mode},
 \code{interview_date} (of the respondent's first wave in the respondent
 layout), \code{days_to_election} and \code{eligible_voter}. Then one column per
@@ -214,6 +217,17 @@ wave that asked it and the respondent's other rows are \code{not_in_wave},
 except the time-invariant targets (year and month of birth), which are
 repeated on each of the respondent's rows.
 
+Pooled polls (the monthly CROP polls of 2007-2010) have one wave per
+poll: each respondent belongs to one poll, whose questions the spec
+maps once for all the polls. Each poll refers to the next general
+election, which \code{election_date} gives row by row, \code{year} is the year the
+poll began, and its weight is normalized within the poll. \code{stratum}
+gives the independent sample a respondent was drawn in, where a study
+pools several: for pooled polls the poll's wave name (as in \code{waves});
+for the 1998 panel the polling firm's code in the file, \code{firme_post}
+(\code{"1"} = CREATEC, \code{"2"} = CROP; each firm interviewed francophones
+only). \code{\link[=qes_design]{qes_design()}} uses it.
+
 \code{interview_date} is the wave's interview date where the file has one
 (\code{NA} otherwise; the fieldwork dates of each wave are in
 \code{qes_spec("spec")$tables$waves}), and \code{days_to_election} the number of
@@ -277,7 +291,14 @@ comparabilité (\code{identical}, \code{comparable}, \code{approximate}) ; \code
 n'offrait pas sont des zéros structurels, pas un appui nul. \code{lang = "fr"}
 donne les étiquettes des niveaux en français ; les codes sont les mêmes.
 La disposition longue (\code{layout = "long"}) donne une ligne par personne et
-par vague. Les pondérations recommandées de chaque vague sont dans
+par vague ; les sondages CROP regroupés ont une vague par sondage, et
+\code{stratum} donne l'échantillon indépendant d'où vient la personne : pour
+les sondages regroupés, le nom de la vague du sondage (comme dans
+\code{waves}) ; pour le panel de 1998, le code de la firme dans le fichier,
+\code{firme_post} (\code{"1"} = CREATEC, \code{"2"} = CROP). Chaque sondage se rapporte
+à l'élection générale suivante, que \code{election_date} donne ligne par
+ligne, \code{year} est l'année où il a commencé, et sa pondération est
+normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 \code{weight_pre} et \code{weight_post} (ou \code{weight} en disposition longue),
 ramenées à une moyenne de 1 par étude et par vague ; une pondération
 non encore documentée vaut NA. \code{eligible_voter} indique si la personne

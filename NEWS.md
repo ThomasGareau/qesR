@@ -1,3 +1,21 @@
+# qesR 0.6.0.9000
+
+Development version. Specification 0.3.0 adds the remaining studies to the
+experimental harmonization engine of 0.6.0; the values 0.6.0 gave for the
+studies it covered are unchanged. The specification is version 0.3.0
+(`qes_spec("spec")`); it adds rows, and no earlier row, code or grade
+changed.
+
+## New: the remaining studies (experimental, specification 0.3.0)
+
+- `qes2007` and `qes2008` (Quebec Election Studies, so they are in the default `studies = NULL`): reported vote and turnout, party identification, year of birth, the 1995 sovereignty-partnership question and, for 2008, age group. In both, code 3 of the vote question is the ADQ, never the CAQ, and "none" among those who said they voted is a spoiled or blank ballot (reason `spoiled`). `qes2007` mixed telephone and web interviews; its `survey_mode` is each respondent's (1,003 by telephone, 1,172 on the web).
+- `qes2012_panel` gains vote intention (first question and pushed; graded `approximate`, since its first question already asks which party the respondent "would be tempted to vote for"), reported vote (unprompted, `approximate`) and turnout; its post-election interviews are dated (`interview_date` in the long layout, from `ResLastCallDate_last`).
+- The pooled CROP polls of 2007-2010 (`qes_crop_2007_2010`) have one wave per monthly poll, 24 in all (`poll_2007_06` to `poll_2010_01`, about 1,000 respondents each), each a stratum of its own (the new leading column `stratum` gives the poll's wave name) and each referring to the next general election, which `election_date` gives row by row (the election of 2008-12-08 up to the poll of November 2008, that of 2012-09-04 after); `year` is the year each poll began. `qes_design(pool = "equal")` counts the 24 polls as one study in the long layout, as in the respondent layout. The spec maps their questions once for every poll: a crosswalk or weight row may name the wave `*` in a study whose waves are all poll waves, and each poll keeps its own weight normalization. Vote intention (first question and pushed) and age group are mapped; the pushed intention's code for "none" also holds 74 answers "another party" and is `not_mappable`. The referendum item and the previous-vote item are not mapped: their wording and reference election are not documented.
+- The 1998 panel (`qes1998`) pools the CREATEC (1,057) and CROP (426) polls of francophones, with a pre- and a post-election wave of the same 1,483 respondents. The firm is a stratum: the new leading column `stratum` gives it as the file's `firme_post` code (`"1"` = CREATEC, `"2"` = CROP; `NA` for a study drawn as one sample), and `qes_design()` now makes each study's strata strata of the design. Reported vote and turnout, the pushed vote intention (the firms' first questions are separate variables, not mapped), the 1995 question (asked by CROP only; `inapplicable` for CREATEC) and age group are mapped; `intvote2`, whose value labels are shifted in the source, is documented as `not_comparable` and never mapped. The firms' own files (`qes1998_crop`, `qes1998_createc`) hold the same respondents and are not harmonized separately.
+- New target `sov_partnership_1995`: the 1995 referendum question, sovereignty with an offer of partnership to the rest of Canada (`qes2007`, `qes2008`, `qes2007_panel`, `qes1998`), never pooled with the other sovereignty targets.
+- The deposits of these studies do not document which weight to apply: all their weights are registered with status `needs_review` and are `NA` until reviewed. For `qes1998` this matters: both firms' codebooks (files 332049 and 332050) say that the undecided, those who would spoil their ballot and those who refused to reveal their vote were over-selected, so unweighted 1998 estimates over-represent the undecided, would-spoil and refusers. The coverage page and the weight message give the 24 polls as one range.
+- The dictionary (version 1.0.2) has the question text of the new items of `qes2012_panel`, `qes1998` and the CROP polls (the CROP codebook gives only variable labels cut after a few words, marked as truncated).
+
 # qesR 0.6.0
 
 qesR 0.6.0 adds an experimental engine that harmonizes variables across

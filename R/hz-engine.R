@@ -444,7 +444,7 @@
   unmapped <- list()
   for (k in seq_along(apply_rows)) {
     i <- apply_rows[k]
-    res <- .qes_hz_apply_row(sub, k, d, members[, match(xw$wave[i], wv$wave)])
+    res <- .qes_hz_apply_row(sub, k, d, .qes_hz_row_member(members, wv, xw$wave[i]))
     results[[as.character(i)]] <- res
     # codes without a mapping are an error (or warning) for the requested
     # targets only; a design input nobody asked for keeps them as NA
@@ -484,8 +484,9 @@
     p <- pick_in[[t]]
     if (!is.na(p$reason)) next
     r <- results[[as.character(p$row)]]
+    timing <- unique(wv$wave_timing[.qes_wave_rows(wv, xw$wave[p$row])])
     design[[t]] <- list(value = r$value, reason = r$reason, wave = xw$wave[p$row],
-                        timing = wv$wave_timing[match(xw$wave[p$row], wv$wave)])
+                        timing = if (length(timing) == 1L) timing else NA_character_)
   }
   eligible <- .qes_hz_eligible(design, n, e_date)
 
@@ -509,7 +510,8 @@
 
   list(
     study = study, n = n, s = s, e_date = e_date, wv = wv, members = members,
-    ids = ids, d_sub = .qes_hz_subsample(wv, d),
+    wave_e_dates = .qes_hz_wave_election_dates(wv, cat_$elections),
+    ids = ids, d_sub = .qes_hz_subsample(wv, d), d_strata = .qes_hz_stratum(wv, d, members, study),
     dates = dates, modes = modes, weights = weights, eligible = eligible,
     cell_wave = vapply(ctx$targets, function(t) if (is.na(pick[[t]]$row)) NA_character_ else xw$wave[pick[[t]]$row],
                        character(1)),
@@ -527,6 +529,38 @@
 .qes_hz_subsample <- function(wv, d) {
   sub_var <- unique(stats::na.omit(wv$subsample_var))
   if (length(sub_var) > 0L && sub_var[1] %in% names(d)) .canon(d[[sub_var[1]]]) else rep(NA_character_, nrow(d))
+}
+
+# The sampling stratum of each row within its study: for pooled polls, the
+# name of the poll's wave (as in `waves`); otherwise the value of the waves'
+# strata variable, as text (the firm of the 1998 panel, firme_post: 1 =
+# CREATEC, 2 = CROP); NA when the study has none.
+.qes_hz_stratum <- function(wv, d, members, study) {
+  var <- unique(stats::na.omit(wv$strata_var))
+  if (length(var) == 0L || !var[1] %in% names(d)) {
+    return(rep(NA_character_, nrow(d)))
+  }
+  if (.qes_poll_study(wv, study) && ncol(members) > 0L) {
+    return(wv$wave[.qes_hz_first_wave(members)])
+  }
+  .canon(d[[var[1]]])
+}
+
+# Members of the wave (or, for "*", of any wave) that a crosswalk row names:
+# a logical vector over the rows.
+.qes_hz_row_member <- function(members, wv, wave) {
+  idx <- .qes_wave_rows(wv, wave)
+  if (length(idx) == 0L) {
+    return(rep(FALSE, nrow(members)))
+  }
+  rowSums(members[, idx, drop = FALSE]) > 0L
+}
+
+# The date of the election each wave refers to (waves.csv election_ref),
+# NA when it has none: the leading election_date of a study that has no
+# single election in the catalog (pooled polls).
+.qes_hz_wave_election_dates <- function(wv, elections) {
+  elections$election_date[match(wv$election_ref, elections$election_id)]
 }
 
 # The leading columns of one study. Respondent layout: one row per row of
@@ -553,10 +587,22 @@
   }
   interview <- pick_wave(part$dates, as.Date(rep(NA_character_, n_out)))
   mode <- pick_wave(part$modes, rep(NA_character_, n_out))
+  # a study with one election in the catalog refers to it throughout; pooled
+  # polls refer, poll by poll, to the election of their wave
+  e_date <- rep(part$e_date, n_out)
+  if (is.na(part$e_date) && length(part$wave_e_dates) > 0L) {
+    e_date <- part$wave_e_dates[w]
+  }
+  # pooled polls span several years: each row takes the year its poll began
+  year <- rep(as.integer(s$year), n_out)
+  if (nrow(wv) > 0L && .qes_poll_study(wv, part$study)) {
+    poll_year <- as.integer(substr(as.character(wv$fieldwork_start[w]), 1L, 4L))
+    year[!is.na(poll_year)] <- poll_year[!is.na(poll_year)]
+  }
   lead <- data.frame(
     study = rep(part$study, n_out),
-    year = rep(as.integer(s$year), n_out),
-    election_date = rep(part$e_date, n_out),
+    year = year,
+    election_date = e_date,
     family = rep(s$family, n_out),
     study_design = rep(s$study_design, n_out),
     target_population = pop,
@@ -576,10 +622,11 @@
   }
   lead$qes_id <- if (n_out > 0L) paste0(part$study, ":", part$ids$key[rows$row]) else character(0)
   lead$subsample <- part$d_sub[rows$row]
+  lead$stratum <- part$d_strata[rows$row]
   lead$source_row <- rows$row
   lead$survey_mode <- mode
   lead$interview_date <- interview
-  lead$days_to_election <- as.integer(part$e_date - interview)
+  lead$days_to_election <- as.integer(e_date - interview)
   lead$eligible_voter <- part$eligible[rows$row]
   lead
 }
@@ -666,13 +713,14 @@
       not_offered <- paste(setdiff(set$name, offered), collapse = ";")
     }
   }
-  w <- if (has_row) match(xw$wave[i], wv$wave) else NA_integer_
-  wgt <- if (!is.na(w)) weights[[w]] else list(var = NA_character_, status = NA_character_, mean_raw = NA_real_)
+  w <- if (has_row) .qes_wave_rows(wv, xw$wave[i]) else integer(0)
+  wgt <- .qes_hz_weights_of(weights, w)
   outside <- NA_integer_
   # NA when eligibility is unknown for every member of the wave (e.g. its
   # age rows are not signed off), not 0
-  if (!is.na(w) && !tg$election_ref_rule[j] %in% c("none", NA) && !all(is.na(eligible[members[, w]]))) {
-    outside <- sum(members[, w] & eligible %in% FALSE)
+  mem <- if (length(w) > 0L) rowSums(members[, w, drop = FALSE]) > 0L else logical(0)
+  if (length(w) > 0L && !tg$election_ref_rule[j] %in% c("none", NA) && !all(is.na(eligible[mem]))) {
+    outside <- sum(mem & eligible %in% FALSE)
   }
   levels <- .qes_hz_reason_levels()
   counts <- as.list(as.integer(table(factor(res$reason, levels = levels))))
@@ -736,7 +784,8 @@
   if (identical(layout, "long") && !static) {
     cw <- part$cell_wave[[t]]
     if (!is.na(cw)) {
-      other <- !(part$wv$wave[rows$wave] %in% cw)
+      # a row of wave "*" asked the question in each poll wave
+      other <- !(rows$wave %in% .qes_wave_rows(part$wv, cw))
       v[other] <- NA_character_
       r[other] <- "not_in_wave"
       s[other] <- NA_character_
@@ -796,6 +845,7 @@
                     target_population_en = character(0), target_population_fr = character(0),
                     stringsAsFactors = FALSE),
     members = matrix(FALSE, 0L, 0L), ids = list(key = character(0)), d_sub = character(0),
+    d_strata = character(0), wave_e_dates = as.Date(character(0)),
     dates = list(), modes = list(), weights = list(), eligible = logical(0),
     cell_wave = stats::setNames(rep(NA_character_, length(targets)), targets),
     values = empty_chr, reasons = empty_chr, srcs = empty_chr
@@ -899,6 +949,17 @@
 #' except the time-invariant targets (year and month of birth), which are
 #' repeated on each of the respondent's rows.
 #'
+#' Pooled polls (the monthly CROP polls of 2007-2010) have one wave per
+#' poll: each respondent belongs to one poll, whose questions the spec
+#' maps once for all the polls. Each poll refers to the next general
+#' election, which `election_date` gives row by row, `year` is the year the
+#' poll began, and its weight is normalized within the poll. `stratum`
+#' gives the independent sample a respondent was drawn in, where a study
+#' pools several: for pooled polls the poll's wave name (as in `waves`);
+#' for the 1998 panel the polling firm's code in the file, `firme_post`
+#' (`"1"` = CREATEC, `"2"` = CROP; each firm interviewed francophones
+#' only). [qes_design()] uses it.
+#'
 #' `interview_date` is the wave's interview date where the file has one
 #' (`NA` otherwise; the fieldwork dates of each wave are in
 #' `qes_spec("spec")$tables$waves`), and `days_to_election` the number of
@@ -956,7 +1017,14 @@
 #' n'offrait pas sont des zéros structurels, pas un appui nul. `lang = "fr"`
 #' donne les étiquettes des niveaux en français ; les codes sont les mêmes.
 #' La disposition longue (`layout = "long"`) donne une ligne par personne et
-#' par vague. Les pondérations recommandées de chaque vague sont dans
+#' par vague ; les sondages CROP regroupés ont une vague par sondage, et
+#' `stratum` donne l'échantillon indépendant d'où vient la personne : pour
+#' les sondages regroupés, le nom de la vague du sondage (comme dans
+#' `waves`) ; pour le panel de 1998, le code de la firme dans le fichier,
+#' `firme_post` (`"1"` = CREATEC, `"2"` = CROP). Chaque sondage se rapporte
+#' à l'élection générale suivante, que `election_date` donne ligne par
+#' ligne, `year` est l'année où il a commencé, et sa pondération est
+#' normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 #' `weight_pre` et `weight_post` (ou `weight` en disposition longue),
 #' ramenées à une moyenne de 1 par étude et par vague ; une pondération
 #' non encore documentée vaut NA. `eligible_voter` indique si la personne
@@ -1007,11 +1075,14 @@
 #' @return A data frame of class `qes_harmonized`, returned visibly, one row
 #'   per respondent of each study's file (no row is dropped), or per
 #'   respondent and wave in the long layout. Leading columns: `study`,
-#'   `year`, `election_date`, `family`, `study_design`, `target_population`,
+#'   `year` (the study's year; for pooled polls, the year the respondent's
+#'   poll began), `election_date`, `family`, `study_design`, `target_population`,
 #'   `waves` (the waves the respondent belongs to, `;`-separated; in the
 #'   long layout `wave`, `wave_timing` and `wave_design` instead), `qes_id`
 #'   (`<study>:<identifier>`, unique in the respondent layout), `subsample`,
-#'   `source_row` (the row in the study's file, for joining raw variables
+#'   `stratum` (the independent sample within the study, see *Waves*: the
+#'   poll's wave name for pooled polls, `"1"` = CREATEC and `"2"` = CROP
+#'   for `qes1998`; `NA` for a study drawn as one sample), `source_row` (the row in the study's file, for joining raw variables
 #'   with [merge()] on `study` and `source_row`), `survey_mode`,
 #'   `interview_date` (of the respondent's first wave in the respondent
 #'   layout), `days_to_election` and `eligible_voter`. Then one column per
@@ -1209,7 +1280,9 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
     for (t in ctx$targets) {
       cw <- part$cell_wave[[t]]
       included <- isTRUE(part$cells$included[match(t, part$cells$target)])
-      w <- if (is.na(cw) || !included) NA_integer_ else match(cw, part$wv$wave)
+      # a row of wave "*" takes the first poll wave: the polls of a study
+      # share their timing (V-S9) and weight variable
+      w <- if (is.na(cw) || !included) NA_integer_ else .qes_wave_rows(part$wv, cw)[1]
       timing <- tg$target_timing[match(t, tg$target)]
       column <- NA_character_
       var <- NA_character_
@@ -1251,11 +1324,16 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
 .qes_hz_weight_notices <- function(parts, guide, quiet, layout = "respondent") {
   review <- character(0)
   for (part in parts) {
-    for (k in seq_along(part$weights)) {
-      w <- part$weights[[k]]
-      if (identical(w$status, "needs_review") && any(part$members[, k])) {
-        review <- c(review, sprintf("%s %s (%s)", part$study, part$wv$wave[k], w$var))
-      }
+    ks <- which(vapply(seq_along(part$weights), function(k) {
+      identical(part$weights[[k]]$status, "needs_review") && any(part$members[, k])
+    }, logical(1)))
+    vars <- vapply(part$weights[ks], `[[`, character(1), "var")
+    polls <- .qes_poll_study(part$wv, part$study)
+    for (v in unique(vars)) {
+      k <- ks[vars == v]
+      # the poll waves of pooled polls are given as a range, not listed
+      waves <- if (polls && length(k) > 1L) paste0(part$wv$wave[k[1]], "..", part$wv$wave[k[length(k)]]) else part$wv$wave[k]
+      review <- c(review, sprintf("%s %s (%s)", part$study, waves, v))
     }
   }
   if (length(review) > 0L) {

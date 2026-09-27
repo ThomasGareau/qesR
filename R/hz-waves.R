@@ -29,6 +29,75 @@
   tg$target[tg$block %in% c("id", "design")]
 }
 
+# ---- poll waves ----------------------------------------------------------------
+#
+# A study whose waves are all poll waves (wave_design poll_wave: pooled
+# polls, such as the monthly CROP polls of 2007-2010) asks the same
+# questions of disjoint samples, one per poll. Its crosswalk and weight rows
+# may name the wave "*", meaning each of its waves: the row applies to every
+# respondent, in whichever poll they were interviewed, and each poll keeps
+# its own dates, election reference and weight normalization. The validator
+# allows "*" only in such studies (V-S4), and the data checks require the
+# polls to be disjoint (V-D8).
+
+.qes_all_waves <- "*"
+
+# Rows of wave table `wv` that wave `wave` of `study` names: the one wave,
+# or every wave of the study for "*". With `study = NULL`, `wv` holds the
+# waves of one study.
+.qes_wave_rows <- function(wv, wave, study = NULL) {
+  own <- if (is.null(study)) rep(TRUE, nrow(wv)) else wv$study %in% study
+  if (identical(wave, .qes_all_waves)) which(own) else which(own & wv$wave %in% wave)
+}
+
+# Is every wave of `study` in `wv` a poll wave (so that "*" may name them)?
+.qes_poll_study <- function(wv, study) {
+  w <- wv$wave_design[wv$study %in% study]
+  length(w) > 0L && all(w %in% "poll_wave")
+}
+
+# The membership rule of wave rows `idx` as text: the rule of one wave, or,
+# for several, "<member_var>=<codes of all of them>" per membership
+# variable, joined by "|" ("" when a wave has no rule: every row).
+.qes_member_rule_rows <- function(wv, idx) {
+  if (length(idx) == 1L) {
+    return(.qes_member_rule(wv, idx))
+  }
+  rules <- vapply(idx, function(w) .qes_member_rule(wv, w), character(1))
+  if (any(rules == "")) {
+    return("")
+  }
+  vars <- wv$member_var[idx]
+  paste(vapply(unique(vars), function(v) {
+    codes <- unlist(lapply(wv$member_codes[idx][vars == v], .qes_split_list))
+    paste0(v, "=", paste(unique(codes), collapse = ";"))
+  }, character(1)), collapse = "|")
+}
+
+# Which rows of `d` belong to any of the wave rows `idx`; NULL when a
+# membership variable is missing from `d`.
+.qes_wave_members_rows <- function(wv, idx, d) {
+  out <- rep(FALSE, nrow(d))
+  for (w in idx) {
+    mem <- .qes_wave_members(wv, w, d)
+    if (is.null(mem)) {
+      return(NULL)
+    }
+    out <- out | mem
+  }
+  out
+}
+
+# Which values of the `waves` leading column of harmonized data (the
+# respondent's waves, ";"-separated, NA for none) include wave `wave`; for
+# "*", any wave.
+.qes_hz_waves_member <- function(waves, wave) {
+  if (identical(wave, .qes_all_waves)) {
+    return(!is.na(waves) & nzchar(waves))
+  }
+  vapply(strsplit(ifelse(is.na(waves), "", waves), ";", fixed = TRUE), function(w) wave %in% w, logical(1))
+}
+
 # ---- membership ----------------------------------------------------------------
 
 # Logical matrix: rows of `d` x waves of `wv` (in wave order), TRUE where the
@@ -94,14 +163,16 @@
 # a list, one element per wave row of `wv`, with `value` (numeric, NA outside
 # the wave or where the weight is missing or not positive), `var`, `status`,
 # `role`, `mean_raw` (mean of the raw weight over the wave's members with a
-# weight) and `used` (FALSE when the wave has no recommended weight or its
-# registry row needs review; `value` is then NA throughout).
+# weight), `n` (the number of those members) and `used` (FALSE when the wave
+# has no recommended weight or its registry row needs review; `value` is then
+# NA throughout).
 .qes_hz_wave_weights <- function(wv, wt, d, members, normalize) {
   n <- nrow(d)
   lapply(seq_len(nrow(wv)), function(w) {
-    k <- which(wt$wave == wv$wave[w] & wt$recommended %in% TRUE)
+    # a weight row of wave "*" is the weight of each poll wave of the study
+    k <- which((wt$wave == wv$wave[w] | wt$wave == .qes_all_waves) & wt$recommended %in% TRUE)
     empty <- list(value = rep(NA_real_, n), var = NA_character_, status = NA_character_,
-                  role = NA_character_, mean_raw = NA_real_, used = FALSE)
+                  role = NA_character_, mean_raw = NA_real_, n = 0L, used = FALSE)
     if (length(k) == 0L) {
       return(empty)
     }
@@ -119,6 +190,7 @@
     mem <- members[, w]
     x[!mem | is.na(x) | x <= 0] <- NA_real_
     out$mean_raw <- if (any(!is.na(x))) mean(x, na.rm = TRUE) else NA_real_
+    out$n <- sum(!is.na(x))
     if (!identical(out$status, "reviewed")) {
       return(out)
     }
@@ -126,6 +198,25 @@
     out$value <- if (isTRUE(normalize) && !is.na(out$mean_raw)) x / out$mean_raw else x
     out
   })
+}
+
+# The weight of wave rows `idx` for cell provenance: the variable and the
+# registry status when the waves share them (NA otherwise), and the mean of
+# the raw weight over all their members with a weight.
+.qes_hz_weights_of <- function(weights, idx) {
+  if (length(idx) == 0L) {
+    return(list(var = NA_character_, status = NA_character_, mean_raw = NA_real_))
+  }
+  ws <- weights[idx]
+  shared <- function(f) {
+    v <- unique(vapply(ws, function(x) as.character(x[[f]]), character(1)))
+    if (length(v) == 1L) v else NA_character_
+  }
+  n <- vapply(ws, function(x) as.integer(x$n %||% 0L), integer(1))
+  m <- vapply(ws, function(x) as.numeric(x$mean_raw), numeric(1))
+  ok <- n > 0L & !is.na(m)
+  list(var = shared("var"), status = shared("status"),
+       mean_raw = if (any(ok)) sum(m[ok] * n[ok]) / sum(n[ok]) else NA_real_)
 }
 
 # The weight column a wave's weight goes to in the respondent layout: pre

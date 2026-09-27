@@ -63,8 +63,7 @@ engine_marginals <- function(study) {
   out <- lapply(seq_len(nrow(rows)), function(k) {
     t <- rows$target[k]
     in_s <- h$study == study
-    member <- vapply(strsplit(ifelse(is.na(h$waves[in_s]), "", h$waves[in_s]), ";", fixed = TRUE),
-                     function(w) rows$wave[k] %in% w, logical(1))
+    member <- .qes_hz_waves_member(h$waves[in_s], rows$wave[k])
     v <- h[[t]][in_s][member]
     v <- if (is.numeric(v)) .qes_code_chr(v) else as.character(v)
     r <- as.character(h[[paste0(t, "__na")]][in_s][member])
@@ -84,8 +83,7 @@ engine_marginals <- function(study) {
   for (k in lead_rows) {
     t <- xw$target[k]
     in_s <- h$study == study
-    member <- vapply(strsplit(ifelse(is.na(h$waves[in_s]), "", h$waves[in_s]), ";", fixed = TRUE),
-                     function(w) xw$wave[k] %in% w, logical(1))
+    member <- .qes_hz_waves_member(h$waves[in_s], xw$wave[k])
     v <- as.character(h[[t]][in_s][member])
     n <- table(ifelse(is.na(v), "", v))
     out[[length(out) + 1L]] <- data.frame(

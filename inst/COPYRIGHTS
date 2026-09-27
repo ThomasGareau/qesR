@@ -70,10 +70,15 @@ All these deposits are on Borealis (https://borealisdata.ca).
 
 The three 1998 surveys cover francophones only. The codebook of the deposit
 says it was decided to keep only francophones ("retenir uniquement les
-francophones"); the CROP file kept respondents whose language of use is
-French, and the CREATEC file respondents whose mother tongue is French. The
-definition used for the combined qes1998 panel file is pending: the deposit
-does not state it.
+francophones"); the CROP file interviewed 450 respondents in French and
+kept, for its post-election wave, the 426 whose language of use (the
+language spoken most often at home) is French, and the CREATEC file
+respondents whose mother tongue is French. The combined qes1998 panel file
+pools the 1,057 CREATEC respondents and 426 CROP respondents, the number of
+CROP respondents who speak French most often at home; it has no variable
+linking its rows to the CROP file, and the deposit does not state one
+definition for it, so the definition is inferred from these counts,
+unconfirmed, and remains pending.
 
 
 2. The 2022 study (CC BY-NC 4.0): nothing ships

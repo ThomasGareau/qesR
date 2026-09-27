@@ -68,7 +68,10 @@ libellé et les niveaux de la question de chaque étude.
 
 `studies = NULL`, la valeur par défaut, retient les Études électorales
 québécoises qui ont une question pour au moins une des cibles ; les panels
-Durand et les sondages CROP sont laissés de côté à moins de les nommer.
+Durand, les sondages CROP et le panel de 1998 sont laissés de côté à moins
+de les nommer. Les pondérations de `qes2007` et de `qes2008` ne sont pas
+encore documentées : leurs lignes n'ont pas de pondération et
+`qes_design()` les laisse de côté plus bas, avec un message.
 `layout = "long"` donne une ligne par répondant et par vague : chaque
 réponse se trouve sur la ligne de la vague qui l'a posée, à côté de la
 pondération de cette vague. `missing = "reasons"` ajoute une colonne
@@ -239,9 +242,9 @@ spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 ```
 
-## Trois questions sur la souveraineté, jamais regroupées
+## Quatre questions sur la souveraineté, jamais regroupées
 
-Une cible correspond à un seul stimulus de question. Les panels Durand ont
+Une cible correspond à un seul stimulus de question. D'autres études ont
 posé des questions sur la souveraineté avec d'autres libellés : elles
 alimentent d'autres cibles, qui ne sont jamais fusionnées avec `sov_indep`.
 
@@ -252,9 +255,12 @@ rownames(sov) <- NULL
 knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 ```
 
-`sov_sovereign_country` porte sur un « pays souverain » (`qes2012_panel`)
-et `sov_favour` est une échelle d'appui en quatre points
-(`qes2018_panel`). Leurs pondérations ne sont pas encore documentées :
+`sov_sovereign_country` porte sur un « pays souverain » (`qes2012_panel`),
+`sov_favour` est une échelle d'appui en quatre points (`qes2018_panel`) et
+`sov_partnership_1995` reprend la question du référendum de 1995, la
+souveraineté assortie d'une offre de partenariat au reste du Canada
+(`qes2007`, `qes2008`, `qes2007_panel` et les répondants CROP de `qes1998`).
+Leurs pondérations ne sont pas encore documentées :
 `qes_harmonize()` renvoie `NA` pour ces pondérations et `qes_design()`
 laisse ces répondants de côté, avec un message, tant qu'elles ne sont pas
 révisées. Placez les

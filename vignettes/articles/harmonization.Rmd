@@ -62,8 +62,11 @@ and levels of every study's question.
 ## Harmonize
 
 `studies = NULL`, the default, takes the Quebec Election Studies that have
-a question for at least one of the targets; the Durand panels and the CROP
-polls are left out unless you name them. `layout = "long"` gives one row
+a question for at least one of the targets; the Durand panels, the CROP
+polls and the 1998 panel are left out unless you name them. The weights of
+`qes2007` and `qes2008` are not documented yet, so their rows have no
+weight and `qes_design()` leaves them out below, with a message.
+`layout = "long"` gives one row
 per respondent and wave, so each answer sits on the row of the wave that
 asked it, next to that wave's weight. `missing = "reasons"` adds a column
 `<target>__na` with the reason of every missing value.
@@ -220,11 +223,11 @@ spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 ```
 
-## Three sovereignty questions, never pooled
+## Four sovereignty questions, never pooled
 
-A target is one question stimulus. The Durand panels asked about
-sovereignty with other wordings, so they feed other targets, which are
-never merged with `sov_indep`:
+A target is one question stimulus. Other studies asked about sovereignty
+with other wordings, so they feed other targets, which are never merged
+with `sov_indep`:
 
 ```{r sovereignty}
 sov <- qes_spec("crosswalk", targets = "sovereignty", lang = params$lang)
@@ -233,8 +236,11 @@ rownames(sov) <- NULL
 knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 ```
 
-`sov_sovereign_country` asks about a "sovereign country" (`qes2012_panel`)
-and `sov_favour` is a four-point scale of favour (`qes2018_panel`). Their
+`sov_sovereign_country` asks about a "sovereign country" (`qes2012_panel`),
+`sov_favour` is a four-point scale of favour (`qes2018_panel`), and
+`sov_partnership_1995` repeats the question of the 1995 referendum,
+sovereignty with an offer of partnership to the rest of Canada (`qes2007`,
+`qes2008`, `qes2007_panel` and the CROP respondents of `qes1998`). Their
 weights are not documented yet, so `qes_harmonize()` returns `NA` for them
 and `qes_design()` leaves these respondents out, with a message, until the
 weights are reviewed. Put the targets side by side and read each one

@@ -45,11 +45,25 @@
   }, character(1))
 }
 
+# A crosswalk row's wave for the reference: its name, or "each poll" for
+# the wave "*" of pooled polls.
+.qes_wave_label <- function(wave, lang) {
+  ifelse(wave %in% .qes_all_waves, .qes_rt("each_poll", lang), wave)
+}
+
 # The recommended weight of each crosswalk row's study-wave.
 .qes_row_weight <- function(spec, xw) {
   wt <- spec$tables$weights
   rec <- wt[wt$recommended %in% TRUE, , drop = FALSE]
-  rec$weight_var[match(paste(xw$study, xw$wave), paste(rec$study, rec$wave))]
+  out <- rec$weight_var[match(paste(xw$study, xw$wave), paste(rec$study, rec$wave))]
+  # the poll waves of a row of wave "*" (or of a weight of wave "*")
+  star <- match(paste(xw$study, .qes_all_waves), paste(rec$study, rec$wave))
+  out[is.na(out)] <- rec$weight_var[star[is.na(out)]]
+  for (i in which(is.na(out) & xw$wave %in% .qes_all_waves)) {
+    v <- unique(rec$weight_var[rec$study == xw$study[i]])
+    if (length(v) == 1L) out[i] <- v
+  }
+  out
 }
 
 # The `studies` filter of the views: canonical codes (the demo study means
@@ -343,6 +357,10 @@ print.qes_crosswalk <- function(x, ...) {
   cov_waves = c(en = "Waves and recommended weights", fr = "Vagues et pond\u00e9rations recommand\u00e9es"),
   cov_n_targets = c(en = "Targets", fr = "Cibles"),
   cov_no_weight = c(en = "no recommended weight", fr = "aucune pond\u00e9ration recommand\u00e9e"),
+  # the wave "*" of pooled polls, and their waves in the studies table
+  each_poll = c(en = "each poll", fr = "chaque sondage"),
+  cov_polls = c(en = "%d poll waves, %s to %s (n = %s to %s each)%s%s",
+                fr = "%d vagues de sondage, de %s \u00e0 %s (n = %s \u00e0 %s chacune)%s%s"),
   cov_weight_review = c(en = "needs review, not applied", fr = "\u00e0 r\u00e9viser, non appliqu\u00e9e"),
   cov_studies_note = c(
     en = "`n` is the number of respondents of each wave. A weight that needs review is not applied: `qes_harmonize()` returns `NA` for it until its documentation is checked. `qes_design()` uses the weight of the wave each target came from.",
@@ -455,7 +473,7 @@ print.qes_crosswalk <- function(x, ...) {
       anchor <- paste(used$study, used$wave, used$source_var, sep = ":") %in% tg$anchor_row[j]
       cells <- lapply(seq_len(nrow(used)), function(k) {
         u <- used[k, , drop = FALSE]
-        src <- paste0("`", u$source_var, "` (", u$wave, ")")
+        src <- paste0("`", u$source_var, "` (", .qes_wave_label(u$wave, lang), ")")
         grade <- paste0("`", u$grade, "`", if (anchor[k]) paste0(" (", t_("anchor"), ")") else "",
                         if (u$status %in% c("draft", "review")) paste0(" (", t_(u$status), ")") else "")
         offered <- gsub(";", ", ", u$levels_offered %|NA|% "", fixed = TRUE)
@@ -478,7 +496,7 @@ print.qes_crosswalk <- function(x, ...) {
       out <- c(out, paste0("**", t_("not_used"), "**"), "")
       for (k in seq_len(nrow(unused))) {
         u <- unused[k, , drop = FALSE]
-        out <- c(out, sprintf("- %s `%s` (%s)%s`%s`. %s", u$study, u$source_var, u$wave, cl, u$grade,
+        out <- c(out, sprintf("- %s `%s` (%s)%s`%s`. %s", u$study, u$source_var, .qes_wave_label(u$wave, lang), cl, u$grade,
                               .qes_pick_lang(u, "grade_reason", lang)))
       }
       out <- c(out, "")
@@ -544,7 +562,7 @@ print.qes_crosswalk <- function(x, ...) {
       if (length(k) == 0L) return(dash)
       paste(vapply(k, function(i) {
         paste0(.qes_enum_label("grade", used$grade[i], lang),
-               if (s %in% multi_wave) paste0(" (", used$wave[i], ")") else "",
+               if (s %in% multi_wave) paste0(" (", .qes_wave_label(used$wave[i], lang), ")") else "",
                if (!is.na(not_off[i]) && nzchar(not_off[i])) " \\*" else "")
       }, character(1)), collapse = t_("semi"))
     }, character(1), USE.NAMES = FALSE)
@@ -555,17 +573,25 @@ print.qes_crosswalk <- function(x, ...) {
   study_rows <- lapply(studies, function(s) {
     w <- wv[wv$study == s, , drop = FALSE]
     w <- w[order(w$wave_order), , drop = FALSE]
-    waves <- vapply(seq_len(nrow(w)), function(i) {
-      rec <- wt[wt$study == s & wt$wave == w$wave[i] & wt$recommended %in% TRUE, , drop = FALSE]
-      weight <- if (nrow(rec) == 0L) {
+    weight_of <- function(wave) {
+      rec <- wt[wt$study == s & wt$wave %in% c(wave, .qes_all_waves) & wt$recommended %in% TRUE, , drop = FALSE]
+      if (nrow(rec) == 0L) {
         t_("cov_no_weight")
       } else if (identical(rec$status[1], "reviewed")) {
         paste0("`", rec$weight_var[1], "`")
       } else {
         paste0("`", rec$weight_var[1], "` (", t_("cov_weight_review"), ")")
       }
-      sprintf("%s (n = %s)%s%s", w$wave[i], number(w$n_cases[i]), t_("colon"), weight)
-    }, character(1))
+    }
+    waves <- if (.qes_poll_study(wv, s) && nrow(w) > 1L) {
+      # pooled polls: the number of polls, their first and last, their sizes
+      sprintf(t_("cov_polls"), nrow(w), w$wave[1], w$wave[nrow(w)], number(min(w$n_cases)),
+              number(max(w$n_cases)), t_("colon"), weight_of(w$wave[1]))
+    } else {
+      vapply(seq_len(nrow(w)), function(i) {
+        sprintf("%s (n = %s)%s%s", w$wave[i], number(w$n_cases[i]), t_("colon"), weight_of(w$wave[i]))
+      }, character(1))
+    }
     g <- applied$grade[applied$study == s]
     c(paste0("`", s, "`"), paste(waves, collapse = t_("semi")),
       as.character(length(unique(applied$target[applied$study == s]))),

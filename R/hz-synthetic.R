@@ -58,7 +58,10 @@
     stop(sprintf("qesR internal error: waves of '%s' without a membership rule differ in n_cases.", study), call. = FALSE)
   }
   ruled <- which(has_rule)
-  shift <- seq_along(ruled) - 1L
+  # the poll waves of pooled polls are disjoint: consecutive blocks of
+  # their sizes; other ruled waves overlap, each shifted by one row
+  polls <- .qes_poll_study(wv, study)
+  shift <- if (polls) c(0L, cumsum(wv$n_cases[ruled])[-length(ruled)]) else seq_along(ruled) - 1L
   N <- max(c(n_all, shift + wv$n_cases[ruled], 1L))
   members <- lapply(seq_len(nrow(wv)), function(w) {
     if (!has_rule[w]) return(rep(TRUE, N))
@@ -66,6 +69,8 @@
     seq_len(N) %in% (shift[k] + seq_len(wv$n_cases[w]))
   })
   names(members) <- wv$wave
+  # wave "*" names every poll wave
+  members[[.qes_all_waves]] <- Reduce(`|`, members, rep(FALSE, N))
   d <- list()
   labels <- list()
 
@@ -112,7 +117,9 @@
       next
     }
     num <- suppressWarnings(as.numeric(codes))
-    other <- .qes_synth_other(codes)
+    # a code no wave on this variable uses marks the rows in none of them
+    all_codes <- unique(unlist(lapply(wv$member_codes[ruled][wv$member_var[ruled] == v], .qes_split_list)))
+    other <- .qes_synth_other(all_codes)
     x <- d[[v]] %||% rep(other, N)
     x[members[[w]]] <- codes[1]
     d[[v]] <- x
@@ -227,10 +234,14 @@
   # weights, subsample and strata variables, mode variables
   for (k in seq_len(nrow(wt))) {
     v <- wt$weight_var[k]
-    mem <- members[[wt$wave[k]]]
     x <- d[[v]] %||% rep(NA_real_, N)
-    x[mem] <- rep_len(c(0.5, 1.5), sum(mem))
-    if (sum(mem) %% 2L == 1L) x[max(which(mem))] <- 1
+    # a weight of wave "*" has mean 1 in each poll wave
+    waves <- if (identical(wt$wave[k], .qes_all_waves)) wv$wave else wt$wave[k]
+    for (w in waves) {
+      mem <- members[[w]]
+      x[mem] <- rep_len(c(0.5, 1.5), sum(mem))
+      if (sum(mem) %% 2L == 1L) x[max(which(mem))] <- 1
+    }
     d[[v]] <- x
   }
   for (v in unique(stats::na.omit(c(wv$subsample_var, wv$strata_var)))) {

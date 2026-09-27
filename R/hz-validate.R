@@ -355,8 +355,16 @@
   # ---- V-S4: referential integrity ----------------------------------------------------
   bad <- which(!xw$study %in% study_codes)
   add("V-S4", "crosswalk", bad, xkeys[bad], "study is not in the catalog")
-  bad <- which(!paste(xw$study, xw$wave) %in% paste(wv$study, wv$wave))
+  # wave "*" names every wave of a study whose waves are all poll waves
+  star_ok <- function(study, wave) {
+    vapply(seq_along(study), function(k) identical(wave[k], .qes_all_waves) && .qes_poll_study(wv, study[k]),
+           logical(1))
+  }
+  star_bad <- function(study, wave) wave %in% .qes_all_waves & !star_ok(study, wave)
+  bad <- which(!paste(xw$study, xw$wave) %in% paste(wv$study, wv$wave) & !star_ok(xw$study, xw$wave))
   add("V-S4", "crosswalk", bad, xkeys[bad], "(study, wave) is not in waves.csv")
+  bad <- which(star_bad(xw$study, xw$wave))
+  add("V-S4", "crosswalk", bad, xkeys[bad], "wave * is allowed only in a study whose waves are all poll waves")
   bad <- which(!xw$target %in% tg$target)
   add("V-S4", "crosswalk", bad, xkeys[bad], "target is not in targets.csv")
   bad <- which(xw$rule %in% "map" & !has(xw$map_id))
@@ -431,13 +439,17 @@
   add("V-S4", "waves", bad, wkeys[bad], "study is not in the catalog")
   bad <- which(has(wv$election_ref) & !wv$election_ref %in% elections$election_id)
   add("V-S4", "waves", bad, wkeys[bad], "election_ref is not in catalog/elections.csv")
-  bad <- which(!paste(wt$study, wt$wave) %in% paste(wv$study, wv$wave))
+  bad <- which(!paste(wt$study, wt$wave) %in% paste(wv$study, wv$wave) & !star_ok(wt$study, wt$wave))
   add("V-S4", "weights", bad, tkeys[bad], "(study, wave) is not in waves.csv")
+  bad <- which(star_bad(wt$study, wt$wave))
+  add("V-S4", "weights", bad, tkeys[bad], "wave * is allowed only in a study whose waves are all poll waves")
+  both <- intersect(wt$study[wt$wave %in% .qes_all_waves], wt$study[!wt$wave %in% .qes_all_waves])
+  add("V-S4", "weights", NA, both, "a study's weights are registered for wave * or wave by wave, not both")
   # a mode that varies by respondent (var:<name>) is read through the
   # wave's survey_mode crosswalk row on that variable
   for (w in which(has(wv$mode) & grepl("^var:", wv$mode))) {
     v <- sub("^var:", "", wv$mode[w])
-    ok <- any(xw$study == wv$study[w] & xw$wave == wv$wave[w] & xw$target %in% "survey_mode" &
+    ok <- any(xw$study == wv$study[w] & xw$wave %in% c(wv$wave[w], .qes_all_waves) & xw$target %in% "survey_mode" &
                 xw$source_var %in% v & xw$rule %in% "map")
     if (!ok) {
       add("V-S4", "waves", w, wkeys[w], sprintf("mode var:%s needs a survey_mode crosswalk row (rule map) on %s in this wave", v, v))
@@ -455,10 +467,18 @@
     bad <- which(!gt_keys %in% xw_keys)
     add("V-S4", "gates", bad, gkeys[bad], "(study, wave, source_var, gate_var) is not a crosswalk row")
     # cells counted under another membership rule than the wave's are stale
-    w_rule <- vapply(seq_len(nrow(gt)), function(k) {
-      w <- which(wv$study == gt$study[k] & wv$wave == gt$wave[k])
-      if (length(w) == 1L) .qes_member_rule(wv, w) else NA_character_
+    # (once per study and wave)
+    gw <- paste(gt$study, gt$wave, sep = "\x1f")
+    first <- match(unique(gw), gw)
+    rule_of <- vapply(first, function(k) {
+      w <- .qes_wave_rows(wv, gt$wave[k], gt$study[k])
+      if (length(w) == 1L || (length(w) > 1L && identical(gt$wave[k], .qes_all_waves))) {
+        .qes_member_rule_rows(wv, w)
+      } else {
+        NA_character_
+      }
     }, character(1))
+    w_rule <- unname(rule_of[match(gw, gw[first])])
     bad <- which(!is.na(w_rule) & gate_or_empty(gt$member_rule) != w_rule)
     bad <- bad[!duplicated(gt_keys[bad])]
     add("V-S4", "gates", bad, gkeys[bad], sprintf(
@@ -514,7 +534,9 @@
     for (col in names(x)) {
       v <- x[[col]]
       if (!is.character(v)) next
-      for (i in which(has(v))) {
+      # printable ASCII needs no closer look
+      plain <- !grepl("[^\x20-\x7E]", v, useBytes = TRUE)
+      for (i in which(has(v) & !plain)) {
         why <- if (!validUTF8(v[i])) "invalid UTF-8" else bad_cp(v[i])
         if (!is.na(why)) add("V-S7", tab, i, col, why)
       }
@@ -526,20 +548,27 @@
   }
 
   # ---- V-S8: alias contradictions ------------------------------------------------------------
+  # the normalized aliases of each level set (and their md5), once per set
+  alias_of <- list()
+  alias_hash_of <- list()
   for (id in unique(vm$map_id)) {
+    set_id <- tg$levels_id[match(xw$target[match(id, xw$map_id)], tg$target)]
     set <- target_set(xw$target[match(id, xw$map_id)])
     if (is.null(set)) next
-    alias <- lapply(set$aliases, function(a) .qes_norm_label(split(a)))
-    alias <- stats::setNames(alias, set$code)
-    alias_hash <- NULL
+    if (is.null(alias_of[[set_id]])) {
+      alias_of[[set_id]] <- stats::setNames(lapply(set$aliases, function(a) .qes_norm_label(split(a))), set$code)
+    }
+    alias <- alias_of[[set_id]]
     rows <- which(vm$map_id == id)
+    labs <- .qes_norm_label(vm$source_label[rows])
     for (i in rows) {
       mapped <- vm$target_code[i]
       if (has(vm$source_label[i])) {
-        lab <- .qes_norm_label(vm$source_label[i])
+        lab <- labs[match(i, rows)]
         hits <- names(alias)[vapply(alias, function(a) lab %in% a, logical(1))]
       } else if (has(vm$source_label_hash[i])) {
-        if (is.null(alias_hash)) alias_hash <- lapply(alias, .qes_md5_text)
+        if (is.null(alias_hash_of[[set_id]])) alias_hash_of[[set_id]] <- lapply(alias, .qes_md5_text)
+        alias_hash <- alias_hash_of[[set_id]]
         hits <- names(alias_hash)[vapply(alias_hash, function(a) vm$source_label_hash[i] %in% a, logical(1))]
       } else {
         next
@@ -558,17 +587,35 @@
   # ---- V-S9: timing and election reference ------------------------------------------------------
   for (i in seq_len(nrow(xw))) {
     j <- match(xw$target[i], tg$target)
-    w <- which(wv$study == xw$study[i] & wv$wave == xw$wave[i])
-    if (is.na(j) || length(w) != 1L) next
+    star <- identical(xw$wave[i], .qes_all_waves)
+    w <- .qes_wave_rows(wv, xw$wave[i], xw$study[i])
+    if (is.na(j) || length(w) == 0L || (length(w) > 1L && !star)) next
     tt <- tg$target_timing[j]
-    wt_ <- wv$wave_timing[w]
-    if (tt %in% c("pre", "post") && !wt_ %in% c(tt, "between")) {
-      add("V-S9", "crosswalk", i, xkeys[i], sprintf("a %s-election target in a %s-election wave", tt, wt_))
+    for (wt_ in unique(wv$wave_timing[w])) {
+      if (tt %in% c("pre", "post") && !wt_ %in% c(tt, "between")) {
+        add("V-S9", "crosswalk", i, xkeys[i], sprintf("a %s-election target in a %s-election wave", tt, wt_))
+      }
     }
     rule <- tg$election_ref_rule[j]
     ref <- xw$election_ref[i]
     s_ref <- studies$election_id[match(xw$study[i], studies$study)]
-    if (identical(rule, "none") || !has(rule)) {
+    if (star && !identical(rule, "none") && has(rule)) {
+      # a row over every poll wave refers, poll by poll, to the election of
+      # each wave (waves.csv), which must be set, in the target's jurisdiction
+      if (has(ref)) {
+        add("V-S9", "crosswalk", i, xkeys[i], "a row of wave * takes the election of each wave: leave election_ref empty")
+      }
+      w_ref <- wv$election_ref[w]
+      if (!all(has(w_ref))) {
+        add("V-S9", "crosswalk", i, xkeys[i], "a row of wave * needs election_ref on every wave of the study")
+      }
+      e <- match(w_ref[has(w_ref)], elections$election_id)
+      if (has(tg$jurisdiction[j]) && any(!is.na(e) & elections$jurisdiction[e] != tg$jurisdiction[j])) {
+        add("V-S9", "crosswalk", i, xkeys[i], "a wave's election_ref is in another jurisdiction than the target")
+      }
+    } else if (star) {
+      if (has(ref)) add("V-S9", "crosswalk", i, xkeys[i], "the target has no election reference, but election_ref is set")
+    } else if (identical(rule, "none") || !has(rule)) {
       if (has(ref)) add("V-S9", "crosswalk", i, xkeys[i], "the target has no election reference, but election_ref is set")
     } else if (!has(ref)) {
       add("V-S9", "crosswalk", i, xkeys[i], "the target needs election_ref")
@@ -682,11 +729,16 @@
       add("V-S13", "weights", NA, k, sprintf("%d recommended weights; each study-wave with weights has exactly one", n_rec))
     }
   }
-  no_weight <- setdiff(wkeys, paste(wt$study, wt$wave, sep = "/"))
+  weighted <- c(paste(wt$study, wt$wave, sep = "/"), wkeys[wv$study %in% wt$study[wt$wave %in% .qes_all_waves]])
+  no_weight <- setdiff(wkeys, weighted)
   add("V-S13", "waves", NA, no_weight, "no registered weight: harmonized weights will be NA", severity = "note")
   if (isTRUE(release)) {
     review <- paste(wt$study, wt$wave, sep = "/")[rec & wt$status %in% "needs_review"]
-    bad <- which(xw$status %in% "stable" & paste(xw$study, xw$wave, sep = "/") %in% review)
+    # a weight of wave "*" is each poll wave's, and a row of wave "*" uses
+    # every poll wave's
+    review <- c(review, wkeys[paste(wv$study, .qes_all_waves, sep = "/") %in% review])
+    row_waves <- lapply(seq_len(nrow(xw)), function(i) paste(xw$study[i], wv$wave[.qes_wave_rows(wv, xw$wave[i], xw$study[i])], sep = "/"))
+    bad <- which(xw$status %in% "stable" & vapply(row_waves, function(k) any(k %in% review), logical(1)))
     add("V-S13", "crosswalk", bad, xkeys[bad], "a released stable row uses a study-wave whose recommended weight needs review")
   }
 
@@ -753,7 +805,7 @@
   mode_family <- function(i) {
     m <- xw$mode[i]
     if (!has(m)) {
-      m <- wv$mode[match(paste(xw$study[i], xw$wave[i]), paste(wv$study, wv$wave))]
+      m <- wv$mode[.qes_wave_rows(wv, xw$wave[i], xw$study[i])[1]]
     }
     if (is.na(m)) return(NA_character_)
     if (m %in% c("web", "phone")) m else "mixed"

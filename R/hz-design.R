@@ -37,14 +37,19 @@
 #' Normalized weights have mean 1 in each study and wave, so a pooled
 #' estimate gives each study a share proportional to its number of
 #' respondents. `pool = "equal"` rescales the weights so that each study
-#' (each study and wave in the long layout) has the same total; it is the
+#' (each study and wave in the long layout; the polls of pooled polls count
+#' as one) has the same total; it is the
 #' only place where qesR changes the relative size of studies. Whether
 #' either is meaningful depends on the question: studies differ in
 #' population, mode, wording and sampling, and the grades of
 #' [qes_spec()] say how comparable each study's question is.
 #'
 #' @section Design:
-#' Studies are independent samples, so each study is a stratum. In the
+#' Studies are independent samples, so each study is a stratum. A study
+#' made of several independent samples is divided further, by its `stratum`
+#' column: the 1998 panel by polling firm (`stratum` 1 = CREATEC, 2 =
+#' CROP), the pooled CROP polls of 2007-2010 by poll (`stratum` is the
+#' poll's wave name, as in `waves`). In the
 #' respondent layout each row is its own sampling unit (`ids = ~1`). In the
 #' long layout a respondent interviewed in two waves appears in two rows of
 #' one study, so the respondent (`qes_id`) is the sampling unit and the
@@ -58,7 +63,11 @@
 #' `qes_design()` (expérimental) transforme le résultat de
 #' [qes_harmonize()] en plan de sondage du package \pkg{survey} (ou en
 #' `tbl_svy` de \pkg{srvyr}). Chaque étude est une strate ; en disposition
-#' longue, la personne (`qes_id`) est l'unité d'échantillonnage. Avec
+#' longue, la personne (`qes_id`) est l'unité d'échantillonnage. Une étude
+#' formée de plusieurs échantillons indépendants est divisée selon sa
+#' colonne `stratum` : le panel de 1998 par firme de sondage (1 = CREATEC,
+#' 2 = CROP), les sondages CROP de 2007-2010 par sondage (`stratum` est le
+#' nom de la vague du sondage, comme dans `waves`). Avec
 #' `weight = NULL`, la pondération est choisie d'après la vague d'où vient
 #' chaque cible (`attr(x, "qes_weight_guide")`) : `weight_pre` pour des
 #' cibles de vagues préélectorales, `weight_post` pour des cibles de vagues
@@ -67,7 +76,8 @@
 #' Chaque vague a au plus une pondération recommandée.
 #' Les lignes sans valeur de pondération sont laissées hors du plan, avec un
 #' message. `pool = "equal"` donne le même total à chaque étude (et vague en
-#' disposition longue).
+#' disposition longue ; les sondages regroupés comptent pour une seule
+#' étude).
 #'
 #' @param x Harmonized data returned by [qes_harmonize()], with its weight
 #'   columns and attributes.
@@ -79,12 +89,13 @@
 #'   package. The package must be installed.
 #' @param pool `"as_is"` (default) keeps the weights of `x`; `"equal"`
 #'   rescales them so that every study (every study and wave in the long
-#'   layout) has the same total.
+#'   layout; the polls of pooled polls count as one) has the same total.
 #'
 #' @return A `survey.design2` (engine `"survey"`) or `tbl_svy` (engine
 #'   `"srvyr"`) object whose data are the rows of `x` with a value of the
 #'   weight, as a plain data frame, with the added column `qes_stratum`
-#'   (the study). The weight is the column named by `weight`.
+#'   (the study, or `<study>:<stratum>` where the `stratum` column is set).
+#'   The weight is the column named by `weight`.
 #'
 #' @family harmonization
 #' @seealso [qes_harmonize()] for the weight columns and
@@ -137,9 +148,19 @@ qes_design <- function(x, weight = NULL, engine = c("survey", "srvyr"), pool = c
   }
   df <- df[keep, , drop = FALSE]
   rownames(df) <- NULL
-  df$qes_stratum <- df$study
+  # studies are independent samples; within a study, the independent samples
+  # that its waves declare (strata_var: the firms of the 1998 panel, the
+  # polls of pooled polls) are strata too
+  stratum <- if ("stratum" %in% names(df)) df$stratum else rep(NA_character_, nrow(df))
+  df$qes_stratum <- ifelse(is.na(stratum), df$study, paste(df$study, stratum, sep = ":"))
   if (identical(pool, "equal")) {
-    group <- if (long) paste(df$study, df$wave, sep = ":") else df$study
+    # the polls of pooled polls are one study: they share one total, or
+    # 24 polls would each get a study's share
+    group <- if (long) {
+      ifelse(df$wave_design %in% "poll_wave", df$study, paste(df$study, df$wave, sep = ":"))
+    } else {
+      df$study
+    }
     totals <- tapply(df[[weight]], group, sum)
     df[[weight]] <- df[[weight]] * (nrow(df) / length(totals)) / unname(totals[group])
   }

@@ -228,12 +228,13 @@
     if (!.qes_hz_projected(xw, i) || !xw$source_var[i] %in% names(d)) next
     gate <- xw$gate_var[i]
     if (!is.na(gate) && !gate %in% names(d)) next
-    w <- which(wv$study == study & wv$wave == xw$wave[i])
-    if (length(w) != 1L) next
+    # one wave, or every poll wave of the study for wave "*"
+    w <- .qes_wave_rows(wv, xw$wave[i], study)
+    if (length(w) == 0L || (length(w) > 1L && !identical(xw$wave[i], .qes_all_waves))) next
     key <- paste(xw$wave[i], xw$source_var[i], gate, sep = "\x1f")
     if (key %in% seen) next
     seen <- c(seen, key)
-    mem <- .qes_wave_members(wv, w, d)
+    mem <- .qes_wave_members_rows(wv, w, d)
     if (is.null(mem)) next
     src <- .canon(d[[xw$source_var[i]]])[mem]
     src[is.na(src)] <- "NA"
@@ -249,7 +250,7 @@
     gc <- vapply(parts, `[`, character(1), 1L)
     out[[length(out) + 1L]] <- data.frame(
       study = study, wave = xw$wave[i], source_var = xw$source_var[i],
-      member_rule = .qes_member_rule(wv, w), gate_var = gate,
+      member_rule = .qes_member_rule_rows(wv, w), gate_var = gate,
       gate_code = ifelse(nzchar(gc), gc, NA_character_),
       source_code = vapply(parts, `[`, character(1), 2L), n = as.integer(tab),
       stringsAsFactors = FALSE
@@ -280,8 +281,8 @@
   xw <- spec$tables$crosswalk
   wv <- spec$tables$waves
   study <- xw$study[i]
-  w <- which(wv$study == study & wv$wave == xw$wave[i])
-  rule <- if (length(w) == 1L) .qes_member_rule(wv, w) else ""
+  w <- .qes_wave_rows(wv, xw$wave[i], study)
+  rule <- if (length(w) >= 1L) .qes_member_rule_rows(wv, w) else ""
   g <- sources$gates
   same_gate <- if (is.na(xw$gate_var[i])) is.na(g$gate_var) else g$gate_var %in% xw$gate_var[i]
   rows <- g[g$study == study & g$wave == xw$wave[i] & g$source_var == xw$source_var[i] & same_gate, , drop = FALSE]
@@ -540,8 +541,11 @@
   has <- function(x) !is.na(x) & nzchar(x)
   xkey <- function(i) paste(xw$study[i], xw$wave[i], xw$target[i], xw$source_var[i], sep = "/")
   vars_of <- function(study) sources$variables$variable[sources$variables$study == study]
+  # the rows of each (study, variable) of the values table, indexed once
+  value_rows <- split(seq_len(nrow(sources$values)), paste(sources$values$study, sources$values$variable, sep = "\x1f"))
   values_of <- function(study, var) {
-    sources$values[sources$values$study == study & sources$values$variable == var, , drop = FALSE]
+    rows <- value_rows[[paste(study, var, sep = "\x1f")]] %||% integer(0)
+    sources$values[rows, , drop = FALSE]
   }
   hint <- function(var, study) {
     s <- .qes_suggest_variables(var, vars_of(study), n = 3L)
@@ -628,22 +632,32 @@
     if (!exists_in(xw$source_var[i], xw$study[i])) next
     val <- values_of(xw$study[i], xw$source_var[i])
     rows <- which(vm$map_id == xw$map_id[i])
+    # the normalized labels of the file and of the value map, once per map
+    norm_file <- .qes_norm_label(val$label[match(vm$source_code[rows], val$value)])
+    norm_map <- .qes_norm_label(vm$source_label[rows])
     for (k in rows) {
       j <- match(vm$source_code[k], val$value)
       file_label <- if (is.na(j)) NA_character_ else val$label[j]
-      file_hash <- if (is.na(j)) NA_character_ else val$label_hash[j]
-      if (is.na(file_hash) && !is.na(file_label)) file_hash <- .qes_md5_text(.qes_norm_label(file_label))
+      # the file has a label, or its hash (a study whose labels cannot ship)
+      file_has_label <- !is.na(file_label) || (!is.na(j) && !is.na(val$label_hash[j]))
+      # the md5 of the file's label, computed only when a hash is compared
+      file_hash <- function() {
+        h <- if (is.na(j)) NA_character_ else val$label_hash[j]
+        if (is.na(h) && !is.na(file_label)) h <- .qes_md5_text(.qes_norm_label(file_label))
+        h
+      }
       origin <- vm$source_label_origin[k]
       vkey <- paste(vm$map_id[k], vm$source_code[k], sep = "/")
       if (has(vm$source_label[k])) {
         if (!is.na(file_label)) {
-          if (!identical(.qes_norm_label(file_label), .qes_norm_label(vm$source_label[k]))) {
+          if (!identical(norm_file[match(k, rows)], norm_map[match(k, rows)])) {
             add("V-D3", "valuemaps", k, vkey, sprintf("%s %s: the file labels code %s '%s', the value map '%s'", xw$study[i], xw$source_var[i], vm$source_code[k], file_label, vm$source_label[k]))
           }
-        } else if (origin %in% c("file", "label_donor") && (is.na(j) || is.na(file_hash))) {
+        } else if (origin %in% c("file", "label_donor") && !file_has_label) {
           add("V-D3", "valuemaps", k, vkey, sprintf("%s %s: the value map quotes a file label for code %s, but the file has none", xw$study[i], xw$source_var[i], vm$source_code[k]))
         }
       } else if (has(vm$source_label_hash[k])) {
+        file_hash <- file_hash()
         if (is.na(file_hash)) {
           add("V-D3", "valuemaps", k, vkey, sprintf("%s %s: the value map has a label hash for code %s, but the file has no label", xw$study[i], xw$source_var[i], vm$source_code[k]))
         } else if (!identical(file_hash, vm$source_label_hash[k])) {
@@ -708,6 +722,22 @@
       }
     } else if (!identical(as.integer(n), wv$n_cases[w])) {
       add("V-D8", "waves", w, wkey, sprintf("%d rows are members of the wave, n_cases says %d", n, wv$n_cases[w]))
+    }
+  }
+
+  # the poll waves of a study are disjoint samples: with data, no row is a
+  # member of two of them (a row of wave "*" takes the respondent's poll)
+  if (!is.null(data) && isTRUE(member_counts)) {
+    for (study in intersect(names(data), studies)) {
+      if (!.qes_poll_study(wv, study)) next
+      idx <- which(wv$study == study)
+      m <- vapply(idx, function(w) .qes_wave_members(wv, w, data[[study]]) %||% rep(FALSE, nrow(data[[study]])),
+                  logical(nrow(data[[study]])))
+      both <- which(rowSums(matrix(m, nrow = nrow(data[[study]]))) > 1L)
+      if (length(both) > 0L) {
+        add("V-D8", "waves", idx[1], study, sprintf("%d rows are members of two or more poll waves, e.g. rows %s",
+                                                   length(both), paste(utils::head(both, 5L), collapse = ", ")))
+      }
     }
   }
 

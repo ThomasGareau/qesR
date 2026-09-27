@@ -49,12 +49,12 @@ test_that("two panel studies with two waves each give one row per respondent", {
   expect_identical(h$qes_id[1], paste0("qes2007_panel:", .canon(syn$qes2007_panel$nompn[1]), "-",
                                        .canon(syn$qes2007_panel$quest[1])))
   # leading columns, then the core targets
-  expect_identical(names(h)[1:14], c("study", "year", "election_date", "family", "study_design",
-                                     "target_population", "waves", "qes_id", "subsample", "source_row",
+  expect_identical(names(h)[1:15], c("study", "year", "election_date", "family", "study_design",
+                                     "target_population", "waves", "qes_id", "subsample", "stratum", "source_row",
                                      "survey_mode", "interview_date", "days_to_election", "eligible_voter"))
   core <- core_targets()
-  expect_identical(names(h)[15:(14 + length(core))], core)
-  expect_identical(names(h)[(15 + length(core)):ncol(h)],
+  expect_identical(names(h)[16:(15 + length(core))], core)
+  expect_identical(names(h)[(16 + length(core)):ncol(h)],
                    c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var"))
   expect_s3_class(h$election_date, "Date")
   expect_identical(unique(h$election_date[h$study == "qes2007_panel"]), as.Date("2007-03-26"))
@@ -321,7 +321,8 @@ test_that("arguments are checked", {
   err <- expect_error(qes_harmonize(targets = "vote_prov_recal", data = syn), class = "qesR_error_input")
   expect_true("vote_prov_recall" %in% err$suggestions)
   expect_error(qes_harmonize(targets = character(0), data = syn), class = "qesR_error_input")
-  expect_error(qes_harmonize("qes2008"), class = "qesR_error_input")
+  # the firms' own 1998 files are raw data of the qes1998 respondents, not in the spec
+  expect_error(qes_harmonize("qes1998_crop"), class = "qesR_error_input")
   expect_error(qes_harmonize("qes2019"), class = "qesR_error_unknown_study")
   expect_error(qes_harmonize("qes2012", data = syn), class = "qesR_error_input")
   expect_error(qes_harmonize(data = list(syn$qes2014)), class = "qesR_error_input")
@@ -335,10 +336,10 @@ test_that("targets accepts target, family and set names, in spec order", {
   syn <- hz_syn("qes2014")
   wcols <- c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var")
   h <- hz_run(syn, targets = c("sov_indep", "vote_prov"))
-  expect_identical(setdiff(names(h)[-(1:14)], wcols),
+  expect_identical(setdiff(names(h)[-(1:15)], wcols),
                    c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "sov_indep"))
   h <- hz_run(syn, targets = "vote")
-  expect_identical(setdiff(names(h)[-(1:14)], wcols),
+  expect_identical(setdiff(names(h)[-(1:15)], wcols),
                    c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall"))
   # a family whose only target is a leading column adds nothing
   expect_error(hz_run(syn, targets = "interview_mode"), class = "qesR_error_input")
@@ -347,8 +348,11 @@ test_that("targets accepts target, family and set names, in spec order", {
 test_that("study selection: defaults, 'all' and the demonstration study", {
   s <- hz_spec()
   covered <- .qes_hz_covered(s)
-  expect_true(all(c("qes2012", "qes2014", "qes2018", "qes2022", "qes2007_panel", "qes2018_panel") %in% covered))
-  expect_identical(.qes_hz_resolve_studies(NULL, NULL, s), c("qes2022", "qes2018", "qes2014", "qes2012"))
+  expect_true(all(c("qes2012", "qes2014", "qes2018", "qes2022", "qes2007_panel", "qes2018_panel",
+                    "qes2007", "qes2008", "qes2012_panel", "qes_crop_2007_2010", "qes1998") %in% covered))
+  # the default is the Quebec Election Studies, never the pooled polls or panels
+  expect_identical(.qes_hz_resolve_studies(NULL, NULL, s),
+                   c("qes2022", "qes2018", "qes2014", "qes2012", "qes2008", "qes2007"))
   expect_identical(.qes_hz_resolve_studies("all", NULL, s), covered)
   expect_identical(.qes_hz_resolve_studies(" QES2014 ", NULL, s), "qes2014")
   expect_identical(.qes_hz_resolve_studies(NULL, list(qes2018 = 1, qes2012 = 1), s), c("qes2018", "qes2012"))

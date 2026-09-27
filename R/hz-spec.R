@@ -408,8 +408,9 @@
 #' vue `"targets"` donne une ligne par cible et, pour chaque étude, son niveau
 #' de comparabilité ; la vue `"crosswalk"` donne la question source, la
 #' raison du niveau, les niveaux offerts et non offerts, la question filtre et
-#' le libellé ; la vue `"spec"` renvoie la spécification vérifiée.
-#' `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+#' le libellé (une vague `"*"` désigne une ligne qui s'applique à chaque
+#' sondage des sondages CROP regroupés) ; la vue `"spec"` renvoie la
+#' spécification vérifiée. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
 #' `vignette("fr-reference-harmonisation", package = "qesR")` en est la
 #' référence complète.
 #'
@@ -443,7 +444,9 @@
 #'     `weight_var`, `status`, `evidence`, `notes`. With `level = "code"`:
 #'     `study`, `wave`, `target`, `variable`, `source_code`, `source_label`,
 #'     `origin` (`map`, `na_codes`, `range` or `gate`), `target_code`,
-#'     `target_level`, `target_label`, `na_reason`, `note`.
+#'     `target_level`, `target_label`, `na_reason`, `note`. A `wave` of `"*"`
+#'     marks a row that applies to every poll of pooled polls (the CROP
+#'     polls of 2007-2010, one wave per poll).
 #'   * `"spec"`: an object of class `qes_spec`: a list with the spec
 #'     `version`, its content `hash`, `custom` (`TRUE` when it is not the
 #'     shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,

@@ -23,7 +23,13 @@ test_that("qes_studies() returns the offline catalog with doi_url and waves", {
   expect_identical(unname(waves[c("qes2022", "qes2018", "qes2014", "qes2012", "qes2018_panel",
                                   "qes2007_panel", "qes2012_panel")]),
                    c("cps;pes", "post", "post", "post", "pre;post", "pre;post", "pre;post"))
-  expect_true(all(is.na(waves[c("qes2007", "qes2008", "qes_crop_2007_2010", "qes1998")])))
+  expect_identical(unname(waves[c("qes2007", "qes2008", "qes1998")]), c("post", "post", "pre;post"))
+  # the pooled CROP polls: one wave per monthly poll, in field order
+  crop <- strsplit(waves[["qes_crop_2007_2010"]], ";", fixed = TRUE)[[1]]
+  expect_length(crop, 24L)
+  expect_identical(crop[c(1, 24)], c("poll_2007_06", "poll_2010_01"))
+  # the firms' own 1998 files are not harmonized
+  expect_true(all(is.na(waves[c("qes1998_crop", "qes1998_createc")])))
   expect_type(s$year, "integer")
   expect_type(s$default_member, "logical")
   expect_identical(rownames(s), as.character(seq_len(nrow(s))))

@@ -48,3 +48,4 @@
 "q79","","","Travaillez-vous actuellement à votre compte, êtes-vous salarié, avez-vous pris votre retraite, êtes-vous au chômage ou cherchez-vous du travail, êtes-vous étudiant, ménagère ou quelque chose d'autre ?","","","","questionnaire","196358:Q79","","","","FALSE","drafted by data-raw/extract_questions.R"
 "q81","","","Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte ? Est-ce...","","","","questionnaire","196358:Q81","","","","FALSE","drafted by data-raw/extract_questions.R"
 "q80","","","Quelle langue parlez-vous LE PLUS SOUVENT à la maison ?","","","","questionnaire","196358:Q80","","","","FALSE","drafted by data-raw/extract_questions.R"
+"q0age","","","Quel âge avez-vous ?","","","","questionnaire","196358:Q0AGE","","","","TRUE","wording checked by hand against the questionnaire(s) in doc_ref; under 18 (code 1) ends the interview"

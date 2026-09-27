@@ -28,6 +28,9 @@ test_that("each projected row counts every member of its wave once", {
   wave_of <- sub(" [^ ]+ [^ ]+$", "", names(totals))
   wv <- s$tables$waves
   size <- stats::setNames(wv$n_cases, paste(wv$study, wv$wave))
+  # a row of wave "*" counts the members of every poll wave of its study
+  polls <- tapply(wv$n_cases, wv$study, sum)
+  size <- c(size, stats::setNames(as.integer(polls), paste(names(polls), "*")))
   expect_identical(as.vector(totals), unname(size[wave_of]))
 })
 

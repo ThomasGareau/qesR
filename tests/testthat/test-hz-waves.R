@@ -14,10 +14,10 @@ hz_run <- function(data, ..., include_draft = TRUE, quiet = TRUE) {
 hz_syn <- function(studies) .qes_synthetic(studies, spec = hz_spec())
 
 lead_respondent <- c("study", "year", "election_date", "family", "study_design", "target_population",
-                     "waves", "qes_id", "subsample", "source_row", "survey_mode", "interview_date",
+                     "waves", "qes_id", "subsample", "stratum", "source_row", "survey_mode", "interview_date",
                      "days_to_election", "eligible_voter")
 lead_long <- c("study", "year", "election_date", "family", "study_design", "target_population",
-               "wave", "wave_timing", "wave_design", "qes_id", "subsample", "source_row", "survey_mode",
+               "wave", "wave_timing", "wave_design", "qes_id", "subsample", "stratum", "source_row", "survey_mode",
                "interview_date", "days_to_election", "eligible_voter")
 
 test_that("the respondent layout has the wave, date, mode, eligibility and weight columns", {
