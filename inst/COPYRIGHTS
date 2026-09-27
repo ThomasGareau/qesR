@@ -93,8 +93,8 @@ in writing, qesR ships none of its value labels, question text or answer
 counts.
 The package holds only its catalog entry (title, authors, version, file
 names, sizes and checksums, as published on the deposit), the names of the
-variables that get_qes_master() and get_decon() read
-(inst/extdata/legacy/sources.csv), rules written for qesR that say which
+variables whose weights and interview dates get_qes_master() reads
+(inst/extdata/harmonize/legacy.csv), rules written for qesR that say which
 codes mark item nonresponse (inst/extdata/dict/shard_rules.csv), and the
 rows of the harmonization spec (inst/extdata/harmonize/): variable names,
 codes, the md5 hash of each normalized value label (used to check that the
@@ -118,6 +118,8 @@ out commercial use.
 
   - inst/extdata/catalog/elections.csv: election dates, from the official
     results published by Élections Québec (each row gives its source URL).
-  - inst/extdata/legacy/: which variable each column of get_qes_master() and
-    get_decon() read in qesR 0.4.4, and the labels 0.4.4 attached by hand;
-    part of qesR (MIT).
+  - inst/extdata/harmonize/legacy.csv: how each column of get_qes_master()
+    and get_decon() is rendered from the harmonized targets; and
+    inst/extdata/legacy/: the columns qesR 0.4.4 stacked by name and no
+    longer built (removed.csv), and the studies whose legacy values differ
+    from qesR 0.4.4 (changes.csv, no counts); part of qesR (MIT).

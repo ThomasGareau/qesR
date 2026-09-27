@@ -102,7 +102,13 @@ test_that("V-L3 and the waves, weights and eligibility of the originals (live)",
   expect_identical(sum(is.na(by("qes2012", h$eligible_voter))), 21L)
   expect_true(all(by("qes2012_panel", h$eligible_voter)))
   expect_true(all(by("qes2018_panel", h$eligible_voter)))
-  expect_identical(sum(by("qes2007_panel", h$eligible_voter) %in% TRUE), 2049L)
+  # the 2007 panel's age bands in whichever wave the respondent answered
+  # (spec 1.0.0): 2,049 pre-wave respondents, and 304 of the 391 reached
+  # only after the election (those aged 18-34 then may have been 17 on
+  # election day)
+  elig <- by("qes2007_panel", h$eligible_voter)
+  expect_identical(sum(elig %in% TRUE), 2353L)
+  expect_identical(sum(elig[!grepl("pre", by("qes2007_panel", h$waves))] %in% TRUE), 304L)
   # interview dates and modes
   expect_identical(range(by("qes2022", h$interview_date)), as.Date(c("2022-09-19", "2022-09-23")))
   expect_identical(range(by("qes2007_panel", h$interview_date), na.rm = TRUE), as.Date(c("2007-03-01", "2007-04-13")))

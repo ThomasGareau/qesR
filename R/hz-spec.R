@@ -26,10 +26,12 @@
 #                  the md5 of each harmonized column (study, target) that the
 #                  engine gives on the pinned file (data-raw/build_hashes.R),
 #                  checked on the originals by V-L1 (live tests).
-# gates.csv and expected/ describe the shipped studies; a spec directory
-# without them loads with empty tables. Slice HZ6 adds legacy.csv; the content
-# hash covers every CSV of the directory, so it is hashed without code
-# changes.
+#   legacy.csv     the renderer of the legacy columns of get_qes_master() and
+#                  get_decon() from the targets (R/legacy.R; slice HZ6),
+#                  checked by V-S18.
+# gates.csv, expected/ and legacy.csv describe the shipped studies and
+# functions; a spec directory without them loads with empty tables. The
+# content hash covers every CSV of the directory.
 #
 # .qes_spec_load() reads a directory through the one CSV loader and types it;
 # .qes_spec_check() (R/hz-validate.R) runs the validator V-S1 to V-S17 on the
@@ -47,12 +49,12 @@
 )
 # Optional files (a spec directory may lack them) and their schemas.
 .qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv",
-                              hashes = "expected/hashes.csv")
+                              hashes = "expected/hashes.csv", legacy = "legacy.csv")
 .qes_spec_table_schema <- c(
   targets = "spec_targets", levels = "spec_levels", crosswalk = "spec_crosswalk",
   valuemaps = "spec_valuemaps", waves = "spec_waves", weights = "spec_weights",
   changes = "spec_changes", gates = "spec_gates", expected = "spec_expected",
-  hashes = "spec_hashes"
+  hashes = "spec_hashes", legacy = "spec_legacy"
 )
 .qes_spec_fields <- c("Spec-Version", "Spec-Date", "Schema-Version", "Engine-Min", "Hash", "Licence")
 
@@ -410,13 +412,17 @@
 #' raison du niveau, les niveaux offerts et non offerts, la question filtre et
 #' le libellé (une vague `"*"` désigne une ligne qui s'applique à chaque
 #' sondage des sondages CROP regroupés) ; la vue `"spec"` renvoie la
-#' spécification vérifiée. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+#' spécification vérifiée, dont la table `tables$legacy`, qui rend les
+#' colonnes de [get_qes_master()] et de [get_decon()] à partir des cibles.
+#' L'ensemble de cibles `"decon"` réunit les cibles des colonnes de
+#' `get_decon()`. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
 #' `vignette("fr-reference-harmonisation", package = "qesR")` en est la
 #' référence complète.
 #'
 #' @param view `"targets"`, `"crosswalk"` or `"spec"`.
 #' @param targets Target, family or set names (views `"targets"` and
-#'   `"crosswalk"`); `NULL` (default) is every target.
+#'   `"crosswalk"`; the set `"decon"` holds the targets of the columns of
+#'   [get_decon()]); `NULL` (default) is every target.
 #' @param studies Study codes (views `"targets"` and `"crosswalk"`); `NULL`
 #'   (default) is every study the spec covers.
 #' @param level `"row"` (default) or `"code"` (view `"crosswalk"` only).
@@ -446,11 +452,14 @@
 #'     `origin` (`map`, `na_codes`, `range` or `gate`), `target_code`,
 #'     `target_level`, `target_label`, `na_reason`, `note`. A `wave` of `"*"`
 #'     marks a row that applies to every poll of pooled polls (the CROP
-#'     polls of 2007-2010, one wave per poll).
+#'     polls of 2007-2010, one wave per poll), or, in a panel, a question
+#'     that does not change over the study (gender, education), asked in
+#'     whichever wave the respondent took part (the 2007 panel).
 #'   * `"spec"`: an object of class `qes_spec`: a list with the spec
 #'     `version`, its content `hash`, `custom` (`TRUE` when it is not the
 #'     shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,
-#'     waves, weights, changes, gates, expected, hashes); `attr(, "check")`
+#'     waves, weights, changes, gates, expected, hashes, legacy: the renderer of
+#'     [get_qes_master()] and [get_decon()]); `attr(, "check")`
 #'     holds the problems table (`rule`, `severity`, `table`, `row`, `key`,
 #'     `detail`).
 #'

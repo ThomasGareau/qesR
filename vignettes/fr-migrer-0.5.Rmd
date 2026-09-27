@@ -97,7 +97,7 @@ ces notes).
 | `download_codebook()` | `qes_download(what = "docs")` | `file` choisit maintenant des documents par leur nom ; fichiers vérifiés par md5 |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | les fichiers des firmes de 1998 s'ajoutent après les 11 anciens codes |
-| `get_decon()` | gardée telle quelle jusqu'à qesR 0.7.0 | valeurs modifiées (plus bas) |
+| `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` | obsolète (dépréciation douce) depuis qesR 0.7.0 ; valeurs modifiées (plus bas) |
 
 `get_qes()`, `get_qes_master()` et `qes_codebook()` gardent leur nom. Une
 fonction héritée retourne ce que retourne sa remplaçante. Dans une nouvelle
@@ -138,6 +138,22 @@ unique(master[, c("qes_code", "vote_choice_timing", "sovereignty_item")])
 
 `attr(master, "legacy_column_map")` indique le sens de chaque colonne et les
 études dont les valeurs ont changé. `get_decon()` change de la même façon.
+
+### Depuis qesR 0.7.0
+
+Les deux fonctions sont produites par le moteur d'harmonisation
+(`qes_harmonize()`), pour les 11 études, avec les mêmes arguments et les
+mêmes colonnes ; le fichier fusionné garde les types de ses colonnes et en
+ajoute d'autres à la fin. `vote_choice` et `turnout` contiennent le vote et
+la participation déclarés dans toutes les études, y compris `qes2022` et
+`qes1998`, et les abstentionnistes, « ne sait pas » et les refus valent
+`NA` dans `vote_choice` ; les colonnes que 0.5.0 laissait vides là où la
+question existe sont remplies (l'idéologie de 2014 et de 2018, l'intérêt de
+2018 sur 0-10, l'identification partisane provinciale), et un code que la
+spécification n'apparie pas vaut `NA`. `get_decon()` est obsolète
+(dépréciation douce) : ses colonnes sont des facteurs aux niveaux anglais
+des cibles harmonisées. Les NEWS de 0.7.0 donnent un tableau des
+changements, colonne par colonne.
 
 ## Garder des résultats reproductibles
 

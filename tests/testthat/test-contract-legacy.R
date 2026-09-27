@@ -12,18 +12,33 @@ test_that("get_qescodes() keeps the v0.4.4 columns and the first 11 codes", {
   expect_identical(names(get_qescodes(detailed = TRUE)), v044_qescodes_detailed_cols)
 })
 
+# The legacy builders are rendered from the harmonization engine (slice
+# HZ6): the fixture serves spec-shaped synthetic data (helper-legacy.R).
+# One default build, shared by the shape tests below.
+legacy_master_default <- function() {
+  if (is.null(legacy_synthetic_env$master)) {
+    local_fake_legacy()
+    legacy_synthetic_env$master <- suppressMessages(get_qes_master(quiet = TRUE))
+  }
+  legacy_synthetic_env$master
+}
+
 test_that("get_qes_master() keeps the 30 documented columns, in order", {
   local_qes_notices_shown()
-  local_fake_dataverse()
-  master <- get_qes_master(quiet = TRUE)
+  master <- legacy_master_default()
   n <- length(v044_master_cols)
   expect_identical(names(master)[seq_len(n)], names(v044_master_cols))
+  # the columns appended in 0.5.0 follow, then those of 0.7.0: appended
+  # columns are never removed
+  expect_identical(names(master)[n + 1:2], c("vote_choice_timing", "sovereignty_item"))
+  expect_identical(names(master)[-seq_len(n + 2L)],
+                   c("family", "study_design", "waves", "subsample", "source_row", "weight_pre", "weight_post",
+                     "vote_intent", "turnout_intent", "sov_partnership_1995"))
 })
 
 test_that("get_qes_master() keeps the v0.4.4 type of every documented column", {
   local_qes_notices_shown()
-  local_fake_dataverse()
-  master <- get_qes_master(quiet = TRUE)
+  master <- legacy_master_default()
   n <- length(v044_master_cols)
   types <- vapply(master[seq_len(n)], function(x) class(x)[1], character(1))
   expect_identical(types, v044_master_cols)
@@ -31,8 +46,7 @@ test_that("get_qes_master() keeps the v0.4.4 type of every documented column", {
 
 test_that("get_qes_master() keeps every v0.4.4 attribute name", {
   local_qes_notices_shown()
-  local_fake_dataverse()
-  master <- get_qes_master(quiet = TRUE)
+  master <- legacy_master_default()
   expect_true(all(v044_master_attrs %in% names(attributes(master))))
   # and adds those of design.md section 2.4
   expect_true(all(c("legacy_na_columns", "legacy_column_map", "removed_columns", "qes_provenance", "qes_spec") %in%
@@ -40,38 +54,43 @@ test_that("get_qes_master() keeps every v0.4.4 attribute name", {
   expect_identical(nrow(master), sum(attr(master, "qes_provenance")$n_rows))
   expect_identical(sort(attr(master, "loaded_surveys")), sort(v044_qescodes))
   expect_identical(attr(master, "failed_surveys"), character(0))
+  expect_identical(attr(master, "duplicates_removed"), 0L)
+  expect_identical(attr(master, "empty_rows_removed"), 0L)
 })
 
 test_that("get_qes_master() records failures and keeps the other studies", {
   local_qes_notices_shown()
-  local_fake_dataverse(fail = "qes2008")
+  local_fake_legacy(fail = "qes2008")
   master <- get_qes_master(surveys = c("qes2018", "qes2008"), quiet = TRUE)
   expect_identical(attr(master, "loaded_surveys"), "qes2018")
   expect_length(attr(master, "failed_surveys"), 1L)
   expect_match(attr(master, "failed_surveys"), "^qes2008:")
-  expect_error(
-    get_qes_master(surveys = c("qes2018", "qes2008"), quiet = TRUE, strict = TRUE)
+  err <- expect_error(
+    get_qes_master(surveys = c("qes2018", "qes2008"), quiet = TRUE, strict = TRUE),
+    class = "qesR_error_source"
   )
+  expect_identical(names(err$failures), "qes2008")
 })
 
 test_that("get_qes_master() never drops a row", {
   local_qes_notices_shown()
-  dup <- fake_study_data("qes2018")
-  dup$quest[2] <- dup$quest[1]
-  dup[3, c("age", "sexe", "q1", "poids")] <- NA
-  local_fake_dataverse(data = list(qes2018 = dup))
+  syn <- legacy_synthetic()$qes2018
+  # a repeated identifier would stop the engine (qesR_error_duplicate_id):
+  # rows whose answers are all missing are kept
+  syn[3, c("qsexe", "q26", "q27", "q36_1", "qscol", "qlangue")] <- NA
+  local_fake_legacy(data = list(qes2018 = syn))
   master <- get_qes_master(surveys = "qes2018", quiet = TRUE)
-  expect_identical(nrow(master), nrow(dup))
+  expect_identical(nrow(master), nrow(syn))
   expect_identical(attr(master, "duplicates_removed"), 0L)
   expect_identical(attr(master, "empty_rows_removed"), 0L)
 })
 
 test_that("get_decon() keeps the 19 v0.4.4 columns", {
   local_qes_notices_shown()
-  local_fake_dataverse()
+  local_fake_legacy()
   decon <- get_decon("qes2018", quiet = TRUE)
   expect_identical(names(decon), v044_decon_cols)
-  expect_identical(nrow(decon), nrow(fake_study_data("qes2018")))
+  expect_identical(nrow(decon), nrow(legacy_synthetic()$qes2018))
 })
 
 test_that("codebook layouts keep the v0.4.4 columns first, in order", {

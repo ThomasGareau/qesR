@@ -12,7 +12,7 @@
 #' | Discover | [qes_docs()] | Lists the codebooks, questionnaires and reports of each study, offline. |
 #' | Get data | [get_qes()] | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
 #' | Get data | [qes_download()] | Saves the original files (data and documents), md5-checked, in a folder you choose. |
-#' | Get data | [get_qes_master()] | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies. Its values changed in qesR 0.5.0 (see `NEWS`). |
+#' | Get data | [get_qes_master()] | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see `NEWS`). |
 #' | Metadata and search | [qes_codebook()] | A study's codebook: labels, question text (English and French), value labels, missing codes. |
 #' | Metadata and search | [qes_question()] | The exact wording of one or more questions, in English or French. |
 #' | Metadata and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
@@ -130,7 +130,7 @@
 #' `qesR_message_arg_ignored`, shown when a legacy argument that no longer
 #' changes the result is used; and `qesR_message_values_changed` and
 #' `qesR_message_legacy_columns`, shown by [get_qes_master()] and
-#' [get_decon()], whose values changed in qesR 0.5.0. Every condition carries
+#' [get_decon()], whose values changed in qesR 0.5.0 and 0.7.0. Every condition carries
 #' the fields `id` (its message key) and `lang` (the language of its message).
 #'
 #' @section Study catalog:
@@ -247,7 +247,7 @@
 #' `qesR_message_deprecated`, `qesR_message_assign_default`,
 #' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat),
 #' `qesR_message_values_changed` et `qesR_message_legacy_columns` (valeurs de
-#' [get_qes_master()] et [get_decon()] modifiées dans qesR 0.5.0)
+#' [get_qes_master()] et [get_decon()] modifiées dans qesR 0.5.0 et 0.7.0)
 #' s'affichent au plus une fois par session et ne sont pas masqués par
 #' `quiet`. Chaque
 #' condition porte les champs `id` (sa clé de message) et `lang` (la langue de

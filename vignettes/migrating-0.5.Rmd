@@ -87,7 +87,7 @@ Each prints a one-time notice naming its replacement
 | `download_codebook()` | `qes_download(what = "docs")` | `file` now selects documents by name; files are md5-checked |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | the 1998 firm files are added after the 11 old codes |
-| `get_decon()` | kept as it is until qesR 0.7.0 | values changed (below) |
+| `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` | soft-deprecated since qesR 0.7.0; values changed (below) |
 
 `get_qes()`, `get_qes_master()` and `qes_codebook()` keep their names. A
 legacy function returns what its replacement returns. The first call of
@@ -127,6 +127,20 @@ unique(master[, c("qes_code", "vote_choice_timing", "sovereignty_item")])
 
 `attr(master, "legacy_column_map")` says what each column means and which
 studies' values changed. `get_decon()` changes the same way.
+
+### Since qesR 0.7.0
+
+Both functions are rendered from the harmonization engine
+(`qes_harmonize()`), for all 11 studies, with the same arguments and
+columns; the master keeps its column types and gains appended columns.
+`vote_choice` and `turnout` hold the reported vote and turnout in every
+study, including `qes2022` and `qes1998`, and non-voters, "don't know" and
+refusals are `NA` in `vote_choice`; columns 0.5.0 left empty where the
+question exists are filled (the 2014 and 2018 ideology, the 2018 interest
+on 0-10, the provincial party identification), and a code the
+specification does not map is `NA`. `get_decon()` is soft-deprecated: its
+columns are factors with the English levels of the harmonized targets. The
+NEWS of 0.7.0 has a table of the changes, column by column.
 
 ## Keeping results reproducible
 

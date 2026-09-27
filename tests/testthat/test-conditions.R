@@ -123,7 +123,7 @@ test_that("informational messages are classed and silenced by quiet", {
 })
 
 test_that("every message get_qes() and get_qes_master() emit has a documented subclass", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
   documented <- c(
     "qesR_message_download", "qesR_message_assign_default", "qesR_message_deprecated",
@@ -155,7 +155,7 @@ test_that("get_question() warns with a qesR_warning and its variable", {
 
 test_that("get_qes_master() records failures in English whatever the language", {
   local_qes_notices_shown()
-  local_fake_dataverse(fail = "qes2008")
+  local_fake_legacy(fail = "qes2008")
   withr::local_options(qesR.lang = "fr")
   master <- get_qes_master(surveys = c("qes2018", "qes2008"), assign_global = FALSE, quiet = TRUE)
   withr::local_options(qesR.lang = "en")
@@ -174,7 +174,7 @@ test_that("get_qes_master() records failures in English whatever the language", 
   # stay in English under qesR.lang = "fr"); only the codes are passed
   expect_s3_class(err$args[[2]], "qesR_quoted")
 
-  local_fake_dataverse(fail = c("qes2018", "qes2008"))
+  local_fake_legacy(fail = c("qes2018", "qes2008"))
   err <- expect_error(
     get_qes_master(surveys = c("qes2018", "qes2008"), assign_global = FALSE, quiet = TRUE),
     class = "qesR_error_source"

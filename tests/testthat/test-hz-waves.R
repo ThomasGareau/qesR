@@ -316,3 +316,17 @@ test_that("qes_studies() lists each study's waves from the spec", {
   expect_identical(s$waves[s$study == "qes2022"], "cps;pes")
   expect_identical(s$waves[s$study == "qes2018_panel"], "pre;post")
 })
+
+test_that("the weight guide names no single wave's weight for a panel's '*' row", {
+  syn <- hz_syn("qes2007_panel")
+  h <- hz_run(syn, targets = c("gender", "vote_prov_recall"))
+  g <- attr(h, "qes_weight_guide")
+  gen <- g[g$target == "gender", ]
+  expect_identical(gen$wave, "*")
+  # the pre and post waves have different weights: neither is named
+  expect_true(is.na(gen$weight_column))
+  expect_true(is.na(gen$weight_var))
+  # a question of one wave keeps its wave's weight
+  rec <- g[g$target == "vote_prov_recall", ]
+  expect_identical(rec$weight_column, "weight_post")
+})

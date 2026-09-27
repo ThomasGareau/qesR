@@ -44,6 +44,7 @@ Other legacy:
 \code{\link{format_codebook}()},
 \code{\link{get_codebook}()},
 \code{\link{get_codebook_files}()},
+\code{\link{get_decon}()},
 \code{\link{get_question}()}
 }
 \concept{legacy}

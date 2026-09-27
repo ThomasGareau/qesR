@@ -20,7 +20,8 @@ qes_spec(
 \item{view}{\code{"targets"}, \code{"crosswalk"} or \code{"spec"}.}
 
 \item{targets}{Target, family or set names (views \code{"targets"} and
-\code{"crosswalk"}); \code{NULL} (default) is every target.}
+\code{"crosswalk"}; the set \code{"decon"} holds the targets of the columns of
+\code{\link[=get_decon]{get_decon()}}); \code{NULL} (default) is every target.}
 
 \item{studies}{Study codes (views \code{"targets"} and \code{"crosswalk"}); \code{NULL}
 (default) is every study the spec covers.}
@@ -60,11 +61,14 @@ By \code{view}:
 \code{origin} (\code{map}, \code{na_codes}, \code{range} or \code{gate}), \code{target_code},
 \code{target_level}, \code{target_label}, \code{na_reason}, \code{note}. A \code{wave} of \code{"*"}
 marks a row that applies to every poll of pooled polls (the CROP
-polls of 2007-2010, one wave per poll).
+polls of 2007-2010, one wave per poll), or, in a panel, a question
+that does not change over the study (gender, education), asked in
+whichever wave the respondent took part (the 2007 panel).
 \item \code{"spec"}: an object of class \code{qes_spec}: a list with the spec
 \code{version}, its content \code{hash}, \code{custom} (\code{TRUE} when it is not the
 shipped spec) and \code{tables} (targets, levels, crosswalk, valuemaps,
-waves, weights, changes, gates, expected, hashes); \code{attr(, "check")}
+waves, weights, changes, gates, expected, hashes, legacy: the renderer of
+\code{\link[=get_qes_master]{get_qes_master()}} and \code{\link[=get_decon]{get_decon()}}); \code{attr(, "check")}
 holds the problems table (\code{rule}, \code{severity}, \code{table}, \code{row}, \code{key},
 \code{detail}).
 }
@@ -112,32 +116,48 @@ de comparabilité ; la vue \code{"crosswalk"} donne la question source, la
 raison du niveau, les niveaux offerts et non offerts, la question filtre et
 le libellé (une vague \code{"*"} désigne une ligne qui s'applique à chaque
 sondage des sondages CROP regroupés) ; la vue \code{"spec"} renvoie la
-spécification vérifiée. \code{lang = "fr"} donne les étiquettes, définitions et raisons en français.
+spécification vérifiée, dont la table \code{tables$legacy}, qui rend les
+colonnes de \code{\link[=get_qes_master]{get_qes_master()}} et de \code{\link[=get_decon]{get_decon()}} à partir des cibles.
+L'ensemble de cibles \code{"decon"} réunit les cibles des colonnes de
+\code{get_decon()}. \code{lang = "fr"} donne les étiquettes, définitions et raisons en français.
 \code{vignette("fr-reference-harmonisation", package = "qesR")} en est la
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 0.3.0)}{
+\section{Targets in the shipped spec (version 1.0.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{
-\item{\code{vote_prov_recall}}{Provincial vote (recall) (family \code{vote_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007_panel, qes2007, qes2008, qes2012_panel, qes1998.}
-\item{\code{vote_prov_intent}}{Provincial vote intention (family \code{vote_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2022, qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010.}
+\item{\code{vote_prov_recall}}{Provincial vote (recall) (family \code{vote_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007_panel, qes2007, qes2008, qes2012_panel, qes1998.}
+\item{\code{vote_prov_intent}}{Provincial vote intention (family \code{vote_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2022, qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010.}
 \item{\code{vote_prov_intent_push}}{Provincial vote intention, undecided pushed (family \code{vote_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010, qes1998.}
-\item{\code{turnout_prov_recall}}{Voted in the provincial election (recall) (family \code{turnout_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007, qes2008, qes2012_panel, qes1998.}
+\item{\code{turnout_prov_recall}}{Voted in the provincial election (recall) (family \code{turnout_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007, qes2008, qes2012_panel, qes1998, qes2007_panel.}
 \item{\code{sov_indep}}{Referendum vote: independent country (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2018, qes2022.}
 \item{\code{sov_sovereign_country}}{Referendum vote: sovereign country (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2012_panel.}
 \item{\code{sov_favour}}{Favour Quebec independence (4 points) (family \code{sovereignty}; sets \code{core}; ordinal). Studies: qes2018_panel.}
-\item{\code{lr_self}}{Left-right self-placement (0-10) (family \code{left_right}; sets \code{core}; numeric). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel.}
-\item{\code{pid_prov}}{Provincial party identification (family \code{party_id}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.}
-\item{\code{interest_4pt}}{Interest in politics (4 points) (family \code{interest}; sets \code{core}; ordinal). Studies: qes2012, qes2014, qes2018.}
-\item{\code{birth_year}}{Year of birth (family \code{birth}; sets \code{core}; numeric). Studies: qes2022, qes2012, qes2014, qes2018, qes2007, qes2008.}
+\item{\code{lr_self}}{Left-right self-placement (0-10) (family \code{left_right}; sets \code{core}, \code{decon}; numeric). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel.}
+\item{\code{pid_prov}}{Provincial party identification (family \code{party_id}; sets \code{core}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.}
+\item{\code{interest_4pt}}{Interest in politics (4 points) (family \code{interest}; sets \code{core}, \code{decon}; ordinal). Studies: qes2012, qes2014, qes2018.}
+\item{\code{birth_year}}{Year of birth (family \code{birth}; sets \code{core}, \code{decon}; numeric). Studies: qes2022, qes2012, qes2014, qes2018, qes2007, qes2008.}
 \item{\code{birth_month}}{Month of birth (family \code{birth}; no set; numeric). Studies: qes2018.}
-\item{\code{age}}{Age in years (family \code{age_years}; sets \code{core}; numeric). Studies: qes2018, qes2022.}
+\item{\code{age}}{Age in years (family \code{age_years}; sets \code{core}, \code{decon}; numeric). Studies: qes2018, qes2022.}
 \item{\code{age_group3}}{Age group (3 bands) (family \code{age_bands}; sets \code{core}; ordinal). Studies: qes2018_panel, qes2012_panel, qes2007_panel, qes2008, qes_crop_2007_2010, qes1998.}
-\item{\code{citizen}}{Canadian citizen (family \code{citizenship}; sets \code{core}; categorical). Studies: qes2022.}
+\item{\code{citizen}}{Canadian citizen (family \code{citizenship}; sets \code{core}, \code{decon}; categorical). Studies: qes2022.}
 \item{\code{survey_mode}}{Interview mode (family \code{interview_mode}; no set; categorical). Studies: qes2018_panel, qes2007.}
 \item{\code{sov_partnership_1995}}{Referendum vote: the 1995 sovereignty-partnership question (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2007, qes2008, qes1998, qes2007_panel.}
+\item{\code{turnout_prov_likely}}{Likelihood of voting in the provincial election (family \code{turnout_prov}; sets \code{vote}, \code{decon}; ordinal). Studies: qes2022.}
+\item{\code{vote_prov_intent_other}}{Provincial vote intention: another party (text) (family \code{vote_prov}; sets \code{decon}; string). Studies: qes2022.}
+\item{\code{pid_fed}}{Federal party identification (family \code{party_id}; sets \code{core}, \code{decon}; categorical). Studies: qes2022.}
+\item{\code{interest_0_10}}{Interest in politics (0-10) (family \code{interest}; sets \code{core}, \code{decon}; numeric). Studies: qes2007, qes2022.}
+\item{\code{interest_election_0_10}}{Interest in the provincial election (0-10) (family \code{interest}; no set; numeric). Studies: qes2007, qes2008.}
+\item{\code{interest_campaign_4pt}}{Interest in the election campaign (4 points) (family \code{interest}; no set; ordinal). Studies: qes2007_panel.}
+\item{\code{age_group6}}{Age group (6 bands) (family \code{age_bands}; sets \code{core}; ordinal). Studies: qes_crop_2007_2010, qes1998, qes2007_panel, qes2012_panel, qes2008.}
+\item{\code{gender}}{Gender (family \code{sex_gender}; sets \code{core}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010, qes1998.}
+\item{\code{education4}}{Education (4 groups) (family \code{education}; sets \code{core}, \code{decon}; ordinal). Studies: qes2014, qes2012, qes2018, qes2022, qes2007, qes2008, qes2018_panel, qes2007_panel, qes_crop_2007_2010.}
+\item{\code{lang_mother}}{Mother tongue (family \code{language}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2018, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010.}
+\item{\code{born_canada}}{Born in Canada (family \code{birthplace}; sets \code{core}, \code{decon}; categorical). Studies: qes2022, qes2012, qes2014, qes2018.}
+\item{\code{income_native}}{Household income (each study's own brackets) (family \code{income}; sets \code{decon}; string). Studies: qes2012, qes2014, qes2007, qes2008, qes2007_panel, qes2018_panel, qes_crop_2007_2010, qes2022.}
+\item{\code{religion}}{Religion (each study's own categories) (family \code{faith}; sets \code{decon}; string). Studies: qes2012, qes2014, qes2022.}
 }
 }
 

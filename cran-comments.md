@@ -90,16 +90,15 @@ function of 0.4.4 keeps its name and arguments.
 
 ## R CMD check results
 
-`R CMD check --as-cran qesR_0.6.0.tar.gz` on the local machine (macOS,
-R 4.4.0), run with `_R_CHECK_CRAN_INCOMING_REMOTE_=true`: 0 errors |
-0 warnings | 3 NOTEs: the "New submission" NOTE (below; the URL
-checks of the same step reported no problem) and two NOTEs from the
-local machine (below).
+`_R_CHECK_CRAN_INCOMING_REMOTE_=true R CMD check --as-cran qesR_0.7.0.tar.gz`
+on the local machine (macOS, R 4.4.0), run on 2026-09-27 on this tarball:
+0 errors | 0 warnings | 3 NOTEs: the "New submission" NOTE of the incoming
+check, and 2 NOTEs from the local machine (below). The incoming check,
+with the remote URL and DOI checks on, reported no URL or DOI problem.
 
-The tests pass (5,589 expectations, 0 failures, 0 warnings; 15 skipped
-with their reason: network tests, skipped on CRAN, and one check planned
-for a later version). The examples, also with `--run-donttest`, and the
-vignettes run without errors.
+The tests pass (6,353 expectations, 0 failures, 0 warnings, in about 95
+seconds; 17 skipped with their reason: network tests, skipped on CRAN).
+The examples and the vignettes run without errors.
 
 * checking CRAN incoming feasibility ... NOTE
 

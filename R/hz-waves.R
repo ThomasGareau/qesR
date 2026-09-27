@@ -274,9 +274,11 @@
       add(dy >= 19 | (dy == 18 & month < em), dy <= 17 | (dy == 18 & month > em))
     }
   }
+  # the age that settles eligibility either way, by the timing of the wave
+  # that asked (one timing, or one per respondent for a row of wave "*")
   timing_rules <- function(timing) {
-    switch(timing %|NA|% "", pre = c(true = 18, false = 16), post = c(true = 19, false = 17),
-           c(true = 19, false = 16))
+    tm <- ifelse(is.na(timing), "", timing)
+    list(true = ifelse(tm == "pre", 18, 19), false = ifelse(tm == "pre", 16, ifelse(tm == "post", 17, 16)))
   }
   if (!is.null(cells[["age"]])) {
     a <- num("age")

@@ -85,12 +85,12 @@
     fr = "L'objet %1$s est introuvable dans l'environnement appelant."
   ),
   input_master_study = c(
-    en = "get_qes_master() builds only the qesR 0.4.4 studies; %1$s will be added to the master in qesR 0.7.0. Read it on its own with get_qes().",
-    fr = "get_qes_master() ne construit que les \u00e9tudes de qesR 0.4.4\u00a0; %1$s sera ajout\u00e9 au fichier fusionn\u00e9 dans qesR 0.7.0. Lisez-le seul avec get_qes()."
+    en = "get_qes_master() builds the 11 studies of qesR 0.4.4 (and \"qes_demo\"); %1$s is not one of them. The 1998 firms' own files hold respondents of qes1998: read them on their own with get_qes().",
+    fr = "get_qes_master() construit les 11 \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb)\u00a0; %1$s n'en fait pas partie. Les fichiers propres aux firmes de 1998 contiennent des r\u00e9pondants de qes1998\u00a0: lisez-les seuls avec get_qes()."
   ),
   input_decon_study = c(
-    en = "get_decon() builds only the qesR 0.4.4 studies (and \"qes_demo\"), one at a time; %1$s is not one of them. Read other studies with get_qes().",
-    fr = "get_decon() ne construit que les \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb), une \u00e0 la fois\u00a0; %1$s n'en fait pas partie. Lisez les autres \u00e9tudes avec get_qes()."
+    en = "get_decon() builds only the qesR 0.4.4 studies (and \"qes_demo\"), one at a time; %1$s is not one of them. Read other studies with get_qes(), or harmonize them with qes_harmonize(targets = \"decon\", include_draft = TRUE).",
+    fr = "get_decon() ne construit que les \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb), une \u00e0 la fois\u00a0; %1$s n'en fait pas partie. Lisez les autres \u00e9tudes avec get_qes(), ou harmonisez-les avec qes_harmonize(targets = \"decon\", include_draft = TRUE)."
   ),
   input_save_dir = c(
     en = "Directory does not exist: %1$s.",
@@ -500,20 +500,29 @@
   ),
   legacy_values_changed = c(
     en = paste0(
-      "Harmonized values changed in qesR 0.5.0: get_qes_master() and get_decon() ",
-      "keep every respondent and set values verified to be wrong to NA ",
-      "(attr(, \"legacy_na_columns\") lists them); see NEWS. Results from ",
-      "qesR <= 0.4.4 are reproducible by installing qesR 0.4.4 ",
-      "(remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
-      "This note is shown once per session."
+      "Values changed in qesR 0.7.0: get_qes_master() and get_decon() are now ",
+      "rendered from the harmonization engine (qes_harmonize()), so vote_choice ",
+      "and turnout are the reported vote and turnout in every study that asked ",
+      "them (the CROP polls asked only an intention: vote_intent), and codes the ",
+      "spec does not map are NA (language, the mother tongue, is NA for ",
+      "respondents who gave two first languages, OD8); ",
+      "attr(, \"legacy_column_map\") says what each column holds ",
+      "and NEWS lists the changes. Results of an earlier version are reproducible ",
+      "by installing it (for 0.4.4: remotes::install_github(\"ThomasGareau/qesR\", ",
+      "ref = \"v0.4.4\")). This note is shown once per session."
     ),
     fr = paste0(
-      "Les valeurs harmonis\u00e9es ont chang\u00e9 dans qesR 0.5.0\u00a0: ",
-      "get_qes_master() et get_decon() gardent tous les r\u00e9pondants et ",
-      "mettent \u00e0 NA les valeurs v\u00e9rifi\u00e9es comme fausses ",
-      "(attr(, \"legacy_na_columns\") les \u00e9num\u00e8re)\u00a0; voir NEWS. ",
-      "Les r\u00e9sultats de qesR <= 0.4.4 se reproduisent en installant qesR ",
-      "0.4.4 (remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
+      "Les valeurs ont chang\u00e9 dans qesR 0.7.0\u00a0: get_qes_master() et ",
+      "get_decon() sont maintenant produits par le moteur d'harmonisation ",
+      "(qes_harmonize()), de sorte que vote_choice et turnout sont le vote et ",
+      "la participation d\u00e9clar\u00e9s dans toutes les \u00e9tudes qui les ",
+      "ont demand\u00e9s (les sondages CROP n'ont demand\u00e9 que l'intention\u00a0: ",
+      "vote_intent), et que les codes que la sp\u00e9cification n'apparie pas ",
+      "valent NA (language, la langue maternelle, vaut NA pour les personnes qui ",
+      "ont donn\u00e9 deux premi\u00e8res langues, OD8)\u00a0; attr(, \"legacy_column_map\") ",
+      "d\u00e9crit chaque colonne et NEWS \u00e9num\u00e8re les changements. Les ",
+      "r\u00e9sultats d'une version ant\u00e9rieure se reproduisent en l'installant ",
+      "(pour 0.4.4\u00a0: remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
       "Cette note s'affiche une fois par session."
     )
   ),
@@ -534,15 +543,21 @@
   ),
   legacy_decon_columns = c(
     en = paste0(
-      "In get_decon(), party_best and partylean are NA in every study, and turnout ",
-      "and votechoice are NA except for qes2022: their qesR 0.4.4 sources were ",
-      "other questions. This note is shown once per session."
+      "In get_decon(), categorical columns are factors with the English levels of ",
+      "the harmonized targets, party_best and partylean are NA in every study, and ",
+      "turnout and votechoice are the reported turnout and vote where the study ",
+      "asked them (NA for the CROP polls), except for qes2022 ",
+      "(the campaign-period likelihood of voting and vote intention; ",
+      "attr(, \"timing\")). This note is shown once per session."
     ),
     fr = paste0(
-      "Dans get_decon(), party_best et partylean valent NA dans toutes les ",
-      "\u00e9tudes, et turnout et votechoice valent NA sauf pour qes2022\u00a0: ",
-      "leurs sources dans qesR 0.4.4 \u00e9taient d'autres questions. Cette ",
-      "note s'affiche une fois par session."
+      "Dans get_decon(), les colonnes cat\u00e9gorielles sont des facteurs aux ",
+      "niveaux anglais des cibles harmonis\u00e9es, party_best et partylean valent ",
+      "NA dans toutes les \u00e9tudes, et turnout et votechoice sont la ",
+      "participation et le vote d\u00e9clar\u00e9s l\u00e0 o\u00f9 l'\u00e9tude les a ",
+      "demand\u00e9s (NA pour les sondages CROP), sauf pour qes2022 (la ",
+      "probabilit\u00e9 de voter et l'intention de vote pendant la campagne\u00a0; ",
+      "attr(, \"timing\")). Cette note s'affiche une fois par session."
     )
   ),
 

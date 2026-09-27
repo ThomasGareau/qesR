@@ -16,7 +16,8 @@ test_that("view 'targets' gives one row per target and each study's best grade",
   expect_match(v$levels[v$target == "interest_4pt"], "^1=Very interested; 2=")
   # filters and language
   f <- qes_spec(targets = "vote", studies = c("qes2014", "qes_demo"), lang = "fr")
-  expect_identical(f$target, c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall"))
+  expect_identical(f$target, c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall",
+                               "turnout_prov_likely"))
   expect_identical(names(f)[-(1:9)], "qes2014")
   expect_identical(f$label[1], "Vote provincial (rappel)")
   expect_identical(attr(v, "qes_spec")$version, s$version)
@@ -223,7 +224,7 @@ test_that("the coverage grid gives each target's grade in each study, as qes_spe
       expect_true(startsWith(cell, .qes_enum_label("grade", g, "en")), label = paste(t, studies[k]))
       row <- xw[xw$study == studies[k] & xw$target == t & xw$rule != "none", , drop = FALSE]
       if (studies[k] %in% multi) {
-        expect_true(grepl(sprintf("(%s)", .qes_wave_label(row$wave, "en")), cell, fixed = TRUE))
+        expect_true(grepl(sprintf("(%s)", .qes_wave_label(row$wave, "en", row$study, s)), cell, fixed = TRUE))
       }
       zero <- .qes_not_offered(s, row)
       expect_identical(endsWith(cell, "\\*"), !is.na(zero) && nzchar(zero), label = paste(t, studies[k]))

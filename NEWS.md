@@ -1,12 +1,89 @@
-# qesR 0.6.0.9000
+# qesR 0.7.0
 
-Development version. Specification 0.3.0 adds the remaining studies to the
-experimental harmonization engine of 0.6.0; the values 0.6.0 gave for the
-studies it covered are unchanged. The specification is version 0.3.0
-(`qes_spec("spec")`); it adds rows, and no earlier row, code or grade
-changed.
+qesR 0.7.0 switches the legacy functions to the harmonization engine:
+`get_qes_master()` and `get_decon()` are now rendered from `qes_harmonize()`
+for all 11 studies of qesR 0.4.4, with the same arguments, the same columns
+in the same order and (for the master) the same types. The harmonization
+specification is version 1.0.0: 13 new targets, the remaining studies
+(`qes2007`, `qes2008`, the CROP polls and the 1998 panel), and the renderer
+of the legacy columns. `get_decon()` is
+soft-deprecated. `get_qes()` returns the same data as in 0.5.0.
 
-## New: the remaining studies (experimental, specification 0.3.0)
+## Legacy switch: `get_qes_master()` and `get_decon()` from the engine
+
+- `get_qes_master()` keeps its arguments, its 30 documented columns in the order and with the types of qesR 0.4.4, and the columns appended in 0.5.0; each column is now rendered from the targets of the spec, study by study, as the new table `legacy.csv` of the spec says (`qes_spec("spec")$tables$legacy`: the target(s) and render of each column). The frozen 0.4.4 sources and the blank rules of the interim builders of 0.5.0 are gone. A code the spec does not map is `NA`, never passed through, and every row of every file is kept (40,987 rows). A message says so once per session (class `qesR_message_values_changed`). The engine applies the crosswalk rows still in review (checked against the original files and documents, not yet signed off by a reviewer), as `qes_harmonize(include_draft = TRUE)` does; `attr(, "source_map")` gives each column's question, target, value map and grade in each study.
+- `vote_choice` and `turnout` are the reported vote and turnout in every study (OD4): `qes2022` from its post-election wave, `qes1998` from its post-election recontact, the 2018 panel's `turnout` from its turnout question (`rts_q1`) rather than the vote question. Nonvoters, spoiled ballots, "don't know" and refusals are `NA` in `vote_choice`: the 0.4.4 categories "Did not vote / None" and "Don't know / Refused" are gone (`turnout` says who voted). The pooled CROP polls asked only vote intentions and stay `NA`; `vote_intent` has them.
+- Columns filled where the spec has the question: `ideology` for `qes2014` (with its answers 0 and 10) and `qes2018`; `political_interest` for `qes2018` (the four-point item as 10, 7, 3 and 0, OD7); `born_canada` for `qes2018`; `provincial_pid` for `qes2007`, `qes2008`, `qes2012`, `qes2014` and `qes2018`; `language` for `qes2014` (the mother tongue, not the language of the interview); `income` for `qes2012`; `year_of_birth` for `qes2022`; `age` and `age_group` for the `qes2018` respondents who gave their age but not their year of birth, and `age_group` for the `qes2008` respondents without a year of birth.
+- Values corrected: `age_group` has six bands in the 2007 and 2012 panels, whose questions have them (0.4.4 used a three-band recode); `education` is University for *maîtrise* (`qes2007`, `qes2008`) and College/CEGEP/Technical for the 2018 panel's trade certificates, labels 0.4.4 left as they were, and for `qes2012` puts code 8 (the French questionnaire's *cours technique*) in College and leaves code 10 (*Certificate and diploma*, in neither questionnaire) `NA`; `language` is `NA` for the respondents of `qes2007` who report two first languages (OD8); `province_territory` is "Quebec" for the 2018 panel (0.4.4 put its region there); `income` amounts of `qes2022` are written in full (`100000`, not `1e+05`).
+- `respondent_id` joins each study's identifier variables: in `qes2007_panel` the project code and the questionnaire number (`nompn-quest`, such as `1-3232`, unique; `quest` alone repeats across its two subsamples), in `qes2018_panel` the interview mode and id (`method-id`, such as `1-20012`; 0.5.0 made up `qes2018_panel_<row>`). The one `qes2007_panel` row that belongs to no wave (neither interview completed, by its disposition codes) is now `NA` in every answer column.
+- Appended columns (never removed): `family`, `study_design`, `waves`, `subsample`, `source_row` (the row in the study's file, to join raw variables from `get_qes()`), `weight_pre` and `weight_post` (the spec's recommended weights, as deposited; `NA` where they are not documented yet), `vote_intent` (vote intention at the first question), `turnout_intent` (likelihood of voting, `qes2022`) and `sov_partnership_1995` (the 1995 referendum question, 1 or 0). The `region_cma3`, `region_admin` and `income_rank` columns of the design are not appended yet: their targets are not in the spec.
+- New attributes and changed ones: `legacy_column_map` gains `render` and gives in `studies_changed` the studies whose values differ from qesR 0.4.4; `legacy_na_columns` gives, for each column that is all `NA` in a study, why (`no_source`, `na_column` or `all_missing`, with the decision in `cause`, such as `OD4` or `OD5`; 0.5.0's reason `blanked` is gone, since no value is blanked after it is read); `source_map` gains `target`, `map_id`, `grade`, `render` and `spec_version`; `qes_spec` records the spec version and content hash; `qes_provenance` has the cell and spec levels of `qes_provenance()`.
+- `get_decon()` is soft-deprecated: it keeps working and will not be removed, and a message names its replacement, `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`, once per session (class `qesR_message_deprecated`). Its 19 columns are rendered from the same targets: categorical columns are factors with the targets' English levels (the same levels in every study: `"Man"` rather than `"A man"`), `education` has the four groups of the master, `province_territory` is `"Quebec"`, `yob` is a number, `income` and `religion` are each study's own categories as text (the `qes2022` amount stays a number), `age` is in years (the age band, a factor, for the panels and `qes1998`, which asked bands), and codes the spec does not map (the `-99` of `qes2022`) are `NA`. `turnout` and `votechoice` are the reported turnout and vote for every study that asked them (`qes2018` from `q5` and `q6`); for `qes2022` they are still the campaign-period likelihood of voting and vote intention (OD9), which `attr(, "timing")` says (`"pre"`). `get_decon("qes1998")` returns its answers.
+
+### What changed, by column and study
+
+<!-- legacy-table: start (generated by data-raw/compare_legacy.R) -->
+
+Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0, for the studies whose metadata ships (the counts of `qes2022`, CC BY-NC, are not published here). The 0.4.4 counts are over the rows 0.4.4 kept (it dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row). Columns and studies not listed are unchanged since 0.5.0.
+
+| Column | Study | 0.4.4 | 0.5.0 | 0.7.0 | Why |
+|---|---|---|---|---|---|
+| `age` | `qes2018` | 3,031 | 3,031 | 3,072 | The age item (agenum) of the respondents who gave no year of birth |
+| `age_group` | `qes2018` | 2,802 | 2,802 | 2,839 | Age bands of the respondents who gave their age (agenum) but no year of birth |
+| `born_canada` | `qes2018` | 3,072 | 0 | 3,047 | q69 with Canadian-born people outside Quebec as Yes (0.5.0 blanked the 0.4.4 coding) |
+| `political_interest` | `qes2018` | 3,012 | 0 | 3,012 | q27 on 0-10 with the corrected conversion (10, 7, 3, 0) |
+| `ideology` | `qes2018` | 0 | 0 | 2,490 | q36_1 (0.4.4 found no source) |
+| `vote_choice` | `qes2018` | 2,207 | 2,207 | 2,016 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `provincial_pid` | `qes2018` | 0 | 0 | 2,655 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `respondent_id` | `qes2018_panel` | 1,250 | 1,250 | 1,250 | The file's identifier (interview mode and id, qes_id) instead of a made-up <study>_<row> |
+| `province_territory` | `qes2018_panel` | 1,250 | 1,250 | 1,250 | Quebec for every respondent; 0.4.4 put the region (Couronne, ROQ) in the province column |
+| `education` | `qes2018_panel` | 1,250 | 1,247 | 1,247 | The trade certificate (d3 code 4), left as a label by 0.4.4, is College/CEGEP/Technical |
+| `turnout` | `qes2018_panel` | 828 | 828 | 842 | The turnout question (rts_q1) instead of the vote question: 14 who went to vote but did not know for whom are 1; The turnout question (rts_q1) instead of the vote question: 13 who went to vote and spoiled their ballot are 1, not 0 |
+| `vote_choice` | `qes2018_panel` | 842 | 842 | 704 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `language` | `qes2014` | 1,517 | 0 | 1,402 | The mother tongue (QLANG); 0.5.0 blanked the interview language (LANG) |
+| `ideology` | `qes2014` | 1,053 | 0 | 1,195 | Q32 with its 0 and 10 answers (0.5.0 blanked the truncated 0.4.4 column) |
+| `vote_choice` | `qes2014` | 1,352 | 1,352 | 1,283 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `provincial_pid` | `qes2014` | 0 | 0 | 1,383 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `education` | `qes2012` | 1,500 | 1,500 | 1,400 | scol code 10 (Certificate and diploma) is in neither questionnaire: not mappable; scol code 8 (the French questionnaire's cours technique) is College, not University |
+| `income` | `qes2012` | 0 | 0 | 1,357 | The income brackets of reven (0.4.4 found no source) |
+| `vote_choice` | `qes2012` | 1,369 | 1,369 | 1,274 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `provincial_pid` | `qes2012` | 0 | 0 | 1,361 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `age_group` | `qes2012_panel` | 844 | 844 | 844 | Six age bands, which the question has, instead of the producer's three-band recode |
+| `vote_choice` | `qes2012_panel` | 844 | 844 | 633 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `age_group` | `qes2008` | 1,125 | 1,125 | 1,151 | The study's own age bands (q0age) where the year of birth is missing |
+| `education` | `qes2008` | 1,141 | 1,141 | 1,141 | maîtrise (q77 code 10), left as a label by 0.4.4, is University |
+| `vote_choice` | `qes2008` | 986 | 986 | 898 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `provincial_pid` | `qes2008` | 0 | 0 | 1,083 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `language` | `qes2007` | 2,172 | 2,172 | 2,119 | Two first languages including French or English (codes 4, 5 and 7) are not mapped to one of them |
+| `education` | `qes2007` | 2,160 | 2,158 | 2,158 | maîtrise (q77 code 10), left as a label by 0.4.4, is University |
+| `vote_choice` | `qes2007` | 1,990 | 1,990 | 1,727 | Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `provincial_pid` | `qes2007` | 0 | 0 | 2,069 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `respondent_id` | `qes2007_panel` | 2,062 | 2,442 | 2,442 | The project and questionnaire number (nompn-quest, qes_id), unique, instead of quest, which repeats across the two subsamples |
+| `language` | `qes2007_panel` | 2,057 | 2,435 | 2,434 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `age_group` | `qes2007_panel` | 2,062 | 2,441 | 2,440 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave; Six age bands, which the question has, instead of the producer's three-band recode |
+| `gender` | `qes2007_panel` | 2,062 | 2,441 | 2,440 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `education` | `qes2007_panel` | 2,053 | 2,430 | 2,429 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `income` | `qes2007_panel` | 2,062 | 2,033 | 2,032 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `turnout` | `qes2007_panel` | 1,735 | 2,055 | 2,054 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `vote_choice` | `qes2007_panel` | 2,062 | 2,055 | 1,494 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave; Nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
+| `vote_choice` | `qes1998` | 1,483 | 0 | 1,126 | The reported vote of the post-election recontact (q3post) |
+| `vote_choice_timing` | `qes1998` |  | 0 | 1,483 | vote_choice now holds the reported vote in this study |
+
+In `qes2022`: `year_of_birth`, cps_yob read as the year its value label gives (codes 1-91 are labelled with years); `income`, Amounts written in full (100000, not 1e+05); `turnout`, Reported turnout from the post-election wave (pes_turnout); `vote_choice`, The reported vote of the post-election wave (pes_votechoice); `federal_pid`, -99 (item not answered) is a missing value (0.4.4 category Don't know / Refused); `vote_choice_timing`, vote_choice now holds the reported vote in this study.
+
+<!-- legacy-table: end -->
+
+`dev/legacy-diff.md` in the source repository, generated by `data-raw/compare_legacy.R`, gives every difference from qesR 0.4.4 and 0.5.0, cell counts by column and study for both functions, and its cause; the gate of this release is that each one is explained. Results of an earlier version are reproducible by installing it (for 0.4.4: `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+
+## Harmonization specification 1.0.0
+
+- 13 new targets, with 58 crosswalk rows checked against the original files and documents (all in review): `gender`, `education4` (primary or less, secondary, college, university), `lang_mother` (a respondent who reports two first languages is `NA` with reason `not_mappable`, OD8), `born_canada`, `income_native` and `religion` (each study's own categories, as text: they are not comparable across studies), `pid_fed`, `interest_0_10`, `interest_election_0_10` and `interest_campaign_4pt` (interest in politics on 0-10, in the election, and in the campaign on four points: never pooled with `interest_4pt` or with each other), `age_group6`, `turnout_prov_likely` and `vote_prov_intent_other` (`qes2022`); and the 2007 panel's reported turnout. The new set `decon` names the targets of `get_decon()`: `qes_harmonize(targets = "decon", include_draft = TRUE)`.
+- A crosswalk row of rule `string` may take `from_label = TRUE`: the value is the text of the code's value label in the file (a code without a label is unmapped, never passed through as a number).
+- A crosswalk row may name the wave `*` for a target of timing `static` or `any`: it applies to the members of any wave of the study, for a question asked in whichever wave the respondent took part. The 2007 panel's time-invariant items (gender, education, mother tongue, income, age group) use it, so its 391 respondents reached only after the election now have them; this moves its existing `age_group3` row from the pre-election wave to `*`, which makes the specification a major version (1.0.0): the `age_group3` column of `qes2007_panel` and its `eligible_voter` change for those respondents. No other existing row, code, grade, marginal or column hash changed.
+- The table `legacy.csv` (the renderer of `get_qes_master()` and `get_decon()`) is part of the specification and of its content hash, checked by the new validator rule V-S18. `Engine-Min` is 0.7.0.
+- The check that a row graded `identical` matches its target's anchor (V-S17) now finds the anchor when two targets read the same question (the three and six age bands of one question); it skipped those targets before.
+
+## New: the remaining studies (experimental; specification 0.3.0, now part of 1.0.0)
 
 - `qes2007` and `qes2008` (Quebec Election Studies, so they are in the default `studies = NULL`): reported vote and turnout, party identification, year of birth, the 1995 sovereignty-partnership question and, for 2008, age group. In both, code 3 of the vote question is the ADQ, never the CAQ, and "none" among those who said they voted is a spoiled or blank ballot (reason `spoiled`). `qes2007` mixed telephone and web interviews; its `survey_mode` is each respondent's (1,003 by telephone, 1,172 on the web).
 - `qes2012_panel` gains vote intention (first question and pushed; graded `approximate`, since its first question already asks which party the respondent "would be tempted to vote for"), reported vote (unprompted, `approximate`) and turnout; its post-election interviews are dated (`interview_date` in the long layout, from `ResLastCallDate_last`).

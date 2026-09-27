@@ -66,16 +66,20 @@ test_that("the pooled CROP polls have one wave per poll, each with its election"
   expect_identical(wt$status[wt$study == crop], "needs_review")
 })
 
-test_that("wave * is allowed only in a study of poll waves, and checked like the waves it names", {
+test_that("wave * is allowed only in a study of poll waves or for a static or any-time target, and checked like the waves it names", {
   s <- hz_spec()
-  # in a study whose waves are not poll waves
+  # in a study whose waves are not poll waves, for a target tied to an
+  # election period
   t <- s$tables
-  i <- hz_xw_row(t, "qes2014", "lr_self")
+  i <- hz_xw_row(t, "qes2014", "vote_prov_recall")
   t$crosswalk$wave[i] <- "*"
   s1 <- s
   s1$tables <- t
   p <- .qes_spec_check(s1)
   expect_true(any(p$rule == "V-S4" & grepl("poll waves", p$detail)))
+  # a time-invariant item asked in whichever wave (the 2007 panel's gender)
+  expect_identical(t$crosswalk$wave[hz_xw_row(t, "qes2007_panel", "gender")], "*")
+  expect_false(any(.qes_spec_check(s)$severity == "error"))
   # a row of wave * takes its election from each wave, not from election_ref
   s2 <- s
   i <- hz_xw_row(s2$tables, crop, "vote_prov_intent")

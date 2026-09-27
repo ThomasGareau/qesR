@@ -1,5 +1,6 @@
-# The spec validator, rules V-S1 to V-S17 and the hash half of V-P2
-# (design.md section 5.10, slice HZ1).
+# The spec validator, rules V-S1 to V-S17, V-S18 (the legacy renderer
+# table, R/legacy.R; slice HZ6) and the hash half of V-P2 (design.md section
+# 5.10, slice HZ1).
 #
 # One implementation, run in four places: at runtime by qes_spec() (once per
 # session), in the offline tests, in CI (data-raw/spec_check.R, with
@@ -355,16 +356,23 @@
   # ---- V-S4: referential integrity ----------------------------------------------------
   bad <- which(!xw$study %in% study_codes)
   add("V-S4", "crosswalk", bad, xkeys[bad], "study is not in the catalog")
-  # wave "*" names every wave of a study whose waves are all poll waves
-  star_ok <- function(study, wave) {
-    vapply(seq_along(study), function(k) identical(wave[k], .qes_all_waves) && .qes_poll_study(wv, study[k]),
-           logical(1))
+  # wave "*" names every wave of a study: in a study whose waves are all
+  # poll waves (each respondent answered in one poll), or, in a crosswalk
+  # row, for a target that is not tied to one election period (timing
+  # "static" or "any"), asked in whichever wave the respondent took part
+  # (V-S9 checks the timing against every wave)
+  star_ok <- function(study, wave, target = NULL) {
+    timing <- if (is.null(target)) rep(NA_character_, length(study)) else tg$target_timing[match(target, tg$target)]
+    vapply(seq_along(study), function(k) {
+      identical(wave[k], .qes_all_waves) && any(wv$study %in% study[k]) &&
+        (.qes_poll_study(wv, study[k]) || timing[k] %in% c("static", "any"))
+    }, logical(1))
   }
-  star_bad <- function(study, wave) wave %in% .qes_all_waves & !star_ok(study, wave)
-  bad <- which(!paste(xw$study, xw$wave) %in% paste(wv$study, wv$wave) & !star_ok(xw$study, xw$wave))
+  star_bad <- function(study, wave, target = NULL) wave %in% .qes_all_waves & !star_ok(study, wave, target)
+  bad <- which(!paste(xw$study, xw$wave) %in% paste(wv$study, wv$wave) & !star_ok(xw$study, xw$wave, xw$target))
   add("V-S4", "crosswalk", bad, xkeys[bad], "(study, wave) is not in waves.csv")
-  bad <- which(star_bad(xw$study, xw$wave))
-  add("V-S4", "crosswalk", bad, xkeys[bad], "wave * is allowed only in a study whose waves are all poll waves")
+  bad <- which(star_bad(xw$study, xw$wave, xw$target))
+  add("V-S4", "crosswalk", bad, xkeys[bad], "wave * is allowed only in a study whose waves are all poll waves, or for a target of timing static or any")
   bad <- which(!xw$target %in% tg$target)
   add("V-S4", "crosswalk", bad, xkeys[bad], "target is not in targets.csv")
   bad <- which(xw$rule %in% "map" & !has(xw$map_id))
@@ -811,8 +819,10 @@
     if (m %in% c("web", "phone")) m else "mixed"
   }
   for (j in seq_len(nrow(tg))) {
-    a <- match(tg$anchor_row[j], anchors)
-    if (is.na(a) || !identical(xw$target[a], tg$target[j])) next
+    # the anchor row of this target (two targets may share a source, e.g.
+    # the three and six age bands of one question)
+    a <- which(anchors == tg$anchor_row[j] & xw$target == tg$target[j])[1]
+    if (is.na(a)) next
     if (!identical(xw$grade[a], "identical")) {
       add("V-S17", "crosswalk", a, xkeys[a], "the anchor row must be graded identical")
     }
@@ -827,6 +837,12 @@
         add("V-S17", "crosswalk", i, xkeys[i], sprintf("graded identical but differs from the anchor in %s", paste(names(diff_)[diff_], collapse = ", ")))
       }
     }
+  }
+
+  # ---- V-S18: the legacy renderer (legacy.csv) ----------------------------------------------------
+  lg <- spec$tables$legacy
+  if (!is.null(lg) && nrow(lg) > 0L) {
+    out <- c(out, list(.qes_legacy_check(lg, tg, sets, study_codes, target_set)))
   }
 
   # ---- V-P2 (hash half): SPEC records the content hash and the version has a CHANGES row ----

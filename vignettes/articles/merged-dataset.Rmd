@@ -19,7 +19,7 @@ library(qesR)
 qes_studies()$study
 ```
 
-By default, and with `surveys = "all"`, `get_qes_master()` builds the 11 studies of qesR 0.4.4. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in the master yet (their respondents are already in `qes1998`); read them with `get_qes()`, as `?get_qes_master` explains.
+By default, and with `surveys = "all"`, `get_qes_master()` builds the 11 studies of qesR 0.4.4. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in the master (their respondents are already in `qes1998`); read them with `get_qes()`, as `?get_qes_master` explains.
 
 ## Build merged data
 
@@ -41,20 +41,20 @@ table(master$qes_code)
 
 ## How it is built
 
-- Each column reads the variable qesR 0.4.4 read for that study, and converts it as 0.4.4 did. The sources are frozen: nothing is chosen by name when you run it. `attr(master, "source_map")` gives the source of every column.
+- Since qesR 0.7.0 the master is rendered from the harmonization engine: each study is harmonized by `qes_harmonize()` and each column is rendered from the targets it needs, as the renderer table of the spec says (`qes_spec("spec")$tables$legacy`). A code the spec does not map is `NA`, never passed through. `attr(master, "source_map")` gives, for every column of every study, the question read, its target and its comparability grade.
 - Every respondent of every file is kept: there is no de-duplication and no removal of empty rows. Panel and cross-section respondents stay separate rows.
-- Values verified to be wrong are `NA`: for example vote intentions in `vote_choice` (`qes2022`, CROP, `qes1998`), sovereignty questions other than the referendum on an independent country, and `party_best` and `party_lean` everywhere. `attr(master, "legacy_na_columns")` lists each column and study that is `NA` by design, with the reason.
+- `vote_choice` and `turnout` are the reported vote and turnout in every study; the CROP polls asked only vote intentions (in `vote_intent`). `sovereignty_support` is the referendum on an independent country only, and `party_best` and `party_lean` are `NA` everywhere. `attr(master, "legacy_na_columns")` lists each column and study that is `NA` throughout, with the reason.
 - `vote_choice_timing` and `sovereignty_item` say what `vote_choice` and `sovereignty_support` hold in each study.
 - qesR 0.4.4 also appended 70 columns by stacking variables that share a name across studies; they mixed different questions and are no longer built (`attr(master, "removed_columns")`). Read those items from each study with `get_qes()`.
 
 ```{r}
-head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable")])
+head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable", "target", "grade")])
 attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
 
 `attr(master, "legacy_column_map")` says what each column means and flags the columns that mix instruments (`political_interest`, `age_group`, `education`). `survey_weight` is each study's own weight on its own scale: do not pool weighted estimates across studies without rescaling.
 
-Results from qesR 0.4.4 are reproducible only with that version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+Results from qesR 0.4.4 are reproducible only with that version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`), and those of 0.5.0 and 0.6.0 only with one of those versions.
 
 ## Save merged data
 

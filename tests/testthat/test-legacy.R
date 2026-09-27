@@ -1,209 +1,241 @@
-# The frozen tables of the interim legacy builders (inst/extdata/legacy/,
-# R/legacy.R; design.md section 5.12, slice S4) and what they guarantee.
+# The legacy renderer (R/legacy.R, the spec's legacy.csv; design.md section
+# 5.12, slice HZ6): the table, its validator rule V-S18, and each render.
 
-legacy <- function(name) qesR:::.qes_legacy_table(name)
+legacy_tab <- function(profile) qesR:::.qes_legacy_table(profile, hz_spec())
 
-master_source_columns <- setdiff(names(qesR:::.qes_master_types), c("qes_code", "qes_year", "qes_name_en"))
-decon_source_columns <- setdiff(v044_decon_cols, "qes_code")
-legacy_studies <- c(v044_qescodes, "qes_demo")
+test_that("legacy.csv is part of the spec, UTF-8 with LF endings, and passes V-S18", {
+  path <- file.path(hz_spec_dir(), "legacy.csv")
+  bytes <- file_bytes(path)
+  expect_false(any(bytes == as.raw(0x0d)))
+  expect_true(validUTF8(rawToChar(bytes)))
+  s <- hz_spec()
+  expect_identical(names(s$tables$legacy), names(qesR:::.qes_schemas$spec_legacy))
+  p <- .qes_spec_check(s)
+  expect_false(any(p$rule == "V-S18"))
+  # the content hash covers it: an edit changes the hash
+  t <- s$tables
+  t$legacy$definition[1] <- "edited"
+  expect_false(identical(qesR:::.qes_spec_tables_hash(t), s$hash))
+})
 
-test_that("the legacy tables are UTF-8 CSV with LF endings, and match their schemas", {
+test_that("the master profile has the 30 columns of 0.4.4 in order and type, then the appended ones", {
+  cols <- qesR:::.qes_legacy_columns("master", hz_spec())
+  n <- length(v044_master_cols)
+  expect_identical(names(cols)[seq_len(n)], names(v044_master_cols))
+  expect_identical(unname(cols[seq_len(n)]), unname(v044_master_cols))
+  expect_identical(names(cols)[n + 1:2], c("vote_choice_timing", "sovereignty_item"))
+  expect_identical(names(qesR:::.qes_legacy_columns("decon", hz_spec())), v044_decon_cols)
+})
+
+test_that("every legacy target is a target of the spec, and every study row names catalog studies", {
+  s <- hz_spec()
+  lg <- s$tables$legacy
+  t <- unique(unlist(lapply(lg$target, qesR:::.qes_split_list)))
+  expect_true(all(t %in% s$tables$targets$target))
+  st <- unique(unlist(lapply(lg$studies, qesR:::.qes_split_list)))
+  expect_true(all(st %in% v044_qescodes))
+  # the survey weight of 0.4.4 (OD6), study by study
+  w <- lg[lg$profile == "master" & lg$column == "survey_weight" & !is.na(lg$studies), , drop = FALSE]
+  expect_setequal(w$studies, v044_qescodes)
+  expect_true(all(startsWith(w$render, "raw:")))
+  # the qes2022 turnout and vote of get_decon() are the campaign-period items (OD9)
+  d <- lg[lg$profile == "decon" & lg$studies %in% "qes2022", , drop = FALSE]
+  expect_identical(d$target[d$column == "turnout"], "turnout_prov_likely")
+  expect_identical(d$target[d$column == "votechoice"], "vote_prov_intent")
+  # the master's turnout and vote are the reported ones (OD4), in every study
+  m <- lg[lg$profile == "master", , drop = FALSE]
+  expect_identical(unique(m$target[m$column == "vote_choice"]), "vote_prov_recall")
+  expect_identical(unique(m$target[m$column == "turnout"]), "turnout_prov_recall")
+  expect_identical(unique(m$target[m$column == "sovereignty_support"]), "sov_indep")
+  # the study rows of those columns only carry the decision (OD4, OD5)
+  k <- m$column %in% c("vote_choice", "turnout") & !is.na(m$studies)
+  expect_identical(unique(m$cause[k]), "OD4")
+  expect_identical(unique(m$studies[k]), "qes_crop_2007_2010")
+  k <- m$column %in% c("sovereignty_support", "sovereignty") & !is.na(m$studies)
+  expect_identical(unique(m$cause[k]), "OD5")
+})
+
+test_that("V-S18 finds a broken renderer table", {
+  s <- hz_spec()
+  broken <- function(edit) {
+    s2 <- s
+    s2$tables$legacy <- edit(s2$tables$legacy)
+    p <- .qes_spec_check(s2)
+    p[p$rule == "V-S18", , drop = FALSE]
+  }
+  row <- function(lg, col, profile = "master") which(lg$profile == profile & lg$column == col & is.na(lg$studies))
+  expect_match(broken(function(lg) { lg$target[row(lg, "gender")] <- "gendr"; lg })$detail, "unknown target")
+  expect_match(broken(function(lg) { lg$render[row(lg, "gender")] <- "bogus"; lg })$detail, "unknown render")
+  # a recode must name every level of the target
+  expect_match(broken(function(lg) { lg$render[row(lg, "gender")] <- "recode:man=Man;woman=Woman"; lg })$detail,
+               "does not fit")
+  # int01 needs a yes/no target; legacy_party a party set
+  expect_match(broken(function(lg) { lg$target[row(lg, "turnout")] <- "gender"; lg })$detail, "does not fit")
+  expect_match(broken(function(lg) { lg$target[row(lg, "vote_choice")] <- "gender"; lg })$detail, "does not fit")
+  # a render without a target, a target on a render that takes none
+  expect_match(broken(function(lg) { lg$target[row(lg, "gender")] <- NA; lg })$detail, "needs a target")
+  expect_match(broken(function(lg) { lg$target[row(lg, "qes_code")] <- "gender"; lg })$detail, "takes no target")
+  # positions number the columns without gaps; each column has one default row
+  expect_match(broken(function(lg) { lg$position[lg$column == "survey_weight"] <- 99L; lg })$detail, "positions")
+  expect_match(broken(function(lg) { lg$studies[row(lg, "gender")] <- "qes2018"; lg })$detail, "one default row")
+  expect_match(broken(function(lg) {
+    lg$studies[lg$profile == "master" & lg$column == "survey_weight" & lg$studies %in% "qes2018"] <- "qes2019"
+    lg
+  })$detail, "unknown study")
+  # the stacked master has one type per column; get_decon() may take one per study
+  expect_match(broken(function(lg) {
+    k <- which(lg$profile == "master" & lg$column == "survey_weight" & lg$studies %in% "qes2018")
+    lg$type[k] <- "character"
+    lg
+  })$detail, "type")
+  expect_identical(nrow(broken(identity)), 0L)
+  expect_match(broken(function(lg) { lg$render[row(lg, "vote_choice_timing")] <- "timing:no_such_column"; lg })$detail,
+               "does not fit")
+  # a timing or item column must read a column placed before it
+  expect_match(broken(function(lg) { lg$render[row(lg, "vote_choice_timing")] <- "timing:vote_intent"; lg })$detail,
+               "does not fit")
+  expect_match(broken(function(lg) {
+    lg$render[row(lg, "sovereignty_item")] <- "item:sov_partnership_1995"
+    lg
+  })$detail, "does not fit")
+})
+
+test_that("each study takes its own row of a column, qes_demo those of qes2014", {
+  lg <- legacy_tab("master")
+  r <- qesR:::.qes_legacy_rows(lg, "qes2022")
+  expect_identical(r$column, unique(lg$column))
+  expect_identical(r$render[r$column == "interview_start"], "raw:cps_StartDate")
+  expect_identical(r$render[r$column == "survey_weight"], "raw:cps_weight_general")
+  expect_identical(qesR:::.qes_legacy_rows(lg, "qes1998")$render[r$column == "language"], "constant:French")
+  expect_identical(qesR:::.qes_legacy_rows(lg, "qes2018")$render[r$column == "language"], "level_en")
+  demo <- qesR:::.qes_legacy_rows(lg, "qes_demo")
+  expect_identical(demo$render[demo$column == "survey_weight"], "raw:POND")
+  expect_identical(demo$render[demo$column == "interview_start"], "raw:SDAT")
+})
+
+# A harmonized study as the renderer sees it (values = "code"), with its
+# cell provenance: `included` lists the targets the study has.
+fake_h <- function(study = "qes2014", included = character(0), ...) {
+  cols <- list(...)
+  n <- if (length(cols) > 0L) length(cols[[1]]) else 3L
+  h <- data.frame(study = rep(study, n), year = rep(2014L, n), qes_id = paste0(study, ":", seq_len(n)),
+                  family = rep("qes", n), stringsAsFactors = FALSE)
+  for (nm in names(cols)) h[[nm]] <- cols[[nm]]
+  k <- length(included)
+  cell <- data.frame(study = rep(study, k), target = included, included = rep(TRUE, k),
+                     source_var = sprintf("v_%s", included), map_id = rep(NA_character_, k), grade = rep("comparable", k),
+                     stringsAsFactors = FALSE)
+  list(h = h, cell = cell)
+}
+render <- function(render, x, target = NA_character_, type = "character", raw = NULL, filled = list()) {
+  r <- data.frame(profile = "master", column = "col", studies = NA_character_, target = target,
+                  render = render, type = type, stringsAsFactors = FALSE)
+  qesR:::.qes_legacy_render_column(r, x$h, x$cell, raw, hz_spec(), filled)
+}
+
+test_that("party labels are those of qesR 0.4.4, and missing values stay NA", {
+  x <- fake_h(included = "vote_prov_recall", vote_prov_recall = c("PLQ", "other", NA, "ADQ"))
+  expect_identical(render("legacy_party", x, "vote_prov_recall")$value, c("PLQ", "Other party", NA, "ADQ"))
+  x <- fake_h(included = "vote_prov_intent", vote_prov_intent = c("no_party", "QS", "CAQ"))
+  expect_identical(render("legacy_party", x, "vote_prov_intent")$value, c("Did not vote / None", "QS", "CAQ"))
+  x <- fake_h(included = "pid_fed", pid_fed = c("LPC", "BQ", "none", "PPC"))
+  expect_identical(render("legacy_party", x, "pid_fed")$value, c("Liberal", "Bloc Quebecois", "Did not vote / None", "PPC"))
+})
+
+test_that("int01, scale10 and recode renders", {
+  x <- fake_h(included = "sov_indep", sov_indep = c("yes", "no", "would_not_vote", NA))
+  expect_identical(render("int01", x, "sov_indep", "numeric")$value, c(1, 0, NA, NA))
+  # OD7: four-point interest on 0-10; 0-10 items as answered
+  x <- fake_h(included = "interest_4pt", interest_4pt = c("very", "quite", "hardly", "not_at_all", NA))
+  expect_identical(render("scale10", x, "interest_4pt;interest_0_10", "numeric")$value, c(10, 7, 3, 0, NA))
+  x <- fake_h(included = "interest_0_10", interest_0_10 = c(4, 9, NA))
+  expect_identical(render("scale10", x, "interest_4pt;interest_0_10", "numeric")$value, c(4, 9, NA))
+  x <- fake_h(included = "gender", gender = c("man", "woman", "nonbinary", "other"))
+  expect_identical(render("recode:man=Man;woman=Woman;nonbinary=Non-binary;other=Other", x, "gender")$value,
+                   c("Man", "Woman", "Non-binary", "Other"))
+  expect_identical(render("level_en", x, "gender")$value, c("Man", "Woman", "Non-binary", "Another gender"))
+  f <- render("factor", x, "gender", "factor")$value
+  expect_s3_class(f, "factor")
+  expect_identical(levels(f), c("Man", "Woman", "Non-binary", "Another gender"))
+  # a study without the target: an empty factor with the target's levels
+  y <- fake_h(included = character(0), gender = rep(NA_character_, 3))
+  f <- render("factor", y, "gender", "factor")$value
+  expect_true(all(is.na(f)))
+  expect_identical(levels(f), c("Man", "Woman", "Non-binary", "Another gender"))
+})
+
+test_that("age in years and age bands follow qesR 0.4.4, from the targets", {
+  x <- fake_h(included = c("age", "birth_year"), age = c(40, NA, NA, NA, 200),
+              birth_year = c(1960, 1990, NA, 1999, NA))
+  # the age item, else the study's year minus the year of birth
+  expect_identical(render("age_years", x, "age;birth_year", "numeric")$value, c(40, 24, NA, 15, NA))
+  bands <- render("age_bands", x, "age;birth_year;age_group6;age_group3")$value
+  expect_identical(bands, c("35-44", "18-24", NA, NA, NA))
+  # the study's own bands where no age is known: six, else three
+  y <- fake_h(included = c("age_group6", "age_group3"), age_group6 = c("a65_plus", NA, NA),
+              age_group3 = c("a55_plus", "a18_34", NA))
+  expect_identical(render("age_bands", y, "age;birth_year;age_group6;age_group3")$value, c("65+", "18-34", NA))
+  z <- fake_h(included = "age_group3", age_group3 = c("a35_54", "a55_plus", NA))
+  expect_identical(render("age_bands", z, "age;birth_year;age_group6;age_group3")$value, c("35-54", "55+", NA))
+})
+
+test_that("catalog, lead, id, raw, constant, timing and item renders", {
+  x <- fake_h("qes2018", included = "vote_prov_recall", vote_prov_recall = c("PQ", "CAQ", NA))
+  expect_identical(render("catalog:study", x)$value, rep("qes2018", 3))
+  expect_identical(render("catalog:name_en", x)$value, rep("Quebec Election Study 2018", 3))
+  expect_identical(render("lead:year", x)$value, rep("2014", 3))
+  expect_identical(render("lead:family", x)$value, rep("qes", 3))
+  expect_identical(render("id", x)$value, c("1", "2", "3"))
+  # a study identified by its row (qes2014): <study>_<row>, as in 0.4.4
+  expect_identical(render("id", fake_h("qes2014"))$value, c("qes2014_1", "qes2014_2", "qes2014_3"))
+  raw <- data.frame(w = c(1.5, 0.5, 1), d = as.POSIXct(c("2022-09-19 14:17:02", NA, "2022-09-20 01:00:00"), tz = "UTC"),
+                    n = c(20140409, 20140410, NA))
+  expect_identical(render("raw:w", x, type = "numeric", raw = raw)$value, c(1.5, 0.5, 1))
+  expect_identical(render("raw:d", x, raw = raw)$value, c("2022-09-19 14:17:02", NA, "2022-09-20 01:00:00"))
+  expect_identical(render("raw:n", x, raw = raw)$value, c("20140409", "20140410", NA))
+  expect_identical(render("raw:absent", x, raw = raw)$value, rep(NA_character_, 3))
+  expect_identical(render("constant:Quebec", x)$value, rep("Quebec", 3))
+  expect_identical(render("na_column", x, type = "numeric")$value, rep(NA_real_, 3))
+  filled <- list(vote_choice = "vote_prov_recall", sovereignty_support = NA_character_)
+  expect_identical(render("timing:vote_choice", x, filled = filled)$value, rep("post", 3))
+  expect_identical(render("item:vote_choice", x, filled = filled)$value, rep("vote_prov_recall", 3))
+  expect_identical(render("item:sovereignty_support", x, filled = filled)$value, rep(NA_character_, 3))
+  # the first target the study has is the one used, and recorded
+  out <- render("legacy_party", x, "vote_prov_recall")
+  expect_identical(out$target, "vote_prov_recall")
+  expect_identical(render("legacy_party", fake_h("qes2018"), "vote_prov_recall")$target, NA_character_)
+})
+
+test_that("changes.csv and removed.csv match their schemas; the column map reads them", {
   dir <- system.file("extdata", "legacy", package = "qesR", mustWork = TRUE)
-  files <- list.files(dir, pattern = "\\.csv$", full.names = TRUE)
-  expect_setequal(basename(files), c("sources.csv", "blanks.csv", "studies.csv", "columns.csv", "removed.csv"))
-  for (f in files) {
+  expect_setequal(basename(list.files(dir, pattern = "\\.csv$")), c("changes.csv", "removed.csv"))
+  for (name in c("changes", "removed")) {
+    f <- file.path(dir, paste0(name, ".csv"))
     bytes <- file_bytes(f)
-    expect_false(any(bytes == as.raw(0x0d)), info = basename(f))
-    expect_true(validUTF8(rawToChar(bytes)), info = basename(f))
-    name <- sub("\\.csv$", "", basename(f))
-    expect_identical(names(legacy(name)), names(qesR:::.qes_schemas[[paste0("legacy_", name)]]), info = name)
+    expect_false(any(bytes == as.raw(0x0d)), info = name)
+    expect_true(validUTF8(rawToChar(bytes)), info = name)
+    expect_identical(names(qesR:::.qes_legacy_file(name)), names(qesR:::.qes_schemas[[paste0("legacy_", name)]]))
   }
-})
-
-test_that("every column of every legacy study has exactly one frozen source", {
-  src <- legacy("sources")
-  expect_setequal(unique(src$profile), c("master", "decon"))
-  for (p in c("master", "decon")) {
-    cols <- if (p == "master") master_source_columns else decon_source_columns
-    rows <- src[src$profile == p, , drop = FALSE]
-    expect_setequal(unique(rows$study), legacy_studies)
-    for (s in legacy_studies) {
-      expect_identical(rows$column[rows$study == s], cols, info = paste(p, s))
-    }
-  }
-  expect_false(anyDuplicated(paste(src$profile, src$column, src$study)) > 0L)
-  # only respondent_id may be synthetic
-  expect_true(all(src$column[src$source_variable %in% "(synthetic_rowid)"] == "respondent_id"))
-  # the demo reads only variables its file has, with qes2014's choices
-  demo <- src[src$study == "qes_demo" & !is.na(src$source_variable) & src$source_variable != "(synthetic_rowid)", ]
-  demo_names <- names(get_qes("qes_demo", assign_global = FALSE, quiet = TRUE, with_codebook = FALSE))
-  expect_true(all(demo$source_variable %in% demo_names))
-  q14 <- src[src$study == "qes2014", ]
-  expect_identical(
-    demo$source_variable,
-    q14$source_variable[match(paste(demo$profile, demo$column), paste(q14$profile, q14$column))]
-  )
-})
-
-test_that("the frozen sources are those qesR 0.4.4 chose", {
-  src <- legacy("sources")
-  pick <- function(p, col, s) src$source_variable[src$profile == p & src$column == col & src$study == s]
-  # spot checks against the source_map of the R9 baseline (design.md 13.3)
-  expect_identical(pick("master", "turnout", "qes2018"), "q5")
-  expect_identical(pick("master", "vote_choice", "qes2022"), "cps_votechoice1")
-  expect_identical(pick("master", "ideology", "qes2018"), NA_character_)
-  expect_identical(pick("master", "party_best", "qes2018"), "q8")
-  expect_identical(pick("master", "survey_weight", "qes_crop_2007_2010"), "XPOND")
-  expect_identical(pick("master", "respondent_id", "qes2007_panel"), "quest")
-  expect_identical(pick("decon", "turnout", "qes2014"), "Q1")
-  expect_identical(pick("decon", "votechoice", "qes2018"), "q2")
-})
-
-test_that("blank rules name real columns, studies and causes", {
-  b <- legacy("blanks")
-  for (i in seq_len(nrow(b))) {
-    cols <- if (b$profile[i] == "master") master_source_columns else decon_source_columns
-    expect_true(b$column[i] %in% c(cols, "*"), info = b$column[i])
-    expect_true(b$study[i] %in% c(v044_qescodes, "*"), info = b$study[i])
-    expect_true(nzchar(b$basis[i]))
-    codes <- qesR:::.qes_split_list(b$codes[i])
-    expect_false(anyNA(suppressWarnings(as.numeric(codes))), info = paste(b$column[i], b$study[i]))
-  }
-  expect_true(all(b$cause %in% c("A:H2", "A:H3", "A:H4", "A:H6", "A:H7", "OD4", "OD5", "OD8")))
-  expect_false(anyDuplicated(paste(b$profile, b$column, b$study)) > 0L)
-  # the blanks of design.md 5.12 (and OD4, OD5, OD8) are all there
-  has <- function(col, s, p = "master") any(b$profile == p & b$column == col & b$study %in% c(s, "*"))
-  expect_true(has("party_best", "qes2012") && has("party_lean", "qes2014"))
-  expect_true(has("political_interest", "qes2018") && has("ideology", "qes2014"))
-  expect_true(has("born_canada", "qes2018") && has("language", "qes2014") && has("language", "qes2022"))
-  expect_true(has("income", "qes2018") && has("religion", "qes2018"))
-  for (s in c("qes2022", "qes_crop_2007_2010", "qes1998")) expect_true(has("vote_choice", s), info = s)
-  expect_true(has("turnout", "qes2022"))
-  for (s in c("qes2007", "qes2008", "qes1998", "qes2012_panel")) {
-    expect_true(has("sovereignty_support", s) && has("sovereignty", s), info = s)
-  }
-  expect_true(has("vote_choice_text", "qes2018"))
-  expect_true(has("turnout", "qes2018", "decon") && has("votechoice", "qes2018", "decon"))
-  expect_true(has("party_best", "qes2022", "decon") && has("partylean", "qes2022", "decon"))
-})
-
-test_that("the per-study constants and the column map cover the master", {
-  s <- legacy("studies")
-  expect_identical(s$study, v044_qescodes)
-  timing <- qesR:::.qes_catalog()$enums
-  timing <- timing$value[timing$enum == "target_timing"]
-  expect_true(all(is.na(s$vote_choice_timing) | s$vote_choice_timing %in% timing))
-  expect_true(all(is.na(s$decon_vote_timing) | s$decon_vote_timing %in% timing))
-  expect_true(all(is.na(s$sovereignty_item) | s$sovereignty_item == "sov_indep"))
-  # a timing is given only where vote_choice keeps a source
-  b <- legacy("blanks")
-  vote_blanked <- b$study[b$profile == "master" & b$column == "vote_choice" & is.na(b$codes)]
-  expect_true(all(is.na(s$vote_choice_timing[s$study %in% vote_blanked])))
-  sov_blanked <- b$study[b$profile == "master" & b$column == "sovereignty_support" & is.na(b$codes)]
-  expect_true(all(is.na(s$sovereignty_item[s$study %in% sov_blanked])))
-  expect_true(all(!is.na(s$sovereignty_item[!s$study %in% sov_blanked])))
-
-  map <- legacy("columns")
-  expect_identical(map$column, c(names(qesR:::.qes_master_types), names(qesR:::.qes_master_appended)))
-  expect_true(all(nzchar(map$definition)))
-  removed <- legacy("removed")
-  expect_identical(nrow(removed), 70L)
-  expect_false(anyDuplicated(removed$column) > 0L)
-  expect_length(intersect(removed$column, map$column), 0L)
-})
-
-test_that("the interim master runs on qes_demo through the frozen source map", {
-  local_qes_notices_shown()
-  log <- local_fake_dataverse()
-  m <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
-  expect_identical(nrow(m), 60L)
-  expect_length(log$urls, 0L)
-  expect_identical(names(m)[seq_along(v044_master_cols)], names(v044_master_cols))
-  expect_identical(names(m)[-seq_along(v044_master_cols)], c("vote_choice_timing", "sovereignty_item"))
-  types <- vapply(m[seq_along(v044_master_cols)], function(x) class(x)[1], character(1))
-  expect_identical(types, v044_master_cols)
-  expect_identical(m$respondent_id, sprintf("qes_demo_%d", 1:60))
-  # qes2014's blanks apply: interview language (OD8) and truncated ideology
-  expect_true(all(is.na(m$language)))
-  expect_true(all(is.na(m$ideology)))
-  expect_true(all(m$turnout %in% c(0, 1, NA)))
-  expect_true(any(!is.na(m$vote_choice)))
-  expect_true(all(m$vote_choice_timing == "post"))
-  expect_true(all(m$sovereignty_item == "sov_indep"))
-  src <- attr(m, "source_map")
-  expect_identical(src$source_variable[src$harmonized_variable == "vote_choice"], "Q3")
-  expect_identical(attr(m, "qes_provenance")$study, "qes_demo")
-  na <- attr(m, "legacy_na_columns")
-  expect_identical(names(na), c("column", "study", "reason", "n_cells", "cause", "basis"))
-  expect_setequal(na$reason, c("no_source", "blanked"))
-  expect_identical(na$cause[na$column == "language"], "OD8")
-  expect_identical(attr(m, "qes_spec")$engine, "legacy-interim")
-  map <- attr(m, "legacy_column_map")
-  expect_identical(names(map), c("column", "target", "definition", "studies_changed", "flag", "note"))
-  expect_identical(map$studies_changed[map$column == "party_best"], "all")
+  ch <- qesR:::.qes_legacy_changes()
+  expect_true(all(ch$study %in% v044_qescodes))
+  expect_setequal(unique(ch$profile), c("master", "decon"))
+  # causes are the design's finding and decision ids, or 0.5.0 and HZ6
+  causes <- unique(unlist(strsplit(ch$cause, ";", fixed = TRUE)))
+  expect_true(all(grepl("^(0\\.5\\.0|HZ6|P5|OD[0-9]+|A:H[0-9]+)$", causes)))
+  expect_length(qesR:::.qes_legacy_removed()$column, 70L)
+  map <- qesR:::.qes_legacy_column_map("master")
+  expect_identical(names(map), c("column", "target", "definition", "studies_changed", "flag", "note", "render"))
+  expect_identical(map$column, names(qesR:::.qes_legacy_columns("master")))
+  expect_true(all(!is.na(map$definition)))
+  expect_match(map$studies_changed[map$column == "vote_choice"], "qes1998")
+  expect_true(is.na(map$studies_changed[map$column == "qes_code"]))
   expect_identical(map$flag[map$column == "political_interest"], "approximate")
 })
 
-test_that("blanks by code set only the listed codes to NA", {
-  local_qes_notices_shown()
-  local_fake_dataverse(data = list(
-    qes2022 = data.frame(
-      ResponseId = c("a", "b", "c"),
-      cps_income = c(52000, -99, 0),
-      cps_religion = haven::labelled(c(1, -99, 2), labels = c("-99" = -99, "None" = 1, "Catholic" = 2)),
-      cps_UserLanguage = c("FR-CA", "EN", "FR-CA"),
-      cps_turnout = haven::labelled(c(1, 1, 2), labels = c("Certain to vote" = 1, "Likely" = 2)),
-      cps_qc_referendum = haven::labelled(c(1, 2, 1), labels = c("Yes" = 1, "No" = 2))
-    ),
-    qes2007_panel = data.frame(
-      quest = 1:3,
-      vote = haven::labelled(c(1, 0, 10), labels = c("n'a pas voté" = 0, "L'ADQ" = 1, "non rejoint" = 10))
-    )
-  ))
-  m <- get_qes_master(surveys = c("qes2022", "qes2007_panel"), quiet = TRUE)
-  m22 <- m[m$qes_code == "qes2022", ]
-  expect_identical(m22$income, c("52000", NA, "0"))
-  expect_identical(m22$religion, c("None", NA, "Catholic"))
-  expect_true(all(is.na(m22$language)))
-  expect_true(all(is.na(m22$turnout)))
-  expect_identical(m22$sovereignty_support, c(1, 0, 1))
-  expect_identical(m22$sovereignty, c(1, 0, 1))
-  expect_true(all(is.na(m22$vote_choice_timing)))
-  m07 <- m[m$qes_code == "qes2007_panel", ]
-  expect_identical(m07$vote_choice, c("ADQ", "Did not vote / None", NA))
-  expect_true(all(is.na(m07$sovereignty_support)))
-  na <- attr(m, "legacy_na_columns")
-  pick <- function(col, s) na[na$column == col & na$study == s, , drop = FALSE]
-  expect_identical(pick("income", "qes2022")$n_cells, 1L)
-  expect_identical(pick("vote_choice", "qes2007_panel")$n_cells, 1L)
-  expect_identical(pick("vote_choice", "qes2007_panel")$reason, "blanked")
-  expect_identical(pick("citizenship", "qes2007_panel")$reason, "no_source")
-  # n_cells counts the values set to NA, and a code rule that blanked
-  # nothing is not listed
-  expect_identical(pick("religion", "qes2022")$n_cells, 1L)
-  expect_identical(nrow(pick("vote_choice_text", "qes2022")), 1L)
-  d <- get_decon("qes2022", quiet = TRUE)
-  dna <- attr(d, "legacy_na_columns")
-  expect_identical(dna$n_cells[dna$column == "income"], 1L)
-  expect_false("citizenship" %in% dna$column[dna$reason == "blanked"])
-  expect_true(all(dna$n_cells[dna$reason == "blanked" & !dna$column %in% c("party_best", "partylean")] > 0L))
-})
-
-test_that("no row is dropped, and every study's row count is its file's", {
-  local_qes_notices_shown()
-  dup <- data.frame(quest = c(1, 1, 2, 3), nompn = c("674A", "674B", "674A", "674A"), age = c(30, 40, NA, 50))
-  local_fake_dataverse(data = list(qes2007_panel = dup))
-  m <- get_qes_master(surveys = "qes2007_panel", quiet = TRUE)
-  expect_identical(nrow(m), 4L)
-  expect_identical(m$respondent_id, c("1", "1", "2", "3"))
-  expect_identical(attr(m, "duplicates_removed"), 0L)
-  expect_identical(attr(m, "empty_rows_removed"), 0L)
-  expect_identical(attr(m, "qes_provenance")$n_rows, 4L)
-})
-
 test_that("the notices of the legacy builders are classed and shown once per session", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
+  withr::local_options(qesR.quiet_deprecated = TRUE)
   n_values <- count_class(get_qes_master(surveys = "qes2018", assign_global = FALSE, quiet = TRUE), "qesR_message_values_changed")
   expect_identical(n_values, 1L)
   expect_identical(

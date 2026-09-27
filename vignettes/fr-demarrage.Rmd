@@ -274,6 +274,7 @@ tryCatch(
 ## Si vous utilisiez qesR 0.4.4
 
 `get_qes_master()` et les autres fonctions de qesR 0.4.4 continuent de
-fonctionner. Ce qui a changé, et comment garder des résultats
+fonctionner ; depuis qesR 0.7.0, le fichier fusionné est produit par le
+moteur d'harmonisation. Ce qui a changé, et comment garder des résultats
 reproductibles, est expliqué dans
 `vignette("fr-migrer-0.5", package = "qesR")`.

@@ -64,6 +64,7 @@ Other legacy:
 \code{\link{format_codebook}()},
 \code{\link{get_codebook}()},
 \code{\link{get_codebook_files}()},
+\code{\link{get_decon}()},
 \code{\link{get_question}()},
 \code{\link{get_value_labels}()}
 }

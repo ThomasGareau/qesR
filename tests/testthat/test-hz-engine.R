@@ -337,10 +337,12 @@ test_that("targets accepts target, family and set names, in spec order", {
   wcols <- c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var")
   h <- hz_run(syn, targets = c("sov_indep", "vote_prov"))
   expect_identical(setdiff(names(h)[-(1:15)], wcols),
-                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "sov_indep"))
+                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "sov_indep",
+                     "vote_prov_intent_other"))
   h <- hz_run(syn, targets = "vote")
   expect_identical(setdiff(names(h)[-(1:15)], wcols),
-                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall"))
+                   c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall",
+                     "turnout_prov_likely"))
   # a family whose only target is a leading column adds nothing
   expect_error(hz_run(syn, targets = "interview_mode"), class = "qesR_error_input")
 })

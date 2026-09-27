@@ -268,6 +268,20 @@
   .qes_label_number(names(labs))[match(code, lc)]
 }
 
+# Value label text of the codes `code` of column `x` (rule string with
+# from_label), trimmed at both ends and otherwise as in the file; NA for a
+# code without a label or with a blank one.
+.qes_hz_col_labels <- function(x, code) {
+  labs <- attr(x, "labels", exact = TRUE)
+  if (length(labs) == 0L) {
+    return(rep(NA_character_, length(code)))
+  }
+  lc <- .canon(unname(unclass(labs)))
+  txt <- trimws(enc2utf8(names(labs)))
+  txt[!nzchar(txt)] <- NA_character_
+  txt[match(code, lc)]
+}
+
 # Dates from source values in `format` (yyyymmdd, posixct, stata) as ISO
 # text; NA where a value does not read as a date.
 .qes_hz_dates <- function(x, format) {
@@ -330,7 +344,16 @@
       reason[rest & code != "NA" & !ok] <- "unmapped"
     } else if (base == "string") {
       ok <- rest & !is.na(src) & nzchar(src)
-      value[ok] <- src[ok]
+      if (identical(unname(args["from_label"]), "TRUE")) {
+        # the text of each code's value label in the file (study-scoped
+        # text targets such as income brackets); a code without a label is
+        # unmapped, never passed through as a number
+        lab <- .qes_hz_col_labels(x, src)
+        value[ok & !is.na(lab)] <- lab[ok & !is.na(lab)]
+        reason[ok & is.na(lab)] <- "unmapped"
+      } else {
+        value[ok] <- src[ok]
+      }
       reason[rest & !ok] <- "sysmis"
     } else if (base == "constant") {
       value[] <- unname(args["value"])
@@ -378,6 +401,11 @@
   }
 }
 
+# Frames already read through .qes_read() in this call, by study code. Only
+# the legacy builders (R/legacy.R) fill it, for the length of one build, so
+# that each study's file is read once even with the cache and memo off.
+.qes_hz_preread <- new.env(parent = emptyenv())
+
 # Harmonize one study: its leading columns, the values, reasons and source
 # codes of each target, its wave membership and weights, and its cell and
 # study provenance.
@@ -387,7 +415,9 @@
   stand_in <- !identical(spec_study, study)
   verified <- is.null(frame)
   if (verified) {
-    d <- .qes_read(study, quiet = ctx$quiet)
+    # a file the legacy builders have just read through .qes_read() (the
+    # same pinned, md5-checked read) is not requested a second time
+    d <- .qes_hz_preread$frames[[study]] %||% .qes_read(study, quiet = ctx$quiet)
     prov <- attr(d, "qes_provenance", exact = TRUE)
   } else {
     d <- frame
@@ -484,9 +514,16 @@
     p <- pick_in[[t]]
     if (!is.na(p$reason)) next
     r <- results[[as.character(p$row)]]
-    timing <- unique(wv$wave_timing[.qes_wave_rows(wv, xw$wave[p$row])])
-    design[[t]] <- list(value = r$value, reason = r$reason, wave = xw$wave[p$row],
-                        timing = if (length(timing) == 1L) timing else NA_character_)
+    w_idx <- .qes_wave_rows(wv, xw$wave[p$row])
+    timing <- unique(wv$wave_timing[w_idx])
+    if (length(timing) > 1L) {
+      # a row of wave "*" over waves of different timings: each
+      # respondent's answer has the timing of the first of those waves
+      # they took part in
+      first <- .qes_hz_first_wave(members, seq_len(ncol(members)) %in% w_idx)
+      timing <- wv$wave_timing[first]
+    }
+    design[[t]] <- list(value = r$value, reason = r$reason, wave = xw$wave[p$row], timing = timing)
   }
   eligible <- .qes_hz_eligible(design, n, e_date)
 
@@ -951,7 +988,10 @@
 #'
 #' Pooled polls (the monthly CROP polls of 2007-2010) have one wave per
 #' poll: each respondent belongs to one poll, whose questions the spec
-#' maps once for all the polls. Each poll refers to the next general
+#' maps once for all the polls. In the same way, a question that does not
+#' change over a panel (gender, education, mother tongue) is mapped once
+#' for all its waves when each respondent answered it in whichever wave
+#' they took part (the 2007 panel). Each poll refers to the next general
 #' election, which `election_date` gives row by row, `year` is the year the
 #' poll began, and its weight is normalized within the poll. `stratum`
 #' gives the independent sample a respondent was drawn in, where a study
@@ -988,7 +1028,11 @@
 #' and a post-election one (reported vote) with `weight_post`.
 #' `attr(, "qes_weight_guide")` gives, for each target and study, the wave
 #' that asked it and the weight column and variable that fit it, and a
-#' message says when the targets of a study need different weights.
+#' message says when the targets of a study need different weights. For a
+#' question that covers every wave of a panel (wave `"*"`, such as gender
+#' in the 2007 panel), the guide names a weight only when those waves share
+#' it; otherwise `weight_column` and `weight_var` are `NA`, since each
+#' respondent's weight depends on the waves they took part in.
 #'
 #' @section Eligibility:
 #' `eligible_voter` says whether the respondent could vote in the study's
@@ -1016,8 +1060,11 @@
 #' écarte les cellules sous un niveau donné. Les options qu'une question
 #' n'offrait pas sont des zéros structurels, pas un appui nul. `lang = "fr"`
 #' donne les étiquettes des niveaux en français ; les codes sont les mêmes.
+#' `targets = "decon"` demande les cibles des colonnes de [get_decon()].
 #' La disposition longue (`layout = "long"`) donne une ligne par personne et
-#' par vague ; les sondages CROP regroupés ont une vague par sondage, et
+#' par vague ; une question invariante d'un panel (genre, scolarité) est
+#' lue dans la vague à laquelle la personne a participé (panel de 2007) ;
+#' les sondages CROP regroupés ont une vague par sondage, et
 #' `stratum` donne l'échantillon indépendant d'où vient la personne : pour
 #' les sondages regroupés, le nom de la vague du sondage (comme dans
 #' `waves`) ; pour le panel de 1998, le code de la firme dans le fichier,
@@ -1027,7 +1074,10 @@
 #' normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 #' `weight_pre` et `weight_post` (ou `weight` en disposition longue),
 #' ramenées à une moyenne de 1 par étude et par vague ; une pondération
-#' non encore documentée vaut NA. `eligible_voter` indique si la personne
+#' non encore documentée vaut NA. `attr(, "qes_weight_guide")` donne, pour
+#' chaque cible et étude, la colonne de pondération qui convient ; pour une
+#' question qui couvre toutes les vagues d'un panel (vague `"*"`), elle vaut
+#' NA quand ces vagues n'ont pas la même pondération. `eligible_voter` indique si la personne
 #' pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
 #' citoyenneté canadienne) ; `interview_date`, `days_to_election` et
 #' `survey_mode` décrivent l'entrevue. [qes_design()] en fait un plan de
@@ -1037,7 +1087,8 @@
 #'   the Quebec Election Studies the spec covers, or the studies named in
 #'   `data` when it is given; `"all"` means every study the spec covers.
 #' @param targets Target, family or set names (see [qes_spec()]); the
-#'   default `"core"` is the core set.
+#'   default `"core"` is the core set, and `"decon"` the targets of the
+#'   columns of [get_decon()].
 #' @param layout `"respondent"` (default): one row per respondent of each
 #'   study's file. `"long"`: one row per respondent and wave (see *Waves*).
 #' @param values How categorical targets are returned: `"factor"` (default;
@@ -1272,7 +1323,8 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
 # study, the weight column that matches the timing of the wave that asked
 # the question, and its variable. wave and weight_column are NA when no row
 # was applied for the target in the study; weight_var and weight_status are
-# NA when the wave has no recommended weight.
+# NA when the wave has no recommended weight. A "*" row of a panel names a
+# weight only when all its waves agree on it.
 .qes_hz_weight_guide <- function(parts, ctx) {
   tg <- ctx$spec$tables$targets
   rows <- list()
@@ -1280,24 +1332,33 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
     for (t in ctx$targets) {
       cw <- part$cell_wave[[t]]
       included <- isTRUE(part$cells$included[match(t, part$cells$target)])
-      # a row of wave "*" takes the first poll wave: the polls of a study
-      # share their timing (V-S9) and weight variable
-      w <- if (is.na(cw) || !included) NA_integer_ else .qes_wave_rows(part$wv, cw)[1]
+      # a row of wave "*" in pooled polls takes the first poll wave: the
+      # polls share their timing (V-S9) and weight variable. In a panel, a
+      # "*" row (a static target) covers waves with their own weights: the
+      # guide names a weight only when those waves agree, else NA (each
+      # respondent's weight is that of the waves they took part in)
+      ws <- if (is.na(cw) || !included) integer(0) else .qes_wave_rows(part$wv, cw)
+      if (length(ws) > 1L && .qes_poll_study(part$wv, part$study)) ws <- ws[1]
       timing <- tg$target_timing[match(t, tg$target)]
+      column_of <- function(w) {
+        if (identical(ctx$layout, "long")) return("weight")
+        cols <- .qes_hz_weight_columns(part$wv$wave_timing[w])
+        if (length(cols) == 2L) {
+          if (timing %in% "pre") "weight_pre" else "weight_post"
+        } else if (length(cols) == 1L) cols else NA_character_
+      }
+      one <- function(x) {
+        x <- unique(x)
+        if (length(x) == 1L) x else NA_character_
+      }
+      w <- if (length(ws) > 0L) ws[1] else NA_integer_
       column <- NA_character_
       var <- NA_character_
       status <- NA_character_
-      if (!is.na(w)) {
-        if (identical(ctx$layout, "long")) {
-          column <- "weight"
-        } else {
-          cols <- .qes_hz_weight_columns(part$wv$wave_timing[w])
-          column <- if (length(cols) == 2L) {
-            if (timing %in% "pre") "weight_pre" else "weight_post"
-          } else if (length(cols) == 1L) cols else NA_character_
-        }
-        var <- part$weights[[w]]$var
-        status <- part$weights[[w]]$status
+      if (length(ws) > 0L) {
+        column <- one(vapply(ws, column_of, character(1)))
+        var <- one(vapply(ws, function(k) part$weights[[k]]$var %||% NA_character_, character(1)))
+        status <- one(vapply(ws, function(k) part$weights[[k]]$status %||% NA_character_, character(1)))
       }
       rows[[length(rows) + 1L]] <- data.frame(
         target = t, study = part$study, wave = if (is.na(w)) NA_character_ else cw, target_timing = timing,

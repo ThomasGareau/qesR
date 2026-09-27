@@ -28,7 +28,8 @@ the Quebec Election Studies the spec covers, or the studies named in
 \code{data} when it is given; \code{"all"} means every study the spec covers.}
 
 \item{targets}{Target, family or set names (see \code{\link[=qes_spec]{qes_spec()}}); the
-default \code{"core"} is the core set.}
+default \code{"core"} is the core set, and \code{"decon"} the targets of the
+columns of \code{\link[=get_decon]{get_decon()}}.}
 
 \item{layout}{\code{"respondent"} (default): one row per respondent of each
 study's file. \code{"long"}: one row per respondent and wave (see \emph{Waves}).}
@@ -219,7 +220,10 @@ repeated on each of the respondent's rows.
 
 Pooled polls (the monthly CROP polls of 2007-2010) have one wave per
 poll: each respondent belongs to one poll, whose questions the spec
-maps once for all the polls. Each poll refers to the next general
+maps once for all the polls. In the same way, a question that does not
+change over a panel (gender, education, mother tongue) is mapped once
+for all its waves when each respondent answered it in whichever wave
+they took part (the 2007 panel). Each poll refers to the next general
 election, which \code{election_date} gives row by row, \code{year} is the year the
 poll began, and its weight is normalized within the poll. \code{stratum}
 gives the independent sample a respondent was drawn in, where a study
@@ -258,7 +262,11 @@ A pre-election question (vote intention) is weighted with \code{weight_pre}
 and a post-election one (reported vote) with \code{weight_post}.
 \code{attr(, "qes_weight_guide")} gives, for each target and study, the wave
 that asked it and the weight column and variable that fit it, and a
-message says when the targets of a study need different weights.
+message says when the targets of a study need different weights. For a
+question that covers every wave of a panel (wave \code{"*"}, such as gender
+in the 2007 panel), the guide names a weight only when those waves share
+it; otherwise \code{weight_column} and \code{weight_var} are \code{NA}, since each
+respondent's weight depends on the waves they took part in.
 }
 
 \section{Eligibility}{
@@ -290,8 +298,11 @@ comparabilité (\code{identical}, \code{comparable}, \code{approximate}) ; \code
 écarte les cellules sous un niveau donné. Les options qu'une question
 n'offrait pas sont des zéros structurels, pas un appui nul. \code{lang = "fr"}
 donne les étiquettes des niveaux en français ; les codes sont les mêmes.
+\code{targets = "decon"} demande les cibles des colonnes de \code{\link[=get_decon]{get_decon()}}.
 La disposition longue (\code{layout = "long"}) donne une ligne par personne et
-par vague ; les sondages CROP regroupés ont une vague par sondage, et
+par vague ; une question invariante d'un panel (genre, scolarité) est
+lue dans la vague à laquelle la personne a participé (panel de 2007) ;
+les sondages CROP regroupés ont une vague par sondage, et
 \code{stratum} donne l'échantillon indépendant d'où vient la personne : pour
 les sondages regroupés, le nom de la vague du sondage (comme dans
 \code{waves}) ; pour le panel de 1998, le code de la firme dans le fichier,
@@ -301,7 +312,10 @@ ligne, \code{year} est l'année où il a commencé, et sa pondération est
 normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 \code{weight_pre} et \code{weight_post} (ou \code{weight} en disposition longue),
 ramenées à une moyenne de 1 par étude et par vague ; une pondération
-non encore documentée vaut NA. \code{eligible_voter} indique si la personne
+non encore documentée vaut NA. \code{attr(, "qes_weight_guide")} donne, pour
+chaque cible et étude, la colonne de pondération qui convient ; pour une
+question qui couvre toutes les vagues d'un panel (vague \code{"*"}), elle vaut
+NA quand ces vagues n'ont pas la même pondération. \code{eligible_voter} indique si la personne
 pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
 citoyenneté canadienne) ; \code{interview_date}, \code{days_to_election} et
 \code{survey_mode} décrivent l'entrevue. \code{\link[=qes_design]{qes_design()}} en fait un plan de

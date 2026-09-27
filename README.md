@@ -91,16 +91,18 @@ qes_download("qes2018", path = dir, what = c("data", "docs"))
 
 `get_qes_master()` stacks the 11 studies of qesR 0.4.4 in one data frame
 with the 30 harmonized columns of 0.4.4 (same names, order and types).
-Since 0.5.0 it keeps every respondent, drops the columns that stacked
-different questions under one name, and sets values verified to be wrong to
-`NA`; attributes say what changed and why.
+Since 0.5.0 it keeps every respondent and drops the columns that stacked
+different questions under one name; since 0.7.0 it is rendered from the
+harmonization engine below, so `vote_choice` is the reported vote in every
+study and a code the specification does not map is `NA`. Attributes say
+what each column holds and which question it read in each study.
 
 ```r
 master <- get_qes_master()
-head(attr(master, "legacy_na_columns"))
+head(attr(master, "legacy_column_map"))
 ```
 
-Results computed with qesR 0.4.4 change under 0.5.0. See
+Results computed with qesR 0.4.4 change under 0.5.0 and 0.7.0. See
 `vignette("migrating-0.5", package = "qesR")` and NEWS; to reproduce a 0.4.4
 result exactly, install that version:
 `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`.
@@ -133,19 +135,32 @@ comparable, A approximate; a dash: no question in the specification):
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
 | `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
-| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | — | C |
+| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | A | C |
+| `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
+| `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |
+| `pid_fed` | I | — | — | — | — | — | — | — | — | — | — |
 | `sov_indep` | C | C | — | I | I | — | — | — | — | — | — |
 | `sov_sovereign_country` | — | — | — | — | — | I | — | — | — | — | — |
 | `sov_favour` | — | — | I | — | — | — | — | — | — | — | — |
 | `lr_self` | A | C | A | I | I | — | — | — | — | — | — |
 | `interest_4pt` | — | C | — | C | I | — | — | — | — | — | — |
 | `sov_partnership_1995` | — | — | — | — | — | — | — | C | I | C | C |
+| `interest_0_10` | A | — | — | — | — | — | — | — | I | — | — |
+| `interest_election_0_10` | — | — | — | — | — | — | — | C | I | — | — |
+| `interest_campaign_4pt` | — | — | — | — | — | — | — | — | — | I | — |
 | `birth_year` | I | C | — | C | C | — | — | C | C | — | — |
 | `birth_month` | — | I | — | — | — | — | — | — | — | — | — |
 | `age` | I | A | — | — | — | — | — | — | — | — | — |
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
+| `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
+| `gender` | C | C | C | C | I | C | C | C | C | C | C |
+| `education4` | C | C | A | I | C | — | A | C | C | A | — |
+| `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
+| `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
+| `income_native` | A | — | A | C | I | — | A | A | A | A | — |
+| `religion` | A | — | — | C | I | — | — | — | — | — | — |
 
 <!-- coverage: end -->
 
@@ -229,14 +244,16 @@ qes_download("qes2018", path = dir, what = c("data", "docs"))
 
 `get_qes_master()` empile les 11 études de qesR 0.4.4 dans un seul tableau,
 avec les 30 colonnes harmonisées de 0.4.4 (mêmes noms, ordre et types).
-Depuis 0.5.0, il garde tous les répondants, retire les colonnes qui
-empilaient des questions différentes sous un même nom et met à `NA` les
-valeurs dont l'erreur a été vérifiée ; ses attributs disent ce qui a changé
-et pourquoi.
+Depuis 0.5.0, il garde tous les répondants et retire les colonnes qui
+empilaient des questions différentes sous un même nom ; depuis 0.7.0, il est
+produit par le moteur d'harmonisation décrit plus bas, de sorte que
+`vote_choice` est le vote déclaré dans toutes les études et qu'un code que
+la spécification n'apparie pas vaut `NA`. Ses attributs disent ce que
+contient chaque colonne et quelle question elle a lue dans chaque étude.
 
 ```r
 master <- get_qes_master()
-head(attr(master, "legacy_na_columns"))
+head(attr(master, "legacy_column_map"))
 ```
 
 ### Données harmonisées (expérimental)
@@ -269,19 +286,32 @@ question dans la spécification) :
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
 | `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
-| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | — | C |
+| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | A | C |
+| `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
+| `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |
+| `pid_fed` | I | — | — | — | — | — | — | — | — | — | — |
 | `sov_indep` | C | C | — | I | I | — | — | — | — | — | — |
 | `sov_sovereign_country` | — | — | — | — | — | I | — | — | — | — | — |
 | `sov_favour` | — | — | I | — | — | — | — | — | — | — | — |
 | `lr_self` | A | C | A | I | I | — | — | — | — | — | — |
 | `interest_4pt` | — | C | — | C | I | — | — | — | — | — | — |
 | `sov_partnership_1995` | — | — | — | — | — | — | — | C | I | C | C |
+| `interest_0_10` | A | — | — | — | — | — | — | — | I | — | — |
+| `interest_election_0_10` | — | — | — | — | — | — | — | C | I | — | — |
+| `interest_campaign_4pt` | — | — | — | — | — | — | — | — | — | I | — |
 | `birth_year` | I | C | — | C | C | — | — | C | C | — | — |
 | `birth_month` | — | I | — | — | — | — | — | — | — | — | — |
 | `age` | I | A | — | — | — | — | — | — | — | — | — |
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
+| `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
+| `gender` | C | C | C | C | I | C | C | C | C | C | C |
+| `education4` | C | C | A | I | C | — | A | C | C | A | — |
+| `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
+| `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
+| `income_native` | A | — | A | C | I | — | A | A | A | A | — |
+| `religion` | A | — | — | C | I | — | — | — | — | — | — |
 
 <!-- coverage: end -->
 
@@ -308,7 +338,7 @@ pondérée.
   `Retry-After`.
 - Les fonctions de qesR 0.4.4 continuent de fonctionner et affichent une
   note unique qui nomme leur remplacement (`?qesR-deprecated`).
-- Les résultats de `get_qes_master()` changent avec 0.5.0 : voir
+- Les résultats de `get_qes_master()` changent avec 0.5.0 et 0.7.0 : voir
   `vignette("fr-migrer-0.5", package = "qesR")` ; pour reproduire
   exactement un résultat de 0.4.4, installez cette version
   (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).

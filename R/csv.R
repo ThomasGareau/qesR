@@ -75,23 +75,13 @@
     evidence = "chr"
   ),
   # the interim legacy builders (inst/extdata/legacy/, R/legacy.R)
-  legacy_sources = c(
-    profile = "chr", column = "chr", study = "chr", source_variable = "chr"
-  ),
-  legacy_blanks = c(
-    profile = "chr", column = "chr", study = "chr", codes = "chr",
-    cause = "chr", basis = "chr"
-  ),
-  legacy_studies = c(
-    study = "chr", vote_choice_timing = "chr", sovereignty_item = "chr",
-    decon_vote_timing = "chr"
-  ),
-  legacy_columns = c(
-    column = "chr", target = "chr", definition = "chr", flag = "chr",
-    note = "chr"
-  ),
   legacy_removed = c(
     column = "chr", studies = "chr", source_variables = "chr"
+  ),
+  # the studies whose values in a legacy column differ from qesR 0.4.4
+  # (data-raw/compare_legacy.R; no counts, so nothing of qes2022 ships)
+  legacy_changes = c(
+    profile = "chr", column = "chr", study = "chr", cause = "chr"
   ),
   # the harmonization spec (inst/extdata/harmonize/, design.md section 5,
   # R/hz-spec.R). Code columns (source_code, na_codes, gate_codes) are text:
@@ -159,6 +149,12 @@
   spec_hashes = c(
     study = "chr", wave = "chr", target = "chr", source_var = "chr",
     n = "int", md5 = "chr"
+  ),
+  # the legacy renderer of get_qes_master() and get_decon() (R/legacy.R)
+  spec_legacy = c(
+    profile = "chr", position = "int", column = "chr", studies = "chr",
+    target = "chr", render = "chr", type = "chr", flag = "chr", cause = "chr",
+    definition = "chr", note = "chr"
   ),
   # the same aggregates for a study whose metadata cannot ship (OD3), kept in
   # the build-ignored data-raw/nc/ for CI: variable types and missing-code

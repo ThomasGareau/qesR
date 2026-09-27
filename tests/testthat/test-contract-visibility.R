@@ -5,7 +5,10 @@
 export_calls <- function() {
   list(
     get_qes = quote(get_qes("qes2018")),
-    get_qes_master = quote(get_qes_master()),
+    # the legacy builders are rendered from the engine, whose spec checks run
+    # against the shipped catalog (see below); the default of 11 studies
+    # runs on synthetic data in test-contract-legacy.R
+    get_qes_master = quote(with_shipped_catalog(get_qes_master(surveys = "qes_demo"))),
     qes_codebook = quote(qes_codebook("qes2018")),
     get_codebook = quote(get_codebook("qes2018")),
     get_qes_codebook = quote(get_qes_codebook("qes2018")),
@@ -16,7 +19,7 @@ export_calls <- function() {
     get_qes_codebook_files = quote(get_qes_codebook_files("qes2018")),
     download_codebook = quote(download_codebook("qes2018")),
     get_preview = quote(get_preview("qes2018")),
-    get_decon = quote(get_decon()),
+    get_decon = quote(with_shipped_catalog(get_decon("qes_demo"))),
     get_qescodes = quote(get_qescodes()),
     qes_studies = quote(qes_studies()),
     qes_docs = quote(qes_docs()),

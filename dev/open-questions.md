@@ -8,6 +8,99 @@ Nothing here blocks a slice. Data requests follow the policy of design.md
 section 0.3 (OD18): Claude fetches public documents itself; the items below
 are either not in any public deposit or need the owner's judgement.
 
+## Slice HZ6: the legacy switch (qesR 0.7.0, spec 1.0.0)
+
+Sources used: the pinned originals (md5-verified, offline cache), the
+deposited questionnaires and codebooks, the R9 baseline of qesR 0.4.4 and a
+0.5.0 baseline built from commit aa1d3bd (the interim builders, whose values
+0.6.0 kept). `dev/legacy-diff.md` (from `data-raw/compare_legacy.R`)
+explains every difference from 0.5.0; 0 are unexplained.
+
+### A. Decisions taken in the slice that the owner may want to change
+
+H1. **The legacy builders apply the crosswalk rows in review.** No row of
+    the spec is signed off yet (`status = stable`), and `qes_harmonize()`
+    applies only signed-off rows by default. `get_qes_master()` and
+    `get_decon()` call the engine with `include_draft = TRUE`: otherwise
+    every column would be `NA`. The rows were checked against the originals
+    and documents, and the legacy columns were always built from unreviewed
+    code, so this is no step back; `attr(, "source_map")` gives each cell's
+    grade, and `?get_qes_master` says so. *To confirm*, or to sign off the
+    rows the legacy profile uses before the release. Choice made in the
+    review fixes: the rows stay in review, so the replacement that the
+    `get_decon()` notice names (and `?get_decon`, `?qesR-deprecated`, NEWS
+    and both migration vignettes) is the working call
+    `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`; a test
+    checks that it returns values for `qes_demo`. Once the decon rows are
+    signed off, `include_draft = TRUE` can be dropped from those texts.
+
+H2. **Missing categories of `vote_choice`.** The 0.4.4 categories "Did not
+    vote / None" and "Don't know / Refused" become `NA` (the engine's
+    reasons `not_voted`, `spoiled`, `dk`, `refused`), in all eight studies
+    that had them (for example `qes2007_panel`: 561 cells); `turnout` still
+    says who voted. The alternative is to render those reasons as the old
+    texts (a `recode` of NA reasons in `legacy.csv`), which would also add
+    them to `qes2012` and `qes2014`, where 0.4.4 left nonvoters `NA`.
+
+H3. **`gender` keeps "Non-binary" and "Other"** (qes2022, 6 cells), as
+    0.5.0 did; design section 5.12 wrote "Non-binary -> NA in the legacy
+    column only". Keeping them changes nothing from 0.5.0.
+
+H4. **`age_group` of the 2007 and 2012 panels has six bands** (their
+    questions have them; design section 5.12's `age_group6`), where 0.4.4
+    and 0.5.0 used the producers' three-band recodes (`age3`, `age_3gr`).
+    `qes2018_panel` keeps its three bands (OD15).
+
+H5. **`qes2012` education code 10** (*Certificate and diploma*, 100
+    respondents) is in neither questionnaire: `not_mappable` (0.4.4 put it
+    in College); code 8 (the French questionnaire's *cours technique*) is
+    College (0.4.4: University). The 2018 panel's trade certificate (d3 code
+    4, 127) is College/CEGEP/Technical; 0.4.4 left its label as a value.
+
+H6. **`get_decon()` types.** Its columns follow the targets: factors with
+    the targets' English levels, `education` in four groups (the qes2022
+    file's ten categories are gone), `yob` a number, `religion` and (except
+    for qes2022, an amount) `income` text; `age` is a factor of bands for
+    the panels and `qes1998`, which asked bands (as 0.4.4 had them), numbers
+    elsewhere. `get_decon()` is soft-deprecated; its replacement
+    `qes_harmonize(targets = "decon")` gives the same targets with reasons.
+
+H7. **`respondent_id`** of `qes2007_panel` and `qes2018_panel` is the ID
+    part of the engine's `qes_id` (`nompn-quest`, `method-id`), as design
+    section 5.12 says; the CROP polls keep `QUEST` (0.4.4's choice; the
+    engine identifies CROP rows by position, one `QUEST` repeats).
+
+H8. **The 2007 panel's time-invariant items** (gender, education, mother
+    tongue, income, six age bands) are read in whichever wave the respondent
+    took part (crosswalk wave `*`, allowed from spec 1.0.0 for targets of
+    timing `static` or `any`), so its 391 respondents reached only after the
+    election keep them, as in 0.5.0. The existing `age_group3` row moved to
+    wave `*` too (the MAJOR change of spec 1.0.0), which gives those 391 an
+    age group and, for 304 of them, `eligible_voter`. The one row in no wave
+    (neither interview completed) is now `NA` in every answer column.
+
+### B. Deferred (other slices)
+
+- `language` of `qes2022` stays `NA`: its mother-tongue question is three
+  select-all items (`cps_lang_1..3`), which need the registered
+  `fn:multiselect` rule (design section 5.6).
+- `income` and `religion` of `qes2018` stay `NA` (as in 0.5.0): the file
+  has no value labels, and a `string` row reads the file's labels; quoting
+  the questionnaire's labels for text targets needs a schema change.
+- `vote_choice_text` stays `NA` everywhere (as in 0.5.0): the "other party"
+  text of the recall items is not a target yet.
+- `party_lean` stays `NA` everywhere (render `na_column`, as in 0.5.0):
+  design section 5.12 maps it to `vote_prov_lean`, which is not a target of
+  the spec yet. It is filled when that target and its crosswalk rows are
+  added.
+- The appended columns `region_cma3`, `region_admin` and `income_rank` of
+  design section 5.12 wait for their targets; the appended column is named
+  `waves` (the engine's respondent-layout column), not `wave`.
+- `qes2014` `Q57` wording keeps the dictionary's text, which carries a stray
+  "3." from the questionnaire extraction (the crosswalk wording must equal
+  the dictionary's question text); a dictionary patch would fix both.
+- The website's analysis articles still read the master (W.2).
+
 ## Slice HZ5: the remaining studies (spec 0.3.0)
 
 Sources used: the pinned originals (md5-verified), the deposited

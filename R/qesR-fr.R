@@ -22,7 +22,7 @@
 #' | Découvrir | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
 #' | Obtenir les données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
 #' | Obtenir les données | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
-#' | Obtenir les données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir `NEWS`). |
+#' | Obtenir les données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir `NEWS`). |
 #' | Métadonnées et recherche | [qes_codebook()] | Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. |
 #' | Métadonnées et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
 #' | Métadonnées et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |

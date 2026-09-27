@@ -19,7 +19,7 @@ replacement has shipped. Until then it works silently.\tabular{lll}{
    \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
    \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab yes \cr
    \code{get_qescodes()} \tab \code{qes_studies()} \tab yes \cr
-   \code{get_decon()} \tab none yet (a replacement is planned for qesR 0.7.0) \tab no \cr
+   \code{get_decon()} \tab \code{qes_harmonize(targets = "decon", include_draft = TRUE)} \tab yes (since 0.7.0) \cr
 }
 }
 \section{Notices}{

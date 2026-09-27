@@ -17,7 +17,7 @@ Grouped as in the reference index of the website.\tabular{lll}{
    Discover \tab \code{\link[=qes_docs]{qes_docs()}} \tab Lists the codebooks, questionnaires and reports of each study, offline. \cr
    Get data \tab \code{\link[=get_qes]{get_qes()}} \tab Loads a study: \code{qes2018 <- get_qes("qes2018")}. The data are returned, never written into your workspace by default. \cr
    Get data \tab \code{\link[=qes_download]{qes_download()}} \tab Saves the original files (data and documents), md5-checked, in a folder you choose. \cr
-   Get data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies. Its values changed in qesR 0.5.0 (see \code{NEWS}). \cr
+   Get data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see \code{NEWS}). \cr
    Metadata and search \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab A study's codebook: labels, question text (English and French), value labels, missing codes. \cr
    Metadata and search \tab \code{\link[=qes_question]{qes_question()}} \tab The exact wording of one or more questions, in English or French. \cr
    Metadata and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
@@ -142,7 +142,7 @@ not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
 \code{qesR_message_arg_ignored}, shown when a legacy argument that no longer
 changes the result is used; and \code{qesR_message_values_changed} and
 \code{qesR_message_legacy_columns}, shown by \code{\link[=get_qes_master]{get_qes_master()}} and
-\code{\link[=get_decon]{get_decon()}}, whose values changed in qesR 0.5.0. Every condition carries
+\code{\link[=get_decon]{get_decon()}}, whose values changed in qesR 0.5.0 and 0.7.0. Every condition carries
 the fields \code{id} (its message key) and \code{lang} (the language of its message).
 }
 
@@ -268,7 +268,7 @@ masqués par \code{quiet = TRUE}.
 \code{qesR_message_deprecated}, \code{qesR_message_assign_default},
 \code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat),
 \code{qesR_message_values_changed} et \code{qesR_message_legacy_columns} (valeurs de
-\code{\link[=get_qes_master]{get_qes_master()}} et \code{\link[=get_decon]{get_decon()}} modifiées dans qesR 0.5.0)
+\code{\link[=get_qes_master]{get_qes_master()}} et \code{\link[=get_decon]{get_decon()}} modifiées dans qesR 0.5.0 et 0.7.0)
 s'affichent au plus une fois par session et ne sont pas masqués par
 \code{quiet}. Chaque
 condition porte les champs \code{id} (sa clé de message) et \code{lang} (la langue de

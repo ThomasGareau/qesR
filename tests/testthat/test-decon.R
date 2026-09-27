@@ -1,145 +1,108 @@
-# Restored from 397aa0c^ in slice S0b. Triage: kept unchanged.
-
-test_that(".build_decon maps and preserves row count", {
-  dat <- data.frame(
-    cps_citizen = c(1, 2),
-    cps_age_in_years = c(30, 45),
-    cps_genderid = c(1, 2),
-    cps_province = c(11, 11),
-    cps_edu = c(3, 4),
-    stringsAsFactors = FALSE
-  )
-
-  out <- qesR:::.build_decon(dat, srvy = "qes2022")
-
-  expect_s3_class(out, "data.frame")
-  expect_true(identical(nrow(out), 2L))
-  expect_true(all(c("qes_code", "citizenship", "age", "gender") %in% names(out)))
-  expect_true(all(out$qes_code == "qes2022"))
-})
-
-# Slice S2b: get_decon() reads the original files, and changes from 0.4.4
-# only by deletion or blanking (design.md section 2.3).
-
-test_that("a column whose labels only repeat its codes stays a number", {
-  # qes2022 cps_age_in_years: each age 15..115 is labelled with itself
-  ages <- c(53, 30, 76)
-  dat <- data.frame(
-    cps_age_in_years = haven::labelled(ages, labels = stats::setNames(15:115 + 0, as.character(15:115)), label = "Age"),
-    cps_genderid = haven::labelled(c(1, 2, 1), labels = c("A man" = 1, "A woman" = 2)),
-    cps_interest_1 = c(7, 8, 8),
-    stringsAsFactors = FALSE
-  )
-  out <- qesR:::.build_decon(dat, srvy = "qes2022")
-  expect_true(is.numeric(out$age))
-  expect_false(is.factor(out$age))
-  expect_identical(as.numeric(out$age), ages)
-  expect_identical(mean(out$age), mean(ages))
-  expect_identical(attr(out$age, "label"), "Age")
-  # a column with real labels is still a factor of them
-  expect_identical(as.character(out$gender), c("A man", "A woman", "A man"))
-  expect_true(is.numeric(out$political_interest))
-})
-
-test_that("qes2018 gender and education get the labels of 0.4.4 back", {
-  # the .dta has no value labels for qsexe and qscol
-  dat <- data.frame(qsexe = c(1, 2), qscol = c(8, 13), age = c(40, 50))
-  out <- qesR:::.build_decon(dat, srvy = "qes2018")
-  expect_identical(as.character(out$gender), c("Masculin", "Feminin"))
-  expect_identical(as.character(out$education), c("Secondaire 5 (DES)", "Universite non completee"))
-  expect_s3_class(out$education, "factor")
-  expect_true(is.numeric(out$age))
-})
-
-test_that("qes1998 age code 6, unlabelled in the panel file, is 65+", {
-  dat <- data.frame(age = haven::labelled(c(1, 6, 9), labels = c("18-24" = 1, "55-64" = 5)))
-  out <- qesR:::.build_decon(dat, srvy = "qes1998")
-  expect_identical(as.character(out$age), c("18-24", "65+", "Refus/pas de reponse"))
-})
-
-test_that("get_decon() column classes are those of 0.4.4 (numbers stay numbers)", {
-  # v0.4.4 classes of the qes2022 decon (R9 baseline); integer and double
-  # are both numbers (get_qes() now stores codes as doubles)
-  v044 <- c(
-    qes_code = "character", citizenship = "factor", yob = "factor", age = "numeric",
-    gender = "factor", education = "factor", political_interest = "numeric",
-    ideology = "numeric", income = "numeric", votechoice_text = "character"
-  )
-  dat <- data.frame(
-    cps_citizen = haven::labelled(c(1, 2), labels = c("Canadian citizen" = 1, "Permanent resident" = 2)),
-    # years are coded 1..91 and labelled with the year
-    cps_yob = haven::labelled(c(51, -99), labels = c("-99" = -99, "1920" = 1, "1970" = 51)),
-    cps_age_in_years = haven::labelled(c(52, 30), labels = stats::setNames(c(30, 52), c("30", "52"))),
-    cps_genderid = haven::labelled(c(1, 2), labels = c("A man" = 1, "A woman" = 2)),
-    cps_edu = haven::labelled(c(3, 4), labels = c("Some" = 3, "More" = 4)),
-    cps_interest_1 = c(7, 8),
-    cps_ideoself_1 = c(5, 6),
-    cps_income = c(77000, 0),
-    cps_votechoice1_8_TEXT = c("", "Bloc Montréal"),
-    stringsAsFactors = FALSE
-  )
-  out <- qesR:::.build_decon(dat, srvy = "qes2022")
-  family <- function(x) if (is.factor(x)) "factor" else if (is.numeric(x)) "numeric" else class(x)[1]
-  expect_identical(vapply(out[names(v044)], family, character(1)), v044)
-})
-
-# Slice S4: frozen sources and blanks (design.md sections 2.3 and 5.12).
-
-test_that("qes2022 -99 codes are NA in every column, and their factor level goes", {
-  dat <- data.frame(
-    cps_ideoself_1 = c(5, -99, 6),
-    cps_yob = haven::labelled(c(51, -99, 1), labels = c("-99" = -99, "1920" = 1, "1970" = 51)),
-    cps_income = c(77000, -99, 0),
-    cps_votechoice1 = haven::labelled(c(1, 2, 1), labels = c("CAQ" = 1, "PQ" = 2)),
-    cps_partybest = haven::labelled(c(1, 2, 1), labels = c("CAQ" = 1, "PQ" = 2)),
-    cps_votelean = c(1, NA, 2)
-  )
-  out <- qesR:::.build_decon(dat, srvy = "qes2022")
-  expect_identical(as.numeric(out$ideology), c(5, NA, 6))
-  expect_identical(mean(out$ideology, na.rm = TRUE), 5.5)
-  expect_identical(as.character(out$yob), c("1970", NA, "1920"))
-  expect_false("-99" %in% levels(out$yob))
-  expect_s3_class(out$yob, "factor")
-  expect_identical(as.numeric(out$income), c(77000, NA, 0))
-  # the vote intention is kept for qes2022 (OD9), and says so
-  expect_identical(as.character(out$votechoice), c("CAQ", "PQ", "CAQ"))
-  expect_identical(attr(out, "timing")[["votechoice"]], "pre")
-  expect_identical(attr(out, "timing")[["turnout"]], "pre")
-  # party_best and partylean are NA everywhere
-  expect_true(all(is.na(out$party_best)))
-  expect_true(all(is.na(out$partylean)))
-  na <- attr(out, "legacy_na_columns")
-  expect_identical(na$n_cells[na$column == "ideology"], 1L)
-  expect_identical(na$reason[na$column == "party_best"], "blanked")
-  src <- attr(out, "source_map")
-  expect_identical(src$source_variable[src$column == "ideology"], "cps_ideoself_1")
-})
-
-test_that("qes2018 turnout and votechoice are NA: their 0.4.4 sources were other questions", {
-  dat <- data.frame(
-    q1 = haven::labelled(c(1, 2), labels = c("Tres satisfait" = 1, "Assez satisfait" = 2)),
-    q2 = haven::labelled(c(1, 2), labels = c("Economie" = 1, "Sante" = 2)),
-    qsexe = c(1, 2)
-  )
-  out <- qesR:::.build_decon(dat, srvy = "qes2018")
-  expect_true(all(is.na(out$turnout)))
-  expect_true(all(is.na(out$votechoice)))
-  expect_s3_class(out$turnout, "factor")
-  expect_length(levels(out$turnout), 0L)
-  expect_identical(unname(attr(out, "timing")), rep(NA_character_, 3))
-  expect_identical(as.character(out$gender), c("Masculin", "Feminin"))
-})
+# get_decon() rendered from the harmonization engine (design.md sections 2.3
+# and 5.12, slice HZ6): the profile "decon" of the spec's legacy.csv.
 
 test_that("get_decon() runs on the demo offline and refuses the studies added since 0.4.4", {
   local_qes_notices_shown()
-  log <- local_fake_dataverse()
+  load <- getFromNamespace(".qes_load_catalog", "qesR")
+  main <- load(catalog_dir())
+  with_demo <- load(catalog_dir(), demo_dir = system.file("extdata", "demo", "catalog", package = "qesR"))
+  testthat::local_mocked_bindings(
+    .qes_catalog = function(demo = FALSE) if (isTRUE(demo)) with_demo else main,
+    .package = "qesR"
+  )
   decon <- get_decon("qes_demo", quiet = TRUE)
   expect_identical(names(decon), v044_decon_cols)
   expect_identical(nrow(decon), 60L)
   expect_true(all(decon$qes_code == "qes_demo"))
-  expect_true(all(is.na(decon$votechoice)))
+  # categorical columns are factors with the target's English levels
+  expect_s3_class(decon$gender, "factor")
+  expect_identical(levels(decon$gender), c("Man", "Woman", "Non-binary", "Another gender"))
+  expect_identical(levels(decon$turnout), c("Yes", "No"))
+  expect_true(any(!is.na(decon$votechoice)))
+  expect_identical(attr(decon, "timing"), c(turnout = "post", votechoice = "post", votechoice_text = NA_character_))
+  sm <- attr(decon, "source_map")
+  expect_identical(names(sm), c("qes_code", "column", "source_variable", "target", "grade"))
+  expect_identical(sm$target[sm$column == "votechoice"], "vote_prov_recall")
   expect_identical(attr(decon, "qes_provenance")$study, "qes_demo")
+  # party_best and partylean have no valid source anywhere
+  na <- attr(decon, "legacy_na_columns")
+  expect_identical(na$reason[na$column == "party_best"], "na_column")
   expect_error(get_decon("qes1998_crop", quiet = TRUE), class = "qesR_error_input")
   expect_error(get_decon("all", quiet = TRUE), class = "qesR_error_input")
-  expect_length(log$urls, 0L)
+})
+
+test_that("qes2022 keeps the campaign-period turnout and vote (OD9), with its types", {
+  local_qes_notices_shown()
+  local_fake_legacy()
+  d <- get_decon("qes2022", quiet = TRUE)
+  expect_identical(attr(d, "timing"), c(turnout = "pre", votechoice = "pre", votechoice_text = "pre"))
+  sm <- attr(d, "source_map")
+  expect_identical(sm$target[sm$column == "turnout"], "turnout_prov_likely")
+  expect_identical(sm$target[sm$column == "votechoice"], "vote_prov_intent")
+  expect_s3_class(d$turnout, "ordered")
+  expect_s3_class(d$votechoice, "factor")
+  # numbers stay numbers (the qes2022 income is an amount); text stays text
+  for (col in c("yob", "age", "political_interest", "ideology", "income")) {
+    expect_true(is.numeric(d[[col]]), info = col)
+  }
+  expect_type(d$religion, "character")
+  expect_type(d$votechoice_text, "character")
+  expect_true(all(d$province_territory == "Quebec"))
+})
+
+test_that("the reported vote and turnout fill the other studies; the panels give age bands", {
+  local_qes_notices_shown()
+  local_fake_legacy()
+  d <- get_decon("qes2018", quiet = TRUE)
+  expect_identical(attr(d, "timing")[c("turnout", "votechoice")], c(turnout = "post", votechoice = "post"))
+  expect_true(any(!is.na(d$turnout)))
+  expect_true(is.numeric(d$age))
+  expect_type(d$income, "character")
+  p <- get_decon("qes2018_panel", quiet = TRUE)
+  # the panel asked age bands, not the age: a factor of bands, as in 0.4.4
+  expect_s3_class(p$age, "factor")
+  expect_true(all(levels(p$age) %in% c("18-34", "35-54", "55+")))
+  expect_identical(attr(p, "source_map")$target[attr(p, "source_map")$column == "age"], "age_group3")
+  # a study without a question for a column: NA, with its levels
+  expect_true(all(is.na(p$fed_pid)))
+  expect_true(length(levels(p$fed_pid)) > 0L)
+})
+
+test_that("the replacement that the get_decon() notice names returns values for the demo", {
+  reg <- getFromNamespace(".qes_deprecated", "qesR")
+  call_text <- reg$replacement[reg$name == "get_decon"]
+  expect_match(call_text, "include_draft = TRUE", fixed = TRUE)
+  # the documented call, with the demo as `srvy`
+  expr <- str2lang(sub("qes_harmonize(", "qes_harmonize(srvy, ", call_text, fixed = TRUE))
+  expr$quiet <- TRUE
+  h <- eval(expr, list(srvy = "qes_demo", qes_harmonize = qesR::qes_harmonize))
+  expect_identical(nrow(h), 60L)
+  for (col in c("gender", "vote_prov_recall", "turnout_prov_recall", "lr_self", "birth_year")) {
+    expect_true(any(!is.na(h[[col]])), info = col)
+  }
+})
+
+test_that("get_decon() raises the error of its one study, without a 'skipping' message", {
+  local_qes_notices_shown()
+  local_fake_legacy(fail = "qes2018")
+  ids <- character(0)
+  err <- withCallingHandlers(
+    tryCatch(get_decon("qes2018", quiet = FALSE), error = function(e) e),
+    message = function(m) {
+      ids <<- c(ids, m$id %||% NA_character_)
+      invokeRestart("muffleMessage")
+    }
+  )
+  expect_s3_class(err, "error")
+  expect_false("master_skip" %in% ids)
+  # the master, which builds several studies, still skips with the message
+  ids <- character(0)
+  withCallingHandlers(
+    get_qes_master(surveys = c("qes2018", "qes2014"), quiet = FALSE),
+    message = function(m) {
+      ids <<- c(ids, m$id %||% NA_character_)
+      invokeRestart("muffleMessage")
+    }
+  )
+  expect_true("master_skip" %in% ids)
 })

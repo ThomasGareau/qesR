@@ -1,11 +1,11 @@
-# Freeze the sources of the interim legacy master and get_decon() (design.md
-# section 5.12, slice S4) from the clean qesR 0.4.4 baseline (R9).
+# The record of qesR 0.4.4's legacy sources, from the clean qesR 0.4.4
+# baseline (R9; design.md section 5.12, slices S4 and HZ6).
 #
 # Usage (from the package root):
 #   QESR_LEGACY_BASELINE=<dir> Rscript data-raw/build_legacy.R [--check]
 #
-# <dir> is the output directory of the R9 baseline run (qesR 0.4.4 at commit
-# v0.4.4, fresh session, LANGUAGE=en). It must hold:
+# <dir> is the output directory of the R9 baseline run (qesR 0.4.4 at
+# commit v0.4.4, fresh session, LANGUAGE=en). It must hold:
 #   legacy_master_source_map.csv            the `source_map` attribute of
 #                                           get_qes_master() (1,067 rows);
 #   legacy_get_qes_names_all_studies.csv    the column names get_qes()
@@ -15,22 +15,20 @@
 # Writes
 #   data-raw/legacy_source_map.csv          the frozen record: every
 #       (profile, column, study) source variable qesR 0.4.4 chose, including
-#       the 70 auto-stacked master columns that 0.5.0 removes. `origin` says
+#       the 70 auto-stacked master columns that 0.5.0 removed. `origin` says
 #       where each row comes from:
 #         * master rows: the `source_map` attribute of the baseline master;
 #         * decon rows: qesR 0.4.4's get_decon() lookup (first exact, then
 #           case-insensitive match over its candidate lists, R/decon.R at
 #           tag v0.4.4) applied to the 0.4.4 get_qes() column names, since 0.4.4
-#           get_decon() recorded no source map. Its non-NA counts equal those
-#           of the baseline get_decon() output for every study and column;
-#   inst/extdata/legacy/sources.csv         the runtime table: the 27 source
-#       columns of the master and the 18 of get_decon() for the 11 studies,
-#       plus `qes_demo`, which gets the qes2014 source wherever the demo file
-#       (a subset of qes2014's names) has that variable;
+#           get_decon() recorded no source map.
+#       The interim builders of qesR 0.5.0 read their sources from it; since
+#       0.7.0 the legacy columns are rendered from the harmonization engine
+#       (the spec's legacy.csv), and the record documents what 0.4.4 read
+#       (data-raw/compare_legacy.R compares the results);
 #   inst/extdata/legacy/removed.csv         the 70 auto-stacked master columns
-#       ([A:H1]) and the raw variables they stacked.
-# The other tables of inst/extdata/legacy/ (blanks.csv, columns.csv,
-# studies.csv) are curated by hand; see their header comments in R/legacy.R.
+#       ([A:H1]) and the raw variables they stacked (attr(, "removed_columns")
+#       of get_qes_master()).
 # With --check it writes nothing and fails if the shipped files differ.
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -121,25 +119,6 @@ decon_rows <- do.call(rbind, lapply(studies, function(s) {
 frozen <- rbind(master_rows, decon_rows)
 rownames(frozen) <- NULL
 
-# Runtime table: core columns only, every (profile, column, study).
-core <- frozen[frozen$kind == "core", c("profile", "column", "study", "source_variable")]
-core$ord_p <- match(core$profile, c("master", "decon"))
-core$ord_c <- ifelse(core$profile == "master",
-                     match(core$column, master_columns),
-                     match(core$column, names(decon_lookup)))
-core$ord_s <- match(core$study, studies)
-core <- core[order(core$ord_p, core$ord_c, core$ord_s), c("profile", "column", "study", "source_variable")]
-
-# qes_demo: the qes2014 source wherever the demo file has that variable.
-demo_names <- names(haven::read_sav(file.path("inst", "extdata", "demo", "data", "qes_demo.sav"), n_max = 0))
-demo <- core[core$study == "qes2014", ]
-demo$study <- "qes_demo"
-keep <- demo$source_variable %in% c(demo_names, "(synthetic_rowid)")
-demo$source_variable[!keep] <- NA_character_
-sources <- rbind(core, demo)
-sources <- sources[order(match(sources$profile, c("master", "decon")), seq_len(nrow(sources))), ]
-rownames(sources) <- NULL
-
 stacked <- frozen[frozen$profile == "master" & frozen$kind == "stacked" & !is.na(frozen$source_variable), ]
 removed <- do.call(rbind, lapply(unique(frozen$column[frozen$kind == "stacked"]), function(col) {
   rows <- stacked[stacked$column == col, ]
@@ -175,7 +154,5 @@ write_utf8_csv <- function(x, path) {
 
 dir.create(file.path("inst", "extdata", "legacy"), showWarnings = FALSE)
 write_utf8_csv(frozen, file.path("data-raw", "legacy_source_map.csv"))
-write_utf8_csv(sources, file.path("inst", "extdata", "legacy", "sources.csv"))
 write_utf8_csv(removed, file.path("inst", "extdata", "legacy", "removed.csv"))
-cat(sprintf("frozen rows: %d; runtime sources: %d; removed columns: %d\n",
-            nrow(frozen), nrow(sources), nrow(removed)))
+cat(sprintf("frozen rows: %d; removed columns: %d\n", nrow(frozen), nrow(removed)))

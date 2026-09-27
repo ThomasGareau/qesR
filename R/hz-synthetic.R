@@ -15,7 +15,8 @@
 #   * value labels are those the value map quotes from the file (origins
 #     "file" and "label_donor"); a study whose file has no labels (qes2018)
 #     or whose labels cannot ship (qes2022, hashes only) gets none, and
-#     from_label rows get labels made up from their range;
+#     from_label rows get labels made up from their range (numeric rows) or
+#     "Category 1" and "Category 2" (string rows, the text of the value);
 #   * weights are 0.5 and 1.5 in turn on the wave's members, the last one 1
 #     when their number is odd, so the mean is exactly 1.
 # Nothing comes from respondent data; counts are the spec's n_cases only.
@@ -168,6 +169,15 @@
         y <- a * x + b
         x <- x[y >= r$min - 1e-9 & y <= r$max + 1e-9]
         codes <- c(codes, .qes_code_chr(x))
+      }
+    } else if (xw$rule[i] %in% "string") {
+      # open text: two made-up codes, labelled "Category 1" and "Category 2"
+      # for from_label rows (the value is the label)
+      args <- .qes_parse_kv(xw$args[i]) %||% character(0)
+      num_codes <- c("1", "2")
+      codes <- c(codes, num_codes)
+      if (identical(unname(args["from_label"]), "TRUE")) {
+        it$labels <- c(it$labels, stats::setNames(num_codes, paste("Category", num_codes)))
       }
     }
     it$codes <- unique(c(it$codes, codes))

@@ -19,7 +19,7 @@ library(qesR)
 qes_studies()$study
 ```
 
-Par défaut, et avec `surveys = "all"`, `get_qes_master()` construit les 11 études de qesR 0.4.4. Les fichiers des deux firmes de 1998, `qes1998_crop` et `qes1998_createc`, ne font pas encore partie du fichier fusionné (leurs répondants sont déjà dans `qes1998`) ; lisez-les avec `get_qes()`, comme l'explique `?get_qes_master`.
+Par défaut, et avec `surveys = "all"`, `get_qes_master()` construit les 11 études de qesR 0.4.4. Les fichiers des deux firmes de 1998, `qes1998_crop` et `qes1998_createc`, ne font pas partie du fichier fusionné (leurs répondants sont déjà dans `qes1998`) ; lisez-les avec `get_qes()`, comme l'explique `?get_qes_master`.
 
 ## Construire la base fusionnée
 
@@ -41,20 +41,20 @@ table(master$qes_code)
 
 ## Construction
 
-- Chaque colonne lit la variable que qesR 0.4.4 lisait pour cette étude, et la convertit de la même façon. Les sources sont figées : rien n'est choisi d'après un nom au moment de l'exécution. `attr(master, "source_map")` donne la source de chaque colonne.
+- Depuis qesR 0.7.0, le fichier fusionné est produit par le moteur d'harmonisation : chaque étude est harmonisée par `qes_harmonize()` et chaque colonne est rendue à partir des cibles dont elle a besoin, selon la table de rendu de la spécification (`qes_spec("spec")$tables$legacy`). Un code que la spécification n'apparie pas vaut `NA`, jamais transmis tel quel. `attr(master, "source_map")` donne, pour chaque colonne de chaque étude, la question lue, sa cible et son niveau de comparabilité.
 - Tous les répondants de chaque fichier sont conservés : ni dédoublonnage, ni retrait des lignes vides. Les répondants des panels et des enquêtes transversales restent des lignes distinctes.
-- Les valeurs vérifiées comme fausses valent `NA` : par exemple les intentions de vote dans `vote_choice` (`qes2022`, CROP, `qes1998`), les questions sur la souveraineté autres que le référendum sur un pays indépendant, et `party_best` et `party_lean` partout. `attr(master, "legacy_na_columns")` énumère chaque colonne et étude qui vaut `NA` à dessein, avec la raison.
+- `vote_choice` et `turnout` sont le vote et la participation déclarés dans toutes les études ; les sondages CROP ne posaient que des intentions de vote (dans `vote_intent`). `sovereignty_support` est seulement le référendum sur un pays indépendant, et `party_best` et `party_lean` valent `NA` partout. `attr(master, "legacy_na_columns")` énumère chaque colonne et étude qui vaut `NA` d'un bout à l'autre, avec la raison.
 - `vote_choice_timing` et `sovereignty_item` indiquent ce que contiennent `vote_choice` et `sovereignty_support` dans chaque étude.
 - qesR 0.4.4 ajoutait aussi 70 colonnes en empilant des variables de même nom d'une étude à l'autre ; elles mêlaient des questions différentes et ne sont plus construites (`attr(master, "removed_columns")`). Lisez ces questions dans chaque étude avec `get_qes()`.
 
 ```{r}
-head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable")])
+head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable", "target", "grade")])
 attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
 
 `attr(master, "legacy_column_map")` décrit chaque colonne (en anglais) et signale celles qui mêlent des instruments (`political_interest`, `age_group`, `education`). `survey_weight` est la pondération propre à chaque étude, sur sa propre échelle : ne combinez pas d'estimations pondérées entre études sans la remettre à l'échelle.
 
-Les résultats de qesR 0.4.4 ne se reproduisent qu'avec cette version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+Les résultats de qesR 0.4.4 ne se reproduisent qu'avec cette version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`), et ceux de 0.5.0 et 0.6.0 qu'avec l'une de ces versions.
 
 ## Exporter
 

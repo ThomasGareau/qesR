@@ -61,6 +61,7 @@ test_that("readRDS() is never called", {
 })
 
 test_that("no iconv() transliteration", {
-  skip("fixed in HZ6 (legacy master text; the DDI label tokens went in S3)")
+  # the legacy master's text normalization went with the engine-based
+  # renderer (slice HZ6), the DDI label tokens in slice S3
   expect_no_offender("iconv\\s*\\([^)]*TRANSLIT")
 })

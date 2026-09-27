@@ -31,3 +31,33 @@ age3,3,a55_plus,55 and over,55 et plus,3,TRUE,55+;55 ans et plus;55 and over
 survey_mode,1,web,Web,Web,1,TRUE,web;internet;en ligne
 survey_mode,2,phone,Telephone,Téléphone,2,TRUE,telephone;phone
 survey_mode,3,mixed,Mixed,Mixte,3,TRUE,mixed;mixte
+likely4,1,certain,Certain to vote,Certain(e) de voter,1,TRUE,certain to vote;certain de voter
+likely4,2,likely,Likely to vote,Probablement voter,2,TRUE,likely to vote;probable de voter
+likely4,3,unlikely,Unlikely to vote,Peu probable de voter,3,TRUE,unlikely to vote;peu probable de voter
+likely4,4,certain_not,Certain not to vote,Certain(e) de ne pas voter,4,TRUE,certain not to vote;certain de ne pas voter
+likely4,5,already_voted,Already voted,A déjà voté,0,TRUE,i already voted;j'ai deja vote
+pid_ca,1,LPC,Liberal,Libéral,1,TRUE,liberal;liberal party;parti liberal
+pid_ca,2,CPC,Conservative,Conservateur,2,TRUE,conservative;conservative party;parti conservateur
+pid_ca,3,NDP,NDP,NPD,3,TRUE,ndp;new democratic party;npd
+pid_ca,4,BQ,Bloc Québécois,Bloc Québécois,4,TRUE,bloc quebecois;bq
+pid_ca,5,GPC,Green,Vert,5,TRUE,green;green party;parti vert
+pid_ca,6,PPC,PPC,PPC,6,TRUE,ppc;people's party of canada;parti populaire du canada
+pid_ca,90,other,Another party,Un autre parti,90,TRUE,another party (please specify);another party;un autre parti
+pid_ca,97,none,None of these,Aucun de ceux-là,97,TRUE,none of these;aucun de ceux-la
+age6,1,a18_24,18-24,18-24,1,TRUE,18-24;18-24 ans;entre 18 et 24 ans
+age6,2,a25_34,25-34,25-34,2,TRUE,25-34;25-34 ans;entre 25 et 34 ans
+age6,3,a35_44,35-44,35-44,3,TRUE,35-44;35-44 ans;entre 35 et 44 ans
+age6,4,a45_54,45-54,45-54,4,TRUE,45-54;45-54 ans;entre 45 et 54 ans
+age6,5,a55_64,55-64,55-64,5,TRUE,55-64;55-64 ans;entre 55 et 64 ans
+age6,6,a65_plus,65 and over,65 et plus,6,TRUE,65+;65 ans et plus;ou 65 ans et plus?;65 and over
+gender,1,man,Man,Homme,1,TRUE,man;a man;male;homme;un homme;masculin
+gender,2,woman,Woman,Femme,2,TRUE,woman;a woman;female;femme;une femme;feminin
+gender,3,nonbinary,Non-binary,Non binaire,3,TRUE,non-binary;non binaire
+gender,4,other,Another gender,Un autre genre,4,TRUE,"another gender, please specify:;another gender;un autre genre"
+edu4,1,primary,Primary or less,Primaire ou moins,1,TRUE,primary or less;primaire ou moins;primaire
+edu4,2,secondary,Secondary,Secondaire,2,TRUE,secondary;secondaire
+edu4,3,college,"College (CEGEP, technical)","Collégial (cégep, technique)",3,TRUE,college;cegep;collegial
+edu4,4,university,University,Universitaire,4,TRUE,university;universite;universitaire
+lang3,1,french,French,Français,1,TRUE,french;francais
+lang3,2,english,English,Anglais,2,TRUE,english;anglais
+lang3,3,other,Other,Autre,3,TRUE,other;autre;une autre langue;autre (preciser) :

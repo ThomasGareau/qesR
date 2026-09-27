@@ -24,7 +24,7 @@ Les fonctions sont regroupées comme dans la référence du site web.\tabular{ll
    Découvrir \tab \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
    Obtenir les données \tab \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
    Obtenir les données \tab \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
-   Obtenir les données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir \code{NEWS}). \cr
+   Obtenir les données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir \code{NEWS}). \cr
    Métadonnées et recherche \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. \cr
    Métadonnées et recherche \tab \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
    Métadonnées et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr

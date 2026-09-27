@@ -70,7 +70,7 @@ test_that("the assignment table covers every export with assign_global", {
 })
 
 test_that("default calls assign nothing into the caller's frame", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
   for (case in assign_cases()) {
     call <- case$call
@@ -82,7 +82,7 @@ test_that("default calls assign nothing into the caller's frame", {
 })
 
 test_that("opt-in assignment lands in the caller's frame: direct canonical calls", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
   for (f in c("get_qes", "get_qes_master", "get_decon", "get_codebook")) {
     case <- assign_cases()[[f]]
@@ -123,7 +123,7 @@ test_that("get_qes() uses the canonical code for assignment and qes_survey_code"
 })
 
 test_that("get_qes_master(save_path =) sets saved_to before assigning", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
   path <- withr::local_tempfile(fileext = ".csv")
   caller <- new.env(parent = globalenv())
@@ -222,7 +222,8 @@ test_that("legacy wrappers emit qesR_message_deprecated once per session", {
 
   for (f in legacy_exports) {
     case <- legacy_calls()[[f]]
-    local_fake_dataverse()
+    # get_decon() is rendered from the engine: spec-shaped synthetic data
+    if (identical(f, "get_decon")) local_fake_legacy() else local_fake_dataverse()
     local_qes_once()
     withr::local_options(qesR.quiet_deprecated = NULL)
 

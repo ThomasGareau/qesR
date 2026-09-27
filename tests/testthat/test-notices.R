@@ -8,9 +8,10 @@ test_that("the deprecation registry lists the 11 legacy wrappers", {
   expect_false(anyDuplicated(reg$name) > 0L)
   expect_type(reg$shipped, "logical")
   expect_false(anyNA(reg$shipped))
-  # get_decon() stays stable until the engine-based legacy switch (0.7.0)
-  expect_false(reg$shipped[reg$name == "get_decon"])
+  # get_decon() is soft-deprecated from the engine-based legacy switch (0.7.0)
+  expect_true(reg$shipped[reg$name == "get_decon"])
   expect_identical(reg$since[reg$name == "get_decon"], "0.7.0")
+  expect_identical(reg$replacement[reg$name == "get_decon"], "qes_harmonize(targets = \"decon\", include_draft = TRUE)")
   # a shipped replacement must name a function that exists now
   for (i in which(reg$shipped)) {
     fn <- sub("\\(.*$", "", sub("^head\\(", "", reg$replacement[i]))
@@ -19,7 +20,7 @@ test_that("the deprecation registry lists the 11 legacy wrappers", {
 })
 
 test_that("canonical exports never announce a deprecation", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
   withr::local_options(qesR.quiet_deprecated = NULL)
   expect_identical(count_class(qes_codebook("qes2018", quiet = TRUE), "qesR_message_deprecated"), 0L)
@@ -48,7 +49,7 @@ test_that("the deprecation notice is shown in French with qesR.lang = 'fr'", {
 })
 
 test_that("the assignment-default note fires once, only when assign_global is unset", {
-  local_fake_dataverse()
+  local_fake_legacy()
   local_qes_once()
 
   # supplying assign_global (either value) never triggers it

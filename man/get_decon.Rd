@@ -9,9 +9,9 @@ get_decon(srvy = "qes2022", assign_global = FALSE, quiet = FALSE)
 \arguments{
 \item{srvy}{A qesR survey code. Defaults to \code{"qes2022"}. Codes are trimmed
 and case-insensitive. The 11 studies of qesR 0.4.4 are available, and
-\code{"qes_demo"}, the synthetic demonstration study; the studies added
-since (\code{qes1998_crop}, \code{qes1998_createc}) raise an error of class
-\code{qesR_error_input}.}
+\code{"qes_demo"}, the synthetic demonstration study; the 1998 firms' own
+files (\code{qes1998_crop}, \code{qes1998_createc}) raise an error of class
+\code{qesR_error_input} (their respondents are in \code{qes1998}).}
 
 \item{assign_global}{If TRUE, also assign the result as \code{decon} into the
 environment \code{get_decon()} was called from (the global environment only
@@ -21,76 +21,96 @@ when called at top level). Defaults to FALSE.}
 }
 \value{
 A data frame with the 19 columns above, returned visibly, with
-the attributes \code{timing}, \code{source_map}, \code{legacy_na_columns} and
-\code{qes_provenance} (the file read; see \code{\link[=qes_provenance]{qes_provenance()}}).
+the attributes \code{timing} (what \code{turnout}, \code{votechoice} and
+\code{votechoice_text} hold: \code{"pre"}, \code{"post"} or \code{NA} where the column has
+no value), \code{source_map} (\code{qes_code}, \code{column}, \code{source_variable},
+\code{target}, \code{grade}), \code{legacy_na_columns} and \code{qes_provenance} (the file
+read; see \code{\link[=qes_provenance]{qes_provenance()}}).
 }
 \description{
 Builds a small teaching dataset with 19 standardized columns from one
 Quebec Election Study of qesR 0.4.4.
 }
 \details{
+\code{get_decon()} is soft-deprecated since qesR 0.7.0: it keeps working and
+will not be removed, and a message names its replacement once per
+session. The same variables, with a reason for every missing value and a
+grade for every study's question, come from
+\code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)}
+(\code{include_draft = TRUE} applies the crosswalk rows still in review, as
+\code{get_decon()} does; without it the columns are \code{NA} until those rows are
+signed off).
+
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
 call in a session that leaves \code{assign_global} unset prints a one-time note
 about this change from qesR 0.4.4.
-
-Each column reads the variable qesR 0.4.4 read for that study (the
-\code{source_map} attribute; nothing is chosen by name at run time) and shows
-it as 0.4.4 did: a labelled column becomes a factor of its labels, other
-columns keep their values. Every respondent of the study is kept.
 }
 \section{Columns}{
 
 \code{qes_code}, then \code{citizenship}, \code{yob} (year of birth), \code{age}, \code{gender},
 \code{province_territory}, \code{education}, \code{political_interest}, \code{turnout},
 \code{votechoice}, \code{votechoice_text}, \code{party_best}, \code{partylean}, \code{fed_pid},
-\code{prov_pid}, \code{ideology}, \code{income}, \code{religion} and \code{born_canada}. Most of
-them are filled for \code{qes2022} only; a column with no source in a study is
-all \code{NA}.
+\code{prov_pid}, \code{ideology}, \code{income}, \code{religion} and \code{born_canada}. Since
+qesR 0.7.0 each column is rendered from a target of the harmonization
+engine (\code{\link[=qes_harmonize]{qes_harmonize()}}): categorical columns are factors with the
+target's English levels (the same levels in every study), numbers stay
+numbers, and \code{income} and \code{religion} are each study's own categories as
+text. \code{turnout} and \code{votechoice} are the reported turnout and vote,
+asked after the election, except for \code{qes2022}, where they are the
+likelihood of voting and the vote intention asked during the campaign
+(OD9); \code{attr(, "timing")} says which (\code{"post"} or \code{"pre"}).
 }
 
-\section{What changed in 0.5.0}{
+\section{What changed in 0.7.0}{
 
-Values verified to be wrong are \code{NA}; other differences come from reading
-the original files (label case, repaired characters, doubles instead of
-integers; see NEWS). The values set to \code{NA}:
-\itemize{
-\item \code{turnout} and \code{votechoice} of every study but \code{qes2022}, whose sources in
-qesR 0.4.4 were other questions (\code{q1} and \code{q2}: satisfaction with
-democracy and the most important issue in \code{qes2018}, for example);
-\item \code{party_best} and \code{partylean} everywhere (a different construct in each
-study);
-\item the \code{-99} item nonresponse codes of \code{qes2022} in every column (the
-\code{ideology} mean is about 4.96, not 2.64).
-}
-
-\code{qes2022} \code{turnout} and \code{votechoice} are the campaign-period likelihood of
-voting and vote intention, as in 0.4.4; \code{attr(, "timing")} says so
-(\code{"pre"}). The attributes \code{source_map} and \code{legacy_na_columns} give the
-source of every column and the reason for every \code{NA} column (see
-\code{\link[=get_qes_master]{get_qes_master()}}). A message says so once per session (classes
-\code{qesR_message_values_changed} and \code{qesR_message_legacy_columns}).
+The columns hold the targets of the harmonization spec (see
+\code{attr(, "source_map")}): the factor levels are the targets' English
+labels rather than each file's labels (\code{"Man"} rather than \code{"A man"}),
+\code{education} has four groups, \code{province_territory} is \code{"Quebec"},
+\code{yob} is a number, \code{income} and \code{religion} are text, and codes the spec
+does not map (such as the \code{-99} of \code{qes2022}) are \code{NA}. \code{turnout} and
+\code{votechoice} are filled for every study that asked the reported vote
+(\code{qes2018} from \code{q5} and \code{q6}), and \code{get_decon("qes1998")} returns real
+rows. \code{party_best} and \code{partylean} are \code{NA} everywhere (their 0.4.4
+sources were other questions in each study).
 }
 
 \section{En français}{
 
 \code{get_decon()} construit un petit jeu de données d'enseignement de 19
-colonnes à partir d'une étude de qesR 0.4.4, en lisant les mêmes
-variables que qesR 0.4.4. Depuis qesR 0.5.0, les valeurs vérifiées comme
-fausses sont mises à \code{NA} : \code{turnout} et \code{votechoice} sauf pour \code{qes2022},
-\code{party_best} et \code{partylean} partout, et les codes \code{-99} de \code{qes2022}.
-Les autres différences viennent de la lecture des fichiers originaux
-(casse des étiquettes, caractères réparés, nombres réels au lieu
-d'entiers : voir NEWS). L'attribut \code{timing} indique que \code{turnout} et \code{votechoice} de \code{qes2022}
-sont mesurés pendant la campagne (\code{"pre"}).
+colonnes à partir d'une étude de qesR 0.4.4. Depuis qesR 0.7.0, elle est
+obsolète (dépréciation douce) : elle continue de fonctionner et ne sera
+pas retirée, et un message nomme son remplacement une fois par session,
+\code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)}
+(\code{include_draft = TRUE} applique les lignes de correspondance encore en
+révision, comme \code{get_decon()}). Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+anglais des cibles, nombres, et texte pour \code{income} et \code{religion}.
+\code{turnout} et \code{votechoice} sont la participation et le vote déclarés
+après l'élection, sauf pour \code{qes2022}, où ce sont la probabilité de voter
+et l'intention de vote pendant la campagne (OD9) ; \code{attr(, "timing")}
+l'indique (\code{"post"} ou \code{"pre"}).
 }
 
 \examples{
 # the synthetic demonstration study, offline
 decon <- get_decon("qes_demo", quiet = TRUE)
 head(decon)
-attr(decon, "source_map")[, c("column", "source_variable")]
+attr(decon, "source_map")[, c("column", "source_variable", "target")]
+
+# the replacement
+h <- qes_harmonize("qes_demo", targets = "decon", include_draft = TRUE, quiet = TRUE)
+names(h)
 }
 \seealso{
 \link{qesR-deprecated} for the legacy functions and their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{format_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

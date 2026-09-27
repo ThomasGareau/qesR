@@ -183,7 +183,7 @@ test_that("no data file of a study holds whole-number codes as text where 0.4.4 
   }
 })
 
-test_that("get_decon() keeps the column types of 0.4.4 (live)", {
+test_that("get_decon() keeps the 19 columns of 0.4.4, with the types of the renderer (live)", {
   local_live_originals()
   local_qes_notices_shown()
   withr::local_options(qesR.quiet_deprecated = TRUE)
@@ -191,11 +191,15 @@ test_that("get_decon() keeps the column types of 0.4.4 (live)", {
   family <- function(x) {
     if (is.factor(x)) "factor" else if (is.numeric(x)) "numeric" else class(x)[1]
   }
+  lg <- qesR:::.qes_legacy_table("decon")
   for (s in unique(v044$study)) {
     d <- suppressMessages(get_decon(s, assign_global = FALSE, quiet = TRUE))
     m <- v044[v044$study == s, , drop = FALSE]
-    expected <- ifelse(m$class %in% c("integer", "numeric"), "numeric", m$class)
     expect_identical(names(d), m$column, info = s)
+    # since 0.7.0 each column has the type of its renderer row for the study
+    # (legacy.csv): factors of the targets' levels, numbers, text
+    rows <- qesR:::.qes_legacy_rows(lg, s)
+    expected <- ifelse(rows$type == "integer", "numeric", rows$type)
     expect_identical(unname(vapply(d, family, character(1))), expected, info = s)
   }
   # qes2022 age is a number: its mean is the mean age, not of level positions
@@ -204,7 +208,7 @@ test_that("get_decon() keeps the column types of 0.4.4 (live)", {
   expect_identical(mean(d22$age), mean(plain_values(q22$cps_age_in_years)))
 })
 
-test_that("get_qes_master() keeps every respondent of the 11 files (live, S4)", {
+test_that("get_qes_master() keeps every respondent of the 11 files (live, S4, HZ6)", {
   local_live_originals()
   local_qes_notices_shown()
   m <- suppressMessages(get_qes_master(assign_global = FALSE, quiet = TRUE))
@@ -216,13 +220,16 @@ test_that("get_qes_master() keeps every respondent of the 11 files (live, S4)", 
   expect_identical(as.integer(counts[["qes2007_panel"]]), 2442L)
   types <- vapply(m[seq_along(v044_master_cols)], function(x) class(x)[1], character(1))
   expect_identical(types, v044_master_cols)
-  # the verified-invalid cells are blank (design.md 5.12)
+  # no invalid value comes back (design.md 5.12): the columns without a valid
+  # source stay NA, and since 0.7.0 the engine fills the reported vote of
+  # qes2022, the 2018 interest (OD7) and the 2014 ideology (slice HZ6)
   by <- function(col, s) m[[col]][m$qes_code == s]
   expect_true(all(is.na(m$party_best)) && all(is.na(m$party_lean)))
-  expect_true(all(is.na(by("vote_choice", "qes2022"))) && all(is.na(by("turnout", "qes2022"))))
-  expect_true(all(is.na(by("political_interest", "qes2018"))))
-  expect_true(all(is.na(by("ideology", "qes2014"))))
+  expect_true(any(!is.na(by("vote_choice", "qes2022"))) && any(!is.na(by("turnout", "qes2022"))))
+  expect_true(all(by("political_interest", "qes2018") %in% c(NA, 0, 3, 7, 10)))
+  expect_true(all(by("ideology", "qes2014") %in% c(NA, 0:10)))
   expect_false(any(by("income", "qes2022") %in% "-99"))
+  expect_false(any(m$vote_choice %in% c("Don't know / Refused", "Did not vote / None")))
   # no don't-know or refusal label is left as an income or a religion
   dk <- "know|sais pas|NSP|refus|pr\u00e9f\u00e8re ne pas|prefer not|^-?99$"
   expect_false(any(grepl(dk, m$income, ignore.case = TRUE)))

@@ -128,7 +128,7 @@
   map = c("from_label", "nonmonotone"),
   date = "format",
   weight = character(0),
-  string = character(0),
+  string = "from_label",
   constant = "value",
   none = character(0)
 )

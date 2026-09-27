@@ -29,8 +29,12 @@ test_that("each projected row counts every member of its wave once", {
   wv <- s$tables$waves
   size <- stats::setNames(wv$n_cases, paste(wv$study, wv$wave))
   # a row of wave "*" counts the members of every poll wave of its study
-  polls <- tapply(wv$n_cases, wv$study, sum)
-  size <- c(size, stats::setNames(as.integer(polls), paste(names(polls), "*")))
+  # (each respondent answered in one poll), or of any wave of a panel (for
+  # a time-invariant item: the 2007 panel's 2,050 pre-wave and 391
+  # post-only respondents)
+  poll <- wv$wave_design == "poll_wave"
+  polls <- tapply(wv$n_cases[poll], wv$study[poll], sum)
+  size <- c(size, stats::setNames(as.integer(polls), paste(names(polls), "*")), `qes2007_panel *` = 2441L)
   expect_identical(as.vector(totals), unname(size[wave_of]))
 })
 
@@ -96,8 +100,11 @@ test_that("real-code marginals are what the source files give", {
   expect_identical(n("qes2012_panel", "age_group3", "a18_34"), 127L)
   expect_identical(n("qes2012_panel", "age_group3", "a35_54"), 339L)
   expect_identical(n("qes2012_panel", "age_group3", "a55_plus"), 378L)
-  expect_identical(n("qes2007_panel", "age_group3", "a18_34"), 441L)
+  # the 2007 panel's age bands, in whichever wave the respondent answered
+  # (spec 1.0.0; the pre-election wave alone had 441 aged 18-34)
+  expect_identical(n("qes2007_panel", "age_group3", "a18_34"), 528L)
   expect_identical(n("qes2007_panel", "age_group3", reason = "sysmis"), 1L)
+  expect_identical(n("qes2007_panel", "age_group6", "a65_plus"), 418L)
   expect_identical(n("qes2018_panel", "age_group3", "a55_plus"), 551L)
   # 2018 year and month of birth: the 41 who chose not to answer are refused
   expect_identical(n("qes2018", "birth_year", reason = "refused"), 41L)

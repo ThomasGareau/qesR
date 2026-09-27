@@ -74,7 +74,7 @@ test_that("qes_spec(view = 'spec') returns the checked spec", {
   expect_identical(s$version, unname(read.dcf(file.path(spec_dir(), "SPEC"))[1, "Spec-Version"]))
   expect_false(s$custom)
   expect_setequal(names(s$tables), c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes",
-                                     "gates", "expected", "hashes"))
+                                     "gates", "expected", "hashes", "legacy"))
   chk <- attr(s, "check")
   expect_s3_class(chk, "data.frame")
   expect_identical(names(chk), c("rule", "severity", "table", "row", "key", "detail"))

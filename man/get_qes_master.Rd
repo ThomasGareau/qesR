@@ -16,11 +16,10 @@ get_qes_master(
 \arguments{
 \item{surveys}{Character vector of qesR survey codes (see \code{\link[=qes_studies]{qes_studies()}}).
 Defaults to the 11 studies of qesR 0.4.4; \code{"all"} on its own means the
-same 11. Studies added to the catalog since (\code{qes1998_crop},
-\code{qes1998_createc}) are not in the master yet and raise an error: their
-respondents are already in \code{qes1998}. Read them with \code{\link[=get_qes]{get_qes()}}. Codes
-are trimmed and case-insensitive. \code{"qes_demo"} builds the master of the
-synthetic demonstration study, offline.}
+same 11. The 1998 firms' own files (\code{qes1998_crop}, \code{qes1998_createc})
+raise an error: their respondents are in \code{qes1998}. Codes are trimmed
+and case-insensitive. \code{"qes_demo"} builds the master of the synthetic
+demonstration study, offline.}
 
 \item{assign_global}{If TRUE, also assign the result as \code{object_name} into
 the environment \code{get_qes_master()} was called from (the global environment
@@ -41,12 +40,16 @@ provenance of every study read is written next to it, as
 }
 \value{
 A data frame, returned visibly: the 30 documented columns of
-qesR 0.4.4 in their order and type, then \code{vote_choice_timing} and
-\code{sovereignty_item}. Attributes:
+qesR 0.4.4 in their order and type, then the appended columns
+\code{vote_choice_timing}, \code{sovereignty_item} (0.5.0), \code{family},
+\code{study_design}, \code{waves}, \code{subsample}, \code{source_row}, \code{weight_pre},
+\code{weight_post}, \code{vote_intent}, \code{turnout_intent} and
+\code{sov_partnership_1995} (0.7.0). Attributes:
 \itemize{
-\item \code{source_map}: the source variable of every column of every study
+\item \code{source_map}: the source of every column of every study
 (\code{qes_code}, \code{qes_year}, \code{qes_name_en}, \code{harmonized_variable},
-\code{source_variable}, \code{file_md5});
+\code{source_variable}, \code{target}, \code{map_id}, \code{grade}, \code{render}, \code{file_md5},
+\code{spec_version});
 \item \code{loaded_surveys}, \code{failed_surveys}: the studies read, and one line per
 failed study, \code{"<code>: <reason>"}. qesR's own part of the reason is
 always in English, whatever the message language; a root cause raised
@@ -58,18 +61,26 @@ The full conditions are in the \code{failures} field of the
 \code{qes_name_en};
 \item \code{crossstudy_variables_added} (always empty) and \code{variable_name_map}
 (no rows): kept for code written for 0.4.4;
-\item \code{legacy_na_columns}: one row per column and study whose cells are \code{NA}
-by design (\code{column}, \code{study}, \code{reason} \code{"no_source"} or \code{"blanked"},
-\code{n_cells}, \code{cause}, \code{basis}); \code{n_cells} is the whole column for
-\code{"no_source"} and the number of values set to \code{NA} for \code{"blanked"};
+\item \code{legacy_na_columns}: one row per column and study whose cells are all
+\code{NA} (\code{column}, \code{study}, \code{reason}, \code{n_cells}, \code{cause}, \code{basis});
+\code{reason} is \code{"no_source"} (the spec has no question for it in the
+study, the file lacks the variable, or the study has no registered
+weight), \code{"na_column"} (no valid source in any study) or
+\code{"all_missing"} (the question's every answer is a missing value);
+\code{cause} names the decision behind it where there is one (for example
+\code{"OD4"} for the reported vote of the CROP polls, \code{"OD5"} for
+\code{sovereignty_support} in the studies that asked another question).
+0.5.0's \code{"blanked"} reason is gone: no value is blanked after it is
+read;
 \item \code{legacy_column_map}: what each column means (\code{column}, \code{target},
-\code{definition}, \code{studies_changed}, \code{flag}, \code{note}); \code{flag} is
-\code{"approximate"} for columns that mix instruments;
+\code{definition}, \code{studies_changed}, \code{flag}, \code{note}, \code{render});
+\code{studies_changed} lists the studies whose values differ from qesR
+0.4.4, and \code{flag} is \code{"approximate"} for columns that mix
+instruments;
 \item \code{removed_columns}: the names of the 70 columns no longer built;
-\item \code{qes_provenance}: the file read for each study (see
-\code{\link[=qes_provenance]{qes_provenance()}});
-\item \code{qes_spec}: records that the frozen legacy tables, not a
-harmonization spec, built the data;
+\item \code{qes_provenance}: the file read for each study, with the cell and
+spec levels (see \code{\link[=qes_provenance]{qes_provenance()}});
+\item \code{qes_spec}: the spec version and content hash that built the data;
 \item \code{saved_to}: the output path when \code{save_path} is given.
 }
 }
@@ -80,14 +91,13 @@ and the same 30 harmonized columns for every study.
 }
 \details{
 \code{get_qes_master()} is the fixed legacy schema of qesR 0.4.4. It is kept
-stable, with the same arguments, columns and column types, so that code
-written for 0.4.4 keeps working; new work should use the study files
-themselves (\code{\link[=get_qes]{get_qes()}}) or the harmonization engine (\code{\link[=qes_harmonize]{qes_harmonize()}},
-experimental), which keeps intention and recall, and the sovereignty
-wordings, apart and gives every missing value a reason.
-Its values are those of 0.4.4 except where they were wrong: in qesR 0.5.0
-the master changes by deletion, apart from the reader changes listed
-(see \emph{What changed in 0.5.0}).
+stable, with the same arguments, columns (in the same order) and column
+types, so that code written for 0.4.4 keeps working; columns added since
+are appended after the 30 and are never removed. New work should use the
+harmonization engine (\code{\link[=qes_harmonize]{qes_harmonize()}}, experimental), which keeps
+intention and recall, the sovereignty wordings and the four-point and 0-10
+interest scales apart, gives every missing value a reason and every cell
+a comparability grade, or the study files themselves (\code{\link[=get_qes]{get_qes()}}).
 
 \code{get_qes_master()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{master <- get_qes_master()}. The first call
@@ -96,83 +106,131 @@ this change from qesR 0.4.4.
 }
 \section{How it is built}{
 
-Each study is read with \code{\link[=get_qes]{get_qes()}} from its pinned original file. For
-each column, the master reads the variable qesR 0.4.4 read (the frozen
-\code{source_map} attribute: nothing is chosen by name at run time) and
-converts it as 0.4.4 did. Every row of every file is kept: there is no
-de-duplication and no removal of empty rows, so each study contributes
-exactly its number of respondents (\code{qes2007_panel}: 2,442 rows).
+Since qesR 0.7.0 the master is rendered from the harmonization engine.
+Each study is harmonized by \code{\link[=qes_harmonize]{qes_harmonize()}} from its pinned original
+file (checked by md5), and each legacy column is rendered from the
+targets it needs, as the renderer table of the spec says
+(\code{qes_spec("spec")$tables$legacy}): for example \code{vote_choice} is the
+reported vote (target \code{vote_prov_recall}) with the party labels of
+0.4.4, \code{sovereignty_support} is 1 or 0 for the referendum on an
+independent country (\code{sov_indep}), and \code{political_interest} puts the
+four-point interest items on 0-10 as 10, 7, 3 and 0. A code the spec does
+not map is \code{NA}, never passed through. Every row of every file is kept:
+there is no de-duplication and no removal of empty rows, so each study
+contributes exactly its number of respondents (\code{qes2007_panel}: 2,442
+rows).
+
+The engine applies the spec's crosswalk rows that are still in review
+(checked against the original files and documents, not yet signed off by
+a reviewer), as \code{\link[=qes_harmonize]{qes_harmonize()}} does with \code{include_draft = TRUE};
+\code{attr(, "source_map")} gives the grade of each column's question in each
+study. \code{attr(, "legacy_column_map")} says what each column holds.
 }
 
-\section{What changed in 0.5.0}{
+\section{What changed in 0.7.0}{
+
+Compared with 0.5.0 (NEWS has a table of counts, column by column, for
+qesR 0.4.4, 0.5.0 and 0.7.0):
+\itemize{
+\item \code{vote_choice} and \code{turnout} are the reported vote and turnout in every
+study (OD4): \code{qes2022} from its post-election wave, \code{qes1998} from its
+post-election recontact; the pooled CROP polls asked only vote
+intentions and stay \code{NA}. Nonvoters, spoiled ballots, "don't know" and
+refusals are \code{NA} in \code{vote_choice} (0.4.4 had the categories
+"Did not vote / None" and "Don't know / Refused"); \code{turnout} says who
+voted.
+\item Columns filled where the spec has the question: \code{ideology} for
+\code{qes2014} (with its 0 and 10 answers) and \code{qes2018},
+\code{political_interest} for \code{qes2018} (OD7), \code{born_canada} for \code{qes2018},
+\code{provincial_pid} for \code{qes2007}, \code{qes2008}, \code{qes2012}, \code{qes2014} and
+\code{qes2018}, \code{language} for \code{qes2014} (the mother tongue, not the
+language of the interview), \code{income} for \code{qes2012}, \code{year_of_birth}
+for \code{qes2022}, and \code{age} for the \code{qes2018} respondents who gave their
+age but not their year of birth.
+\item \code{age_group} has six bands in the 2007 and 2012 panels, whose question
+has them (0.4.4 used a three-band recode); \code{education} maps the labels
+0.4.4 left as they were (\code{maîtrise} is University; the 2018 panel's
+trade certificates are College/CEGEP/Technical) and, for \code{qes2012},
+puts the French questionnaire's \emph{cours technique} in College and leaves
+the one code that is in neither questionnaire \code{NA}; \code{language} is \code{NA}
+for respondents who report two first languages (OD8).
+\item \code{respondent_id} joins each study's identifier variables: \code{qes2007_panel}
+(project and questionnaire number, unique) and \code{qes2018_panel}
+(interview mode and id, where 0.5.0 made one up).
+\item \code{province_territory} is "Quebec" in every study (0.4.4 put the
+\code{qes2018_panel} region there).
+\item Columns appended: \code{family}, \code{study_design}, \code{waves}, \code{subsample},
+\code{source_row} (to join raw variables from \code{\link[=get_qes]{get_qes()}}), \code{weight_pre} and
+\code{weight_post} (the spec's recommended weights, as deposited; \code{NA} where
+they are not documented yet), \code{vote_intent}, \code{turnout_intent} and
+\code{sov_partnership_1995}.
+}
 
 Results from qesR 0.4.4 can be reproduced only by installing that version
-(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}).
-Compared with 0.4.4:
-\itemize{
-\item \strong{Rows.} No respondent is dropped. qesR 0.4.4 removed 380
-\code{qes2007_panel} respondents (its \code{quest} number repeats across the two
-subsamples) and one \code{qes_crop_2007_2010} respondent as "duplicates".
-\item \strong{Columns removed.} The 70 columns 0.4.4 appended after the 30
-documented ones, by stacking raw variables that share a name across
-studies (for example \code{vote_federal_2006}, which held satisfaction with
-democracy for \code{qes2012}), are gone; \code{attr(, "removed_columns")} lists
-them. Read those items from each study with \code{\link[=get_qes]{get_qes()}}.
-\item \strong{Cells blanked.} Values verified to be wrong are \code{NA}:
-\code{party_best} and \code{party_lean} everywhere; \code{vote_choice} and \code{turnout}
-where the source is a vote intention (\code{qes2022}, \code{qes_crop_2007_2010},
-\code{qes1998}) and \code{qes2007_panel} respondents not reached after the
-election; \code{sovereignty_support} and \code{sovereignty} where the question is
-not the referendum on an independent country; \code{language} where the
-source is the interview language (\code{qes2014}, \code{qes2022}); raw codes and
-\code{-99} codes left in \code{income} and \code{religion}; \code{political_interest} of
-\code{qes2018} (raw 1-4 codes) and \code{qes2012_panel}; \code{ideology} of \code{qes2014}
-(its 0 and 10 answers were lost); \code{born_canada} of \code{qes2018};
-\code{vote_choice_text} of \code{qes2018} and \code{qes2022}; \code{education} of \code{qes1998};
-and "don't know" and refusal labels left in \code{born_canada}, \code{language},
-\code{education}, \code{income} and \code{religion}. \code{vote_choice} keeps the 0.4.4
-category "Don't know / Refused" until 0.7.0. \code{attr(, "legacy_na_columns")} lists every blanked column
-of every study, with the number of cells and the reason.
-\item \strong{Columns appended.} \code{vote_choice_timing} (\code{"post"}: the vote reported
-after the election) and \code{sovereignty_item} (\code{"sov_indep"}: the
-referendum on an independent country) say what \code{vote_choice} and
-\code{sovereignty_support} hold in each study, one value per study; they
-are \code{NA} in the studies where those columns are blanked.
-\item \strong{Other changes} come from reading the original files (accents
-repaired, weights at full precision, \code{qes2022} interview dates without a
-trailing \code{.000}) and from the catalog's study names. \code{qes2018}
-\code{turnout} is 0 instead of \code{NA} for the 336 respondents who said they
-did not vote (\code{q5} codes 1 and 3), as the 0.4.4 coding intended.
-}
+(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}), and
+those of 0.5.0 and 0.6.0 by installing one of them.
 
 A message says so once per session (class \code{qesR_message_values_changed},
-and \code{qesR_message_legacy_columns} for the removed columns).
+and \code{qesR_message_legacy_columns} for the 70 columns 0.4.4 stacked by
+name, gone since 0.5.0).
 }
 
 \section{En français}{
 
 \code{get_qes_master()} est le fichier fusionné hérité de qesR 0.4.4 : mêmes
-arguments, mêmes 30 colonnes, mêmes types. Chaque colonne lit la variable
-que qesR 0.4.4 lisait (attribut \code{source_map}, figé), convertie de la même
-façon. Aucune ligne n'est retirée (\code{qes2007_panel} : 2 442 lignes). Les
-70 colonnes empilées par nom de variable sont retirées
-(\code{attr(, "removed_columns")}) et les valeurs vérifiées comme fausses sont
-mises à \code{NA} (\code{attr(, "legacy_na_columns")} en donne la liste et la
-raison). \code{vote_choice_timing} et \code{sovereignty_item} précisent ce que
-contiennent \code{vote_choice} et \code{sovereignty_support} dans chaque étude.
-Les résultats de qesR 0.4.4 ne se reproduisent qu'en installant cette
-version (\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}).
-La lecture des fichiers originaux change aussi quelques valeurs (accents,
-pondérations, dates de \code{qes2022}, \code{turnout} de \code{qes2018} : voir NEWS).
+arguments, mêmes 30 colonnes dans le même ordre, mêmes types ; les
+colonnes ajoutées depuis suivent les 30 et ne seront jamais retirées.
+Depuis qesR 0.7.0, il est produit par le moteur d'harmonisation
+(\code{\link[=qes_harmonize]{qes_harmonize()}}) : chaque colonne est rendue à partir des cibles de la
+spécification, selon la table \code{legacy} de la spécification
+(\code{qes_spec("spec")$tables$legacy}). \code{vote_choice} et \code{turnout} sont le
+vote et la participation déclarés après l'élection dans toutes les
+études qui les ont demandés (les sondages CROP n'ont demandé que
+l'intention de vote : \code{NA}) ; \code{sovereignty_support} vaut 1 ou 0 pour le référendum sur un pays
+indépendant ; \code{political_interest} place les échelles d'intérêt en quatre
+points sur 0-10 (10, 7, 3 et 0). Un code que la spécification n'apparie
+pas vaut \code{NA}. Aucune ligne n'est retirée (\code{qes2007_panel} : 2 442
+lignes). \code{attr(, "legacy_column_map")} décrit chaque colonne et
+\code{attr(, "source_map")} donne la question de chaque colonne dans chaque
+étude, avec son niveau de comparabilité.
+
+Autres changements de 0.7.0 par rapport à 0.5.0 :
+\itemize{
+\item les abstentionnistes, bulletins rejetés, « ne sait pas » et refus valent
+\code{NA} dans \code{vote_choice} ;
+\item des colonnes sont remplies là où la spécification a la question
+(\code{ideology}, \code{political_interest}, \code{born_canada}, \code{provincial_pid},
+\code{language} de 2014 : la langue maternelle, \code{income} de 2012,
+\code{year_of_birth} de 2022) ;
+\item \code{age_group} a six tranches dans les panels de 2007 et de 2012 ;
+\code{education} classe les libellés que 0.4.4 laissait tels quels
+(\code{maîtrise} : University ; certificat de métier : College/CEGEP/Technical)
+et, pour \code{qes2012}, met le \emph{cours technique} dans College ; \code{language}
+vaut \code{NA} pour qui déclare deux premières langues (OD8) ;
+\item \code{respondent_id} joint les variables d'identification de l'étude
+(\code{qes2007_panel} et \code{qes2018_panel}) ;
+\item \code{province_territory} vaut « Quebec » dans toutes les études ;
+\item colonnes ajoutées : \code{family}, \code{study_design}, \code{waves}, \code{subsample},
+\code{source_row} (pour joindre des variables brutes de \code{\link[=get_qes]{get_qes()}}),
+\code{weight_pre} et \code{weight_post} (pondérations recommandées de la
+spécification, telles que déposées ; \code{NA} si elles ne sont pas encore
+documentées), \code{vote_intent}, \code{turnout_intent} et \code{sov_partnership_1995}.
+}
+
+Les résultats de qesR 0.4.4 ne
+se reproduisent qu'en installant cette version
+(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}). Pour de
+nouvelles analyses, utilisez \code{\link[=qes_harmonize]{qes_harmonize()}}.
 }
 
 \examples{
 # the synthetic demonstration study, offline
 demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
-attr(demo_master, "legacy_na_columns")[, c("column", "reason", "cause")]
+attr(demo_master, "legacy_column_map")[1:5, c("column", "target", "definition")]
 }
 \seealso{
-\code{\link[=get_qes]{get_qes()}} for the study files, \code{\link[=qes_provenance]{qes_provenance()}} and
-\code{\link[=qes_cite]{qes_cite()}} to record and cite the files read.
+\code{\link[=qes_harmonize]{qes_harmonize()}} for harmonized data with grades and reasons,
+\code{\link[=get_qes]{get_qes()}} for the study files, \code{\link[=qes_provenance]{qes_provenance()}} and \code{\link[=qes_cite]{qes_cite()}} to
+record and cite the files read.
 }
