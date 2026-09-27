@@ -17,22 +17,27 @@ Cette page est le point d'entrée en français. Les autres pages d'aide sont
 en anglais ; certaines ont une section « En français ».
 }
 \section{Fonctions}{
-\tabular{ll}{
-   Fonction \tab Rôle \cr
-   \code{\link[=qes_studies]{qes_studies()}} \tab Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; \code{check_updates = TRUE} demande à Dataverse si une version plus récente existe. \cr
-   \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
-   \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
-   \code{\link[=qes_codebook]{qes_codebook()}} \tab Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. \cr
-   \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
-   \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain \cr
-   \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
-   \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
-   \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. \cr
-   \code{\link[=qes_cite]{qes_cite()}} \tab Citation de qesR et de chaque jeu de données, en texte, BibTeX ou \code{bibentry}. \cr
-   \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir \code{NEWS}). \cr
-   \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Liste ou supprime les fichiers gardés dans le cache de téléchargement. \cr
+
+Les fonctions sont regroupées comme dans la référence du site web.\tabular{lll}{
+   Groupe \tab Fonction \tab Rôle \cr
+   Découvrir \tab \code{\link[=qes_studies]{qes_studies()}} \tab Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; \code{check_updates = TRUE} demande à Dataverse si une version plus récente existe. \cr
+   Découvrir \tab \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
+   Obtenir les données \tab \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
+   Obtenir les données \tab \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
+   Obtenir les données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir \code{NEWS}). \cr
+   Métadonnées et recherche \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. \cr
+   Métadonnées et recherche \tab \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
+   Métadonnées et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr
+   Métadonnées et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
+   Reproductibilité \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. \cr
+   Reproductibilité \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation de qesR et de chaque jeu de données, en texte, BibTeX ou \code{bibentry}. \cr
+   Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Liste ou supprime les fichiers gardés dans le cache de téléchargement. \cr
 }
 
+
+L'harmonisation entre études (\code{qes_harmonize()}, \code{qes_spec()},
+\code{qes_design()}) est prévue pour qesR 0.6.0, à titre expérimental ; elle ne
+fait pas partie de cette version.
 
 Les fonctions de qesR 0.4.4 (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) continuent de fonctionner et ne
@@ -57,10 +62,13 @@ valeur ne vient d'un vrai répondant.
 
 \section{Guides}{
 
-\code{vignette("fr-demarrage", package = "qesR")} (démarrage),
-\code{vignette("fr-citations", package = "qesR")} (citations) et
-\code{vignette("fr-migrer-0.5", package = "qesR")} (passer de qesR 0.4.4 à
-0.5.0).
+\code{vignette("fr-demarrage", package = "qesR")} (démarrage : du code d'étude
+à une estimation pondérée), \code{vignette("fr-citations", package = "qesR")}
+(citations) et \code{vignette("fr-migrer-0.5", package = "qesR")} (passer de
+qesR 0.4.4 à 0.5.0). Le site web, \url{https://thomasgareau.github.io/qesR/},
+offre aussi en français le catalogue des études et des exemples
+d'analyse construits à partir des fichiers complets (menu « Guides
+(FR) »).
 }
 
 \section{Licences}{

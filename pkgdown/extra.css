@@ -1,6 +1,6 @@
 /* qesR site styles. Colours come from the logo: blue #0468b9, gold #ffe542,
    slate #3e4b63. Everything else is Bootstrap 5, set in _pkgdown.yml, so the
-   light and dark themes both work. */
+   light and dark themes both work. No custom JavaScript. */
 
 :root {
   --qesr-gold: #f2c200;
@@ -13,6 +13,43 @@
 .navbar-brand {
   font-weight: 700;
   letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The logo in the navbar, next to the package name. It is decorative (the
+   name is the link text), so it is a background image, not an <img>. The
+   path is relative to this file, which pkgdown copies to the site root. */
+.navbar-brand::before {
+  content: "";
+  display: inline-block;
+  width: 1.6rem;
+  height: 1.9rem;
+  margin-right: 0.45rem;
+  background: url("logo.png") center / contain no-repeat;
+}
+
+/* A visible keyboard focus everywhere, in both themes (WCAG 1.4.11 asks
+   for 3:1 against the background): link blue on the light theme (7.3:1 on
+   white; gold would be 1.7:1), gold on the dark theme (9.2:1 on #212529). */
+a:focus-visible,
+button:focus-visible,
+.nav-link:focus-visible,
+.dropdown-item:focus-visible {
+  outline: 3px solid #0357a0;
+  outline-offset: 2px;
+}
+
+[data-bs-theme="dark"] a:focus-visible,
+[data-bs-theme="dark"] button:focus-visible,
+[data-bs-theme="dark"] .nav-link:focus-visible,
+[data-bs-theme="dark"] .dropdown-item:focus-visible {
+  outline-color: var(--qesr-gold);
+}
+
+/* Section headings inside the navbar menus ("Examples"). */
+.dropdown-header {
+  font-weight: 600;
 }
 
 /* Wide catalog tables scroll inside their box instead of the page; the
@@ -46,4 +83,11 @@ main table td code {
 main .contents > p:first-of-type > em:only-child > a {
   font-style: normal;
   font-weight: 600;
+}
+
+/* Figures keep a light background in the dark theme, so the axis text of
+   the plots (drawn for a white page) stays readable. */
+[data-bs-theme="dark"] main img:not(.logo):not([src$="logo.png"]) {
+  background-color: #fff;
+  border-radius: var(--bs-border-radius);
 }

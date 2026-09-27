@@ -1,16 +1,15 @@
 ---
-title: "Données fusionnées harmonisées"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Données fusionnées harmonisées}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "Le fichier fusionné hérité"
+params:
+  lang: "fr"
 ---
 
 *[English version](merged-dataset.html)*
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 `get_qes_master()` empile les Études électorales québécoises de qesR 0.4.4 dans un seul data.frame, avec les 30 colonnes harmonisées de 0.4.4 : mêmes noms, même ordre, mêmes types. C'est le format hérité, figé et stable pour le code écrit pour 0.4.4.
@@ -32,10 +31,10 @@ dim(demo_master)
 head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
 ```
 
-Les vraies études sont lues à partir de leurs fichiers originaux retenus :
+Les vraies études sont lues à partir de leurs fichiers originaux retenus. Ce bloc s'exécute à la construction du site, par le cache de téléchargement de qesR :
 
-```{r, eval = FALSE}
-master <- get_qes_master(strict = FALSE)
+```{r real}
+master <- get_qes_master(quiet = TRUE)
 dim(master)
 table(master$qes_code)
 ```

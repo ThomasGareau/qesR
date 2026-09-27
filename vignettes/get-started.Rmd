@@ -24,10 +24,10 @@ md5 checksum before use. The catalog of studies, their documents, their
 citations and the description of every variable of the studies released
 under CC0 ship with the package.
 
-Every chunk on this page runs without a network connection: it uses the
-catalog, the shipped metadata and `qes_demo`, a small synthetic study that
-ships with qesR. The chunks that would download a real study are shown but
-not run.
+This page goes from a study code to a weighted estimate. Every chunk on it
+runs without a network connection: it uses the catalog, the shipped metadata
+and `qes_demo`, a small synthetic study that ships with qesR. The chunks
+that would download a real study are shown but not run.
 
 ## Install
 
@@ -114,6 +114,65 @@ head(hits[, c("study", "variable", "label")])
 The 2022 study is licensed CC BY-NC 4.0, so qesR ships none of its
 metadata: its codebook is built from your own copy of the data file the
 first time you ask for it.
+
+## A weighted estimate
+
+What share of Quebec adults would have voted YES in a referendum on
+independence, just after the 2014 election? Question Q19 of `qes2014` asks
+it (its wording is above). A correct estimate states four things, and the
+steps above give each of them.
+
+1. **The population.** The catalog gives each study's design and target
+   population: `qes2014` is a post-election survey that targets the Quebec
+   adult population, nothing wider. Its respondents come from an opt-in
+   online panel, not from a probability sample.
+2. **The weight.** `POND` is the weight of `qes2014`. Its technical report
+   (`qes_docs("qes2014")`) says it adjusts the sample to the latest census
+   by sex, age, region and language. The estimate describes the adult
+   population only to the extent that this adjustment corrects the panel.
+
+```{r population}
+studies[studies$study == "qes2014",
+        c("study", "study_design", "target_population_en", "target_population_fr")]
+qes_codebook("qes2014", variables = "POND")[, c("variable", "label")]
+```
+
+3. **The question and its codes.** Q19 codes YES as 1, NO as 2, "don't
+   know" as 8 and "refused" as 9 (the long codebook above).
+4. **The denominator.** `qes_missing()` set codes 8 and 9 to `NA`. The share
+   below is among respondents who answered YES or NO, and says so.
+
+On the demonstration study, which copies these names and codes:
+
+```{r estimate}
+answered <- demo_clean$Q19 %in% c(1, 2)
+yes <- demo_clean$Q19[answered] == 1
+weight <- demo_clean$POND[answered]
+c(
+  respondents = sum(answered),
+  unweighted = mean(yes),
+  weighted = sum(weight * yes) / sum(weight)
+)
+```
+
+The demonstration data are synthetic, so these numbers describe no
+population; they show the computation. On the real file the same lines give
+34.8% YES among the 1,353 respondents who answered YES or NO (34.1%
+unweighted), weighted to the Quebec adult population of 2014.
+
+```{r estimate-real, eval = FALSE}
+qes2014 <- qes_missing(get_qes("qes2014"))
+answered <- qes2014$Q19 %in% c(1, 2)
+yes <- qes2014$Q19[answered] == 1
+weight <- qes2014$POND[answered]
+sum(weight * yes) / sum(weight)
+```
+
+This is a point estimate. `qes2014` is a non-probability online panel: its
+technical report (`qes_docs("qes2014")`) gives no margin of error, and a
+design-based standard error, from the `survey` package for instance, would
+not have its usual meaning. Compute each estimate within one study: studies differ in design,
+population and wording, and their weights are on their own scales.
 
 ## Provenance and citations
 

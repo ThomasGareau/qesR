@@ -1,5 +1,5 @@
 ---
-title: "Exemple de cas d'usage : l'appui à la souveraineté"
+title: "Exemple : appui à l'indépendance"
 params:
   lang: "fr"
 ---
@@ -8,6 +8,8 @@ params:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 Cette page estime l'appui à l'indépendance du Québec dans les études du
@@ -26,7 +28,7 @@ calculée à l'intérieur d'une étude, avec la pondération propre à cette ét
 (`survey_weight`) ; c'est une estimation ponctuelle qui ne tient pas compte du
 plan de sondage.
 
-```{r data}
+```{r data, message = FALSE}
 library(qesR)
 library(ggplot2)
 
@@ -73,10 +75,17 @@ Le libellé dans les quatre études qui la posent :
 ```{r wording}
 asked <- items$qes_code[items$in_column == tr("yes", "oui")]
 wording <- do.call(rbind, lapply(asked, function(s) {
-  q <- qes_question(s, items$source_variable[items$qes_code == s], lang = params$lang)
-  q[, c("study", "variable", "question", "truncated")]
+  v <- items$source_variable[items$qes_code == s]
+  q <- qes_question(s, v, lang = params$lang)
+  # a study documented in one language only: show that language
+  if (is.na(q$question)) q <- qes_question(s, v, lang = tr("fr", "en"))
+  q[, c("study", "variable", "question", "question_lang", "truncated")]
 }))
-knitr::kable(wording, row.names = FALSE)
+knitr::kable(
+  wording, row.names = FALSE,
+  col.names = tr(c("Study", "Variable", "Question", "Language", "Truncated"),
+                 c("Étude", "Variable", "Question", "Langue", "Tronquée"))
+)
 ```
 
 ## Tableau 2 : l'appui à l'indépendance
@@ -93,15 +102,16 @@ sov <- do.call(rbind, lapply(split(master, master$qes_code), function(d) {
 }))
 sov <- sov[order(sov$year), ]
 knitr::kable(
-  sov, row.names = FALSE,
+  sov, row.names = FALSE, format.args = list(decimal.mark = tr(".", ",")),
   col.names = tr(c("Study", "Year", "N answering", "YES (%)"),
                  c("Étude", "Année", "N répondants", "OUI (%)"))
 )
 ```
 
-```{r support-plot, fig.alt = "Weighted share who would vote YES in a referendum on independence, in the 2012, 2014, 2018 and 2022 Quebec Election Studies."}
+```{r support-plot, fig.alt = tr("Weighted share who would vote YES in a referendum on independence, in the Quebec Election Studies that asked the question.", "Part pondérée qui voterait OUI à un référendum sur l'indépendance, dans les Études électorales québécoises qui posaient la question.")}
+# points only: the question's wording and timing change between studies
+# (see the notes), so the studies do not form one series
 ggplot(sov, aes(x = year, y = pct)) +
-  geom_line(colour = "#12355b") +
   geom_point(size = 2.5, colour = "#12355b") +
   scale_x_continuous(breaks = sov$year) +
   scale_y_continuous(limits = c(0, 100)) +
@@ -118,9 +128,15 @@ ggplot(sov, aes(x = year, y = pct)) +
   et leur population diffèrent : `qes2018` couvre les personnes de 16 ans et
   plus, et `qes2022` est un panel en ligne de citoyens de 18 ans et plus
   (`qes_studies()`).
-- Le texte de la question de `qes2022` est l'étiquette de sa variable, que
-  son fichier de données a coupée à 80 caractères (`truncated`) ; le libellé
-  complet est dans son questionnaire (`qes_docs("qes2022")`).
+- La question n'a été posée ni au même moment ni dans les mêmes mots :
+  `qes2022` l'a posée pendant la campagne (sa vague `cps_`), les autres après
+  l'élection, et les questions de 2018 et de 2022 ajoutent « aujourd'hui »
+  (tableau 1). La figure montre un point par étude et ne les relie pas en
+  une série.
+- Le texte de la question de `qes2022` est l'étiquette de sa variable,
+  en anglais seulement (colonne `Langue`), que son fichier de données a
+  coupée à 80 caractères (`truncated`) ; le libellé complet est dans son
+  questionnaire (`qes_docs("qes2022")`).
 - Pour les autres études, lisez leur propre question avec `get_qes()` et
   `qes_question()` ; la comparer à la question sur l'indépendance demande de
   la prudence, car le libellé diffère.

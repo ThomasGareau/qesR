@@ -56,7 +56,11 @@ table <- data.frame(
   licence = studies$licence,
   citation = qes_cite(studies$study, lang = params$lang)[-1]
 )
-knitr::kable(table, col.names = c("Code", "Year / Année", "Study / Étude", "Licence", "Citation"))
+knitr::kable(table, col.names = if (identical(params$lang, "fr")) {
+  c("Code", "Année", "Étude", "Licence", "Citation")
+} else {
+  c("Code", "Year", "Study", "Licence", "Citation")
+})
 ```
 
 The 2022 study is released under CC BY-NC 4.0, which requires attribution and

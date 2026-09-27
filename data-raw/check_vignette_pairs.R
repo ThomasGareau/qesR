@@ -5,12 +5,13 @@
 # Every French vignette or article is named fr-*.Rmd and links to its English
 # partner in its first lines ("*[English version](<partner>.html)*"); the
 # partner links back ("*[Version française](fr-....html)*"). This script checks
-# that every page has a partner that links back and, for the vignettes that
-# ship with the package (vignettes/*.Rmd), that both pages run the same code:
-# their knitr::purl() output, chunk labels included, must be identical, so the
-# prose may differ but the code may not. The website-only articles
-# (vignettes/articles/) are checked for pairing only; their code is aligned
-# with the website slice.
+# that every page has a partner that links back and that both pages run the
+# same code: their knitr::purl() output, chunk labels and options included,
+# must be identical, so the prose may differ but the code may not. This holds
+# for the vignettes that ship with the package (vignettes/*.Rmd) and for the
+# website-only articles (vignettes/articles/). Text that must differ by
+# language (table headers, figure alt text) is chosen in the code from
+# params$lang.
 #
 # Vignette sources are not installed with the package, so this cannot run
 # under R CMD check. It runs in CI (.github/workflows/R-CMD-check.yml) and
@@ -102,11 +103,11 @@ check_links <- function(root) {
 
 problems <- c(
   check_dir(file.path(root, "vignettes"), compare_code = TRUE),
-  check_dir(file.path(root, "vignettes", "articles"), compare_code = FALSE),
+  check_dir(file.path(root, "vignettes", "articles"), compare_code = TRUE),
   check_links(root)
 )
 if (length(problems)) {
   cat("EN/FR vignette pairs:\n", paste0("- ", problems, collapse = "\n"), "\n", sep = "")
   quit(save = "no", status = 1L)
 }
-cat("EN/FR vignette pairs: all pages paired; shipped pairs run identical code; links resolve.\n")
+cat("EN/FR vignette pairs: all pages paired; every pair runs identical code; links resolve.\n")

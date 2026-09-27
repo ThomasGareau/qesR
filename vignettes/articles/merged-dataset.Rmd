@@ -1,16 +1,15 @@
 ---
-title: "Merged Dataset Workflow"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Merged Dataset Workflow}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "The legacy merged file"
+params:
+  lang: "en"
 ---
 
 *[Version française](fr-donnees-fusionnees.html)*
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 `get_qes_master()` stacks the Quebec Election Studies of qesR 0.4.4 in one data frame, with the 30 harmonized columns of 0.4.4: same names, order and types. It is the fixed legacy schema, kept stable for code written for 0.4.4.
@@ -32,10 +31,10 @@ dim(demo_master)
 head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
 ```
 
-The real studies are read from their pinned original files:
+The real studies are read from their pinned original files. This chunk runs when the website is built, through qesR's download cache:
 
-```{r, eval = FALSE}
-master <- get_qes_master(strict = FALSE)
+```{r real}
+master <- get_qes_master(quiet = TRUE)
 dim(master)
 table(master$qes_code)
 ```

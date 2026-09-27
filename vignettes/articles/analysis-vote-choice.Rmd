@@ -1,5 +1,5 @@
 ---
-title: "Use case example: Reported Vote Over Time"
+title: "Example: reported vote"
 params:
   lang: "en"
 ---
@@ -8,6 +8,8 @@ params:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 5)
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 This page shows the reported provincial vote in the studies of the legacy
@@ -23,7 +25,7 @@ estimate is computed within one study, with that study's own weight
 The Quebec Election Studies and the Durand panels are shown apart, because
 their designs differ.
 
-```{r data}
+```{r data, message = FALSE}
 library(qesR)
 library(ggplot2)
 
@@ -33,55 +35,82 @@ master <- get_qes_master(quiet = TRUE)
 studies <- qes_studies()
 master$family <- studies$family[match(master$qes_code, studies$study)]
 master$year <- as.integer(master$qes_year)
-
-# Weighted share of each value of x, within one study
-wshare <- function(x, w) {
-  ok <- !is.na(x) & !is.na(w)
-  if (!any(ok)) return(NULL)
-  tapply(w[ok], x[ok], sum) / sum(w[ok])
-}
 ```
 
 ## Table 1: reported vote by study
 
 Shares are among respondents who reported voting for a party, including
 "Other party". Respondents who did not vote, did not know or refused to say
-are left out of the denominator. A blank cell means that no respondent of
-that study reported that party; the ADQ merged into the CAQ in 2012, so the
-ADQ has no voters after 2008 and the CAQ none before 2012.
+are left out of the denominator.
+
+Two kinds of cell are structural zeros, not estimates, and are not shown as
+0:
+
+- **—** the party did not run in that election (official results of
+  Élections Québec). The ADQ merged into the CAQ in 2012, and Option
+  nationale ran only in 2012 and 2014.
+- **n.l.** the party ran, but the study's question did not list it as an
+  answer, so its voters could only answer "Other party". Both 2018 studies
+  omit the Green Party (PVQ): see
+  `qes_codebook("qes2018", layout = "long", variables = "q6")`.
+
+A 0.0 is a party that was listed but that no respondent of the study
+reported.
 
 ```{r vote}
-options(knitr.kable.NA = "")
 parties <- c("PLQ", "PQ", "ADQ", "CAQ", "QS", "PVQ", "ON", "Other party")
-voters <- master[master$vote_choice %in% parties, ]
+# Parties with candidates at each general election (official results of
+# Elections Quebec). A party that did not run cannot be reported.
+ran <- list(
+  QC2007 = c("PLQ", "PQ", "ADQ", "QS", "PVQ"),
+  QC2008 = c("PLQ", "PQ", "ADQ", "QS", "PVQ"),
+  QC2012 = c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON"),
+  QC2014 = c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON"),
+  QC2018 = c("PLQ", "PQ", "CAQ", "QS", "PVQ"),
+  QC2022 = c("PLQ", "PQ", "CAQ", "QS", "PVQ")
+)
+# Parties that ran but that the study's question did not list as an answer
+# (value labels of the source variable, from qes_codebook())
+not_listed <- list(qes2018 = "PVQ", qes2018_panel = "PVQ")
+
+voters <- master[master$vote_choice %in% parties & !is.na(master$survey_weight), ]
 vote <- do.call(rbind, lapply(split(voters, voters$qes_code), function(d) {
-  s <- wshare(d$vote_choice, d$survey_weight)
+  w <- tapply(d$survey_weight, factor(d$vote_choice, levels = parties), sum)
+  w[is.na(w)] <- 0
+  election <- studies$election_id[match(d$qes_code[1], studies$study)]
+  status <- ifelse(!parties %in% c(ran[[election]], "Other party"), "not_run",
+                   ifelse(parties %in% not_listed[[d$qes_code[1]]], "not_listed", "offered"))
   data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1],
-             n = nrow(d), party = names(s), pct = round(100 * as.numeric(s), 1))
+             n = nrow(d), party = parties, pct = round(100 * as.numeric(w) / sum(w), 1),
+             status = status)
 }))
-vote_wide <- reshape(vote, idvar = c("study", "year", "family", "n"),
+vote$cell <- ifelse(vote$status == "not_run", "\u2014",
+                    ifelse(vote$status == "not_listed", tr("n.l.", "n.p."),
+                           formatC(vote$pct, format = "f", digits = 1,
+                                   decimal.mark = tr(".", ","))))
+vote_wide <- reshape(vote[, c("study", "year", "family", "n", "party", "cell")],
+                     idvar = c("study", "year", "family", "n"),
                      timevar = "party", direction = "wide")
-names(vote_wide) <- sub("^pct\\.", "", names(vote_wide))
-vote_wide <- vote_wide[order(vote_wide$family, vote_wide$year),
-                       c("study", "year", "family", "n", intersect(parties, names(vote_wide)))]
+names(vote_wide) <- sub("^cell\\.", "", names(vote_wide))
+vote_wide <- vote_wide[order(vote_wide$family, vote_wide$year), ]
 knitr::kable(
-  vote_wide, row.names = FALSE,
+  vote_wide, row.names = FALSE, align = c("l", "r", "l", rep("r", 1 + length(parties))),
   col.names = c(tr(c("Study", "Year", "Family", "N voters"),
                    c("Étude", "Année", "Famille", "N votants")),
-                intersect(parties, names(vote_wide)))
+                tr(parties, c(parties[-length(parties)], "Autre parti")))
 )
 ```
 
 ## Figure 1: the main parties
 
-```{r vote-plot, fig.alt = "Weighted reported vote share of the PLQ, PQ, ADQ, CAQ and QS in each study, by year, with Quebec Election Studies and Durand panels in separate panels."}
-main <- vote[vote$party %in% c("PLQ", "PQ", "ADQ", "CAQ", "QS"), ]
+```{r vote-plot, fig.alt = tr("Weighted reported vote share of the PLQ, PQ, ADQ, CAQ and QS in each study, by year, with Quebec Election Studies and Durand panels in separate panels.", "Part pondérée du vote déclaré pour le PLQ, le PQ, l'ADQ, la CAQ et QS dans chaque étude, par année, les Études électorales québécoises et les panels Durand dans des panneaux distincts.")}
+main <- vote[vote$status == "offered" & vote$party %in% c("PLQ", "PQ", "ADQ", "CAQ", "QS"), ]
 main$family <- ifelse(main$family == "qes",
                       tr("Quebec Election Studies", "Études électorales québécoises"),
                       tr("Durand panels", "Panels Durand"))
-ggplot(main, aes(x = year, y = pct, colour = party)) +
+ggplot(main, aes(x = year, y = pct, colour = party, shape = party)) +
   geom_line() +
-  geom_point(size = 2.2) +
+  geom_point(size = 2.4) +
   facet_wrap(~family, ncol = 1) +
   scale_colour_manual(values = c(PLQ = "#d71920", PQ = "#004c9d", ADQ = "#6d9eeb",
                                  CAQ = "#00a3c7", QS = "#ff6f00")) +
@@ -89,7 +118,8 @@ ggplot(main, aes(x = year, y = pct, colour = party)) +
   labs(
     x = tr("Year of the study", "Année de l'étude"),
     y = tr("Share of reported votes, weighted (%)", "Part des votes déclarés, pondérée (%)"),
-    colour = tr("Party", "Parti")
+    colour = tr("Party", "Parti"),
+    shape = tr("Party", "Parti")
   ) +
   theme_minimal(base_size = 12)
 ```

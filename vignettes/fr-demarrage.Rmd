@@ -24,10 +24,11 @@ données original dont la somme de contrôle md5 est vérifiée avant usage. Le
 catalogue des études, leurs documents, leurs citations et la description de
 chaque variable des études sous licence CC0 sont livrés avec le package.
 
-Tous les blocs de code de cette page s'exécutent sans connexion réseau : ils
-utilisent le catalogue, les métadonnées livrées et `qes_demo`, une petite
-étude synthétique fournie avec qesR. Les blocs qui téléchargeraient une
-vraie étude sont montrés, mais pas exécutés.
+Cette page va d'un code d'étude à une estimation pondérée. Tous ses blocs
+de code s'exécutent sans connexion réseau : ils utilisent le catalogue, les
+métadonnées livrées et `qes_demo`, une petite étude synthétique fournie avec
+qesR. Les blocs qui téléchargeraient une vraie étude sont montrés, mais pas
+exécutés.
 
 ## Installation
 
@@ -118,6 +119,71 @@ head(hits[, c("study", "variable", "label")])
 L'étude de 2022 est sous licence CC BY-NC 4.0 : qesR ne livre aucune de ses
 métadonnées, et son codebook est construit à partir de votre propre copie du
 fichier de données la première fois que vous le demandez.
+
+## Une estimation pondérée
+
+Quelle part des adultes québécois aurait voté OUI à un référendum sur
+l'indépendance, juste après l'élection de 2014 ? La question Q19 de
+`qes2014` le demande (son libellé figure plus haut). Une estimation correcte
+précise quatre choses, et les étapes précédentes donnent chacune d'elles.
+
+1. **La population.** Le catalogue donne le devis et la population cible de
+   chaque étude : `qes2014` est une enquête postélectorale qui vise la
+   population adulte du Québec, et rien de plus large. Ses répondants
+   viennent d'un panel en ligne à adhésion volontaire, et non d'un
+   échantillon probabiliste.
+2. **La pondération.** `POND` est la pondération de `qes2014`. Son rapport
+   technique (`qes_docs("qes2014")`) indique qu'elle ajuste l'échantillon au
+   dernier recensement selon le sexe, l'âge, la région et la langue.
+   L'estimation ne décrit la population adulte que dans la mesure où cet
+   ajustement corrige le panel.
+
+```{r population}
+studies[studies$study == "qes2014",
+        c("study", "study_design", "target_population_en", "target_population_fr")]
+qes_codebook("qes2014", variables = "POND")[, c("variable", "label")]
+```
+
+3. **La question et ses codes.** Q19 code OUI 1, NON 2, « je ne sais pas »
+   8 et « je préfère ne pas répondre » 9 (le codebook long plus haut).
+4. **Le dénominateur.** `qes_missing()` a mis les codes 8 et 9 à `NA`. La
+   part ci-dessous est calculée parmi les répondants qui ont répondu OUI ou
+   NON, et elle le dit.
+
+Sur l'étude de démonstration, qui reprend ces noms et ces codes :
+
+```{r estimate}
+answered <- demo_clean$Q19 %in% c(1, 2)
+yes <- demo_clean$Q19[answered] == 1
+weight <- demo_clean$POND[answered]
+c(
+  respondents = sum(answered),
+  unweighted = mean(yes),
+  weighted = sum(weight * yes) / sum(weight)
+)
+```
+
+Les données de démonstration sont synthétiques : ces nombres ne décrivent
+aucune population, ils montrent le calcul. Sur le vrai fichier, les mêmes
+lignes donnent 34,8 % de OUI parmi les 1 353 répondants qui ont répondu OUI
+ou NON (34,1 % sans pondération), pondérés selon la population adulte du
+Québec de 2014.
+
+```{r estimate-real, eval = FALSE}
+qes2014 <- qes_missing(get_qes("qes2014"))
+answered <- qes2014$Q19 %in% c(1, 2)
+yes <- qes2014$Q19[answered] == 1
+weight <- qes2014$POND[answered]
+sum(weight * yes) / sum(weight)
+```
+
+C'est une estimation ponctuelle. `qes2014` est un panel en ligne non
+probabiliste : son rapport technique (`qes_docs("qes2014")`) ne donne pas de
+marge d'erreur, et une erreur type fondée sur le plan de sondage, celle du
+package `survey` par exemple, n'aurait pas son sens habituel. Calculez chaque
+estimation dans une seule étude : les études diffèrent par leur devis, leur
+population et le libellé de leurs questions, et leurs pondérations sont
+chacune sur leur propre échelle.
 
 ## Provenance et citations
 

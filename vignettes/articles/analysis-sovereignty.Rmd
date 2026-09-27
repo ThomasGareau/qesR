@@ -1,5 +1,5 @@
 ---
-title: "Use case example: Support for Sovereignty"
+title: "Example: support for independence"
 params:
   lang: "en"
 ---
@@ -8,6 +8,8 @@ params:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5)
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
 
 This page estimates support for Quebec independence in the studies of the
@@ -25,7 +27,7 @@ questions put to undecided respondents, or a favourable/opposed scale) have
 study's own weight (`survey_weight`); it is a point estimate that ignores the
 survey's design.
 
-```{r data}
+```{r data, message = FALSE}
 library(qesR)
 library(ggplot2)
 
@@ -71,10 +73,17 @@ The wording in the four studies that ask it:
 ```{r wording}
 asked <- items$qes_code[items$in_column == tr("yes", "oui")]
 wording <- do.call(rbind, lapply(asked, function(s) {
-  q <- qes_question(s, items$source_variable[items$qes_code == s], lang = params$lang)
-  q[, c("study", "variable", "question", "truncated")]
+  v <- items$source_variable[items$qes_code == s]
+  q <- qes_question(s, v, lang = params$lang)
+  # a study documented in one language only: show that language
+  if (is.na(q$question)) q <- qes_question(s, v, lang = tr("fr", "en"))
+  q[, c("study", "variable", "question", "question_lang", "truncated")]
 }))
-knitr::kable(wording, row.names = FALSE)
+knitr::kable(
+  wording, row.names = FALSE,
+  col.names = tr(c("Study", "Variable", "Question", "Language", "Truncated"),
+                 c("Étude", "Variable", "Question", "Langue", "Tronquée"))
+)
 ```
 
 ## Table 2: support for independence
@@ -91,15 +100,16 @@ sov <- do.call(rbind, lapply(split(master, master$qes_code), function(d) {
 }))
 sov <- sov[order(sov$year), ]
 knitr::kable(
-  sov, row.names = FALSE,
+  sov, row.names = FALSE, format.args = list(decimal.mark = tr(".", ",")),
   col.names = tr(c("Study", "Year", "N answering", "YES (%)"),
                  c("Étude", "Année", "N répondants", "OUI (%)"))
 )
 ```
 
-```{r support-plot, fig.alt = "Weighted share who would vote YES in a referendum on independence, in the 2012, 2014, 2018 and 2022 Quebec Election Studies."}
+```{r support-plot, fig.alt = tr("Weighted share who would vote YES in a referendum on independence, in the Quebec Election Studies that asked the question.", "Part pondérée qui voterait OUI à un référendum sur l'indépendance, dans les Études électorales québécoises qui posaient la question.")}
+# points only: the question's wording and timing change between studies
+# (see the notes), so the studies do not form one series
 ggplot(sov, aes(x = year, y = pct)) +
-  geom_line(colour = "#12355b") +
   geom_point(size = 2.5, colour = "#12355b") +
   scale_x_continuous(breaks = sov$year) +
   scale_y_continuous(limits = c(0, 100)) +
@@ -115,9 +125,13 @@ ggplot(sov, aes(x = year, y = pct)) +
 - The four studies are Quebec Election Studies, but they differ in mode and
   population: `qes2018` covers people aged 16 and over, and `qes2022` is an
   online panel of citizens aged 18 and over (`qes_studies()`).
-- `qes2022`'s question text is its variable label, which its data file cut
-  at 80 characters (`truncated`); the full wording is in its questionnaire
-  (`qes_docs("qes2022")`).
+- The question was not asked at the same moment nor in the same words:
+  `qes2022` asked it during the campaign (its `cps_` wave), the others after
+  the election, and the 2018 and 2022 questions add "today" (Table 1). The
+  figure shows one point per study and does not join them into a series.
+- `qes2022`'s question text is its variable label, in English only, which
+  its data file cut at 80 characters (`truncated`); the full wording is in
+  its questionnaire (`qes_docs("qes2022")`).
 - For the other studies, read their own question with `get_qes()` and
   `qes_question()`; comparing it with the independence question needs care,
   because the wording differs.

@@ -14,20 +14,26 @@
 #' en anglais ; certaines ont une section « En français ».
 #'
 #' @section Fonctions:
-#' | Fonction | Rôle |
-#' |---|---|
-#' | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
-#' | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
-#' | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
-#' | [qes_codebook()] | Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. |
-#' | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
-#' | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain|sovereign")`. |
-#' | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
-#' | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
-#' | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. |
-#' | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
-#' | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir `NEWS`). |
-#' | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
+#' Les fonctions sont regroupées comme dans la référence du site web.
+#'
+#' | Groupe | Fonction | Rôle |
+#' |---|---|---|
+#' | Découvrir | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
+#' | Découvrir | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
+#' | Obtenir les données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
+#' | Obtenir les données | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
+#' | Obtenir les données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études. Ses valeurs ont changé dans qesR 0.5.0 (voir `NEWS`). |
+#' | Métadonnées et recherche | [qes_codebook()] | Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. |
+#' | Métadonnées et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
+#' | Métadonnées et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
+#' | Métadonnées et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
+#' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date. |
+#' | Reproductibilité | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
+#' | Cache | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
+#'
+#' L'harmonisation entre études (`qes_harmonize()`, `qes_spec()`,
+#' `qes_design()`) est prévue pour qesR 0.6.0, à titre expérimental ; elle ne
+#' fait pas partie de cette version.
 #'
 #' Les fonctions de qesR 0.4.4 (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) continuent de fonctionner et ne
@@ -46,10 +52,13 @@
 #' valeur ne vient d'un vrai répondant.
 #'
 #' @section Guides:
-#' `vignette("fr-demarrage", package = "qesR")` (démarrage),
-#' `vignette("fr-citations", package = "qesR")` (citations) et
-#' `vignette("fr-migrer-0.5", package = "qesR")` (passer de qesR 0.4.4 à
-#' 0.5.0).
+#' `vignette("fr-demarrage", package = "qesR")` (démarrage : du code d'étude
+#' à une estimation pondérée), `vignette("fr-citations", package = "qesR")`
+#' (citations) et `vignette("fr-migrer-0.5", package = "qesR")` (passer de
+#' qesR 0.4.4 à 0.5.0). Le site web, <https://thomasgareau.github.io/qesR/>,
+#' offre aussi en français le catalogue des études et des exemples
+#' d'analyse construits à partir des fichiers complets (menu « Guides
+#' (FR) »).
 #'
 #' @section Licences:
 #' Les données ne font pas partie du package : qesR les télécharge depuis

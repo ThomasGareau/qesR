@@ -4,20 +4,25 @@ params:
   lang: "fr"
 ---
 
-Toutes les études que qesR peut charger, avec les informations que qesR fixe
-pour chacune. Cette page est produite à la construction du site à partir du
-catalogue fourni avec le package (`inst/extdata/catalog/`) : ce sont les
-mêmes données que `qes_studies()` et `qes_docs()`, sans copie rédigée à la
-main. [English version](studies.html).
+*[English version](studies.html)*
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE, warning = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE)
+# messages in the language of the page, whatever the locale of the build
+options(qesR.lang = params$lang)
 ```
+
+Toutes les études que qesR peut charger, avec ce que qesR fixe pour
+chacune : le dépôt et sa version, le fichier de données et sa somme de
+contrôle md5, et les documents. Cette page est produite à la construction
+du site à partir du catalogue livré avec le package
+(`inst/extdata/catalog/`) : ce sont les mêmes données que `qes_studies()`
+et `qes_docs()`. Rien n'y est recopié à la main.
 
 ```{r catalog}
 library(qesR)
-lang <- params$lang
-fr <- identical(lang, "fr")
+fr <- identical(params$lang, "fr")
+pick <- function(en, fr_text) if (fr) fr_text else en
 dir <- system.file("extdata", "catalog", package = "qesR", mustWork = TRUE)
 read <- function(name) {
   utils::read.csv(file.path(dir, name), colClasses = "character", encoding = "UTF-8", na.strings = "")
@@ -25,72 +30,105 @@ read <- function(name) {
 enums <- read("enums.csv")
 label <- function(enum, value) {
   e <- enums[enums$enum == enum, , drop = FALSE]
-  e[[if (fr) "label_fr" else "label_en"]][match(value, e$value)]
+  e[[pick("label_en", "label_fr")]][match(value, e$value)]
 }
 files <- read("files.csv")
 studies <- qes_studies()
 docs <- qes_docs()
-pick <- function(en, fr_text) if (fr) fr_text else en
-data_rows <- files$n_rows[match(
-  paste(studies$study, studies$data_file_id),
-  paste(files$study, files$file_id)
-)]
-years <- ifelse(studies$year_end == studies$year, studies$year, paste0(studies$year, "-", studies$year_end))
+data_file <- files[match(paste(studies$study, studies$data_file_id),
+                         paste(files$study, files$file_id)), ]
+number <- function(x) format(as.integer(x), big.mark = pick(",", "\u00a0"))
+years <- ifelse(studies$year_end == studies$year, studies$year,
+                paste0(studies$year, "-", studies$year_end))
+title <- studies[[pick("title_en", "title_fr")]]
+yes_no <- function(x) ifelse(x, pick("yes", "oui"), pick("no", "non"))
+colon <- pick(": ", "\u00a0: ")
+semi <- pick("; ", "\u00a0; ")
+# facts quoted in the prose below, from the catalog as well
+enum_list <- function(x) {
+  if (length(x) < 2L) return(x)
+  paste(paste(x[-length(x)], collapse = ", "), x[length(x)], sep = pick(" and ", " et "))
+}
+codes <- function(x) enum_list(sprintf("`%s`", x))
+other_families <- enum_list(unique(label("family", studies$family[studies$family != "qes"])))
+shared_doi <- unique(studies$doi[duplicated(studies$doi)])
+shared_deposits <- paste(vapply(shared_doi, function(x) codes(studies$study[studies$doi == x]), ""),
+                         collapse = semi)
+if (!nzchar(shared_deposits)) shared_deposits <- pick("none", "aucun")
+not_cc0 <- studies[studies$licence != "CC0 1.0", ]
+not_cc0 <- if (nrow(not_cc0)) paste0(codes(not_cc0$study), " (", enum_list(unique(not_cc0$licence)), ")") else pick("none", "aucune")
+no_metadata <- studies$study[!as.logical(studies$metadata_shipped)]
+no_metadata <- if (length(no_metadata)) codes(no_metadata) else pick("none", "aucune")
 ```
 
-## Études
-
-```{r studies}
+```{r overview}
 knitr::kable(data.frame(
-  code = paste0("`", studies$study, "`"),
+  code = sprintf("[`%s`](#%s)", studies$study, studies$study),
   year = years,
-  title = sprintf("[%s](%s)", studies[[pick("title_en", "title_fr")]], studies$doi_url),
+  family = label("family", studies$family),
+  title = sprintf("[%s](%s)", title, studies$doi_url),
   design = label("study_design", studies$study_design),
   population = studies[[pick("target_population_en", "target_population_fr")]],
-  n = format(as.integer(data_rows), big.mark = pick(",", "\u00a0")),
+  n = number(data_file$n_rows),
   licence = studies$licence,
-  version = studies$dataset_version
-), col.names = if (fr) {
-  c("Code", "Année", "Étude (DOI)", "Devis", "Population", "n", "Licence", "Version")
-} else {
-  c("Code", "Year", "Study (DOI)", "Design", "Population", "n", "Licence", "Version")
-}, align = "lllllrll")
+  codebook = yes_no(as.logical(studies$metadata_shipped))
+), col.names = pick(
+  c("Code", "Year", "Family", "Study (DOI)", "Design", "Population", "n", "Licence", "Offline codebook"),
+  c("Code", "Année", "Famille", "Étude (DOI)", "Devis", "Population", "n", "Licence", "Livre de codes hors ligne")
+), align = "llllllrll")
 ```
 
-Chaque titre renvoie au DOI du dépôt. `n` est le nombre de lignes du fichier
-de données fixé et *Version* la version fixée du jeu de données. Les panels de Durand,
-les sondages CROP et les sondages de 1998 ne font pas partie des Études
-électorales québécoises ; ils figurent sous leur propre titre. Les trois codes
-de 1998 partagent un même dépôt.
+`n` est le nombre de lignes du fichier de données fixé. Les études des
+familles `r other_families` ne sont pas des Études électorales
+québécoises : elles figurent sous leur propre titre, et leurs devis et leurs
+populations diffèrent ; vérifiez les deux avant de comparer des études.
+Codes qui partagent un même dépôt : `r shared_deposits`.
+Études qui ne sont pas dans le domaine public : `r not_cc0`. Études dont
+qesR ne livre pas les métadonnées : `r no_metadata`.
 
-## Notes
+## Par étude
 
-```{r notes, results = "asis"}
-notes <- studies[[pick("notes_en", "notes_fr")]]
+La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents téléchargent
+le fichier depuis Dataverse ; `qes_download()` les enregistre, vérifiés par
+md5, dans un dossier de votre choix.
+
+```{r by-study, results = "asis"}
 for (i in seq_len(nrow(studies))) {
-  if (!is.na(notes[i]) && nzchar(notes[i])) {
-    cat(sprintf("- **`%s`**: %s\n", studies$study[i], notes[i]))
+  s <- studies[i, ]
+  f <- data_file[i, ]
+  d <- docs[docs$study == s$study, ]
+  cat(sprintf("### `%s`%s%s {#%s}\n\n", s$study, colon, title[i], s$study))
+  cat(sprintf("- **%s**%s%s%s%s%s%s\n", pick("Study", "Étude"), colon,
+              label("family", s$family), semi, label("study_design", s$study_design), semi,
+              s[[pick("target_population_en", "target_population_fr")]]))
+  cat(sprintf("- **%s**%s[%s](%s), %s, version %s%slicence [%s](%s)\n", pick("Deposit", "Dépôt"),
+              colon, s$doi_url, s$doi_url, s$publisher, s$dataset_version, semi,
+              label("licence", s$licence), s$licence_url))
+  cat(sprintf("- **%s**%s`%s` (%s), %s %s \u00d7 %s %s, md5 `%s`\n",
+              pick("Pinned data file", "Fichier de données fixé"), colon,
+              f$original_file_name, label("format", f$format), number(f$n_rows),
+              pick("rows", "lignes"), number(f$n_cols), pick("columns", "colonnes"), f$md5))
+  cat(sprintf("- **%s**%s%s\n", pick("Offline codebook", "Livre de codes hors ligne"), colon,
+              if (as.logical(s$metadata_shipped)) {
+                pick("yes, shipped with qesR (`qes_codebook()`, `qes_search()`)",
+                     "oui, livré avec qesR (`qes_codebook()`, `qes_search()`)")
+              } else {
+                pick("no; `qes_codebook()` builds it from your copy of the data file",
+                     "non ; `qes_codebook()` le construit à partir de votre copie du fichier de données")
+              }))
+  note <- s[[pick("notes_en", "notes_fr")]]
+  if (!is.na(note) && nzchar(note)) {
+    cat(sprintf("- **%s**%s%s\n", "Note", colon, note))
   }
+  if (nrow(d)) {
+    cat(sprintf("- **%s** (`qes_docs(\"%s\")`)%s\n", "Documents", s$study, colon))
+    what <- paste0(label("role", d$role),
+                   ifelse(is.na(d$lang), "", paste0(", ", label("lang", d$lang))),
+                   ", ", toupper(d$format))
+    cat(sprintf("    - [%s](%s)%s%s\n", d$file_name, d$url, colon, what), sep = "")
+  }
+  cat(sprintf("- **%s**%s`qes_cite(\"%s\")`\n\n", pick("Cite", "Citer"), colon, s$study))
 }
-```
-
-## Documents
-
-Livres de codes, questionnaires et rapports déposés avec chaque étude, tels
-que les liste `qes_docs()`. Les liens téléchargent le fichier depuis Dataverse.
-
-```{r docs}
-knitr::kable(data.frame(
-  code = paste0("`", docs$study, "`"),
-  document = sprintf("[%s](%s)", docs$file_name, docs$url),
-  role = label("role", docs$role),
-  lang = label("lang", docs$lang),
-  format = toupper(docs$format)
-), col.names = if (fr) {
-  c("Code", "Document", "Rôle", "Langue", "Format")
-} else {
-  c("Code", "Document", "Role", "Language", "Format")
-})
 ```
 
 ## Citer

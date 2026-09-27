@@ -1,16 +1,35 @@
 name: pkgdown
 
+# Builds and checks the website on every push to main and every pull request.
+# Publishing to gh-pages is the maintainer's action: it happens only on a
+# manual run ("Run workflow") with `deploy` ticked, never on push, in a
+# separate job that alone has write access. Release checklist: deploy only
+# after qesR is accepted on CRAN, since the site tells readers to
+# install.packages("qesR").
+
 "on":
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Publish the built site to gh-pages"
+        type: boolean
+        default: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
+    env:
+      # The analysis articles read the full data files when the site is built.
+      # They go through qesR's disk cache, which is kept between runs and keyed
+      # on the pinned checksums, so Dataverse sees each file once per pin.
+      QESR_CACHE_DIR: /home/runner/.cache/qesR-site
+      QESR_LANG: en
 
     steps:
       - name: Checkout
@@ -27,18 +46,57 @@ jobs:
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown
+          extra-packages: any::pkgdown, any::yaml, any::xml2
           needs: website
+
+      - name: Restore the qesR download cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.QESR_CACHE_DIR }}
+          key: qesR-cache-${{ hashFiles('inst/extdata/catalog/files.csv') }}
+          # a changed catalog still reuses the files whose pin did not change
+          # (qesR checks each file's md5 and fetches only those that differ)
+          restore-keys: qesR-cache-
+
+      - name: Create the cache directory
+        run: mkdir -p "$QESR_CACHE_DIR"
 
       - name: Install qesR
         run: R CMD INSTALL .
+
+      - name: Check EN/FR article pairs
+        run: Rscript data-raw/check_vignette_pairs.R .
 
       - name: Build pkgdown site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
+      - name: Check the site
+        run: Rscript data-raw/check_site.R . docs
+
+      - name: Keep the built site for the deploy job
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: docs
+          include-hidden-files: true   # .nojekyll
+          retention-days: 1
+
+  deploy:
+    needs: pkgdown
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Get the built site
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: docs
+
       - name: Deploy to gh-pages
-        if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

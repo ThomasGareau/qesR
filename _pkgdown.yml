@@ -1,9 +1,15 @@
 url: https://thomasgareau.github.io/qesR/
 
+# The site is built locally or by .github/workflows/pkgdown.yml, and checked
+# by data-raw/check_site.R. It is published to gh-pages only by hand (the
+# workflow's manual run), never on push.
+
 template:
   bootstrap: 5
   light-switch: true
   bslib:
+    # Colours from the logo. Contrast on the light background: links 7.3:1,
+    # primary 5.7:1; in dark mode Bootstrap derives #68a4d5 (5.9:1).
     primary: "#0468b9"
     secondary: "#3e4b63"
     link-color: "#0357a0"
@@ -15,10 +21,16 @@ template:
 home:
   title: qesR
   description: >
-    Load Quebec Election Study data and related Quebec election surveys in R,
-    with study metadata, documents and citations.
+    Load the Quebec Election Studies and related Quebec election surveys in
+    R, pinned to their original files, with offline codebooks, bilingual
+    search and citations.
   sidebar:
     structure: [links, license, citation, authors, dev]
+  links:
+  - text: Aperçu en français (?qesR-fr)
+    href: reference/qesR-fr.html
+  - text: Quebec Election Studies (CECD)
+    href: https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/
 
 authors:
   Thomas Gareau-Paquette:
@@ -35,6 +47,8 @@ navbar:
     studies:
       text: Studies
       href: articles/studies.html
+    # Each entry of "Guides" has its French partner at the same position in
+    # "Guides (FR)"; data-raw/check_site.R checks it.
     guides:
       text: Guides
       menu:
@@ -46,16 +60,19 @@ navbar:
         href: articles/citations.html
       - text: Moving from qesR 0.4.4
         href: articles/migrating-0.5.html
-      - text: Merged dataset
+      - text: Legacy merged file
         href: articles/merged-dataset.html
       - text: "-------"
-      - text: Examples
-      - text: Descriptive statistics
+      - text: Examples (built from the full data files)
+      - text: Respondents by study
         href: articles/analysis-descriptive.html
-      - text: Sovereignty attitudes
+      - text: Support for independence
         href: articles/analysis-sovereignty.html
-      - text: Vote choice over time
+      - text: Reported vote
         href: articles/analysis-vote-choice.html
+      - text: "-------"
+      - text: Function overview
+        href: reference/qesR-package.html
     guides_fr:
       text: Guides (FR)
       menu:
@@ -67,16 +84,19 @@ navbar:
         href: articles/fr-citations.html
       - text: Passer de qesR 0.4.4 à 0.5.0
         href: articles/fr-migrer-0.5.html
-      - text: Données fusionnées
+      - text: Fichier fusionné hérité
         href: articles/fr-donnees-fusionnees.html
       - text: "-------"
-      - text: Exemples
-      - text: Statistiques descriptives
+      - text: Exemples (construits à partir des fichiers complets)
+      - text: Répondants par étude
         href: articles/fr-analyse-descriptive.html
-      - text: Attitudes souverainistes
+      - text: Appui à l'indépendance
         href: articles/fr-analyse-souverainete.html
-      - text: Choix de vote
+      - text: Vote déclaré
         href: articles/fr-analyse-choix-vote.html
+      - text: "-------"
+      - text: Aperçu des fonctions
+        href: reference/qesR-fr.html
     news:
       text: Changelog
       href: news/index.html
@@ -86,29 +106,26 @@ navbar:
       aria-label: GitHub repository
 
 reference:
-- title: Package
+- title: Discover
+  desc: >
+    Start here: the package overview (in English, and in French on
+    `?qesR-fr`) and the offline catalog of the studies qesR can load, with
+    their documents. No network request unless you ask for one.
   contents:
   - qesR-package
   - qesR-fr
-- title: Studies, documents and citations
-  desc: >
-    The offline catalog: which studies qesR can load, their documents, how
-    to cite them and which file a result was read from. No network request
-    unless you ask for one.
-  contents:
   - qes_studies
   - qes_docs
-  - qes_cite
-  - qes_provenance
-- title: Data
+- title: Get data
   desc: >
-    Load a study, save its original files, or build the harmonized master
-    file.
+    Load a study from its pinned original file, save the original files
+    themselves, or build the legacy merged file of qesR 0.4.4. Data are
+    returned, never written into your workspace unless you ask.
   contents:
   - get_qes
   - qes_download
   - get_qes_master
-- title: Codebooks and search
+- title: Metadata and search
   desc: >
     What each variable measures, the exact question asked, in English and
     French, and which codes mean "don't know" or "refused". Offline for every
@@ -118,16 +135,31 @@ reference:
   - qes_question
   - qes_search
   - qes_missing
+- title: Harmonization (experimental, qesR 0.6.0)
+  desc: >
+    Not in this version. A cross-study engine is planned for qesR 0.6.0,
+    marked experimental: `qes_harmonize()`, driven by a reviewed
+    specification that `qes_spec()` shows, with a comparability grade for
+    each study and question, and `qes_design()` for weighted estimates.
+    Until then, compare studies from their own variables (see *Metadata and
+    search*); `get_qes_master()` is kept for code written for qesR 0.4.4.
+- title: Reproducibility
+  desc: >
+    Which file a result was read from, and how to cite qesR and each dataset.
+  contents:
+  - qes_provenance
+  - qes_cite
 - title: Cache
   desc: >
     Where downloaded files are kept, and how to list or delete them.
   contents:
   - qes_cache_info
   - qes_cache_clear
-- title: Legacy functions
+- title: Legacy and deprecated
   desc: >
-    Functions from qesR 0.4.4. They keep working, with the same arguments, and
-    will not be removed. `?qesR-deprecated` names the replacement of each one.
+    Functions from qesR 0.4.4. They keep working, with the same arguments,
+    and will not be removed. `?qesR-deprecated` gives the replacement of
+    each one.
   contents:
   - qesR-deprecated
   - get_qescodes
@@ -150,6 +182,10 @@ articles:
   - migrating-0.5
   - articles/merged-dataset
 - title: Examples
+  desc: >
+    Built when the site is built, from the full data files downloaded
+    through qesR's cache. Each estimate is computed within one study, with
+    that study's own weight.
   navbar: ~
   contents:
   - articles/analysis-descriptive
@@ -164,6 +200,10 @@ articles:
   - fr-migrer-0.5
   - articles/fr-donnees-fusionnees
 - title: Exemples en français
+  desc: >
+    Construits à la construction du site, à partir des fichiers de données
+    complets téléchargés par le cache de qesR. Chaque estimation est
+    calculée dans une seule étude, avec la pondération de cette étude.
   navbar: ~
   contents:
   - articles/fr-analyse-descriptive
