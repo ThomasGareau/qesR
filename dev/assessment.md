@@ -436,7 +436,7 @@ votechoice = c("cps_votechoice1", "qes_votechoice", "qvote", "q2")
 - **Inconsistent result in the master:** `get_qes_master` assigns before setting `saved_to` (master.R:1856-1881), so the assigned copy differs from the returned one.
 - **Stale docs:** the Rd files and README still say "global" (§3.2 row 5).
 - **Downstream dependency:** 53 of the paper's calls are bare `get_qes("qes20xx")` followed by use of the global object, plus 2 conditional calls. They rely on the v0.4.4 default `TRUE`. HEAD's `FALSE` default makes them fail with "object not found", and in `tableA1_modelsummary.R` a `tryCatch` hides that failure, so the QES table silently disappears.
-- **Fix:** keep the argument, because removing it changes the signature. Assign only into the caller's frame, and fix the alias path. Whether the default stays `FALSE`, as CRAN request 5 asks, or goes back to `TRUE` is an **open decision for the owner**. If it stays `FALSE`, record it in NEWS as a breaking change and have the paper pin v0.4.4 (d1faad6) or assign explicitly (`qes2012 <- get_qes("qes2012")`).
+- **Fix:** keep the argument, because removing it changes the signature. Assign only into the caller's frame, and fix the alias path. Whether the default stays `FALSE`, as CRAN request 5 asks, or goes back to `TRUE` is an **open decision for the owner**. If it stays `FALSE`, record it in NEWS as a breaking change and have the paper pin tag v0.4.4 (formerly commit d1faad6) or assign explicitly (`qes2012 <- get_qes("qes2012")`).
 
 **A2. Name collisions (medium).**
 - `get_question`, `get_preview` and `get_decon` collide with CRAN cesR, whose signatures differ, e.g. `cesR::get_preview(srvy, obs = 6, pos = 1)`.
@@ -800,14 +800,14 @@ On the owner's ideas:
 This section measures what the verified bugs do to the outputs the owner's paper actually uses. Full variable lists, counts and check commands are in [`dev/downstream-impact.md`](downstream-impact.md).
 
 **Method.**
-- **Version:** HEAD c154985, whose data output equals v0.4.4 (d1faad6). The WIP diff touches only the `assign_global` defaults, `get_question()` and the codebook roots.
+- **Version:** HEAD c154985, whose data output equals tag v0.4.4 (formerly commit d1faad6). The WIP diff touches only the `assign_global` defaults, `get_question()` and the codebook roots.
 - **What was compared:** default `get_qes()` calls for qes2012, qes2014, qes2018 and qes2022. Each was compared with the original `.sav`/`.dta` files downloaded with `?format=original`.
 - **Masters:** the tracked master (built in an English session) and a fresh v0.4.4 build (French session).
 - **Paper project:** read-only.
 
 **Fixing these bugs will change results when the paper's scripts are re-run.** It will certainly change every `get_qes_master()`-based output and the label, factor-text and type outputs of `get_qes()`. So:
 - Release the fixes as a new version, with NEWS listing the changed outputs.
-- The paper should pin the qesR version it used and record it in the replication output: an renv lockfile, or `remotes::install_github(..., ref = "d1faad6")`, plus `packageDescription("qesR")$RemoteSha`.
+- The paper should pin the qesR version it used and record it in the replication output: an renv lockfile, or `remotes::install_github(..., ref = "v0.4.4")`, plus `packageDescription("qesR")$RemoteSha`.
 
 ### 10.1 Per bug
 

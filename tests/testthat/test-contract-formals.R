@@ -9,7 +9,7 @@ test_that("all 14 v0.4.4 exports still exist and are functions", {
   }
 })
 
-test_that("formals() match d1faad6 up to the allowed differences", {
+test_that("formals() match v0.4.4 up to the allowed differences", {
   expected <- allowed_formals()
   for (f in v044_exports) {
     current <- as.list(formals(getExportedValue("qesR", f)))

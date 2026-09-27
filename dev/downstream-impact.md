@@ -4,7 +4,7 @@ Companion to `dev/assessment.md` §10. This file holds the full variable lists, 
 
 ## Scope and method
 
-- **Package version measured:** HEAD c154985. Its `R/` code differs from d1faad6 (v0.4.4 on `main`, the version installed for the paper) only in the `assign_global` defaults, `get_question()`'s lookup environment and the local-codebook search roots (`git -c core.fileMode=false diff d1faad6 c154985 -- R/`). So data output is the same as v0.4.4. One caveat: main also searches `getwd()/codebooks` and `getwd()/inst/codebooks`. That matters only in a working directory that has those folders. The paper project has neither.
+- **Package version measured:** HEAD c154985. Its `R/` code differs from v0.4.4 (v0.4.4 on `main`, the version installed for the paper) only in the `assign_global` defaults, `get_question()`'s lookup environment and the local-codebook search roots (`git -c core.fileMode=false diff v0.4.4 c154985 -- R/`). So data output is the same as v0.4.4. One caveat: main also searches `getwd()/codebooks` and `getwd()/inst/codebooks`. That matters only in a working directory that has those folders. The paper project has neither.
 - **Calls measured:** `get_qes()` with default arguments for qes2012, qes2014, qes2018 and qes2022, and `get_qes_master()` in two builds:
   - the tracked root `qes_master.csv`, 40,606 rows, built by older code in an English-message session;
   - a fresh v0.4.4 build, 39,132 rows, built in a French-message session.
@@ -23,7 +23,7 @@ Companion to `dev/assessment.md` §10. This file holds the full variable lists, 
 
 So:
 - Release the fixes as a new version (0.5.0) with a NEWS entry for each changed output. Do not patch them silently into 0.4.4.
-- Pin the qesR version the paper used: the commit SHA in an renv lockfile, or `remotes::install_github("ThomasGareau/qesR", ref = "d1faad6")`. Print `packageDescription("qesR")$RemoteSha` in the replication output.
+- Pin the qesR version the paper used: the commit SHA in an renv lockfile, or `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`. Print `packageDescription("qesR")$RemoteSha` in the replication output.
 
 ---
 
@@ -191,13 +191,13 @@ Tracked and fresh builds are identical on all of these unless stated.
 
 ### 2.2 A1: the `assign_global` default
 
-- **Installed version:** d1faad6, whose default is `assign_global = TRUE`.
+- **Installed version:** v0.4.4, whose default is `assign_global = TRUE`.
 - **HEAD c154985 flips the default to FALSE.** Under HEAD, the 55 bare calls fail with "object 'qes2012' not found". That changes no numbers, but:
   - `tableA1_modelsummary.R` wraps the QES block in a `tryCatch` (lines 100-257), so under HEAD the QES table and row disappear without an error. The only trace is `qes_status` in `tableA1_modelsummary.json`, written at line 881.
   - `build_fig_qes_ces_multinomial.R:78` also relies on the global object.
 - **Checks:**
   ```r
-  packageDescription("qesR")$RemoteSha   # expect d1faad6...
+  packageDescription("qesR")$RemoteSha   # expect v0.4.4...
   formals(qesR::get_qes)$assign_global   # expect TRUE
   ```
 

@@ -1,11 +1,11 @@
 # Contract data for the 14 v0.4.4 exports (slice S0b, design.md sections 2 and 8.1).
 #
-# Everything here was taken from qesR 0.4.4 at commit d1faad6: the formals from
-# the installed d1faad6 namespace, the legacy column names from its outputs.
+# Everything here was taken from qesR 0.4.4 at tag v0.4.4 (commit b181098, formerly d1faad6): the formals from
+# the installed v0.4.4 namespace, the legacy column names from its outputs.
 # These are frozen: change them only together with a documented, allowed
 # difference in design.md section 1.2 (constraint 1).
 
-# formals() of every v0.4.4 export at d1faad6.
+# formals() of every v0.4.4 export at tag v0.4.4.
 v044_formals <- list(
   download_codebook = alist(srvy = , dest_dir = tempdir(), file = NULL, quiet = FALSE, refresh = FALSE, overwrite = FALSE),
   format_codebook = alist(codebook = , layout = c("compact", "wide", "long")),
@@ -110,11 +110,11 @@ v044_codebook_files_cols <- c("file_id", "filename", "extension", "size", "downl
 v044_download_codebook_cols <- c(v044_codebook_files_cols, "local_path", "downloaded")
 
 # get_qes() column names per study: tests/testthat/fixtures/v044-get-qes-names.csv
-# (study, position, name, type, n_na). Built by running d1faad6 against the
+# (study, position, name, type, n_na). Built by running v0.4.4 against the
 # Dataverse originals: each column's name, its storage ("numeric", "character"
 # or "logical") and its is.na() count (added in slice S2b from the same R9
 # baseline); no labels or values. tests/testthat/fixtures/v044-get-decon-classes.csv
-# holds the class of every get_decon() column of d1faad6 per study, from the
+# holds the class of every get_decon() column of tag v0.4.4 per study, from the
 # same baseline. The file is UTF-8. It is read
 # with `encoding = "UTF-8"` only (no `fileEncoding`), so the bytes are kept and
 # marked UTF-8 instead of being re-encoded to the native locale; re-encoding

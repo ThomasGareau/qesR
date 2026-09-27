@@ -57,7 +57,7 @@ difference is an intended deletion, a blanked value or one of the reader
 changes listed here. To reproduce a 0.4.4 result exactly, install that
 version, for example in a separate library or an renv project:
 `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")` (the same
-code as the d1faad6 baseline of `dev/legacy-diff.md`), and record
+code as the v0.4.4 baseline of `dev/legacy-diff.md`), and record
 `packageDescription("qesR")$RemoteSha` with the results.
 
 ## Changed outputs: legacy master and `get_decon()`

@@ -5,7 +5,7 @@
 #   QESR_LEGACY_BASELINE=<dir> Rscript data-raw/build_legacy.R [--check]
 #
 # <dir> is the output directory of the R9 baseline run (qesR 0.4.4 at commit
-# d1faad6, fresh session, LANGUAGE=en). It must hold:
+# v0.4.4, fresh session, LANGUAGE=en). It must hold:
 #   legacy_master_source_map.csv            the `source_map` attribute of
 #                                           get_qes_master() (1,067 rows);
 #   legacy_get_qes_names_all_studies.csv    the column names get_qes()
@@ -20,7 +20,7 @@
 #         * master rows: the `source_map` attribute of the baseline master;
 #         * decon rows: qesR 0.4.4's get_decon() lookup (first exact, then
 #           case-insensitive match over its candidate lists, R/decon.R at
-#           d1faad6) applied to the 0.4.4 get_qes() column names, since 0.4.4
+#           tag v0.4.4) applied to the 0.4.4 get_qes() column names, since 0.4.4
 #           get_decon() recorded no source map. Its non-NA counts equal those
 #           of the baseline get_decon() output for every study and column;
 #   inst/extdata/legacy/sources.csv         the runtime table: the 27 source
@@ -62,7 +62,7 @@ master_columns <- c(
   "sovereignty", "federal_pid", "provincial_pid", "survey_weight"
 )
 
-# qesR 0.4.4 get_decon() lookup, verbatim from R/decon.R at d1faad6.
+# qesR 0.4.4 get_decon() lookup, verbatim from R/decon.R at tag v0.4.4.
 decon_lookup <- list(
   citizenship = c("cps_citizen", "cps_citizenship", "citizenship"),
   yob = c("cps_yob", "yob", "ageyear_1"),
@@ -103,7 +103,7 @@ master_rows <- data.frame(
   study = source_map$qes_code,
   source_variable = source_map$source_variable,
   kind = ifelse(source_map$harmonized_variable %in% master_columns, "core", "stacked"),
-  origin = "source_map attribute of get_qes_master(), qesR 0.4.4 (d1faad6)",
+  origin = "source_map attribute of get_qes_master(), qesR 0.4.4 (tag v0.4.4)",
   stringsAsFactors = FALSE
 )
 decon_rows <- do.call(rbind, lapply(studies, function(s) {
@@ -114,7 +114,7 @@ decon_rows <- do.call(rbind, lapply(studies, function(s) {
     study = s,
     source_variable = vapply(decon_lookup, function(c) pick_v044(nm, c), character(1)),
     kind = "core",
-    origin = "get_decon() lookup of qesR 0.4.4 (d1faad6) over its get_qes() names",
+    origin = "get_decon() lookup of qesR 0.4.4 (tag v0.4.4) over its get_qes() names",
     stringsAsFactors = FALSE
   )
 }))

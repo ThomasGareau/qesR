@@ -63,7 +63,7 @@ IDs from different lists never share a prefix:
    - [0.5.0] the 63 auto-stacked columns with invalid content are removed, and cells verified to be invalid are blanked;
    - [0.5.0] no respondent is dropped, whether by deduplication or by empty-row removal (qes2007_panel has 2,442 rows);
    - [0.7.0] it is rendered from the engine, and `vote_choice`/`turnout` mean reported vote everywhere;
-   - v0.4.4 numbers are reproducible only by installing d1faad6.
+   - v0.4.4 numbers are reproducible only by installing v0.4.4.
 9. **[0.5.0 study level, 0.6.0 cell level] Every result is versioned.**
    - `qes_provenance()` records the DOI, dataset version, file id, md5, catalog/dictionary/spec versions, spec hash and qesR version.
    - `qes_cite()` turns that into a citation.
@@ -134,14 +134,14 @@ Unchanged binding rules: all 14 current exports keep working; `get_qes()`/`get_q
 
 | # | Constraint | Mechanism |
 |---|---|---|
-| 1 | All 14 exports keep working; `get_qes()`/`get_qes_master()` keep their signatures; old names become soft-deprecated, kept indefinitely, documented in NEWS | • A `formals()` snapshot test covers all 14 exports against d1faad6, with an explicit allowed-diff table (§8.1): `assign_global` TRUE → FALSE in `get_qes`, `get_qes_master` and `get_decon` only (the codebook functions were already FALSE), plus `variables` and `lang` appended to `qes_codebook()`.<br>• The 11 legacy wrappers call internal implementations (§2.3) and emit `qesR_message_deprecated` once per session, in EN/FR, with no removal date.<br>• A registry `.qes_deprecated` drives both the messages and the contract test.<br>• NEWS has a section "Soft-deprecated names (kept indefinitely)". |
+| 1 | All 14 exports keep working; `get_qes()`/`get_qes_master()` keep their signatures; old names become soft-deprecated, kept indefinitely, documented in NEWS | • A `formals()` snapshot test covers all 14 exports against v0.4.4, with an explicit allowed-diff table (§8.1): `assign_global` TRUE → FALSE in `get_qes`, `get_qes_master` and `get_decon` only (the codebook functions were already FALSE), plus `variables` and `lang` appended to `qes_codebook()`.<br>• The 11 legacy wrappers call internal implementations (§2.3) and emit `qesR_message_deprecated` once per session, in EN/FR, with no removal date.<br>• A registry `.qes_deprecated` drives both the messages and the contract test.<br>• NEWS has a section "Soft-deprecated names (kept indefinitely)". |
 | 2 | `assign_global = FALSE`; visible return; explicit opt-in | • `return(data)`, with an `expect_visible()` test.<br>• Each canonical export is a thin wrapper `f <- function(<frozen args>) .f_impl(<args>, envir = parent.frame())`, and legacy wrappers call `.f_impl()` directly (§2.3), so opt-in assignment lands in the frame of whoever called the exported name.<br>• Attributes such as `saved_to` are set before assignment.<br>• A body scan of the installed namespace forbids `.GlobalEnv` (§8.1). |
 | 3 | CRAN: no writes outside `tempdir()` by default; opt-in `R_user_dir` cache; guarded network code; offline tests; 0/0/1 | • The session cache lives in `tempdir()`; the disk cache is used only by option.<br>• Every Rd example and CRAN vignette runs offline on `qes_demo` and shipped metadata. `--as-cran` runs `\donttest{}`, so the package has exactly **one** network example, on the `qes_studies()` page: `qes_studies(check_updates = TRUE)`, a metadata-only call, inside `if (curl::has_internet())` and `tryCatch(qesR_error_network = ...)`.<br>• Tests use `skip_on_cran()` + `skip_if_offline()` + `QESR_LIVE`.<br>• A test confirms that `globalenv()`, `getwd()`, `~` and `R_user_dir` are unchanged, using the `.qes_catalog()` fixture seam (§8.1). |
 | 4 | Light dependencies | • Imports: `curl`, `haven`, `jsonlite`, which is still three. In S2a `curl` comes in; `xml2` goes out in S3, when the offline codebook replaces the DDI path (§4.1).<br>• Specs are read with `utils::read.csv`/`read.dcf`, and md5 comes from `tools::md5sum`.<br>• Suggests: `testthat (>= 3.1.7)`, `withr`, `knitr`, `rmarkdown`, `survey`, `srvyr`.<br>• There is no tibble, yaml, rlang, cli, lifecycle, httr2, webfakes or dplyr. |
 | 5 | Bilingual EN/FR docs in sync; bilingual-aware messages | • One message table with a key-parity test.<br>• Target, level and grade-reason text is EN/FR in the spec, and validator V-S6 requires both.<br>• The harmonization reference is generated in both languages from one source.<br>• Hand-written vignette pairs share identical code chunks, checked in CI (vignette sources are not installed, so this cannot run under `R CMD check`).<br>• `?qesR-fr` is the French entry point (§9). |
 | 6 | No insecure TLS; never `readRDS` remote files | • The TLS fallback and shell-out are deleted in S0c ([A:D1]).<br>• The affine grammar is one regex that is never evaluated.<br>• Every file is md5-verified before use.<br>• Forbidden calls (`ssl_verifypeer`, `insecure`, `readRDS`, `load`, `system2`, `eval`, `parse`) are checked by a body scan of the installed namespace on CRAN and by a source grep in CI. |
 | 7 | Licence: no derived microdata rows; 2022 is CC BY-NC; a deposit needs permission | • `inst/extdata/qes_master.csv` is deleted.<br>• The demo and all fixtures are synthetic.<br>• qes2022 ships no dictionary rows, no label text and no aggregates (label hashes only), and a test enforces this.<br>• A one-time `qesR_message_licence` is shown per study.<br>• `inst/COPYRIGHTS` is added.<br>• The deposit is conditional slice HZ9. |
-| 8 | Reproducibility: versioned results | • Pinned `file_id` + md5 + dataset version.<br>• `VERSIONS` covers the catalog and dictionary.<br>• `SPEC` has semver plus a content hash, and CI enforces the bump rule.<br>• `qes_provenance()` and `qes_cite()`.<br>• A frozen spec can be passed as `spec = "<dir>"`.<br>• v0.4.4 is reproduced only by pinning d1faad6 (§5.11). |
+| 8 | Reproducibility: versioned results | • Pinned `file_id` + md5 + dataset version.<br>• `VERSIONS` covers the catalog and dictionary.<br>• `SPEC` has semver plus a content hash, and CI enforces the bump rule.<br>• `qes_provenance()` and `qes_cite()`.<br>• A frozen spec can be passed as `spec = "<dir>"`.<br>• v0.4.4 is reproduced only by pinning v0.4.4 (§5.11). |
 | 9 | Politeness to Dataverse; no personal information | • One request per cold study (46 for a master build today, 11 after).<br>• Retries with backoff and `Retry-After`, sequential requests, at least 1 s per host.<br>• The User-Agent is exactly `qesR/<ver> R/<ver>`, with no e-mail and no GitHub URL (the repository path contains the owner's name).<br>• The URL builder takes only catalog fields, and a test checks that (§4.6). |
 
 ---
@@ -215,7 +215,7 @@ Exporting either later is a MINOR change that needs no redesign: the signatures 
 
 ### 2.3 Back-compat map for all 14 current exports
 
-All `formals()` match d1faad6 except for the allowed differences listed in §1.2, constraint 1.
+All `formals()` match v0.4.4 except for the allowed differences listed in §1.2, constraint 1.
 
 **Frame rule (fixes [A:A1]).** Every export that can assign is a thin wrapper:
 
@@ -989,7 +989,7 @@ These are followed by the targets, then their companion columns (`__na` with `mi
 - **Freezing.** Copy `inst/extdata/harmonize/` from a release tag and pass `spec = "<dir>"`. SPEC's `Schema-Version`/`Engine-Min` say whether the installed engine can run it. There is no in-package archive.
 - **Provenance** is written next to any `save_path` as `<stem>_provenance.csv`.
 - **v0.4.4 results:**
-  - They can only be reproduced by installing d1faad6 (`remotes::install_github("ThomasGareau/qesR", ref = "d1faad6")`); there is no compatibility flag.
+  - They can only be reproduced by installing v0.4.4 (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`); there is no compatibility flag.
   - `data-raw/compare_legacy.R` runs the old and new versions in separate libraries. It writes an aggregates-only "What changed" table into NEWS: legacy column × study, with n valid, mean or distribution, and cause ID.
   - Changes the owner's master-based files will see:
     - 2014 ideology n goes from 1,053 to 1,195;
@@ -1004,7 +1004,7 @@ These are followed by the targets, then their companion columns (`__na` with `mi
 ### 5.12 What `get_qes_master()` becomes
 
 **0.5.0 (interim, OD2).** The old `master.R` code keeps running on the new reader, with deletions only and no new regexes or recodes.
-- **Frozen sources.** Source discovery is replaced by `data-raw/legacy_source_map.csv`: the per-(column, study) source variable that v0.4.4 actually chose, taken from the `source_map` attribute of a clean d1faad6 build (R9). The interim master selects exactly those variables, so label-text changes in the new reader cannot change which variable is chosen. This is still a deletion: runtime discovery is removed.
+- **Frozen sources.** Source discovery is replaced by `data-raw/legacy_source_map.csv`: the per-(column, study) source variable that v0.4.4 actually chose, taken from the `source_map` attribute of a clean v0.4.4 build (R9). The interim master selects exactly those variables, so label-text changes in the new reader cannot change which variable is chosen. This is still a deletion: runtime discovery is removed.
 - **Removed:**
   - [A:H1] stacking (63 columns, listed in `attr(, "removed_columns")` and in a once-per-session message);
   - dedup;
@@ -1021,7 +1021,7 @@ These are followed by the targets, then their companion columns (`__na` with `mi
   - `sovereignty_support`/`sovereignty` in 2007, 2008 and 1998 (partnership wording) and in 2012p ("pays souverain") (OD5);
   - `vote_choice_text` in 2018.
 - **Appended:** `vote_choice_timing` and `sovereignty_item`, per-study constants that document what those columns hold. They are kept in 0.7.0 (appended columns are never removed).
-- **Message:** a once-per-session message: "Harmonized values changed in qesR 0.5.0; see NEWS. Results from qesR ≤ 0.4.4 are reproducible by pinning d1faad6." (EN/FR).
+- **Message:** a once-per-session message: "Harmonized values changed in qesR 0.5.0; see NEWS. Results from qesR ≤ 0.4.4 are reproducible by pinning v0.4.4." (EN/FR).
 - **`get_decon()` interim:** the same mechanism. 2022 −99 is blanked, 2018 `turnout`/`votechoice` (wrong source, [A:H6]) are blanked, `partylean`/`party_best` are NA, and it has frozen sources.
 
 **Gate:** `compare_legacy.R` against the R9 baseline shows that every difference from v0.4.4 is an intended deletion or blank. This needs R1/R2 for the five uncached studies.
@@ -1244,7 +1244,7 @@ There is no insecure option.
 - `.qes_catalog()` (catalog). It serves a fixture catalog whose md5s match the synthetic fixtures written at test time, so every export, including `get_qes()` with a real-looking code and `get_qes_master()` with its default 11 studies, can run offline.
 
 **Contract tests** (written in S0b; tests that only S0c can satisfy are marked with `skip("fixed in S0c")` until then):
-- **`formals()` snapshot** of all 14 exports against d1faad6, with an allowed-diff table:
+- **`formals()` snapshot** of all 14 exports against v0.4.4, with an allowed-diff table:
   - `get_qes$assign_global`, `get_qes_master$assign_global` and `get_decon$assign_global`: `TRUE` → `FALSE`;
   - `qes_codebook`: `variables`, `lang` appended.
 - **Visibility:** `expect_visible()`.
@@ -1404,7 +1404,7 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   |---|---|---|---|
   | `get-started` | `demarrage` | `qes_demo`; then `qes_studies()`, `qes_search()`, `qes_codebook("qes2014")`. The `qes_spec()` and `qes_harmonize("qes_demo", ..., weight = ...)` sections are added in 0.6.0 | 0.5.0 |
   | `citations` | `fr-citations` | `qes_cite()` over the catalog (reviewer request 3) | 0.5.0 |
-  | `migrating-0.5` | `fr-migrer-0.5` | the §2.3 table, `x <- get_qes("x")`, pinning d1faad6 | 0.5.0 |
+  | `migrating-0.5` | `fr-migrer-0.5` | the §2.3 table, `x <- get_qes("x")`, pinning v0.4.4 | 0.5.0 |
   | `harmonization-reference` | `fr-reference-harmonisation` | generated (above) | 0.6.0 |
 
 - **EN/FR sync:**
@@ -1424,7 +1424,7 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   - *Soft-deprecated names (kept indefinitely)*: the table, including arguments that became no-ops (`refresh`, `get_question(full = FALSE)`) and changed meaning (`download_codebook(file =)`).
   - *New*.
   - *Security*.
-  - *Reproducibility*: "The owner's paper pinned v0.4.4 (d1faad6); results change."
+  - *Reproducibility*: "The owner's paper pinned tag v0.4.4 (formerly commit d1faad6); results change."
 - **`cran-comments.md`:**
   - opt-in assignment into `parent.frame()` is the pattern CRAN accepts;
   - the argument keeps its legacy name `assign_global` only for signature compatibility (reviewer request 5);
@@ -1626,7 +1626,7 @@ The integrated design was not re-scored. Revision 2 instead went through two cri
 
 ### 12.4 Critic review of revision 1: decision record
 
-Every finding was checked before it was applied. The validity findings were re-run offline (`scratchpad/design/apply-critics/v1.R`, `v2.R`, plus the 2018 questionnaire text and the 2014 Léger note), and the coherence findings were checked against `R/` and d1faad6. **No finding was rejected outright. Two were applied with a different fix (CV6, CV16). Where a critic offered alternatives, the choice is noted (CC-A8, CC-B2, CC-B5, CC-F5).** Two grades came out differently from the critic's proposal: CV2 is `comparable`, and CV22 stays `needs_review`.
+Every finding was checked before it was applied. The validity findings were re-run offline (`scratchpad/design/apply-critics/v1.R`, `v2.R`, plus the 2018 questionnaire text and the 2014 Léger note), and the coherence findings were checked against `R/` and v0.4.4. **No finding was rejected outright. Two were applied with a different fix (CV6, CV16). Where a critic offered alternatives, the choice is noted (CC-A8, CC-B2, CC-B5, CC-F5).** Two grades came out differently from the critic's proposal: CV2 is `comparable`, and CV22 stays `needs_review`.
 
 **Validity findings (CV1-CV23)**
 
@@ -1670,7 +1670,7 @@ Every finding was checked before it was applied. The validity findings were re-r
 | CC-A8 | One Rd page for 11 functions loses docs | Accepted. 9 legacy pages, grouped only where the arguments agree. |
 | CC-A9 | Legacy arguments whose meaning disappears | Accepted. `qesR_message_arg_ignored`; NEWS. |
 | CC-A10 | `variable_name_map_path` dropped silently | Accepted. |
-| CC-A11 | Allowed formals diffs must be explicit | Accepted (verified in d1faad6: TRUE only in `get_qes`, `get_qes_master`, `get_decon`). |
+| CC-A11 | Allowed formals diffs must be explicit | Accepted (verified in v0.4.4: TRUE only in `get_qes`, `get_qes_master`, `get_decon`). |
 | CC-B1 | ID namespace collisions | Accepted. Prefixes in the header table. |
 | CC-B2 | Argument order violated | Accepted. **Reordered** before first release; `quiet` added to `qes_studies()`. |
 | CC-B3 | Duplicated enums | Accepted. `enums.csv`; `study_design`/`wave_design`, `target_timing`/`wave_timing`/`var_timing`; one `label_source` enum. |
@@ -1752,7 +1752,7 @@ When this section was written, nothing below had been fetched. The item texts ke
   - 1998: 329987 panel (`a2a2b2fef6a2edb202beae0e63e59f0c`), 316121 CREATEC (`1aba610f71f1b5c46e03da2036e83330`) and 286331 CROP (`ceec0332eaa0eab117e4bcf5c4d8d672`).
 
   Purpose: twin choice, name-map checks, user-missing declarations, CP850 confirmation, `n_rows`, the dictionary, and 2007 `q12` = 97. **This is a hard prerequisite for S2b's release gate, S4 and S5 (0.5.0), not only for HZ5.**
-- **R2. v0.4.4 `get_qes()` column names** (name manifests) for qes2008, qes2012_panel, qes2007_panel, qes2018_panel and CROP. Claude builds them by running d1faad6 in a temporary library, after confirming that its requests carry no personal information (if they do, only the User-Agent is patched in that temporary copy). Also these questionnaires, fetched by Claude where public and requested from the owner otherwise:
+- **R2. v0.4.4 `get_qes()` column names** (name manifests) for qes2008, qes2012_panel, qes2007_panel, qes2018_panel and CROP. Claude builds them by running v0.4.4 in a temporary library, after confirming that its requests carry no personal information (if they do, only the User-Agent is patched in that temporary copy). Also these questionnaires, fetched by Claude where public and requested from the owner otherwise:
   - **CROP 2007-10:** the full `intvoterefa` wording and the `QP4` reference election per wave (Q-e);
   - **1998:** the CREATEC questionnaire, the definition of "francophone" (Q-f), and the weighting documentation per firm (`poids`, `ponder2`, `ponder3`, `ponderc`).
 
@@ -1772,7 +1772,7 @@ When this section was written, nothing below had been fetched. The item texts ke
   - C-Dem PIs, on redistributing qes2022 labels, wording and aggregates (OD3);
   - QES/CECD and C-Dem, on a harmonized deposit (OD14).
 - **R9. A clean v0.4.4 legacy baseline.**
-  - **What to run:** at d1faad6, in a fresh session with `LANGUAGE=en`, run `get_qes_master(assign_global = FALSE)` and `get_decon()` for each study it supports.
+  - **What to run:** at tag v0.4.4, in a fresh session with `LANGUAGE=en`, run `get_qes_master(assign_global = FALSE)` and `get_decon()` for each study it supports.
   - **What to save:** the returned objects' `source_map` attribute, `table(qes_code)` and column names, or the full `.rds` kept locally and never committed.
   - **Why the existing builds do not qualify:** the tracked `qes_master.csv` was built by older code, and the fresh 39,132-row build ran under French messages and lost panel rows ([A:D10]).
   - **What depends on it:** the frozen `legacy_source_map.csv` (S4) and the `compare_legacy.R` gate.
