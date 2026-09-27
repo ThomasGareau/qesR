@@ -84,6 +84,10 @@
     en = "get_qes_master() builds only the qesR 0.4.4 studies; %1$s will be added to the master in qesR 0.7.0. Read it on its own with get_qes().",
     fr = "get_qes_master() ne construit que les \u00e9tudes de qesR 0.4.4\u00a0; %1$s sera ajout\u00e9 au fichier fusionn\u00e9 dans qesR 0.7.0. Lisez-le seul avec get_qes()."
   ),
+  input_decon_study = c(
+    en = "get_decon() builds only the qesR 0.4.4 studies (and \"qes_demo\"), one at a time; %1$s is not one of them. Read other studies with get_qes().",
+    fr = "get_decon() ne construit que les \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb), une \u00e0 la fois\u00a0; %1$s n'en fait pas partie. Lisez les autres \u00e9tudes avec get_qes()."
+  ),
   input_save_dir = c(
     en = "Directory does not exist: %1$s.",
     fr = "Le dossier n'existe pas\u00a0: %1$s."
@@ -313,6 +317,53 @@
     en = "In %1$s(), `%2$s` no longer changes the result and is ignored. This note is shown once per session.",
     fr = "Dans %1$s(), `%2$s` ne change plus le r\u00e9sultat et est ignor\u00e9. Cette note s'affiche une fois par session."
   ),
+  legacy_values_changed = c(
+    en = paste0(
+      "Harmonized values changed in qesR 0.5.0: get_qes_master() and get_decon() ",
+      "keep every respondent and set values verified to be wrong to NA ",
+      "(attr(, \"legacy_na_columns\") lists them); see NEWS. Results from ",
+      "qesR <= 0.4.4 are reproducible by installing qesR 0.4.4 ",
+      "(remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
+      "This note is shown once per session."
+    ),
+    fr = paste0(
+      "Les valeurs harmonis\u00e9es ont chang\u00e9 dans qesR 0.5.0\u00a0: ",
+      "get_qes_master() et get_decon() gardent tous les r\u00e9pondants et ",
+      "mettent \u00e0 NA les valeurs v\u00e9rifi\u00e9es comme fausses ",
+      "(attr(, \"legacy_na_columns\") les \u00e9num\u00e8re)\u00a0; voir NEWS. ",
+      "Les r\u00e9sultats de qesR <= 0.4.4 se reproduisent en installant qesR ",
+      "0.4.4 (remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
+      "Cette note s'affiche une fois par session."
+    )
+  ),
+  legacy_master_columns = c(
+    en = paste0(
+      "get_qes_master() no longer appends the %1$s columns that qesR 0.4.4 built ",
+      "by stacking variables that share a name across studies; ",
+      "attr(, \"removed_columns\") lists them. Read those items from each study ",
+      "with get_qes(). This note is shown once per session."
+    ),
+    fr = paste0(
+      "get_qes_master() n'ajoute plus les %1$s colonnes que qesR 0.4.4 ",
+      "construisait en empilant des variables de m\u00eame nom d'une \u00e9tude ",
+      "\u00e0 l'autre\u00a0; attr(, \"removed_columns\") les \u00e9num\u00e8re. ",
+      "Lisez ces questions dans chaque \u00e9tude avec get_qes(). Cette note ",
+      "s'affiche une fois par session."
+    )
+  ),
+  legacy_decon_columns = c(
+    en = paste0(
+      "In get_decon(), party_best and partylean are NA in every study, and turnout ",
+      "and votechoice are NA except for qes2022: their qesR 0.4.4 sources were ",
+      "other questions. This note is shown once per session."
+    ),
+    fr = paste0(
+      "Dans get_decon(), party_best et partylean valent NA dans toutes les ",
+      "\u00e9tudes, et turnout et votechoice valent NA sauf pour qes2022\u00a0: ",
+      "leurs sources dans qesR 0.4.4 \u00e9taient d'autres questions. Cette ",
+      "note s'affiche une fois par session."
+    )
+  ),
 
   missing_untyped = c(
     en = "%1$s of %2$s variable(s) have no missing codes in the codebook and were left unchanged.",
@@ -446,26 +497,6 @@
   master_n_skipped = c(
     en = "Master dataset studies skipped: %1$s",
     fr = "\u00c9tudes ignor\u00e9es\u00a0: %1$s"
-  ),
-  master_n_dedup = c(
-    en = "Master dataset within-study duplicate respondents removed: %1$s",
-    fr = "R\u00e9pondants en double retir\u00e9s (au sein d'une m\u00eame \u00e9tude)\u00a0: %1$s"
-  ),
-  master_n_empty = c(
-    en = "Master dataset all-empty rows removed: %1$s",
-    fr = "Lignes enti\u00e8rement vides retir\u00e9es\u00a0: %1$s"
-  ),
-  master_n_extra = c(
-    en = "Master dataset cross-study variables added: %1$s",
-    fr = "Variables communes \u00e0 plusieurs \u00e9tudes ajout\u00e9es\u00a0: %1$s"
-  ),
-  master_n_renamed = c(
-    en = "Master dataset opaque legacy variables renamed: %1$s",
-    fr = "Variables h\u00e9rit\u00e9es opaques renomm\u00e9es\u00a0: %1$s"
-  ),
-  master_map_saved = c(
-    en = "Master dataset variable name map saved to: %1$s",
-    fr = "Table de correspondance des noms enregistr\u00e9e dans\u00a0: %1$s"
   ),
   master_saved = c(
     en = "Master dataset saved to: %1$s",

@@ -8,7 +8,10 @@ get_decon(srvy = "qes2022", assign_global = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{srvy}{A qesR survey code. Defaults to \code{"qes2022"}. Codes are trimmed
-and case-insensitive.}
+and case-insensitive. The 11 studies of qesR 0.4.4 are available, and
+\code{"qes_demo"}, the synthetic demonstration study; the studies added
+since (\code{qes1998_crop}, \code{qes1998_createc}) raise an error of class
+\code{qesR_error_input}.}
 
 \item{assign_global}{If TRUE, also assign the result as \code{decon} into the
 environment \code{get_decon()} was called from (the global environment only
@@ -17,21 +20,79 @@ when called at top level). Defaults to FALSE.}
 \item{quiet}{If TRUE, suppress informational output while downloading.}
 }
 \value{
-A data frame with standardized columns, returned visibly.
+A data frame with the 19 columns above, returned visibly, with
+the attributes \code{timing}, \code{source_map}, \code{legacy_na_columns} and
+\code{qes_provenance} (the file read; see \code{\link[=qes_provenance]{qes_provenance()}}).
 }
 \description{
-Builds a deconstructed teaching/testing dataset with standardized columns from a selected Quebec election study.
+Builds a small teaching dataset with 19 standardized columns from one
+Quebec Election Study of qesR 0.4.4.
 }
 \details{
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
 call in a session that leaves \code{assign_global} unset prints a one-time note
 about this change from qesR 0.4.4.
+
+Each column reads the variable qesR 0.4.4 read for that study (the
+\code{source_map} attribute; nothing is chosen by name at run time) and shows
+it as 0.4.4 did: a labelled column becomes a factor of its labels, other
+columns keep their values. Every respondent of the study is kept.
 }
+\section{Columns}{
+
+\code{qes_code}, then \code{citizenship}, \code{yob} (year of birth), \code{age}, \code{gender},
+\code{province_territory}, \code{education}, \code{political_interest}, \code{turnout},
+\code{votechoice}, \code{votechoice_text}, \code{party_best}, \code{partylean}, \code{fed_pid},
+\code{prov_pid}, \code{ideology}, \code{income}, \code{religion} and \code{born_canada}. Most of
+them are filled for \code{qes2022} only; a column with no source in a study is
+all \code{NA}.
+}
+
+\section{What changed in 0.5.0}{
+
+Values verified to be wrong are \code{NA}; other differences come from reading
+the original files (label case, repaired characters, doubles instead of
+integers; see NEWS). The values set to \code{NA}:
+\itemize{
+\item \code{turnout} and \code{votechoice} of every study but \code{qes2022}, whose sources in
+qesR 0.4.4 were other questions (\code{q1} and \code{q2}: satisfaction with
+democracy and the most important issue in \code{qes2018}, for example);
+\item \code{party_best} and \code{partylean} everywhere (a different construct in each
+study);
+\item the \code{-99} item nonresponse codes of \code{qes2022} in every column (the
+\code{ideology} mean is about 4.96, not 2.64).
+}
+
+\code{qes2022} \code{turnout} and \code{votechoice} are the campaign-period likelihood of
+voting and vote intention, as in 0.4.4; \code{attr(, "timing")} says so
+(\code{"pre"}). The attributes \code{source_map} and \code{legacy_na_columns} give the
+source of every column and the reason for every \code{NA} column (see
+\code{\link[=get_qes_master]{get_qes_master()}}). A message says so once per session (classes
+\code{qesR_message_values_changed} and \code{qesR_message_legacy_columns}).
+}
+
+\section{En français}{
+
+\code{get_decon()} construit un petit jeu de données d'enseignement de 19
+colonnes à partir d'une étude de qesR 0.4.4, en lisant les mêmes
+variables que qesR 0.4.4. Depuis qesR 0.5.0, les valeurs vérifiées comme
+fausses sont mises à \code{NA} : \code{turnout} et \code{votechoice} sauf pour \code{qes2022},
+\code{party_best} et \code{partylean} partout, et les codes \code{-99} de \code{qes2022}.
+Les autres différences viennent de la lecture des fichiers originaux
+(casse des étiquettes, caractères réparés, nombres réels au lieu
+d'entiers : voir NEWS). L'attribut \code{timing} indique que \code{turnout} et \code{votechoice} de \code{qes2022}
+sont mesurés pendant la campagne (\code{"pre"}).
+}
+
 \examples{
+# the synthetic demonstration study, offline
+decon <- get_decon("qes_demo", quiet = TRUE)
+head(decon)
+
 \donttest{
   decon <- get_decon("qes2022")
-  head(decon)
+  attr(decon, "timing")
 }
 }
 \seealso{

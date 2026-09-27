@@ -125,7 +125,10 @@ test_that("informational messages are classed and silenced by quiet", {
 test_that("every message get_qes() and get_qes_master() emit has a documented subclass", {
   local_fake_dataverse()
   local_qes_once()
-  documented <- c("qesR_message_download", "qesR_message_assign_default", "qesR_message_deprecated")
+  documented <- c(
+    "qesR_message_download", "qesR_message_assign_default", "qesR_message_deprecated",
+    "qesR_message_values_changed", "qesR_message_legacy_columns"
+  )
   seen <- list()
   collect <- function(expr) {
     withCallingHandlers(expr, message = function(m) {

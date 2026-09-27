@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-`qesR` offre un fichier fusionné inter-études via `get_qes_master()`.
+`get_qes_master()` empile les Études électorales québécoises de qesR 0.4.4 dans un seul data.frame, avec les 30 colonnes harmonisées de 0.4.4 : mêmes noms, même ordre, mêmes types. C'est le format hérité, figé et stable pour le code écrit pour 0.4.4.
 
 ```{r}
 library(qesR)
@@ -24,35 +24,42 @@ Par défaut, et avec `surveys = "all"`, `get_qes_master()` construit les 11 étu
 
 ## Construire la base fusionnée
 
+L'étude de démonstration synthétique fonctionne hors ligne :
+
+```{r}
+demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
+dim(demo_master)
+head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
+```
+
+Les vraies études sont lues à partir de leurs fichiers originaux retenus :
+
 ```{r, eval = FALSE}
 master <- get_qes_master(strict = FALSE)
 dim(master)
-head(master)
+table(master$qes_code)
 ```
 
-## Variables harmonisées
+## Construction
 
-Les champs harmonisés incluent la démographie (âge, genre, éducation, revenu), le choix de vote, l'identification partisane, les attitudes envers la souveraineté, les thermomètres de chefs, et plus encore. Utilisez `colnames(master)` pour voir la liste complète.
+- Chaque colonne lit la variable que qesR 0.4.4 lisait pour cette étude, et la convertit de la même façon. Les sources sont figées : rien n'est choisi d'après un nom au moment de l'exécution. `attr(master, "source_map")` donne la source de chaque colonne.
+- Tous les répondants de chaque fichier sont conservés : ni dédoublonnage, ni retrait des lignes vides. Les répondants des panels et des enquêtes transversales restent des lignes distinctes.
+- Les valeurs vérifiées comme fausses valent `NA` : par exemple les intentions de vote dans `vote_choice` (`qes2022`, CROP, `qes1998`), les questions sur la souveraineté autres que le référendum sur un pays indépendant, et `party_best` et `party_lean` partout. `attr(master, "legacy_na_columns")` énumère chaque colonne et étude qui vaut `NA` à dessein, avec la raison.
+- `vote_choice_timing` et `sovereignty_item` indiquent ce que contiennent `vote_choice` et `sovereignty_support` dans chaque étude.
+- qesR 0.4.4 ajoutait aussi 70 colonnes en empilant des variables de même nom d'une étude à l'autre ; elles mêlaient des questions différentes et ne sont plus construites (`attr(master, "removed_columns")`). Lisez ces questions dans chaque étude avec `get_qes()`.
 
-La fusion applique aussi :
-
-- une normalisation des valeurs pour rendre les réponses comparables
-- la dérivation de `age_group` lorsque l'âge ou l'année de naissance est disponible
-- la conservation des répondants panel et non-panel (pas de fusion entre études)
-- le renommage explicite des variables héritées opaques (par ex. `q10`, `q16`, `voteprec`) vers des noms lisibles
-- le suivi de la provenance via `attr(master, "source_map")`
-- la liste des variables inter-études ajoutées via `attr(master, "crossstudy_variables_added")`
-- la table de correspondance anciens/nouveaux noms via `attr(master, "variable_name_map")`
-
-La déduplication s'applique uniquement à l'intérieur d'un même code d'étude
-(pas entre enquêtes panel et non-panel).
-
-```{r, eval = FALSE}
-name_map <- attr(master, "variable_name_map")
-head(name_map)
+```{r}
+head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable")])
+attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
+
+`attr(master, "legacy_column_map")` décrit chaque colonne (en anglais) et signale celles qui mêlent des instruments (`political_interest`, `age_group`, `education`). `survey_weight` est la pondération propre à chaque étude, sur sa propre échelle : ne combinez pas d'estimations pondérées entre études sans la remettre à l'échelle.
+
+Les résultats de qesR 0.4.4 ne se reproduisent qu'avec cette version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
 
 ## Exporter
+
+`save_path` écrit un fichier CSV en UTF-8 ou un fichier RDS, et à côté `<racine>_provenance.csv`, le relevé du fichier lu pour chaque étude.
 
 ```{r, eval = FALSE}
 get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)

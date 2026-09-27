@@ -33,8 +33,9 @@ install.packages("/path/to/qesR", repos = NULL, type = "source")
 
 ## Merged Dataset
 
-`qesR` includes a harmonized merged file across studies through
-`get_qes_master()`.
+`get_qes_master()` stacks the 11 studies of qesR 0.4.4 in one data frame
+with the 30 harmonized columns of 0.4.4 (same names, order and types). It is
+the fixed legacy schema: kept stable for code written for 0.4.4.
 
 ```r
 library(qesR)
@@ -43,20 +44,32 @@ master <- get_qes_master(strict = FALSE)
 head(master)
 ```
 
-The merged data can be saved directly:
+The merged data can be saved directly (UTF-8 CSV or RDS, with a
+`<stem>_provenance.csv` file recording the file read for each study):
 
 ```r
 get_qes_master(save_path = "qes_master.csv", strict = FALSE)
 get_qes_master(save_path = "qes_master.rds", strict = FALSE)
 ```
 
-Harmonized fields include demographics (age, gender, education, income), vote choice, party identification, sovereignty attitudes, leader thermometers, and more. Use `colnames(master)` to see the full list.
+Each column reads the variable qesR 0.4.4 read (`attr(master, "source_map")`)
+and converts it as 0.4.4 did. Since qesR 0.5.0 the master changes by
+deletion, apart from the reader changes listed in NEWS (for example
+`qes2018` `turnout` is 0, not `NA`, for respondents who said they did not
+vote):
 
-Source-variable provenance is available via `attr(master, "source_map")` and old-to-new variable name mappings via `attr(master, "variable_name_map")`.
+- every respondent of every file is kept (no de-duplication, no removal of
+  empty rows; `qes2007_panel` has its 2,442 respondents);
+- the 70 columns 0.4.4 appended by stacking variables that share a name
+  across studies are gone (`attr(master, "removed_columns")`);
+- values verified to be wrong are `NA`, for example vote intentions in
+  `vote_choice`, sovereignty questions other than the referendum on an
+  independent country, and `party_best`/`party_lean` everywhere;
+  `attr(master, "legacy_na_columns")` lists each column and study with the
+  reason, and `attr(master, "legacy_column_map")` says what each column means.
 
-Deduplication in `get_qes_master()` is applied **within the same survey code**
-only (e.g., duplicate IDs inside one file). Respondents are not removed across
-panel vs. non-panel studies.
+Results from qesR 0.4.4 are reproducible only with that version
+(`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
 
 ## Website
 
@@ -122,13 +135,13 @@ head(qes2018, 10)
 decon <- get_decon("qes2022")
 head(decon)
 
-# harmonized stacked master dataset across studies
+# legacy stacked master dataset across studies (the qesR 0.4.4 columns)
 qes_master <- get_qes_master()
 head(qes_master)
-# includes derived age_group and harmonized education/turnout/vote fields
 
-# inspect which source variable fed each harmonized field
+# which source variable fed each column, and why a column is NA
 head(attr(qes_master, "source_map"))
+head(attr(qes_master, "legacy_na_columns"))
 ```
 
 ### Workspace, messages and errors

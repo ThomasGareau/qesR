@@ -73,6 +73,25 @@
   dict_shard_rules = c(
     study = "chr", variable = "chr", value = "chr", missing_type = "chr",
     evidence = "chr"
+  ),
+  # the interim legacy builders (inst/extdata/legacy/, R/legacy.R)
+  legacy_sources = c(
+    profile = "chr", column = "chr", study = "chr", source_variable = "chr"
+  ),
+  legacy_blanks = c(
+    profile = "chr", column = "chr", study = "chr", codes = "chr",
+    cause = "chr", basis = "chr"
+  ),
+  legacy_studies = c(
+    study = "chr", vote_choice_timing = "chr", sovereignty_item = "chr",
+    decon_vote_timing = "chr"
+  ),
+  legacy_columns = c(
+    column = "chr", target = "chr", definition = "chr", flag = "chr",
+    note = "chr"
+  ),
+  legacy_removed = c(
+    column = "chr", studies = "chr", source_variables = "chr"
   )
 )
 

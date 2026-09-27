@@ -22,7 +22,6 @@ test_that("get_qes_master() keeps the 30 documented columns, in order", {
 
 test_that("get_qes_master() keeps the v0.4.4 type of every documented column", {
   local_qes_notices_shown()
-  skip("fixed in S4: a column with no valid source is all-NA of its v0.4.4 type, not logical")
   local_fake_dataverse()
   master <- get_qes_master(quiet = TRUE)
   n <- length(v044_master_cols)
@@ -35,6 +34,10 @@ test_that("get_qes_master() keeps every v0.4.4 attribute name", {
   local_fake_dataverse()
   master <- get_qes_master(quiet = TRUE)
   expect_true(all(v044_master_attrs %in% names(attributes(master))))
+  # and adds those of design.md section 2.4
+  expect_true(all(c("legacy_na_columns", "legacy_column_map", "removed_columns", "qes_provenance", "qes_spec") %in%
+    names(attributes(master))))
+  expect_identical(nrow(master), sum(attr(master, "qes_provenance")$n_rows))
   expect_identical(sort(attr(master, "loaded_surveys")), sort(v044_qescodes))
   expect_identical(attr(master, "failed_surveys"), character(0))
 })
@@ -53,7 +56,6 @@ test_that("get_qes_master() records failures and keeps the other studies", {
 
 test_that("get_qes_master() never drops a row", {
   local_qes_notices_shown()
-  skip("fixed in S4: no de-duplication and no empty-row removal (P5)")
   dup <- fake_study_data("qes2018")
   dup$quest[2] <- dup$quest[1]
   dup[3, c("age", "sexe", "q1", "poids")] <- NA

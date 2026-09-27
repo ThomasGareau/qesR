@@ -86,7 +86,7 @@ qes_provenance(qes2018)
 qes_cite(qes2018)
 ```
 
-## Build a harmonized master dataset
+## Build the legacy master dataset
 
 ```{r, eval = FALSE}
 master <- get_qes_master(
@@ -102,7 +102,7 @@ head(master)
 
 - Surveys are loaded in labelled form with available variable/value labels.
 - Codebook metadata can be inspected in compact, wide, or long layout.
-- Merged data includes harmonized variables, de-duplication, and source-map tracing.
+- The merged data keeps the harmonized columns of qesR 0.4.4, every respondent of every file, and the source of every column (`attr(master, "source_map")`); values verified to be wrong are `NA` (`attr(master, "legacy_na_columns")`).
 
 ## Messages and errors
 

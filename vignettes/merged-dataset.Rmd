@@ -13,7 +13,7 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-`qesR` provides a merged harmonized dataset through `get_qes_master()`.
+`get_qes_master()` stacks the Quebec Election Studies of qesR 0.4.4 in one data frame, with the 30 harmonized columns of 0.4.4: same names, order and types. It is the fixed legacy schema, kept stable for code written for 0.4.4.
 
 ```{r}
 library(qesR)
@@ -24,47 +24,42 @@ By default, and with `surveys = "all"`, `get_qes_master()` builds the 11 studies
 
 ## Build merged data
 
+The synthetic demonstration study runs offline:
+
+```{r}
+demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
+dim(demo_master)
+head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
+```
+
+The real studies are read from their pinned original files:
+
 ```{r, eval = FALSE}
 master <- get_qes_master(strict = FALSE)
 dim(master)
-head(master)
+table(master$qes_code)
 ```
 
-## What it harmonizes
+## How it is built
 
-Harmonized fields include demographics (age, gender, education, income), vote choice, party identification, sovereignty attitudes, leader thermometers, and more. Use `colnames(master)` to see the full list.
+- Each column reads the variable qesR 0.4.4 read for that study, and converts it as 0.4.4 did. The sources are frozen: nothing is chosen by name when you run it. `attr(master, "source_map")` gives the source of every column.
+- Every respondent of every file is kept: there is no de-duplication and no removal of empty rows. Panel and cross-section respondents stay separate rows.
+- Values verified to be wrong are `NA`: for example vote intentions in `vote_choice` (`qes2022`, CROP, `qes1998`), sovereignty questions other than the referendum on an independent country, and `party_best` and `party_lean` everywhere. `attr(master, "legacy_na_columns")` lists each column and study that is `NA` by design, with the reason.
+- `vote_choice_timing` and `sovereignty_item` say what `vote_choice` and `sovereignty_support` hold in each study.
+- qesR 0.4.4 also appended 70 columns by stacking variables that share a name across studies; they mixed different questions and are no longer built (`attr(master, "removed_columns")`). Read those items from each study with `get_qes()`.
 
-`get_qes_master()` also keeps the merge logic explicit:
-
-- uses cross-study variable maps and value normalization for comparability
-- derives `age_group` where age or year-of-birth is available
-- retains panel and non-panel respondents as separate observations
-- renames opaque legacy variables (for example `q10`, `q16`, `voteprec`) to readable merged names
-- stores source-variable provenance in `attr(master, "source_map")`
-- stores the list of added cross-study variables in `attr(master, "crossstudy_variables_added")`
-- stores old-to-new variable renaming in `attr(master, "variable_name_map")`
-
-It also records source-variable provenance:
-
-```{r, eval = FALSE}
-source_map <- attr(master, "source_map")
-head(source_map)
+```{r}
+head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable")])
+attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
 
-```{r, eval = FALSE}
-name_map <- attr(master, "variable_name_map")
-head(name_map)
-```
+`attr(master, "legacy_column_map")` says what each column means and flags the columns that mix instruments (`political_interest`, `age_group`, `education`). `survey_weight` is each study's own weight on its own scale: do not pool weighted estimates across studies without rescaling.
 
-## Quality controls in merge
-
-`get_qes_master()` applies:
-
-- respondent de-duplication within the same survey code
-- derived age groups where age or year-of-birth are available
-- removal of rows empty across harmonized variables
+Results from qesR 0.4.4 are reproducible only with that version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
 
 ## Save merged data
+
+`save_path` writes a UTF-8 CSV file or an RDS file, and next to it `<stem>_provenance.csv`, the record of the file read for each study.
 
 ```{r, eval = FALSE}
 get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)

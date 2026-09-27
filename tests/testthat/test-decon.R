@@ -82,3 +82,64 @@ test_that("get_decon() column classes are those of 0.4.4 (numbers stay numbers)"
   family <- function(x) if (is.factor(x)) "factor" else if (is.numeric(x)) "numeric" else class(x)[1]
   expect_identical(vapply(out[names(v044)], family, character(1)), v044)
 })
+
+# Slice S4: frozen sources and blanks (design.md sections 2.3 and 5.12).
+
+test_that("qes2022 -99 codes are NA in every column, and their factor level goes", {
+  dat <- data.frame(
+    cps_ideoself_1 = c(5, -99, 6),
+    cps_yob = haven::labelled(c(51, -99, 1), labels = c("-99" = -99, "1920" = 1, "1970" = 51)),
+    cps_income = c(77000, -99, 0),
+    cps_votechoice1 = haven::labelled(c(1, 2, 1), labels = c("CAQ" = 1, "PQ" = 2)),
+    cps_partybest = haven::labelled(c(1, 2, 1), labels = c("CAQ" = 1, "PQ" = 2)),
+    cps_votelean = c(1, NA, 2)
+  )
+  out <- qesR:::.build_decon(dat, srvy = "qes2022")
+  expect_identical(as.numeric(out$ideology), c(5, NA, 6))
+  expect_identical(mean(out$ideology, na.rm = TRUE), 5.5)
+  expect_identical(as.character(out$yob), c("1970", NA, "1920"))
+  expect_false("-99" %in% levels(out$yob))
+  expect_s3_class(out$yob, "factor")
+  expect_identical(as.numeric(out$income), c(77000, NA, 0))
+  # the vote intention is kept for qes2022 (OD9), and says so
+  expect_identical(as.character(out$votechoice), c("CAQ", "PQ", "CAQ"))
+  expect_identical(attr(out, "timing")[["votechoice"]], "pre")
+  expect_identical(attr(out, "timing")[["turnout"]], "pre")
+  # party_best and partylean are NA everywhere
+  expect_true(all(is.na(out$party_best)))
+  expect_true(all(is.na(out$partylean)))
+  na <- attr(out, "legacy_na_columns")
+  expect_identical(na$n_cells[na$column == "ideology"], 1L)
+  expect_identical(na$reason[na$column == "party_best"], "blanked")
+  src <- attr(out, "source_map")
+  expect_identical(src$source_variable[src$column == "ideology"], "cps_ideoself_1")
+})
+
+test_that("qes2018 turnout and votechoice are NA: their 0.4.4 sources were other questions", {
+  dat <- data.frame(
+    q1 = haven::labelled(c(1, 2), labels = c("Tres satisfait" = 1, "Assez satisfait" = 2)),
+    q2 = haven::labelled(c(1, 2), labels = c("Economie" = 1, "Sante" = 2)),
+    qsexe = c(1, 2)
+  )
+  out <- qesR:::.build_decon(dat, srvy = "qes2018")
+  expect_true(all(is.na(out$turnout)))
+  expect_true(all(is.na(out$votechoice)))
+  expect_s3_class(out$turnout, "factor")
+  expect_length(levels(out$turnout), 0L)
+  expect_identical(unname(attr(out, "timing")), rep(NA_character_, 3))
+  expect_identical(as.character(out$gender), c("Masculin", "Feminin"))
+})
+
+test_that("get_decon() runs on the demo offline and refuses the studies added since 0.4.4", {
+  local_qes_notices_shown()
+  log <- local_fake_dataverse()
+  decon <- get_decon("qes_demo", quiet = TRUE)
+  expect_identical(names(decon), v044_decon_cols)
+  expect_identical(nrow(decon), 60L)
+  expect_true(all(decon$qes_code == "qes_demo"))
+  expect_true(all(is.na(decon$votechoice)))
+  expect_identical(attr(decon, "qes_provenance")$study, "qes_demo")
+  expect_error(get_decon("qes1998_crop", quiet = TRUE), class = "qesR_error_input")
+  expect_error(get_decon("all", quiet = TRUE), class = "qesR_error_input")
+  expect_length(log$urls, 0L)
+})

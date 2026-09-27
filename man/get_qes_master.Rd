@@ -2,7 +2,7 @@
 % Please edit documentation in R/master.R
 \name{get_qes_master}
 \alias{get_qes_master}
-\title{Build a Harmonized Stacked Master QES Dataset}
+\title{Build the Legacy Stacked Master QES Dataset}
 \usage{
 get_qes_master(
   surveys = NULL,
@@ -19,7 +19,8 @@ Defaults to the 11 studies of qesR 0.4.4; \code{"all"} on its own means the
 same 11. Studies added to the catalog since (\code{qes1998_crop},
 \code{qes1998_createc}) are not in the master yet and raise an error: their
 respondents are already in \code{qes1998}. Read them with \code{\link[=get_qes]{get_qes()}}. Codes
-are trimmed and case-insensitive.}
+are trimmed and case-insensitive. \code{"qes_demo"} builds the master of the
+synthetic demonstration study, offline.}
 
 \item{assign_global}{If TRUE, also assign the result as \code{object_name} into
 the environment \code{get_qes_master()} was called from (the global environment
@@ -33,39 +34,148 @@ only when called at top level), after \code{saved_to} is set. Defaults to FALSE.
 \item{strict}{If TRUE, stop when any study fails. If FALSE, return partial results and
 record failures in attributes.}
 
-\item{save_path}{Optional output path for writing the master file. Use \code{.rds} for RDS
-output; otherwise CSV is written. When opaque legacy variables are renamed
-in the merged output, an old-to-new variable map is also written alongside
-the saved file.}
+\item{save_path}{Optional output path for writing the master file: \code{.rds}
+writes an RDS file, any other extension a UTF-8 CSV file. The
+provenance of every study read is written next to it, as
+\verb{<stem>_provenance.csv}.}
 }
 \value{
-A harmonized stacked data frame with attributes:
-\code{source_map}, \code{loaded_surveys}, \code{failed_surveys}, and
-\code{harmonized_variables}. Additional attributes
-\code{duplicates_removed}, \code{empty_rows_removed}, and
-\code{variable_name_map} report row filtering and renaming details.
-When \code{save_path} is provided, the output path is stored in \code{saved_to};
-if renaming is applied, the sidecar mapping file path is stored in
-\code{variable_name_map_path}. \code{failed_surveys} holds one line per failed
-study, \code{"<code>: <reason>"}. qesR's own part of the reason is always in
-English, whatever the message language; a root cause raised by R itself
-(for example a download error) keeps the text R reported. The full
-conditions are in the \code{failures} field of the \code{strict = TRUE} error. The data frame is returned visibly.
+A data frame, returned visibly: the 30 documented columns of
+qesR 0.4.4 in their order and type, then \code{vote_choice_timing} and
+\code{sovereignty_item}. Attributes:
+\itemize{
+\item \code{source_map}: the source variable of every column of every study
+(\code{qes_code}, \code{qes_year}, \code{qes_name_en}, \code{harmonized_variable},
+\code{source_variable}, \code{file_md5});
+\item \code{loaded_surveys}, \code{failed_surveys}: the studies read, and one line per
+failed study, \code{"<code>: <reason>"}. qesR's own part of the reason is
+always in English, whatever the message language; a root cause raised
+by R itself (for example a download error) keeps the text R reported.
+The full conditions are in the \code{failures} field of the
+\code{strict = TRUE} error;
+\item \code{duplicates_removed} and \code{empty_rows_removed}: always \code{0L};
+\item \code{harmonized_variables}: the columns after \code{qes_code}, \code{qes_year} and
+\code{qes_name_en};
+\item \code{crossstudy_variables_added} (always empty) and \code{variable_name_map}
+(no rows): kept for code written for 0.4.4;
+\item \code{legacy_na_columns}: one row per column and study whose cells are \code{NA}
+by design (\code{column}, \code{study}, \code{reason} \code{"no_source"} or \code{"blanked"},
+\code{n_cells}, \code{cause}, \code{basis}); \code{n_cells} is the whole column for
+\code{"no_source"} and the number of values set to \code{NA} for \code{"blanked"};
+\item \code{legacy_column_map}: what each column means (\code{column}, \code{target},
+\code{definition}, \code{studies_changed}, \code{flag}, \code{note}); \code{flag} is
+\code{"approximate"} for columns that mix instruments;
+\item \code{removed_columns}: the names of the 70 columns no longer built;
+\item \code{qes_provenance}: the file read for each study (see
+\code{\link[=qes_provenance]{qes_provenance()}});
+\item \code{qes_spec}: records that the frozen legacy tables, not a
+harmonization spec, built the data;
+\item \code{saved_to}: the output path when \code{save_path} is given.
+}
 }
 \description{
-Downloads multiple Quebec Election Study datasets, harmonizes shared variables,
-stacks all rows into one master data frame, de-duplicates respondents within
-the same survey code, and drops rows that are empty across harmonized variables.
+Reads the Quebec Election Studies of qesR 0.4.4 and stacks them in one
+data frame with the 0.4.4 columns: one row per respondent of each study,
+and the same 30 harmonized columns for every study.
 }
 \details{
+\code{get_qes_master()} is the fixed legacy schema of qesR 0.4.4. It is kept
+stable, with the same arguments, columns and column types, so that code
+written for 0.4.4 keeps working; new work should use the study files
+themselves (\code{\link[=get_qes]{get_qes()}}) and, from qesR 0.6.0, the harmonization engine.
+Its values are those of 0.4.4 except where they were wrong: in qesR 0.5.0
+the master changes by deletion, apart from the reader changes listed
+(see \emph{What changed in 0.5.0}).
+
 \code{get_qes_master()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{master <- get_qes_master()}. The first call
 in a session that leaves \code{assign_global} unset prints a one-time note about
 this change from qesR 0.4.4.
 }
+\section{How it is built}{
+
+Each study is read with \code{\link[=get_qes]{get_qes()}} from its pinned original file. For
+each column, the master reads the variable qesR 0.4.4 read (the frozen
+\code{source_map} attribute: nothing is chosen by name at run time) and
+converts it as 0.4.4 did. Every row of every file is kept: there is no
+de-duplication and no removal of empty rows, so each study contributes
+exactly its number of respondents (\code{qes2007_panel}: 2,442 rows).
+}
+
+\section{What changed in 0.5.0}{
+
+Results from qesR 0.4.4 can be reproduced only by installing that version
+(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}).
+Compared with 0.4.4:
+\itemize{
+\item \strong{Rows.} No respondent is dropped. qesR 0.4.4 removed 380
+\code{qes2007_panel} respondents (its \code{quest} number repeats across the two
+subsamples) and one \code{qes_crop_2007_2010} respondent as "duplicates".
+\item \strong{Columns removed.} The 70 columns 0.4.4 appended after the 30
+documented ones, by stacking raw variables that share a name across
+studies (for example \code{vote_federal_2006}, which held satisfaction with
+democracy for \code{qes2012}), are gone; \code{attr(, "removed_columns")} lists
+them. Read those items from each study with \code{\link[=get_qes]{get_qes()}}.
+\item \strong{Cells blanked.} Values verified to be wrong are \code{NA}:
+\code{party_best} and \code{party_lean} everywhere; \code{vote_choice} and \code{turnout}
+where the source is a vote intention (\code{qes2022}, \code{qes_crop_2007_2010},
+\code{qes1998}) and \code{qes2007_panel} respondents not reached after the
+election; \code{sovereignty_support} and \code{sovereignty} where the question is
+not the referendum on an independent country; \code{language} where the
+source is the interview language (\code{qes2014}, \code{qes2022}); raw codes and
+\code{-99} codes left in \code{income} and \code{religion}; \code{political_interest} of
+\code{qes2018} (raw 1-4 codes) and \code{qes2012_panel}; \code{ideology} of \code{qes2014}
+(its 0 and 10 answers were lost); \code{born_canada} of \code{qes2018};
+\code{vote_choice_text} of \code{qes2018} and \code{qes2022}; \code{education} of \code{qes1998};
+and "don't know" and refusal labels left in \code{born_canada}, \code{language},
+\code{education}, \code{income} and \code{religion}. \code{vote_choice} keeps the 0.4.4
+category "Don't know / Refused" until 0.7.0. \code{attr(, "legacy_na_columns")} lists every blanked column
+of every study, with the number of cells and the reason.
+\item \strong{Columns appended.} \code{vote_choice_timing} (\code{"post"}: the vote reported
+after the election) and \code{sovereignty_item} (\code{"sov_indep"}: the
+referendum on an independent country) say what \code{vote_choice} and
+\code{sovereignty_support} hold in each study, one value per study; they
+are \code{NA} in the studies where those columns are blanked.
+\item \strong{Other changes} come from reading the original files (accents
+repaired, weights at full precision, \code{qes2022} interview dates without a
+trailing \code{.000}) and from the catalog's study names. \code{qes2018}
+\code{turnout} is 0 instead of \code{NA} for the 336 respondents who said they
+did not vote (\code{q5} codes 1 and 3), as the 0.4.4 coding intended.
+}
+
+A message says so once per session (class \code{qesR_message_values_changed},
+and \code{qesR_message_legacy_columns} for the removed columns).
+}
+
+\section{En français}{
+
+\code{get_qes_master()} est le fichier fusionné hérité de qesR 0.4.4 : mêmes
+arguments, mêmes 30 colonnes, mêmes types. Chaque colonne lit la variable
+que qesR 0.4.4 lisait (attribut \code{source_map}, figé), convertie de la même
+façon. Aucune ligne n'est retirée (\code{qes2007_panel} : 2 442 lignes). Les
+70 colonnes empilées par nom de variable sont retirées
+(\code{attr(, "removed_columns")}) et les valeurs vérifiées comme fausses sont
+mises à \code{NA} (\code{attr(, "legacy_na_columns")} en donne la liste et la
+raison). \code{vote_choice_timing} et \code{sovereignty_item} précisent ce que
+contiennent \code{vote_choice} et \code{sovereignty_support} dans chaque étude.
+Les résultats de qesR 0.4.4 ne se reproduisent qu'en installant cette
+version (\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}).
+La lecture des fichiers originaux change aussi quelques valeurs (accents,
+pondérations, dates de \code{qes2022}, \code{turnout} de \code{qes2018} : voir NEWS).
+}
+
 \examples{
+# the synthetic demonstration study, offline
+demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
+head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
+attr(demo_master, "legacy_na_columns")[, c("column", "reason", "cause")]
+
 \donttest{
   master <- get_qes_master(surveys = "qes2022")
   head(master)
 }
+}
+\seealso{
+\code{\link[=get_qes]{get_qes()}} for the study files, \code{\link[=qes_provenance]{qes_provenance()}} and
+\code{\link[=qes_cite]{qes_cite()}} to record and cite the files read.
 }

@@ -1,181 +1,3 @@
-.master_harmonization_lookup <- function() {
-  list(
-    respondent_id = c("ResponseId", "responseid", "respid", "quetr", "quest2_crop", "quest", "QUEST", "questpost", "questpst", "questbv", "questionnaire7701", "seq"),
-    interview_start = c("cps_StartDate", "sdat", "SDAT", "startdate", "StartDate"),
-    interview_end = c("cps_EndDate", "enddate", "EndDate"),
-    interview_recorded = c("cps_RecordedDate", "recordeddate", "RecordedDate", "date"),
-    language = c("cps_UserLanguage", "LANG", "lang", "qlang", "QLANG", "qlangue", "s1", "langfix", "langu", "lmat", "lmat2", "lusag", "lusage", "lang_pre", "s_lang_pst"),
-    citizenship = c("cps_citizen", "cps_citizenship", "citizenship"),
-    year_of_birth = c("cps_yob", "QAGE", "qage", "agex", "ageyear_1", "yob", "q75", "Q75"),
-    age = c("cps_age_in_years", "SMAGE", "smage", "age", "agecalc", "agenum", "QAGE", "qage", "q0age"),
-    age_group = c("CLAGE", "clage", "age_3gr", "agegrp", "age3", "age45", "age"),
-    gender = c("cps_genderid", "QSEXE", "qsexe", "sexfix", "sexe", "sexe_post", "gender", "q76", "SEXE"),
-    province_territory = c("cps_province", "q0qc", "Q0QC", "QREGION", "qregion", "regio", "reg", "reg_3gr", "region"),
-    education = c("cps_edu", "QSCOL", "qscol", "q77", "d3", "scol", "scolU", "scolu", "education", "educ", "edu"),
-    income = c("cps_income", "q78", "Q78", "q100", "Q100", "q57", "Q57", "q61", "Q61", "d5", "D5", "revenu", "income"),
-    religion = c("cps_religion", "q103", "Q103", "q63", "Q63", "religion"),
-    born_canada = c("cps_borncda", "q105", "Q105", "born_canada"),
-    political_interest = c("cps_interest_1", "cps_intelection_1", "qinterest", "interest", "interet", "interetrec", "interet2", "interetbin", "interetrev", "interetrev2", "q14", "Q14", "q15", "Q15", "q27", "Q27", "q28", "Q28"),
-    ideology = c("cps_ideoself_1", "lr", "ideology", "q71", "Q71", "q32", "Q32", "q36", "Q36", "rts_q8", "q70a"),
-    turnout = c("cps_turnout", "Q2", "q21", "q11", "q5", "rts_q1", "q1post", "allervot", "allervo2", "avote", "participation", "votebin", "voteoui", "turnout", "q1"),
-    vote_choice = c("cps_votechoice1", "Q3", "q25", "q12a", "q12", "q6", "rts_q2", "voteprov", "intvoteprov", "intvote", "intvote2", "vote94", "vote", "qes_votechoice", "qvote", "q2", "vote_choice", "votechoice"),
-    vote_choice_text = c("cps_votechoice1_8_TEXT", "q2_96_other", "votechoice_text"),
-    party_best = c("cps_partybest", "partybest", "qpartybest", "Q8"),
-    party_lean = c("cps_votelean", "Q5", "q13", "q12b", "q5a", "rv1b", "intvote", "intvoteprov", "votelean", "partylean"),
-    sovereignty_support = c("cps_qc_referendum", "cps_qc_independent", "independance", "q26", "q19", "Q19", "q52", "Q20", "souv_rec", "voteref", "intvoteref", "intref"),
-    sovereignty = c("cps_qc_referendum", "cps_qc_independent", "independance", "q26", "q19", "Q19", "q52", "Q20", "souv_rec", "voteref", "intvoteref", "intref"),
-    federal_pid = c("cps_fedpid", "fed_pid", "fpid"),
-    provincial_pid = c("cps_provpid", "prov_pid", "ppid"),
-    survey_weight = c(
-      "cps_weight_general",
-      "cps_weight_general_trimmed",
-      "pes_weight_general",
-      "pes_weight_general_trimmed",
-      "cps_wts",
-      "ponderc",
-      "poids",
-      "POND",
-      "pond",
-      "pondx",
-      "xpond",
-      "XPOND",
-      "pond_post",
-      "pond_postam1",
-      "ponder2",
-      "ponder3",
-      "pondvote",
-      "weight",
-      "weights",
-      "wgt",
-      "pdspart",
-      "pdspart2"
-    )
-  )
-}
-
-.master_study_overrides <- function() {
-  list(
-    qes2022 = c(
-      sovereignty_support = "cps_qc_referendum",
-      sovereignty = "cps_qc_referendum",
-      survey_weight = "cps_weight_general"
-    ),
-    qes2018 = c(
-      language = "qlangue",
-      turnout = "q5",
-      vote_choice = "q6",
-      party_lean = "q5a",
-      political_interest = "q27",
-      ideology = "q36",
-      income = "q61",
-      religion = "q67",
-      born_canada = "q69",
-      sovereignty_support = "q26",
-      sovereignty = "q26"
-    ),
-    qes2018_panel = c(
-      language = "s1",
-      gender = "sexfix",
-      province_territory = "region",
-      education = "d3",
-      turnout = "vote",
-      vote_choice = "vote",
-      party_lean = "rv1b",
-      ideology = "rts_q8",
-      income = "d5",
-      sovereignty_support = "independance",
-      sovereignty = "independance",
-      survey_weight = "weight"
-    ),
-    qes2014 = c(
-      turnout = "Q2",
-      vote_choice = "Q3",
-      party_lean = "Q5",
-      political_interest = "Q28",
-      ideology = "Q32",
-      income = "Q57",
-      religion = "Q63",
-      born_canada = "Q65",
-      sovereignty_support = "Q19",
-      sovereignty = "Q19",
-      survey_weight = "POND"
-    ),
-    qes2012 = c(
-      gender = "sexe",
-      turnout = "q21",
-      vote_choice = "q25",
-      political_interest = "q67",
-      ideology = "q71",
-      income = NA_character_,
-      religion = "q103",
-      born_canada = "q105",
-      sovereignty_support = "q52",
-      sovereignty = "q52"
-    ),
-    qes2012_panel = c(
-      turnout = "participation",
-      vote_choice = "voteprov",
-      party_lean = "intvoteprov",
-      political_interest = "interetrec",
-      sovereignty_support = "souv_rec",
-      sovereignty = "souv_rec"
-    ),
-    qes_crop_2007_2010 = c(
-      age = NA_character_,
-      age_group = "QAGE",
-      gender = "SEXE",
-      income = "revenu",
-      sovereignty_support = "intvoteref",
-      sovereignty = "intvoteref",
-      survey_weight = "XPOND"
-    ),
-    qes2008 = c(
-      gender = "q76",
-      education = "q77",
-      turnout = "q11",
-      vote_choice = "q12a",
-      party_lean = "q12b",
-      political_interest = "q14",
-      income = "q78",
-      ideology = NA_character_,
-      religion = NA_character_,
-      born_canada = NA_character_,
-      sovereignty_support = "q19",
-      sovereignty = "q19"
-    ),
-    qes2007 = c(
-      gender = "q76",
-      education = "q77",
-      turnout = "q11",
-      vote_choice = "q12",
-      party_lean = "q13",
-      political_interest = "q15",
-      income = "q78",
-      ideology = NA_character_,
-      religion = NA_character_,
-      born_canada = NA_character_,
-      sovereignty_support = "q19",
-      sovereignty = "q19"
-    ),
-    qes2007_panel = c(
-      turnout = "avote",
-      vote_choice = "vote",
-      party_lean = "intvote",
-      political_interest = "interet",
-      sovereignty_support = "intref",
-      sovereignty = "intref"
-    ),
-    qes1998 = c(
-      turnout = "q1post",
-      vote_choice = "intvote",
-      party_lean = NA_character_,
-      sovereignty_support = "voteref",
-      sovereignty = "voteref",
-      survey_weight = "ponderc"
-    )
-  )
-}
-
 .recode_turnout_by_study <- function(out, raw, qes_code) {
   if (length(out) == 0L) {
     return(out)
@@ -347,26 +169,6 @@
   }
 
   master
-}
-
-.resolve_master_source_column <- function(data, srvy, target, candidates) {
-  overrides <- .master_study_overrides()
-  study_map <- overrides[[srvy]]
-
-  if (!is.null(study_map) && target %in% names(study_map)) {
-    preferred <- unname(study_map[[target]])
-    if (length(preferred) == 1L && is.na(preferred)) {
-      return(NA_character_)
-    }
-    if (!is.na(preferred)) {
-      preferred_hit <- .pick_first_column(data, preferred)
-      if (!is.na(preferred_hit)) {
-        return(preferred_hit)
-      }
-    }
-  }
-
-  .pick_first_column(data, candidates)
 }
 
 .normalize_master_text <- function(x) {
@@ -1134,475 +936,6 @@
   master
 }
 
-.remove_master_study_duplicates <- function(master) {
-  if (!is.data.frame(master) || nrow(master) == 0L || !all(c("qes_code", "respondent_id") %in% names(master))) {
-    return(list(data = master, removed = 0L))
-  }
-
-  ids <- trimws(as.character(master$respondent_id))
-  codes <- as.character(master$qes_code)
-  valid_id <- !is.na(ids) & nzchar(ids)
-  valid_code <- !is.na(codes) & nzchar(codes)
-  valid <- valid_id & valid_code
-
-  key <- paste0(codes, "||", tolower(ids))
-  keep <- !valid | !duplicated(key)
-
-  list(
-    data = master[keep, , drop = FALSE],
-    removed = as.integer(sum(!keep))
-  )
-}
-
-.remove_empty_master_rows <- function(master) {
-  if (!is.data.frame(master) || nrow(master) == 0L) {
-    return(list(data = master, removed = 0L))
-  }
-
-  harm_cols <- setdiff(
-    names(master),
-    c("qes_code", "qes_year", "qes_name_en", "respondent_id")
-  )
-  if (length(harm_cols) == 0L) {
-    return(list(data = master, removed = 0L))
-  }
-
-  missing_mat <- sapply(harm_cols, function(col) .master_missing_vector(master[[col]]))
-  if (is.null(dim(missing_mat))) {
-    missing_mat <- matrix(missing_mat, ncol = 1L)
-  }
-
-  all_missing <- rowSums(missing_mat) == ncol(missing_mat)
-  keep <- !all_missing
-
-  list(
-    data = master[keep, , drop = FALSE],
-    removed = as.integer(sum(all_missing))
-  )
-}
-
-.master_core_source_variables <- function() {
-  lookup <- .master_harmonization_lookup()
-  overrides <- .master_study_overrides()
-
-  from_lookup <- unlist(lookup, use.names = FALSE)
-  from_overrides <- unlist(overrides, use.names = FALSE)
-  out <- unique(c(from_lookup, from_overrides))
-  out <- as.character(out)
-  out <- out[!is.na(out) & nzchar(trimws(out))]
-  unique(out)
-}
-
-.discover_crossstudy_raw_variables <- function(raw_by_study, min_studies = 2L) {
-  if (!is.list(raw_by_study) || length(raw_by_study) == 0L) {
-    return(character(0))
-  }
-
-  var_lists <- lapply(raw_by_study, function(d) {
-    if (!is.data.frame(d)) {
-      return(character(0))
-    }
-    unique(names(d))
-  })
-
-  pool <- unlist(var_lists, use.names = FALSE)
-  if (length(pool) == 0L) {
-    return(character(0))
-  }
-
-  counts <- table(pool)
-  keep <- names(counts)[counts >= min_studies]
-
-  exclude <- unique(c(
-    names(.master_harmonization_lookup()),
-    .master_core_source_variables(),
-    "qes_code",
-    "qes_year",
-    "qes_name_en"
-  ))
-
-  keep <- setdiff(keep, exclude)
-  keep <- keep[nzchar(keep)]
-  sort(unique(keep))
-}
-
-.master_opaque_variable_candidates <- function() {
-  c(
-    "q10", "q16", "q17", "q18", "q18a", "q18b", "q20", "q20b", "q22", "q23", "q24",
-    "q3", "q31", "q33", "q35", "q37", "q38", "q39", "q4", "q40", "q41", "q42", "q43",
-    "q44", "q45", "q46", "q47", "q48", "q49", "q50", "q51", "q53", "q54", "q55", "q56",
-    "q58", "q59", "q60", "q61b", "q61d", "q62a", "q62b", "q64", "q65", "q66", "q68",
-    "q7", "q70", "q72", "q73", "q74", "q79", "q8", "q80", "q81", "q9", "raison1",
-    "raison2", "s_jse", "satisf", "sefie", "sondbons", "voteprec"
-  )
-}
-
-.master_opaque_short_names <- function() {
-  c(
-    q10 = "issue_family_support",
-    q16 = "info_source_primary",
-    q17 = "info_source_secondary",
-    q18 = "party_best_health",
-    q18a = "identity_self_1",
-    q18b = "identity_self_2",
-    q20 = "referendum_intent",
-    q20b = "party_best_anticorruption",
-    q22 = "elites_out_of_touch",
-    q23 = "trust_government",
-    q24 = "gov_tax_waste",
-    q3 = "issue_education",
-    q31 = "feeling_qs_0_100",
-    q33 = "election_timing_eval",
-    q35 = "pr_reform_support",
-    q37 = "democracy_needs_parties",
-    q38 = "parties_all_same",
-    q39 = "feeling_charest_0_100",
-    q4 = "qc_difference_view",
-    q40 = "feeling_boisclair_0_100",
-    q41 = "feeling_dumont_0_100",
-    q42 = "feeling_david_0_100",
-    q43 = "feeling_mckay_0_100",
-    q44 = "leader_most_competent",
-    q45 = "fed_gov_too_interventionist",
-    q46 = "leader_closest_people",
-    q47 = "qc_economy_change",
-    q48 = "federalist_sovereignist_self",
-    q49 = "future_outlook",
-    q50 = "privatize_hydro_support",
-    q51 = "private_healthcare_support",
-    q53 = "gov_role_environment",
-    q54 = "profits_help_poor",
-    q55 = "party_best_health_alt",
-    q56 = "powers_for_quebec",
-    q58 = "party_best_environment",
-    q59 = "party_best_poverty",
-    q60 = "qc_voice_federal",
-    q61b = "party_best_qc_identity",
-    q61d = "party_best_caisse_depot",
-    q62a = "decision_level_a",
-    q62b = "decision_level_b",
-    q64 = "feeling_unions_0_100",
-    q65 = "feeling_business_0_100",
-    q66 = "same_sex_marriage",
-    q68 = "family_values_priority",
-    q7 = "issue_tax_cuts",
-    q70 = "provincial_pid_item",
-    q72 = "provincial_party_lean",
-    q73 = "party_named",
-    q74 = "vote_federal_2006",
-    q79 = "employment_status",
-    q8 = "issue_qc_status",
-    q80 = "home_language",
-    q81 = "gov_role_jobs_income",
-    q9 = "issue_poverty",
-    raison1 = "vote_reason_1",
-    raison2 = "vote_reason_2",
-    s_jse = "interview_weekday",
-    satisf = "gov_satisfaction",
-    sefie = "polling_trust",
-    sondbons = "polls_eval",
-    voteprec = "previous_vote_2003"
-  )
-}
-
-.resolve_master_opaque_key <- function(var, keys) {
-  if (is.na(var) || !nzchar(var)) {
-    return(NA_character_)
-  }
-  if (var %in% keys) {
-    return(var)
-  }
-  hits <- keys[endsWith(var, paste0("_", keys))]
-  if (length(hits) == 1L) {
-    return(hits[[1]])
-  }
-  NA_character_
-}
-
-.truncate_master_name <- function(x, max_chars = 32L) {
-  x <- as.character(x)
-  x <- gsub("\\.+", "_", x, perl = TRUE)
-  x <- gsub("_+", "_", x, perl = TRUE)
-  x <- gsub("^_|_$", "", x, perl = TRUE)
-  if (!is.finite(max_chars) || max_chars <= 0L) {
-    return(x)
-  }
-  if (nchar(x) > max_chars) {
-    x <- substr(x, 1L, max_chars)
-    x <- gsub("_+$", "", x, perl = TRUE)
-  }
-  if (!nzchar(x)) {
-    x <- "var"
-  }
-  x
-}
-
-.extract_master_label_map <- function(data) {
-  if (!is.data.frame(data) || ncol(data) == 0L) {
-    return(stats::setNames(character(0), character(0)))
-  }
-
-  out <- stats::setNames(rep(NA_character_, ncol(data)), names(data))
-  for (nm in names(data)) {
-    lb <- attr(data[[nm]], "label", exact = TRUE)
-    if (!is.null(lb) && length(lb) > 0L) {
-      txt <- trimws(as.character(lb[[1]]))
-      if (nzchar(txt)) {
-        out[[nm]] <- txt
-      }
-    }
-  }
-  out
-}
-
-.select_master_label_hint <- function(var, label_maps_by_study) {
-  if (!is.list(label_maps_by_study) || length(label_maps_by_study) == 0L) {
-    return(NA_character_)
-  }
-
-  vals <- unlist(
-    lapply(label_maps_by_study, function(m) {
-      if (is.null(m) || !(var %in% names(m))) {
-        return(NA_character_)
-      }
-      as.character(m[[var]])
-    }),
-    use.names = FALSE
-  )
-
-  vals <- trimws(as.character(vals))
-  vals <- vals[!is.na(vals) & nzchar(vals)]
-  if (length(vals) == 0L) {
-    return(NA_character_)
-  }
-
-  norm <- .normalize_master_text(vals)
-  keep <- nzchar(norm) & norm != .normalize_master_text(var)
-  vals <- vals[keep]
-  norm <- norm[keep]
-
-  if (length(vals) == 0L) {
-    return(NA_character_)
-  }
-
-  tab <- sort(table(norm), decreasing = TRUE)
-  winners <- names(tab)[tab == max(tab)]
-  cand <- vals[norm %in% winners]
-  cand <- cand[order(nchar(cand), decreasing = TRUE)]
-  cand[[1]]
-}
-
-.slugify_master_label <- function(text, max_words = 8L, max_chars = 64L) {
-  if (is.null(text) || length(text) == 0L || is.na(text) || !nzchar(trimws(text))) {
-    return(NA_character_)
-  }
-
-  txt <- iconv(as.character(text), from = "", to = "ASCII//TRANSLIT")
-  txt <- tolower(txt)
-  txt <- gsub("<[^>]+>", " ", txt, perl = TRUE)
-  txt <- gsub("&[a-z]+;", " ", txt, perl = TRUE)
-  txt <- gsub("['`]", "", txt, perl = TRUE)
-  txt <- gsub("[^a-z0-9]+", " ", txt, perl = TRUE)
-  txt <- trimws(txt)
-  if (!nzchar(txt)) {
-    return(NA_character_)
-  }
-
-  tokens <- strsplit(txt, "\\s+", perl = TRUE)[[1]]
-  stop_words <- c(
-    "the", "a", "an", "and", "or", "to", "of", "for", "in", "on", "at", "is", "are", "was", "were",
-    "be", "do", "did", "does", "with", "from", "that", "this", "these", "those", "your", "you",
-    "que", "qui", "quoi", "quel", "quelle", "quels", "quelles", "de", "du", "des", "la", "le", "les",
-    "et", "en", "au", "aux", "pour", "dans", "sur", "est", "sont", "etre", "avoir", "votre", "vous",
-    "ce", "cet", "cette", "ces", "une", "un", "d", "l"
-  )
-  tokens <- tokens[!(tokens %in% stop_words)]
-  tokens <- tokens[nchar(tokens) >= 2L]
-  if (length(tokens) == 0L) {
-    return(NA_character_)
-  }
-
-  tokens <- tokens[seq_len(min(length(tokens), max_words))]
-  slug <- paste(tokens, collapse = "_")
-  slug <- gsub("_+", "_", slug, perl = TRUE)
-  slug <- gsub("^_|_$", "", slug, perl = TRUE)
-  if (!nzchar(slug)) {
-    return(NA_character_)
-  }
-  if (nchar(slug) > max_chars) {
-    slug <- substr(slug, 1L, max_chars)
-    slug <- gsub("_+$", "", slug, perl = TRUE)
-  }
-  if (grepl("^[0-9]", slug, perl = TRUE)) {
-    slug <- paste0("var_", slug)
-  }
-  slug
-}
-
-.make_unique_master_names <- function(candidates, existing = character(0), max_chars = Inf) {
-  if (length(candidates) == 0L) {
-    return(candidates)
-  }
-
-  out <- character(length(candidates))
-  taken <- as.character(existing)
-
-  for (i in seq_along(candidates)) {
-    base <- .truncate_master_name(candidates[[i]], max_chars = max_chars)
-    cur <- base
-    k <- 2L
-    while (cur %in% c(taken, out[seq_len(max(0L, i - 1L))])) {
-      suffix <- paste0("_", k)
-      if (is.finite(max_chars)) {
-        room <- max(1L, as.integer(max_chars) - nchar(suffix))
-        stem <- substr(base, 1L, room)
-        stem <- gsub("_+$", "", stem, perl = TRUE)
-        if (!nzchar(stem)) {
-          stem <- "v"
-        }
-        cur <- paste0(stem, suffix)
-      } else {
-        cur <- paste0(base, suffix)
-      }
-      k <- k + 1L
-    }
-    out[[i]] <- cur
-  }
-
-  out
-}
-
-.build_master_opaque_rename_map <- function(master, label_maps_by_study) {
-  key_space <- .master_opaque_variable_candidates()
-  resolved_key <- vapply(
-    names(master),
-    .resolve_master_opaque_key,
-    character(1),
-    keys = key_space
-  )
-  keep <- !is.na(resolved_key) & nzchar(resolved_key)
-  vars <- names(master)[keep]
-  keys <- resolved_key[keep]
-  if (length(vars) == 0L) {
-    return(data.frame(
-      legacy_variable = character(0),
-      master_variable = character(0),
-      label_hint = character(0),
-      stringsAsFactors = FALSE
-    ))
-  }
-
-  manual <- .master_opaque_short_names()
-
-  label_hint <- mapply(
-    function(v, k) {
-      hint <- .select_master_label_hint(v, label_maps_by_study = label_maps_by_study)
-      if (is.na(hint) || !nzchar(hint)) {
-        hint <- .select_master_label_hint(k, label_maps_by_study = label_maps_by_study)
-      }
-      hint
-    },
-    v = vars,
-    k = keys,
-    SIMPLIFY = TRUE,
-    USE.NAMES = FALSE
-  )
-
-  candidates <- unname(manual[keys])
-  fallback <- is.na(candidates) | !nzchar(candidates)
-  if (any(fallback)) {
-    slug <- vapply(label_hint[fallback], .slugify_master_label, character(1), max_words = 4L, max_chars = 24L)
-    slug_empty <- is.na(slug) | !nzchar(slug)
-    slug[slug_empty] <- paste0("legacy_", keys[fallback][slug_empty])
-    candidates[fallback] <- slug
-  }
-  candidates <- gsub("\\.+", "_", make.names(candidates, unique = FALSE), perl = TRUE)
-  candidates <- vapply(candidates, .truncate_master_name, character(1), max_chars = 32L)
-
-  existing <- setdiff(names(master), vars)
-  master_names <- .make_unique_master_names(candidates, existing = existing, max_chars = 32L)
-
-  data.frame(
-    legacy_variable = vars,
-    master_variable = master_names,
-    label_hint = label_hint,
-    stringsAsFactors = FALSE
-  )
-}
-
-.rename_master_opaque_variables <- function(master, source_map, label_maps_by_study) {
-  rename_map <- .build_master_opaque_rename_map(master, label_maps_by_study)
-  if (nrow(rename_map) == 0L) {
-    return(list(
-      master = master,
-      source_map = source_map,
-      rename_map = rename_map
-    ))
-  }
-
-  idx <- match(rename_map$legacy_variable, names(master))
-  names(master)[idx] <- rename_map$master_variable
-
-  if (is.data.frame(source_map) && "harmonized_variable" %in% names(source_map)) {
-    lookup <- stats::setNames(rename_map$master_variable, rename_map$legacy_variable)
-    hit <- source_map$harmonized_variable %in% names(lookup)
-    source_map$harmonized_variable[hit] <- unname(lookup[source_map$harmonized_variable[hit]])
-  }
-
-  list(
-    master = master,
-    source_map = source_map,
-    rename_map = rename_map
-  )
-}
-
-.append_crossstudy_variables <- function(stacked, source_maps, raw_by_study, study_meta) {
-  extra_vars <- .discover_crossstudy_raw_variables(raw_by_study, min_studies = 2L)
-  if (length(extra_vars) == 0L) {
-    return(list(
-      stacked = stacked,
-      source_maps = source_maps,
-      extra_vars = character(0)
-    ))
-  }
-
-  for (srvy in names(stacked)) {
-    base <- stacked[[srvy]]
-    raw <- raw_by_study[[srvy]]
-    n <- nrow(base)
-
-    add <- data.frame(matrix(NA, nrow = n, ncol = length(extra_vars)), stringsAsFactors = FALSE)
-    names(add) <- extra_vars
-
-    if (is.data.frame(raw)) {
-      common <- intersect(extra_vars, names(raw))
-      for (v in common) {
-        add[[v]] <- .coerce_master_value(raw[[v]], target = v)
-      }
-    }
-
-    stacked[[srvy]] <- cbind(base, add, stringsAsFactors = FALSE)
-
-    meta <- study_meta[[srvy]]
-    src_rows <- data.frame(
-      qes_code = srvy,
-      qes_year = meta$year %||% NA_character_,
-      qes_name_en = meta$name_en %||% NA_character_,
-      harmonized_variable = extra_vars,
-      source_variable = if (is.data.frame(raw)) ifelse(extra_vars %in% names(raw), extra_vars, NA_character_) else NA_character_,
-      stringsAsFactors = FALSE
-    )
-
-    source_maps[[srvy]] <- rbind(source_maps[[srvy]], src_rows)
-  }
-
-  list(
-    stacked = stacked,
-    source_maps = source_maps,
-    extra_vars = extra_vars
-  )
-}
-
 .coerce_master_value <- function(x, target) {
   numeric_targets <- c("year_of_birth", "age", "survey_weight")
 
@@ -1640,10 +973,11 @@
 # get_qes_master() and get_decon() turn labelled columns into their labels.
 # qesR 0.4.4 labelled a few source columns that the original files leave
 # unlabelled, from hand-typed maps (.qes_legacy_label_maps below); the
-# reader no longer does (labels come from the files, R/read.R), so until the
-# interim legacy builder freezes its sources (slice S4) these builders put the
-# 0.4.4 labels back on exactly the columns whose harmonized values depend on
-# them, and only for codes the file leaves unlabelled:
+# reader no longer does (labels come from the files, R/read.R), so these
+# builders put the 0.4.4 labels back on exactly the columns whose values
+# depend on them, and only for codes the file leaves unlabelled. Like the
+# frozen sources (R/legacy.R), they are part of the interim builders and go
+# with them when the engine renders the legacy columns (0.7.0):
 #   * qes2018 `qscol` (education) in both builders, and `qsexe` (gender) in
 #     get_decon(), which 0.4.4 returned as factors of those labels;
 #   * qes1998 `scol` code 9 ("Refus / pas de reponse", declared missing in the
@@ -1655,19 +989,15 @@
 #     REPONSE", as 0.4.4 had them.
 # Every labelled column also has its label text trimmed ("  Refus" in the
 # qes2007 SPSS labels) and blank labels dropped (qes2012 code 96), since 0.4.4
-# showed those codes as numbers. qes2018 `q2_96_other` holds the typed text of
-# the "other issue" answer as value labels; 0.4.4 had none, so the master's
-# `vote_choice_text` stayed empty, and it stays unlabelled here.
+# showed those codes as numbers.
 .qes_legacy_label_vars <- list(
   master = list(qes2018 = "qscol", qes1998 = c("scol", "age")),
   decon = list(qes2018 = c("qsexe", "qscol"), qes1998 = "age")
 )
-.qes_legacy_unlabelled <- list(qes2018 = "q2_96_other")
 
 # The 0.4.4 label maps of those columns, frozen as qesR 0.4.4 typed them
 # (without accents) in its hand-made codebook overrides, which slice S3
-# replaced by the dictionary; these legacy builders still need them until
-# slice S4 freezes their sources.
+# replaced by the dictionary.
 .qes_legacy_label_maps <- list(
   qes2018 = list(
     qsexe = c("1" = "Masculin", "2" = "Feminin"),
@@ -1725,16 +1055,6 @@
     attr(data[[j]], "labels") <- if (length(labels) > 0L) labels else NULL
   }
 
-  for (v in intersect(.qes_legacy_unlabelled[[srvy]], names(data))) {
-    x <- data[[v]]
-    label <- attr(x, "label", exact = TRUE)
-    x <- .qes_plain(x)
-    if (!is.null(label)) {
-      attr(x, "label") <- label
-    }
-    data[[v]] <- x
-  }
-
   fills <- .qes_legacy_label_fills(srvy, consumer)
   for (v in intersect(names(fills), names(data))) {
     x <- data[[v]]
@@ -1756,8 +1076,42 @@
   data
 }
 
+# The 30 documented columns of the legacy master, in the order and with the
+# types of qesR 0.4.4; the columns appended since follow them.
+.qes_master_types <- c(
+  qes_code = "character", qes_year = "character", qes_name_en = "character",
+  respondent_id = "character", interview_start = "character",
+  interview_end = "character", interview_recorded = "character",
+  language = "character", citizenship = "character", year_of_birth = "numeric",
+  age = "numeric", age_group = "character", gender = "character",
+  province_territory = "character", education = "character",
+  income = "character", religion = "character", born_canada = "character",
+  political_interest = "numeric", ideology = "numeric", turnout = "numeric",
+  vote_choice = "character", vote_choice_text = "character",
+  party_best = "character", party_lean = "character",
+  sovereignty_support = "numeric", sovereignty = "numeric",
+  federal_pid = "character", provincial_pid = "character",
+  survey_weight = "numeric"
+)
+# Appended in qesR 0.5.0; appended columns are never removed.
+.qes_master_appended <- c(vote_choice_timing = "character", sovereignty_item = "character")
+
+.qes_master_cast <- function(x, type) {
+  if (is.factor(x)) {
+    x <- as.character(x)
+  }
+  switch(type,
+    character = as.character(x),
+    numeric = if (is.numeric(x)) as.numeric(x) else suppressWarnings(as.numeric(as.character(x)))
+  )
+}
+
+# One study of the legacy master: the frozen v0.4.4 source of every column
+# (inst/extdata/legacy/sources.csv), converted as 0.4.4 converted it. No
+# source is looked up by name. Returns list(data, source_map, masks), where
+# `masks` marks the cells to blank (see .qes_legacy_blank_masks()).
 .build_qes_master_study <- function(data, srvy, year = NA_character_, name_en = NA_character_) {
-  lookup <- .master_harmonization_lookup()
+  sources <- .qes_legacy_sources("master", srvy)
   n <- nrow(data)
 
   out <- data.frame(
@@ -1766,41 +1120,17 @@
     qes_name_en = rep(name_en, n),
     stringsAsFactors = FALSE
   )
-
-  source_map <- data.frame(
-    qes_code = srvy,
-    qes_year = year,
-    qes_name_en = name_en,
-    harmonized_variable = names(lookup),
-    source_variable = NA_character_,
-    stringsAsFactors = FALSE
-  )
-
-  for (target in names(lookup)) {
-    source_col <- .resolve_master_source_column(data, srvy = srvy, target = target, candidates = lookup[[target]])
-    source_map$source_variable[source_map$harmonized_variable == target] <- source_col
-
-    if (is.na(source_col)) {
+  for (target in names(sources)) {
+    source_col <- sources[[target]]
+    if (identical(source_col, "(synthetic_rowid)")) {
+      out[[target]] <- sprintf("%s_%s", srvy, seq_len(n))
+    } else if (is.na(source_col) || !(source_col %in% names(data))) {
+      # a pinned file always has its frozen sources (its md5 fixes its
+      # columns); only synthetic test data can lack one
       out[[target]] <- rep(NA, n)
     } else {
       out[[target]] <- .coerce_master_value(data[[source_col]], target = target)
     }
-  }
-
-  # Some legacy files expose questionnaire identifiers (e.g., QUEST = 0) rather
-  # than respondent IDs. In those cases, generate stable row IDs to avoid
-  # collapsing almost all rows during within-study de-duplication.
-  rid <- trimws(as.character(out$respondent_id))
-  valid_rid <- !is.na(rid) & nzchar(rid)
-  uniq_ratio <- if (sum(valid_rid) > 0L) {
-    length(unique(tolower(rid[valid_rid]))) / sum(valid_rid)
-  } else {
-    0
-  }
-
-  if (sum(valid_rid) == 0L || uniq_ratio < 0.5) {
-    out$respondent_id <- sprintf("%s_%s", srvy, seq_len(n))
-    source_map$source_variable[source_map$harmonized_variable == "respondent_id"] <- "(synthetic_rowid)"
   }
 
   if (identical(srvy, "qes_crop_2007_2010") && ("projet" %in% names(data))) {
@@ -1809,15 +1139,68 @@
     out$qes_year[use_derived] <- derived_year[use_derived]
   }
 
-  list(data = out, source_map = source_map)
+  source_map <- data.frame(
+    qes_code = srvy,
+    qes_year = year,
+    qes_name_en = name_en,
+    harmonized_variable = names(sources),
+    source_variable = unname(sources),
+    stringsAsFactors = FALSE
+  )
+
+  list(
+    data = out,
+    source_map = source_map,
+    masks = .qes_legacy_blank_masks(data, srvy, "master", sources),
+    sources = sources
+  )
+}
+
+# The finished master rows of one study: the 0.4.4 recodes run on this
+# study alone (so a study's rows never depend on which other studies are
+# loaded), then the verified-invalid cells blanked, the documented types set
+# and the per-study constants appended. Returns list(data, counts), where
+# `counts` is the number of values each mask set to NA.
+#
+# qesR 0.4.4 ran its recodes on the stacked columns of all 11 studies, which
+# rbind() had made text wherever one study's source was text: every column
+# but year_of_birth, age and survey_weight. The recodes treat text and
+# numbers differently (a numeric gender code is left as is, the text "1" is
+# a man), so each study's columns are made text first, as in that full
+# build: every study then gets the values the full 0.4.4 build gave it,
+# whichever studies are loaded with it.
+.qes_master_numeric_sources <- c("year_of_birth", "age", "survey_weight")
+
+.finish_qes_master_study <- function(built) {
+  out <- built$data
+  for (col in setdiff(names(out), .qes_master_numeric_sources)) {
+    if (is.factor(out[[col]]) || !is.character(out[[col]])) {
+      out[[col]] <- as.character(out[[col]])
+    }
+  }
+  out <- .postprocess_master_dataset(out)
+  counts <- integer(0)
+  for (col in names(built$masks)) {
+    counts[[col]] <- .qes_legacy_blank_count(out[[col]], built$masks[[col]])
+    out[[col]][built$masks[[col]]] <- NA
+  }
+  for (col in names(.qes_master_types)) {
+    out[[col]] <- .qes_master_cast(out[[col]], .qes_master_types[[col]])
+  }
+  out <- out[names(.qes_master_types)]
+  constants <- .qes_legacy_constants(built$source_map$qes_code[1])
+  n <- nrow(out)
+  out$vote_choice_timing <- rep(constants$vote_choice_timing, n)
+  out$sovereignty_item <- rep(constants$sovereignty_item, n)
+  list(data = out, counts = counts)
 }
 
 # The legacy master builds only the 11 qesR 0.4.4 studies, by default and
-# with "all". The studies added to the catalog since (the 1998 CROP and
-# CREATEC surveys) are refused until the engine-based master (HZ5, 0.7.0):
-# the qes1998 panel file already holds their respondents, so naming them
-# with qes1998 would count the same people twice, and the legacy name-matching
-# harmonization is not extended to new studies.
+# with "all", plus the synthetic `qes_demo` when it is named. The studies
+# added to the catalog since (the 1998 CROP and CREATEC surveys) are refused
+# until the engine-based master (0.7.0): the qes1998 panel file already
+# holds their respondents, so naming them with qes1998 would count the same
+# people twice, and the frozen sources cover the 0.4.4 studies only.
 .validate_master_surveys <- function(surveys) {
   if (is.null(surveys)) {
     return(.qes_legacy_codes)
@@ -1825,8 +1208,8 @@
   if (is.character(surveys) && length(surveys) == 1L && identical(.qes_canon_code(surveys), "all")) {
     return(.qes_legacy_codes)
   }
-  codes <- .qes_resolve_codes(surveys, "surveys")
-  new_codes <- setdiff(codes, .qes_legacy_codes)
+  codes <- .qes_resolve_codes(surveys, "surveys", demo = TRUE)
+  new_codes <- setdiff(codes, c(.qes_legacy_codes, "qes_demo"))
   if (length(new_codes) > 0L) {
     .qes_abort(
       "input_master_study",
@@ -1838,23 +1221,96 @@
   codes
 }
 
-#' Build a Harmonized Stacked Master QES Dataset
+#' Build the Legacy Stacked Master QES Dataset
 #'
-#' Downloads multiple Quebec Election Study datasets, harmonizes shared variables,
-#' stacks all rows into one master data frame, de-duplicates respondents within
-#' the same survey code, and drops rows that are empty across harmonized variables.
+#' Reads the Quebec Election Studies of qesR 0.4.4 and stacks them in one
+#' data frame with the 0.4.4 columns: one row per respondent of each study,
+#' and the same 30 harmonized columns for every study.
+#'
+#' `get_qes_master()` is the fixed legacy schema of qesR 0.4.4. It is kept
+#' stable, with the same arguments, columns and column types, so that code
+#' written for 0.4.4 keeps working; new work should use the study files
+#' themselves ([get_qes()]) and, from qesR 0.6.0, the harmonization engine.
+#' Its values are those of 0.4.4 except where they were wrong: in qesR 0.5.0
+#' the master changes by deletion, apart from the reader changes listed
+#' (see *What changed in 0.5.0*).
 #'
 #' `get_qes_master()` returns the data and assigns nothing unless
 #' `assign_global = TRUE`: write `master <- get_qes_master()`. The first call
 #' in a session that leaves `assign_global` unset prints a one-time note about
 #' this change from qesR 0.4.4.
 #'
+#' @section How it is built:
+#' Each study is read with [get_qes()] from its pinned original file. For
+#' each column, the master reads the variable qesR 0.4.4 read (the frozen
+#' `source_map` attribute: nothing is chosen by name at run time) and
+#' converts it as 0.4.4 did. Every row of every file is kept: there is no
+#' de-duplication and no removal of empty rows, so each study contributes
+#' exactly its number of respondents (`qes2007_panel`: 2,442 rows).
+#'
+#' @section What changed in 0.5.0:
+#' Results from qesR 0.4.4 can be reproduced only by installing that version
+#' (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+#' Compared with 0.4.4:
+#' * **Rows.** No respondent is dropped. qesR 0.4.4 removed 380
+#'   `qes2007_panel` respondents (its `quest` number repeats across the two
+#'   subsamples) and one `qes_crop_2007_2010` respondent as "duplicates".
+#' * **Columns removed.** The 70 columns 0.4.4 appended after the 30
+#'   documented ones, by stacking raw variables that share a name across
+#'   studies (for example `vote_federal_2006`, which held satisfaction with
+#'   democracy for `qes2012`), are gone; `attr(, "removed_columns")` lists
+#'   them. Read those items from each study with [get_qes()].
+#' * **Cells blanked.** Values verified to be wrong are `NA`:
+#'   `party_best` and `party_lean` everywhere; `vote_choice` and `turnout`
+#'   where the source is a vote intention (`qes2022`, `qes_crop_2007_2010`,
+#'   `qes1998`) and `qes2007_panel` respondents not reached after the
+#'   election; `sovereignty_support` and `sovereignty` where the question is
+#'   not the referendum on an independent country; `language` where the
+#'   source is the interview language (`qes2014`, `qes2022`); raw codes and
+#'   `-99` codes left in `income` and `religion`; `political_interest` of
+#'   `qes2018` (raw 1-4 codes) and `qes2012_panel`; `ideology` of `qes2014`
+#'   (its 0 and 10 answers were lost); `born_canada` of `qes2018`;
+#'   `vote_choice_text` of `qes2018` and `qes2022`; `education` of `qes1998`;
+#'   and "don't know" and refusal labels left in `born_canada`, `language`,
+#'   `education`, `income` and `religion`. `vote_choice` keeps the 0.4.4
+#'   category "Don't know / Refused" until 0.7.0. `attr(, "legacy_na_columns")` lists every blanked column
+#'   of every study, with the number of cells and the reason.
+#' * **Columns appended.** `vote_choice_timing` (`"post"`: the vote reported
+#'   after the election) and `sovereignty_item` (`"sov_indep"`: the
+#'   referendum on an independent country) say what `vote_choice` and
+#'   `sovereignty_support` hold in each study, one value per study; they
+#'   are `NA` in the studies where those columns are blanked.
+#' * **Other changes** come from reading the original files (accents
+#'   repaired, weights at full precision, `qes2022` interview dates without a
+#'   trailing `.000`) and from the catalog's study names. `qes2018`
+#'   `turnout` is 0 instead of `NA` for the 336 respondents who said they
+#'   did not vote (`q5` codes 1 and 3), as the 0.4.4 coding intended.
+#'
+#' A message says so once per session (class `qesR_message_values_changed`,
+#' and `qesR_message_legacy_columns` for the removed columns).
+#'
+#' @section En français:
+#' `get_qes_master()` est le fichier fusionné hérité de qesR 0.4.4 : mêmes
+#' arguments, mêmes 30 colonnes, mêmes types. Chaque colonne lit la variable
+#' que qesR 0.4.4 lisait (attribut `source_map`, figé), convertie de la même
+#' façon. Aucune ligne n'est retirée (`qes2007_panel` : 2 442 lignes). Les
+#' 70 colonnes empilées par nom de variable sont retirées
+#' (`attr(, "removed_columns")`) et les valeurs vérifiées comme fausses sont
+#' mises à `NA` (`attr(, "legacy_na_columns")` en donne la liste et la
+#' raison). `vote_choice_timing` et `sovereignty_item` précisent ce que
+#' contiennent `vote_choice` et `sovereignty_support` dans chaque étude.
+#' Les résultats de qesR 0.4.4 ne se reproduisent qu'en installant cette
+#' version (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+#' La lecture des fichiers originaux change aussi quelques valeurs (accents,
+#' pondérations, dates de `qes2022`, `turnout` de `qes2018` : voir NEWS).
+#'
 #' @param surveys Character vector of qesR survey codes (see [qes_studies()]).
 #'   Defaults to the 11 studies of qesR 0.4.4; `"all"` on its own means the
 #'   same 11. Studies added to the catalog since (`qes1998_crop`,
 #'   `qes1998_createc`) are not in the master yet and raise an error: their
 #'   respondents are already in `qes1998`. Read them with [get_qes()]. Codes
-#'   are trimmed and case-insensitive.
+#'   are trimmed and case-insensitive. `"qes_demo"` builds the master of the
+#'   synthetic demonstration study, offline.
 #' @param assign_global If TRUE, also assign the result as `object_name` into
 #'   the environment `get_qes_master()` was called from (the global environment
 #'   only when called at top level), after `saved_to` is set. Defaults to FALSE.
@@ -1863,24 +1319,49 @@
 #' @param quiet If TRUE, suppress informational output while downloading.
 #' @param strict If TRUE, stop when any study fails. If FALSE, return partial results and
 #'   record failures in attributes.
-#' @param save_path Optional output path for writing the master file. Use `.rds` for RDS
-#'   output; otherwise CSV is written. When opaque legacy variables are renamed
-#'   in the merged output, an old-to-new variable map is also written alongside
-#'   the saved file.
+#' @param save_path Optional output path for writing the master file: `.rds`
+#'   writes an RDS file, any other extension a UTF-8 CSV file. The
+#'   provenance of every study read is written next to it, as
+#'   `<stem>_provenance.csv`.
 #'
-#' @return A harmonized stacked data frame with attributes:
-#'   `source_map`, `loaded_surveys`, `failed_surveys`, and
-#'   `harmonized_variables`. Additional attributes
-#'   `duplicates_removed`, `empty_rows_removed`, and
-#'   `variable_name_map` report row filtering and renaming details.
-#'   When `save_path` is provided, the output path is stored in `saved_to`;
-#'   if renaming is applied, the sidecar mapping file path is stored in
-#'   `variable_name_map_path`. `failed_surveys` holds one line per failed
-#'   study, `"<code>: <reason>"`. qesR's own part of the reason is always in
-#'   English, whatever the message language; a root cause raised by R itself
-#'   (for example a download error) keeps the text R reported. The full
-#'   conditions are in the `failures` field of the `strict = TRUE` error. The data frame is returned visibly.
+#' @return A data frame, returned visibly: the 30 documented columns of
+#'   qesR 0.4.4 in their order and type, then `vote_choice_timing` and
+#'   `sovereignty_item`. Attributes:
+#'   * `source_map`: the source variable of every column of every study
+#'     (`qes_code`, `qes_year`, `qes_name_en`, `harmonized_variable`,
+#'     `source_variable`, `file_md5`);
+#'   * `loaded_surveys`, `failed_surveys`: the studies read, and one line per
+#'     failed study, `"<code>: <reason>"`. qesR's own part of the reason is
+#'     always in English, whatever the message language; a root cause raised
+#'     by R itself (for example a download error) keeps the text R reported.
+#'     The full conditions are in the `failures` field of the
+#'     `strict = TRUE` error;
+#'   * `duplicates_removed` and `empty_rows_removed`: always `0L`;
+#'   * `harmonized_variables`: the columns after `qes_code`, `qes_year` and
+#'     `qes_name_en`;
+#'   * `crossstudy_variables_added` (always empty) and `variable_name_map`
+#'     (no rows): kept for code written for 0.4.4;
+#'   * `legacy_na_columns`: one row per column and study whose cells are `NA`
+#'     by design (`column`, `study`, `reason` `"no_source"` or `"blanked"`,
+#'     `n_cells`, `cause`, `basis`); `n_cells` is the whole column for
+#'     `"no_source"` and the number of values set to `NA` for `"blanked"`;
+#'   * `legacy_column_map`: what each column means (`column`, `target`,
+#'     `definition`, `studies_changed`, `flag`, `note`); `flag` is
+#'     `"approximate"` for columns that mix instruments;
+#'   * `removed_columns`: the names of the 70 columns no longer built;
+#'   * `qes_provenance`: the file read for each study (see
+#'     [qes_provenance()]);
+#'   * `qes_spec`: records that the frozen legacy tables, not a
+#'     harmonization spec, built the data;
+#'   * `saved_to`: the output path when `save_path` is given.
+#' @seealso [get_qes()] for the study files, [qes_provenance()] and
+#'   [qes_cite()] to record and cite the files read.
 #' @examples
+#' # the synthetic demonstration study, offline
+#' demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
+#' head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
+#' attr(demo_master, "legacy_na_columns")[, c("column", "reason", "cause")]
+#'
 #' \donttest{
 #'   master <- get_qes_master(surveys = "qes2022")
 #'   head(master)
@@ -1916,18 +1397,27 @@ get_qes_master <- function(
   .assert_single_string(object_name, "object_name")
   if (!is.null(save_path)) {
     .assert_single_string(save_path, "save_path")
+    out_dir <- dirname(save_path)
+    if (!dir.exists(out_dir)) {
+      .qes_abort(
+        "input_save_dir",
+        class = "qesR_error_input",
+        args = list(.qes_q(out_dir)),
+        data = list(arg = "save_path", value = save_path)
+      )
+    }
   }
+  .qes_legacy_notice("get_qes_master")
 
   stacked <- list()
   source_maps <- list()
-  raw_by_study <- list()
-  label_maps_by_study <- list()
-  study_meta <- list()
+  na_rows <- list()
+  provenance <- list()
   failed <- character(0)
   failed_conditions <- list()
 
   for (srvy in surveys) {
-    study <- .qes_legacy_view(.qes_study_row(srvy))
+    study <- .qes_legacy_view(.qes_study_row(srvy, demo = TRUE))
 
     dat <- tryCatch(
       .get_qes_impl(
@@ -1954,6 +1444,7 @@ get_qes_master <- function(
       next
     }
 
+    prov <- attr(dat, "qes_provenance", exact = TRUE)
     dat <- .qes_legacy_source_labels(dat, srvy, consumer = "master")
     built <- .build_qes_master_study(
       data = dat,
@@ -1961,15 +1452,20 @@ get_qes_master <- function(
       year = study$year,
       name_en = study$name_en
     )
+    finished <- .finish_qes_master_study(built)
+    rows <- finished$data
+    # every row of the file, and only those (design rule P5)
+    if (nrow(rows) != nrow(dat) || (!is.null(prov) && !identical(as.integer(nrow(rows)), as.integer(prov$n_rows[1])))) {
+      stop(sprintf("qesR internal error: the master rows of '%s' differ from its file.", srvy), call. = FALSE)
+    }
 
-    stacked[[srvy]] <- built$data
+    built$source_map$file_md5 <- if (is.null(prov)) NA_character_ else prov$md5_observed[1]
+    stacked[[srvy]] <- rows
     source_maps[[srvy]] <- built$source_map
-    raw_by_study[[srvy]] <- dat
-    label_maps_by_study[[srvy]] <- .extract_master_label_map(dat)
-    study_meta[[srvy]] <- list(
-      year = study$year,
-      name_en = study$name_en
-    )
+    na_rows[[srvy]] <- .qes_legacy_na_rows(srvy, "master", built$sources, built$masks, nrow(rows), finished$counts)
+    if (!is.null(prov)) {
+      provenance[[srvy]] <- prov
+    }
 
     .qes_inform(
       "master_rows_loaded",
@@ -2007,80 +1503,47 @@ get_qes_master <- function(
     )
   }
 
-  extra <- .append_crossstudy_variables(
-    stacked = stacked,
-    source_maps = source_maps,
-    raw_by_study = raw_by_study,
-    study_meta = study_meta
-  )
-  stacked <- extra$stacked
-  source_maps <- extra$source_maps
-
   master <- do.call(rbind, stacked)
   rownames(master) <- NULL
-  master <- .postprocess_master_dataset(master)
-
-  dedup <- .remove_master_study_duplicates(master)
-  master <- dedup$data
-
-  no_empty <- .remove_empty_master_rows(master)
-  master <- no_empty$data
-
   source_map <- do.call(rbind, source_maps)
   rownames(source_map) <- NULL
-
-  renamed <- .rename_master_opaque_variables(
-    master = master,
-    source_map = source_map,
-    label_maps_by_study = label_maps_by_study
-  )
-  master <- renamed$master
-  source_map <- renamed$source_map
-  variable_name_map <- renamed$rename_map
-
-  renamed_lookup <- stats::setNames(variable_name_map$master_variable, variable_name_map$legacy_variable)
-  extra_vars_named <- extra$extra_vars
-  if (length(extra_vars_named) > 0L && length(renamed_lookup) > 0L) {
-    hit <- extra_vars_named %in% names(renamed_lookup)
-    extra_vars_named[hit] <- unname(renamed_lookup[extra_vars_named[hit]])
+  legacy_na <- do.call(rbind, na_rows)
+  rownames(legacy_na) <- NULL
+  prov <- if (length(provenance) > 0L) do.call(rbind, provenance) else NULL
+  if (!is.null(prov)) {
+    rownames(prov) <- NULL
   }
 
   attr(master, "source_map") <- source_map
   attr(master, "loaded_surveys") <- names(stacked)
   attr(master, "failed_surveys") <- failed
-  attr(master, "duplicates_removed") <- dedup$removed
-  attr(master, "empty_rows_removed") <- no_empty$removed
+  attr(master, "duplicates_removed") <- 0L
+  attr(master, "empty_rows_removed") <- 0L
   attr(master, "harmonized_variables") <- setdiff(names(master), c("qes_code", "qes_year", "qes_name_en"))
-  attr(master, "crossstudy_variables_added") <- extra_vars_named
-  attr(master, "variable_name_map") <- variable_name_map
-  attr(master, "variable_name_map_path") <- NULL
-  attr(master, "saved_to") <- NULL
+  attr(master, "crossstudy_variables_added") <- character(0)
+  attr(master, "variable_name_map") <- data.frame(
+    legacy_variable = character(0),
+    master_variable = character(0),
+    label_hint = character(0),
+    stringsAsFactors = FALSE
+  )
+  attr(master, "legacy_na_columns") <- legacy_na
+  attr(master, "legacy_column_map") <- .qes_legacy_column_map()
+  attr(master, "removed_columns") <- .qes_legacy_table("removed")$column
+  attr(master, "qes_provenance") <- prov
+  attr(master, "qes_spec") <- .qes_legacy_spec()
 
   if (!is.null(save_path)) {
-    out_dir <- dirname(save_path)
-    if (!dir.exists(out_dir)) {
-      .qes_abort(
-        "input_save_dir",
-        class = "qesR_error_input",
-        args = list(.qes_q(out_dir)),
-        data = list(arg = "save_path", value = save_path)
-      )
-    }
-
     ext <- tolower(tools::file_ext(save_path))
     if (ext == "rds") {
       saveRDS(master, save_path)
     } else {
-      utils::write.csv(master, save_path, row.names = FALSE, na = "")
+      .qes_write_csv(master, save_path)
     }
-
-    if (is.data.frame(variable_name_map) && nrow(variable_name_map) > 0L) {
-      stem <- sub("\\.[^.]+$", "", save_path, perl = TRUE)
-      map_path <- paste0(stem, "_variable_name_map.csv")
-      utils::write.csv(variable_name_map, map_path, row.names = FALSE, na = "")
-      attr(master, "variable_name_map_path") <- map_path
+    if (!is.null(prov)) {
+      stem <- tools::file_path_sans_ext(save_path)
+      .qes_write_csv(as.data.frame(prov), paste0(stem, "_provenance.csv"))
     }
-
     attr(master, "saved_to") <- save_path
   }
 
@@ -2097,22 +1560,6 @@ get_qes_master <- function(
     .qes_inform("master_n_loaded", class = "qesR_message_download", args = list(length(stacked)))
     if (length(failed) > 0L) {
       .qes_inform("master_n_skipped", class = "qesR_message_download", args = list(length(failed)))
-    }
-    if (dedup$removed > 0L) {
-      .qes_inform("master_n_dedup", class = "qesR_message_download", args = list(dedup$removed))
-    }
-    if (no_empty$removed > 0L) {
-      .qes_inform("master_n_empty", class = "qesR_message_download", args = list(no_empty$removed))
-    }
-    if (length(extra$extra_vars) > 0L) {
-      .qes_inform("master_n_extra", class = "qesR_message_download", args = list(length(extra$extra_vars)))
-    }
-    if (is.data.frame(variable_name_map) && nrow(variable_name_map) > 0L) {
-      .qes_inform("master_n_renamed", class = "qesR_message_download", args = list(nrow(variable_name_map)))
-      map_path <- attr(master, "variable_name_map_path", exact = TRUE)
-      if (!is.null(save_path) && !is.null(map_path)) {
-        .qes_inform("master_map_saved", class = "qesR_message_download", args = list(map_path))
-      }
     }
     if (!is.null(save_path)) {
       .qes_inform("master_saved", class = "qesR_message_download", args = list(save_path))

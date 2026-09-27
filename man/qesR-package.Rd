@@ -91,12 +91,15 @@ it left unchanged in a \code{qesR_message_missing_untyped} (silenced by
 \code{quiet = TRUE}).
 Progress messages (classes \code{qesR_message_download} and
 \code{qesR_message_cached}) are silenced by \code{quiet = TRUE}, as is the one-time
-tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}). Three notices are shown at most once per session and are
+tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}). These
+notices are shown at most once per session and are
 not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
 \link{qesR-deprecated}); \code{qesR_message_assign_default}, shown when \code{get_qes()},
-\code{get_qes_master()} or \code{get_decon()} is called without \code{assign_global}; and
+\code{get_qes_master()} or \code{get_decon()} is called without \code{assign_global};
 \code{qesR_message_arg_ignored}, shown when a legacy argument that no longer
-changes the result is used. Every condition carries
+changes the result is used; and \code{qesR_message_values_changed} and
+\code{qesR_message_legacy_columns}, shown by \code{\link[=get_qes_master]{get_qes_master()}} and
+\code{\link[=get_decon]{get_decon()}}, whose values changed in qesR 0.5.0. Every condition carries
 the fields \code{id} (its message key) and \code{lang} (the language of its message).
 }
 
@@ -217,8 +220,10 @@ les variables laissées inchangées dans un
 de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le
 conseil unique sur le cache disque (\code{qesR_message_disk_cache_tip}) sont
 masqués par \code{quiet = TRUE}.
-\code{qesR_message_deprecated}, \code{qesR_message_assign_default} et
-\code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat)
+\code{qesR_message_deprecated}, \code{qesR_message_assign_default},
+\code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat),
+\code{qesR_message_values_changed} et \code{qesR_message_legacy_columns} (valeurs de
+\code{\link[=get_qes_master]{get_qes_master()}} et \code{\link[=get_decon]{get_decon()}} modifiées dans qesR 0.5.0)
 s'affichent au plus une fois par session et ne sont pas masqués par
 \code{quiet}. Chaque
 condition porte les champs \code{id} (sa clé de message) et \code{lang} (la langue de

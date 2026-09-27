@@ -221,6 +221,33 @@ test_that("get_decon() keeps the column types of 0.4.4 (live)", {
   expect_identical(mean(d22$age), mean(plain_values(q22$cps_age_in_years)))
 })
 
+test_that("get_qes_master() keeps every respondent of the 11 files (live, S4)", {
+  local_live_originals()
+  local_qes_notices_shown()
+  m <- suppressMessages(get_qes_master(assign_global = FALSE, quiet = TRUE))
+  prov <- attr(m, "qes_provenance")
+  expect_identical(attr(m, "failed_surveys"), character(0))
+  expect_identical(nrow(m), sum(prov$n_rows))
+  counts <- table(m$qes_code)
+  expect_identical(as.integer(counts[prov$study]), as.integer(prov$n_rows))
+  expect_identical(as.integer(counts[["qes2007_panel"]]), 2442L)
+  types <- vapply(m[seq_along(v044_master_cols)], function(x) class(x)[1], character(1))
+  expect_identical(types, v044_master_cols)
+  # the verified-invalid cells are blank (design.md 5.12)
+  by <- function(col, s) m[[col]][m$qes_code == s]
+  expect_true(all(is.na(m$party_best)) && all(is.na(m$party_lean)))
+  expect_true(all(is.na(by("vote_choice", "qes2022"))) && all(is.na(by("turnout", "qes2022"))))
+  expect_true(all(is.na(by("political_interest", "qes2018"))))
+  expect_true(all(is.na(by("ideology", "qes2014"))))
+  expect_false(any(by("income", "qes2022") %in% "-99"))
+  # no don't-know or refusal label is left as an income or a religion
+  dk <- "know|sais pas|NSP|refus|pr\u00e9f\u00e8re ne pas|prefer not|^-?99$"
+  expect_false(any(grepl(dk, m$income, ignore.case = TRUE)))
+  expect_false(any(grepl(dk, m$religion, ignore.case = TRUE)))
+  expect_true(all(is.na(by("sovereignty_support", "qes2007"))))
+  expect_true(any(!is.na(by("sovereignty_support", "qes2018"))))
+})
+
 test_that("the shipped dictionary describes the pinned files as the reader reads them (live, S3)", {
   local_live_originals()
   local_qes_notices_shown()

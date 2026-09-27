@@ -81,12 +81,15 @@
 #' `quiet = TRUE`).
 #' Progress messages (classes `qesR_message_download` and
 #' `qesR_message_cached`) are silenced by `quiet = TRUE`, as is the one-time
-#' tip suggesting the disk cache (`qesR_message_disk_cache_tip`). Three notices are shown at most once per session and are
+#' tip suggesting the disk cache (`qesR_message_disk_cache_tip`). These
+#' notices are shown at most once per session and are
 #' not silenced by `quiet`: `qesR_message_deprecated` (see
 #' [qesR-deprecated]); `qesR_message_assign_default`, shown when `get_qes()`,
-#' `get_qes_master()` or `get_decon()` is called without `assign_global`; and
+#' `get_qes_master()` or `get_decon()` is called without `assign_global`;
 #' `qesR_message_arg_ignored`, shown when a legacy argument that no longer
-#' changes the result is used. Every condition carries
+#' changes the result is used; and `qesR_message_values_changed` and
+#' `qesR_message_legacy_columns`, shown by [get_qes_master()] and
+#' [get_decon()], whose values changed in qesR 0.5.0. Every condition carries
 #' the fields `id` (its message key) and `lang` (the language of its message).
 #'
 #' @section Study catalog:
@@ -198,8 +201,10 @@
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 #' masqués par `quiet = TRUE`.
-#' `qesR_message_deprecated`, `qesR_message_assign_default` et
-#' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat)
+#' `qesR_message_deprecated`, `qesR_message_assign_default`,
+#' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat),
+#' `qesR_message_values_changed` et `qesR_message_legacy_columns` (valeurs de
+#' [get_qes_master()] et [get_decon()] modifiées dans qesR 0.5.0)
 #' s'affichent au plus une fois par session et ne sont pas masqués par
 #' `quiet`. Chaque
 #' condition porte les champs `id` (sa clé de message) et `lang` (la langue de
