@@ -8,8 +8,9 @@
 #' Variable names must match exactly; there is no partial or fuzzy matching.
 #'
 #' The wording comes from the metadata of [qes_codebook()]: offline for the
-#' studies shipped with qesR, from your cached copy of the data file for
-#' `qes2022`. `qes2022`'s question text is its data file's variable label,
+#' studies shipped with qesR; for `qes2022`, from its data file, which is
+#' downloaded (with a message, as [qes_codebook()] gives) and cached on first
+#' use when it is not already cached. `qes2022`'s question text is its data file's variable label,
 #' which Stata cuts at 80 characters: such rows have `truncated = TRUE` and
 #' `doc_ref` names the codebook document that has the full wording (see
 #' [qes_docs()]). qesR never guesses the end of a cut question.
@@ -20,7 +21,11 @@
 #' avec sa source. Les noms de variables doivent correspondre exactement.
 #' `lang = "fr"` donne le libellé français, `lang = "en"` l'anglais ; par
 #' défaut, la langue de l'étude. Un libellé coupé à 80 caractères dans le
-#' fichier (`qes2022`) est signalé par `truncated = TRUE`. `doc_ref` donne
+#' fichier (`qes2022`) est signalé par `truncated = TRUE`. Le libellé vient
+#' des métadonnées de [qes_codebook()] : hors ligne pour les études livrées
+#' avec qesR ; pour `qes2022`, de son fichier de données, téléchargé (avec un
+#' message, comme pour [qes_codebook()]) et mis en cache à la première
+#' utilisation s'il n'est pas déjà en cache. `doc_ref` donne
 #' une ou plusieurs références `<file_id>:<question>` séparées par `;` (par
 #' exemple `"352010:Q19;352009:Q19"`, questionnaires anglais et français).
 #'
@@ -63,7 +68,8 @@ qes_question <- function(x, variables, lang = NULL) {
     if (length(study) != 1L) {
       .qes_abort("input_string", class = "qesR_error_input", args = list("x"), data = list(arg = "x", value = x))
     }
-    dict <- .qes_dict_study(study)
+    # a first-use download of qes2022 is announced, as qes_codebook() does
+    dict <- .qes_dict_study(study, quiet = FALSE)
   }
   vars <- .qes_match_variables(variables, dict$variables$variable, study = study,
     scope = if (is.data.frame(x)) "data" else "study")
@@ -100,7 +106,9 @@ qes_question <- function(x, variables, lang = NULL) {
 #' warning of class `qesR_warning_truncated` says so. `full` no longer
 #' changes the result: the text is always the most complete one qesR has.
 #'
-#' @param do A data.frame or the name of one in the calling environment.
+#' @param do A data.frame, or the name of one, looked up (read only) in the
+#'   calling environment and its enclosing environments: the workspace, for a
+#'   call at top level or from a function or `sapply()` lambda defined there.
 #' @param q Column name whose question text should be returned.
 #' @param full Ignored: the full question text is always returned. Setting
 #'   it to `FALSE` prints a one-time note.
@@ -132,8 +140,10 @@ get_question <- function(do, q, full = TRUE) {
   .qes_abort_unknown_variables(q, names(data))
 }
 
-# `envir`: the caller's frame, where a character `do` is looked up (read only,
-# never inherited from enclosing frames).
+# `envir`: the caller's frame, where a character `do` is looked up, read
+# only, together with its enclosing frames (so a function or sapply() lambda
+# defined at top level finds an object of the workspace, as qesR 0.4.4 did).
+# `mode = "list"` skips functions and other non-list objects of that name.
 .get_question_impl <- function(do, q, full = TRUE, envir) {
   .assert_single_string(q, "q")
   if (!isTRUE(full)) {
@@ -143,7 +153,10 @@ get_question <- function(do, q, full = TRUE) {
   object_name <- NULL
   if (is.character(do) && length(do) == 1L) {
     object_name <- do
-    if (!exists(do, envir = envir, inherits = FALSE)) {
+    if (!exists(do, envir = envir, mode = "list", inherits = TRUE)) {
+      if (exists(do, envir = envir, inherits = TRUE)) {
+        .qes_abort("input_do", class = "qesR_error_input", data = list(arg = "do", value = do))
+      }
       .qes_abort(
         "input_object_missing",
         class = "qesR_error_input",
@@ -151,7 +164,7 @@ get_question <- function(do, q, full = TRUE) {
         data = list(arg = "do", value = do)
       )
     }
-    data <- get(do, envir = envir, inherits = FALSE)
+    data <- get(do, envir = envir, mode = "list", inherits = TRUE)
     if (!is.data.frame(data)) {
       .qes_abort("input_do", class = "qesR_error_input", data = list(arg = "do", value = do))
     }

@@ -151,8 +151,11 @@ d'échantillonnage. Les estimations sont calculées dans chaque étude avec
 `svyby()` ; le tableau signale les niveaux qu'une étude n'offrait pas au
 lieu d'afficher 0.
 
-```{r design, message = FALSE}
+```{r design}
 d <- qes_design(h)
+```
+
+```{r design-table, message = FALSE}
 cells <- qes_provenance(h, level = "cell")
 spec <- qes_spec("spec")
 

@@ -9,7 +9,8 @@ qes_docs(studies = NULL, role = NULL, lang = NULL)
 \arguments{
 \item{studies}{Optional character vector of study codes (see
 \code{\link[=qes_studies]{qes_studies()}}); \code{NULL} lists every study, \code{"all"} too. Codes are
-trimmed and case-insensitive.}
+trimmed and case-insensitive. The synthetic \code{"qes_demo"} is accepted and
+has no documents (zero rows).}
 
 \item{role}{Optional character vector of roles to keep: \code{"codebook"},
 \code{"questionnaire"}, \code{"technical_report"} or \code{"methodology"}.}

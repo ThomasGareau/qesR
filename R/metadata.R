@@ -52,12 +52,13 @@
 
 # Schema version of a metadata shard; part of its cache file name, so a new
 # schema never reads an old shard.
-.qes_shard_schema <- "1"
+.qes_shard_schema <- "2"
 
 # ---- codes and text --------------------------------------------------------------
 
 # A code as text: whole numbers without decimals or exponent ("100000", "-99"),
-# other numbers with up to 15 significant digits, text unchanged.
+# other numbers with up to 15 significant digits and a "." decimal mark
+# whatever getOption("OutDec") is, text unchanged.
 .qes_code_chr <- function(v) {
   if (is.character(v)) {
     return(v)
@@ -69,7 +70,7 @@
   out[whole] <- sprintf("%.0f", v[whole])
   out[whole & out == "-0"] <- "0"
   other <- ok & !whole
-  out[other] <- vapply(v[other], function(z) format(z, digits = 15, scientific = FALSE), character(1))
+  out[other] <- vapply(v[other], function(z) format(z, digits = 15, scientific = FALSE, decimal.mark = "."), character(1))
   out
 }
 
@@ -410,8 +411,60 @@
     v$doc_ref[has] <- docs$file_id[1]
   }
   dict$variables <- v
-  dict$values <- .qes_apply_shard_rules(dict$values, study_row$study)
+  values <- .qes_rule_rows(dict$values, data, study_row$study)
+  dict$values <- .qes_apply_shard_rules(values, study_row$study)
   dict
+}
+
+# Rows for the codes of the study's generic ("*") missing-code rules that a
+# numeric column holds but its values table lacks: the table lists only the
+# labelled codes of a column with more than 50 distinct values, so without
+# them -99 would stay a number in qes2022's unlabelled 0-100 thermometers,
+# incomes and years of birth. The rows have no label; their missing type is
+# set by .qes_apply_shard_rules(), where a rule for the variable still wins.
+.qes_rule_rows <- function(values, data, study) {
+  rules <- tryCatch(.qes_shard_rules(), error = function(e) NULL)
+  if (is.null(rules) || !is.data.frame(data) || ncol(data) == 0L) {
+    return(values)
+  }
+  generic <- rules[rules$study == study & rules$variable == "*", , drop = FALSE]
+  if (nrow(generic) == 0L) {
+    return(values)
+  }
+  have <- paste(values$variable, values$value, sep = "\r")
+  add <- list()
+  for (v in names(data)) {
+    x <- data[[v]]
+    if (!identical(.qes_storage(x), "numeric")) {
+      next
+    }
+    base <- .qes_code_chr(.qes_plain(x))
+    for (code in unique(generic$value)) {
+      n <- sum(base == code, na.rm = TRUE)
+      if (n == 0L || paste(v, code, sep = "\r") %in% have) {
+        next
+      }
+      add[[length(add) + 1L]] <- data.frame(
+        study = study, variable = v, value = code, label = NA_character_,
+        label_source = "none", label_lang = NA_character_, label_en = NA_character_,
+        label_fr = NA_character_, missing_type = NA_character_, n = as.integer(n),
+        label_flag = NA_character_, stringsAsFactors = FALSE
+      )
+    }
+  }
+  if (length(add) == 0L) {
+    return(values)
+  }
+  added <- do.call(rbind, add)
+  out <- rbind(values[, names(added), drop = FALSE], added)
+  # the new rows go among the codes of their variable, in numeric order
+  pos <- match(out$variable, names(data))
+  touched <- out$variable %in% added$variable
+  within <- seq_len(nrow(out))
+  within[touched] <- suppressWarnings(as.numeric(out$value[touched]))
+  out <- out[order(pos, within, seq_len(nrow(out)), na.last = TRUE), , drop = FALSE]
+  rownames(out) <- NULL
+  out
 }
 
 # Apply the shipped missing-code rules of `study` to its values table: a rule
@@ -642,6 +695,8 @@
   values$variable <- vars[known][match(values$variable, old_names)]
   if (any(!known)) {
     extra <- .qes_dict_build(data[, !known, drop = FALSE], .qes_study_row(study, demo = demo))
+    # the study's missing-code rules (none for a study whose metadata ships)
+    extra$values <- .qes_apply_shard_rules(.qes_rule_rows(extra$values, data[, !known, drop = FALSE], study), study)
     extra$variables$position <- which(!known)
     variables <- rbind(variables, extra$variables)
     values <- rbind(values, extra$values)

@@ -3,8 +3,21 @@
 # tables are consistent, the recorded report ships no qes2022 aggregate
 # (OD3), and the report and its gate work on the synthetic qes_demo. The
 # checks on the pinned files are in test-validation-live.R.
+#
+# The official results of Elections Quebec and the recorded report are in the
+# source tree but not in the package build (inst/COPYRIGHTS, section 3): the
+# tests that read them run on the source tree only, and the report skips the
+# recall and turnout checks without them.
+
+skip_if_no_official <- function() {
+  testthat::skip_if_not(
+    .qes_validation_has("official_results.csv") && .qes_validation_has("official_turnout.csv"),
+    "the official results are not installed (build-ignored)"
+  )
+}
 
 test_that("the official results add up and name their source", {
+  skip_if_no_official()
   b <- .qes_validation_benchmarks()
   r <- b$results
   expect_false(anyDuplicated(paste(r$election_id, r$party)) > 0L)
@@ -59,6 +72,8 @@ test_that("the census margins are distributions with a documented age cut", {
 })
 
 test_that("the recorded report ships no qes2022 aggregate and matches the benchmarks", {
+  skip_if_no_official()
+  testthat::skip_if_not(.qes_validation_has("validation_report.csv"), "the recorded report is not installed (build-ignored)")
   rec <- .qes_validation_recorded()
   expect_identical(names(rec), .qes_val_columns)
   shipped <- .qes_catalog()$studies
@@ -92,7 +107,26 @@ test_that("the recorded report ships no qes2022 aggregate and matches the benchm
   expect_true(all(t$value > 0 & t$value < 35))
 })
 
+test_that("without the official results, recall and turnout are skipped and the record is empty", {
+  local_mocked_bindings(.qes_validation_has = function(file) file == "census_margins.csv")
+  b <- .qes_validation_benchmarks()
+  expect_null(b$results)
+  expect_null(b$turnout)
+  expect_gt(nrow(b$census), 0L)
+  rec <- .qes_validation_recorded()
+  expect_identical(names(rec), .qes_val_columns)
+  expect_identical(nrow(rec), 0L)
+  r <- .qes_validation_run("qes_demo")
+  expect_identical(names(r), .qes_val_columns)
+  off <- r[r$check %in% c("recall", "turnout"), ]
+  expect_identical(nrow(off), 2L)
+  expect_identical(off$status, c("skipped", "skipped"))
+  expect_true(all(is.na(off$benchmark)))
+  expect_gt(sum(r$check == "census"), 0L)
+})
+
 test_that("the report runs offline on qes_demo and the gate compares with the record", {
+  skip_if_no_official()
   r <- .qes_validation_run("qes_demo")
   expect_identical(names(r), .qes_val_columns)
   expect_setequal(unique(r$check), c("recall", "turnout", "census", "construct"))

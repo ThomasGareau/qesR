@@ -913,8 +913,8 @@
 "qes2007_panel","pre","interest_campaign_4pt","interet","not_at_all",,289
 "qes2007_panel","pre","interest_campaign_4pt","interet",,"dk_refused",3
 "qes2007_panel","pre","interest_campaign_4pt","interet",,"sysmis",1
-"qes2007_panel","post","turnout_prov_recall","avote","yes",,1752
-"qes2007_panel","post","turnout_prov_recall","avote","no",,302
+"qes2007_panel","post","turnout_prov_recall","voteoui","yes",,1752
+"qes2007_panel","post","turnout_prov_recall","voteoui","no",,302
 "qes_crop_2007_2010","*","age_group6","QAGE","a18_24",,1489
 "qes_crop_2007_2010","*","age_group6","QAGE","a25_34",,3834
 "qes_crop_2007_2010","*","age_group6","QAGE","a35_44",,4776

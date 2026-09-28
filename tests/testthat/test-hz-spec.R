@@ -111,6 +111,29 @@ test_that("a broken spec raises qesR_error_spec with the problems table", {
   expect_true("V-S3" %in% attr(rep, "check")$rule)
 })
 
+test_that("an edited qes_spec object is named as such when it is broken", {
+  sp <- qes_spec("spec")
+  sp$tables$crosswalk$notes_en[1] <- "A note in English only."
+  err <- expect_error(qes_spec("spec", spec = sp), class = "qesR_error_spec")
+  expect_identical(err$id, "spec_invalid_edited")
+  expect_true("V-S6" %in% err$problems$rule)
+  msg <- conditionMessage(err)
+  expect_false(grepl(sp$dir, msg, fixed = TRUE))
+  expect_false(grepl("extdata/harmonize", msg, fixed = TRUE))
+  # also through qes_harmonize()
+  err2 <- expect_error(qes_harmonize("qes2014", targets = "gender", spec = sp, quiet = TRUE),
+                       class = "qesR_error_spec")
+  expect_identical(err2$id, "spec_invalid_edited")
+  # an unedited object still names its directory
+  dir <- local_spec_copy()
+  x <- .qes_read_csv(file.path(dir, "crosswalk.csv"))
+  x$grade[1] <- "same"
+  .qes_write_csv(x, file.path(dir, "crosswalk.csv"))
+  rep <- qes_spec("spec", spec = dir, validate = "report")
+  err3 <- expect_error(qes_spec("spec", spec = rep), class = "qesR_error_spec")
+  expect_identical(err3$id, "spec_invalid")
+})
+
 test_that("files, schema version, engine version and column types are enforced", {
   dir <- local_spec_copy()
   unlink(file.path(dir, "levels.csv"))
@@ -171,6 +194,15 @@ test_that("V-S1 catches malformed cells", {
     t$crosswalk$gate_to[xw_row(t, "qes2012", "vote_prov_recall")] <- "2=not_voted;9=refused"
     t
   }))
+  # a gate needs a rule that applies it (map, numeric, weight, date, string)
+  s <- shipped_spec()
+  i <- xw_row(s$tables, "qes2012", "religion")
+  s$tables$crosswalk$rule[i] <- "fn:gated"
+  s$tables$crosswalk$args[i] <- NA_character_
+  p <- .qes_spec_check(s)
+  expect_true(any(p$rule == "V-S1" & grepl("a gate applies only to rules", p$detail)))
+  p <- .qes_spec_check(shipped_spec())
+  expect_false(any(grepl("a gate applies only to rules", p$detail)))
   expect_true("V-S1" %in% rules_after(function(t) {
     t$valuemaps$source_code[1] <- "01"
     t

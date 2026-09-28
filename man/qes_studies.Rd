@@ -36,6 +36,18 @@ latest version) and \code{status}: \code{"current"}, \code{"new_version_same_fil
 
 The text columns do not depend on the session language: \code{title_en} and
 \code{title_fr} (and \code{notes_en}, \code{notes_fr}) are both always there.
+
+The data frame has class \code{c("qes_studies", "data.frame")}. It prints
+compactly: \code{study}, \code{year}, \code{family}, \code{study_design}, \code{licence} and the
+title in the session language (\code{status} too after \code{check_updates = TRUE}); \code{as.data.frame()} or \code{names()} gives every column. A subset of
+its columns is a plain data frame.
+
+\emph{En français} : le tableau (classe \code{c("qes_studies", "data.frame")})
+s'affiche de façon compacte : \code{study}, \code{year}, \code{family},
+\code{study_design}, \code{licence} et le titre dans la langue de la session
+(\code{status} aussi avec \code{check_updates = TRUE}) ; \code{as.data.frame()} ou
+\code{names()} donne toutes les colonnes. Un sous-ensemble de ses colonnes
+est un data frame ordinaire.
 }
 \description{
 \code{qes_studies()} returns the offline study catalog: one row per study code,

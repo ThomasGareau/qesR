@@ -73,7 +73,8 @@ test_that("the replacement that the get_decon() notice names returns values for 
   call_text <- reg$replacement[reg$name == "get_decon"]
   expect_match(call_text, "include_draft = TRUE", fixed = TRUE)
   # the documented call, with the demo as `srvy`
-  expr <- str2lang(sub("qes_harmonize(", "qes_harmonize(srvy, ", call_text, fixed = TRUE))
+  expect_match(call_text, "qes_harmonize(srvy, ", fixed = TRUE)
+  expr <- str2lang(call_text)
   expr$quiet <- TRUE
   h <- eval(expr, list(srvy = "qes_demo", qes_harmonize = qesR::qes_harmonize))
   expect_identical(nrow(h), 60L)

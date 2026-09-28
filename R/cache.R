@@ -500,7 +500,18 @@
 #'   (`NA` for shards), `md5` (of the file, or for a shard of the data file it
 #'   was built from), `bytes`, `retrieved` (modification time), `kind`
 #'   (`"file"` or `"shard"`) and `path`. Attributes `mode` (the cache mode)
-#'   and `dir` (the cache directory, `NA` in mode `"none"`).
+#'   and `dir` (the cache directory, `NA` in mode `"none"`). The data frame
+#'   has class `c("qes_cache_info", "data.frame")` and prints compactly: the
+#'   mode, directory and total size once, then each file with its size and
+#'   its path relative to the cache directory; the `path` column itself is
+#'   absolute, and `as.data.frame()` gives every column. A subset of its
+#'   columns is a plain data frame.
+#'
+#'   *En français* : une ligne par fichier en cache, de classe
+#'   `c("qes_cache_info", "data.frame")`. L'affichage donne une fois le mode,
+#'   le dossier et la taille totale, puis chaque fichier avec sa taille et
+#'   son chemin relatif au dossier du cache ; la colonne `path` reste
+#'   absolue, et `as.data.frame()` donne toutes les colonnes.
 #'
 #' @family cache
 #' @seealso [qes_cache_clear()] to delete cached files.
@@ -515,7 +526,74 @@ qes_cache_info <- function() {
   out <- if (is.na(root)) .qes_cache_empty_info() else .qes_cache_list(root)
   attr(out, "mode") <- mode
   attr(out, "dir") <- root
+  class(out) <- c("qes_cache_info", "data.frame")
   out
+}
+
+# Subsetting keeps the class, and the attributes mode and dir, only when
+# every column is kept (a row subset); a column subset is a plain data frame.
+#' @export
+`[.qes_cache_info` <- function(x, ...) {
+  out <- NextMethod()
+  if (!is.data.frame(out)) {
+    return(out)
+  }
+  if (identical(names(out), names(x))) {
+    attr(out, "mode") <- attr(x, "mode", exact = TRUE)
+    attr(out, "dir") <- attr(x, "dir", exact = TRUE)
+  } else {
+    class(out) <- setdiff(class(out), "qes_cache_info")
+  }
+  out
+}
+
+# Bytes as a short size ("12.3 MB"), base 1024 as file managers show.
+.qes_format_bytes <- function(bytes) {
+  bytes <- as.numeric(bytes)
+  units <- c("B", "KB", "MB", "GB", "TB")
+  out <- rep(NA_character_, length(bytes))
+  ok <- !is.na(bytes)
+  k <- pmin(pmax(floor(log(pmax(bytes[ok], 1), 1024)), 0), length(units) - 1L)
+  v <- bytes[ok] / 1024^k
+  out[ok] <- ifelse(k == 0, sprintf("%.0f %s", v, units[k + 1L]), sprintf("%.1f %s", v, units[k + 1L]))
+  out
+}
+
+#' @export
+print.qes_cache_info <- function(x, ...) {
+  needed <- c("study", "kind", "file_id", "bytes", "retrieved", "path")
+  if (!all(needed %in% names(x))) {
+    print(as.data.frame(x), ...)
+    return(invisible(x))
+  }
+  lang <- .qes_lang()
+  mode <- attr(x, "mode", exact = TRUE) %||% NA_character_
+  dir <- attr(x, "dir", exact = TRUE) %||% NA_character_
+  total <- sum(as.numeric(x$bytes), na.rm = TRUE)
+  cat(.qes_msg("cache_print_header",
+               list(mode, if (is.na(dir)) "-" else dir, nrow(x), .qes_format_bytes(total)),
+               lang = lang), "\n", sep = "")
+  if (nrow(x) > 0L) {
+    # paths relative to the cache directory (the column keeps them absolute)
+    rel <- x$path
+    if (!is.na(dir)) {
+      prefix <- paste0(sub("[/\\\\]+$", "", dir), "/")
+      at <- !is.na(rel) & startsWith(rel, prefix)
+      rel[at] <- substring(rel[at], nchar(prefix) + 1L)
+    }
+    view <- data.frame(
+      study = x$study,
+      kind = x$kind,
+      file_id = x$file_id,
+      size = .qes_format_bytes(x$bytes),
+      retrieved = format(x$retrieved, "%Y-%m-%d %H:%M"),
+      file = rel,
+      stringsAsFactors = FALSE
+    )
+    print(view, ...)
+  }
+  cat(.qes_msg("cache_print_footer", lang = lang), "\n", sep = "")
+  invisible(x)
 }
 
 # ---- qes_cache_clear() ---------------------------------------------------------------
@@ -556,6 +634,7 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
   mode <- .qes_cache_mode()
   root <- .qes_cache_root(mode)
   removed <- character(0)
+  removed_studies <- character(0)
 
   if (!is.na(root) && dir.exists(root)) {
     if (!.qes_cache_is_marked(root)) {
@@ -587,6 +666,7 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
     }
     unlink(targets[.qes_cache_inside(targets, root)])
     removed <- targets[!file.exists(targets)]
+    removed_studies <- unique(stats::na.omit(listed$study[listed$path %in% removed]))
     .qes_cache_prune(file.path(root, .qes_cache_layout), root)
     .qes_cache_forget(removed)
   }
@@ -598,8 +678,12 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
   } else {
     removed_md5 <- sub("^[0-9]+-([0-9a-f]{32})\\..*$", "\\1", basename(removed))
     .qes_memo_clear(studies = codes, md5 = removed_md5)
-    if (!is.null(codes)) {
-      .qes_dict_forget(codes)
+    # the metadata held in memory for every study that lost a file (a data
+    # file or a shard), not only the studies named: what is still on disk is
+    # read again when it is needed
+    forget <- unique(c(codes, removed_studies))
+    if (length(forget) > 0L) {
+      .qes_dict_forget(forget)
     }
   }
   invisible(removed)

@@ -246,7 +246,7 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 | `get_codebook`, `get_qes_codebook` | soft-deprecated (0.5.0) | `.qes_codebook_impl()` | as `qes_codebook`; opt-in assignment now works through the wrapper ([A:A1]) | — |
 | `format_codebook(codebook, layout)` | soft-deprecated (0.5.0) | `.qes_codebook_impl(codebook, layout =)` | • A plain data.frame is an error that names the fix, e.g. a codebook read back from CSV, which has lost its class ([A:A5]).<br>• The long layout keeps unlabelled variables ([A:K7]). | — |
 | `get_value_labels(codebook, variable = NULL, long = FALSE)` | soft-deprecated (0.5.0) | legacy adapter over the long codebook, reshaped to the legacy list or data.frame | • An unknown variable is an error instead of `named list()` ([A:K6]).<br>• `''` labels are preserved. | — |
-| `get_question(do, q, full = TRUE)` | soft-deprecated (0.5.0) | legacy adapter over `qes_question()`, returning `character(1)` | • Exact match ([A:A6]); truncation is flagged.<br>• `full = FALSE` returns the same full text as `TRUE` and emits a once-per-session `qesR_message_arg_ignored`, because it changes what is returned.<br>• A character `do` is looked up in the caller's frame, read only. | — |
+| `get_question(do, q, full = TRUE)` | soft-deprecated (0.5.0) | legacy adapter over `qes_question()`, returning `character(1)` | • Exact match ([A:A6]); truncation is flagged.<br>• `full = FALSE` returns the same full text as `TRUE` and emits a once-per-session `qesR_message_arg_ignored`, because it changes what is returned.<br>• A character `do` is looked up from the caller's frame, including enclosing frames, read only. | — |
 | `get_codebook_files`, `get_qes_codebook_files` | soft-deprecated (0.5.0) | legacy adapter over `qes_docs()`, with columns remapped to `file_id, filename, extension, size, download_url` | They now return the documentation files ([A:K1], [A:K2]). | — |
 | `download_codebook(srvy, dest_dir = tempdir(), file, quiet, refresh, overwrite)` | soft-deprecated (0.5.0) | legacy adapter over `qes_download(what = "docs", path = dest_dir)` | • Files are md5-verified.<br>• `file` is now a regex over **document** file names; in v0.4.4 it selected the data file ([A:A4]).<br>• `refresh` is a no-op with a message.<br>• `dest_dir` is created only on this legacy path, and only when files exist. | — |
 | `get_preview(srvy, obs = 6L, file = NULL)` | soft-deprecated (0.5.0) | `head(.get_qes_impl(srvy, file, quiet = TRUE), obs)` | • `obs` must be a whole number ≥ 1.<br>• Data is served from the memo or cache. | — |
@@ -505,7 +505,7 @@ crosswalk.csv      one reviewed decision per (study, wave, target), incl. offere
 valuemaps.csv      source code -> level or NA reason
 legacy.csv         get_qes_master / get_decon column renderers
 CHANGES.csv        spec changelog (EN/FR), source of the NEWS spec section
-gates.csv          gate code x source code counts among wave members, for every projectable row (CC0 studies)
+gates.csv          gate code x source code counts among wave members, for every projectable row and every gated weight, date or string row (CC0 studies)
 expected/marginals.csv   projected unweighted harmonized marginals (CC0 studies)
 expected/hashes.csv      md5 of each harmonized column per (study, wave, target), all studies
 benchmarks_elections.csv added only after the owner verifies the official figures (R3)
@@ -744,7 +744,7 @@ interest4,4,not_at_all,Not at all interested,Pas du tout intéressé(e),4,TRUE,n
 
 **`crosswalk.csv`** has one reviewed decision per `(study, wave, target)`:
 - **Rule:** `rule` (`map`, `numeric`, `weight`, `date`, `string`, `constant`, `fn:<name>`), `source_var` (exact case, as returned by `get_qes()` after the name map), `map_id`, `args` (`min=0;max=10;affine=x-1;from_label=TRUE`, `format=yyyymmdd`), `na_codes` (`98=dk;99=refused;-99=no_answer`).
-- **Gate:** `gate_var`, `gate_codes`, and `gate_to`. `gate_to` is an NA reason, a level name, or a **per-code** list `code=outcome;...` on the gate variable, where `NA=` covers a missing gate value.
+- **Gate:** `gate_var`, `gate_codes`, and `gate_to`. `gate_to` is an NA reason, a level name, or a **per-code** list `code=outcome;...` on the gate variable, where `NA=` covers a missing gate value. A gate applies to rules `map`, `numeric`, `weight`, `date` and `string` (V-S1); a weight, date or string target has no level set, so its gate outcomes are NA reasons.
 - **Output:** `primary` (≤ 1 per (study, target)).
 - **Validity:** `grade`, `grade_reason_en`, `grade_reason_fr`, `instrument`, `election_ref`, `mode`, `dk_offered` (`explicit`/`volunteered`/`none`), `levels_offered` (`;`-list).
 - **Wording:** `wording_en`, `wording_fr`, `wording_ref` (only `wording_ref` for qes2022 under OD3).

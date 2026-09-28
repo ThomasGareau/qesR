@@ -36,8 +36,9 @@ Variable names must match exactly; there is no partial or fuzzy matching.
 }
 \details{
 The wording comes from the metadata of \code{\link[=qes_codebook]{qes_codebook()}}: offline for the
-studies shipped with qesR, from your cached copy of the data file for
-\code{qes2022}. \code{qes2022}'s question text is its data file's variable label,
+studies shipped with qesR; for \code{qes2022}, from its data file, which is
+downloaded (with a message, as \code{\link[=qes_codebook]{qes_codebook()}} gives) and cached on first
+use when it is not already cached. \code{qes2022}'s question text is its data file's variable label,
 which Stata cuts at 80 characters: such rows have \code{truncated = TRUE} and
 \code{doc_ref} names the codebook document that has the full wording (see
 \code{\link[=qes_docs]{qes_docs()}}). qesR never guesses the end of a cut question.
@@ -49,7 +50,11 @@ chaque variable nommée, tel que le donne le questionnaire de l'étude,
 avec sa source. Les noms de variables doivent correspondre exactement.
 \code{lang = "fr"} donne le libellé français, \code{lang = "en"} l'anglais ; par
 défaut, la langue de l'étude. Un libellé coupé à 80 caractères dans le
-fichier (\code{qes2022}) est signalé par \code{truncated = TRUE}. \code{doc_ref} donne
+fichier (\code{qes2022}) est signalé par \code{truncated = TRUE}. Le libellé vient
+des métadonnées de \code{\link[=qes_codebook]{qes_codebook()}} : hors ligne pour les études livrées
+avec qesR ; pour \code{qes2022}, de son fichier de données, téléchargé (avec un
+message, comme pour \code{\link[=qes_codebook]{qes_codebook()}}) et mis en cache à la première
+utilisation s'il n'est pas déjà en cache. \code{doc_ref} donne
 une ou plusieurs références \verb{<file_id>:<question>} séparées par \verb{;} (par
 exemple \code{"352010:Q19;352009:Q19"}, questionnaires anglais et français).
 }

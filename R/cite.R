@@ -201,7 +201,7 @@
 #' cat(qes_cite("qes2022", style = "bibtex"), sep = "\n\n")
 #' @export
 qes_cite <- function(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "en") {
-  style <- match.arg(style)
+  style <- .qes_check_one(style, "style", c("text", "bibtex", "bibentry"))
   if (!is.character(lang) || length(lang) != 1L || !(lang %in% c("en", "fr"))) {
     .qes_abort(
       "input_choice",

@@ -191,7 +191,8 @@ test_that("the interview mode varies by respondent where the wave says so", {
   # the mode row is a crosswalk row like any other: not applied until signed off
   h0 <- suppressMessages(withCallingHandlers(
     qes_harmonize(data = syn, targets = "vote_prov_intent", quiet = TRUE),
-    qesR_warning_unverified_source = function(w) invokeRestart("muffleWarning")
+    qesR_warning_unverified_source = function(w) invokeRestart("muffleWarning"),
+    qesR_warning_all_unreviewed = function(w) invokeRestart("muffleWarning")
   ))
   expect_true(all(is.na(h0$survey_mode)))
   # the spec requires a survey_mode row on the variable a var: mode names

@@ -60,8 +60,11 @@ nouveau travail puisse utiliser 0.7.0 :
 remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
 ```
 
-Les résultats calculés avec 0.5.0 ou 0.6.0 ne se reproduisent qu'avec ces
-versions.
+0.5.0 et 0.6.0 étaient des versions de développement, jamais publiées. Un
+résultat calculé avec l'une d'elles se reproduit en installant le commit
+dont il provient, que `packageDescription("qesR")$RemoteSha` enregistre
+pour une installation depuis GitHub
+(`remotes::install_github("ThomasGareau/qesR", ref = "<sha>")`).
 
 ## Assignez vous-même le résultat
 
@@ -262,7 +265,7 @@ ces notes).
 | `download_codebook()` | `qes_download(what = "docs")` | `file` choisit maintenant des documents par leur nom ; fichiers vérifiés par md5 |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | les fichiers des firmes de 1998 s'ajoutent après les 11 anciens codes |
-| `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` | obsolète (dépréciation douce) depuis 0.7.0 ; valeurs modifiées (plus haut) |
+| `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | obsolète (dépréciation douce) depuis 0.7.0 ; valeurs modifiées (plus haut) |
 
 `get_qes()`, `get_qes_master()` et `qes_codebook()` gardent leur nom. Une
 fonction héritée retourne ce que retourne sa remplaçante. Dans une nouvelle

@@ -65,6 +65,12 @@ test_that("fields, regex and studies restrict the search", {
   expect_match(vals$values[vals$variable == "q69"], "2=Ailleurs au Canada", fixed = TRUE)
   expect_error(qes_search("x", fields = "nope"), class = "qesR_error_input")
   expect_error(qes_search("(", regex = TRUE), class = "qesR_error_input")
+  # the pattern is checked with the engine that matches it (PCRE)
+  expect_no_error(qes_search("vot(?=e)", studies = "qes2018", regex = TRUE))
+  expect_no_error(qes_search("(?<name>vote)", studies = "qes2018", regex = TRUE))
+  for (bad in c("\\k", "\\g", "\\c")) {
+    expect_no_warning(expect_error(qes_search(bad, regex = TRUE), class = "qesR_error_input"))
+  }
   expect_error(qes_search(""), class = "qesR_error_input")
   expect_error(qes_search("x", studies = "2018"), class = "qesR_error_unknown_study")
 })

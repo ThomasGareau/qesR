@@ -81,8 +81,8 @@ definition for it, so the definition is inferred from these counts,
 unconfirmed, and remains pending.
 
 
-2. The 2022 study (CC BY-NC 4.0): nothing ships
-------------------------------------------------
+2. The 2022 study (CC BY-NC 4.0): no labels, question text or counts ship
+--------------------------------------------------------------------------
 
   qes2022             2022 Quebec Election Study. Mahéo, Bélanger,        10.7910/DVN/PAQBDR
                       Stephenson, Harell (Harvard Dataverse)
@@ -102,15 +102,32 @@ labels of your copy are the ones the spec was written for, without shipping
 them), page references to its codebook, and the facts about its waves and
 weights that the codebook publishes (pp. 5 and 7): the size of each wave,
 its fieldwork dates and mode, and the weighting method (raking on age,
-gender, education and language, the trimming bounds). No count from its
-data file ships (gates.csv and expected/marginals.csv have no qes2022
-row). expected/hashes.csv holds, for each of its harmonized columns, the
-md5 hash of the column that qesR computes from the pinned file (used to
-check that the harmonization gives the same result on your copy); a hash
-cannot be turned back into answers or counts. Its codebook
+gender, education and language, the trimming bounds). The notes and grade
+reasons of the spec rows say, in qesR's own words and with page references
+to the codebook, how each question was asked and routed and which level or
+missing-value reason each code is given (as the value maps do); they quote
+no value label or question text. No count of answers from its data file
+ships: gates.csv and expected/marginals.csv have no qes2022 row, and the
+test fixture tests/testthat/fixtures/v044-get-qes-names.csv gives, for
+qes2022, only the variable names and storage types that qesR 0.4.4
+returned, with its column of missing-value counts left empty.
+expected/hashes.csv holds, for each of its harmonized columns, the number
+of rows of the file (1,521, the size of the study, which the codebook
+publishes on p. 5) and the md5 hash of the column that qesR computes from
+the pinned file (used to check that the harmonization gives the same
+result on your copy); a hash cannot be turned back into answers or counts.
+Its codebook
 is built on your computer from your own copy of the data file. When you use
 this study, the licence requires attribution (qes_cite("qes2022")) and rules
 out commercial use.
+
+The one exception is outside the package: the source repository of qesR
+(not the package built from it) keeps, in the folder data-raw/nc/, counts
+and other aggregates of the 2022 study and the value labels that mark its
+item nonresponse, for the checks run in GitHub CI. That folder is excluded
+from the package build. Its files are licensed under CC BY-NC 4.0, with the
+attribution above, and are not covered by the MIT licence of qesR
+(data-raw/nc/README.md).
 
 
 3. Other sources
@@ -123,20 +140,24 @@ out commercial use.
     inst/extdata/legacy/: the columns qesR 0.4.4 stacked by name and no
     longer built (removed.csv), and the studies whose legacy values differ
     from qesR 0.4.4 (changes.csv, no counts); part of qesR (MIT).
-  - inst/extdata/validation/official_results.csv and official_turnout.csv:
-    province-wide votes by party, valid and rejected ballots, ballots cast
-    and registered electors of the Quebec general elections of 1998 to
-    2022, from the official results published by Élections Québec (its
-    archived results files; each row gives its source URL). Parties other
-    than those the harmonization spec names are summed into one row.
-    Source: Élections Québec, official results of the general elections,
-    © Directeur général des élections du Québec. Élections Québec's terms
-    of use (https://www.electionsquebec.qc.ca/en/our-institution/terms-of-use/,
+  - Not in the package: inst/extdata/validation/official_results.csv and
+    official_turnout.csv of the qesR source repository hold province-wide
+    votes by party, valid and rejected ballots, ballots cast and registered
+    electors of the Quebec general elections of 1998 to 2022, from the
+    official results published by Élections Québec (its archived results
+    files; each row gives its source URL). Parties other than those the
+    harmonization spec names are summed into one row. Source: Élections
+    Québec, official results of the general elections, © Directeur général
+    des élections du Québec. Élections Québec's terms of use
+    (https://www.electionsquebec.qc.ca/en/our-institution/terms-of-use/,
     consulted 2026-09-27) allow reproduction for non-profit purposes with
     mention of the source and copyright; other uses and adaptations need
-    its written permission. Whether these terms cover their redistribution
-    in qesR (MIT) is pending the owner's confirmation with Élections Québec
-    before a CRAN release.
+    its written permission. Until that permission covers their
+    redistribution under the MIT licence of qesR, these two files, and the
+    validation report computed from them (below), are excluded from the
+    package build; they are used only in the source repository (its tests,
+    data-raw/build_validation.R and the website) and are not covered by
+    the MIT licence.
   - inst/extdata/validation/census_margins.csv: counts of the Quebec
     population by gender, age group, mother tongue and highest certificate
     at the censuses of 2006, 2011 (with the 2011 National Household Survey)
@@ -148,7 +169,10 @@ out commercial use.
     Population, tables 98-10-0020-01, 98-10-0218-01 and 98-10-0384-01
     (2006, 2011 NHS, 2016, 2021). This does not constitute an endorsement
     by Statistics Canada of this product.
-  - inst/extdata/validation/validation_report.csv: aggregates computed by
-    qesR from the CC0 studies of section 1 (weighted and unweighted shares
-    and differences from the tables above; no respondent rows), and no
-    aggregate of qes2022 (section 2).
+  - Not in the package: inst/extdata/validation/validation_report.csv of
+    the source repository: aggregates computed by qesR from the CC0
+    studies of section 1 (weighted and unweighted shares and differences
+    from the tables above, the official shares and turnout of Élections
+    Québec among them; no respondent rows), and no aggregate of qes2022
+    (section 2). It is excluded from the package build with the official
+    results.

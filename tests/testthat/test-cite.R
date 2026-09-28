@@ -95,3 +95,9 @@ test_that("qes_cite() of harmonized data gives the spec version and content hash
   # without harmonized data, qesR alone, as citation("qesR")
   expect_false(grepl("spec", qes_cite()[1], fixed = TRUE))
 })
+
+test_that("a bad style is an input error", {
+  expect_error(qes_cite("qes2014", style = NA), class = "qesR_error_input")
+  expect_error(qes_cite("qes2014", style = "bad"), class = "qesR_error_input")
+  expect_identical(qes_cite("qes2014", style = "bibt"), qes_cite("qes2014", style = "bibtex"))
+})

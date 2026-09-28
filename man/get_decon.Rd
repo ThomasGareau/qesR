@@ -56,10 +56,11 @@ qesR 0.7.0 each column is rendered from a target of the harmonization
 engine (\code{\link[=qes_harmonize]{qes_harmonize()}}): categorical columns are factors with the
 target's English levels (the same levels in every study), numbers stay
 numbers, and \code{income} and \code{religion} are each study's own categories as
-text. \code{turnout} and \code{votechoice} are the reported turnout and vote,
-asked after the election, except for \code{qes2022}, where they are the
-likelihood of voting and the vote intention asked during the campaign
-(OD9); \code{attr(, "timing")} says which (\code{"post"} or \code{"pre"}).
+text (the \code{qes2022} income amount stays a number). \code{turnout} and
+\code{votechoice} are the reported turnout and vote, asked after the
+election, except for \code{qes2022}, where they are the
+likelihood of voting and the vote intention asked during the campaign,
+as in qesR 0.4.4; \code{attr(, "timing")} says which (\code{"post"} or \code{"pre"}).
 }
 
 \section{What changed in 0.7.0}{
@@ -68,7 +69,8 @@ The columns hold the targets of the harmonization spec (see
 \code{attr(, "source_map")}): the factor levels are the targets' English
 labels rather than each file's labels (\code{"Man"} rather than \code{"A man"}),
 \code{education} has four groups, \code{province_territory} is \code{"Quebec"},
-\code{yob} is a number, \code{income} and \code{religion} are text, and codes the spec
+\code{yob} is a number, \code{income} and \code{religion} are text (the \code{qes2022}
+income amount stays a number), and codes the spec
 does not map (such as the \code{-99} of \code{qes2022}) are \code{NA}. \code{turnout} and
 \code{votechoice} are filled for every study that asked the reported vote
 (\code{qes2018} from \code{q5} and \code{q6}), and \code{get_decon("qes1998")} returns real
@@ -85,11 +87,12 @@ pas retirée, et un message nomme son remplacement une fois par session,
 \code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)}
 (\code{include_draft = TRUE} applique les lignes de correspondance encore en
 révision, comme \code{get_decon()}). Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
-anglais des cibles, nombres, et texte pour \code{income} et \code{religion}.
+anglais des cibles, nombres, et texte pour \code{income} et \code{religion} (le
+montant du revenu de \code{qes2022} reste un nombre).
 \code{turnout} et \code{votechoice} sont la participation et le vote déclarés
 après l'élection, sauf pour \code{qes2022}, où ce sont la probabilité de voter
-et l'intention de vote pendant la campagne (OD9) ; \code{attr(, "timing")}
-l'indique (\code{"post"} ou \code{"pre"}).
+et l'intention de vote pendant la campagne, comme dans qesR 0.4.4 ;
+\code{attr(, "timing")} l'indique (\code{"post"} ou \code{"pre"}).
 }
 
 \examples{

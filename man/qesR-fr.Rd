@@ -53,9 +53,26 @@ chacune.
 \section{Langue}{
 
 \code{options(qesR.lang = "fr")} affiche les messages, avertissements et
-erreurs en français. La langue ne change jamais les données ni le texte
-retournés : l'argument \code{lang} de \code{\link[=qes_codebook]{qes_codebook()}}, \code{\link[=qes_question]{qes_question()}} et
-\code{\link[=qes_cite]{qes_cite()}} choisit la langue du texte retourné.
+erreurs en français. Elle ne change jamais les données ni le texte
+retournés, et ne fixe jamais l'argument \code{lang} des fonctions : il faut le
+donner à chaque appel. Il n'a pas le même rôle partout :
+\itemize{
+\item \code{\link[=qes_harmonize]{qes_harmonize()}} : \code{"en"} (par défaut) ou \code{"fr"}, la langue des
+niveaux des facteurs, des étiquettes de variables et des populations
+(\code{lang = "fr"} donne \code{Homme}, \code{Femme}, ...) ; les codes ne changent
+pas ;
+\item \code{\link[=qes_spec]{qes_spec()}} : \code{"en"} (par défaut) ou \code{"fr"}, la langue des
+étiquettes, définitions, justifications et notes ;
+\item \code{\link[=qes_codebook]{qes_codebook()}} et \code{\link[=qes_question]{qes_question()}} : \code{NULL} (par défaut), la langue
+de l'étude, ou \code{"en"}, \code{"fr"} ; la langue du texte des questions (les
+étiquettes sont celles du fichier) ;
+\item \code{\link[=qes_search]{qes_search()}} : \code{"both"} (par défaut), \code{"en"} ou \code{"fr"}, les langues
+où chercher et celle de la colonne \code{question} ;
+\item \code{\link[=qes_cite]{qes_cite()}} : \code{"en"} (par défaut) ou \code{"fr"}, la langue des quelques
+mots que qesR ajoute aux citations ;
+\item \code{\link[=qes_docs]{qes_docs()}} et \code{\link[=qes_download]{qes_download()}} : un filtre, les langues des documents
+à garder (\code{NULL}, par défaut, les garde toutes).
+}
 }
 
 \section{Données de démonstration}{

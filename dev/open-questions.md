@@ -8,6 +8,57 @@ Nothing here blocks a slice. Data requests follow the policy of design.md
 section 0.3 (OD18): Claude fetches public documents itself; the items below
 are either not in any public deposit or need the owner's judgement.
 
+## Review of the harmonization spec (qesR 0.7.0.9000, spec 2.0.0)
+
+Corrections from the review of the spec (CHANGES.csv 2.0.0), checked on the
+pinned originals: the `religion` rows of qes2012 and qes2014 are gated on
+their filter question (a gate now applies to `string`, `date` and `weight`
+rules too); the 2007 panel's turnout reads `voteoui` and is graded
+`comparable`; text-only notes on education, the 1998 language constant and
+the qes2022 evidence. Points for the owner:
+
+R1. **Spec version.** The religion gate changes two column hashes, so the
+    spec is 2.0.0 by the rule of design.md section 5.11 (a corrected gate
+    is MAJOR), although 1.0.0 has not been released on CRAN. If 0.7.0 is
+    released with these corrections, the owner may prefer to fold them into
+    1.0.0 (one CHANGES row); `data-raw/spec_check.R` does not enforce either
+    choice, since `origin/main` has no spec.
+R2. **Vocational and trade credentials in `education4`.** `qes2018` counts
+    the DEP (qscol code 9, "Secondaire 5 (Diplôme d'Études Professionnelles)" in
+    the questionnaire) as
+    secondary; `qes2018_panel` counts the trade certificate or registered
+    apprenticeship (d3 code 4, 127 respondents, mostly the DEP in Quebec)
+    as college; the questionnaires with no DEP option (the qes2014 anchor,
+    qes2012, qes2007, qes2008) probably put DEP holders under technical
+    training (college). The maps are unchanged (a change moves respondents
+    and is MAJOR); the grade reasons and the target description now say
+    so. *Owner's decision:* one rule for both. The anchor argues for
+    college (move qes2018 code 9 to 3); Statistics Canada classes trades
+    certificates apart from college (98-10-0384-01), which argues for
+    not_mappable in both.
+R3. **qes1998 `language` in `get_qes_master()`.** Still the constant French
+    (a sample restriction), now with a note that it is the mother tongue
+    only for the 1,057 CREATEC rows and the home language for the 426 CROP
+    rows. The stricter render (French for `firme_post = 1`, NA for the CROP
+    rows with an OD16 cause) needs a stratum-conditional render in
+    `legacy.csv` (engine, validator and tests). *Owner's decision*, with
+    OD16.
+R4. **Élections Québec's results are out of the package build** (see the
+    HZ7 deferred item below): the census margins still ship; the recall
+    and turnout checks are skipped in an installed package and run on the
+    source tree (live tests, `data-raw/build_validation.R`, the website).
+R5. **qes2022 under OD3.** The per-variable missing counts of the test
+    fixture `v044-get-qes-names.csv` no longer ship (moved to the
+    build-ignored `data-raw/nc/v044_n_na_qes2022.csv`, read by the live
+    test on the source tree); the crosswalk evidence notes give codes and
+    codebook pages only, with no observation from the file ("not
+    observed", "every row ..."). Still in the package, and now listed in
+    `inst/COPYRIGHTS` section 2: the row count `n` of `expected/hashes.csv`
+    (1,521, the size published on codebook p. 5), and grade reasons and
+    notes that say in qesR's own words how each question was asked and
+    which level or reason each code is given. *To confirm* under OD3, or
+    drop `n` for qes2022 and reword the grade reasons.
+
 ## Slice HZ7: live validation (qesR 0.7.0.9000, spec 1.0.0 unchanged)
 
 Sources used: Élections Québec's archived results files of the general
@@ -35,8 +86,10 @@ V1. **Age cuts where 18+ is not published.** Gender 18+ and six age bands
 V2. **Education is compared as university or below**, not in the four
     levels of `education4`. The census counts the certificate completed;
     the surveys ask the level reached (a year of CEGEP or university
-    counts), and a trades certificate (DEP) is secondary in 2018 and
-    technical (college) in 2014. A three-group comparison gave 18-37 point
+    counts), and a trades certificate (DEP) is secondary in qes2018 and
+    technical (college) in qes2018_panel (and, probably, in the studies
+    whose question has no DEP option, such as qes2014); see R2 of the spec
+    review above. A three-group comparison gave 18-37 point
     indices driven by that boundary; with two groups `qes2022` (weighted on
     education) is 3.5 points from the census and the others 9-23. *To
     confirm.*
@@ -68,7 +121,18 @@ V6. **The website article shows qes2022 aggregates**, computed at build
     nothing of qes2022 ships in the package. *To confirm* while OD3 is open
     (the article can drop qes2022 rows if the owner prefers).
 V7. **Version.** DESCRIPTION is 0.7.0.9000 with a NEWS section of its own,
-    as in HZ5; nothing that qesR returns changed.
+    as in HZ5; nothing that qesR returns changed. The incoming check of a
+    0.7.0.9000 tarball adds "Version contains large components" to the
+    "New submission" NOTE, so this version cannot be submitted as it is.
+    *Owner's decision:* to release as 0.7.0, (1) set `Version: 0.7.0`;
+    (2) merge the `# qesR 0.7.0.9000` subsections of NEWS.md into
+    `# qesR 0.7.0`, drop that heading and "Development version.", and
+    reword "Nothing that qesR returns changes" for the release section;
+    (3) build `qesR_0.7.0.tar.gz` with `sh data-raw/build_tarball.sh
+    <dir> --check` (a copy with git's file modes; a tarball built straight
+    from the exFAT tree has every file executable) and confirm the "large
+    components" line is gone; (4) update the date, NOTE list and test counts
+    of cran-comments.md from that run. `Engine-Min` (0.7.0) needs no change.
 
 ### B. Findings for review (no change made)
 
@@ -106,10 +170,14 @@ F4. **V-L2 baselines of design section 8.3 confirmed** on the official
   terms of use allow reproduction for non-profit purposes with source and
   copyright, and require written permission for other uses and for
   adaptations. `official_results.csv` sums minor parties (an adaptation)
-  and qesR is MIT (commercial use allowed). **Owner request before a CRAN
-  release:** ask Élections Québec for permission to redistribute these
-  province-wide totals in qesR, or drop the file and fetch the results at
-  build time. `inst/COPYRIGHTS` states the terms and marks this pending.
+  and qesR is MIT (commercial use allowed). **Done meanwhile (spec 2.0.0
+  review, R4):** `official_results.csv`, `official_turnout.csv` and
+  `validation_report.csv` stay in the source tree but are excluded from
+  the package build (`.Rbuildignore`). **Owner request:** ask Élections
+  Québec for written permission to redistribute and adapt these
+  province-wide totals under MIT; with it, remove the three lines of
+  `.Rbuildignore` and quote the permission in `inst/COPYRIGHTS` and
+  `cran-comments.md`.
 - Weighted validation of the studies whose weights are `needs_review`
   (qes2007, qes2008, the panels, CROP, 1998) waits for R4.
 - A 2011 age-by-sex benchmark at 18+ (V1) and 2006 mother tongue.
@@ -168,6 +236,8 @@ H5. **`qes2012` education code 10** (*Certificate and diploma*, 100
     in College); code 8 (the French questionnaire's *cours technique*) is
     College (0.4.4: University). The 2018 panel's trade certificate (d3 code
     4, 127) is College/CEGEP/Technical; 0.4.4 left its label as a value.
+    qes2018 puts the DEP (qscol code 9) in secondary: the two 2018 studies
+    disagree (spec 2.0.0 review, R2).
 
 H6. **`get_decon()` types.** Its columns follow the targets: factors with
     the targets' English levels, `education` in four groups (the qes2022

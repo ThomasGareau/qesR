@@ -134,11 +134,13 @@
 }
 
 # A user-supplied regular expression that R cannot compile is an input
-# error, not a bare regex error with a locale-dependent message.
-.qes_assert_regex <- function(pattern, arg) {
+# error, not a bare regex error with a locale-dependent message. `perl`
+# selects the engine the caller matches with (TRE or PCRE), so the check
+# accepts and refuses the same patterns as the match.
+.qes_assert_regex <- function(pattern, arg, perl = FALSE, value = pattern) {
   ok <- tryCatch(
     {
-      grepl(pattern, "", ignore.case = TRUE)
+      grepl(pattern, "", ignore.case = TRUE, perl = perl)
       TRUE
     },
     error = function(e) FALSE,
@@ -148,8 +150,8 @@
     .qes_abort(
       "input_regex",
       class = "qesR_error_input",
-      args = list(arg, .qes_q(pattern)),
-      data = list(arg = arg, value = pattern)
+      args = list(arg, .qes_q(value)),
+      data = list(arg = arg, value = value)
     )
   }
   invisible(pattern)

@@ -2,7 +2,7 @@
 # harmonization engine since qesR 0.7.0 (design.md sections 2.3 and 5.12,
 # slice HZ6; the renderer is R/legacy.R and the spec's legacy.csv, profile
 # "decon"). Soft-deprecated from 0.7.0: its replacement is
-# qes_harmonize(targets = "decon", include_draft = TRUE).
+# qes_harmonize(srvy, targets = "decon", include_draft = TRUE).
 
 #' Create a Prepared Non-Exhaustive qesR Dataset
 #'
@@ -32,17 +32,19 @@
 #' engine ([qes_harmonize()]): categorical columns are factors with the
 #' target's English levels (the same levels in every study), numbers stay
 #' numbers, and `income` and `religion` are each study's own categories as
-#' text. `turnout` and `votechoice` are the reported turnout and vote,
-#' asked after the election, except for `qes2022`, where they are the
-#' likelihood of voting and the vote intention asked during the campaign
-#' (OD9); `attr(, "timing")` says which (`"post"` or `"pre"`).
+#' text (the `qes2022` income amount stays a number). `turnout` and
+#' `votechoice` are the reported turnout and vote, asked after the
+#' election, except for `qes2022`, where they are the
+#' likelihood of voting and the vote intention asked during the campaign,
+#' as in qesR 0.4.4; `attr(, "timing")` says which (`"post"` or `"pre"`).
 #'
 #' @section What changed in 0.7.0:
 #' The columns hold the targets of the harmonization spec (see
 #' `attr(, "source_map")`): the factor levels are the targets' English
 #' labels rather than each file's labels (`"Man"` rather than `"A man"`),
 #' `education` has four groups, `province_territory` is `"Quebec"`,
-#' `yob` is a number, `income` and `religion` are text, and codes the spec
+#' `yob` is a number, `income` and `religion` are text (the `qes2022`
+#' income amount stays a number), and codes the spec
 #' does not map (such as the `-99` of `qes2022`) are `NA`. `turnout` and
 #' `votechoice` are filled for every study that asked the reported vote
 #' (`qes2018` from `q5` and `q6`), and `get_decon("qes1998")` returns real
@@ -57,11 +59,12 @@
 #' `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`
 #' (`include_draft = TRUE` applique les lignes de correspondance encore en
 #' révision, comme `get_decon()`). Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
-#' anglais des cibles, nombres, et texte pour `income` et `religion`.
+#' anglais des cibles, nombres, et texte pour `income` et `religion` (le
+#' montant du revenu de `qes2022` reste un nombre).
 #' `turnout` et `votechoice` sont la participation et le vote déclarés
 #' après l'élection, sauf pour `qes2022`, où ce sont la probabilité de voter
-#' et l'intention de vote pendant la campagne (OD9) ; `attr(, "timing")`
-#' l'indique (`"post"` ou `"pre"`).
+#' et l'intention de vote pendant la campagne, comme dans qesR 0.4.4 ;
+#' `attr(, "timing")` l'indique (`"post"` ou `"pre"`).
 #'
 #' @param srvy A qesR survey code. Defaults to `"qes2022"`. Codes are trimmed
 #'   and case-insensitive. The 11 studies of qesR 0.4.4 are available, and
@@ -102,6 +105,8 @@ get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
 
 .get_decon_impl <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE,
                             envir = NULL, assign_missing = FALSE) {
+  .qes_check_flag(assign_global, "assign_global")
+  .qes_check_flag(quiet, "quiet")
   code <- .get_qes_study(srvy, demo = TRUE)$qes_survey_code
   if (length(code) != 1L || !(code %in% c(.qes_legacy_codes, "qes_demo"))) {
     .qes_abort(

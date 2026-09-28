@@ -77,12 +77,12 @@
     fr = "`%1$s` doit valoir TRUE ou FALSE."
   ),
   input_do = c(
-    en = "`do` must be a data.frame or the name of one in the calling environment.",
-    fr = "`do` doit \u00eatre un data.frame ou le nom d'un data.frame de l'environnement appelant."
+    en = "`do` must be a data.frame or the name of one in the calling environment or an enclosing one.",
+    fr = "`do` doit \u00eatre un data.frame ou le nom d'un data.frame de l'environnement appelant ou d'un environnement englobant."
   ),
   input_object_missing = c(
-    en = "Object %1$s was not found in the calling environment.",
-    fr = "L'objet %1$s est introuvable dans l'environnement appelant."
+    en = "Object %1$s was not found in the calling environment or its enclosing environments (such as the workspace).",
+    fr = "L'objet %1$s est introuvable dans l'environnement appelant et ses environnements englobants (comme l'espace de travail)."
   ),
   input_master_study = c(
     en = "get_qes_master() builds the 11 studies of qesR 0.4.4 (and \"qes_demo\"); %1$s is not one of them. The 1998 firms' own files hold respondents of qes1998: read them on their own with get_qes().",
@@ -239,6 +239,10 @@
     en = "Column %1$s was not found in the data. Close matches: %2$s.",
     fr = "La colonne %1$s est introuvable dans les donn\u00e9es. Correspondances proches\u00a0: %2$s."
   ),
+  hz_missing_id = c(
+    en = "`%1$s` lacks the identifier column(s) %2$s that qes_harmonize() needs to build qes_id; keep them when subsetting columns.",
+    fr = "`%1$s` ne contient pas la ou les colonnes d'identifiant %2$s dont qes_harmonize() a besoin pour construire qes_id\u00a0; conservez-les lors de la s\u00e9lection des colonnes."
+  ),
   unknown_variable_study = c(
     en = "Variable %1$s is not in study %2$s.",
     fr = "La variable %1$s ne fait pas partie de l'\u00e9tude %2$s."
@@ -332,6 +336,10 @@
     fr = "Le fichier de catalogue de qesR %1$s est invalide\u00a0: %2$s. R\u00e9installez qesR."
   ),
   # ---- qesR_error_spec -----------------------------------------------------
+  spec_invalid_edited = c(
+    en = "The harmonization spec (a qes_spec object edited after it was loaded) has %1$s problem(s); the `problems` field of this error lists them all.",
+    fr = "La sp\u00e9cification d'harmonisation (un objet qes_spec modifi\u00e9 apr\u00e8s son chargement) a %1$s probl\u00e8me(s)\u00a0; le champ `problems` de cette erreur les \u00e9num\u00e8re tous."
+  ),
   spec_invalid = c(
     en = "The harmonization spec in %1$s has %2$s problem(s); the `problems` field of this error lists them all.",
     fr = "La sp\u00e9cification d'harmonisation de %1$s a %2$s probl\u00e8me(s)\u00a0; le champ `problems` de cette erreur les \u00e9num\u00e8re tous."
@@ -463,6 +471,14 @@
     en = "Harmonized data built with different specs (content hashes %1$s) cannot be combined with rbind(). Harmonize every study with one spec, in one qes_harmonize() call.",
     fr = "Des donn\u00e9es harmonis\u00e9es avec des sp\u00e9cifications diff\u00e9rentes (empreintes %1$s) ne peuvent pas \u00eatre combin\u00e9es avec rbind(). Harmonisez toutes les \u00e9tudes avec une seule sp\u00e9cification, en un seul appel \u00e0 qes_harmonize()."
   ),
+  hz_rbind_options = c(
+    en = "Harmonized data built with different options cannot be combined with rbind(): %1$s. Harmonize every study with the same lang, layout, values, missing and weights.",
+    fr = "Des donn\u00e9es harmonis\u00e9es avec des options diff\u00e9rentes ne peuvent pas \u00eatre combin\u00e9es avec rbind()\u00a0: %1$s. Harmonisez toutes les \u00e9tudes avec les m\u00eames lang, layout, values, missing et weights."
+  ),
+  hz_rbind_targets = c(
+    en = "Harmonized data with different columns cannot be combined with rbind(). Missing from each part: %1$s. Harmonize every study with the same targets (and keep_source setting).",
+    fr = "Des donn\u00e9es harmonis\u00e9es aux colonnes diff\u00e9rentes ne peuvent pas \u00eatre combin\u00e9es avec rbind(). Colonnes absentes de chaque partie\u00a0: %1$s. Harmonisez toutes les \u00e9tudes avec les m\u00eames cibles (et le m\u00eame keep_source)."
+  ),
   hz_rbind_study = c(
     en = "rbind() of harmonized data would repeat the respondents of %1$s. Combine results for different studies only.",
     fr = "rbind() de donn\u00e9es harmonis\u00e9es r\u00e9p\u00e9terait les r\u00e9pondants de %1$s. Combinez seulement des r\u00e9sultats portant sur des \u00e9tudes diff\u00e9rentes."
@@ -472,8 +488,12 @@
     fr = "%1$s cellule(s) utilisent des lignes de correspondance pas encore approuv\u00e9es par un r\u00e9viseur (statut review ou draft), appliqu\u00e9es parce que include_draft = TRUE. qes_provenance(x, level = \"cell\") donne le statut de chacune."
   ),
   unreviewed_skipped = c(
-    en = "%1$s cell(s) have crosswalk rows not yet signed off by a reviewer (status review or draft); they are NA (reason not_reviewed). include_draft = TRUE applies them.",
-    fr = "%1$s cellule(s) ont des lignes de correspondance pas encore approuv\u00e9es par un r\u00e9viseur (statut review ou draft)\u00a0; elles valent NA (motif not_reviewed). include_draft = TRUE les applique."
+    en = "%1$s cell(s) (study and target) have crosswalk rows not yet signed off by a reviewer (status review or draft); their %2$s value(s) are NA (reason not_reviewed). include_draft = TRUE applies them.",
+    fr = "%1$s cellule(s) (\u00e9tude et cible) ont des lignes de correspondance pas encore approuv\u00e9es par un r\u00e9viseur (statut review ou draft)\u00a0; leurs %2$s valeur(s) sont NA (motif not_reviewed). include_draft = TRUE les applique."
+  ),
+  unreviewed_all = c(
+    en = "All %1$s value(s) of %2$s are NA (reason not_reviewed): no crosswalk row for them is signed off by a reviewer yet (status review or draft). Pass include_draft = TRUE to apply them.",
+    fr = "Les %1$s valeur(s) de %2$s sont toutes NA (motif not_reviewed)\u00a0: aucune de leurs lignes de correspondance n'est encore approuv\u00e9e par un r\u00e9viseur (statut review ou draft). Passez include_draft = TRUE pour les appliquer."
   ),
 
   # ---- once-per-session notices -------------------------------------------
@@ -500,29 +520,57 @@
   ),
   legacy_values_changed = c(
     en = paste0(
-      "Values changed in qesR 0.7.0: get_qes_master() and get_decon() are now ",
-      "rendered from the harmonization engine (qes_harmonize()), so vote_choice ",
+      "Values changed in qesR 0.7.0: get_qes_master() is now rendered from the ",
+      "harmonization engine (qes_harmonize()), so vote_choice ",
       "and turnout are the reported vote and turnout in every study that asked ",
       "them (the CROP polls asked only an intention: vote_intent), and codes the ",
       "spec does not map are NA (language, the mother tongue, is NA for ",
-      "respondents who gave two first languages, OD8); ",
+      "respondents who gave two first languages); ",
       "attr(, \"legacy_column_map\") says what each column holds ",
       "and NEWS lists the changes. Results of an earlier version are reproducible ",
       "by installing it (for 0.4.4: remotes::install_github(\"ThomasGareau/qesR\", ",
       "ref = \"v0.4.4\")). This note is shown once per session."
     ),
     fr = paste0(
-      "Les valeurs ont chang\u00e9 dans qesR 0.7.0\u00a0: get_qes_master() et ",
-      "get_decon() sont maintenant produits par le moteur d'harmonisation ",
+      "Les valeurs ont chang\u00e9 dans qesR 0.7.0\u00a0: get_qes_master() est ",
+      "maintenant produit par le moteur d'harmonisation ",
       "(qes_harmonize()), de sorte que vote_choice et turnout sont le vote et ",
       "la participation d\u00e9clar\u00e9s dans toutes les \u00e9tudes qui les ",
       "ont demand\u00e9s (les sondages CROP n'ont demand\u00e9 que l'intention\u00a0: ",
       "vote_intent), et que les codes que la sp\u00e9cification n'apparie pas ",
       "valent NA (language, la langue maternelle, vaut NA pour les personnes qui ",
-      "ont donn\u00e9 deux premi\u00e8res langues, OD8)\u00a0; attr(, \"legacy_column_map\") ",
+      "ont donn\u00e9 deux premi\u00e8res langues)\u00a0; attr(, \"legacy_column_map\") ",
       "d\u00e9crit chaque colonne et NEWS \u00e9num\u00e8re les changements. Les ",
       "r\u00e9sultats d'une version ant\u00e9rieure se reproduisent en l'installant ",
       "(pour 0.4.4\u00a0: remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
+      "Cette note s'affiche une fois par session."
+    )
+  ),
+  legacy_values_changed_decon = c(
+    en = paste0(
+      "Values changed in qesR 0.7.0: get_decon() is now rendered from the ",
+      "harmonization engine (qes_harmonize(srvy, targets = \"decon\", include_draft = TRUE)), ",
+      "so turnout and votechoice are the reported turnout and vote in every study ",
+      "that asked them (for qes2022, still the campaign-period likelihood of voting ",
+      "and vote intention), and codes the spec does not map are NA (the -99 of ",
+      "qes2022); attr(, \"source_map\") gives the question and target behind each ",
+      "column, attr(, \"timing\") what turnout and votechoice hold (\"post\" or ",
+      "\"pre\"), and NEWS lists the changes. Results of an earlier version are ",
+      "reproducible by installing it (for 0.4.4: remotes::install_github(",
+      "\"ThomasGareau/qesR\", ref = \"v0.4.4\")). This note is shown once per session."
+    ),
+    fr = paste0(
+      "Les valeurs ont chang\u00e9 dans qesR 0.7.0\u00a0: get_decon() est maintenant ",
+      "produit par le moteur d'harmonisation (qes_harmonize(srvy, targets = \"decon\", ",
+      "include_draft = TRUE)), de sorte que turnout et votechoice sont la participation ",
+      "et le vote d\u00e9clar\u00e9s dans toutes les \u00e9tudes qui les ont demand\u00e9s ",
+      "(pour qes2022, encore la probabilit\u00e9 de voter et l'intention de vote pendant ",
+      "la campagne), et que les codes que la sp\u00e9cification n'apparie pas valent ",
+      "NA (le -99 de qes2022)\u00a0; attr(, \"source_map\") donne la question et la cible ",
+      "de chaque colonne, attr(, \"timing\") ce que contiennent turnout et votechoice ",
+      "(\"post\" ou \"pre\"), et NEWS \u00e9num\u00e8re les changements. Les r\u00e9sultats ",
+      "d'une version ant\u00e9rieure se reproduisent en l'installant (pour 0.4.4\u00a0: ",
+      "remotes::install_github(\"ThomasGareau/qesR\", ref = \"v0.4.4\")). ",
       "Cette note s'affiche une fois par session."
     )
   ),
@@ -722,12 +770,24 @@
     fr = "Cellules tir\u00e9es de lignes pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = TRUE)\u00a0: %1$s."
   ),
   hz_print_unreviewed_skipped = c(
-    en = "Cells left NA because their rows are not yet signed off by a reviewer (include_draft = FALSE): %1$s.",
-    fr = "Cellules laiss\u00e9es \u00e0 NA parce que leurs lignes ne sont pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = FALSE)\u00a0: %1$s."
+    en = "Cells left NA because their rows are not yet signed off by a reviewer (include_draft = FALSE): %1$s (%2$s value(s)).",
+    fr = "Cellules laiss\u00e9es \u00e0 NA parce que leurs lignes ne sont pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = FALSE)\u00a0: %1$s (%2$s valeur(s))."
   ),
   hz_print_licence = c(
     en = "Licence: %1$s is released under CC BY-NC 4.0 (non-commercial use, with attribution; see qes_cite()).",
     fr = "Licence\u00a0: %1$s est diffus\u00e9e sous CC BY-NC 4.0 (usage non commercial, avec attribution\u00a0; voir qes_cite())."
+  ),
+  studies_print_footer = c(
+    en = "%1$s studies; as.data.frame() or names() gives all %2$s columns.",
+    fr = "%1$s \u00e9tudes\u00a0; as.data.frame() ou names() donne les %2$s colonnes."
+  ),
+  cache_print_header = c(
+    en = "qesR cache (mode %1$s): %2$s; %3$s file(s), %4$s.",
+    fr = "Cache de qesR (mode %1$s)\u00a0: %2$s\u00a0; %3$s fichier(s), %4$s."
+  ),
+  cache_print_footer = c(
+    en = "Paths are relative to the cache directory; as.data.frame() gives every column, with full paths.",
+    fr = "Les chemins sont relatifs au dossier du cache\u00a0; as.data.frame() donne toutes les colonnes, avec les chemins complets."
   ),
   prov_footer = c(
     en = "as.data.frame() gives every column.",

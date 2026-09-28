@@ -9,7 +9,9 @@
 # qes2022, whose aggregates do not ship (OD3), the build-ignored
 # data-raw/nc/validation_qes2022.csv: its rows are gated only when the tests
 # run from the source tree. The gate is one-sided: a gated row fails only
-# when it rises more than 2.0 points above its recorded value.
+# when it rises more than 2.0 points above its recorded value. The official
+# results and the recorded report are not in the package build
+# (inst/COPYRIGHTS, section 3): the first test needs the source tree.
 
 recorded_with_nc <- function() {
   nc <- testthat::test_path("..", "..", "data-raw", "nc", "validation_qes2022.csv")
@@ -24,6 +26,8 @@ describe_rows <- function(x) {
 
 test_that("V-L2, turnout and census margins stay within 2.0 points of the record (live)", {
   local_live_originals()
+  skip_if_not(.qes_validation_has("official_results.csv") && .qes_validation_has("validation_report.csv"),
+              "the official results and the recorded report are not installed (build-ignored)")
   r <- .qes_validation_run("all")
   rec <- recorded_with_nc()
   g <- .qes_validation_gate(r, rec)

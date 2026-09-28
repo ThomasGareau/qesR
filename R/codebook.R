@@ -48,7 +48,7 @@
     download_url = url(files$file_id),
     stringsAsFactors = FALSE
   )
-  docs <- if (demo) .qes_legacy_files_frame() else .get_codebook_files_impl(code, fn = NULL)
+  docs <- .get_codebook_files_impl(code, fn = NULL)
   list(
     survey_code = code,
     doi = study$doi,
@@ -418,6 +418,10 @@
 #' lorsqu'il est inconnu, sans traduction automatique. `lang = "fr"` donne
 #' le texte français. Pour `qes2022` (CC BY-NC 4.0), le codebook est construit
 #' à partir de votre copie du fichier de données et conservé dans le cache.
+#' L'attribut `selected_data_file` garde le nom Dataverse du fichier décrit
+#' (la copie `.tab` d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
+#' affiché nomme aussi le fichier original (`.sav` ou `.dta`) que
+#' [get_qes()] lit et que [qes_provenance()] indique.
 #'
 #' @param srvy A study code from [qes_studies()] (trimmed and
 #'   case-insensitive), or an object to describe again: a codebook returned
@@ -474,7 +478,11 @@
 #'   is `NA`.
 #'
 #'   Every layout has the attributes `survey_code`, `doi`, `doi_url`,
-#'   `selected_data_file`, `variable_names_file` (the data file whose
+#'   `selected_data_file` (the Dataverse name of the data file described:
+#'   for an ingested file, the `.tab` copy, as in qesR 0.4.4; the header
+#'   printed by the codebook also names the original `.sav` or `.dta` that
+#'   [get_qes()] reads and [qes_provenance()] reports),
+#'   `variable_names_file` (the data file whose
 #'   variable names the codebook uses), `files` (the study's files),
 #'   `codebook_files` (its documents, as [qes_docs()] lists them) and
 #'   `qes_provenance`.
@@ -617,7 +625,7 @@ format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
     }
     .qes_abort_not_codebook(codebook)
   }
-  layout <- match.arg(layout)
+  layout <- .qes_check_one(layout, "layout", .qes_codebook_layouts)
   .qes_codebook_impl(codebook, layout = layout, fn = "format_codebook")
 }
 
@@ -757,7 +765,8 @@ download_codebook <- function(
   if (isTRUE(refresh)) {
     .qes_arg_ignored("download_codebook", "refresh")
   }
-  code <- .get_qes_study(srvy)$qes_survey_code
+  code <- .get_qes_study(srvy, demo = TRUE)$qes_survey_code
+  # the synthetic study has no documents: the zero-row branch below
   rows <- .qes_download_select(.qes_legacy_deposit_codes(code), what = "docs")
   if (!is.null(file)) {
     rows <- rows[grepl(file, rows$file_name, ignore.case = TRUE), , drop = FALSE]
@@ -794,6 +803,33 @@ download_codebook <- function(
   out
 }
 
+# The "Data file:" line of print.qes_codebook(): the deposited file that
+# get_qes() reads and qes_provenance() reports (the original .sav or .dta of
+# an ingested file), then the Dataverse name the attribute
+# selected_data_file keeps (qesR 0.4.4), when they differ. The attribute
+# alone when the file is not in the catalog.
+.qes_codebook_read_name <- function(survey_code, selected) {
+  if (!is.character(selected) || length(selected) != 1L || is.na(selected)) {
+    return(selected)
+  }
+  row <- tryCatch({
+    if (!is.character(survey_code) || length(survey_code) != 1L || is.na(survey_code)) {
+      NULL
+    } else {
+      files <- .qes_catalog(demo = .qes_is_demo_code(survey_code))$files
+      files[files$study == survey_code & files$file_name == selected, , drop = FALSE]
+    }
+  }, error = function(e) NULL)
+  if (is.null(row) || nrow(row) != 1L) {
+    return(selected)
+  }
+  read_name <- .qes_deposit_name(row)
+  if (is.na(read_name) || identical(read_name, selected)) {
+    return(selected)
+  }
+  sprintf("%s (Dataverse: %s)", read_name, selected)
+}
+
 #' @export
 print.qes_codebook <- function(x, n = 10L, ...) {
   survey_code <- attr(x, "survey_code", exact = TRUE)
@@ -806,7 +842,7 @@ print.qes_codebook <- function(x, n = 10L, ...) {
   cat("\n")
 
   if (!is.null(doi) && !is.na(doi)) cat("DOI:", doi, "\n")
-  if (!is.null(selected)) cat("Data file:", selected, "\n")
+  if (!is.null(selected)) cat("Data file:", .qes_codebook_read_name(survey_code, selected), "\n")
   n_var <- if ("variable" %in% names(x)) length(unique(x$variable)) else nrow(x)
   cat("Variables:", n_var, "\n")
   if (nrow(x) != n_var) cat("Rows:", nrow(x), "\n")

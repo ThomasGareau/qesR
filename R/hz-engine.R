@@ -184,8 +184,9 @@
 
 # qes_id keys of the rows of `d`: the catalog id_vars of `study` joined with
 # "-" (".row" is the position in the file). Missing or duplicated
-# identifiers are errors.
-.qes_hz_ids <- function(study, d) {
+# identifiers are errors. `user`: `d` is the user's frame (`data = `), whose
+# missing identifier is named as a column dropped from it.
+.qes_hz_ids <- function(study, d, user = FALSE) {
   file_row <- .qes_default_data_file(study, demo = TRUE)
   ids <- .qes_split_list(file_row$id_vars)
   if (length(ids) == 0L || identical(ids, ".row")) {
@@ -194,6 +195,14 @@
   ids <- setdiff(ids, ".row")
   miss <- setdiff(ids, names(d))
   if (length(miss) > 0L) {
+    if (isTRUE(user)) {
+      .qes_abort(
+        "hz_missing_id",
+        class = "qesR_error_unknown_variable",
+        args = list(paste0("data$", study), .qes_q(miss)),
+        data = list(study = study, variables = miss, suggestions = character(0))
+      )
+    }
     .qes_abort(
       "unknown_variable_study",
       class = "qesR_error_unknown_variable",
@@ -363,6 +372,17 @@
       value <- as.character(res$value)
       reason <- as.character(res$na_reason)
     }
+    # the gate of a weight, date or string row, as for map and numeric rows
+    # (.qes_hz_cell_outcome()): a gate code listed in gate_to overrides the
+    # source's outcome, system missing included; these targets have no level
+    # set, so the outcome is an NA reason (V-S3)
+    if (base %in% c("weight", "date", "string") && !is.na(r$gate_var) && length(r$gate_to) > 0L) {
+      gate <- .canon(d[[r$gate_var]])
+      gate[is.na(gate)] <- "NA"
+      closed <- gate %in% names(r$gate_to)
+      value[closed] <- NA_character_
+      reason[closed] <- unname(r$gate_to[gate[closed]])
+    }
   }
   value[!member] <- NA_character_
   reason[!member] <- "not_in_wave"
@@ -424,7 +444,7 @@
     prov <- .qes_hz_user_provenance(study, d)
   }
   n <- nrow(d)
-  ids <- .qes_hz_ids(study, d)
+  ids <- .qes_hz_ids(study, d, user = !verified)
 
   # the spec rows of this study, relabelled with the output study code
   relabel <- function(x) {
@@ -925,7 +945,10 @@
 #' are applied only with `include_draft = TRUE`, and a message says so. In
 #' this version no row of the shipped spec is signed off yet, so the default
 #' call gives missing values (reason `not_reviewed`) and the examples pass
-#' `include_draft = TRUE`.
+#' `include_draft = TRUE`. When no cell of the result is applied for that
+#' reason, a warning of class `qesR_warning_all_unreviewed` gives the number
+#' of values left `NA` and names `include_draft = TRUE`; otherwise a message
+#' counts the cells (study and target) and values left out.
 #'
 #' Every result records the spec version and content hash
 #' (`attr(, "qes_spec")`). The same spec version and hash, the same pinned
@@ -1049,6 +1072,37 @@
 #' `FALSE`. Its weights target the population aged 16 and over; keeping
 #' only eligible voters does not make them an 18-and-over calibration.
 #'
+#' @section Conditions:
+#' Besides those of every qesR function (see [qesR-package]),
+#' `qes_harmonize()` raises these classed conditions:
+#' * errors: `qesR_error_unmapped` (a source code the spec does not map,
+#'   with `unmapped = "error"`; fields `study`, `target`, `codes`, `n`,
+#'   `unmapped`), `qesR_error_spec` (an invalid spec, or `data` that fail the
+#'   spec's checks; field `problems`, a data frame of the failed rules) and
+#'   `qesR_error_duplicate_id` (identifier variables that do not identify the
+#'   rows of a study uniquely; fields `study`, `id_vars`, `rows`);
+#' * warnings: `qesR_warning_all_unreviewed` (no cell applied, see
+#'   `include_draft`), `qesR_warning_unmapped` (codes set to `NA` with
+#'   `unmapped = "warn"`; field `unmapped`), `qesR_warning_partial` (studies
+#'   left out with `on_fail = "skip"`; field `failed`) and
+#'   `qesR_warning_unverified_source` (`data` not read by qesR from the
+#'   pinned files; field `study`), and `qesR_warning_label_mismatch` and
+#'   `qesR_warning_universe` (such `data` whose value labels differ from
+#'   the pinned file's, or whose answers do not fit the question's
+#'   universe; fields `study`, `problems`);
+#' * messages, silenced by `quiet = TRUE`: `qesR_message_unreviewed_skipped`
+#'   (cells left `NA` because their rows are not signed off),
+#'   `qesR_message_unreviewed_cells` (cells that use rows not signed off,
+#'   with `include_draft = TRUE`), `qesR_message_approximate_cells` (cells
+#'   graded approximate are included), `qesR_message_structural_zeros`
+#'   (levels a question did not offer), `qesR_message_weight_review`
+#'   (recommended weights that need review, left `NA`) and
+#'   `qesR_message_weight_timing` (targets of one study that need different
+#'   weights).
+#'
+#' [qes_design()] sends `qesR_message_design_dropped` (fields `study`, `n`)
+#' when it leaves out rows without the chosen weight.
+#'
 #' @section En français:
 #' `qes_harmonize()` (expérimental) construit un seul tableau à partir de
 #' plusieurs études, une colonne par variable harmonisée (« cible ») et une
@@ -1081,7 +1135,25 @@
 #' pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
 #' citoyenneté canadienne) ; `interview_date`, `days_to_election` et
 #' `survey_mode` décrivent l'entrevue. [qes_design()] en fait un plan de
-#' sondage. Voir `vignette("fr-reference-harmonisation", package = "qesR")`.
+#' sondage. Des résultats portant sur des études différentes se combinent
+#' avec [rbind()] s'ils ont été construits avec la même spécification, les
+#' mêmes `lang`, `layout`, `values`, `missing` et `weights` et les mêmes
+#' colonnes (sinon, une erreur de classe `qesR_error_input`). Une ligne de
+#' correspondance n'est appliquée qu'une fois approuvée par un réviseur
+#' (statut `"stable"`) ; `include_draft = TRUE` applique aussi les lignes
+#' vérifiées mais pas encore approuvées (statut `"review"` ou `"draft"`).
+#' Aucune ligne de la spécification livrée n'est encore approuvée : sans
+#' `include_draft = TRUE`, les valeurs sont NA (motif `not_reviewed`), et un
+#' avertissement de classe `qesR_warning_all_unreviewed` le signale quand
+#' tout le résultat est NA. Les autres conditions ont des classes (section
+#' *Conditions*) : erreurs `qesR_error_unmapped`, `qesR_error_spec` et
+#' `qesR_error_duplicate_id` (variables d'identification qui n'identifient
+#' pas les lignes de façon unique) ; avertissements `qesR_warning_unmapped`,
+#' `qesR_warning_partial` et `qesR_warning_unverified_source` ; messages
+#' `qesR_message_*`, masqués par `quiet = TRUE` ; [qes_design()] envoie
+#' `qesR_message_design_dropped` quand il écarte des lignes sans la
+#' pondération choisie. Voir
+#' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
 #' @param studies Study codes (see [qes_studies()]). `NULL` (default) means
 #'   the Quebec Election Studies the spec covers, or the studies named in
@@ -1113,7 +1185,9 @@
 #'   each value as text.
 #' @param include_draft If `TRUE`, also applies crosswalk rows not yet
 #'   signed off by a reviewer (status `"review"` or `"draft"`); a message
-#'   counts the cells that use them.
+#'   counts the cells that use them. `FALSE` (default) leaves them `NA`
+#'   (reason `not_reviewed`), with a warning when that leaves the whole
+#'   result `NA` (see *Experimental*).
 #' @param data `NULL` (read the pinned files) or a named list of data frames
 #'   as [get_qes()] returns them, named by study code.
 #' @param spec `NULL` (the spec shipped with qesR), the path of a spec
@@ -1148,9 +1222,12 @@
 #'   `failed_studies` (`study`, `class`, `message`, `parent_message`).
 #'
 #'   Results for different studies built with the same spec can be combined
-#'   with [rbind()], which also combines their provenance (an error if the
-#'   spec content hashes differ or a study appears twice); harmonizing all
-#'   the studies in one call is simpler.
+#'   with [rbind()], which also combines their provenance. It is an error
+#'   (class `qesR_error_input`) if the spec content hashes differ, the parts
+#'   were built with different `lang`, `layout`, `values`, `missing` or
+#'   `weights`, their columns differ (different `targets` or `keep_source`),
+#'   or a study appears twice; harmonizing all the studies in one call is
+#'   simpler.
 #'
 #' @family harmonization
 #' @seealso [qes_design()] to use the weights in a survey design,
@@ -1272,8 +1349,11 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
     attr(study_prov, "cell") <- cell
     attr(study_prov, "spec") <- spec_prov
   }
+  # the options that change how values are encoded: rbind() refuses to mix them
   attr(out, "qes_spec") <- list(version = sp$version, hash = sp$hash, custom = isTRUE(sp$custom),
-                                engine = as.character(.qes_engine_version()))
+                                engine = as.character(.qes_engine_version()),
+                                options = list(layout = layout, values = values, missing = missing,
+                                               weights = weights, lang = lang))
   attr(out, "qes_provenance") <- study_prov
   attr(out, "qes_weight_guide") <- .qes_hz_weight_guide(parts, ctx)
   attr(out, "failed_studies") <- failed
@@ -1310,9 +1390,16 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
     }
     skipped <- cell[cell$excluded %in% "not_reviewed", , drop = FALSE]
     if (nrow(skipped) > 0L) {
-      .qes_inform("unreviewed_skipped", class = "qesR_message_unreviewed_skipped",
-                  args = list(nrow(skipped)), data = list(cells = skipped[, c("study", "target", "status")]),
-                  quiet = quiet)
+      n_values <- sum(skipped$n_not_reviewed, na.rm = TRUE)
+      skipped_data <- list(cells = skipped[, c("study", "target", "status")], n_values = n_values)
+      if (!any(cell$included)) {
+        # nothing was applied: every value of the result is NA
+        .qes_warn("unreviewed_all", class = "qesR_warning_all_unreviewed",
+                  args = list(n_values, .qes_q(unique(skipped$target))), data = skipped_data)
+      } else {
+        .qes_inform("unreviewed_skipped", class = "qesR_message_unreviewed_skipped",
+                    args = list(nrow(skipped), n_values), data = skipped_data, quiet = quiet)
+      }
     }
   }
   .qes_hz_weight_notices(parts, attr(out, "qes_weight_guide"), quiet, ctx$layout)
@@ -1474,9 +1561,10 @@ print.qes_harmonized <- function(x, n = 6L, ...) {
     if (unsigned > 0L) {
       cat(.qes_msg("hz_print_unreviewed", list(unsigned), lang), "\n", sep = "")
     }
-    skipped <- sum(cell$excluded %in% "not_reviewed")
-    if (skipped > 0L) {
-      cat(.qes_msg("hz_print_unreviewed_skipped", list(skipped), lang), "\n", sep = "")
+    skipped <- cell$excluded %in% "not_reviewed"
+    if (any(skipped)) {
+      n_values <- if ("n_not_reviewed" %in% names(cell)) sum(cell$n_not_reviewed[skipped], na.rm = TRUE) else NA_integer_
+      cat(.qes_msg("hz_print_unreviewed_skipped", list(sum(skipped), n_values), lang), "\n", sep = "")
     }
   }
   guide <- attr(x, "qes_weight_guide", exact = TRUE)
@@ -1531,18 +1619,53 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
     attr(a, "failed_studies") <- NULL
     a
   }
-  out <- do.call(rbind, c(lapply(args, strip), list(deparse.level = deparse.level)))
-  rownames(out) <- NULL
-  harmonized <- vapply(args, function(a) inherits(a, "qes_harmonized") && !is.null(attr(a, "qes_spec", exact = TRUE)),
-                       logical(1))
+  harmonized <- vapply(args, function(a) {
+    inherits(a, "qes_harmonized") && is.data.frame(a) && !is.null(attr(a, "qes_spec", exact = TRUE))
+  }, logical(1))
   if (length(args) == 0L || !all(harmonized)) {
+    out <- do.call(rbind, c(lapply(args, strip), list(deparse.level = deparse.level)))
+    rownames(out) <- NULL
     return(out)
   }
+  # every check runs before the bind, so a mismatch gets a classed message
+  # rather than a bare base-R error
   specs <- lapply(args, attr, "qes_spec", exact = TRUE)
   hashes <- unique(vapply(specs, function(s) as.character(s$hash), character(1)))
   if (length(hashes) > 1L) {
     .qes_abort("hz_rbind_spec", class = "qesR_error_input", args = list(.qes_q(hashes)),
                data = list(hashes = hashes))
+  }
+  # the build options (objects made before they were recorded have none)
+  opts <- lapply(specs, `[[`, "options")
+  if (!any(vapply(opts, is.null, logical(1)))) {
+    keys <- unique(unlist(lapply(opts, names), use.names = FALSE))
+    differ <- list()
+    for (k in keys) {
+      v <- vapply(opts, function(o) if (is.null(o[[k]])) NA_character_ else as.character(o[[k]])[1], character(1))
+      if (length(unique(v)) > 1L) differ[[k]] <- v
+    }
+    if (length(differ) > 0L) {
+      what <- vapply(names(differ), function(k) {
+        sprintf("%s = %s", k, paste(sprintf("\"%s\"", unique(differ[[k]])), collapse = " / "))
+      }, character(1))
+      .qes_abort("hz_rbind_options", class = "qesR_error_input",
+                 args = list(paste(what, collapse = "; ")),
+                 data = list(options = differ))
+    }
+  }
+  # the same columns: parts harmonized with different targets cannot be bound
+  cols <- lapply(args, names)
+  all_cols <- unique(unlist(cols, use.names = FALSE))
+  lacking <- lapply(cols, function(cn) setdiff(all_cols, cn))
+  if (any(lengths(lacking) > 0L)) {
+    who <- vapply(seq_along(args), function(i) {
+      st <- paste(unique(as.character(args[[i]]$study)), collapse = ", ")
+      if (!nzchar(st)) st <- sprintf("#%d", i)
+      if (length(lacking[[i]]) == 0L) NA_character_ else sprintf("%s: %s", st, paste(lacking[[i]], collapse = ", "))
+    }, character(1))
+    .qes_abort("hz_rbind_targets", class = "qesR_error_input",
+               args = list(paste(who[!is.na(who)], collapse = "; ")),
+               data = list(missing = lacking))
   }
   studies <- unlist(lapply(args, function(a) unique(as.character(a$study))), use.names = FALSE)
   dup <- unique(studies[duplicated(studies)])
@@ -1550,6 +1673,9 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
     .qes_abort("hz_rbind_study", class = "qesR_error_input", args = list(.qes_q(dup)),
                data = list(study = dup))
   }
+  # columns in the order of the first part (base rbind matches them by name)
+  out <- do.call(rbind, c(lapply(args, strip), list(deparse.level = deparse.level)))
+  rownames(out) <- NULL
   provs <- lapply(args, attr, "qes_provenance", exact = TRUE)
   provs <- provs[vapply(provs, is.data.frame, logical(1))]
   bind <- function(x) {

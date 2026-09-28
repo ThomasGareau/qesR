@@ -3,22 +3,21 @@
 #' @description
 #' Eleven functions from qesR 0.4.4 are kept as **legacy wrappers**. They keep
 #' working, with the same arguments, and will not be removed. Each one prints a
-#' short notice naming its replacement, once per session, but only once that
-#' replacement has shipped. Until then it works silently.
+#' short notice naming its replacement, once per session.
 #'
-#' | Legacy function | Replacement | Notice shown |
+#' | Legacy function | Replacement | Deprecated since |
 #' |---|---|---|
-#' | `get_codebook()` | `qes_codebook()` | yes |
-#' | `get_qes_codebook()` | `qes_codebook()` | yes |
-#' | `get_preview()` | `head(get_qes(srvy), obs)` | yes |
-#' | `format_codebook()` | `qes_codebook(codebook, layout = )` | yes |
-#' | `get_value_labels()` | `qes_codebook(layout = "long")` | yes |
-#' | `get_question()` | `qes_question()` | yes |
-#' | `get_codebook_files()` | `qes_docs()` | yes |
-#' | `get_qes_codebook_files()` | `qes_docs()` | yes |
-#' | `download_codebook()` | `qes_download(what = "docs")` | yes |
-#' | `get_qescodes()` | `qes_studies()` | yes |
-#' | `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` | yes (since 0.7.0) |
+#' | `get_codebook()` | `qes_codebook()` | 0.5.0 |
+#' | `get_qes_codebook()` | `qes_codebook()` | 0.5.0 |
+#' | `get_preview()` | `head(get_qes(srvy), obs)` | 0.5.0 |
+#' | `format_codebook()` | `qes_codebook(codebook, layout = )` | 0.5.0 |
+#' | `get_value_labels()` | `qes_codebook(layout = "long")` | 0.5.0 |
+#' | `get_question()` | `qes_question()` | 0.5.0 |
+#' | `get_codebook_files()` | `qes_docs()` | 0.5.0 |
+#' | `get_qes_codebook_files()` | `qes_docs()` | 0.5.0 |
+#' | `download_codebook()` | `qes_download(what = "docs")` | 0.5.0 |
+#' | `get_qescodes()` | `qes_studies()` | 0.5.0 |
+#' | `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | 0.7.0 |
 #'
 #' @section Notices:
 #' The notice is a message of class `qesR_message_deprecated`, not a warning,
@@ -32,8 +31,8 @@
 #' Onze fonctions de qesR 0.4.4 restent disponibles comme fonctions
 #' héritées : elles continuent de fonctionner, avec les mêmes
 #' arguments, et ne seront pas retirées. Chacune affiche une fois par session
-#' une courte note qui nomme la fonction qui la remplace, seulement lorsque ce
-#' remplacement est disponible. La note est un message de classe
+#' une courte note qui nomme la fonction qui la remplace (depuis 0.5.0, et
+#' depuis 0.7.0 pour `get_decon()`). La note est un message de classe
 #' `qesR_message_deprecated` ; `quiet = TRUE` ne la masque pas, mais
 #' `options(qesR.quiet_deprecated = TRUE)` la masque. Elle s'affiche en
 #' français avec `options(qesR.lang = "fr")`.
@@ -55,7 +54,8 @@ NULL
 
 # Registry of the legacy wrappers (design.md sections 1.2 and 2.3). It drives
 # the notices and the contract test. `shipped` says whether the replacement is
-# available, which turns the notice on; `slice` is where that happens.
+# available, which turns the notice on (every replacement has shipped; the
+# flag is kept for future wrappers); `slice` is where that happens.
 .qes_deprecated <- data.frame(
   name = c(
     "get_codebook", "get_qes_codebook", "get_preview",
@@ -68,7 +68,7 @@ NULL
     "qes_codebook(codebook, layout = )", "qes_codebook(layout = \"long\")",
     "qes_question()",
     "qes_docs()", "qes_docs()", "qes_download(what = \"docs\")",
-    "qes_studies()", "qes_harmonize(targets = \"decon\", include_draft = TRUE)"
+    "qes_studies()", "qes_harmonize(srvy, targets = \"decon\", include_draft = TRUE)"
   ),
   since = c(
     "0.5.0", "0.5.0", "0.5.0",

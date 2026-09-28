@@ -181,3 +181,21 @@ test_that("print() shows the study and counts variables, not rows", {
   expect_true(any(grepl("Variables: 2", out, fixed = TRUE)))
   expect_true(any(grepl("Rows: 7", out, fixed = TRUE)))
 })
+
+test_that("print() names the data file get_qes() reads, and the Dataverse copy", {
+  cb <- qes_codebook("qes2014", variables = "Q2")
+  row <- qesR:::.qes_default_data_file("qes2014")
+  # the attribute keeps the qesR 0.4.4 value, the Dataverse name
+  expect_identical(attr(cb, "selected_data_file"), row$file_name)
+  out <- utils::capture.output(print(cb, n = 1))
+  line <- out[startsWith(out, "Data file:")]
+  expect_length(line, 1L)
+  read_name <- qesR:::.qes_deposit_name(row)
+  expect_true(startsWith(line, paste("Data file:", read_name)))
+  if (!identical(read_name, row$file_name)) {
+    expect_match(line, paste0("(Dataverse: ", row$file_name, ")"), fixed = TRUE)
+  }
+  # a codebook naming a file the catalog does not have prints it as is
+  expect_identical(qesR:::.qes_codebook_read_name("qes2014", "other.tab"), "other.tab")
+  expect_identical(qesR:::.qes_codebook_read_name(NULL, "other.tab"), "other.tab")
+})

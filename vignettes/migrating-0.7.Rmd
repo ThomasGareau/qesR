@@ -57,8 +57,11 @@ separate library or an renv project so that new work can use 0.7.0:
 remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
 ```
 
-Results computed with 0.5.0 or 0.6.0 are reproducible only with those
-versions.
+0.5.0 and 0.6.0 were development versions and were never released. A
+result computed with one of them is reproducible by installing the commit
+it was built from, which `packageDescription("qesR")$RemoteSha` records for
+an installation from GitHub
+(`remotes::install_github("ThomasGareau/qesR", ref = "<sha>")`).
 
 ## Assign the result yourself
 
@@ -243,7 +246,7 @@ Each prints a one-time notice naming its replacement
 | `download_codebook()` | `qes_download(what = "docs")` | `file` now selects documents by name; files are md5-checked |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | the 1998 firm files are added after the 11 old codes |
-| `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` | soft-deprecated since 0.7.0; values changed (above) |
+| `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | soft-deprecated since 0.7.0; values changed (above) |
 
 `get_qes()`, `get_qes_master()` and `qes_codebook()` keep their names. A
 legacy function returns what its replacement returns. The first call of

@@ -153,8 +153,9 @@ qes_search <- function(pattern, studies = NULL,
   codes <- if (is.null(studies)) .qes_study_codes() else .qes_resolve_codes(studies, "studies", demo = TRUE)
 
   if (isTRUE(regex)) {
-    .qes_assert_regex(pattern, "pattern")
+    # check the pattern that is matched, with the engine that matches it
     pat <- .qes_unaccent(pattern)
+    .qes_assert_regex(pat, "pattern", perl = TRUE, value = pattern)
     hit_fn <- function(text) !is.na(text) & grepl(pat, text, ignore.case = TRUE, perl = TRUE)
   } else {
     terms <- .qes_fold(strsplit(pattern, "|", fixed = TRUE)[[1]])

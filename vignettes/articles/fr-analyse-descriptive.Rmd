@@ -74,7 +74,8 @@ knitr::kable(
 ## Tableau 2 : groupes d'âge
 
 Les études n'enregistrent pas l'âge avec les mêmes tranches : six tranches
-dans la plupart des études, trois (18-34, 35-54, 55+) dans les panels Durand.
+dans la plupart des études, trois (18-34, 35-54, 55+) dans le panel Durand de
+2018 (`qes2018_panel`).
 Les six tranches s'emboîtent dans les trois ; le tableau utilise donc trois
 tranches. Les populations cibles diffèrent aussi : `qes2018` couvre les
 personnes de 16 ans et plus, les sondages de 1998 les francophones seulement

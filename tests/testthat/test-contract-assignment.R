@@ -261,3 +261,21 @@ test_that("legacy wrappers emit qesR_message_deprecated once per session", {
     expect_identical(length(silenced$messages), 0L, info = f)
   }
 })
+
+test_that("malformed logical flags are input errors, not a silent FALSE", {
+  bad <- list(
+    quote(get_qes("qes_demo", assign_global = "TRUE", quiet = TRUE)),
+    quote(get_qes("qes_demo", quiet = "yes")),
+    quote(get_qes("qes_demo", quiet = NA)),
+    quote(get_qes("qes_demo", with_codebook = "no", quiet = TRUE)),
+    quote(get_qes_master(surveys = "qes_demo", assign_global = "TRUE", quiet = TRUE)),
+    quote(get_qes_master(surveys = "qes_demo", strict = NA, quiet = TRUE)),
+    quote(get_decon("qes_demo", assign_global = "TRUE", quiet = TRUE)),
+    quote(get_decon("qes_demo", quiet = NA))
+  )
+  env <- new.env()
+  for (call in bad) {
+    expect_error(eval(call, env), class = "qesR_error_input", label = deparse(call))
+  }
+  expect_false(exists("qes_demo", envir = env, inherits = FALSE))
+})

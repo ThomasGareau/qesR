@@ -222,3 +222,37 @@ test_that("a codebook describes the pinned data file of its own study only ([A:D
     "qes1998_crop"
   )
 })
+
+test_that("qes_studies() prints a compact view in the session language", {
+  s <- qes_studies()
+  expect_s3_class(s, c("qes_studies", "data.frame"), exact = TRUE)
+  withr::local_options(qesR.lang = "en", width = 200)
+  out <- capture.output(res <- withVisible(print(s)))
+  expect_false(res$visible)
+  header <- out[1]
+  for (col in c("study", "year", "family", "study_design", "licence", "title")) {
+    expect_match(header, col, fixed = TRUE)
+  }
+  expect_false(grepl("notes_en", paste(out, collapse = "\n"), fixed = TRUE))
+  expect_match(out[length(out)], "13 studies", fixed = TRUE)
+  expect_match(out[length(out)], "all 30 columns", fixed = TRUE)
+  # the title follows the language; the data do not
+  withr::local_options(qesR.lang = "fr")
+  fr <- capture.output(print(s))
+  expect_true(any(grepl(substr(s$title_fr[s$study == "qes2018"], 1L, 20L), fr, fixed = TRUE)))
+  expect_match(fr[length(fr)], "13 études", fixed = TRUE)
+  # subsets: rows keep the compact print, columns are a plain data frame
+  rows <- s[s$family == "qes", ]
+  expect_s3_class(rows, "qes_studies")
+  expect_no_error(capture.output(print(rows)))
+  cols <- s[, c("study", "doi")]
+  expect_identical(class(cols), "data.frame")
+  expect_identical(s[["study"]], s$study)
+  expect_type(s[, "study"], "character")
+  expect_identical(class(as.data.frame(s)), "data.frame")
+  empty <- s[0, ]
+  expect_no_error(capture.output(print(empty)))
+  # the legacy table is unchanged
+  local_qes_notices_shown()
+  expect_identical(class(get_qescodes()), "data.frame")
+})

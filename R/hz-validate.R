@@ -172,6 +172,9 @@
       if (is.null(to) || !setequal(names(to), codes)) {
         add("V-S1", "crosswalk", i, k, "gate_to must give one outcome for each gate code (code=outcome)")
       }
+      if (!base %in% c("map", "numeric", "weight", "date", "string")) {
+        add("V-S1", "crosswalk", i, k, "a gate applies only to rules map, numeric, weight, date and string")
+      }
     }
     lo <- split(xw$levels_offered[i])
     if (anyDuplicated(lo) > 0L) {

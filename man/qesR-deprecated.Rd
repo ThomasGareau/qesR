@@ -6,20 +6,19 @@
 \description{
 Eleven functions from qesR 0.4.4 are kept as \strong{legacy wrappers}. They keep
 working, with the same arguments, and will not be removed. Each one prints a
-short notice naming its replacement, once per session, but only once that
-replacement has shipped. Until then it works silently.\tabular{lll}{
-   Legacy function \tab Replacement \tab Notice shown \cr
-   \code{get_codebook()} \tab \code{qes_codebook()} \tab yes \cr
-   \code{get_qes_codebook()} \tab \code{qes_codebook()} \tab yes \cr
-   \code{get_preview()} \tab \code{head(get_qes(srvy), obs)} \tab yes \cr
-   \code{format_codebook()} \tab \code{qes_codebook(codebook, layout = )} \tab yes \cr
-   \code{get_value_labels()} \tab \code{qes_codebook(layout = "long")} \tab yes \cr
-   \code{get_question()} \tab \code{qes_question()} \tab yes \cr
-   \code{get_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
-   \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab yes \cr
-   \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab yes \cr
-   \code{get_qescodes()} \tab \code{qes_studies()} \tab yes \cr
-   \code{get_decon()} \tab \code{qes_harmonize(targets = "decon", include_draft = TRUE)} \tab yes (since 0.7.0) \cr
+short notice naming its replacement, once per session.\tabular{lll}{
+   Legacy function \tab Replacement \tab Deprecated since \cr
+   \code{get_codebook()} \tab \code{qes_codebook()} \tab 0.5.0 \cr
+   \code{get_qes_codebook()} \tab \code{qes_codebook()} \tab 0.5.0 \cr
+   \code{get_preview()} \tab \code{head(get_qes(srvy), obs)} \tab 0.5.0 \cr
+   \code{format_codebook()} \tab \code{qes_codebook(codebook, layout = )} \tab 0.5.0 \cr
+   \code{get_value_labels()} \tab \code{qes_codebook(layout = "long")} \tab 0.5.0 \cr
+   \code{get_question()} \tab \code{qes_question()} \tab 0.5.0 \cr
+   \code{get_codebook_files()} \tab \code{qes_docs()} \tab 0.5.0 \cr
+   \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab 0.5.0 \cr
+   \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab 0.5.0 \cr
+   \code{get_qescodes()} \tab \code{qes_studies()} \tab 0.5.0 \cr
+   \code{get_decon()} \tab \code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)} \tab 0.7.0 \cr
 }
 }
 \section{Notices}{
@@ -37,8 +36,8 @@ depends on the language.
 Onze fonctions de qesR 0.4.4 restent disponibles comme fonctions
 héritées : elles continuent de fonctionner, avec les mêmes
 arguments, et ne seront pas retirées. Chacune affiche une fois par session
-une courte note qui nomme la fonction qui la remplace, seulement lorsque ce
-remplacement est disponible. La note est un message de classe
+une courte note qui nomme la fonction qui la remplace (depuis 0.5.0, et
+depuis 0.7.0 pour \code{get_decon()}). La note est un message de classe
 \code{qesR_message_deprecated} ; \code{quiet = TRUE} ne la masque pas, mais
 \code{options(qesR.quiet_deprecated = TRUE)} la masque. Elle s'affiche en
 français avec \code{options(qesR.lang = "fr")}.

@@ -77,7 +77,7 @@ test_that("qes2022 metadata is built from the user's copy, as a CSV shard in the
   info <- qes_cache_info()
   shards <- info[info$kind == "shard", ]
   expect_identical(nrow(shards), 2L)
-  expect_true(all(grepl("^qes2022-[0-9a-f]{32}-s1\\.(variables|values)\\.csv$", basename(shards$path))))
+  expect_true(all(grepl("^qes2022-[0-9a-f]{32}-s2\\.(variables|values)\\.csv$", basename(shards$path))))
   expect_identical(unique(shards$study), "qes2022")
   # a second session reads the shard, not the data
   getFromNamespace(".qes_dict_forget", "qesR")()
@@ -112,6 +112,45 @@ test_that("get_qes('qes2022') builds the shard from the file it reads, and qes_m
   expect_identical(out$cps_lang_2, d$cps_lang_2)
   expect_identical(plain(out$cps_ideoself_1), c(0, 5, NA, 10))
   expect_length(log$urls, 1L)
+})
+
+# More than 50 distinct values, so the values table lists no observed code:
+# -99 in an unlabelled income or year of birth is still "no answer".
+fake_2022_wide <- function() {
+  n <- 60L
+  d <- data.frame(
+    ResponseId = sprintf("R%02d", seq_len(n)),
+    cps_income = c(-99, -99, seq(1000, by = 1500, length.out = n - 2L)),
+    cps_yob = c(-99, seq(1930, by = 1, length.out = n - 1L)),
+    cps_lang_2 = rep(c(1, -99), n / 2L),
+    stringsAsFactors = FALSE
+  )
+  attr(d$cps_income, "label") <- "Household income"
+  attr(d$cps_yob, "label") <- "Year of birth"
+  d
+}
+
+test_that("the generic qes2022 rule (-99 = no answer) covers unlabelled numeric columns", {
+  local_qes_notices_shown()
+  local_fake_dataverse(data = list(qes2022 = fake_2022_wide()))
+  d <- get_qes("qes2022", quiet = TRUE)
+  cb <- qes_codebook(d, quiet = TRUE)
+  expect_identical(cb$missing_codes[cb$variable == "cps_income"], "-99=no_answer")
+  expect_identical(cb$missing_codes[cb$variable == "cps_yob"], "-99=no_answer")
+  expect_identical(cb$missing_codes[cb$variable == "cps_lang_2"], "-99=not_selected")
+  out <- qes_missing(d, quiet = TRUE)
+  expect_identical(sum(is.na(out$cps_income)), 2L)
+  expect_false(any(unclass(out$cps_income) %in% -99, na.rm = TRUE))
+  expect_identical(sum(is.na(out$cps_yob)), 1L)
+  # a select-all item keeps its -99 by default
+  expect_identical(out$cps_lang_2, d$cps_lang_2)
+  tagged <- qes_missing(d, variables = "cps_income", action = "tagged", quiet = TRUE)
+  expect_identical(sum(haven::na_tag(tagged$cps_income) %in% "o"), 2L)
+  # the same without the shard: tables built from the columns at hand
+  getFromNamespace(".qes_dict_forget", "qesR")()
+  sub <- d[, c("ResponseId", "cps_income")]
+  attr(sub, "qes_survey_code") <- "qes2022"
+  expect_identical(sum(is.na(qes_missing(sub, quiet = TRUE)$cps_income)), 2L)
 })
 
 test_that("functions given qes2022 data never download it again to describe it", {
@@ -187,4 +226,15 @@ test_that("codebook, question and search output do not depend on the locale", {
     qes_search(paste0("r", intToUtf8(0xE9), "f", intToUtf8(0xE9), "rendum"), studies = "qes2014"),
     s
   )
+})
+
+test_that("qes_question('qes2022') announces the download of an uncached file", {
+  local_qes_notices_shown()
+  log <- local_fake_dataverse(data = list(qes2022 = fake_2022()))
+  expect_message(q <- qes_question("qes2022", "cps_ideoself_1"), class = "qesR_message_download")
+  expect_length(log$urls, 1L)
+  expect_identical(q$question, "Where would you place yourself?")
+  # in memory now: no second download, no message
+  expect_no_message(qes_question("qes2022", "cps_ideoself_1"))
+  expect_length(log$urls, 1L)
 })

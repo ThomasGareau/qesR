@@ -65,6 +65,10 @@ test_that("format_codebook supports compact, wide, and long layouts", {
   expect_identical(nrow(long), 3L)
   expect_identical(long$variable, c("vote_choice", "vote_choice", "interest"))
   expect_true(is.na(long$value[3]))
+
+  # a bad layout is an input error, not a bare match.arg() error
+  expect_error(format_codebook(cb, layout = "bad"), class = "qesR_error_input")
+  expect_error(format_codebook(cb, layout = NA), class = "qesR_error_input")
 })
 
 test_that("get_value_labels returns list and long table", {

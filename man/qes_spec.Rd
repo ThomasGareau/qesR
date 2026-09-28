@@ -124,7 +124,7 @@ L'ensemble de cibles \code{"decon"} réunit les cibles des colonnes de
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 1.0.0)}{
+\section{Targets in the shipped spec (version 2.0.1)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{

@@ -321,6 +321,19 @@
 #'   The text columns do not depend on the session language: `title_en` and
 #'   `title_fr` (and `notes_en`, `notes_fr`) are both always there.
 #'
+#'   The data frame has class `c("qes_studies", "data.frame")`. It prints
+#'   compactly: `study`, `year`, `family`, `study_design`, `licence` and the
+#'   title in the session language (`status` too after `check_updates =
+#'   TRUE`); `as.data.frame()` or `names()` gives every column. A subset of
+#'   its columns is a plain data frame.
+#'
+#'   *En français* : le tableau (classe `c("qes_studies", "data.frame")`)
+#'   s'affiche de façon compacte : `study`, `year`, `family`,
+#'   `study_design`, `licence` et le titre dans la langue de la session
+#'   (`status` aussi avec `check_updates = TRUE`) ; `as.data.frame()` ou
+#'   `names()` donne toutes les colonnes. Un sous-ensemble de ses colonnes
+#'   est un data frame ordinaire.
+#'
 #' @family studies and documents
 #' @seealso [qes_docs()] for the documents of each study, [qes_cite()] to cite
 #'   them.
@@ -374,7 +387,51 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
     studies <- .qes_check_updates(studies, catalog$files, quiet = quiet)
   }
   rownames(studies) <- NULL
+  class(studies) <- c("qes_studies", "data.frame")
   studies
+}
+
+# The columns print.qes_studies() shows (the title in the session language).
+.qes_studies_print_cols <- c("study", "year", "family", "study_design", "licence")
+
+# Subsetting keeps the class only when every column is kept (a row subset):
+# a column subset, such as x[, c("study", "status")], is a plain data frame
+# and prints as one.
+#' @export
+`[.qes_studies` <- function(x, ...) {
+  out <- NextMethod()
+  if (is.data.frame(out) && !identical(names(out), names(x))) {
+    class(out) <- setdiff(class(out), "qes_studies")
+  }
+  out
+}
+
+#' @export
+print.qes_studies <- function(x, ...) {
+  lang <- .qes_lang()
+  title_col <- if (identical(lang, "fr")) "title_fr" else "title_en"
+  needed <- c(.qes_studies_print_cols, "year_end", title_col)
+  if (!all(needed %in% names(x))) {
+    print(as.data.frame(x), ...)
+    return(invisible(x))
+  }
+  view <- data.frame(
+    study = x$study,
+    year = .qes_year_label(x$year, x$year_end),
+    family = x$family,
+    study_design = x$study_design,
+    licence = x$licence,
+    title = x[[title_col]],
+    stringsAsFactors = FALSE
+  )
+  if ("status" %in% names(x)) {
+    view$status <- x$status
+  }
+  if (nrow(view) > 0L) {
+    print(.qes_preview(view, width = 50L), ...)
+  }
+  cat(.qes_msg("studies_print_footer", list(nrow(x), ncol(x)), lang = lang), "\n", sep = "")
+  invisible(x)
 }
 
 # The waves of each study in the shipped harmonization spec, ";"-separated in

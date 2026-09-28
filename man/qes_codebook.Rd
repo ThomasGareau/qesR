@@ -79,7 +79,11 @@ SPSS file); a variable with no value labels keeps one row whose \code{value}
 is \code{NA}.
 
 Every layout has the attributes \code{survey_code}, \code{doi}, \code{doi_url},
-\code{selected_data_file}, \code{variable_names_file} (the data file whose
+\code{selected_data_file} (the Dataverse name of the data file described:
+for an ingested file, the \code{.tab} copy, as in qesR 0.4.4; the header
+printed by the codebook also names the original \code{.sav} or \code{.dta} that
+\code{\link[=get_qes]{get_qes()}} reads and \code{\link[=qes_provenance]{qes_provenance()}} reports),
+\code{variable_names_file} (the data file whose
 variable names the codebook uses), \code{files} (the study's files),
 \code{codebook_files} (its documents, as \code{\link[=qes_docs]{qes_docs()}} lists them) and
 \code{qes_provenance}.
@@ -127,6 +131,10 @@ ou plusieurs références \verb{<file_id>:<question>} séparées par \verb{;}) ;
 lorsqu'il est inconnu, sans traduction automatique. \code{lang = "fr"} donne
 le texte français. Pour \code{qes2022} (CC BY-NC 4.0), le codebook est construit
 à partir de votre copie du fichier de données et conservé dans le cache.
+L'attribut \code{selected_data_file} garde le nom Dataverse du fichier décrit
+(la copie \code{.tab} d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
+affiché nomme aussi le fichier original (\code{.sav} ou \code{.dta}) que
+\code{\link[=get_qes]{get_qes()}} lit et que \code{\link[=qes_provenance]{qes_provenance()}} indique.
 }
 
 \examples{

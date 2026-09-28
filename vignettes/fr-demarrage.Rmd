@@ -200,7 +200,9 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 
 Les lignes de cette première spécification sont vérifiées sur les fichiers
 originaux, mais pas encore approuvées par un réviseur : elles ne sont
-appliquées qu'avec `include_draft = TRUE`. Sur l'étude de démonstration, qui
+appliquées qu'avec `include_draft = TRUE` ; sans lui, toutes les valeurs
+sont `NA` (motif `not_reviewed`), et un avertissement le signale. Sur
+l'étude de démonstration, qui
 tient lieu de `qes2014` :
 
 ```{r harmonize}

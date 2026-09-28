@@ -188,7 +188,8 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 
 The rows of this first specification are checked against the original
 files but not yet signed off by a reviewer, so they are applied only with
-`include_draft = TRUE`. On the demonstration study, which stands in for
+`include_draft = TRUE`; without it every value is `NA` (reason
+`not_reviewed`), and a warning says so. On the demonstration study, which stands in for
 `qes2014`:
 
 ```{r harmonize}

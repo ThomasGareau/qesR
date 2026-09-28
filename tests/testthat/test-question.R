@@ -1,9 +1,8 @@
 # Restored from 397aa0c^ in slice S0b. Triage:
-# * The object-name test no longer writes to .GlobalEnv: since c154985,
-#   get_question("name") looks the object up in the calling frame, so the
-#   test defines it there. This is deliberate (assessment.md section 5.9):
-#   a global object read from inside a user function, which v0.4.4 found,
-#   is no longer found, so S0c/S3 must not treat that as a regression.
+# * The object-name test no longer writes to .GlobalEnv: get_question("name")
+#   looks the object up in the calling frame and its enclosing frames (read
+#   only), so a function or sapply() lambda defined at top level finds a
+#   workspace object, as v0.4.4 did.
 # * Slice S3 made the column match exact (case aside) and suggests near
 #   matches in the error ([A:A6]): a prefix is never accepted.
 
@@ -22,20 +21,71 @@ test_that("get_question works for data.frame and object name", {
   expect_false(exists("tmp_qes_obj", envir = globalenv(), inherits = FALSE))
 })
 
-test_that("get_question does not find objects outside the calling frame", {
+test_that("get_question finds objects in enclosing frames", {
   local_qes_notices_shown()
   dat <- data.frame(x = 1:3)
   attr(dat$x, "label") <- "Example question text"
   # the object lives in an enclosing frame, not in the frame that calls
-  # get_question(); inherits = FALSE must not reach it
+  # get_question()
   outer <- function() {
     tmp_qes_hidden <- dat
     inner <- function() get_question("tmp_qes_hidden", "x")
     inner()
   }
-  err <- expect_error(outer(), class = "qesR_error_input")
+  expect_identical(outer(), "Example question text")
+})
+
+test_that("get_question finds a workspace object from a function and from sapply()", {
+  local_qes_notices_shown()
+  dat <- data.frame(x = 1:3, y = 4:6)
+  attr(dat$x, "label") <- "Question x"
+  attr(dat$y, "label") <- "Question y"
+  ws <- globalenv()
+  nm <- "tmp_qes_ws_obj"
+  stopifnot(!exists(nm, envir = ws, inherits = FALSE))
+  assign(nm, dat, envir = ws)
+  withr::defer(rm(list = nm, envir = ws))
+
+  # closures whose enclosure is the workspace, as at top level
+  f <- function(v) get_question("tmp_qes_ws_obj", v)
+  environment(f) <- ws
+  expect_identical(f("x"), "Question x")
+  lambda <- function(v) get_question("tmp_qes_ws_obj", v)
+  environment(lambda) <- ws
+  expect_identical(
+    unname(sapply(c("x", "y"), lambda)),
+    c("Question x", "Question y")
+  )
+})
+
+test_that("get_question skips non-list objects and reports missing names", {
+  local_qes_notices_shown()
+  err <- expect_error(
+    get_question("tmp_qes_no_such_object", "x"),
+    class = "qesR_error_input"
+  )
   expect_identical(err$arg, "do")
-  expect_identical(err$value, "tmp_qes_hidden")
+  expect_identical(err$value, "tmp_qes_no_such_object")
+
+  dat <- data.frame(x = 1:3)
+  attr(dat$x, "label") <- "Outer text"
+  outer <- function() {
+    tmp_qes_shadow <- dat
+    inner <- function() {
+      tmp_qes_shadow <- "not a data frame"
+      get_question("tmp_qes_shadow", "x")
+    }
+    inner()
+  }
+  # mode = "list": the character in the inner frame is skipped
+  expect_identical(outer(), "Outer text")
+
+  only_chr <- function() {
+    tmp_qes_chr <- "text"
+    get_question("tmp_qes_chr", "x")
+  }
+  err <- expect_error(only_chr(), class = "qesR_error_input")
+  expect_identical(err$arg, "do")
 })
 
 test_that("get_question reports missing label", {

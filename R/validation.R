@@ -3,8 +3,17 @@
 # (tests/testthat/test-validation-live.R), by data-raw/build_validation.R,
 # which records the baselines in inst/extdata/validation/validation_report.csv,
 # and by the website's Validation article. Nothing here makes a request: it
-# reads a harmonized data frame and the benchmarks shipped in
+# reads a harmonized data frame and the benchmarks in
 # inst/extdata/validation/ (data-raw/build_benchmarks.R).
+#
+# The official results of Elections Quebec (official_results.csv,
+# official_turnout.csv) and the recorded report, whose recall and turnout
+# rows hold official shares, are in the source tree but not in the package
+# build (.Rbuildignore): their terms of use need written permission for
+# redistribution and adaptation (inst/COPYRIGHTS, section 3). An installed
+# package has only the census margins, so the recall and turnout checks are
+# skipped there and the recorded report is empty; the live tests,
+# data-raw/build_validation.R and the website run on the source tree.
 #
 # Checks (one row each in the report, plus one row per level of each
 # comparison):
@@ -27,23 +36,37 @@
 # two distributions, in points: the share that would have to change category
 # for the two to agree.
 
+# The path of a table of inst/extdata/validation/, "" when the package does
+# not have it (the build-ignored tables, in an installed package).
 .qes_validation_file <- function(file) {
-  system.file("extdata", "validation", file, package = "qesR", mustWork = TRUE)
+  system.file("extdata", "validation", file, package = "qesR")
 }
 
+.qes_validation_has <- function(file) nzchar(.qes_validation_file(file))
+
+# The benchmark tables; results and turnout are NULL where they are not
+# installed.
 .qes_validation_benchmarks <- function() {
+  read <- function(file, schema) {
+    if (.qes_validation_has(file)) .qes_read_csv(.qes_validation_file(file), schema) else NULL
+  }
   list(
-    results = .qes_read_csv(.qes_validation_file("official_results.csv"), "validation_results"),
-    turnout = .qes_read_csv(.qes_validation_file("official_turnout.csv"), "validation_turnout"),
-    census = .qes_read_csv(.qes_validation_file("census_margins.csv"), "validation_census")
+    results = read("official_results.csv", "validation_results"),
+    turnout = read("official_turnout.csv", "validation_turnout"),
+    census = .qes_read_csv(system.file("extdata", "validation", "census_margins.csv", package = "qesR",
+                                       mustWork = TRUE), "validation_census")
   )
 }
 
-# The recorded report (baselines). Rows of studies whose aggregates cannot
-# ship (qes2022, OD3) are kept in the build-ignored data-raw/nc/ and passed
-# in `extra`.
+# The recorded report (baselines); no rows where it is not installed. Rows
+# of studies whose aggregates cannot ship (qes2022, OD3) are kept in the
+# build-ignored data-raw/nc/ and passed in `extra`.
 .qes_validation_recorded <- function(extra = NULL) {
-  out <- .qes_read_csv(.qes_validation_file("validation_report.csv"), "validation_report")
+  out <- if (.qes_validation_has("validation_report.csv")) {
+    .qes_read_csv(.qes_validation_file("validation_report.csv"), "validation_report")
+  } else {
+    .qes_val_empty()
+  }
   if (!is.null(extra)) {
     out <- rbind(out, extra)
   }
@@ -79,6 +102,13 @@
     estimate = round(estimate, 2), benchmark = round(benchmark, 2), value = round(value, 2),
     status = status, note = note, stringsAsFactors = FALSE
   )
+}
+
+# A report with no rows.
+.qes_val_empty <- function() {
+  cols <- names(.qes_schemas$validation_report)
+  .qes_apply_schema(as.data.frame(stats::setNames(rep(list(character(0)), length(cols)), cols),
+                                  stringsAsFactors = FALSE), "validation_report")[, .qes_val_columns]
 }
 
 # Weighted percentage distribution of `x` over `levels`.
@@ -138,7 +168,7 @@
   }
   rows <- rows[!vapply(rows, is.null, logical(1))]
   if (!length(rows)) {
-    out <- .qes_val_row(character(0), character(0), character(0), character(0), character(0))
+    out <- .qes_val_empty()
   } else {
     out <- do.call(rbind, rows)
   }
@@ -155,6 +185,10 @@
   }
   x <- as.character(x)
   election <- .qes_val_election(h, study)
+  if (is.null(benchmarks$results)) {
+    return(.qes_val_row(study, "recall", "V-L2", paste(election, collapse = ";"), "vote_prov_recall",
+                        status = "skipped", note = "the official results are not installed (inst/COPYRIGHTS, section 3)"))
+  }
   off <- benchmarks$results[benchmarks$results$election_id %in% election, , drop = FALSE]
   if (length(election) != 1L || !nrow(off)) {
     return(.qes_val_row(study, "recall", "V-L2", paste(election, collapse = ";"), "vote_prov_recall",
@@ -214,6 +248,10 @@
   }
   x <- as.character(x)
   election <- .qes_val_election(h, study)
+  if (is.null(benchmarks$turnout)) {
+    return(.qes_val_row(study, "turnout", "turnout", paste(election, collapse = ";"), "turnout_prov_recall",
+                        status = "skipped", note = "the official results are not installed (inst/COPYRIGHTS, section 3)"))
+  }
   off <- benchmarks$turnout[benchmarks$turnout$election_id %in% election, , drop = FALSE]
   if (length(election) != 1L || nrow(off) != 1L) {
     return(NULL)

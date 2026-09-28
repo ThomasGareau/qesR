@@ -77,3 +77,20 @@ test_that("lists split on semicolons", {
   expect_identical(split(NA_character_), character(0))
   expect_identical(split(""), character(0))
 })
+
+test_that("numbers are written with a '.' decimal mark whatever OutDec is", {
+  withr::local_options(OutDec = ",")
+  expect_identical(.qes_code_chr(c(0.5, -99, 0.671536982059479)), c("0.5", "-99", "0.671536982059479"))
+  x <- data.frame(w = c(0.671536982059479, 1.25, NA), id = c(1, 2, 3), wave = c("pre", "post", NA),
+                  stringsAsFactors = FALSE)
+  path <- withr::local_tempfile(fileext = ".csv")
+  .qes_write_csv(x, path)
+  back <- .qes_read_csv(path)
+  expect_identical(names(back), names(x))
+  expect_identical(back$w, c("0.671536982059479", "1.25", ""))
+  withr::local_options(OutDec = ".")
+  base <- utils::read.csv(path, stringsAsFactors = FALSE)
+  expect_identical(dim(base), dim(x))
+  expect_equal(base$w, x$w)
+  expect_identical(base$wave, c("pre", "post", ""))
+})

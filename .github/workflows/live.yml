@@ -11,11 +11,15 @@
 # plus every other live test (get_qes() on each original, the legacy builders).
 #
 # The originals are restored from the Actions cache (keyed on the catalog's
-# md5 pins; saved right after the fetch, whatever the checks do); only
-# missing files are downloaded, through qesR's own client
+# md5 pins); only missing files are downloaded, through qesR's own client
 # (User-Agent "qesR/<ver> R/<ver>", no personal information, requests at
-# least 1 s apart). The job uploads an aggregates-only report; it never
-# commits, pushes or opens issues. A failure is the notification.
+# least 1 s apart). A complete set is saved under the exact key right after
+# the fetch, whatever the checks do; a fetch that fails partway saves what it
+# got under a run-unique key, which the next run restores by prefix before
+# fetching the rest and saving the complete set under the exact key.
+# The job uploads an aggregates-only report, with the CC BY-NC notice of its
+# qes2022 rows (data-raw/nc/README.md); it never commits, pushes or opens
+# issues. A failure is the notification.
 
 name: live
 
@@ -57,24 +61,37 @@ jobs:
 
       # Restore and save are separate steps so that the fetched originals are
       # cached even when a later check fails (actions/cache saves only on
-      # success): a failing week does not download them again.
+      # success): a failing week does not download them again. Cache keys
+      # are immutable, so only a complete fetch is saved under the exact key;
+      # a partial one goes under a run-unique key that restore-keys matches,
+      # and the next complete fetch can still be saved under the exact key.
       - name: Restore the pinned originals
         id: restore
         uses: actions/cache/restore@v4
         with:
           path: ${{ env.QESR_CACHE_DIR }}
           key: qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}
-          restore-keys: qesr-originals-
+          restore-keys: |
+            qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}-partial-
+            qesr-originals-
 
       - name: Fetch missing originals
+        id: fetch
         run: Rscript data-raw/live_fetch.R
 
       - name: Save the pinned originals
-        if: always() && steps.restore.outputs.cache-hit != 'true'
+        if: always() && steps.fetch.outcome == 'success' && steps.restore.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: ${{ env.QESR_CACHE_DIR }}
           key: qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}
+
+      - name: Save the originals fetched so far (partial fetch)
+        if: always() && steps.fetch.outcome == 'failure'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.QESR_CACHE_DIR }}
+          key: qesr-originals-${{ hashFiles('inst/extdata/catalog/files.csv') }}-partial-${{ github.run_id }}
 
       # The originals come from the cache (QESR_TEST_DATA_DIR: no request);
       # QESR_LIVE=true lets V-L5 ask Dataverse for the latest versions.
@@ -96,11 +113,15 @@ jobs:
         continue-on-error: true
         run: Rscript data-raw/build_validation.R --check --out validation-report.csv
 
+      # The report has the qes2022 rows (CC BY-NC 4.0, not MIT): their
+      # licence and attribution notice is uploaded with it.
       - name: Upload the aggregates-only report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: validation-report
-          path: validation-report.csv
+          path: |
+            validation-report.csv
+            data-raw/nc/README.md
           if-no-files-found: ignore
           retention-days: 90

@@ -47,12 +47,21 @@ test_that("every legacy target is a target of the spec, and every study row name
   expect_identical(unique(m$target[m$column == "vote_choice"]), "vote_prov_recall")
   expect_identical(unique(m$target[m$column == "turnout"]), "turnout_prov_recall")
   expect_identical(unique(m$target[m$column == "sovereignty_support"]), "sov_indep")
-  # the study rows of those columns only carry the decision (OD4, OD5)
+  # the study rows of those columns only carry the decision (OD4, OD5), by a
+  # descriptive name
   k <- m$column %in% c("vote_choice", "turnout") & !is.na(m$studies)
-  expect_identical(unique(m$cause[k]), "OD4")
+  expect_identical(unique(m$cause[k]), "reported_vote_only")
   expect_identical(unique(m$studies[k]), "qes_crop_2007_2010")
   k <- m$column %in% c("sovereignty_support", "sovereignty") & !is.na(m$studies)
-  expect_identical(unique(m$cause[k]), "OD5")
+  expect_identical(unique(m$cause[k]), "independence_question_only")
+  # qes2007_panel asked the 1995 question (sov_partnership_1995), like qes2007
+  k <- m$column == "sovereignty_support" & grepl("qes2007_panel", m$studies)
+  expect_match(m$note[k], "1995 question", fixed = TRUE)
+  expect_true(grepl("qes2007", m$studies[k], fixed = TRUE))
+  # no shipped text cites the design's internal decision ids
+  for (col in c("cause", "definition", "note")) {
+    expect_false(any(grepl("\\bOD[0-9]+\\b|A:H[0-9]", lg[[col]])), info = col)
+  }
 })
 
 test_that("V-S18 finds a broken renderer table", {
@@ -219,9 +228,11 @@ test_that("changes.csv and removed.csv match their schemas; the column map reads
   ch <- qesR:::.qes_legacy_changes()
   expect_true(all(ch$study %in% v044_qescodes))
   expect_setequal(unique(ch$profile), c("master", "decon"))
-  # causes are the design's finding and decision ids, or 0.5.0 and HZ6
+  # causes are descriptive names (never the design's internal ids), or 0.5.0
   causes <- unique(unlist(strsplit(ch$cause, ";", fixed = TRUE)))
-  expect_true(all(grepl("^(0\\.5\\.0|HZ6|P5|OD[0-9]+|A:H[0-9]+)$", causes)))
+  expect_true(all(causes %in% c("0.5.0", "harmonization_engine", "all_rows_kept", "reported_vote_only",
+                                "interest_on_0_10", "two_first_languages", "campaign_period_vote",
+                                "scale_corrected", "coding_error_fixed", "other_question_fixed")))
   expect_length(qesR:::.qes_legacy_removed()$column, 70L)
   map <- qesR:::.qes_legacy_column_map("master")
   expect_identical(names(map), c("column", "target", "definition", "studies_changed", "flag", "note", "render"))
@@ -261,4 +272,40 @@ test_that("the notices of the legacy builders are classed and shown once per ses
     count_class(get_decon("qes2018", assign_global = FALSE, quiet = TRUE), "qesR_message_legacy_columns"),
     1L
   )
+})
+
+test_that("the values-changed note names the columns and attributes of its builder", {
+  local_fake_legacy()
+  local_qes_once()
+  withr::local_options(qesR.quiet_deprecated = TRUE, qesR.lang = "en")
+  grab <- function(expr) {
+    m <- NULL
+    withCallingHandlers(expr, message = function(cnd) {
+      if (inherits(cnd, "qesR_message_values_changed")) m <<- cnd
+      invokeRestart("muffleMessage")
+    })
+    m
+  }
+  # get_decon() first in the session: its own attributes and columns
+  d <- NULL
+  m <- grab(d <- get_decon("qes2018", assign_global = FALSE, quiet = TRUE))
+  expect_identical(m$id, "legacy_values_changed_decon")
+  expect_identical(m$fn, "get_decon")
+  msg <- conditionMessage(m)
+  expect_match(msg, "source_map", fixed = TRUE)
+  expect_match(msg, "votechoice", fixed = TRUE)
+  expect_false(grepl("legacy_column_map", msg, fixed = TRUE))
+  expect_false(grepl("vote_choice", msg, fixed = TRUE))
+  expect_false(grepl("vote_intent", msg, fixed = TRUE))
+  named <- regmatches(msg, gregexpr('attr\\(, "[a-z_]+"\\)', msg))[[1]]
+  named <- sub('^attr\\(, "([a-z_]+)"\\)$', "\\1", named)
+  expect_true(length(named) > 0L)
+  expect_true(all(named %in% names(attributes(d))))
+  # shared once key: get_qes_master() shows nothing more this session
+  expect_null(grab(get_qes_master(surveys = "qes2018", assign_global = FALSE, quiet = TRUE)))
+  # get_qes_master() first: the master's text
+  local_qes_once()
+  m <- grab(get_qes_master(surveys = "qes2018", assign_global = FALSE, quiet = TRUE))
+  expect_identical(m$id, "legacy_values_changed")
+  expect_match(conditionMessage(m), "legacy_column_map", fixed = TRUE)
 })

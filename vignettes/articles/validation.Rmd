@@ -26,8 +26,11 @@ specification covers:
 
 The page is built when the website is built: the data files are downloaded
 from their Dataverse deposits through qesR's cache and harmonized with
-`qes_harmonize()`. The benchmarks ship with qesR, each row with its source
-(`inst/extdata/validation/`). The same checks run every week on the pinned
+`qes_harmonize()`. The benchmarks are in `inst/extdata/validation/` of the
+qesR source repository, each row with its source; the census margins also
+ship with the package, the official results of Élections Québec and the
+recorded report do not (their terms of use need Élections Québec's written
+permission, which is pending). The same checks run every week on the pinned
 files and fail when the weighted recall index (check V-L2 of the
 specification) or a weighted census index rises more than 2 points above
 its recorded value, when turnout over-reporting leaves 0 to 35 points, or
@@ -312,9 +315,11 @@ questionnaire.
   [98-10-0384-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810038401)
   (highest certificate by age and gender, 2006 to 2021).
 
-The benchmark tables are in `system.file("extdata", "validation", package =
-"qesR")`, with the source of every row. The recorded results of the
-studies released under CC0 are in `validation_report.csv` there; those of
+The benchmark tables are in `inst/extdata/validation/` of the source
+repository, with the source of every row; the installed package
+(`system.file("extdata", "validation", package = "qesR")`) has only the
+census margins. The recorded results of the studies released under CC0
+are in `validation_report.csv` there; those of
 `qes2022`, whose licence (CC BY-NC 4.0) does not allow qesR to ship its
 aggregates, are computed on this page from your copy of the file at build
 time.

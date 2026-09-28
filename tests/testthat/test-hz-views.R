@@ -271,6 +271,17 @@ test_that("the coverage grid lists each study's waves, weights and grades", {
   expect_true(grepl(paste0("`", others, "`", collapse = ", "), md, fixed = TRUE))
 })
 
+test_that("the reference marks the recommended weights that need review, as the coverage grid does", {
+  s <- hz_spec()
+  en <- paste(.spec_reference_md("en", spec = s, targets = "vote_prov_recall", header = FALSE), collapse = "\n")
+  fr <- paste(.spec_reference_md("fr", spec = s, targets = "vote_prov_recall", header = FALSE), collapse = "\n")
+  # qes2012's weight is reviewed; the 2012 panel's is not, and is not applied
+  expect_match(en, "| `pond` |", fixed = TRUE)
+  expect_match(en, "`pond_post` (needs review, not applied)", fixed = TRUE)
+  expect_match(fr, "`pond_post` (\u00e0 r\u00e9viser, non appliqu\u00e9e)", fixed = TRUE)
+  expect_false(grepl("| pond_post |", en, fixed = TRUE))
+})
+
 test_that("the coverage grid has the same shape in English and French, whatever the locale", {
   en <- .spec_coverage_md("en")
   fr <- .spec_coverage_md("fr")

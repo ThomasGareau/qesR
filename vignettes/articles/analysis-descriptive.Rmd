@@ -71,7 +71,7 @@ knitr::kable(
 ## Table 2: age groups
 
 The studies record age in different bands: six bands in most studies, three
-(18-34, 35-54, 55+) in the Durand panels. The six bands nest in the three,
+(18-34, 35-54, 55+) in the 2018 Durand panel (`qes2018_panel`). The six bands nest in the three,
 so the table uses three. Target populations differ too: `qes2018` covers
 people aged 16 and over, the 1998 polls francophones only (see
 `qes_studies()$target_population_en`).

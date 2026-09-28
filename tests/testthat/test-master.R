@@ -65,10 +65,15 @@ test_that("source_map, legacy_na_columns and legacy_column_map describe every co
   all_na <- names(m)[vapply(m, function(x) all(is.na(x)), logical(1))]
   expect_setequal(na$column, all_na)
   expect_identical(na$reason[na$column == "party_best"], "na_column")
-  expect_identical(na$cause[na$column == "party_best"], "A:H2")
+  expect_identical(na$cause[na$column == "party_best"], "no_valid_source")
   expect_identical(na$reason[na$column == "education"], "no_source")
   # a raw variable the file lacks is no_source, not all_missing
   expect_identical(na$reason[na$column == "interview_start"], "no_source")
+  # ... and source_map names no source for it
+  expect_true(is.na(sm$source_variable[sm$harmonized_variable == "interview_start"]))
+  no_src <- na[na$reason == "no_source", , drop = FALSE]
+  hit <- sm[match(paste(no_src$column, no_src$study), paste(sm$harmonized_variable, sm$qes_code)), , drop = FALSE]
+  expect_true(all(is.na(hit$source_variable)))
   # as is a weight the spec registers for no wave of the study
   expect_identical(na$reason[na$column == "weight_pre"], "no_source")
   map <- attr(m, "legacy_column_map")
@@ -151,11 +156,12 @@ test_that("the recall targets fill vote_choice and turnout; the 1998 recall is u
   expect_true(any(!is.na(by("qes_crop_2007_2010", "vote_intent"))))
   na <- attr(m, "legacy_na_columns")
   expect_identical(na$reason[na$column == "vote_choice" & na$study == "qes_crop_2007_2010"], "no_source")
-  # with the decision behind it (OD4; OD5 for the sovereignty columns)
-  expect_identical(na$cause[na$column == "vote_choice" & na$study == "qes_crop_2007_2010"], "OD4")
-  expect_identical(na$cause[na$column == "turnout" & na$study == "qes_crop_2007_2010"], "OD4")
-  expect_identical(na$cause[na$column == "sovereignty_support" & na$study == "qes_crop_2007_2010"], "OD5")
-  expect_identical(na$cause[na$column == "sovereignty_support" & na$study == "qes1998"], "OD5")
+  # with the rule behind it (OD4; OD5 for the sovereignty columns)
+  expect_identical(na$cause[na$column == "vote_choice" & na$study == "qes_crop_2007_2010"], "reported_vote_only")
+  expect_identical(na$cause[na$column == "turnout" & na$study == "qes_crop_2007_2010"], "reported_vote_only")
+  expect_identical(na$cause[na$column == "sovereignty_support" & na$study == "qes_crop_2007_2010"],
+                   "independence_question_only")
+  expect_identical(na$cause[na$column == "sovereignty_support" & na$study == "qes1998"], "independence_question_only")
   # 1998's language is its sample restriction, qes2022's is not harmonized yet
   expect_true(all(by("qes1998", "language") == "French"))
   expect_true(all(is.na(by("qes2022", "language"))))

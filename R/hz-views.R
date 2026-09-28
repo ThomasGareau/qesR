@@ -54,19 +54,31 @@
   ifelse(wave %in% .qes_all_waves, ifelse(polls, .qes_rt("each_poll", lang), .qes_rt("any_wave", lang)), wave)
 }
 
-# The recommended weight of each crosswalk row's study-wave.
-.qes_row_weight <- function(spec, xw) {
+# The recommended weight of each crosswalk row's study-wave: its registry
+# rows (weight_var and status; NA where there is none).
+.qes_row_weight_rec <- function(spec, xw) {
   wt <- spec$tables$weights
   rec <- wt[wt$recommended %in% TRUE, , drop = FALSE]
-  out <- rec$weight_var[match(paste(xw$study, xw$wave), paste(rec$study, rec$wave))]
+  i <- match(paste(xw$study, xw$wave), paste(rec$study, rec$wave))
   # the poll waves of a row of wave "*" (or of a weight of wave "*")
   star <- match(paste(xw$study, .qes_all_waves), paste(rec$study, rec$wave))
-  out[is.na(out)] <- rec$weight_var[star[is.na(out)]]
-  for (i in which(is.na(out) & xw$wave %in% .qes_all_waves)) {
-    v <- unique(rec$weight_var[rec$study == xw$study[i]])
-    if (length(v) == 1L) out[i] <- v
+  i[is.na(i)] <- star[is.na(i)]
+  for (k in which(is.na(i) & xw$wave %in% .qes_all_waves)) {
+    hit <- which(rec$study == xw$study[k])
+    if (length(unique(rec$weight_var[hit])) == 1L) i[k] <- hit[1]
   }
+  out <- rec[i, c("weight_var", "status"), drop = FALSE]
+  rownames(out) <- NULL
   out
+}
+.qes_row_weight <- function(spec, xw) .qes_row_weight_rec(spec, xw)$weight_var
+
+# A recommended weight as the reference and coverage pages show it: the
+# variable, and whether it is applied (a weight that needs review is not).
+.qes_weight_cell <- function(var, status, lang) {
+  ifelse(is.na(var), NA_character_,
+         ifelse(status %in% "reviewed", paste0("`", var, "`"),
+                paste0("`", var, "` (", .qes_rt("cov_weight_review", lang), ")")))
 }
 
 # The `studies` filter of the views: canonical codes (the demo study means
@@ -259,8 +271,8 @@ print.qes_crosswalk <- function(x, ...) {
   ),
   how_title = c(en = "How to read this reference", fr = "Comment lire cette r\u00e9f\u00e9rence"),
   how = c(
-    en = "Each target is one question stimulus: a different wording, scale, timing or format makes another target, and targets are never pooled. For each study, the coverage table gives the source variable and its wave, the comparability grade of the study's question against the target's anchor question and the reason for it, the instrument (the item format), the levels the question offered, the question wording (or, when the wording cannot be shipped, the document and page that give it), the filter question and what each of its codes means, the study's recommended weight and whether \"don't know\" was offered.",
-    fr = "Chaque cible correspond \u00e0 un seul stimulus de question\u00a0: une formulation, une \u00e9chelle, un moment ou un format diff\u00e9rent donne une autre cible, et les cibles ne sont jamais regroup\u00e9es. Pour chaque \u00e9tude, le tableau de couverture donne la variable source et sa vague, le niveau de comparabilit\u00e9 de la question de l'\u00e9tude par rapport \u00e0 la question d'ancrage de la cible et sa raison, l'instrument (le format de la question), les niveaux offerts, le libell\u00e9 de la question (ou, quand il ne peut pas \u00eatre fourni, le document et la page qui le donnent), la question filtre et le sens de chacun de ses codes, la pond\u00e9ration recommand\u00e9e de l'\u00e9tude et si \u00ab\u00a0je ne sais pas\u00a0\u00bb \u00e9tait offert."
+    en = "Each target is one question stimulus: a different wording, scale, timing or format makes another target, and targets are never pooled. For each study, the coverage table gives the source variable and its wave, the comparability grade of the study's question against the target's anchor question and the reason for it, the instrument (the item format), the levels the question offered, the question wording (or, when the wording cannot be shipped, the document and page that give it), the filter question and what each of its codes means, the study's recommended weight (marked when it needs review: qes_harmonize() does not apply it, and its weight columns are NA) and whether \"don't know\" was offered.",
+    fr = "Chaque cible correspond \u00e0 un seul stimulus de question\u00a0: une formulation, une \u00e9chelle, un moment ou un format diff\u00e9rent donne une autre cible, et les cibles ne sont jamais regroup\u00e9es. Pour chaque \u00e9tude, le tableau de couverture donne la variable source et sa vague, le niveau de comparabilit\u00e9 de la question de l'\u00e9tude par rapport \u00e0 la question d'ancrage de la cible et sa raison, l'instrument (le format de la question), les niveaux offerts, le libell\u00e9 de la question (ou, quand il ne peut pas \u00eatre fourni, le document et la page qui le donnent), la question filtre et le sens de chacun de ses codes, la pond\u00e9ration recommand\u00e9e de l'\u00e9tude (signal\u00e9e quand elle est \u00e0 r\u00e9viser\u00a0: qes_harmonize() ne l'applique pas, et ses colonnes de pond\u00e9ration valent NA) et si \u00ab\u00a0je ne sais pas\u00a0\u00bb \u00e9tait offert."
   ),
   grades_title = c(en = "Comparability grades", fr = "Niveaux de comparabilit\u00e9"),
   grade_identical = c(
@@ -472,7 +484,8 @@ print.qes_crosswalk <- function(x, ...) {
       out <- c(out, t_("none"), "")
     } else {
       not_off <- .qes_not_offered(spec, used)
-      weight <- .qes_row_weight(spec, used)
+      wrec <- .qes_row_weight_rec(spec, used)
+      weight <- .qes_weight_cell(wrec$weight_var, wrec$status, lang)
       gate <- .qes_gate_text(used)
       anchor <- paste(used$study, used$wave, used$source_var, sep = ":") %in% tg$anchor_row[j]
       cells <- lapply(seq_len(nrow(used)), function(k) {
@@ -579,13 +592,7 @@ print.qes_crosswalk <- function(x, ...) {
     w <- w[order(w$wave_order), , drop = FALSE]
     weight_of <- function(wave) {
       rec <- wt[wt$study == s & wt$wave %in% c(wave, .qes_all_waves) & wt$recommended %in% TRUE, , drop = FALSE]
-      if (nrow(rec) == 0L) {
-        t_("cov_no_weight")
-      } else if (identical(rec$status[1], "reviewed")) {
-        paste0("`", rec$weight_var[1], "`")
-      } else {
-        paste0("`", rec$weight_var[1], "` (", t_("cov_weight_review"), ")")
-      }
+      if (nrow(rec) == 0L) t_("cov_no_weight") else .qes_weight_cell(rec$weight_var[1], rec$status[1], lang)
     }
     waves <- if (.qes_poll_study(wv, s) && nrow(w) > 1L) {
       # pooled polls: the number of polls, their first and last, their sizes

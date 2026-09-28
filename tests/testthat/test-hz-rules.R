@@ -112,6 +112,22 @@ test_that("weight, date, string and constant rules", {
   expect_identical(r$value, c("abc", NA, NA))
   expect_identical(r$reason, c(NA, "sysmis", "sysmis"))
 
+  # a gate on a string row: a closed gate code gives its NA reason in place
+  # of system missing, and overrides na_codes (the religion rows of qes2012
+  # and qes2014, asked only of those who belong to a religion)
+  s <- hz_one_row("qes2012", "religion")
+  x <- haven::labelled(c(1, 2, 9, NA, NA, NA), labels = c(Catholic = 1, Protestant = 2, `Prefers not to answer` = 9))
+  d <- df1("q103", x)
+  d$q102 <- c(1, 1, 1, 2, 3, NA)
+  r <- apply1(s, d)
+  expect_identical(r$value, c("Catholic", "Protestant", NA, NA, NA, NA))
+  expect_identical(r$reason, c(NA, NA, "refused", "inapplicable", "refused", "sysmis"))
+  s <- hz_one_row("qes2014", "lr_self", rule = "weight", source_var = "w", args = NA_character_,
+                  na_codes = NA_character_, gate_var = "G", gate_codes = "0", gate_to = "0=inapplicable")
+  r <- apply1(s, data.frame(w = c(0.5, 0.5, NA), G = c(1, 0, 0)))
+  expect_identical(r$value, c("0.5", NA, NA))
+  expect_identical(r$reason, c(NA, "inapplicable", "inapplicable"))
+
   s <- hz_one_row("qes2014", "lr_self", rule = "constant", source_var = "t", args = "value=French",
                   na_codes = NA_character_)
   r <- apply1(s, data.frame(t = 1:3), member = c(TRUE, TRUE, FALSE))

@@ -405,6 +405,22 @@ test_that("qes_cache_clear(older_than =) removes only old files", {
   expect_error(qes_cache_clear(older_than = "old"), class = "qesR_error_input")
 })
 
+test_that("qes_cache_clear(older_than =) forgets the metadata of the files it removes", {
+  local_cache_dir()
+  local_fixture_catalog()
+  paths <- seed_cache()
+  memo <- qesR:::.qes_dict_cache
+  keys <- c("shard:qes2018:0123456789abcdef0123456789abcdef", "index:qes2018:1:0",
+            "shard:qes_fixture_b:ffeeddccbbaa99887766554433221100")
+  for (k in keys) assign(k, list(), envir = memo)
+  withr::defer(suppressWarnings(rm(list = keys, envir = memo)))
+  Sys.setFileTime(paths$shard, Sys.time() - 40 * 86400)
+  expect_identical(qes_cache_clear(older_than = 30), paths$shard)
+  left <- ls(memo, all.names = TRUE)
+  expect_false(any(c(keys[1], keys[2]) %in% left))
+  expect_true(keys[3] %in% left)
+})
+
 test_that("qes_cache_clear(older_than =) also removes old interrupted downloads", {
   local_cache_dir()
   local_fixture_catalog()
@@ -468,4 +484,45 @@ test_that("listing and clearing never create a cache directory", {
   qes_cache_info()
   qes_cache_clear()
   expect_length(list.files(user, recursive = TRUE, all.files = TRUE, include.dirs = TRUE), 0L)
+})
+
+test_that("qes_cache_info() prints compactly, with paths relative to the cache", {
+  local_cache_dir()
+  local_fixture_catalog()
+  withr::local_options(qesR.lang = "en")
+  paths <- seed_cache()
+  info <- qes_cache_info()
+  expect_s3_class(info, c("qes_cache_info", "data.frame"), exact = TRUE)
+  out <- capture.output(res <- withVisible(print(info)))
+  expect_false(res$visible)
+  expect_identical(res$value, info)
+  # the directory is printed once, in the header
+  expect_match(out[1], "mode disk", fixed = TRUE)
+  expect_identical(sum(grepl(paths$root, out, fixed = TRUE)), 1L)
+  expect_true(any(grepl(basename(paths$a), out, fixed = TRUE)))
+  expect_match(out[length(out)], "as.data.frame()", fixed = TRUE)
+  # the column itself stays absolute
+  expect_true(all(startsWith(info$path, paths$root)))
+  # a row subset keeps the class and the attributes; a column subset is plain
+  one <- info[info$kind == "shard", ]
+  expect_s3_class(one, "qes_cache_info")
+  expect_identical(attr(one, "dir"), paths$root)
+  expect_no_error(capture.output(print(one)))
+  cols <- info[, c("study", "bytes")]
+  expect_identical(class(cols), "data.frame")
+  expect_no_error(capture.output(print(cols)))
+  expect_identical(class(as.data.frame(info)), "data.frame")
+  withr::local_options(qesR.lang = "fr")
+  expect_match(capture.output(print(info))[1], "Cache de qesR", fixed = TRUE)
+})
+
+test_that("an empty cache prints its header and footer", {
+  local_cache_dir()
+  local_fixture_catalog()
+  withr::local_options(qesR.lang = "en")
+  info <- qes_cache_info()
+  expect_identical(nrow(info), 0L)
+  out <- capture.output(print(info))
+  expect_match(out[1], "0 file(s), 0 B", fixed = TRUE)
+  expect_length(out, 2L)
 })

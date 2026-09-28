@@ -27,7 +27,8 @@
 #'
 #' @param studies Optional character vector of study codes (see
 #'   [qes_studies()]); `NULL` lists every study, `"all"` too. Codes are
-#'   trimmed and case-insensitive.
+#'   trimmed and case-insensitive. The synthetic `"qes_demo"` is accepted and
+#'   has no documents (zero rows).
 #' @param role Optional character vector of roles to keep: `"codebook"`,
 #'   `"questionnaire"`, `"technical_report"` or `"methodology"`.
 #' @param lang Optional character vector of document languages to keep
@@ -46,7 +47,7 @@
 #' qes_docs(qes_studies(family = "qes")$study, role = "questionnaire", lang = "fr")
 #' @export
 qes_docs <- function(studies = NULL, role = NULL, lang = NULL) {
-  codes <- if (is.null(studies)) .qes_study_codes() else .qes_resolve_codes(studies, "studies")
+  codes <- if (is.null(studies)) .qes_study_codes() else .qes_resolve_codes(studies, "studies", demo = TRUE)
   .qes_check_choice(role, "role", .qes_doc_roles)
   .qes_check_choice(lang, "lang", .qes_enum("lang")$value)
 
@@ -157,17 +158,21 @@ get_qes_codebook_files <- function(srvy = NULL, codebook = NULL, file = NULL, qu
         data = list(arg = "srvy", value = NULL)
       )
     }
-    code <- .get_qes_study(srvy)$qes_survey_code
+    code <- .get_qes_study(srvy, demo = TRUE)$qes_survey_code
   } else {
     recorded <- attr(codebook, "survey_code", exact = TRUE)
     if (is.character(recorded) && length(recorded) == 1L && !is.na(recorded)) {
-      code <- .qes_resolve_codes(recorded, "codebook")
+      code <- .qes_resolve_codes(recorded, "codebook", demo = TRUE)
     } else {
       # A codebook that does not record its study: return its own manifest.
       return(.qes_codebook_attr_files(codebook))
     }
   }
 
+  # the synthetic study has no documents: its codebook's own (empty) manifest
+  if (.qes_is_demo_code(code)) {
+    return(if (is.null(codebook)) .qes_legacy_files_frame() else .qes_codebook_attr_files(codebook))
+  }
   docs <- qes_docs(.qes_legacy_deposit_codes(code))
   out <- .qes_legacy_files_frame(nrow(docs))
   out$file_id <- docs$file_id

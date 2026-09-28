@@ -24,3 +24,6 @@
 ^data-raw$
 ^\.gitattributes$
 ^vignettes/articles$
+^inst/extdata/validation/official_results\.csv$
+^inst/extdata/validation/official_turnout\.csv$
+^inst/extdata/validation/validation_report\.csv$

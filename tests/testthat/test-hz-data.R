@@ -116,12 +116,21 @@ test_that("V-D7 checks the universe of gated rows against gates.csv", {
   # a closed gate code with answers
   p <- hz_data_problems(sources_edit = function(src) {
     g <- src$gates
-    i <- which(g$study == "qes2012" & g$gate_code == "2")
+    i <- which(g$study == "qes2012" & g$gate_var %in% "q21" & g$gate_code == "2")
     g$source_code[i] <- "1"
     src$gates <- g
     src
   })
   expect_match(p$detail[p$rule == "V-D7"], "with q21 = 2 (gate closed) have a value of q25", fixed = TRUE)
+  # a gated string row (religion, gated on its filter question) is checked too
+  p <- hz_data_problems(sources_edit = function(src) {
+    g <- src$gates
+    i <- which(g$study == "qes2012" & g$gate_var %in% "q102" & g$gate_code == "2")
+    g$source_code[i] <- "1"
+    src$gates <- g
+    src
+  })
+  expect_identical(p$detail[p$rule == "V-D7"], "842 respondents with q102 = 2 (gate closed) have a value of q103")
   # a gate code the spec leaves open, with no answer and no outcome
   p <- hz_data_problems(function(t) {
     i <- hz_xw_row(t, "qes2012", "vote_prov_recall")

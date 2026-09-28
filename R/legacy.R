@@ -388,10 +388,18 @@
     filled[[r$column]] <- res$target
     targets <- .qes_split_list(res$target)
     ci <- cell[match(targets, cell$target), , drop = FALSE]
+    # a raw variable the file lacks is no source (reason no_source below)
+    src_var <- if (identical(res$kind, "raw")) {
+      if (!is.na(res$raw) && res$raw %in% names(raw)) res$raw else NA_character_
+    } else if (nrow(ci) > 0L) {
+      paste(ci$source_var, collapse = ";")
+    } else {
+      NA_character_
+    }
     map[[k]] <- data.frame(
       qes_code = study, qes_year = as.character(srow$year), qes_name_en = srow$name_en,
       harmonized_variable = r$column,
-      source_variable = if (!is.na(res$raw)) res$raw else if (nrow(ci) > 0L) paste(ci$source_var, collapse = ";") else NA_character_,
+      source_variable = src_var,
       target = if (length(targets) > 0L) paste(targets, collapse = ";") else NA_character_,
       map_id = if (nrow(ci) > 0L && any(!is.na(ci$map_id))) paste(stats::na.omit(ci$map_id), collapse = ";") else NA_character_,
       grade = if (nrow(ci) > 0L) paste(ci$grade, collapse = ";") else NA_character_,
@@ -600,8 +608,11 @@
 # and 7). They are shown whatever `quiet` says, like the assignment notice,
 # and only once per session.
 .qes_legacy_notice <- function(fn) {
+  # one key for both builders (the note is shown once per session), with the
+  # text of the builder that shows it: its columns and its attributes
   if (.qes_once_first("values_changed")) {
-    .qes_inform("legacy_values_changed", class = "qesR_message_values_changed", data = list(fn = fn))
+    id <- if (identical(fn, "get_decon")) "legacy_values_changed_decon" else "legacy_values_changed"
+    .qes_inform(id, class = "qesR_message_values_changed", data = list(fn = fn))
   }
   if (.qes_once_first(paste0("legacy_columns:", fn))) {
     if (identical(fn, "get_qes_master")) {

@@ -84,6 +84,28 @@ before it is abandoned (and retried). Default 60.}
 }
 }
 
+\section{Language of returned text}{
+
+\code{qesR.lang} sets the language of messages only: it never sets the \code{lang}
+argument of a function, which is given in each call and does not mean the
+same thing everywhere:
+\itemize{
+\item \code{\link[=qes_harmonize]{qes_harmonize()}}: \code{"en"} (default) or \code{"fr"}, the language of factor
+levels, variable labels and target populations; codes do not change;
+\item \code{\link[=qes_spec]{qes_spec()}}: \code{"en"} (default) or \code{"fr"}, the language of labels,
+definitions, grade reasons and notes;
+\item \code{\link[=qes_codebook]{qes_codebook()}} and \code{\link[=qes_question]{qes_question()}}: \code{NULL} (default), the study's
+own language, or \code{"en"}, \code{"fr"}; the language of question text (labels
+are always the file's);
+\item \code{\link[=qes_search]{qes_search()}}: \code{"both"} (default), \code{"en"} or \code{"fr"}, the languages
+searched and the language of the \code{question} column;
+\item \code{\link[=qes_cite]{qes_cite()}}: \code{"en"} (default) or \code{"fr"}, the language of the few words
+qesR adds to citations;
+\item \code{\link[=qes_docs]{qes_docs()}} and \code{\link[=qes_download]{qes_download()}}: a filter, the document languages to
+keep (\code{NULL}, the default, keeps all).
+}
+}
+
 \section{Conditions}{
 
 Errors, warnings and messages have classes, so code can react to them with
@@ -121,7 +143,16 @@ study it comes from, passed to \code{\link[=qes_cite]{qes_cite()}} or \code{\lin
 a provenance level the object does not record (field \code{level});}
 \item{\code{qesR_error_dependency}}{a suggested package that a function
 needs is not installed, such as \pkg{survey} for \code{\link[=qes_design]{qes_design()}}
-(field \code{package}).}
+(field \code{package});}
+\item{\code{qesR_error_spec}}{a harmonization spec with errors, or data that
+fail its checks, from \code{\link[=qes_spec]{qes_spec()}} or \code{\link[=qes_harmonize]{qes_harmonize()}} (field
+\code{problems}, a data frame of the failed rules);}
+\item{\code{qesR_error_unmapped}}{a source code the spec does not map, from
+\code{\link[=qes_harmonize]{qes_harmonize()}} with \code{unmapped = "error"} (fields \code{study}, \code{target},
+\code{codes}, \code{n}, \code{unmapped});}
+\item{\code{qesR_error_duplicate_id}}{identifier variables that do not
+identify the rows of a study uniquely, from \code{\link[=qes_harmonize]{qes_harmonize()}} (fields
+\code{study}, \code{id_vars}, \code{rows}).}
 }
 Warnings inherit from \code{qesR_warning}, among them \code{qesR_warning_encoding}
 (a label or text value that still holds a replacement or control
@@ -129,6 +160,11 @@ character after reading; fields \code{study}, \code{file_id}, \code{n}, \code{va
 \code{qesR_warning_unpinned} (files saved by \code{qes_download(version = "latest")}, which the catalog does not pin; fields \code{study}, \code{file_id}) and
 \code{qesR_warning_truncated} (a question text that its source file cut at 80
 characters, from \code{\link[=get_question]{get_question()}}; fields \code{variable}, \code{doc_ref}).
+The warnings and messages of the harmonization engine
+(\code{qesR_warning_all_unreviewed}, \code{qesR_warning_unmapped},
+\code{qesR_warning_partial}, \code{qesR_warning_unverified_source},
+\code{qesR_message_weight_review}, \code{qesR_message_design_dropped} and others)
+are listed in the \emph{Conditions} section of \code{\link[=qes_harmonize]{qes_harmonize()}}.
 Messages inherit from \code{qesR_message}; \code{\link[=qes_missing]{qes_missing()}} counts the variables
 it left unchanged in a \code{qesR_message_missing_untyped} (silenced by
 \code{quiet = TRUE}).
@@ -214,7 +250,9 @@ l'environnement d'où elles sont appelées.
 \strong{Options.} \code{qesR.lang} (variable d'environnement \code{QESR_LANG}) fixe la
 langue des messages, avertissements et erreurs : \code{"en"} ou \code{"fr"}. Sans
 elle, qesR suit \code{LANGUAGE}, puis la locale des messages. La langue ne change
-jamais les données ni le texte retournés. \code{qesR.quiet_deprecated = TRUE}
+jamais les données ni le texte retournés, et ne fixe jamais l'argument
+\code{lang} des fonctions : voir la section \emph{Langue} de \link{qesR-fr}, qui donne
+son rôle dans chaque fonction. \code{qesR.quiet_deprecated = TRUE}
 masque les notes uniques des fonctions héritées (voir \link{qesR-deprecated}).
 \code{qesR.cache} (\code{QESR_CACHE}) fixe où sont gardés les fichiers téléchargés :
 \code{"session"} (par défaut ; un dossier de \code{\link[=tempdir]{tempdir()}}, supprimé à la
@@ -252,14 +290,23 @@ qesR ; \code{path}, \code{reason}) ; \code{qesR_error_no_provenance} (objet qui
 n'indique plus son étude, passé à \code{\link[=qes_cite]{qes_cite()}} ou \code{\link[=qes_provenance]{qes_provenance()}}, ou
 niveau de provenance que l'objet n'enregistre pas ; champ \code{level}) et
 \code{qesR_error_dependency} (package suggéré non installé dont une fonction a
-besoin, comme \pkg{survey} pour \code{\link[=qes_design]{qes_design()}} ; champ \code{package}). Les
+besoin, comme \pkg{survey} pour \code{\link[=qes_design]{qes_design()}} ; champ \code{package}) ;
+\code{qesR_error_spec} (spécification d'harmonisation erronée, ou données qui
+échouent à ses vérifications, de \code{\link[=qes_spec]{qes_spec()}} ou \code{\link[=qes_harmonize]{qes_harmonize()}} ;
+champ \code{problems}), \code{qesR_error_unmapped} (code source que la
+spécification n'apparie pas, avec \code{unmapped = "error"} ; \code{study},
+\code{target}, \code{codes}, \code{n}, \code{unmapped}) et \code{qesR_error_duplicate_id}
+(variables d'identification qui n'identifient pas les lignes d'une étude
+de façon unique ; \code{study}, \code{id_vars}, \code{rows}). Les
 avertissements héritent de \code{qesR_warning}, dont \code{qesR_warning_encoding}
 (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 contrôle après lecture ; \code{study}, \code{file_id}, \code{n}, \code{variables}) et
 \code{qesR_warning_unpinned} (fichiers enregistrés par \code{qes_download(version = "latest")}, que le catalogue ne retient pas ; \code{study}, \code{file_id}) et
 \code{qesR_warning_truncated} (texte de question coupé à 80 caractères dans
 son fichier source, signalé par \code{\link[=get_question]{get_question()}} ; \code{variable},
-\code{doc_ref}), et les messages de \code{qesR_message} ; \code{\link[=qes_missing]{qes_missing()}} compte
+\code{doc_ref}), et les messages de \code{qesR_message} ; les avertissements et
+messages du moteur d'harmonisation sont énumérés dans la section
+\emph{Conditions} de \code{\link[=qes_harmonize]{qes_harmonize()}} ; \code{\link[=qes_missing]{qes_missing()}} compte
 les variables laissées inchangées dans un
 \code{qesR_message_missing_untyped} (masqué par \code{quiet = TRUE}). Les messages
 de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le

@@ -29,6 +29,8 @@
 # does (design.md section 5.6) and gives the unweighted marginals that
 # expected/marginals.csv records (V-P1). Rows with other rules (weight, date,
 # string, fn:) are not projected; the live column hashes cover them (V-L1).
+# gates.csv also holds the cells of a gated weight, date or string row, for
+# the universe check V-D7 only.
 
 # ---- sources ---------------------------------------------------------------------
 
@@ -217,15 +219,23 @@
   xw$rule[i] %in% c("map", "numeric")
 }
 
-# The cells of every projectable crosswalk row of `study`, counted in data
-# frame `d` (the spec_gates table).
+# Are the cells of crosswalk row `i` counted in gates.csv: a projected row,
+# or a gated weight, date or string row (its cells are not projected, but
+# they answer the universe check V-D7).
+.qes_hz_counted <- function(xw, i) {
+  .qes_hz_projected(xw, i) ||
+    (xw$rule[i] %in% c("weight", "date", "string") && !is.na(xw$gate_var[i]) && nzchar(xw$gate_var[i]))
+}
+
+# The cells of every projectable or gated crosswalk row of `study`
+# (.qes_hz_counted()), counted in data frame `d` (the spec_gates table).
 .qes_hz_cells_data <- function(spec, d, study) {
   xw <- spec$tables$crosswalk
   wv <- spec$tables$waves
   out <- list()
   seen <- character(0)
   for (i in which(xw$study == study)) {
-    if (!.qes_hz_projected(xw, i) || !xw$source_var[i] %in% names(d)) next
+    if (!.qes_hz_counted(xw, i) || !xw$source_var[i] %in% names(d)) next
     gate <- xw$gate_var[i]
     if (!is.na(gate) && !gate %in% names(d)) next
     # one wave, or every poll wave of the study for wave "*"
@@ -669,7 +679,7 @@
 
   # ---- V-D7: universe identity on gated rows ----------------------------------------------
   for (i in which(xw$study %in% studies & has(xw$gate_var))) {
-    if (!.qes_hz_projected(xw, i)) next
+    if (!.qes_hz_counted(xw, i)) next
     if (!exists_in(xw$source_var[i], xw$study[i]) || !exists_in(xw$gate_var[i], xw$study[i])) next
     cells <- .qes_hz_cells(spec, sources, i)
     if (is.character(cells)) {

@@ -67,9 +67,14 @@ The full conditions are in the \code{failures} field of the
 study, the file lacks the variable, or the study has no registered
 weight), \code{"na_column"} (no valid source in any study) or
 \code{"all_missing"} (the question's every answer is a missing value);
-\code{cause} names the decision behind it where there is one (for example
-\code{"OD4"} for the reported vote of the CROP polls, \code{"OD5"} for
-\code{sovereignty_support} in the studies that asked another question).
+\code{cause} names the rule behind it where there is one:
+\code{"reported_vote_only"} (\code{vote_choice} and \code{turnout} hold only the
+reported vote and turnout, which the CROP polls did not ask),
+\code{"independence_question_only"} (\code{sovereignty_support} and
+\code{sovereignty} hold only the referendum question on an independent
+country, which the study did not ask), \code{"no_valid_source"} (no study
+has a valid source for the column) or \code{"not_harmonized_yet"}; \code{basis}
+says in words why the column is \code{NA} in the study.
 0.5.0's \code{"blanked"} reason is gone: no value is blanked after it is
 read;
 \item \code{legacy_column_map}: what each column means (\code{column}, \code{target},
@@ -133,7 +138,7 @@ Compared with 0.5.0 (NEWS has a table of counts, column by column, for
 qesR 0.4.4, 0.5.0 and 0.7.0):
 \itemize{
 \item \code{vote_choice} and \code{turnout} are the reported vote and turnout in every
-study (OD4): \code{qes2022} from its post-election wave, \code{qes1998} from its
+study that asked them: \code{qes2022} from its post-election wave, \code{qes1998} from its
 post-election recontact; the pooled CROP polls asked only vote
 intentions and stay \code{NA}. Nonvoters, spoiled ballots, "don't know" and
 refusals are \code{NA} in \code{vote_choice} (0.4.4 had the categories
@@ -141,7 +146,8 @@ refusals are \code{NA} in \code{vote_choice} (0.4.4 had the categories
 voted.
 \item Columns filled where the spec has the question: \code{ideology} for
 \code{qes2014} (with its 0 and 10 answers) and \code{qes2018},
-\code{political_interest} for \code{qes2018} (OD7), \code{born_canada} for \code{qes2018},
+\code{political_interest} for \code{qes2018} (the four-point item as 10, 7, 3
+and 0), \code{born_canada} for \code{qes2018},
 \code{provincial_pid} for \code{qes2007}, \code{qes2008}, \code{qes2012}, \code{qes2014} and
 \code{qes2018}, \code{language} for \code{qes2014} (the mother tongue, not the
 language of the interview), \code{income} for \code{qes2012}, \code{year_of_birth}
@@ -153,7 +159,8 @@ has them (0.4.4 used a three-band recode); \code{education} maps the labels
 trade certificates are College/CEGEP/Technical) and, for \code{qes2012},
 puts the French questionnaire's \emph{cours technique} in College and leaves
 the one code that is in neither questionnaire \code{NA}; \code{language} is \code{NA}
-for respondents who report two first languages (OD8).
+for respondents who report two first languages (they are assigned to
+neither).
 \item \code{respondent_id} joins each study's identifier variables: \code{qes2007_panel}
 (project and questionnaire number, unique) and \code{qes2018_panel}
 (interview mode and id, where 0.5.0 made one up).
@@ -167,8 +174,11 @@ they are not documented yet), \code{vote_intent}, \code{turnout_intent} and
 }
 
 Results from qesR 0.4.4 can be reproduced only by installing that version
-(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}), and
-those of 0.5.0 and 0.6.0 by installing one of them.
+(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}). 0.5.0
+and 0.6.0 were development versions and were never released: a result
+computed with one of them is reproducible by installing the commit it was
+built from, which \code{packageDescription("qesR")$RemoteSha} records for an
+installation from GitHub.
 
 A message says so once per session (class \code{qesR_message_values_changed},
 and \code{qesR_message_legacy_columns} for the 70 columns 0.4.4 stacked by
@@ -206,7 +216,8 @@ Autres changements de 0.7.0 par rapport à 0.5.0 :
 \code{education} classe les libellés que 0.4.4 laissait tels quels
 (\code{maîtrise} : University ; certificat de métier : College/CEGEP/Technical)
 et, pour \code{qes2012}, met le \emph{cours technique} dans College ; \code{language}
-vaut \code{NA} pour qui déclare deux premières langues (OD8) ;
+vaut \code{NA} pour qui déclare deux premières langues (attribuées à
+aucune des deux) ;
 \item \code{respondent_id} joint les variables d'identification de l'étude
 (\code{qes2007_panel} et \code{qes2018_panel}) ;
 \item \code{province_territory} vaut « Quebec » dans toutes les études ;
@@ -219,8 +230,12 @@ documentées), \code{vote_intent}, \code{turnout_intent} et \code{sov_partnershi
 
 Les résultats de qesR 0.4.4 ne
 se reproduisent qu'en installant cette version
-(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}). Pour de
-nouvelles analyses, utilisez \code{\link[=qes_harmonize]{qes_harmonize()}}.
+(\code{remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")}) ; 0.5.0
+et 0.6.0 étaient des versions de développement, jamais publiées : un
+résultat calculé avec l'une d'elles se reproduit en installant le commit
+dont il provient, que \code{packageDescription("qesR")$RemoteSha} enregistre
+pour une installation depuis GitHub. Pour de nouvelles analyses, utilisez
+\code{\link[=qes_harmonize]{qes_harmonize()}}.
 }
 
 \examples{

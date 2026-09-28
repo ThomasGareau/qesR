@@ -59,7 +59,7 @@ test_that("get_qes() reads every pinned original: names, values and keys (live)"
   local_live_originals()
   local_qes_notices_shown()
   cat <- shipped_catalog()
-  manifest <- v044_get_qes_names()
+  manifest <- v044_get_qes_names(with_nc = TRUE)
   for (s in cat$studies$study) {
     dat <- get_qes(s, with_codebook = FALSE, quiet = TRUE)
     row <- cat$files[cat$files$study == s & cat$files$role == "data" & cat$files$is_default, , drop = FALSE]
@@ -74,9 +74,14 @@ test_that("get_qes() reads every pinned original: names, values and keys (live)"
       types <- vapply(dat, storage_type, character(1))
       n_na <- vapply(dat, function(x) sum(is.na(x)), integer(1))
       expect_identical(unname(types[same]), m$type[same], info = s)
-      expect_identical(unname(n_na[same]), as.integer(m$n_na[same]), info = s)
+      # the counts of qes2022 come from the build-ignored data-raw/nc/ (OD3):
+      # compared only when the tests run on the source tree
+      counted <- !is.na(m$n_na)
+      if (any(counted)) {
+        expect_identical(unname(n_na[same & counted]), as.integer(m$n_na[same & counted]), info = s)
+      }
       # the deviations are real (a stale list would hide nothing)
-      if (any(!same)) {
+      if (any(!same) && all(counted[!same])) {
         expect_true(all(types[!same] != m$type[!same] | n_na[!same] != m$n_na[!same]), info = s)
       }
     }

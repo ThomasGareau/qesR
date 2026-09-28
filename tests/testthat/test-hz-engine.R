@@ -188,8 +188,13 @@ test_that("min_grade sets lower cells to NA with reason below_grade", {
 
 test_that("rows not signed off by a reviewer are applied only with include_draft", {
   syn <- hz_syn("qes2014")
-  m <- hz_messages(hz_run(syn, include_draft = FALSE, quiet = FALSE, missing = "reasons"))
-  expect_true("qesR_message_unreviewed_skipped" %in% m$classes)
+  # no row applied at all: a warning (qesR_warning_all_unreviewed), not the
+  # message
+  expect_warning(
+    m <- hz_messages(hz_run(syn, include_draft = FALSE, quiet = FALSE, missing = "reasons")),
+    class = "qesR_warning_all_unreviewed"
+  )
+  expect_false("qesR_message_unreviewed_skipped" %in% m$classes)
   expect_false("qesR_message_unreviewed_cells" %in% m$classes)
   h <- m$value
   expect_true(all(is.na(h$vote_prov_recall)))
@@ -379,7 +384,7 @@ test_that("the demonstration study is harmonized offline with the qes2014 rows",
   # the file was read from the package and checked by md5
   expect_true(qes_provenance(h)$md5_verified)
   # default: rows not signed off are not applied
-  h0 <- qes_harmonize("qes_demo", quiet = TRUE)
+  h0 <- expect_warning(qes_harmonize("qes_demo", quiet = TRUE), class = "qesR_warning_all_unreviewed")
   expect_true(all(is.na(h0$vote_prov_recall)))
 })
 
@@ -435,6 +440,35 @@ test_that("rbind() of per-study results combines their rows and provenance", {
   other <- two
   attr(other, "qes_spec")$hash <- "0123456789abcdef0123456789abcdef"
   expect_error(rbind(one, other), class = "qesR_error_input")
+  # parts built with different options are refused, naming the option
+  fr <- run(syn["qes2022"], missing = "reasons", lang = "fr")
+  err <- expect_error(rbind(one, fr), class = "qesR_error_input")
+  expect_identical(err$id, "hz_rbind_options")
+  expect_identical(names(err$options), "lang")
+  expect_match(conditionMessage(err), "lang", fixed = TRUE)
+  code <- run(syn["qes2022"], missing = "reasons", values = "code")
+  err <- expect_error(rbind(one, code), class = "qesR_error_input")
+  expect_identical(names(err$options), "values")
+  na_only <- run(syn["qes2022"])
+  err <- expect_error(rbind(one, na_only), class = "qesR_error_input")
+  expect_true("missing" %in% names(err$options))
+  raw_w <- run(syn["qes2022"], missing = "reasons", weights = "raw")
+  err <- expect_error(rbind(one, raw_w), class = "qesR_error_input")
+  expect_identical(names(err$options), "weights")
+  # objects made before the options were recorded are still bound
+  old1 <- one
+  old2 <- two
+  attr(old1, "qes_spec")$options <- NULL
+  attr(old2, "qes_spec")$options <- NULL
+  expect_s3_class(rbind(old1, old2), "qes_harmonized")
+  # different targets: a classed error listing what each part lacks, before
+  # base rbind() can fail on the column count
+  fewer <- run(syn["qes2022"], missing = "reasons", targets = "gender")
+  err <- expect_error(rbind(one, fewer), class = "qesR_error_input")
+  expect_identical(err$id, "hz_rbind_targets")
+  expect_length(err$missing[[1]], 0L)
+  expect_true(length(err$missing[[2]]) > 0L)
+  expect_match(conditionMessage(err), "qes2022", fixed = TRUE)
   # with a plain data frame, a plain data frame without the qes attributes
   plain <- rbind.qes_harmonized(one, as.data.frame(strip(two)))
   expect_false(inherits(plain, "qes_harmonized"))
@@ -452,4 +486,61 @@ test_that("harmonized output does not depend on the locale", {
   })
   attr(got, "qes_provenance") <- NULL
   expect_identical(got, ref)
+})
+
+test_that("a result left all NA by unreviewed rows is a warning that counts the values", {
+  syn <- hz_syn("qes2014")
+  w <- expect_warning(
+    h <- hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = TRUE),
+    class = "qesR_warning_all_unreviewed"
+  )
+  expect_true(all(is.na(h$vote_prov_recall)))
+  expect_true(all(is.na(h$gender)))
+  expect_identical(as.integer(w$n_values), 2L * nrow(syn$qes2014))
+  expect_setequal(w$cells$target, c("vote_prov_recall", "gender"))
+  expect_identical(w$id, "unreviewed_all")
+  # the warning is not silenced by quiet, and replaces the message
+  m <- hz_messages(withCallingHandlers(
+    hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = FALSE),
+    qesR_warning_all_unreviewed = function(w) invokeRestart("muffleWarning")
+  ))
+  expect_false("qesR_message_unreviewed_skipped" %in% m$classes)
+  # the print line counts values as well as cells
+  withr::local_options(qesR.lang = "en")
+  out <- capture.output(print(h))
+  line <- out[grepl("include_draft = FALSE", out, fixed = TRUE)]
+  expect_length(line, 1L)
+  expect_match(line, sprintf("2 (%d value(s))", 2L * nrow(syn$qes2014)), fixed = TRUE)
+  # a signed-off row applied next to unreviewed ones: a message, with the count
+  s <- hz_spec()
+  i <- hz_xw_row(s$tables, "qes2014", "vote_prov_recall")
+  s$tables$crosswalk$status[i] <- "stable"
+  s$tables$crosswalk$reviewed_by[i] <- "Test Reviewer"
+  s$tables$crosswalk$reviewed_on[i] <- as.Date("2026-09-27")
+  got <- NULL
+  expect_no_warning(withCallingHandlers(
+    hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, spec = s, quiet = FALSE),
+    qesR_message_unreviewed_skipped = function(m) {
+      got <<- m
+      invokeRestart("muffleMessage")
+    },
+    message = function(m) invokeRestart("muffleMessage")
+  ))
+  expect_false(is.null(got))
+  expect_identical(as.integer(got$n_values), nrow(syn$qes2014))
+})
+
+test_that("a data frame given in data without its identifier names the dropped column", {
+  syn <- hz_syn("qes2018")
+  ids <- qesR:::.qes_split_list(qesR:::.qes_default_data_file("qes2018", demo = TRUE)$id_vars)
+  ids <- setdiff(ids, ".row")
+  skip_if(length(ids) == 0L)
+  d <- syn$qes2018
+  d <- d[, setdiff(names(d), ids), drop = FALSE]
+  withr::local_options(qesR.lang = "en")
+  err <- expect_error(hz_run(list(qes2018 = d), targets = "gender"), class = "qesR_error_unknown_variable")
+  expect_identical(err$id, "hz_missing_id")
+  expect_identical(err$variables, ids)
+  expect_match(conditionMessage(err), "data$qes2018", fixed = TRUE)
+  expect_match(conditionMessage(err), "qes_id", fixed = TRUE)
 })

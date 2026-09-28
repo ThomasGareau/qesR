@@ -138,8 +138,11 @@ stratum and, in the long layout, the respondent is the sampling unit.
 Estimates are computed within each study with `svyby()`; the table marks
 the levels a study did not offer instead of printing a 0.
 
-```{r design, message = FALSE}
+```{r design}
 d <- qes_design(h)
+```
+
+```{r design-table, message = FALSE}
 cells <- qes_provenance(h, level = "cell")
 spec <- qes_spec("spec")
 

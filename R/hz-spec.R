@@ -75,18 +75,31 @@
 }
 
 # Raise qesR_error_spec for a spec that has problems of severity "error".
+# `where` is the spec directory, or (from .qes_spec_where()) a marker for a
+# qes_spec object edited in memory, which the message then names instead of
+# the directory it was first loaded from.
 .qes_spec_abort <- function(problems, where) {
   errors <- problems[problems$severity == "error", , drop = FALSE]
   shown <- utils::head(errors, 5L)
   details <- sprintf("%s %s%s: %s", shown$rule, shown$table,
                      ifelse(is.na(shown$row), "", paste0(" row ", shown$row)), shown$detail)
+  edited <- inherits(where, "qes_spec_edited")
   .qes_abort(
-    "spec_invalid",
+    if (edited) "spec_invalid_edited" else "spec_invalid",
     class = "qesR_error_spec",
-    args = list(where, nrow(errors)),
+    args = if (edited) list(nrow(errors)) else list(where, nrow(errors)),
     data = list(problems = problems),
     details = details
   )
+}
+
+# Where the problems of spec object `obj` are said to be: its directory, or
+# the edited object when its tables were changed after loading.
+.qes_spec_where <- function(obj) {
+  if (isTRUE(attr(obj, "edited", exact = TRUE)) || is.null(obj$dir)) {
+    return(structure(list(dir = obj$dir), class = "qes_spec_edited"))
+  }
+  obj$dir
 }
 
 # ---- hash ---------------------------------------------------------------------
@@ -256,11 +269,15 @@
     obj <- spec
     attr(obj, "check") <- NULL
     # the stored hash describes the tables as loaded; recompute it from the
-    # tables so that an edited object is flagged custom (section 5.11)
-    obj$hash <- .qes_spec_tables_hash(obj$tables)
+    # tables so that an edited object is flagged custom (section 5.11), and
+    # remember the edit so that errors name the object, not its directory
+    new_hash <- .qes_spec_tables_hash(obj$tables)
+    edited <- isTRUE(attr(spec, "edited", exact = TRUE)) || !identical(spec$hash, new_hash)
+    attr(obj, "edited") <- if (edited) TRUE else NULL
+    obj$hash <- new_hash
     obj$custom <- !identical(obj$hash, .qes_spec_shipped_hash())
     if (!identical(validate, "none")) {
-      attr(obj, "check") <- .qes_spec_check_safely(obj, obj$dir %||% "<qes_spec object>")
+      attr(obj, "check") <- .qes_spec_check_safely(obj, .qes_spec_where(obj))
     }
   } else {
     dir <- .qes_spec_dir(spec)
@@ -283,7 +300,7 @@
   }
   check <- attr(obj, "check")
   if (identical(validate, "error") && !is.null(check) && any(check$severity == "error")) {
-    .qes_spec_abort(check, obj$dir %||% "<qes_spec object>")
+    .qes_spec_abort(check, .qes_spec_where(obj))
   }
   obj
 }
@@ -541,13 +558,13 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
       .qes_spec_abort(.qes_spec_problems(
         "internal", "error", NA_character_, NA_integer_, NA_character_,
         paste("the data checks stopped:", conditionMessage(e))
-      ), obj$dir %||% "<qes_spec object>")
+      ), .qes_spec_where(obj))
     }
   ))
   rownames(check) <- NULL
   attr(obj, "check") <- check
   if (identical(validate, "error") && any(check$severity == "error")) {
-    .qes_spec_abort(check, obj$dir %||% "<qes_spec object>")
+    .qes_spec_abort(check, .qes_spec_where(obj))
   }
   obj
 }

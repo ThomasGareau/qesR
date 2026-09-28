@@ -47,9 +47,24 @@
 #'
 #' @section Langue:
 #' `options(qesR.lang = "fr")` affiche les messages, avertissements et
-#' erreurs en français. La langue ne change jamais les données ni le texte
-#' retournés : l'argument `lang` de [qes_codebook()], [qes_question()] et
-#' [qes_cite()] choisit la langue du texte retourné.
+#' erreurs en français. Elle ne change jamais les données ni le texte
+#' retournés, et ne fixe jamais l'argument `lang` des fonctions : il faut le
+#' donner à chaque appel. Il n'a pas le même rôle partout :
+#' * [qes_harmonize()] : `"en"` (par défaut) ou `"fr"`, la langue des
+#'   niveaux des facteurs, des étiquettes de variables et des populations
+#'   (`lang = "fr"` donne `Homme`, `Femme`, ...) ; les codes ne changent
+#'   pas ;
+#' * [qes_spec()] : `"en"` (par défaut) ou `"fr"`, la langue des
+#'   étiquettes, définitions, justifications et notes ;
+#' * [qes_codebook()] et [qes_question()] : `NULL` (par défaut), la langue
+#'   de l'étude, ou `"en"`, `"fr"` ; la langue du texte des questions (les
+#'   étiquettes sont celles du fichier) ;
+#' * [qes_search()] : `"both"` (par défaut), `"en"` ou `"fr"`, les langues
+#'   où chercher et celle de la colonne `question` ;
+#' * [qes_cite()] : `"en"` (par défaut) ou `"fr"`, la langue des quelques
+#'   mots que qesR ajoute aux citations ;
+#' * [qes_docs()] et [qes_download()] : un filtre, les langues des documents
+#'   à garder (`NULL`, par défaut, les garde toutes).
 #'
 #' @section Données de démonstration:
 #' L'étude synthétique `qes_demo` est livrée avec qesR : `get_qes("qes_demo")`

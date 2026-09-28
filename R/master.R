@@ -72,7 +72,7 @@
 #' Compared with 0.5.0 (NEWS has a table of counts, column by column, for
 #' qesR 0.4.4, 0.5.0 and 0.7.0):
 #' * `vote_choice` and `turnout` are the reported vote and turnout in every
-#'   study (OD4): `qes2022` from its post-election wave, `qes1998` from its
+#'   study that asked them: `qes2022` from its post-election wave, `qes1998` from its
 #'   post-election recontact; the pooled CROP polls asked only vote
 #'   intentions and stay `NA`. Nonvoters, spoiled ballots, "don't know" and
 #'   refusals are `NA` in `vote_choice` (0.4.4 had the categories
@@ -80,7 +80,8 @@
 #'   voted.
 #' * Columns filled where the spec has the question: `ideology` for
 #'   `qes2014` (with its 0 and 10 answers) and `qes2018`,
-#'   `political_interest` for `qes2018` (OD7), `born_canada` for `qes2018`,
+#'   `political_interest` for `qes2018` (the four-point item as 10, 7, 3
+#'   and 0), `born_canada` for `qes2018`,
 #'   `provincial_pid` for `qes2007`, `qes2008`, `qes2012`, `qes2014` and
 #'   `qes2018`, `language` for `qes2014` (the mother tongue, not the
 #'   language of the interview), `income` for `qes2012`, `year_of_birth`
@@ -92,7 +93,8 @@
 #'   trade certificates are College/CEGEP/Technical) and, for `qes2012`,
 #'   puts the French questionnaire's *cours technique* in College and leaves
 #'   the one code that is in neither questionnaire `NA`; `language` is `NA`
-#'   for respondents who report two first languages (OD8).
+#'   for respondents who report two first languages (they are assigned to
+#'   neither).
 #' * `respondent_id` joins each study's identifier variables: `qes2007_panel`
 #'   (project and questionnaire number, unique) and `qes2018_panel`
 #'   (interview mode and id, where 0.5.0 made one up).
@@ -105,8 +107,11 @@
 #'   `sov_partnership_1995`.
 #'
 #' Results from qesR 0.4.4 can be reproduced only by installing that version
-#' (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`), and
-#' those of 0.5.0 and 0.6.0 by installing one of them.
+#' (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`). 0.5.0
+#' and 0.6.0 were development versions and were never released: a result
+#' computed with one of them is reproducible by installing the commit it was
+#' built from, which `packageDescription("qesR")$RemoteSha` records for an
+#' installation from GitHub.
 #'
 #' A message says so once per session (class `qesR_message_values_changed`,
 #' and `qesR_message_legacy_columns` for the 70 columns 0.4.4 stacked by
@@ -141,7 +146,8 @@
 #'   `education` classe les libellés que 0.4.4 laissait tels quels
 #'   (`maîtrise` : University ; certificat de métier : College/CEGEP/Technical)
 #'   et, pour `qes2012`, met le *cours technique* dans College ; `language`
-#'   vaut `NA` pour qui déclare deux premières langues (OD8) ;
+#'   vaut `NA` pour qui déclare deux premières langues (attribuées à
+#'   aucune des deux) ;
 #' * `respondent_id` joint les variables d'identification de l'étude
 #'   (`qes2007_panel` et `qes2018_panel`) ;
 #' * `province_territory` vaut « Quebec » dans toutes les études ;
@@ -153,8 +159,12 @@
 #'
 #' Les résultats de qesR 0.4.4 ne
 #' se reproduisent qu'en installant cette version
-#' (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`). Pour de
-#' nouvelles analyses, utilisez [qes_harmonize()].
+#' (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`) ; 0.5.0
+#' et 0.6.0 étaient des versions de développement, jamais publiées : un
+#' résultat calculé avec l'une d'elles se reproduit en installant le commit
+#' dont il provient, que `packageDescription("qesR")$RemoteSha` enregistre
+#' pour une installation depuis GitHub. Pour de nouvelles analyses, utilisez
+#' [qes_harmonize()].
 #'
 #' @param surveys Character vector of qesR survey codes (see [qes_studies()]).
 #'   Defaults to the 11 studies of qesR 0.4.4; `"all"` on its own means the
@@ -202,9 +212,14 @@
 #'     study, the file lacks the variable, or the study has no registered
 #'     weight), `"na_column"` (no valid source in any study) or
 #'     `"all_missing"` (the question's every answer is a missing value);
-#'     `cause` names the decision behind it where there is one (for example
-#'     `"OD4"` for the reported vote of the CROP polls, `"OD5"` for
-#'     `sovereignty_support` in the studies that asked another question).
+#'     `cause` names the rule behind it where there is one:
+#'     `"reported_vote_only"` (`vote_choice` and `turnout` hold only the
+#'     reported vote and turnout, which the CROP polls did not ask),
+#'     `"independence_question_only"` (`sovereignty_support` and
+#'     `sovereignty` hold only the referendum question on an independent
+#'     country, which the study did not ask), `"no_valid_source"` (no study
+#'     has a valid source for the column) or `"not_harmonized_yet"`; `basis`
+#'     says in words why the column is `NA` in the study.
 #'     0.5.0's `"blanked"` reason is gone: no value is blanked after it is
 #'     read;
 #'   * `legacy_column_map`: what each column means (`column`, `target`,
@@ -253,6 +268,9 @@ get_qes_master <- function(
   envir = NULL,
   assign_missing = FALSE
 ) {
+  .qes_check_flag(assign_global, "assign_global")
+  .qes_check_flag(quiet, "quiet")
+  .qes_check_flag(strict, "strict")
   surveys <- .validate_master_surveys(surveys)
   .assert_single_string(object_name, "object_name")
   if (!is.null(save_path)) {

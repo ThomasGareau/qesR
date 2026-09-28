@@ -7,7 +7,9 @@
 get_question(do, q, full = TRUE)
 }
 \arguments{
-\item{do}{A data.frame or the name of one in the calling environment.}
+\item{do}{A data.frame, or the name of one, looked up (read only) in the
+calling environment and its enclosing environments: the workspace, for a
+call at top level or from a function or \code{sapply()} lambda defined there.}
 
 \item{q}{Column name whose question text should be returned.}
 

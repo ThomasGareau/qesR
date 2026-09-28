@@ -35,8 +35,10 @@ h <- qes_harmonize(studies = c("qes2012", "qes2014", "qes2018", "qes2022"),
 d <- qes_design(h, weight = "weight_post")   # for the survey package
 ```
 
-The studies whose weights are not reviewed yet (`qes2007`, `qes2008`, the
-CROP polls, the 1998 polls) have `NA` weights, and `qes_design()` leaves out
+Only `qes2012`, `qes2014`, `qes2018` and `qes2022` have reviewed weights so
+far. The other studies (the three Durand panels `qes2007_panel`,
+`qes2012_panel` and `qes2018_panel`, plus `qes2007`, `qes2008`, the CROP
+polls and the 1998 polls) have `NA` weights, and `qes_design()` leaves out
 every row without the chosen weight; `studies = NULL` means the six Quebec
 Election Studies. Estimate within one study before comparing studies.
 
@@ -76,7 +78,7 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`vote_prov_recall`](articles/harmonization-reference.html#target-vote_prov_recall) | C | C | C | C | I | A | — | C | C | A | C |
 | [`vote_prov_intent`](articles/harmonization-reference.html#target-vote_prov_intent) | A | — | C | — | — | A | C | — | — | I | — |
 | [`vote_prov_intent_push`](articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | C | — | — | A | C | — | — | I | A |
-| [`turnout_prov_recall`](articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | A | C |
+| [`turnout_prov_recall`](articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | C | C |
 | [`turnout_prov_likely`](articles/harmonization-reference.html#target-turnout_prov_likely) | I | — | — | — | — | — | — | — | — | — | — |
 | [`vote_prov_intent_other`](articles/harmonization-reference.html#target-vote_prov_intent_other) | I | — | — | — | — | — | — | — | — | — | — |
 | [`pid_prov`](articles/harmonization-reference.html#target-pid_prov) | C | C | — | I | I | — | — | C | C | — | — |

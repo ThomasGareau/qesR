@@ -72,7 +72,30 @@ review:
    or counts ship; the file `inst/extdata/qes_master.csv`, which held rows
    derived from it, is removed, and the package contains no respondent
    data. qesR downloads the data files from their Dataverse deposits
-   (Borealis and the Harvard Dataverse) at the user's request.
+   (Borealis and the Harvard Dataverse) at the user's request. For the 2022
+   study the harmonization specification holds only variable names, codes,
+   md5 hashes of its value labels, page references to its codebook, the
+   wave sizes and fieldwork facts the codebook publishes, and md5 hashes
+   of the harmonized columns (each with the number of rows of the file,
+   the published size of the study).
+
+   **Third-party benchmark data.** `inst/extdata/validation/` ships one
+   third-party table, `census_margins.csv`: counts of the Quebec population
+   summed from Statistics Canada census tables 98-10-0020-01, 98-10-0218-01
+   and 98-10-0384-01, used under the Statistics Canada Open Licence
+   (<https://www.statcan.gc.ca/en/terms-conditions/open-licence>), with the
+   attribution and non-endorsement notice it requires (`inst/COPYRIGHTS`,
+   section 3). The official election results of Élections Québec that the
+   development repository uses as validation benchmarks
+   (`official_results.csv`, `official_turnout.csv`) and the validation
+   report computed from them (`validation_report.csv`) are excluded from the
+   package build (`.Rbuildignore`): Élections Québec's terms of use allow
+   reproduction for non-profit purposes but need its written permission for
+   other uses and for adaptations, and that permission has not been
+   obtained. The internal checks that read them are skipped when they are
+   absent, and the tests that need them run only on the source tree. The
+   election dates in `inst/extdata/catalog/elections.csv` are facts taken
+   from the official results pages, each row with its source URL.
 
 Other changes since the first submission are in NEWS.md. Every exported
 function of 0.4.4 keeps its name and arguments.
@@ -90,19 +113,41 @@ function of 0.4.4 keeps its name and arguments.
 
 ## R CMD check results
 
-`_R_CHECK_CRAN_INCOMING_REMOTE_=true R CMD check --as-cran qesR_0.7.0.tar.gz`
-on the local machine (macOS, R 4.4.0), run on 2026-09-27 on this tarball:
-0 errors | 0 warnings | 3 NOTEs: the "New submission" NOTE of the incoming
-check, and 2 NOTEs from the local machine (below). The incoming check,
-with the remote URL and DOI checks on, reported no URL or DOI problem.
+RELEASE CHECK TO RE-RUN BEFORE SUBMISSION (maintainer): the tree is still
+the development version 0.7.0.9000. Once `Version: 0.7.0` is set and NEWS.md
+has a single `# qesR 0.7.0` section (dev/open-questions.md, V7), build and
+check the release tarball with `sh data-raw/build_tarball.sh <dir> --check`
+and replace this section with that run. The results below are those of the
+development tarball.
 
-The tests pass (6,353 expectations, 0 failures, 0 warnings, in about 95
-seconds; 17 skipped with their reason: network tests, skipped on CRAN).
+`_R_CHECK_CRAN_INCOMING_REMOTE_=true R CMD check --as-cran qesR_0.7.0.9000.tar.gz`
+on the local machine (macOS, R 4.4.0), run on 2026-09-27 on this tarball,
+built by `data-raw/build_tarball.sh` (a copy of the tree with git's file
+modes): 0 errors | 0 warnings | 3 NOTEs: the incoming-feasibility NOTE
+("New submission", and "Version contains large components (0.7.0.9000)",
+which goes away with version 0.7.0), and 2 NOTEs from the local machine
+(below). The incoming check, with the remote URL and DOI checks on,
+reported no URL or DOI problem.
+
+The tests pass (6,830 expectations, 0 failures, 0 warnings, in about 100
+seconds; 23 skipped with their reason: network tests, skipped on CRAN).
 The examples and the vignettes run without errors.
 
 * checking CRAN incoming feasibility ... NOTE
 
   New submission.
+
+  Version contains large components (0.7.0.9000): the development
+  version; the submitted version is 0.7.0 (see above).
+
+  Possibly misspelled words in DESCRIPTION: the local machine has no
+  spell checker (neither aspell nor hunspell), so this part of the
+  incoming check did not run here. If it lists Bélanger, Blais, Durand,
+  Goyder, Mahéo, Nadeau or "al", these are the surnames of the authors of
+  the datasets cited in the Description with their DOIs, and the "al" of
+  "et al."; "catalogued" (British spelling) and "codebooks" are correct
+  words. (MAINTAINER: replace this paragraph
+  with the words the win-builder check actually lists.)
 
   The earlier submission also had a NOTE on the URL
   `https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR`

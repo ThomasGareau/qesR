@@ -23,7 +23,9 @@
 #     aggregates do not ship (OD3; data-raw/ is build-ignored).
 # With --out <file> it also writes the whole report there (the aggregates-only
 # artifact of the weekly live job, .github/workflows/live.yml), each row with
-# its recorded baseline and gate status.
+# its recorded baseline and gate status. Its qes2022 rows are CC BY-NC 4.0,
+# not MIT: the job uploads data-raw/nc/README.md, their licence and
+# attribution notice, with the report.
 # With --check it writes neither recorded file and fails when the report
 # differs from them (the recorded baselines are stale). The weekly job runs it
 # for information only: what fails the job is the 2.0-point gate of the live

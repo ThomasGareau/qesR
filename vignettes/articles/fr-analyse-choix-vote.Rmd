@@ -63,8 +63,9 @@ Deux sortes de cellules sont des zéros structurels, et non des estimations ;
 elles ne sont pas affichées comme 0 :
 
 - **—** le parti ne se présentait pas à cette élection, selon les résultats
-  officiels d'Élections Québec livrés avec qesR
-  (`inst/extdata/validation/official_results.csv`). L'ADQ s'est fusionnée à
+  officiels d'Élections Québec conservés dans le dépôt source de qesR
+  (`inst/extdata/validation/official_results.csv` ; absents du paquet
+  construit). L'ADQ s'est fusionnée à
   la CAQ en 2012, et Option nationale ne s'est présentée qu'en 2012 et en
   2014.
 - **n.p.** le parti se présentait, mais la question de l'étude ne le
@@ -80,10 +81,15 @@ Un 0,0 est un parti proposé qu'aucun répondant de l'étude n'a déclaré.
 ```{r vote}
 parties <- c("PLQ", "PQ", "ADQ", "CAQ", "QS", "PVQ", "ON", "PCQ", "Other party")
 # Parties with candidates at each general election: the official results of
-# Elections Quebec that ship with qesR. A party that did not run cannot be
-# reported.
-official <- read.csv(system.file("extdata", "validation", "official_results.csv",
-                                 package = "qesR"))
+# Elections Quebec, in the qesR source repository (not in the package build;
+# the package installed from the source tree has them). A party that did
+# not run cannot be reported.
+official_path <- system.file("extdata", "validation", "official_results.csv",
+                             package = "qesR")
+if (!nzchar(official_path)) {
+  official_path <- file.path("..", "..", "inst", "extdata", "validation", "official_results.csv")
+}
+official <- read.csv(official_path)
 ran <- split(official$party, official$election_id)
 # The answers each study's question offered, from the harmonization spec
 # (the levels of the reported-vote target); "other" is "Other party"
@@ -128,7 +134,12 @@ families <- c(qes = tr("Quebec Election Studies", "Études électorales québéc
               polls_1998 = tr("1998 polls", "Sondages de 1998"))
 main$family <- factor(families[main$family], levels = families)
 ggplot(main, aes(x = year, y = pct, colour = party, shape = party)) +
-  geom_line() +
+  # a line only where a party has more than one year in the family (the
+  # 1998 polls have one)
+  geom_line(data = function(d) {
+    d[ave(seq_along(d$year), d$family, d$party,
+          FUN = function(i) length(unique(d$year[i]))) > 1, ]
+  }) +
   geom_point(size = 2.4) +
   facet_wrap(~family, ncol = 1) +
   scale_colour_manual(values = c(PLQ = "#d71920", PQ = "#004c9d", ADQ = "#6d9eeb",

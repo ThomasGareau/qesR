@@ -30,7 +30,8 @@ remotes::install_github("ThomasGareau/qesR")
 ```r
 library(qesR)
 
-# the studies: code, year, family, design, population, licence, DOI, version
+# the studies: code, year, family, design, licence and title (as.data.frame()
+# gives every column: population, DOI, pinned version, ...)
 qes_studies()
 
 # their codebooks, questionnaires and reports
@@ -135,7 +136,7 @@ comparable, A approximate; a dash: no question in the specification):
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
 | `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
-| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | A | C |
+| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |
@@ -270,7 +271,7 @@ originaux, et `include_draft = TRUE` les applique.
 
 ```r
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"),
-                   include_draft = TRUE)
+                   include_draft = TRUE, lang = "fr")
 qes_spec(lang = "fr")              # quelle étude a quelle cible, et son niveau
 ```
 
@@ -286,7 +287,7 @@ question dans la spécification) :
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
 | `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
-| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | A | C |
+| `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |

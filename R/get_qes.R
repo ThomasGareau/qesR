@@ -110,6 +110,10 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 # without assign_global; internal callers leave it FALSE.
 .get_qes_impl <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TRUE,
                           quiet = FALSE, envir = NULL, assign_missing = FALSE) {
+  # a malformed flag (assign_global = "TRUE") is an error, not a silent FALSE
+  .qes_check_flag(assign_global, "assign_global")
+  .qes_check_flag(with_codebook, "with_codebook")
+  .qes_check_flag(quiet, "quiet")
   study <- .get_qes_study(srvy, demo = TRUE)
   # `file` may name the data file of another study of the same deposit
   # (get_qes("qes1998", file = "CROP")): resolve it first, so the banner, the

@@ -11,7 +11,18 @@ A data frame with one row per cached file: \code{study}, \code{file_id}
 (\code{NA} for shards), \code{md5} (of the file, or for a shard of the data file it
 was built from), \code{bytes}, \code{retrieved} (modification time), \code{kind}
 (\code{"file"} or \code{"shard"}) and \code{path}. Attributes \code{mode} (the cache mode)
-and \code{dir} (the cache directory, \code{NA} in mode \code{"none"}).
+and \code{dir} (the cache directory, \code{NA} in mode \code{"none"}). The data frame
+has class \code{c("qes_cache_info", "data.frame")} and prints compactly: the
+mode, directory and total size once, then each file with its size and
+its path relative to the cache directory; the \code{path} column itself is
+absolute, and \code{as.data.frame()} gives every column. A subset of its
+columns is a plain data frame.
+
+\emph{En français} : une ligne par fichier en cache, de classe
+\code{c("qes_cache_info", "data.frame")}. L'affichage donne une fois le mode,
+le dossier et la taille totale, puis chaque fichier avec sa taille et
+son chemin relatif au dossier du cache ; la colonne \code{path} reste
+absolue, et \code{as.data.frame()} donne toutes les colonnes.
 }
 \description{
 \code{qes_cache_info()} lists the data files, documents and metadata shards that

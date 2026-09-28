@@ -63,7 +63,9 @@ each value as text.}
 
 \item{include_draft}{If \code{TRUE}, also applies crosswalk rows not yet
 signed off by a reviewer (status \code{"review"} or \code{"draft"}); a message
-counts the cells that use them.}
+counts the cells that use them. \code{FALSE} (default) leaves them \code{NA}
+(reason \code{not_reviewed}), with a warning when that leaves the whole
+result \code{NA} (see \emph{Experimental}).}
 
 \item{data}{\code{NULL} (read the pinned files) or a named list of data frames
 as \code{\link[=get_qes]{get_qes()}} returns them, named by study code.}
@@ -103,9 +105,12 @@ layout) or \code{weight} and \code{weight_var} (long layout). Attributes:
 \code{failed_studies} (\code{study}, \code{class}, \code{message}, \code{parent_message}).
 
 Results for different studies built with the same spec can be combined
-with \code{\link[=rbind]{rbind()}}, which also combines their provenance (an error if the
-spec content hashes differ or a study appears twice); harmonizing all
-the studies in one call is simpler.
+with \code{\link[=rbind]{rbind()}}, which also combines their provenance. It is an error
+(class \code{qesR_error_input}) if the spec content hashes differ, the parts
+were built with different \code{lang}, \code{layout}, \code{values}, \code{missing} or
+\code{weights}, their columns differ (different \code{targets} or \code{keep_source}),
+or a study appears twice; harmonizing all the studies in one call is
+simpler.
 }
 \description{
 \code{qes_harmonize()} builds one data frame from several studies, with one
@@ -126,7 +131,10 @@ against the files but not yet signed off (status \code{"review"} or \code{"draft
 are applied only with \code{include_draft = TRUE}, and a message says so. In
 this version no row of the shipped spec is signed off yet, so the default
 call gives missing values (reason \code{not_reviewed}) and the examples pass
-\code{include_draft = TRUE}.
+\code{include_draft = TRUE}. When no cell of the result is applied for that
+reason, a warning of class \code{qesR_warning_all_unreviewed} gives the number
+of values left \code{NA} and names \code{include_draft = TRUE}; otherwise a message
+counts the cells (study and target) and values left out.
 
 Every result records the spec version and content hash
 (\code{attr(, "qes_spec")}). The same spec version and hash, the same pinned
@@ -286,6 +294,41 @@ study sampled people aged 16 and over, so some of its respondents are
 only eligible voters does not make them an 18-and-over calibration.
 }
 
+\section{Conditions}{
+
+Besides those of every qesR function (see \link{qesR-package}),
+\code{qes_harmonize()} raises these classed conditions:
+\itemize{
+\item errors: \code{qesR_error_unmapped} (a source code the spec does not map,
+with \code{unmapped = "error"}; fields \code{study}, \code{target}, \code{codes}, \code{n},
+\code{unmapped}), \code{qesR_error_spec} (an invalid spec, or \code{data} that fail the
+spec's checks; field \code{problems}, a data frame of the failed rules) and
+\code{qesR_error_duplicate_id} (identifier variables that do not identify the
+rows of a study uniquely; fields \code{study}, \code{id_vars}, \code{rows});
+\item warnings: \code{qesR_warning_all_unreviewed} (no cell applied, see
+\code{include_draft}), \code{qesR_warning_unmapped} (codes set to \code{NA} with
+\code{unmapped = "warn"}; field \code{unmapped}), \code{qesR_warning_partial} (studies
+left out with \code{on_fail = "skip"}; field \code{failed}) and
+\code{qesR_warning_unverified_source} (\code{data} not read by qesR from the
+pinned files; field \code{study}), and \code{qesR_warning_label_mismatch} and
+\code{qesR_warning_universe} (such \code{data} whose value labels differ from
+the pinned file's, or whose answers do not fit the question's
+universe; fields \code{study}, \code{problems});
+\item messages, silenced by \code{quiet = TRUE}: \code{qesR_message_unreviewed_skipped}
+(cells left \code{NA} because their rows are not signed off),
+\code{qesR_message_unreviewed_cells} (cells that use rows not signed off,
+with \code{include_draft = TRUE}), \code{qesR_message_approximate_cells} (cells
+graded approximate are included), \code{qesR_message_structural_zeros}
+(levels a question did not offer), \code{qesR_message_weight_review}
+(recommended weights that need review, left \code{NA}) and
+\code{qesR_message_weight_timing} (targets of one study that need different
+weights).
+}
+
+\code{\link[=qes_design]{qes_design()}} sends \code{qesR_message_design_dropped} (fields \code{study}, \code{n})
+when it leaves out rows without the chosen weight.
+}
+
 \section{En français}{
 
 \code{qes_harmonize()} (expérimental) construit un seul tableau à partir de
@@ -319,7 +362,25 @@ NA quand ces vagues n'ont pas la même pondération. \code{eligible_voter} indiq
 pouvait voter (18 ans le jour du scrutin et, là où l'étude l'a demandé,
 citoyenneté canadienne) ; \code{interview_date}, \code{days_to_election} et
 \code{survey_mode} décrivent l'entrevue. \code{\link[=qes_design]{qes_design()}} en fait un plan de
-sondage. Voir \code{vignette("fr-reference-harmonisation", package = "qesR")}.
+sondage. Des résultats portant sur des études différentes se combinent
+avec \code{\link[=rbind]{rbind()}} s'ils ont été construits avec la même spécification, les
+mêmes \code{lang}, \code{layout}, \code{values}, \code{missing} et \code{weights} et les mêmes
+colonnes (sinon, une erreur de classe \code{qesR_error_input}). Une ligne de
+correspondance n'est appliquée qu'une fois approuvée par un réviseur
+(statut \code{"stable"}) ; \code{include_draft = TRUE} applique aussi les lignes
+vérifiées mais pas encore approuvées (statut \code{"review"} ou \code{"draft"}).
+Aucune ligne de la spécification livrée n'est encore approuvée : sans
+\code{include_draft = TRUE}, les valeurs sont NA (motif \code{not_reviewed}), et un
+avertissement de classe \code{qesR_warning_all_unreviewed} le signale quand
+tout le résultat est NA. Les autres conditions ont des classes (section
+\emph{Conditions}) : erreurs \code{qesR_error_unmapped}, \code{qesR_error_spec} et
+\code{qesR_error_duplicate_id} (variables d'identification qui n'identifient
+pas les lignes de façon unique) ; avertissements \code{qesR_warning_unmapped},
+\code{qesR_warning_partial} et \code{qesR_warning_unverified_source} ; messages
+\verb{qesR_message_*}, masqués par \code{quiet = TRUE} ; \code{\link[=qes_design]{qes_design()}} envoie
+\code{qesR_message_design_dropped} quand il écarte des lignes sans la
+pondération choisie. Voir
+\code{vignette("fr-reference-harmonisation", package = "qesR")}.
 }
 
 \examples{

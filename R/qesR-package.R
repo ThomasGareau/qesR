@@ -72,6 +72,24 @@
 #'     before it is abandoned (and retried). Default 60.}
 #' }
 #'
+#' @section Language of returned text:
+#' `qesR.lang` sets the language of messages only: it never sets the `lang`
+#' argument of a function, which is given in each call and does not mean the
+#' same thing everywhere:
+#' * [qes_harmonize()]: `"en"` (default) or `"fr"`, the language of factor
+#'   levels, variable labels and target populations; codes do not change;
+#' * [qes_spec()]: `"en"` (default) or `"fr"`, the language of labels,
+#'   definitions, grade reasons and notes;
+#' * [qes_codebook()] and [qes_question()]: `NULL` (default), the study's
+#'   own language, or `"en"`, `"fr"`; the language of question text (labels
+#'   are always the file's);
+#' * [qes_search()]: `"both"` (default), `"en"` or `"fr"`, the languages
+#'   searched and the language of the `question` column;
+#' * [qes_cite()]: `"en"` (default) or `"fr"`, the language of the few words
+#'   qesR adds to citations;
+#' * [qes_docs()] and [qes_download()]: a filter, the document languages to
+#'   keep (`NULL`, the default, keeps all).
+#'
 #' @section Conditions:
 #' Errors, warnings and messages have classes, so code can react to them with
 #' `tryCatch()` or `withCallingHandlers()` without matching message text.
@@ -108,7 +126,16 @@
 #'     a provenance level the object does not record (field `level`);}
 #'   \item{`qesR_error_dependency`}{a suggested package that a function
 #'     needs is not installed, such as \pkg{survey} for [qes_design()]
-#'     (field `package`).}
+#'     (field `package`);}
+#'   \item{`qesR_error_spec`}{a harmonization spec with errors, or data that
+#'     fail its checks, from [qes_spec()] or [qes_harmonize()] (field
+#'     `problems`, a data frame of the failed rules);}
+#'   \item{`qesR_error_unmapped`}{a source code the spec does not map, from
+#'     [qes_harmonize()] with `unmapped = "error"` (fields `study`, `target`,
+#'     `codes`, `n`, `unmapped`);}
+#'   \item{`qesR_error_duplicate_id`}{identifier variables that do not
+#'     identify the rows of a study uniquely, from [qes_harmonize()] (fields
+#'     `study`, `id_vars`, `rows`).}
 #' }
 #' Warnings inherit from `qesR_warning`, among them `qesR_warning_encoding`
 #' (a label or text value that still holds a replacement or control
@@ -117,6 +144,11 @@
 #' "latest")`, which the catalog does not pin; fields `study`, `file_id`) and
 #' `qesR_warning_truncated` (a question text that its source file cut at 80
 #' characters, from [get_question()]; fields `variable`, `doc_ref`).
+#' The warnings and messages of the harmonization engine
+#' (`qesR_warning_all_unreviewed`, `qesR_warning_unmapped`,
+#' `qesR_warning_partial`, `qesR_warning_unverified_source`,
+#' `qesR_message_weight_review`, `qesR_message_design_dropped` and others)
+#' are listed in the *Conditions* section of [qes_harmonize()].
 #' Messages inherit from `qesR_message`; [qes_missing()] counts the variables
 #' it left unchanged in a `qesR_message_missing_untyped` (silenced by
 #' `quiet = TRUE`).
@@ -192,7 +224,9 @@
 #' **Options.** `qesR.lang` (variable d'environnement `QESR_LANG`) fixe la
 #' langue des messages, avertissements et erreurs : `"en"` ou `"fr"`. Sans
 #' elle, qesR suit `LANGUAGE`, puis la locale des messages. La langue ne change
-#' jamais les données ni le texte retournés. `qesR.quiet_deprecated = TRUE`
+#' jamais les données ni le texte retournés, et ne fixe jamais l'argument
+#' `lang` des fonctions : voir la section *Langue* de [qesR-fr], qui donne
+#' son rôle dans chaque fonction. `qesR.quiet_deprecated = TRUE`
 #' masque les notes uniques des fonctions héritées (voir [qesR-deprecated]).
 #' `qesR.cache` (`QESR_CACHE`) fixe où sont gardés les fichiers téléchargés :
 #' `"session"` (par défaut ; un dossier de [tempdir()], supprimé à la
@@ -230,7 +264,14 @@
 #' n'indique plus son étude, passé à [qes_cite()] ou [qes_provenance()], ou
 #' niveau de provenance que l'objet n'enregistre pas ; champ `level`) et
 #' `qesR_error_dependency` (package suggéré non installé dont une fonction a
-#' besoin, comme \pkg{survey} pour [qes_design()] ; champ `package`). Les
+#' besoin, comme \pkg{survey} pour [qes_design()] ; champ `package`) ;
+#' `qesR_error_spec` (spécification d'harmonisation erronée, ou données qui
+#' échouent à ses vérifications, de [qes_spec()] ou [qes_harmonize()] ;
+#' champ `problems`), `qesR_error_unmapped` (code source que la
+#' spécification n'apparie pas, avec `unmapped = "error"` ; `study`,
+#' `target`, `codes`, `n`, `unmapped`) et `qesR_error_duplicate_id`
+#' (variables d'identification qui n'identifient pas les lignes d'une étude
+#' de façon unique ; `study`, `id_vars`, `rows`). Les
 #' avertissements héritent de `qesR_warning`, dont `qesR_warning_encoding`
 #' (étiquette ou valeur texte qui garde un caractère de remplacement ou de
 #' contrôle après lecture ; `study`, `file_id`, `n`, `variables`) et
@@ -238,7 +279,9 @@
 #' "latest")`, que le catalogue ne retient pas ; `study`, `file_id`) et
 #' `qesR_warning_truncated` (texte de question coupé à 80 caractères dans
 #' son fichier source, signalé par [get_question()] ; `variable`,
-#' `doc_ref`), et les messages de `qesR_message` ; [qes_missing()] compte
+#' `doc_ref`), et les messages de `qesR_message` ; les avertissements et
+#' messages du moteur d'harmonisation sont énumérés dans la section
+#' *Conditions* de [qes_harmonize()] ; [qes_missing()] compte
 #' les variables laissées inchangées dans un
 #' `qesR_message_missing_untyped` (masqué par `quiet = TRUE`). Les messages
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le

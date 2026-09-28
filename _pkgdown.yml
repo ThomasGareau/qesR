@@ -4,6 +4,12 @@ url: https://thomasgareau.github.io/qesR/
 # by data-raw/check_site.R. It is published to gh-pages only by hand (the
 # workflow's manual run), never on push.
 
+# Articles renamed since the published site: a redirect page keeps their old
+# addresses working.
+redirects:
+  - ["articles/study-citations.html", "articles/citations.html"]
+  - ["articles/fr-citations-etudes.html", "articles/fr-citations.html"]
+
 template:
   bootstrap: 5
   light-switch: true
@@ -213,7 +219,7 @@ reference:
     | `download_codebook()` | `qes_download(what = "docs")` |
     | `get_preview()` | `head(get_qes())` |
     | `get_qescodes()` | `qes_studies()` |
-    | `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` |
+    | `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` |
   contents:
   - qesR-deprecated
   - get_qescodes

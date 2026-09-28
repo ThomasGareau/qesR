@@ -25,7 +25,11 @@
 #     is NA on one page but not on its partner;
 #   - no page but the changelog mentions the old 40,606-row master file, and
 #     none reads a master file shipped in the package or the working
-#     directory.
+#     directory;
+#   - no article prints a warning or a ggplot2 diagnostic ("#> Warning",
+#     "#> `geom_...`");
+#   - every redirect of the configuration (pages of an earlier site that
+#     moved) was written, and points to a page that was built.
 # It uses yaml and xml2, which pkgdown itself needs. Pairing of the Rmd
 # sources and their identical code are checked by check_vignette_pairs.R.
 
@@ -230,6 +234,16 @@ if (!is.na(site)) {
     if (grepl("system.file\\(\"extdata\", \"qes_master|\\.\\./qes_master", text)) {
       problem("site: %s reads a master file from the package or the working directory", file)
     }
+    # an example that prints a warning or a ggplot2 diagnostic looks broken
+    if (startsWith(file, "articles/") && grepl("#> (Warning|`geom_|`stat_)", text)) {
+      problem("site: %s prints a warning or a ggplot2 diagnostic in its output", file)
+    }
+  }
+
+  # the pages of an earlier site that moved keep a redirect to their new place
+  for (r in config$redirects %||% list()) {
+    if (!file.exists(file.path(site, r[[1]]))) problem("site: no redirect page %s (to %s)", r[[1]], r[[2]])
+    if (!file.exists(file.path(site, r[[2]]))) problem("site: redirect %s points to %s, which was not built", r[[1]], r[[2]])
   }
 
   for (a in sub("^articles/", "", articles)) {

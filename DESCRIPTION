@@ -38,9 +38,8 @@ Description: Load the Quebec Election Studies and related Quebec election
     <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>.
 License: MIT + file LICENSE
 Copyright: See file COPYRIGHTS for the third-party content shipped in
-    inst/extdata: CC0 study metadata, and official election results
-    (Élections Québec) and census counts (Statistics Canada) used as
-    validation benchmarks.
+    inst/extdata: CC0 study metadata, and census counts (Statistics
+    Canada, Open Licence) used as validation benchmarks.
 Encoding: UTF-8
 Depends: R (>= 4.1)
 Imports:

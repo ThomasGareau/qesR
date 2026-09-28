@@ -102,8 +102,8 @@ turnout_qes2022_pes,1,,a6105c0a611b41b08f1209506350279e,file,1,,,
 turnout_qes2022_pes,2,,7fa3b767c460b54a2be4d49030b349c7,file,2,,,
 turnout_qes2022_pes,3,,a0a666901bcce49588cba3879f536cd1,file,2,,,
 turnout_qes2022_pes,4,,3390384f05f08cdd9e133419d401f8f5,file,2,,,
-turnout_qes2022_pes,5,,5e1a5fa3e931487e217ec595a56ee320,file,,not_registered,,eligible but not registered (OD12)
-turnout_qes2022_pes,6,,02d8ac2c16e199480af3e56590821cd3,file,,dk,,does not remember (OD12)
+turnout_qes2022_pes,5,,5e1a5fa3e931487e217ec595a56ee320,file,,not_registered,,"not registered: a missing value, not a nonvoter"
+turnout_qes2022_pes,6,,02d8ac2c16e199480af3e56590821cd3,file,,dk,,"does not remember: a missing value, not a nonvoter"
 vote_qes2022_cps,1,,efca7c6a0a804cb3314179961a4a7837,file,1,,,
 vote_qes2022_cps,2,,83d63ca9d74444b6b703b53b355d8a5f,file,2,,,
 vote_qes2022_cps,3,,993ac46dff8fba8b5bfb525f4156fe38,file,3,,,
@@ -183,8 +183,8 @@ sov_qes2012p_intvoteref,97,Je n'irais pas voter/J'annulerais mon vote,,file,95,,
 sov_qes2012p_intvoteref,98,Je préfère ne pas répondre,,file,,refused,,"reversed convention: 98 = refused, 99 = don't know"
 sov_qes2012p_intvoteref,99,Je ne sais pas,,file,,dk,,
 citizen_qes2022_cps,1,,e18f4738d0bef33c65ad60d4cf48f0bc,file,1,,,
-citizen_qes2022_cps,2,,74e0f5db02550e4e3621b77d88365bd9,file,2,,,permanent resident: not a citizen
-citizen_qes2022_cps,3,,795f3202b17cb6bc3d4b771d8c6c9eaf,file,2,,,other status: not a citizen
+citizen_qes2022_cps,2,,74e0f5db02550e4e3621b77d88365bd9,file,2,,,not a citizen (codebook p. 11)
+citizen_qes2022_cps,3,,795f3202b17cb6bc3d4b771d8c6c9eaf,file,2,,,not a citizen (codebook p. 11)
 age3_qes2018p_age,1,18-34,,file,1,,,
 age3_qes2018p_age,2,35-54,,file,2,,,
 age3_qes2018p_age,3,55+,,file,3,,,
@@ -489,18 +489,18 @@ lang_qes2012_langu,9,I prefer not to answer,,file,,refused,,
 lang_qes2014_qlang,1,Français,,file,1,,,
 lang_qes2014_qlang,2,Anglais,,file,2,,,
 lang_qes2014_qlang,3,Autre,,file,3,,,
-lang_qes2014_qlang,4,Français et anglais,,file,,not_mappable,,French and English (OD8)
-lang_qes2014_qlang,5,Français et autre,,file,,not_mappable,,French and other (OD8)
-lang_qes2014_qlang,6,Anglais et autre,,file,,not_mappable,,English and other (OD8)
+lang_qes2014_qlang,4,Français et anglais,,file,,not_mappable,,"French and English: two first languages, assigned to neither"
+lang_qes2014_qlang,5,Français et autre,,file,,not_mappable,,"French and other: two first languages, assigned to neither"
+lang_qes2014_qlang,6,Anglais et autre,,file,,not_mappable,,"English and other: two first languages, assigned to neither"
 lang_qes2014_qlang,8,Je ne sais pas,,file,,dk,,
 lang_qes2014_qlang,9,Je préfère ne pas répondre,,file,,refused,,
 lang_qes2007_langu,1,Français,,file,1,,,
 lang_qes2007_langu,2,Anglais,,file,2,,,
 lang_qes2007_langu,3,Autre,,questionnaire,3,,,
-lang_qes2007_langu,4,Français et autres,,questionnaire,,not_mappable,,OD8
-lang_qes2007_langu,5,Anglais et autres,,questionnaire,,not_mappable,,OD8
+lang_qes2007_langu,4,Français et autres,,questionnaire,,not_mappable,,"two first languages, assigned to neither"
+lang_qes2007_langu,5,Anglais et autres,,questionnaire,,not_mappable,,"two first languages, assigned to neither"
 lang_qes2007_langu,6,Autres et autres,,questionnaire,3,,,"two languages, neither French nor English"
-lang_qes2007_langu,7,Français et anglais,,questionnaire,,not_mappable,,OD8
+lang_qes2007_langu,7,Français et anglais,,questionnaire,,not_mappable,,"two first languages, assigned to neither"
 lang_qes2007_langu,9,Nsp/Refus,,file,,dk_refused,,
 lang_qes2008_langu,1,Français,,file,1,,,
 lang_qes2008_langu,2,Anglais,,file,2,,,
@@ -562,8 +562,9 @@ interestc_qes2007p_interet,2,assez,,file,2,,,
 interestc_qes2007p_interet,3,peu,,file,3,,,
 interestc_qes2007p_interet,4,pas du tout,,file,4,,,
 interestc_qes2007p_interet,9,* NSP/Refus,,file,,dk_refused,,
-turnout_qes2007p_avote,0,non,,file,2,,,
-turnout_qes2007p_avote,1,oui,,file,1,,,
+turnout_qes2007p_voteoui,1,"Oui, le jour même de l'élection (lundi 26 mars)",,file,1,,,
+turnout_qes2007p_voteoui,2,"Oui, par anticipation une semaine avant?",,file,1,,,
+turnout_qes2007p_voteoui,3,"Non, n'a pas voté",,file,2,,,
 age6_crop_qage,1,18-24 ans,,file,1,,,
 age6_crop_qage,2,25-34 ans,,file,2,,,
 age6_crop_qage,3,35-44 ans,,file,3,,,
