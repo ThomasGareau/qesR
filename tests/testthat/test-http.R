@@ -130,7 +130,10 @@ test_that("a 200 is written through a .part file to its destination", {
   qesR:::.qes_fetch(u, dest)
   expect_identical(readLines(dest, warn = FALSE), "hello")
   expect_match(basename(log$dests[[1]]), "\\.part$")
-  expect_identical(dirname(log$dests[[1]]), dir)
+  expect_identical(
+    normalizePath(dirname(log$dests[[1]]), winslash = "/"),
+    normalizePath(dir, winslash = "/")
+  )
   expect_length(part_files(dir), 0L)
 })
 
