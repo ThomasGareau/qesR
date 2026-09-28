@@ -24,7 +24,8 @@ A data frame with the 19 columns above, returned visibly, with
 the attributes \code{timing} (what \code{turnout}, \code{votechoice} and
 \code{votechoice_text} hold: \code{"pre"}, \code{"post"} or \code{NA} where the column has
 no value), \code{source_map} (\code{qes_code}, \code{column}, \code{source_variable},
-\code{target}, \code{grade}), \code{legacy_na_columns} and \code{qes_provenance} (the file
+\code{target}, \code{grade}, \code{status} of the crosswalk row), \code{legacy_na_columns}
+(as for \code{\link[=get_qes_master]{get_qes_master()}}) and \code{qes_provenance} (the file
 read; see \code{\link[=qes_provenance]{qes_provenance()}}).
 }
 \description{
@@ -36,10 +37,16 @@ Quebec Election Study of qesR 0.4.4.
 will not be removed, and a message names its replacement once per
 session. The same variables, with a reason for every missing value and a
 grade for every study's question, come from
-\code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)}
-(\code{include_draft = TRUE} applies the crosswalk rows still in review, as
-\code{get_decon()} does; without it the columns are \code{NA} until those rows are
-signed off).
+\code{qes_harmonize(srvy, targets = "decon")}. Both apply only the crosswalk
+rows signed off by a reviewer (status \code{stable}); a column whose question
+is in a row still in review is \code{NA} (reason \code{not_reviewed} in
+\code{attr(, "legacy_na_columns")}, which says why the row is held), and
+\code{include_draft = TRUE} in \code{\link[=qes_harmonize]{qes_harmonize()}} applies those rows too. In
+spec 4.0.0 the rows were signed off after an automated double review
+against the original files and documents (not a human review); the rows
+of \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} and the CROP polls are held
+until their recommended weights are reviewed, and \code{gender} of \code{qes2014}
+until a second reviewer confirms its grade.
 
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
@@ -74,8 +81,10 @@ income amount stays a number), and codes the spec
 does not map (such as the \code{-99} of \code{qes2022}) are \code{NA}. \code{turnout} and
 \code{votechoice} are filled for every study that asked the reported vote
 (\code{qes2018} from \code{q5} and \code{q6}), and \code{get_decon("qes1998")} returns real
-rows. \code{party_best} and \code{partylean} are \code{NA} everywhere (their 0.4.4
-sources were other questions in each study).
+rows (its columns from the spec are \code{NA} until its rows are signed off).
+\code{party_best} and \code{partylean} are \code{NA} everywhere (their 0.4.4
+sources were other questions in each study). Only signed-off crosswalk
+rows are applied (see above).
 }
 
 \section{En français}{
@@ -84,9 +93,18 @@ sources were other questions in each study).
 colonnes à partir d'une étude de qesR 0.4.4. Depuis qesR 0.7.0, elle est
 obsolète (dépréciation douce) : elle continue de fonctionner et ne sera
 pas retirée, et un message nomme son remplacement une fois par session,
-\code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)}
-(\code{include_draft = TRUE} applique les lignes de correspondance encore en
-révision, comme \code{get_decon()}). Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+\code{qes_harmonize(srvy, targets = "decon")}. Les deux n'appliquent que les
+lignes de correspondance approuvées par un réviseur (statut \code{stable}) ;
+une colonne dont la question est dans une ligne encore en révision vaut
+\code{NA} (motif \code{not_reviewed} dans \code{attr(, "legacy_na_columns")}, qui dit
+pourquoi la ligne est retenue), et \code{include_draft = TRUE} dans
+\code{\link[=qes_harmonize]{qes_harmonize()}} applique aussi ces lignes. Dans la spécification 4.0.0,
+les lignes ont été approuvées après une double révision automatisée sur
+les fichiers et documents originaux (et non une révision humaine) ; les
+lignes de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et des sondages
+CROP sont retenues jusqu'à ce que leurs pondérations recommandées soient
+révisées, et \code{gender} de \code{qes2014} jusqu'à ce qu'un second réviseur
+confirme son niveau. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
 anglais des cibles, nombres, et texte pour \code{income} et \code{religion} (le
 montant du revenu de \code{qes2022} reste un nombre).
 \code{turnout} et \code{votechoice} sont la participation et le vote déclarés
@@ -102,7 +120,7 @@ head(decon)
 attr(decon, "source_map")[, c("column", "source_variable", "target")]
 
 # the replacement
-h <- qes_harmonize("qes_demo", targets = "decon", include_draft = TRUE, quiet = TRUE)
+h <- qes_harmonize("qes_demo", targets = "decon", quiet = TRUE)
 names(h)
 }
 \seealso{

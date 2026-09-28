@@ -89,8 +89,8 @@
     fr = "get_qes_master() construit les 11 \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb)\u00a0; %1$s n'en fait pas partie. Les fichiers propres aux firmes de 1998 contiennent des r\u00e9pondants de qes1998\u00a0: lisez-les seuls avec get_qes()."
   ),
   input_decon_study = c(
-    en = "get_decon() builds only the qesR 0.4.4 studies (and \"qes_demo\"), one at a time; %1$s is not one of them. Read other studies with get_qes(), or harmonize them with qes_harmonize(targets = \"decon\", include_draft = TRUE).",
-    fr = "get_decon() ne construit que les \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb), une \u00e0 la fois\u00a0; %1$s n'en fait pas partie. Lisez les autres \u00e9tudes avec get_qes(), ou harmonisez-les avec qes_harmonize(targets = \"decon\", include_draft = TRUE)."
+    en = "get_decon() builds only the qesR 0.4.4 studies (and \"qes_demo\"), one at a time; %1$s is not one of them. Read other studies with get_qes(), or harmonize them with qes_harmonize(targets = \"decon\").",
+    fr = "get_decon() ne construit que les \u00e9tudes de qesR 0.4.4 (et \u00ab\u00a0qes_demo\u00a0\u00bb), une \u00e0 la fois\u00a0; %1$s n'en fait pas partie. Lisez les autres \u00e9tudes avec get_qes(), ou harmonisez-les avec qes_harmonize(targets = \"decon\")."
   ),
   input_save_dir = c(
     en = "Directory does not exist: %1$s.",
@@ -549,7 +549,7 @@
   legacy_values_changed_decon = c(
     en = paste0(
       "Values changed in qesR 0.7.0: get_decon() is now rendered from the ",
-      "harmonization engine (qes_harmonize(srvy, targets = \"decon\", include_draft = TRUE)), ",
+      "harmonization engine (qes_harmonize(srvy, targets = \"decon\")), with the crosswalk rows signed off by a reviewer, ",
       "so turnout and votechoice are the reported turnout and vote in every study ",
       "that asked them (for qes2022, still the campaign-period likelihood of voting ",
       "and vote intention), and codes the spec does not map are NA (the -99 of ",
@@ -561,8 +561,8 @@
     ),
     fr = paste0(
       "Les valeurs ont chang\u00e9 dans qesR 0.7.0\u00a0: get_decon() est maintenant ",
-      "produit par le moteur d'harmonisation (qes_harmonize(srvy, targets = \"decon\", ",
-      "include_draft = TRUE)), de sorte que turnout et votechoice sont la participation ",
+      "produit par le moteur d'harmonisation (qes_harmonize(srvy, targets = \"decon\")), ",
+      "avec les lignes de correspondance approuv\u00e9es par un r\u00e9viseur, de sorte que turnout et votechoice sont la participation ",
       "et le vote d\u00e9clar\u00e9s dans toutes les \u00e9tudes qui les ont demand\u00e9s ",
       "(pour qes2022, encore la probabilit\u00e9 de voter et l'intention de vote pendant ",
       "la campagne), et que les codes que la sp\u00e9cification n'apparie pas valent ",
@@ -801,6 +801,10 @@
   master_rows_loaded = c(
     en = "[%1$s] rows loaded: %2$s",
     fr = "[%1$s] lignes charg\u00e9es\u00a0: %2$s"
+  ),
+  legacy_unreviewed = c(
+    en = "[%1$s] %2$s column(s) are NA because the crosswalk rows of their questions are not signed off by a reviewer yet (reason not_reviewed in attr(, \"legacy_na_columns\"), which says why each is held): %3$s.",
+    fr = "[%1$s] %2$s colonne(s) sont NA parce que les lignes de correspondance de leurs questions ne sont pas encore approuv\u00e9es par un r\u00e9viseur (motif not_reviewed dans attr(, \"legacy_na_columns\"), qui dit pourquoi chacune est retenue)\u00a0: %3$s."
   ),
   master_n_rows = c(
     en = "Master dataset rows: %1$s",

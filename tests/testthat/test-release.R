@@ -47,9 +47,13 @@ test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of
   }
   expect_true(grepl("CC BY-NC 4.0", text, fixed = TRUE))
   expect_true(grepl("ships none of its value labels, question text or\\s+answer\\s+counts", text))
-  # OD16: the 1998 population is quoted from the codebook, definition pending
+  # OD16: the 1998 population is quoted from the codebook; the definition,
+  # pending until spec 3.0.0, is confirmed by linking the files
   expect_true(grepl("retenir uniquement les\\s+francophones", text))
-  expect_true(grepl("pending", text, fixed = TRUE))
+  expect_true(grepl("confirms the definition", text, fixed = TRUE))
+  # Élections Québec's open-data licence and its required notice
+  expect_true(grepl("https://www.dgeq.org/licence.html", text, fixed = TRUE))
+  expect_true(grepl("Comprend des donn\u00e9es ouvertes octroy\u00e9es", text, fixed = TRUE))
   # the benchmark sources of inst/extdata/validation/ and their terms
   expect_true(grepl("Statistics Canada Open Licence", text, fixed = TRUE))
   expect_true(grepl("Adapted from Statistics Canada", text, fixed = TRUE))

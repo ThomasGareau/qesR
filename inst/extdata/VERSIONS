@@ -1,5 +1,5 @@
 catalog_version: 2.2.0
-dict_version: 1.0.2
+dict_version: 1.0.3
 schema_version: 1
 built_from: 192422:a6ecbace0da2314d4c7065b8bdea81f7,
  192423:9d09da75d0f0ad008b61f67fb3538320,
@@ -53,4 +53,4 @@ csv_md5: catalog/elections.csv:621553636c87b7faed39a4633d2c60e0,
  catalog/type_fixes.csv:8f2b69b0732a6baa396b675b59232463,
  dict/shard_rules.csv:b6164d28ff13bd3d435d219f9f09a570,
  dict/values.csv.gz:ed81ddc90a7cc09479221529b685f810,
- dict/variables.csv.gz:92fcdf20b9486a164bbaa6ecda3eff54
+ dict/variables.csv.gz:060816614439de0789dd71938333c5f5

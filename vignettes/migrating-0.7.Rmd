@@ -141,7 +141,18 @@ Its values changed twice.
 **In 0.7.0**, the master is rendered from the harmonization engine
 (`qes_harmonize()`) for all 11 studies: each column is built from the
 harmonized variables ("targets") it needs, and a code the specification
-does not map is `NA`. The columns that change estimates:
+does not map is `NA`.
+
+Only the specification's rows signed off by a reviewer are applied. In
+specification 4.0.0 they were signed off after an automated double review
+against the original files and documents (not a human review). The rows of
+`qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls are held in
+review until their recommended weights are reviewed, so every column of
+these studies that comes from the specification is `NA` for now, with the
+reason `not_reviewed` in `attr(master, "legacy_na_columns")` (identifiers,
+dates and the survey weight, read from the file, are kept); so is `gender`
+of `qes2014`, whose grade awaits a second reviewer. A message names these
+columns. The columns that change estimates:
 
 | Column | Since 0.7.0 | Changed in |
 |---|---|---|
@@ -205,8 +216,7 @@ master column. The master's `ideology` and `vote_choice` become:
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
-                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
-                   lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = params$lang)
 table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column")]
 ```
@@ -224,9 +234,9 @@ means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
 round(means, 2)
 ```
 
-The rows of the specification are checked against the original files but
-not yet signed off by a reviewer, so `include_draft = TRUE` is needed for
-now. `qes_spec()` shows which study has which target and how comparable its
+Most rows of the specification are signed off; the rows still in review are
+applied only with `include_draft = TRUE`, and the `review_note` column of
+`qes_spec("crosswalk")` says why each is held. `qes_spec()` shows which study has which target and how comparable its
 question is, and `vignette("harmonization-reference", package = "qesR")`
 gives each target's questions, wordings and grades.
 
@@ -246,7 +256,7 @@ Each prints a one-time notice naming its replacement
 | `download_codebook()` | `qes_download(what = "docs")` | `file` now selects documents by name; files are md5-checked |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | the 1998 firm files are added after the 11 old codes |
-| `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | soft-deprecated since 0.7.0; values changed (above) |
+| `get_decon()` | `qes_harmonize(srvy, targets = "decon")` | soft-deprecated since 0.7.0; values changed (above) |
 
 `get_qes()`, `get_qes_master()` and `qes_codebook()` keep their names. A
 legacy function returns what its replacement returns. The first call of

@@ -48,8 +48,9 @@ qesR 0.4.4 in their order and type, then the appended columns
 \itemize{
 \item \code{source_map}: the source of every column of every study
 (\code{qes_code}, \code{qes_year}, \code{qes_name_en}, \code{harmonized_variable},
-\code{source_variable}, \code{target}, \code{map_id}, \code{grade}, \code{render}, \code{file_md5},
-\code{spec_version});
+\code{source_variable}, \code{target}, \code{map_id}, \code{grade}, \code{status} (of the
+crosswalk row: \code{stable}, or \code{review} for a row held in review),
+\code{render}, \code{file_md5}, \code{spec_version});
 \item \code{loaded_surveys}, \code{failed_surveys}: the studies read, and one line per
 failed study, \code{"<code>: <reason>"}. qesR's own part of the reason is
 always in English, whatever the message language; a root cause raised
@@ -65,7 +66,10 @@ The full conditions are in the \code{failures} field of the
 \code{NA} (\code{column}, \code{study}, \code{reason}, \code{n_cells}, \code{cause}, \code{basis});
 \code{reason} is \code{"no_source"} (the spec has no question for it in the
 study, the file lacks the variable, or the study has no registered
-weight), \code{"na_column"} (no valid source in any study) or
+weight), \code{"not_reviewed"} (the study has the question, but its
+crosswalk row is not signed off by a reviewer yet; \code{cause} is then
+\code{"not_signed_off"} and \code{basis} says why the row is held),
+\code{"na_column"} (no valid source in any study) or
 \code{"all_missing"} (the question's every answer is a missing value);
 \code{cause} names the rule behind it where there is one:
 \code{"reported_vote_only"} (\code{vote_choice} and \code{turnout} hold only the
@@ -125,11 +129,19 @@ there is no de-duplication and no removal of empty rows, so each study
 contributes exactly its number of respondents (\code{qes2007_panel}: 2,442
 rows).
 
-The engine applies the spec's crosswalk rows that are still in review
-(checked against the original files and documents, not yet signed off by
-a reviewer), as \code{\link[=qes_harmonize]{qes_harmonize()}} does with \code{include_draft = TRUE};
-\code{attr(, "source_map")} gives the grade of each column's question in each
-study. \code{attr(, "legacy_column_map")} says what each column holds.
+The engine applies only the crosswalk rows signed off by a reviewer
+(status \code{stable}), as \code{\link[=qes_harmonize]{qes_harmonize()}} does by default. In spec 4.0.0
+the rows were signed off after an automated double review against the
+original files and documents (not a human review). The rows still in
+review are not applied, and the columns they would fill are \code{NA}: every
+column of \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} and the CROP polls
+that comes from the spec (their rows are held until their recommended
+weights are reviewed), and \code{gender} of \code{qes2014} (held until a second
+reviewer confirms its grade). \code{attr(, "legacy_na_columns")} lists these
+columns with the reason \code{not_reviewed} and says why each row is held, and
+a message names them. \code{attr(, "source_map")} gives the grade and review
+status of each column's question in each study, and
+\code{attr(, "legacy_column_map")} says what each column holds.
 }
 
 \section{What changed in 0.7.0}{
@@ -139,8 +151,12 @@ qesR 0.4.4, 0.5.0 and 0.7.0):
 \itemize{
 \item \code{vote_choice} and \code{turnout} are the reported vote and turnout in every
 study that asked them: \code{qes2022} from its post-election wave, \code{qes1998} from its
-post-election recontact; the pooled CROP polls asked only vote
-intentions and stay \code{NA}. Nonvoters, spoiled ballots, "don't know" and
+post-election recontact (once its rows are signed off); the pooled CROP
+polls asked only vote intentions and stay \code{NA}.
+\item Only crosswalk rows signed off by a reviewer are applied (see "How it
+is built"): the columns of the rows still in review are \code{NA}.
+\item \code{income} of \code{qes2022}: an amount of 0 (a blank that the survey sent to
+a follow-up question in brackets) is \code{NA}. Nonvoters, spoiled ballots, "don't know" and
 refusals are \code{NA} in \code{vote_choice} (0.4.4 had the categories
 "Did not vote / None" and "Don't know / Refused"); \code{turnout} says who
 voted.
@@ -202,12 +218,27 @@ points sur 0-10 (10, 7, 3 et 0). Un code que la spécification n'apparie
 pas vaut \code{NA}. Aucune ligne n'est retirée (\code{qes2007_panel} : 2 442
 lignes). \code{attr(, "legacy_column_map")} décrit chaque colonne et
 \code{attr(, "source_map")} donne la question de chaque colonne dans chaque
-étude, avec son niveau de comparabilité.
+étude, avec son niveau de comparabilité et son statut de révision.
+Seules les lignes de correspondance approuvées par un réviseur (statut
+\code{stable}) sont appliquées, comme le fait \code{\link[=qes_harmonize]{qes_harmonize()}} par défaut ;
+dans la spécification 4.0.0, elles ont été approuvées après une double
+révision automatisée sur les fichiers et documents originaux (et non une
+révision humaine). Les colonnes des lignes encore en révision valent
+\code{NA} : toutes celles de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et
+des sondages CROP qui viennent de la spécification (retenues jusqu'à ce
+que leurs pondérations recommandées soient révisées), et \code{gender} de
+\code{qes2014} (retenue jusqu'à ce qu'un second réviseur confirme son
+niveau) ; \code{attr(, "legacy_na_columns")} les énumère avec le motif
+\code{not_reviewed} et dit pourquoi chaque ligne est retenue, et un message
+les nomme.
 
 Autres changements de 0.7.0 par rapport à 0.5.0 :
 \itemize{
 \item les abstentionnistes, bulletins rejetés, « ne sait pas » et refus valent
 \code{NA} dans \code{vote_choice} ;
+\item \code{income} de \code{qes2022} : un montant de 0 (un champ laissé vide, que le
+questionnaire renvoyait à une question de relance par tranches) vaut
+\code{NA} ;
 \item des colonnes sont remplies là où la spécification a la question
 (\code{ideology}, \code{political_interest}, \code{born_canada}, \code{provincial_pid},
 \code{language} de 2014 : la langue maternelle, \code{income} de 2012,

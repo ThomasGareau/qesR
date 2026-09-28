@@ -62,19 +62,31 @@
 #' contributes exactly its number of respondents (`qes2007_panel`: 2,442
 #' rows).
 #'
-#' The engine applies the spec's crosswalk rows that are still in review
-#' (checked against the original files and documents, not yet signed off by
-#' a reviewer), as [qes_harmonize()] does with `include_draft = TRUE`;
-#' `attr(, "source_map")` gives the grade of each column's question in each
-#' study. `attr(, "legacy_column_map")` says what each column holds.
+#' The engine applies only the crosswalk rows signed off by a reviewer
+#' (status `stable`), as [qes_harmonize()] does by default. In spec 4.0.0
+#' the rows were signed off after an automated double review against the
+#' original files and documents (not a human review). The rows still in
+#' review are not applied, and the columns they would fill are `NA`: every
+#' column of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls
+#' that comes from the spec (their rows are held until their recommended
+#' weights are reviewed), and `gender` of `qes2014` (held until a second
+#' reviewer confirms its grade). `attr(, "legacy_na_columns")` lists these
+#' columns with the reason `not_reviewed` and says why each row is held, and
+#' a message names them. `attr(, "source_map")` gives the grade and review
+#' status of each column's question in each study, and
+#' `attr(, "legacy_column_map")` says what each column holds.
 #'
 #' @section What changed in 0.7.0:
 #' Compared with 0.5.0 (NEWS has a table of counts, column by column, for
 #' qesR 0.4.4, 0.5.0 and 0.7.0):
 #' * `vote_choice` and `turnout` are the reported vote and turnout in every
 #'   study that asked them: `qes2022` from its post-election wave, `qes1998` from its
-#'   post-election recontact; the pooled CROP polls asked only vote
-#'   intentions and stay `NA`. Nonvoters, spoiled ballots, "don't know" and
+#'   post-election recontact (once its rows are signed off); the pooled CROP
+#'   polls asked only vote intentions and stay `NA`.
+#' * Only crosswalk rows signed off by a reviewer are applied (see "How it
+#'   is built"): the columns of the rows still in review are `NA`.
+#' * `income` of `qes2022`: an amount of 0 (a blank that the survey sent to
+#'   a follow-up question in brackets) is `NA`. Nonvoters, spoiled ballots, "don't know" and
 #'   refusals are `NA` in `vote_choice` (0.4.4 had the categories
 #'   "Did not vote / None" and "Don't know / Refused"); `turnout` says who
 #'   voted.
@@ -133,11 +145,26 @@
 #' pas vaut `NA`. Aucune ligne n'est retirée (`qes2007_panel` : 2 442
 #' lignes). `attr(, "legacy_column_map")` décrit chaque colonne et
 #' `attr(, "source_map")` donne la question de chaque colonne dans chaque
-#' étude, avec son niveau de comparabilité.
+#' étude, avec son niveau de comparabilité et son statut de révision.
+#' Seules les lignes de correspondance approuvées par un réviseur (statut
+#' `stable`) sont appliquées, comme le fait [qes_harmonize()] par défaut ;
+#' dans la spécification 4.0.0, elles ont été approuvées après une double
+#' révision automatisée sur les fichiers et documents originaux (et non une
+#' révision humaine). Les colonnes des lignes encore en révision valent
+#' `NA` : toutes celles de `qes1998`, `qes2007_panel`, `qes2012_panel` et
+#' des sondages CROP qui viennent de la spécification (retenues jusqu'à ce
+#' que leurs pondérations recommandées soient révisées), et `gender` de
+#' `qes2014` (retenue jusqu'à ce qu'un second réviseur confirme son
+#' niveau) ; `attr(, "legacy_na_columns")` les énumère avec le motif
+#' `not_reviewed` et dit pourquoi chaque ligne est retenue, et un message
+#' les nomme.
 #'
 #' Autres changements de 0.7.0 par rapport à 0.5.0 :
 #' * les abstentionnistes, bulletins rejetés, « ne sait pas » et refus valent
 #'   `NA` dans `vote_choice` ;
+#' * `income` de `qes2022` : un montant de 0 (un champ laissé vide, que le
+#'   questionnaire renvoyait à une question de relance par tranches) vaut
+#'   `NA` ;
 #' * des colonnes sont remplies là où la spécification a la question
 #'   (`ideology`, `political_interest`, `born_canada`, `provincial_pid`,
 #'   `language` de 2014 : la langue maternelle, `income` de 2012,
@@ -193,8 +220,9 @@
 #'   `sov_partnership_1995` (0.7.0). Attributes:
 #'   * `source_map`: the source of every column of every study
 #'     (`qes_code`, `qes_year`, `qes_name_en`, `harmonized_variable`,
-#'     `source_variable`, `target`, `map_id`, `grade`, `render`, `file_md5`,
-#'     `spec_version`);
+#'     `source_variable`, `target`, `map_id`, `grade`, `status` (of the
+#'     crosswalk row: `stable`, or `review` for a row held in review),
+#'     `render`, `file_md5`, `spec_version`);
 #'   * `loaded_surveys`, `failed_surveys`: the studies read, and one line per
 #'     failed study, `"<code>: <reason>"`. qesR's own part of the reason is
 #'     always in English, whatever the message language; a root cause raised
@@ -210,7 +238,10 @@
 #'     `NA` (`column`, `study`, `reason`, `n_cells`, `cause`, `basis`);
 #'     `reason` is `"no_source"` (the spec has no question for it in the
 #'     study, the file lacks the variable, or the study has no registered
-#'     weight), `"na_column"` (no valid source in any study) or
+#'     weight), `"not_reviewed"` (the study has the question, but its
+#'     crosswalk row is not signed off by a reviewer yet; `cause` is then
+#'     `"not_signed_off"` and `basis` says why the row is held),
+#'     `"na_column"` (no valid source in any study) or
 #'     `"all_missing"` (the question's every answer is a missing value);
 #'     `cause` names the rule behind it where there is one:
 #'     `"reported_vote_only"` (`vote_choice` and `turnout` hold only the

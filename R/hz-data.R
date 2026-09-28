@@ -246,11 +246,19 @@
     seen <- c(seen, key)
     mem <- .qes_wave_members_rows(wv, w, d)
     if (is.null(mem)) next
+    # an empty text is system missing, as in the engine (rule string)
     src <- .canon(d[[xw$source_var[i]]])[mem]
-    src[is.na(src)] <- "NA"
+    src[is.na(src) | !nzchar(src)] <- "NA"
+    # typed text (rule string without from_label) is counted as one token:
+    # the checks need only answered or not, and no typed answer is kept
+    args <- .qes_parse_kv(xw$args[i]) %||% character(0)
+    if (identical(xw$rule[i], "string") && !identical(unname(args["from_label"]), "TRUE")) {
+      na <- names(.qes_parse_kv(xw$na_codes[i]) %||% character(0))
+      src[src != "NA" & !src %in% na] <- "<text>"
+    }
     g <- if (is.na(gate)) rep(NA_character_, length(src)) else {
       gv <- .canon(d[[gate]])[mem]
-      gv[is.na(gv)] <- "NA"
+      gv[is.na(gv) | !nzchar(gv)] <- "NA"
       gv
     }
     if (length(src) == 0L) next

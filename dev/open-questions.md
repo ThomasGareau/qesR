@@ -1,511 +1,787 @@
 # Open questions for the owner
 
-Gaps that the public deposits do not settle, recorded as the slices meet
-them. Each item says what was done meanwhile (always the conservative
-choice: an undocumented weight is registered but not applied, an
-undocumented item is left unmapped or graded down) and what would close it.
-Nothing here blocks a slice. Data requests follow the policy of design.md
-section 0.3 (OD18): Claude fetches public documents itself; the items below
-are either not in any public deposit or need the owner's judgement.
+State at qesR 0.7.0, harmonization spec 4.0.0 (2026-09-28). The file
+has two parts:
 
-## Review of the harmonization spec (qesR 0.7.0.9000, spec 2.0.0)
+1. **Resolved (with sources):** what the public deposits, the producers'
+   own publications and the original files now settle, where each answer
+   comes from, and what changed in the spec. Decisions taken in earlier
+   slices are recorded there too; they stand unless the owner reopens one.
+2. **Needs the owner:** only what a person has to do: requests to
+   producers, to Élections Québec and to others (each with the exact text,
+   the addressee and why), and decisions that only the owner can take.
+   Claude sends no request and no e-mail; the owner sends them, from the
+   contact forms named below.
 
-Corrections from the review of the spec (CHANGES.csv 2.0.0), checked on the
-pinned originals: the `religion` rows of qes2012 and qes2014 are gated on
-their filter question (a gate now applies to `string`, `date` and `weight`
-rules too); the 2007 panel's turnout reads `voteoui` and is graded
-`comparable`; text-only notes on education, the 1998 language constant and
-the qes2022 evidence. Points for the owner:
+Policy (design.md section 0.3, OD18): Claude fetches public documents
+itself, with plain requests that carry no personal information; what needs
+a login, a permission or a document that is not public is a request for
+the owner. The conservative choice holds until an item is closed: an
+undocumented weight is registered but not applied, an undocumented item is
+left unmapped or graded down.
 
-R1. **Spec version.** The religion gate changes two column hashes, so the
-    spec is 2.0.0 by the rule of design.md section 5.11 (a corrected gate
-    is MAJOR), although 1.0.0 has not been released on CRAN. If 0.7.0 is
-    released with these corrections, the owner may prefer to fold them into
-    1.0.0 (one CHANGES row); `data-raw/spec_check.R` does not enforce either
-    choice, since `origin/main` has no spec.
-R2. **Vocational and trade credentials in `education4`.** `qes2018` counts
-    the DEP (qscol code 9, "Secondaire 5 (Diplôme d'Études Professionnelles)" in
-    the questionnaire) as
-    secondary; `qes2018_panel` counts the trade certificate or registered
-    apprenticeship (d3 code 4, 127 respondents, mostly the DEP in Quebec)
-    as college; the questionnaires with no DEP option (the qes2014 anchor,
-    qes2012, qes2007, qes2008) probably put DEP holders under technical
-    training (college). The maps are unchanged (a change moves respondents
-    and is MAJOR); the grade reasons and the target description now say
-    so. *Owner's decision:* one rule for both. The anchor argues for
-    college (move qes2018 code 9 to 3); Statistics Canada classes trades
-    certificates apart from college (98-10-0384-01), which argues for
-    not_mappable in both.
-R3. **qes1998 `language` in `get_qes_master()`.** Still the constant French
-    (a sample restriction), now with a note that it is the mother tongue
-    only for the 1,057 CREATEC rows and the home language for the 426 CROP
-    rows. The stricter render (French for `firme_post = 1`, NA for the CROP
-    rows with an OD16 cause) needs a stratum-conditional render in
-    `legacy.csv` (engine, validator and tests). *Owner's decision*, with
-    OD16.
-R4. **Élections Québec's results are out of the package build** (see the
-    HZ7 deferred item below): the census margins still ship; the recall
-    and turnout checks are skipped in an installed package and run on the
-    source tree (live tests, `data-raw/build_validation.R`, the website).
-R5. **qes2022 under OD3.** The per-variable missing counts of the test
-    fixture `v044-get-qes-names.csv` no longer ship (moved to the
-    build-ignored `data-raw/nc/v044_n_na_qes2022.csv`, read by the live
-    test on the source tree); the crosswalk evidence notes give codes and
-    codebook pages only, with no observation from the file ("not
-    observed", "every row ..."). Still in the package, and now listed in
-    `inst/COPYRIGHTS` section 2: the row count `n` of `expected/hashes.csv`
-    (1,521, the size published on codebook p. 5), and grade reasons and
-    notes that say in qesR's own words how each question was asked and
-    which level or reason each code is given. *To confirm* under OD3, or
-    drop `n` for qes2022 and reword the grade reasons.
+---
 
-## Slice HZ7: live validation (qesR 0.7.0.9000, spec 1.0.0 unchanged)
+# Part 1. Resolved (with sources)
 
-Sources used: Élections Québec's archived results files of the general
-elections of 1998 to 2022 (R3) and Statistics Canada census tables
-98-10-0020-01, 98-10-0218-01 and 98-10-0384-01 (R5), all fetched with plain
-requests (scratch `data/MANIFEST.md`); the pinned originals (offline cache);
-the 2018 methodological report (file 361045) for the weighting cells.
-`qes_studies(check_updates = TRUE)` was run once (13 metadata requests,
-User-Agent `qesR/0.7.0 R/4.4.0`): every deposit is `current`.
+Unless stated otherwise, every figure below was checked on the pinned
+original files (md5-verified; `data-raw/` builders and the checks of the
+research of 2026-09-27). "Checked on the file" means that. Web sources were
+fetched with plain requests; archived pages are Internet Archive captures
+(`web.archive.org/web/<timestamp>/<url>`).
 
-### A. Decisions taken in the slice that the owner may want to change
+## 1.1 CROP polls 2007-2010 (`qes_crop_2007_2010`, doi:10.5683/SP3/IRZ1PF)
 
-V1. **Age cuts where 18+ is not published.** Gender 18+ and six age bands
-    18+ only for 2016 and 2021 (single years, 98-10-0020-01). For 2006 and
-    2011: gender 20+ (98-10-0384-01, private households; 2011 from the
-    voluntary NHS) and five age bands from 25 (the tables have 15-19 and
-    20-24 bands, so 18-24 cannot be formed). Mother tongue 20+
-    (98-10-0218-01, outside institutions, single answers only; no 2006
-    column). Education 25+. Respondents are cut the same way where their
-    age is known (the `age` target, else election year minus year of
-    birth, one year high for those born after election day; else the
-    `age_group6` bands). Closing it needs a custom tabulation or the 2011
-    topic-based table 98-311-XCB2011018, which a plain request could not
-    fetch (MANIFEST, NEEDS OWNER 1). *To confirm.*
-V2. **Education is compared as university or below**, not in the four
-    levels of `education4`. The census counts the certificate completed;
-    the surveys ask the level reached (a year of CEGEP or university
-    counts), and a trades certificate (DEP) is secondary in qes2018 and
-    technical (college) in qes2018_panel (and, probably, in the studies
-    whose question has no DEP option, such as qes2014); see R2 of the spec
-    review above. A three-group comparison gave 18-37 point
-    indices driven by that boundary; with two groups `qes2022` (weighted on
-    education) is 3.5 points from the census and the others 9-23. *To
-    confirm.*
-V3. **Census year.** The census on or before the study's latest year, for
-    every row of the study (the CROP polls, 2007-2010, all get 2006; a
-    pooled study whose rows would map to two censuses stops with an error
-    rather than compare its early rows with the later census): 2006 for 2007-2010,
-    2011 for 2012 and 2014, 2016 for 2018, 2021 for 2022. Mother tongue has
-    no 2006 benchmark, so `qes2007`, `qes2008`, the 2007 panel and CROP have
-    no mother-tongue comparison.
-V4. **What is gated.** The weighted V-L2 indices (the design) and, beyond
-    the design text, the weighted census indices, both at the recorded
-    value + 2.0 points. Unweighted rows are recorded for information only
-    (the studies whose weights are `needs_review` have only these). The
-    turnout rule of section 8.3 (fail outside 0-35 points) applies to every
-    row. V-L4 thresholds are those of section 8.3; `pid_prov` agreement is
-    computed among partisans (a party, not "none") who reported a party
-    vote, which gives 78-87% rather than the provisional 70-72% (the
-    denominator of the provisional figure is not recorded). A
-    newly reviewed weight gives a gated row with no record: the live test
-    fails until `data-raw/build_validation.R` records it.
-V5. **Where the report lives.** `inst/extdata/validation/validation_report.csv`
-    (with the benchmark tables), not `inst/validation/` as section 8.3
-    says, so that every shipped table is under `inst/extdata/`. qes2022
-    rows are in `data-raw/nc/validation_qes2022.csv` (build-ignored, OD3)
-    and in the CI artifact.
-V6. **The website article shows qes2022 aggregates**, computed at build
-    time from the downloaded file, as the existing analysis articles do;
-    nothing of qes2022 ships in the package. *To confirm* while OD3 is open
-    (the article can drop qes2022 rows if the owner prefers).
-V7. **Version.** DESCRIPTION is 0.7.0.9000 with a NEWS section of its own,
-    as in HZ5; nothing that qesR returns changed. The incoming check of a
-    0.7.0.9000 tarball adds "Version contains large components" to the
-    "New submission" NOTE, so this version cannot be submitted as it is.
-    *Owner's decision:* to release as 0.7.0, (1) set `Version: 0.7.0`;
-    (2) merge the `# qesR 0.7.0.9000` subsections of NEWS.md into
-    `# qesR 0.7.0`, drop that heading and "Development version.", and
-    reword "Nothing that qesR returns changes" for the release section;
-    (3) build `qesR_0.7.0.tar.gz` with `sh data-raw/build_tarball.sh
-    <dir> --check` (a copy with git's file modes; a tarball built straight
-    from the exFAT tree has every file executable) and confirm the "large
-    components" line is gone; (4) update the date, NOTE list and test counts
-    of cran-comments.md from that run. `Engine-Min` (0.7.0) needs no change.
+The Borealis deposit has one version (1.0) with two public files (the data
+and the 31 KB codebook, file 341537): it cannot settle these points on its
+own. CROP's reports for La Presse, Claire Durand's poll archive and the
+archive of quebecpolitique.com do.
 
-### B. Findings for review (no change made)
+- **Fieldwork dates of each poll (was HZ5 A.4). Resolved.** `waves.csv` has
+  each poll's own dates instead of the month's bounds. Sources: CROP's
+  trend table in its La Presse report of May 2008, p. 17 (June 2007 to May
+  2008), archived at
+  `https://web.archive.org/web/20080611213943/http://www.cyberpresse.ca/assets/pdf/CP1753529.PDF`;
+  CROP's reports of January 2009
+  (`https://web.archive.org/web/20181001075245/http://pdf.cyberpresse.ca/lapresse/donnees0109.pdf`)
+  and March 2009
+  (`https://web.archive.org/web/20181001075059/http://pdf.cyberpresse.ca/lapresse/0964539%20rap%20La%20Presse%20mars09%202.pdf`);
+  the archived per-poll pages of quebecpolitique.com for the other polls.
+  Where sources differ, CROP's own dates are kept (quebecpolitique.com
+  gives 19-29 October 2007, Durand's archive ends August 2007 on the 29th).
+  The published sample sizes equal the file's in 23 of 24 polls (October
+  2008: 1,000 published, 1,001 in the file). In the months with two CROP
+  polls the file's poll is identified by its size and referendum figures
+  (June 2007: the 14-25 June poll; November 2008: the 5-13 November poll,
+  n = 1,003, the two others having no referendum item). June 2009 was
+  fielded 11-18 June and published on 20 June: the deposit's "sondage le
+  20 juin 2009" is the publication date. Mode: CROP-Express telephone
+  omnibus, respondents 18 and over, interviews in French or English (CROP,
+  January 2009 report).
+- **Election that the previous-vote question `QP4`/`voteprec` refers to
+  (was HZ5 A.3). Resolved.** The question names it: "Pour quel parti
+  avez-vous voté aux dernières élections provinciales du 26 mars 2007?"
+  (May 2008 report, Q40, whose counts equal projet 10) and "... du 8
+  décembre 2008?" (January 2009 tables, Q41, whose counts equal projet 16:
+  103 ADQ, 265 PLQ, 271 PQ, 39 QS, 33 PV, 2 other, 183 did not vote or
+  spoiled, 104 NSP/refus). Polls 1-15 were fielded before 2008-12-08 and
+  refer to 2007-03-26; polls 16-24 refer to 2008-12-08 (the ADQ share of
+  QP4 falls from 18.2% in projet 15 to 9.2% in projet 16, weighted).
+  Recorded in each wave's notes; the legacy notes of `turnout` and
+  `vote_choice` (and `get_decon()` `turnout`, `votechoice`) now say the
+  polls asked the previous vote, not the vote at the election each poll
+  refers to. No previous-vote target exists yet (deferred work, 1.9).
+- **Wording of the first referendum question `intvoterefa` (was HZ5 A.2).
+  Resolved for 19 of the 24 polls.** "Si un référendum avait lieu
+  aujourd'hui vous demandant si vous voulez que le Québec devienne un pays
+  souverain, voteriez-vous Oui ou voteriez-vous Non?" (a sovereign country,
+  the wording of the anchor of `sov_sovereign_country`). Stated in CROP's
+  May 2008 report (Q51a; counts 397 Oui, 513 Non = projet 10), January 2009
+  tables (Q43a; 362, 525 = projet 16) and March 2009 report (Q4a), whose
+  series on this question, poll by poll from May 2007 to March 2009, equals
+  each poll's weighted `intvoteref` after allocation of the undecided
+  (projet 1-17). April 2009 (projet 18): CROP asked both a sovereign-country
+  and a sovereignty-partnership question (37/63 and 42/58 after allocation,
+  quebecpolitique.com); the file gives 37.4, the sovereign-country one.
+  October 2009 (projet 23): Le Soleil, 2009-10-27, reports 35% yes « à une
+  proposition de faire du Québec un pays souverain », the file's weighted
+  yes before allocation (35.3); press only. **Not documented:** May 2009
+  (projet 19: the press does not say which question gave its 42%, and the
+  file's 42.4 fits either), June 2009 (20: no sovereignty result
+  published), August and September 2009 and January 2010 (21, 22, 24: the
+  figures match the published results, but no document states the wording
+  after April 2009). Codes 3 (would not vote or spoil), 8 (NSP) and 9
+  (refus) are starred in CROP's questionnaires (recorded if volunteered).
+  **Not mapped yet**, because the spec's grammar cannot leave five polls
+  out: one primary crosswalk row per study and target (V-S5), and a gate
+  must be true routing (V-D7 fails when a closed gate has answers). The
+  facts are in each wave's notes and in the legacy notes of
+  `sovereignty_support` and `sovereignty`; the decision is D2 of part 2.
+  The push `intvoterefb` is asked of codes 3, 8 and 9 only (checked on the
+  file), so `intvoterefa` is the unpushed question, like the anchor
+  (`qes2012_panel` `intvoteref` keeps 88 don't-knows); the
+  `sov_sovereign_country` description now says the push is not part of the
+  target.
+- **Weight `XPOND` (was HZ5 A.1, CROP part). Documented, still
+  `needs_review` (owner's acceptance, D1).** CROP's May 2008 report, p. 3-4:
+  weighted to the 2006 Census population 18 and over (outside
+  institutions) by sex, age, region and language spoken at home; the sample
+  is 500 Montréal CMA, 200 Québec CMA, 300 elsewhere, so unweighted
+  estimates over-represent the Québec CMA (20% of the sample, 10% of the
+  population). In projet 10 the XPOND totals equal the report's population
+  by region and by sex; age and home language are within 3% of the
+  report's comparison table (which disagrees with its own crosstab
+  headers), and the weights are not constant within cells, so
+  post-stratification is inferred, not stated. XPOND's total (thousands)
+  changes by block of polls: 6,117 (June 2007), 5,997 (August-November
+  2007), 5,905 (January-March and May-October 2008), 5,881 (April 2008),
+  6,169 (November 2008-June 2009), 6,215 (August 2009-January 2010).
+- **Gender evidence.** The 1,003 missing `SEXE` are all of projet 20 (June
+  2009), one poll, not two (crosswalk evidence corrected). The deposit's
+  file description (file 329990) gives the reason: the sex of that poll's
+  respondents was not coded because of a coding error (spec 4.0.0).
+- **Wording of the vote-intention questions `intvoteprova` and
+  `intvoteprov` (spec 4.0.0). Resolved.** CROP's January 2009
+  questionnaire (Q2a and the push Q2b, `donnees0109.pdf`, archived above),
+  its May 2008 report (Q38a/38b) and its March 2009 report (Q2a) print the
+  anchor's stem ("S'il y avait des élections provinciales aujourd'hui au
+  Québec, pour lequel des partis suivants voteriez-vous? Voteriez-vous
+  pour...") and push, the parties and leaders read in rotation, and codes 7
+  (would spoil, not vote or none) and 9 (NSP/refus) starred, recorded only
+  if volunteered. The January 2009 tables equal projet 16 (first question
+  105 ADQ, 308 PLQ, 278 PQ; with the push 111, 330, 297) and the May 2008
+  sample counts projet 10 (108 ADQ, 301 PLQ). Both rows carry the French
+  wording and `dk_offered = volunteered`; grades stay `comparable`
+  (monthly omnibus polls, mostly outside a campaign, on a regionally
+  stratified sample). The education ranges of `scol` are those of CROP's
+  Q42 and May 2008 report (p. 5; projet 10 counts equal); its 97 system
+  missing are all in projet 15 (November 2008), the same rows as `revenu`
+  and `lmat`.
 
-F1. **qes2018 mother tongue: English 16.7%, other languages 6.7% (weighted),
-    against 7.3% and 14.0% at the 2016 census (20+).** The map follows the
-    questionnaire with programmed answer values (file 367181: 1 French,
-    2 English, 96 other) and the French share is right (V-L3). Table 14 of
-    the methodological report calibrates "Anglais" to 22.9%, which is the
-    whole non-French share, so the weight does not correct the split
-    between English and other languages. Either the online panel
-    over-represents English speakers, or codes 2 and 96 are swapped in the
-    file. The deposit cannot settle it; the article describes the first
-    reading. *Owner's judgement.*
-F2. **qes2018 weighted education.** `pond` gives 32.4% with a university
-    degree (codes 14-15), Table 15's "Universitaire", so the weighting
-    counted incomplete university (code 13) outside university, while
-    `education4` counts it as university (the level reached). Not a map
-    error; recorded for the education grading.
-F3. **qes2018 weighted age bands** are 4 to 5 points off the 2016 census
-    for 35-44, 45-54 and 55-64: the weight's age cells (Table 12: 16-18,
-    19-38, 39-58, 59-73, 74+) cut across ten-year bands. Not a map error.
-F4. **V-L2 baselines of design section 8.3 confirmed** on the official
-    figures: 8.0 (`qes2012`), 5.6 (`qes2014`), 3.2 (`qes2018`), 8.0
-    (`qes2022`, recorded in `data-raw/nc/`). In 2022 the CAQ is
-    under-reported by 8.0 points and every other party over-reported.
+## 1.2 1998 panel (`qes1998`, doi:10.5683/SP2/QFUAWG)
 
-### C. Deferred (other slices)
+One deposit version (1.0), six files; no CREATEC questionnaire and no
+weighting report. Sources: the PIs' conference paper (Durand, Blais and
+Vachon, ICSN, 1999; `https://www.mapageweb.umontreal.ca/durandc/icsndurc.pdf`),
+their AAPOR 1999 slides (`https://www.mapageweb.umontreal.ca/durandc/aapor/sld004.htm`),
+Durand's poll archive, and the three data files.
 
-- Licence terms of the benchmark sources (licence pages fetched
-  2026-09-27, one plain request each). Statistics Canada: the Open Licence,
-  named in `inst/COPYRIGHTS` with its "Adapted from Statistics Canada ...
-  This does not constitute an endorsement" notice; no question left.
-  Élections Québec: no open licence is published for
-  donnees.electionsquebec.qc.ca (its open-data page names none); its site
-  terms of use allow reproduction for non-profit purposes with source and
-  copyright, and require written permission for other uses and for
-  adaptations. `official_results.csv` sums minor parties (an adaptation)
-  and qesR is MIT (commercial use allowed). **Done meanwhile (spec 2.0.0
-  review, R4):** `official_results.csv`, `official_turnout.csv` and
-  `validation_report.csv` stay in the source tree but are excluded from
-  the package build (`.Rbuildignore`). **Owner request:** ask Élections
-  Québec for written permission to redistribute and adapt these
-  province-wide totals under MIT; with it, remove the three lines of
-  `.Rbuildignore` and quote the permission in `inst/COPYRIGHTS` and
-  `cran-comments.md`.
-- Weighted validation of the studies whose weights are `needs_review`
-  (qes2007, qes2008, the panels, CROP, 1998) waits for R4.
-- A 2011 age-by-sex benchmark at 18+ (V1) and 2006 mother tongue.
-- `age` derived from the year of birth and age groups derived from ages
-  as harmonized targets (HZ4's deferral): validation derives them locally
-  and does not add them to the spec.
-- The panel stability check of section 8.3 (time-invariant agreement and
-  intent-to-recall stability on two-wave respondents) is not part of
-  V-L1 to V-L5 and was not implemented.
+- **Definition of "francophone" (was HZ5 A.5, OD16). Resolved.** The pooled
+  rows link one to one to the firms' files: CREATEC by `quetr`, CROP by
+  `quest = quetr - 60000` (all 426; `ponderc`, `vpl`, `q7a`, `q16a`,
+  `q3post` and age identical). HZ5's "no variable links its CROP rows" was
+  wrong. CREATEC: all 1,057 have Q17 (mother tongue, "la première langue
+  que vous avez apprise et que vous parlez toujours") = French. CROP: all
+  426 have q22 (language spoken most often in the household) = French; the
+  24 left out have English (11) or another language (13); all 450 were
+  interviewed in French. The pooled codebook (file 332051) gives the reason:
+  CREATEC had surveyed francophones only. `waves.csv` (both waves),
+  `inst/COPYRIGHTS` and the legacy note of `language` now say "confirmed".
+- **Sample design. Resolved.** The post-election sample is a
+  non-proportional stratified sample of the pre-election respondents that
+  over-represents non-disclosers and third-party supporters (ICSN paper,
+  p. 5-6; AAPOR slide 4: N = 1,497, response rate 85%).
+- **What each weight is (was HZ5 A.1, 1998 part). Arithmetic resolved;
+  choice open (D3).** Checked on file 329987: `poids` is constant within
+  each firm's pre-election intention stratum (`vpl`; CREATEC also gives
+  2.616 to its 79 respondents not asked the intention): the design factor
+  of the recontact. `ponder2 = ponderc x poids` (exact for CREATEC, within
+  0.3% for CROP). `ponder3 = ponder2 / c`, c = 2.1656 (CREATEC) and 10.4417
+  (CROP), so mean 1 within each firm. `ponderc` is each firm's own weight
+  (CREATEC "Pondération principale", mean 1; CROP "à la population
+  multiplié par 1000", mean 5.16; the ICSN tables say CROP's campaign polls
+  are "weighted according to the 1996 Census"); it does not undo the
+  over-selection (refusals stay 14.8% of CREATEC's intention; 8.1% with
+  `ponder3`). `ponder3` reproduces the ICSN paper's Table 2 (16 of 18 cells
+  exact, 2 off by 1 point); Table 1 does not tell `ponder3` from `poids`.
+  Against this, the CREATEC data file's description (file 316121) says
+  `ponderc` is to be preferred. So every 1998 weight stays `needs_review`
+  with this reason in `weights.csv`; `ponder3` stays the registered
+  candidate. `get_qes_master()` `survey_weight` keeps `ponderc` (the 0.4.4
+  source, OD6), now with a note that it does not undo the over-selection.
+- **Fieldwork (was HZ5 item 15). Already right, detail added.** CREATEC
+  pre-election interviews 18-23 November (`dater`, a day number only, 224
+  missing), CROP 19-23 November (codebook 332049; CROP's campaign poll of
+  1,003 electors); recontact 8-13 December (CREATEC, `s_jr`) and 9-13
+  December (CROP).
+- **CREATEC routing (was HZ5 A.6, routing part). Resolved.** Q3 (intention)
+  was asked only of those who said they would certainly or probably vote:
+  the 79 not asked are 22 "probablement pas", 35 "certainement pas" and 22
+  "NSP/refus" at Q1; the push Q4 went to Q3's don't know, would-spoil and
+  refusal answers. The questionnaire itself is still not deposited (request
+  Q1(c)).
 
-## Slice HZ6: the legacy switch (qesR 0.7.0, spec 1.0.0)
+## 1.3 Weights, modes and dates of the Léger studies
 
-Sources used: the pinned originals (md5-verified, offline cache), the
-deposited questionnaires and codebooks, the R9 baseline of qesR 0.4.4 and a
-0.5.0 baseline built from commit aa1d3bd (the interim builders, whose values
-0.6.0 kept). `dev/legacy-diff.md` (from `data-raw/compare_legacy.R`)
-explains every difference from 0.5.0; 0 are unexplained.
+- **`qes2007` `pond` (was HZ5 A.1). Resolved: `reviewed`.** Bélanger and
+  Nadeau 2009, *Le comportement électoral des Québécois* (PUM), ch. 2
+  note 5 (`https://books.openedition.org/pum/9782`): sex, age, mother
+  tongue and region, to the census, applied separately to the web and the
+  telephone samples. Checked on the file: constant within type x sex x six
+  age bands x 21 regions (`nomx`) x mother tongue (594 cells, none
+  differing); each mode keeps its share; the vote is not calibrated
+  (weighted PLQ 25.8, PQ 30.9, ADQ 31.6 against 33.1/28.3/30.8). Fieldwork
+  2007-04-04 to 04-17 and mixed mode, from the deposit metadata (no date
+  variable in the file).
+- **`qes2008` `pond` and `pondx` (was HZ5 A.1). Resolved from the file;
+  `needs_review` because the book says otherwise.** `pond` ("Sans taux de
+  participation") is constant within sex x age x region (`reg`, 5) x
+  mother tongue x education (`q77`) x reported vote (`q12a`) (680 cells,
+  none differing; without `q12a`, 199 of 234 multi-respondent cells
+  differ), and among party voters gives the official 2008 shares to within
+  0.1 point (PLQ 42.05, PQ 35.26, ADQ 16.41, QS 3.85, PV 2.18; official
+  42.08/35.17/16.37/3.78/2.17). It is calibrated on the vote: role
+  `vote_calibrated`, not recommended. `pondx` ("avec taux de participation")
+  reweights the nonvoters to the official turnout (57.30% weighted, 57.43%
+  official), as the book's ch. 6 note 3 describes
+  (`https://books.openedition.org/pum/9786`). With both weights calibrated
+  on vote or turnout, `qes2008` has no recommended weight; V-S13 now allows
+  that case only (design.md). The book's ch. 2 note 5 names only sex, age,
+  mother tongue and region, so the method is asked of the PIs (Q2).
+- **`qes2008` mode (was HZ5 A.7). Evidence recorded; stays telephone.** The
+  deposit metadata says "Entrevue téléphonique" (2008-12-09 to 12-15). The
+  questionnaires (files 196358, 197296) read like a web script: no LIRE /
+  NE PAS LIRE (10 in the 2007 telephone script), about 50 « Je préfère ne
+  pas répondre », self-reported sex with code 9, quota and « cliquer sur la
+  flèche » exits, PIN and LMID panel identifiers in the English version;
+  the greeting reads like a telephone one, and neither questionnaire names
+  LegerWeb. Kept as the producer's metadata says until the PIs answer (Q2).
+- **`qes2012` (was MANIFEST NEEDS OWNER 4, `pond` margins). Resolved.**
+  Léger's technical report (file 196368): LegerWeb online panel, 1,505
+  respondents, 2012-09-12 to 09-25, pretest of 24 on 09-12, median 27
+  minutes; « La variable POND ... est basée sur les variables suivantes :
+  SEXE, ÂGE, RÉGION et LANGUE, selon le dernier recensement ». Checked on
+  the file: constant within sex x six age bands x 17 regions (`q0qc`) x
+  mother tongue (264 cells); mother-tongue targets 79.1/8.3/12.6, equal to
+  `qes2008`'s and not the 2011 Census (about 78-79% French and 7-8% English
+  at 20+), so "the latest census" is probably 2006 (not confirmed; asked in
+  Q2). The validation compares `qes2012` with the 2011 Census, the census
+  before its election, which is right for the population whatever the
+  weight used.
 
-### A. Decisions taken in the slice that the owner may want to change
+## 1.4 The Durand panels
 
-H1. **The legacy builders apply the crosswalk rows in review.** No row of
-    the spec is signed off yet (`status = stable`), and `qes_harmonize()`
-    applies only signed-off rows by default. `get_qes_master()` and
-    `get_decon()` call the engine with `include_draft = TRUE`: otherwise
-    every column would be `NA`. The rows were checked against the originals
-    and documents, and the legacy columns were always built from unreviewed
-    code, so this is no step back; `attr(, "source_map")` gives each cell's
-    grade, and `?get_qes_master` says so. *To confirm*, or to sign off the
-    rows the legacy profile uses before the release. Choice made in the
-    review fixes: the rows stay in review, so the replacement that the
-    `get_decon()` notice names (and `?get_decon`, `?qesR-deprecated`, NEWS
-    and both migration vignettes) is the working call
-    `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`; a test
-    checks that it returns values for `qes_demo`. Once the decon rows are
-    signed off, `include_draft = TRUE` can be dropped from those texts.
+- **2018 panel dates and modes (was MANIFEST NEEDS OWNER 4). Resolved.**
+  Pre-election wave 2018-09-26 to 09-28: the deposit metadata
+  (doi:10.5683/SP3/XDDMMR, `dateOfCollection`), Ipsos's report for La
+  Presse and Global News of 2018-09-29
+  (`https://www.ipsos.com/sites/default/files/ct/news/documents/2018-09/rapport_la_presse_global_news_29_septembre_2018.pdf`)
+  and Durand and Blais's postprint of their 2020 CJPS article
+  (`https://umontreal.scholaris.ca/bitstreams/0115eb27-9aa6-4916-94f1-3f4a8020cc31/download`):
+  850 web-panel and 400 telephone interviews of adults eligible to vote;
+  only the intention and certainty items were asked of all 1,250.
+  Recontact 2018-10-12 to 10-19: deposit metadata only (Q1(e) asks for
+  confirmation); 842 interviews, 592 online and 250 by telephone (Durand,
+  Policy Options, February 2019). `method` is the pre-wave mode (post-wave
+  members: 136 landline, 103 cell, 603 web), so at least 11 pre-wave web
+  respondents answered the recontact by telephone and the recontact mode
+  of each respondent is not in the file. The codebook's 75/25 split matches
+  neither wave.
+- **2018 panel weights (was R4). Resolved: `reviewed`.** Ipsos's report
+  (Pondération: âge, sexe, région, niveau d'éducation, langue maternelle,
+  census) and Durand and Blais, postprint p. 12 and Table A1 (each wave
+  weighted separately; ranges 0.26-4.39 and 0.31-5.38, reproduced from the
+  file). The weighted margins hit the targets in both waves: age 26/33/41,
+  sex 49/51, the five `fsa_tabl` regions, French mother tongue (`s1`) 79.0,
+  university (`scolU`) 32; the four education groups and the English/other
+  split are not held. Their "cooperation rates" (62.5%, 69.6%) count by the
+  recontact mode, not by pre-wave origin (239/400 and 603/850 in the file),
+  and are not repeated in the spec.
+- **2012 panel weights. Described from the file; still `needs_review`
+  (D1).** `pond`/`pondam1` and `pond_post`/`pond_postam1` are two weights
+  over the same cells (sex x six age bands x `reg` (4) x mother tongue
+  `lmat` (3), 86 cells, none differing); `pondam1 = 0.1573 x pond` has mean
+  0.9916 over the 844 (probably normalized on the larger pre-election
+  sample: inference); `pond_postam1 = 0.1356 x pond_post` has mean 1;
+  `pond_post` is 1.0 to 4.0 times `pond`, but its weighted margins over the
+  844 are not round census-like targets (sex 47.7/52.3), so what it was
+  calibrated to is unknown. `pondvote` gives the official 2012 shares
+  among declared voters to within 0.2 point. Fieldwork 24-26 August and
+  10-18 September 2012 (codebook, file 654292), as `waves.csv` had it.
+- **2007 panel post-wave weight (was MANIFEST NEEDS OWNER 4). Described
+  from the file; `needs_review` (D1).** No weight is calibrated on the
+  post-wave completers. `pond`, `pondam1` and `ponderation_totale` ("bonne
+  pondération après réestimation?") are functions of poll x sex x six age
+  bands x region (3) x home language (2) x education (4) (391 cells; none
+  differing for `ponderation_totale`, 3 for `pond`); `pond_tot_am1` is
+  `ponderation_totale` rescaled to mean 1 within each poll and has values
+  for 2,053 of the 2,054 post-wave members, the 391 converted refusals
+  included. It is now registered as the post wave's recommended weight,
+  `needs_review` (so still `NA`).
 
-H2. **Missing categories of `vote_choice`.** The 0.4.4 categories "Did not
-    vote / None" and "Don't know / Refused" become `NA` (the engine's
-    reasons `not_voted`, `spoiled`, `dk`, `refused`), in all eight studies
-    that had them (for example `qes2007_panel`: 561 cells); `turnout` still
-    says who voted. The alternative is to render those reasons as the old
-    texts (a `recode` of NA reasons in `legacy.csv`), which would also add
-    them to `qes2012` and `qes2014`, where 0.4.4 left nonvoters `NA`.
+## 1.5 `qes2018` mother tongue (was F1). Resolved: not swapped.
 
-H3. **`gender` keeps "Non-binary" and "Other"** (qes2022, 6 cells), as
-    0.5.0 did; design section 5.12 wrote "Non-binary -> NA in the legacy
-    column only". Keeping them changes nothing from 0.5.0.
+The map (1 French, 2 English, 96 other) is right. Programmed questionnaire
+(file 367181): QLANGUE Français 1, Anglais 2, Autre 96; the home-language
+item Q70 has another order (Anglais 1, Français 2, ...), an independent
+check. Checked on file 425914: of code 2, 401 of 447 (89.7%) speak English
+most often at home and 64% were born in Quebec, 17% elsewhere in Canada; of
+code 96, 84 of 187 (44.9%) speak a non-official language at home and 105
+(56.1%) were born outside Canada; code 2 is the largest group in the
+anglophone ridings (126 of 211) and in Pointe-Claire, Kirkland,
+Côte-Saint-Luc and Westmount; 18 of the 20 open answers of code 2 are in
+English. The methodological report (file 361045, p. 3) labels the same
+counts English 447 and Autre 187, consistent with this (it comes from the
+same producer, so it is not independent). The weighted shares are 77.1%
+French, 16.2% English, 6.6% other (16.6% English at 20+), against 7.2%
+English and 13.7% non-official at the 2016 Census (20+, single answers).
+The English excess is sample composition: the weight calibrates French
+against all other languages only (Table 14), and English spoken most often
+at home is over-represented too (18.7% weighted, 12.0% in the 2016 Census,
+all ages, multiple answers counted). The labelled 2018 panel shows the same
+pattern (`s1`: 15.7% English weighted). The crosswalk evidence of the row
+says so; the row can be signed off (D1).
 
-H4. **`age_group` of the 2007 and 2012 panels has six bands** (their
-    questions have them; design section 5.12's `age_group6`), where 0.4.4
-    and 0.5.0 used the producers' three-band recodes (`age3`, `age_3gr`).
-    `qes2018_panel` keeps its three bands (OD15).
+## 1.6 Census benchmarks (was V1, V3; MANIFEST NEEDS OWNER 1 and 2)
 
-H5. **`qes2012` education code 10** (*Certificate and diploma*, 100
-    respondents) is in neither questionnaire: `not_mappable` (0.4.4 put it
-    in College); code 8 (the French questionnaire's *cours technique*) is
-    College (0.4.4: University). The 2018 panel's trade certificate (d3 code
-    4, 127) is College/CEGEP/Technical; 0.4.4 left its label as a value.
-    qes2018 puts the DEP (qscol code 9) in secondary: the two 2018 studies
-    disagree (spec 2.0.0 review, R2).
+- **2011 age by sex at 18+. Resolved.** The 2011 Census Profile's
+  comprehensive CSV download works with a plain GET (catalogue
+  98-316-XWE2011001, provinces file 101,
+  `https://www12.statcan.gc.ca/census-recensement/2011/dp-pd/prof/details/download-telecharger/comprehensive/comp_download.cfm?CTLG=98-316-XWE2011001&FMT=CSV101&Lang=E&Tab=1&Geo1=PR&Code1=01&Geo2=PR&Code2=01&Data=Count&SearchText=&SearchType=Begins&SearchPR=01&B1=All&Custom=&TABID=1`,
+  md5 290269093e4383386ead96eeedb11912). It has single years 15-19, so 18+
+  and the six bands are exact: men 3,086,620, women 3,269,905; 693,310 /
+  1,022,110 / 1,019,030 / 1,272,270 / 1,092,110 / 1,257,685. The topic-based
+  table 98-311-XCB2011018 is only partly live (its Quebec filter returns
+  "File not found") and is not needed.
+- **2006 age by sex at 18+. Applied (provenance for the owner to accept,
+  D6).** Table 97-551-XCB2006009 (Age (123) and Sex (3), 2001 and 2006,
+  100% data) is gone from Statistics Canada's site; its Beyond 20/20 file
+  survives in the Internet Archive
+  (`https://web.archive.org/web/20130701214950id_/http://www12.statcan.gc.ca/census-recensement/2006/dp-pd/tbt/Download.cfm?PID=88984`,
+  md5 899bc736d3e590a5658a05a9c00bf08a). `data-raw/build_benchmarks.R`
+  reads its Quebec 2006 block at a fixed offset and checks it: the file's
+  md5, the Quebec total (7,546,135) and median ages (41.0, 39.9, 41.9) of
+  the 2006 Census Profile, male plus female equal to the total, each
+  five-year band equal to the sum of its single years. 18+: men 2,896,890,
+  women 3,100,020; 650,465 / 960,200 / 1,121,430 / 1,232,125 / 952,430 /
+  1,080,290. The fallback is the population estimates 17-10-0005-01
+  (adjusted for undercoverage, not census counts).
+- **2006 mother tongue. Not applied (D6).** The only 2006 table found by
+  age, 97-555-XCB2006019 (100% data, also from the Internet Archive),
+  gives at 20+ French 4,611,975, English 436,295, other 595,395 (single
+  answers), but counts institutional residents and records far more
+  multiple mother tongues than the sample data or 2011 (3.3% of the
+  population against 2.0%; English and French together 105,325 against
+  43,335 in the 2006 Profile). So `qes2007`, `qes2008`, the 2007 panel and
+  CROP still have no mother-tongue comparison.
+- **What changed.** `census_margins.csv`: gender and six age bands at 18+
+  for 2006 and 2011, as for 2016 and 2021 (they were gender 20+ and five
+  bands from 25, private households). Mother tongue stays 20+ and education
+  25+ (the tables have no 18+ cut; a custom tabulation would be the only
+  way, and is not worth asking for). `validation_report.csv` re-recorded:
+  the 2006 and 2011 indices of every study, and new weighted rows for
+  `qes2007` (recall 7.33) and the 2018 panel (recall 5.53). The validation
+  article (EN/FR) says so.
 
-H6. **`get_decon()` types.** Its columns follow the targets: factors with
-    the targets' English levels, `education` in four groups (the qes2022
-    file's ten categories are gone), `yob` a number, `religion` and (except
-    for qes2022, an amount) `income` text; `age` is a factor of bands for
-    the panels and `qes1998`, which asked bands (as 0.4.4 had them), numbers
-    elsewhere. `get_decon()` is soft-deprecated; its replacement
-    `qes_harmonize(targets = "decon")` gives the same targets with reasons.
+## 1.7 Élections Québec licence (was R4 and the HZ7 deferred item). Facts
+settled; the choice is D5.
 
-H7. **`respondent_id`** of `qes2007_panel` and `qes2018_panel` is the ID
-    part of the engine's `qes_id` (`nompn-quest`, `method-id`), as design
-    section 5.12 says; the CROP polls keep `QUEST` (0.4.4's choice; the
-    engine identifies CROP rows by position, one `QUEST` repeats).
+- Élections Québec publishes its own open-data licence, the « Licence
+  d'utilisation des données ouvertes du directeur général des élections »
+  (`https://www.dgeq.org/licence.html`; English
+  `https://www.dgeq.org/en/licence.html`; consulted 2026-09-27). The
+  earlier note that no open licence exists was wrong. It is free,
+  non-exclusive and non-transferable, for any lawful purpose including
+  commercial use, with reproduction, translation, compilation, public
+  communication and sub-licensing. It requires a fixed notice at all times
+  (quoted in `inst/COPYRIGHTS`), an indemnity, no suggestion of endorsement
+  and no use of the logos; the Chief Electoral Officer may cancel it
+  without giving a reason, which cancels every sub-licence. It is not a
+  Creative Commons licence.
+- It covers the data "available or referenced" on dgeq.org. The archives
+  page (`https://www.dgeq.org/archives.html`) lists the general elections
+  of 2012, 2014, 2018 and 2022: for 2014, 2018 and 2022 the same
+  `resultats.json` files qesR uses; for 2012 only the candidate lists and
+  the poll-level results (`resultats-bureau-vote.zip`), not the
+  `gen2012-09-04/resultats.json` qesR cites. electionsquebec.qc.ca says the
+  archive goes back to 2012. On a cautious reading, 1998, 2007, 2008 and
+  2012 (as qesR takes it) fall under the site's terms of use
+  (`https://www.electionsquebec.qc.ca/notre-institution/conditions-dutilisation/`):
+  non-profit reproduction with source and copyright; written permission
+  for other uses and adaptations.
+- Élections Québec has no organization and no dataset on Données Québec.
+  The « Atlas des élections au Québec » there (Fondation Lionel-Groulx,
+  CC BY-SA 4.0) has per-riding results of 1998-2012 whose 1998 province
+  totals equal Élections Québec's exactly (2007 and 2008 not checked), but
+  its note does not show that the Foundation could relicense Élections
+  Québec's figures, so it is not a way around the permission.
+- Done: `inst/COPYRIGHTS` (section 3) and `cran-comments.md` state these
+  facts; `official_results.csv`, `official_turnout.csv` and
+  `validation_report.csv` stay build-ignored (they mix covered and
+  uncovered years, and the licence is revocable with an indemnity).
 
-H8. **The 2007 panel's time-invariant items** (gender, education, mother
-    tongue, income, six age bands) are read in whichever wave the respondent
-    took part (crosswalk wave `*`, allowed from spec 1.0.0 for targets of
-    timing `static` or `any`), so its 391 respondents reached only after the
-    election keep them, as in 0.5.0. The existing `age_group3` row moved to
-    wave `*` too (the MAJOR change of spec 1.0.0), which gives those 391 an
-    age group and, for 304 of them, `eligible_voter`. The one row in no wave
-    (neither interview completed) is now `NA` in every answer column.
+## 1.8 Decisions taken in earlier slices (recorded; they stand unless the
+owner reopens one)
 
-### B. Deferred (other slices)
+- **Validation (HZ7).** Education compared as university or below (V2),
+  because the census counts credentials completed and the surveys the
+  level reached. Census year: the census on or before the study's latest
+  year, for the whole study (V3). Gated: the weighted V-L2 indices and the
+  weighted census indices, at the recorded value + 2.0 points; unweighted
+  rows for information; turnout within 0-35 points; `pid_prov` agreement
+  among partisans who reported a party vote (V4). The report lives in
+  `inst/extdata/validation/` (V5). Findings, no change: `qes2018` weighted
+  education counts incomplete university outside university (F2); its age
+  cells cut across ten-year bands (F3); the V-L2 baselines 8.0, 5.6, 3.2
+  and 8.0 of design section 8.3 are confirmed (F4).
+- **Legacy switch (HZ6).** The legacy builders applied rows in review
+  (`include_draft = TRUE`), with the grade of each cell in
+  `attr(, "source_map")` (H1; superseded by spec 4.0.0: signed-off rows
+  only, see below). "Did not vote / None" and "Don't know /
+  Refused" of `vote_choice` are `NA` with reasons (H2). `gender` keeps
+  Non-binary and Other (H3). Six age bands for the 2007 and 2012 panels,
+  three for the 2018 panel (H4). `qes2012` education code 10 is
+  `not_mappable`, code 8 college (H5). `get_decon()` types follow the
+  targets (H6). `respondent_id` of the panels is the ID part of `qes_id`
+  (H7). The 2007 panel's time-invariant items read in either wave (H8).
+- **Remaining studies (HZ5).** "None" among voters is `spoiled` (item 10).
+  The Parti Égalité (1998) is `other` (11). 1998 `intvote` feeds the pushed
+  intention (12). CROP `intvoteprov` code 7 is `not_mappable` (13). The
+  firms' own 1998 files are not harmonized, the firm being a stratum of
+  `qes1998` (14). Departures from the design text: 1998 `pre` and `post`
+  waves (15); poll waves and wave `*` (16); the leading column `stratum`
+  (17); 1998 `sov_partnership_1995` from `q16a_crop` without the push
+  (17a); weights registered per wave (17b). Item 18 (version numbering) is
+  superseded by D10.
+- **Spec review (2.0.0).** The `religion` gates, the 2007 panel's turnout
+  from `voteoui`, the text-only notes (R1 to R5 as recorded in CHANGES.csv).
+- **Review sign-off (4.0.0).** An automated double review of the 132
+  crosswalk rows against the original files and documents (codes and data;
+  wording and comparability; adjudicated where the two passes disagreed),
+  2026-09-27, not a human review: `reviewed_by` says so on every row. 96
+  rows were signed off as they were and 36 after a correction, each
+  checked on the originals and the documents before it was applied and
+  named in the row's `review_note` (schema version 2). 93 rows are
+  `stable`; the 39 held in review are listed in D12. `get_qes_master()`
+  and `get_decon()` apply signed-off rows only (`include_draft = FALSE`):
+  a column whose question is in a held row is `NA`, reason `not_reviewed`,
+  cause `not_signed_off`, basis the row's `review_note`; every difference
+  from 0.5.0 is explained in `dev/legacy-diff.md`. MAJOR: `qes2022`
+  `cps_income` code 0 is `no_answer` (a blank sent to the follow-up
+  `cps_income2`) and `cps_votechoice1_8_TEXT` is gated like its parent
+  row.
 
-- `language` of `qes2022` stays `NA`: its mother-tongue question is three
-  select-all items (`cps_lang_1..3`), which need the registered
-  `fn:multiselect` rule (design section 5.6).
-- `income` and `religion` of `qes2018` stay `NA` (as in 0.5.0): the file
-  has no value labels, and a `string` row reads the file's labels; quoting
-  the questionnaire's labels for text targets needs a schema change.
-- `vote_choice_text` stays `NA` everywhere (as in 0.5.0): the "other party"
-  text of the recall items is not a target yet.
-- `party_lean` stays `NA` everywhere (render `na_column`, as in 0.5.0):
-  design section 5.12 maps it to `vote_prov_lean`, which is not a target of
-  the spec yet. It is filled when that target and its crosswalk rows are
-  added.
-- The appended columns `region_cma3`, `region_admin` and `income_rank` of
-  design section 5.12 wait for their targets; the appended column is named
-  `waves` (the engine's respondent-layout column), not `wave`.
-- `qes2014` `Q57` wording keeps the dictionary's text, which carries a stray
-  "3." from the questionnaire extraction (the crosswalk wording must equal
-  the dictionary's question text); a dictionary patch would fix both.
-- The website's analysis articles still read the master (W.2).
+## 1.9 Deferred work (other slices; no owner action)
 
-## Slice HZ5: the remaining studies (spec 0.3.0)
+- Targets not in the spec yet: previous provincial vote (2008 `q13`, CROP
+  `QP4`, whose reference election is now known), federal vote, party
+  identification strength, region, the push sovereignty items, each a
+  target of its own; `vote_prov_lean` (for `party_lean`); the appended
+  columns `region_cma3`, `region_admin`, `income_rank`.
+- `fn:` rules (none registered yet): the 1998 unpushed intention, the CROP
+  and 2007 panel pushed intention without the merged code, and `qes2022`
+  `language` (`fn:multiselect`).
+- `income` and `religion` of `qes2018` (no value labels in the file),
+  `vote_choice_text`, the English question text of `qes2008`, the stray
+  "3." of `qes2014` `Q57` in the dictionary.
+- `age` from the year of birth and age groups from ages as targets; the
+  panel stability check of design section 8.3.
+- Optionally register `weight_web` of the 2018 panel (850 web rows, label
+  Weight_Web_Only), not recommended.
 
-Sources used: the pinned originals (md5-verified), the deposited
-questionnaires and codebooks of each study, and the dataset metadata of
-each deposit (all public, fetched earlier; see the scratch MANIFEST).
+---
 
-### A. Documents that are not in the public deposits (R2 part 2, R4)
+# Part 2. Needs the owner
 
-1. **Weights of qes2007, qes2008, qes1998 and the CROP polls (R4).** No
-   weighting documentation is deposited for any of them. They are
-   registered in `weights.csv` with status `needs_review`, so
-   `qes_harmonize()` returns `NA` weights for these studies until the method
-   is known:
-   - qes2007 `pond` (mean 1; label *Pondération*);
-   - qes2008 `pond` (label *Sans taux de participation*, recommended) and
-     `pondx` (label *avec taux de participation*, registered as
-     `turnout_calibrated`, never recommended);
-   - qes1998: the sample design the weights must correct *is* documented:
-     both firms' codebooks (CROP file 332049 and CREATEC file 332050, line
-     8 of each) say that « les personnes indécises, qui disaient vouloir
-     annuler leur vote ou qui refusaient de révéler leur vote ont été
-     sur-sélectionnées », and the description of the CREATEC data file
-     (316121) says « La variable de pondération « ponderc » est à
-     privilégier par rapport à « poids », « ponder2 » et « ponder3 » » and
-     that the reticent (« discrets ») were over-selected. What is not
-     documented is which weight corrects the over-selection in the pooled
-     file, per wave. The pooled file has four: `ponder3` (mean 1 within
-     each firm, registered as recommended for both waves), `ponder2`
-     (proportional to `ponder3` within each firm, with values for both
-     firms: means 2.17 CREATEC, 10.44 CROP), `ponderc` (the CREATEC
-     *Pondération principale*, mean 1 for CREATEC; CROP's rows are on
-     another scale, mean 5.16, so normalizing it within a wave would give
-     each CROP respondent about five times a CREATEC respondent's weight)
-     and `poids` (16 values). All are `needs_review`, so 1998 estimates are
-     unweighted and **over-represent the undecided, would-spoil and
-     refusing respondents** (refusals alone are 17.5% of CREATEC's Q3 vote intention, `intvotep`, file 332050); the
-     weight rows, the waves' notes, the notes of the intention, recall and
-     turnout rows and NEWS say so. *Asked of the owner:* which weight
-     (`ponderc`, `ponder2`, `ponder3` or `poids`) corrects the
-     over-selection in the pooled file, for the pre- and for the
-     post-election wave, and whether `ponderc` (preferred by the CREATEC
-     deposit) should replace `ponder3` as the recommended weight;
-   - CROP `XPOND` (population scale, mean 5.9 to 6.2 in each poll),
-     registered once for every poll (wave `*`) and normalized within each
-     poll when reviewed.
+## 2.1 Requests to send (the owner sends them; Claude sent nothing)
 
-   *Needed:* the weighting method (variables and margins) of each, or the
-   owner's decision to accept one as documented by its file label.
+Each request uses the addressee's own contact channel (the "Contact"
+button of the Borealis or Harvard Dataverse dataset page, or the
+organization's contact form); no address is written here. None of them
+blocks a release: until an answer comes, the conservative choice of part 1
+holds.
 
-2. **CROP 2007-2010 referendum item (Q-e).** The codebook (file 341537)
-   gives only the first words of `intvoterefa` ("Si un référendum avait lieu
-   aujourd'hui vous demandant"); whether it asks about a sovereign country,
-   an independent country or sovereignty-partnership is unknown, so it is
-   **not mapped** to any sovereignty target (nor are the push `intvoterefb`
-   and the combination `intvoteref`). *Needed:* the question wording.
+**Q1. Claire Durand (Université de Montréal), dataset contact of the CROP
+polls (doi:10.5683/SP3/IRZ1PF), the 1998 polls (doi:10.5683/SP2/QFUAWG),
+the 2018 panel (doi:10.5683/SP3/XDDMMR) and the 2007 and 2012 panels
+(doi:10.5683/SP3/NDS6VT, doi:10.5683/SP3/RKHPVL).** Contact button of the
+CROP dataset page on Borealis. Why: these are the documents and facts only
+the producer holds; they would let the CROP referendum item be mapped, the
+1998 weight be chosen and the panels' weights be reviewed.
 
-3. **CROP 2007-2010 previous-vote item (Q-e).** `QP4`/`voteprec` ("Pour
-   quel parti avez-vous voté aux dernières élections") does not say which
-   election each poll refers to (2003 or 2007 before the 2008 election; 2008
-   after it). Not mapped (the spec has no previous-vote target yet either).
-   *Needed:* the reference election per poll.
+> Madame Durand,
+>
+> Je prépare qesR, un paquet R libre (licence MIT) qui télécharge et
+> harmonise les Études électorales québécoises et vos dépôts de sondages
+> sur Borealis. Quelques points ne sont pas documentés dans les dépôts ;
+> pourriez-vous m'éclairer ?
+>
+> 1. Sondages CROP 2007-2010 (doi:10.5683/SP3/IRZ1PF). (a) Les
+>    questionnaires ou rapports CROP-Express de mai 2009 (14-24 mai,
+>    n = 1 001, projet 19), juin 2009 (11-18 juin, n = 1 003, projet 20),
+>    août 2009 (projet 21), septembre 2009 (projet 22) et janvier 2010
+>    (projet 24) : la question intvoterefa y portait-elle sur un « pays
+>    souverain » ou sur la « souveraineté-partenariat » ? (b) Le libellé
+>    anglais de cette question. (c) XPOND est-elle la pondération livrée
+>    par CROP, et à quoi correspondent ses totaux de population, qui
+>    changent par bloc de sondages (6 117 k, 5 997 k, 5 905 k, 5 881 k,
+>    6 169 k, 6 215 k) ?
+> 2. Sondages de 1998 (doi:10.5683/SP2/QFUAWG). (a) ponder3 (= ponderc x
+>    poids, normalisée dans chaque firme) est-elle la bonne pondération du
+>    fichier panel regroupé, pour les deux vagues ? La description du
+>    fichier CREATEC (316121) recommande ponderc plutôt que poids, ponder2
+>    et ponder3, mais ponderc ne corrige pas la sur-sélection des discrets ;
+>    cette recommandation vise-t-elle seulement les estimations
+>    transversales de CREATEC ? (b) Sur quelles marges et quel recensement
+>    ponderc a-t-elle été calée, pour CREATEC et pour CROP ? (c) Le
+>    questionnaire préélectoral de CREATEC (18-23 novembre 1998) et son
+>    questionnaire de rappel pourraient-ils être déposés ? (d) Quels sont
+>    les trois sondages préélectoraux recontactés ? Les dates d'entrevue de
+>    CREATEC se séparent en 18-20 et 21-23 novembre.
+> 3. Panel de 2018 (doi:10.5683/SP3/XDDMMR). (a) Pouvez-vous confirmer les
+>    dates du recontact, du 12 au 19 octobre 2018 (métadonnées du dépôt) ?
+>    (b) Le fichier d'Ipsos (projet 17-057727) contient-il le mode de
+>    l'entrevue postélectorale de chaque répondant (592 en ligne, 250 par
+>    téléphone) ? Si oui, pourrait-il être ajouté au dépôt ?
+> 4. Panels de 2007 et de 2012. (a) 2012 (doi:10.5683/SP3/RKHPVL) : sur
+>    quelles marges pond_post (« pondération_recensement ») a-t-elle été
+>    calée, et pondam1 a-t-elle été normalisée sur l'échantillon
+>    préélectoral complet ? Le questionnaire préélectoral pourrait-il être
+>    déposé ? (b) 2007 (doi:10.5683/SP3/NDS6VT) : quelle pondération
+>    utiliser pour la vague postélectorale, y compris les 391 refus
+>    convertis (pond_tot_am1 ?) ?
+>
+> Je vous remercie de votre aide.
+>
+> Thomas Gareau-Paquette
 
-4. **CROP 2007-2010 fieldwork.** The codebook dates each poll to its month
-   only; `waves.csv` records the month's bounds and no interview date. The
-   deposit metadata says "2007-01 to 2010-06" and "Panel", while the file
-   holds 24 monthly cross-sections from June 2007 to January 2010.
-   *Needed:* the fieldwork dates of each poll (optional).
+**Q2. Éric Bélanger (McGill University), dataset contact of the QES 2007,
+2008 and 2012 (doi:10.5683/SP2/6XGOKA, doi:10.5683/SP2/8KEYU3,
+doi:10.5683/SP2/WXUPXT); or Richard Nadeau (Université de Montréal).**
+Contact button of the QES 2008 dataset page on Borealis. Why: the 2008 mode
+and weights and the 2007 web questionnaire are not deposited, and the file
+contradicts the book on the 2008 weight.
 
-5. **qes1998: definition of "francophone" (Q-f, OD16).** The firms'
-   codebooks answer it firm by firm: CREATEC interviewed respondents whose
-   mother tongue is French (1,057, file 316121), and CROP's post-election
-   wave kept those whose language at home is French (426 of its 450, file
-   286331). The pooled file holds 1,057 CREATEC and 426 CROP rows, but no
-   variable links its CROP rows to the CROP file, so the pooled definition
-   is inferred from the counts, not stated. The waves' `target_population`
-   says "Francophone Quebec adults (CREATEC: mother tongue French; CROP:
-   French spoken most often at home; the pooled file's definition is
-   inferred from counts, unconfirmed)" (and the same in French), and
-   `inst/COPYRIGHTS` uses the same wording and keeps the definition marked
-   as pending. The catalog row of the CROP firm file (`qes1998_crop`) says
-   "interviewed in French": that file holds all 450 respondents of CROP's
-   pre-election poll, interviewed in French (codebook 332049), so it is
-   left as is. *Needed:*
-   confirmation, or the producer's statement.
+> Monsieur Bélanger,
+>
+> Je prépare qesR, un paquet R libre (licence MIT) qui harmonise les Études
+> électorales québécoises à partir de vos dépôts sur Borealis. Trois points
+> ne sont pas documentés :
+>
+> 1. ÉEQ 2008 (doi:10.5683/SP2/8KEYU3). La note technique de Léger sur
+>    l'enquête postélectorale de décembre 2008 (comme celles de 2012 et de
+>    2014, fichiers 196368 et 352011) pourrait-elle être déposée ? En
+>    particulier : (a) le mode de collecte : les métadonnées indiquent
+>    « Entrevue téléphonique », mais les questionnaires déposés (196358,
+>    197296) ressemblent à un questionnaire Web (aucune consigne
+>    d'intervieweur, « Je préfère ne pas répondre », identifiants PIN et
+>    LMID) ; (b) les variables et le recensement de pond et de pondx : dans
+>    le fichier, pond dépend aussi de la scolarité et du vote déclaré et
+>    reproduit les résultats officiels de 2008, alors que votre livre (PUM
+>    2009, ch. 2, note 5) ne nomme que le sexe, l'âge, la langue maternelle
+>    et la région. Si le mode est le Web, la métadonnée du dépôt pourrait
+>    être corrigée.
+> 2. ÉEQ 2007 (doi:10.5683/SP2/6XGOKA). Le questionnaire Web (seul le
+>    questionnaire téléphonique est déposé), pour savoir si « ne sait pas »
+>    était offert en ligne.
+> 3. ÉEQ 2012 (doi:10.5683/SP2/WXUPXT). Le « dernier recensement » de la
+>    variable POND est-il celui de 2006 ? Ses marges de langue maternelle
+>    sont celles de 2008.
+>
+> Je vous remercie de votre aide.
+>
+> Thomas Gareau-Paquette
 
-6. **qes1998: CREATEC questionnaire.** Not deposited. The wording shipped
-   for the pooled items is CROP's (its codebook prints the questions), and
-   the grade reasons say so. The crosstabs show that CREATEC did not ask
-   vote intention of 79 respondents (its likely nonvoters, by its own
-   turnout question); they are `inapplicable` in the pushed intention.
-   *Needed (optional):* the CREATEC questionnaire, to confirm the wording
-   and the routing.
+**Q3. Élections Québec (directeur général des élections du Québec),
+"Demandes d'autorisation et questions",
+`https://www.electionsquebec.qc.ca/nous-joindre/`.** Only if D5 chooses to
+ship the official results. Why: the terms of use require written
+permission for the years not on dgeq.org and for the adaptation (minor
+parties summed).
 
-7. **qes2008 interview mode.** The deposit metadata says telephone
-   (2008-12-09 to 12-15), and `waves.csv` follows it, but the deposited
-   questionnaires (files 196358 and 197296) carry web instructions ("Veuillez
-   cliquer sur la flèche pour quitter le sondage" after a quota message) and
-   web-style options ("Je préfère ne pas répondre"). Grades are
-   `comparable` either way (a phone study cannot be `identical` to a web
-   anchor), and `dk_offered` is `unknown`. *Needed:* the collection mode.
+> Bonjour,
+>
+> Je maintiens qesR, un paquet R libre (licence MIT, diffusé sur CRAN) qui
+> compare les enquêtes électorales québécoises aux résultats officiels.
+> J'aimerais y inclure les totaux de l'ensemble du Québec (votes par parti,
+> les petits partis additionnés en une ligne ; bulletins valides, rejetés
+> et déposés ; électeurs inscrits ; taux de participation) des élections
+> générales du 30 novembre 1998, du 26 mars 2007, du 8 décembre 2008 et du
+> 4 septembre 2012, tirés des fichiers
+> https://donnees.electionsquebec.qc.ca/production/provincial/resultats/archives/gen<date>/resultats.json.
+>
+> 1. M'autorisez-vous à redistribuer et à adapter ces totaux dans qesR,
+>    avec la mention de la source et de votre droit d'auteur ?
+> 2. Ces fichiers d'archives, qui ne sont pas listés sur dgeq.org, sont-ils
+>    couverts par la Licence d'utilisation des données ouvertes du
+>    directeur général des élections, comme ceux de 2014, 2018 et 2022 ?
+> 3. Pour 2014, 2018 et 2022, la licence est-elle compatible avec une
+>    redistribution dans un paquet sous licence MIT, compte tenu des
+>    clauses d'indemnisation et de résiliation ?
+>
+> Merci à l'avance.
+>
+> Thomas Gareau-Paquette
 
-8. **qes2007 web questionnaire.** The file mixes telephone (1,003) and web
-   (1,172) interviews (`type`), but only the telephone script is deposited,
-   so whether the web version showed "don't know" is unknown
-   (`dk_offered = unknown` on every qes2007 row).
+**Q4. Laura B. Stephenson (Western University), dataset contact of the
+2022 QES (doi:10.7910/DVN/PAQBDR), for its authors (Mahéo, Bélanger,
+Stephenson, Harell).** Contact button of the Harvard Dataverse dataset
+page. Why: OD3 keeps every label, wording and count of `qes2022` out of the
+package until its authors agree in writing (CC BY-NC 4.0); R5 and V6 wait
+on it.
 
-9. **qes2012_panel pre-election questionnaire.** Not deposited (the
-   codebook gives the variable labels). The first intention question,
-   `intvoteprov1`, reads "pour lequel des partis suivants voteriez-vous
-   **ou seriez-vous tenté de voter**?", which already asks for a lean; it
-   and the pushed `intvoteprov` are graded `approximate`. *Needed
-   (optional):* the questionnaire, to confirm the stem and the options read.
+> Dear Professor Stephenson,
+>
+> I maintain qesR, a free R package (MIT licence, submitted to CRAN) that
+> downloads and harmonizes the Quebec Election Studies. The 2022 QES is
+> licensed CC BY-NC 4.0, so qesR currently ships none of its value labels,
+> question wording or answer counts: users build them from their own copy
+> of the file. Would you and your co-authors agree in writing that qesR may
+> ship (1) the value labels and question wording of the 2022 study, with
+> attribution, and (2) aggregate counts (unweighted frequencies of each
+> answer, used to check the harmonization), under the package's MIT
+> licence? If not, is the current approach (variable names, md5 hashes of
+> labels and codebook page references only) acceptable to you?
+>
+> Thank you,
+>
+> Thomas Gareau-Paquette
 
-### B. Decisions taken in the slice that the owner may want to change
+**Q5. Optional reading through the owner's library access (paywalled, not
+fetched).** No one to write to. Durand, Blais and Vachon 2001, *POQ*
+65(1):108-123 (`https://doi.org/10.1086/320041`), methodology section: does
+it name the 1998 weight? Stephenson and Crête 2011, *IJPOR* 23(1):24
+(QES 2007 web and telephone samples). Bélanger and Gélineau 2011, *CJPS*
+44(3):529-551 (`https://doi.org/10.1017/S0008423911000461`), data section
+(2008 mode and weights). The body of Bélanger and Nadeau 2009 (PUM),
+chapters 2, 3 and 6.
 
-10. **"None" among voters (qes2007 `q12` = 97, 12 cases; qes2008 `q12a` =
-    97, 3 cases)** is mapped to `spoiled`, as design section 5.2 proposed
-    (to be confirmed at R1): the originals only label the code *aucun* /
-    *None*. The alternative is `not_mappable`. qes2007 `q12` = 95 (*n'a pas
-    voté*, 4 respondents who had said they voted) is taken at its word
-    (`not_voted`).
+**Q6. Conditional: Statistics Canada (statcan.gc.ca contact form).** Only
+if D6 rejects the decoded Internet Archive file. Why: the 2006 tables are
+no longer published.
 
-11. **The Parti Égalité (1998)** has no level in `party_qc`; its 9
-    intention answers (and none in the recall) are `other`. Adding a level
-    would be a MINOR spec change.
+> Bonjour, pourriez-vous me fournir en CSV, pour le Québec, les tableaux du
+> Recensement de 2006 97-551-XCB2006009 (âge et sexe) et 97-555-XCB2006019
+> (langue maternelle, groupes d'âge et sexe), qui ne sont plus en ligne ?
+> Ils servent de repères dans un paquet R libre, sous la Licence ouverte de
+> Statistique Canada. Merci.
 
-12. **1998 vote intention.** Design section 5.7 drafted `vpl` as the first
-    intention question. Crosstabs show that `vpl` and `intvote` combine each
-    firm's first question and its push (CROP `q7a_crop` + `q7b_crop`,
-    CREATEC `r3_createc` + `r4_createc`), so `intvote` (which keeps the 79
-    unasked CREATEC respondents apart from "would not vote") feeds
-    `vote_prov_intent_push`, graded `approximate` (two firms' instruments
-    pooled). The unpushed intention has no row: it sits in two variables,
-    one per firm, and would need a registered `fn:` rule.
+## 2.2 Decisions only the owner can take
 
-13. **CROP pushed intention.** The producer's `intvoteprov` code 7 holds
-    the 1,105 "no party" answers of the push and 74 "another party" answers
-    (69 of the first question, 5 of the push), so it is `not_mappable`
-    (1,179 respondents, 4.9%), as for the 2007 panel. A registered `fn:`
-    rule combining `intvoteprova` and `intvoteprovb` would recover them.
+**D1. Sign-off.** 93 rows are `stable` after the automated double review
+of spec 4.0.0 (1.8), which is not a human review; design.md made the
+owner's review the sign-off. To decide: (a) whether the automated review
+stands as the sign-off for the release, or which rows the owner reviews by
+hand first (setting `reviewed_by` to the reviewer and, for a row that
+changes, a CHANGES.csv entry); (b) whether to accept as `reviewed` the
+weights described from CROP's reports (`XPOND`, 1.1) and from the files
+only (the 2007 and 2012 panels, 1.4), or keep them `needs_review` until Q1
+is answered: this releases the rows held in D12 (a). Weights set to `reviewed` in this
+round, on producer documents checked on the file: `qes2007` `pond`, the
+2018 panel's `weight` and `weight_rts`; the owner may revert them. A
+stable row on a study-wave whose weight needs review fails the release
+check (V-S13).
 
-14. **The firms' own 1998 files are not harmonized.** `qes1998_crop` and
-    `qes1998_createc` hold the same respondents as the pooled `qes1998`
-    (plus the 24 CROP respondents whose home language is not French);
-    harmonizing them too would count those respondents twice in
-    `qes_harmonize("all")`. The split is represented instead by the firm as
-    a stratum of `qes1998`. Design section 5.7 spoke of "the three 1998
-    codes"; the owner may want the firm files in the spec (with their own
-    wording and the 24 extra CROP respondents), which would need a rule
-    against pooling them with `qes1998`.
+**D2. CROP sovereign-country item.** `intvoterefa` is documented as the
+sovereign-country question in 19 of 24 polls (1.1) but cannot be mapped
+for those only. Options: (a) wait for Q1 (current); (b) map all 24 polls
+under `sov_sovereign_country` at grade `approximate`, with the five
+undocumented polls named in the row's notes; (c) extend the grammar so a
+pooled-polls study may have one primary row per poll wave (engine, V-S5,
+column hashes, provenance and views change). Recommendation: (a), then (b)
+if Q1 gets no answer.
 
-### C. Departures from the design text (for the design record)
+**D3. 1998 recommended weight.** `ponder3` (the design correction, which
+reproduces the PIs' published tables) against `ponderc` (the deposit's
+advice, which does not correct it) (1.2). Options: wait for Q1 (current:
+`ponder3` registered, `needs_review`, so 1998 estimates are unweighted);
+or sign off `ponder3` now on the Table 2 evidence, keeping the producer's
+contrary advice in `source_ref`. `get_qes_master()` `survey_weight` stays
+`ponderc` in either case (the 0.4.4 source); change it only if the owner
+prefers consistency to backward compatibility (a legacy value change).
 
-15. **1998 waves.** Design section 5.3 drafted one `between` wave. The
-    codebooks date a pre-election wave (1998-11-18 to 11-23) and a
-    post-election wave (12-08 to 12-13), and every row answered both, so
-    `qes1998` has `pre` and `post` waves of 1,483 each (like
-    `qes2012_panel`), and each question sits in the wave that asked it.
+**D4. `qes2008` weight.** Both weights are calibrated on vote or turnout,
+so `qes2008` has no recommended weight and V-S13 now allows that (1.3).
+Options: keep (current); or recommend `pond` anyway (it is the one weight
+without the turnout adjustment), which needs V-S13 relaxed further and
+makes the V-L2 recall check of `qes2008` circular (it would have to be
+exempted from the gate).
 
-16. **Poll waves: wave `*`.** A crosswalk or weight row may name the wave
-    `*` in a study whose waves are all poll waves (V-S4); it applies to
-    every poll, each respondent belonging to exactly one (checked on the
-    data by V-D8). Such a row takes its election reference from each wave
-    (V-S9), and the leading `election_date` is then the wave's. The
-    alternative, one row per poll and target (24 x 3 rows), was rejected as
-    unreviewable.
+**D5. Élections Québec results.** (1.7) Options: (a) keep the three files
+build-ignored (current); (b) accept the dgeq.org licence for 2014, 2018
+and 2022 and ship those rows in a separate file with the required notice,
+the rest staying build-ignored until Q3 is answered (the revocation and
+indemnity clauses probably fall short of what CRAN expects of a data
+licence); (c) send Q3 and ship everything with the permission. Also
+decide whether to recompute 2012 from the listed poll-level file (not
+checked yet).
 
-17. **New leading column `stratum`**, after `subsample`: for pooled polls
-    the poll's wave name (as in `waves`, e.g. `poll_2008_11`); for the 1998
-    panel the file's `firme_post` code (`"1"` = CREATEC, `"2"` = CROP,
-    documented in `?qes_harmonize` and `?qes_design`, EN and FR); `NA`
-    elsewhere. `qes_design()` uses `<study>:<stratum>` as the stratum where
-    it is set (this also answers, for these two studies, the HZ4 question
-    about strata in the long layout), and `pool = "equal"` counts the polls
-    of pooled polls as one study in the long layout too. For pooled polls
-    the leading `year` is the year each poll began (2007 to 2010), not the
-    catalog study year.
+**D6. 2006 census benchmarks.** (1.6) (a) Accept the decoded Internet
+Archive copy of Statistics Canada's 2006 file for age by sex at 18+
+(applied), or revert to the undercoverage-adjusted estimates 17-10-0005-01,
+or send Q6. (b) Whether to add a 2006 mother-tongue benchmark from
+97-555-XCB2006019 despite its universe (institutional residents,
+3.3% multiple answers against 2.0% in 2011): not applied. (c) Keep 20+
+for mother tongue and 25+ for education (no 18+ cut is published).
 
-17a. **1998 `sov_partnership_1995` uses `q16a_crop`, not `voteref`**
-    (design section 5.7 named `voteref`): `voteref` adds the `q16b` push
-    (of the 32 `q16a` don't-knows, 6 become yes and 3 no; one refusal
-    becomes no), which the target excludes. Crosstab on the original
-    (file 329987).
+**D7. `qes2008` mode.** Stays telephone, as the deposit says, until Q2 is
+answered. If no answer comes, decide whether the questionnaire evidence
+(1.3) is enough to record it as web; grades are `comparable` either way.
 
-17b. **Weights registered per wave, not per firm; `ponder2` not CROP-only;
-    qes2008 downgraded.** Design section 5.3 lists the 1998 weights
-    (`poids`, `ponder2` for CROP only, `ponderc`) as registered per firm.
-    The registry is per study and wave, so they are registered for the
-    `pre` wave (and `ponder3` for `post`), with `ponder3` recommended (mean
-    1 within each firm, the one scale on which a within-wave normalization
-    does not reweight the firms); `ponder2` has values for both firms
-    (means 2.17 CREATEC, 10.44 CROP), not only CROP. Design section 5.3
-    lists qes2008 `pondx` as `reviewed` (and `pond` with role `poststrat`)
-    from the DDI; the slice registers both as `needs_review` with no role
-    for `pond`, because a DDI variable label is not weighting
-    documentation.
+**D8. Vocational credentials in `education4` (was R2).** `qes2018` counts
+the DEP as secondary, `qes2018_panel` its trade certificate as college, and
+studies with no DEP option probably put DEP holders under technical
+(college). One rule is needed for both (a map change is MAJOR): college
+(the anchor's reading: move `qes2018` code 9 to 3), or `not_mappable` in
+both (Statistics Canada classes trades apart from college).
 
-### D. Release
+**D9. `qes1998` `language` in `get_qes_master()` (was R3).** The pooled
+definition is now confirmed (1.2), so the choice is only between the
+constant French (current, noted as the home language for the 426 CROP
+rows) and the stricter render (French for CREATEC, `NA` for CROP), which
+needs a stratum-conditional render in `legacy.csv` (engine, validator,
+tests).
 
-18. **Version.** Design OD2 makes 0.6.0 the engine for the six cached
-    studies, and the HZ4 commit is 0.6.0 with spec 0.2.0. This slice's
-    engine differs (wave `*`, the `stratum` column, per-poll `year`), so
-    DESCRIPTION is now 0.6.0.9000 and NEWS has a `# qesR 0.6.0.9000`
-    section for spec 0.3.0; the 0.6.0 section is as HZ4 left it.
-    `Engine-Min` stays 0.6.0: the validator accepts only x.y.z, and any
-    x.y.z above 0.6.0 would refuse the 0.6.0.9000 engine. When the release
-    that ships spec 0.3.0 is numbered (0.7.0 by OD2), set `Engine-Min` to
-    that number and rename the NEWS heading. *Owner's decision.*
+**D10. Release numbering (was R1, V7, item 18).** The spec is 4.0.0
+(MAJOR changes after 1.0.0 without a CRAN release in between). Options:
+keep the history as it is, or fold 2.0.0 to 4.0.0 into one entry before the
+first release. Done for the package (2026-09-28): `Version: 0.7.0`, the
+development subsections of NEWS.md merged into `# qesR 0.7.0`, the tarball
+built and checked with `sh data-raw/build_tarball.sh <dir> --check` (the
+"large components" NOTE is gone), and the date, NOTE list and test counts
+of `cran-comments.md` updated. Left to the owner: commit, push, run the
+GitHub checks and win-builder (their results go to the maintainer) and
+fill in their results and the spelling NOTE in `cran-comments.md`.
 
-### E. Deferred (other slices)
+**D11. `qes2022` under OD3 (was R5, V6).** Until Q4 is answered: confirm
+that the row count `n` of `expected/hashes.csv` (1,521, published on
+codebook p. 5) and the grade reasons in qesR's own words may stay, and that
+the website article may show `qes2022` aggregates computed at build time;
+or drop `n` for `qes2022`, reword the reasons and drop those article rows.
 
-- Targets not yet in the spec, whose sources exist in these studies:
-  gender, education, income, region, language, religion, the 0-10 interest
-  scale (2007 `q14`/`q15`), party-identification strength (2007/2008
-  `q71`), previous provincial vote (2008 `q13`, CROP `QP4`), federal vote
-  (2007/2008 `q74`); and the push sovereignty instruments (2007/2008 `q20`,
-  CROP `intvoterefb`, 1998 `q16b_crop`, 2007p `intref2`), each a target of
-  its own. They are added target by target (MINOR), as design section 5.7
-  plans.
-- `fn:` rules (none registered yet): 1998 unpushed intention, CROP and 2007
-  panel pushed intention without the merged code.
-- English question text of qes2008 in the dictionary (the English
-  questionnaire is a PDF; the crosswalk carries the English wording).
-- The legacy master (`get_qes_master()`) switch to the engine: HZ6.
-- The website articles are not rebuilt here (W.2); their prose was updated
-  for the new studies.
+**D12. Rows held in review (spec 4.0.0).** The automated review signed
+these rows off on their content, but they stay `review`, so
+`qes_harmonize()` applies them only with `include_draft = TRUE` and the
+legacy columns they feed are `NA` (reason `not_reviewed`). Each row's
+`review_note` says why. A person must act on each group:
+
+(a) Held by the release check V-S13 (a stable row on a study-wave whose
+recommended weight needs review fails it). They become `stable` when the
+weight is accepted (D1 (b) for `qes2007_panel`, `qes2012_panel` and the
+CROP polls; D3 for `qes1998`), or after Q1 is answered:
+- `qes1998` (weight `ponder3`, D3): `intvote` and `intvote2`
+  (`vote_prov_intent_push`), `q3post` (`vote_prov_recall`), `q1post`
+  (`turnout_prov_recall`), `q16a_crop` (`sov_partnership_1995`), `age`
+  (`age_group3`, `age_group6`), `sexe_post` (`gender`).
+- `qes2007_panel` (weights `pondam1`, `pond_tot_am1`): `intvote1`
+  (`vote_prov_intent`), `intvote` (`vote_prov_intent_push`), `vote`
+  (`vote_prov_recall`), `voteoui` (`turnout_prov_recall`), `intref1`
+  (`sov_partnership_1995`), `age` (`age_group3`, `age_group6`), `sexe`
+  (`gender`), `scol` (`education4`), `lmat` (`lang_mother`), `revenu`
+  (`income_native`), `interet` (`interest_campaign_4pt`).
+- `qes2012_panel` (weights `pondam1`, `pond_post`): `intvoteref`
+  (`sov_sovereign_country`), `intvoteprov1` (`vote_prov_intent`),
+  `intvoteprov` (`vote_prov_intent_push`), `voteprov`
+  (`vote_prov_recall`), `participation` (`turnout_prov_recall`),
+  `interetrec` (`interest_4pt`, documentation only), `age` (`age_group3`,
+  `age_group6`), `sexe` (`gender`; its instrument `sex_recorded` is
+  inferred: keep it, or use `gender_2` as the 2018 panel does), `lmat`
+  (`lang_mother`).
+- `qes_crop_2007_2010` (weight `XPOND`): `intvoteprova`
+  (`vote_prov_intent`), `intvoteprov` (`vote_prov_intent_push`), `QAGE`
+  (`age_group3`, `age_group6`), `SEXE` (`gender`), `scol`
+  (`education4`), `lmat` (`lang_mother`), `revenu` (`income_native`).
+
+The consequence for the release: `get_qes_master()` and `get_decon()`
+return `NA` in every column these four studies take from the spec (their
+identifiers, dates and weights are kept), where 0.5.0 had values. The
+alternative is to accept their weights before the release.
+
+(b) Held for a second reviewer (design.md section 11.1, step 3: an
+`identical` row that pools fielding languages): `qes2014` `QSEXE`
+(`gender`), raised from `comparable` to `identical` in this review (the
+anchor's stems in both languages: "What is your gender?" / "Quel est votre
+sexe?"). Confirm the grade and set it `stable`, or set it back to
+`comparable` with the corrected reasons. Until then `gender` of `qes2014`
+(and of `qes_demo`) is `NA` in the legacy functions.
+
+Other decisions the review raised (no row is held for them): whether to
+use the `cps_income2` brackets for the `qes2022` respondents who left the
+amount blank (a two-source rule the spec does not have yet; the 17 whose
+follow-up says "no income" are `no_answer` for now); whether the
+two-language options that `qes2012` and `qes2008` list in their
+questionnaires but not in their files call for another instrument name
+(`lang_first_multi`) for both.
+
+**Held pending evidence:** none. Every row held in review needs a person
+(D12); no row waits only for a document.

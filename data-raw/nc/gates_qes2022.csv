@@ -154,6 +154,13 @@
 "qes2022","cps","cps_votechoice1",,"cps_turnout","3","NA",62
 "qes2022","cps","cps_votechoice1",,"cps_turnout","4","NA",26
 "qes2022","cps","cps_votechoice1",,"cps_turnout","5","NA",1
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","1","-99",1280
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","1","<text>",15
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","2","-99",131
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","2","<text>",6
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","3","NA",62
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","4","NA",26
+"qes2022","cps","cps_votechoice1_8_TEXT",,"cps_turnout","5","NA",1
 "qes2022","cps","cps_yob",,,,"-99",2
 "qes2022","cps","cps_yob",,,,"12",1
 "qes2022","cps","cps_yob",,,,"15",1

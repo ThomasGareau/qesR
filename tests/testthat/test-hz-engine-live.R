@@ -84,13 +84,18 @@ test_that("V-L3 and the waves, weights and eligibility of the originals (live)",
   expect_lt(abs(share(2, TRUE) - 0.395), 0.005)
   expect_lt(abs(share(2, FALSE) - 0.117), 0.005)
   # reviewed weights have mean 1 in each wave; those that need review are NA
-  for (st in c("qes2012", "qes2014", "qes2018")) {
+  for (st in c("qes2012", "qes2014", "qes2018", "qes2007")) {
     expect_equal(mean(by(st, h$weight_post)), 1, label = st)
   }
+  # the 2018 panel's weights (spec 3.0.0): every pre-wave row, the 842 post-wave members
+  expect_equal(mean(by("qes2018_panel", h$weight_pre)), 1)
+  expect_identical(sum(!is.na(by("qes2018_panel", h$weight_post))), 842L)
+  expect_equal(mean(by("qes2018_panel", h$weight_post), na.rm = TRUE), 1)
   expect_equal(mean(by("qes2022", h$weight_pre)), 1)
   expect_identical(sum(!is.na(by("qes2022", h$weight_post))), 1220L)
   expect_equal(mean(by("qes2022", h$weight_post), na.rm = TRUE), 1)
-  for (st in c("qes2007_panel", "qes2012_panel", "qes2018_panel")) {
+  # qes2008 has no recommended weight (both are calibrated on vote or turnout)
+  for (st in c("qes2007_panel", "qes2012_panel", "qes2008")) {
     expect_true(all(is.na(by(st, h$weight_pre))) && all(is.na(by(st, h$weight_post))), label = st)
   }
   # eligibility: 2018 sampled ages 16 and over; the other samples are adults
@@ -173,6 +178,9 @@ test_that("the remaining studies on the originals: counts, waves, strata and eli
   l <- qes_harmonize("qes2012_panel", targets = "vote_prov_recall", layout = "long", include_draft = TRUE, quiet = TRUE)
   expect_identical(range(l$interview_date[l$wave == "post"]), as.Date(c("2012-09-10", "2012-09-17")))
   expect_true(all(is.na(l$interview_date[l$wave == "pre"])))
-  # every weight of these studies needs review: NA
-  expect_true(all(is.na(h$weight_pre) & is.na(h$weight_post)))
+  # qes2007's weight is reviewed (spec 3.0.0); the other weights of these
+  # studies need review, and qes2008 has none to recommend: NA
+  expect_equal(mean(by("qes2007", "weight_post")), 1)
+  other <- h$study != "qes2007"
+  expect_true(all(is.na(h$weight_pre[other]) & is.na(h$weight_post[other])))
 })

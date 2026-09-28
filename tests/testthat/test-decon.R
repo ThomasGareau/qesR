@@ -21,8 +21,13 @@ test_that("get_decon() runs on the demo offline and refuses the studies added si
   expect_true(any(!is.na(decon$votechoice)))
   expect_identical(attr(decon, "timing"), c(turnout = "post", votechoice = "post", votechoice_text = NA_character_))
   sm <- attr(decon, "source_map")
-  expect_identical(names(sm), c("qes_code", "column", "source_variable", "target", "grade"))
+  expect_identical(names(sm), c("qes_code", "column", "source_variable", "target", "grade", "status"))
   expect_identical(sm$target[sm$column == "votechoice"], "vote_prov_recall")
+  expect_identical(sm$status[sm$column == "votechoice"], "stable")
+  # the qes2014 gender row is held in review (spec 4.0.0): NA, not_reviewed
+  expect_true(all(is.na(decon$gender)))
+  expect_identical(attr(decon, "legacy_na_columns")$reason[attr(decon, "legacy_na_columns")$column == "gender"],
+                   "not_reviewed")
   expect_identical(attr(decon, "qes_provenance")$study, "qes_demo")
   # party_best and partylean have no valid source anywhere
   na <- attr(decon, "legacy_na_columns")
@@ -71,16 +76,19 @@ test_that("the reported vote and turnout fill the other studies; the panels give
 test_that("the replacement that the get_decon() notice names returns values for the demo", {
   reg <- getFromNamespace(".qes_deprecated", "qesR")
   call_text <- reg$replacement[reg$name == "get_decon"]
-  expect_match(call_text, "include_draft = TRUE", fixed = TRUE)
+  # signed-off rows only, as get_decon() since spec 4.0.0
+  expect_false(grepl("include_draft", call_text, fixed = TRUE))
   # the documented call, with the demo as `srvy`
   expect_match(call_text, "qes_harmonize(srvy, ", fixed = TRUE)
   expr <- str2lang(call_text)
   expr$quiet <- TRUE
   h <- eval(expr, list(srvy = "qes_demo", qes_harmonize = qesR::qes_harmonize))
   expect_identical(nrow(h), 60L)
-  for (col in c("gender", "vote_prov_recall", "turnout_prov_recall", "lr_self", "birth_year")) {
+  for (col in c("vote_prov_recall", "turnout_prov_recall", "lr_self", "birth_year")) {
     expect_true(any(!is.na(h[[col]])), info = col)
   }
+  # the qes2014 gender row is held in review (spec 4.0.0)
+  expect_true(all(is.na(h$gender)))
 })
 
 test_that("get_decon() raises the error of its one study, without a 'skipping' message", {

@@ -188,10 +188,11 @@ test_that("min_grade sets lower cells to NA with reason below_grade", {
 
 test_that("rows not signed off by a reviewer are applied only with include_draft", {
   syn <- hz_syn("qes2014")
+  unsigned <- hz_spec_unsigned()
   # no row applied at all: a warning (qesR_warning_all_unreviewed), not the
   # message
   expect_warning(
-    m <- hz_messages(hz_run(syn, include_draft = FALSE, quiet = FALSE, missing = "reasons")),
+    m <- hz_messages(hz_run(syn, include_draft = FALSE, quiet = FALSE, missing = "reasons", spec = unsigned)),
     class = "qesR_warning_all_unreviewed"
   )
   expect_false("qesR_message_unreviewed_skipped" %in% m$classes)
@@ -210,11 +211,11 @@ test_that("rows not signed off by a reviewer are applied only with include_draft
   withr::local_options(qesR.lang = "en")
   expect_true(any(grepl("include_draft = FALSE", capture.output(print(h)), fixed = TRUE)))
   # with include_draft = TRUE they are applied, with their own message
-  m1 <- hz_messages(hz_run(syn, include_draft = TRUE, quiet = FALSE))
+  m1 <- hz_messages(hz_run(syn, include_draft = TRUE, quiet = FALSE, spec = unsigned))
   expect_true("qesR_message_unreviewed_cells" %in% m1$classes)
   expect_false("qesR_message_unreviewed_skipped" %in% m1$classes)
   # a signed-off row is applied by default
-  s <- hz_spec()
+  s <- unsigned
   i <- hz_xw_row(s$tables, "qes2014", "vote_prov_recall")
   s$tables$crosswalk$status[i] <- "stable"
   s$tables$crosswalk$reviewed_by[i] <- "Test Reviewer"
@@ -223,6 +224,14 @@ test_that("rows not signed off by a reviewer are applied only with include_draft
   expect_false(all(is.na(h2$vote_prov_recall)))
   expect_true(all(is.na(h2$sov_indep)))
   expect_true(attr(h2, "qes_spec")$custom)
+  # the shipped spec: the signed-off rows are applied by default, the one
+  # qes2014 row still in review (gender) is not
+  h3 <- hz_run(syn, include_draft = FALSE, missing = "reasons")
+  expect_false(all(is.na(h3$vote_prov_recall)))
+  expect_false(all(is.na(h3$sov_indep)))
+  expect_true(all(h3$gender__na == "not_reviewed"))
+  xw <- hz_spec()$tables$crosswalk
+  expect_identical(xw$status[xw$study == "qes2014" & xw$target == "gender"], "review")
 })
 
 test_that("cells left out for another reason are not counted as not signed off", {
@@ -383,9 +392,10 @@ test_that("the demonstration study is harmonized offline with the qes2014 rows",
   expect_true(all(h$vote_prov_recall__na[unclass(demo$Q2) %in% 2] == "not_voted"))
   # the file was read from the package and checked by md5
   expect_true(qes_provenance(h)$md5_verified)
-  # default: rows not signed off are not applied
-  h0 <- expect_warning(qes_harmonize("qes_demo", quiet = TRUE), class = "qesR_warning_all_unreviewed")
-  expect_true(all(is.na(h0$vote_prov_recall)))
+  # default: the signed-off rows are applied, the rows still in review are not
+  h0 <- qes_harmonize("qes_demo", missing = "reasons", quiet = TRUE)
+  expect_identical(h0$vote_prov_recall, h$vote_prov_recall)
+  expect_true(all(h0$gender__na == "not_reviewed"))
 })
 
 test_that("printing shows the spec, the approximate and structural-zero cells, and the licence", {
@@ -490,8 +500,9 @@ test_that("harmonized output does not depend on the locale", {
 
 test_that("a result left all NA by unreviewed rows is a warning that counts the values", {
   syn <- hz_syn("qes2014")
+  unsigned <- hz_spec_unsigned()
   w <- expect_warning(
-    h <- hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = TRUE),
+    h <- hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = TRUE, spec = unsigned),
     class = "qesR_warning_all_unreviewed"
   )
   expect_true(all(is.na(h$vote_prov_recall)))
@@ -501,7 +512,7 @@ test_that("a result left all NA by unreviewed rows is a warning that counts the 
   expect_identical(w$id, "unreviewed_all")
   # the warning is not silenced by quiet, and replaces the message
   m <- hz_messages(withCallingHandlers(
-    hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = FALSE),
+    hz_run(syn, targets = c("vote_prov_recall", "gender"), include_draft = FALSE, quiet = FALSE, spec = unsigned),
     qesR_warning_all_unreviewed = function(w) invokeRestart("muffleWarning")
   ))
   expect_false("qesR_message_unreviewed_skipped" %in% m$classes)
@@ -512,7 +523,7 @@ test_that("a result left all NA by unreviewed rows is a warning that counts the 
   expect_length(line, 1L)
   expect_match(line, sprintf("2 (%d value(s))", 2L * nrow(syn$qes2014)), fixed = TRUE)
   # a signed-off row applied next to unreviewed ones: a message, with the count
-  s <- hz_spec()
+  s <- unsigned
   i <- hz_xw_row(s$tables, "qes2014", "vote_prov_recall")
   s$tables$crosswalk$status[i] <- "stable"
   s$tables$crosswalk$reviewed_by[i] <- "Test Reviewer"

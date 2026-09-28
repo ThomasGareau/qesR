@@ -58,17 +58,27 @@ test_that("the census margins are distributions with a documented age cut", {
   }
   expect_setequal(unique(cen$variable), c("gender", "age_group6", "lang_mother", "education"))
   expect_true(all(cen$universe %in% c("18+", "20+", "25+")))
-  expect_true(all(grepl("^https://www150\\.statcan\\.gc\\.ca/t1/tbl1/en/tv\\.action\\?pid=[0-9]{10}$", cen$source_url)))
+  # the NDM tables, the 2011 Census Profile download and the Internet
+  # Archive's capture of the 2006 topic-based table
+  ndm <- grepl("^https://www150\\.statcan\\.gc\\.ca/t1/tbl1/en/tv\\.action\\?pid=[0-9]{10}$", cen$source_url)
+  prof <- grepl("^https://www12\\.statcan\\.gc\\.ca/census-recensement/2011/dp-pd/prof/.*CTLG=98-316-XWE2011001", cen$source_url)
+  ivt <- grepl("^https://web\\.archive\\.org/web/[0-9]+id_/http://www12\\.statcan\\.gc\\.ca/census-recensement/2006/dp-pd/tbt/Download\\.cfm\\?PID=88984$", cen$source_url)
+  expect_true(all(ndm | prof | ivt))
+  expect_identical(unique(cen$source_table[prof]), "98-316-XWE2011001")
+  expect_identical(unique(cen$source_table[ivt]), "97-551-XCB2006009")
   # levels are the harmonized levels (education: the census's two groups)
   lv <- .qes_spec_get()$tables$levels
   expect_true(all(cen$level[cen$variable == "gender"] %in% c("man", "woman")))
   expect_true(all(cen$level[cen$variable == "lang_mother"] %in% .qes_spec_levels(lv, "lang3")$name))
   expect_true(all(cen$level[cen$variable == "age_group6"] %in% .qes_spec_levels(lv, "age6")$name))
   expect_setequal(cen$level[cen$variable == "education"], c("below_university", "university"))
-  # 18+ where single years are published (2016, 2021), the nearest cut before
-  expect_identical(unique(cen$universe[cen$variable == "gender" & cen$census_year >= 2016]), "18+")
-  expect_identical(unique(cen$universe[cen$variable == "age_group6" & cen$census_year < 2016]), "25+")
+  # gender and age at 18+ in every census; mother tongue at 20+ from 2011
+  expect_identical(unique(cen$universe[cen$variable %in% c("gender", "age_group6")]), "18+")
+  expect_setequal(cen$census_year[cen$variable == "age_group6"], rep(c(2006L, 2011L, 2016L, 2021L), each = 6L))
+  expect_setequal(unique(cen$census_year[cen$variable == "lang_mother"]), c(2011L, 2016L, 2021L))
   expect_identical(sum(cen$count[cen$census_year == 2021 & cen$variable == "gender"]), 6850675)
+  expect_identical(sum(cen$count[cen$census_year == 2011 & cen$variable == "gender"]), 6356525)
+  expect_identical(sum(cen$count[cen$census_year == 2006 & cen$variable == "gender"]), 5996910)
 })
 
 test_that("the recorded report ships no qes2022 aggregate and matches the benchmarks", {
@@ -85,7 +95,7 @@ test_that("the recorded report ships no qes2022 aggregate and matches the benchm
   # one V-L2 index per study with a reviewed weight, and the baselines of
   # design.md section 8.3 confirmed on the official figures (R3)
   v <- rec[rec$check == "recall" & is.na(rec$level) & rec$status %in% "gate", ]
-  expect_setequal(v$study, c("qes2012", "qes2014", "qes2018"))
+  expect_setequal(v$study, c("qes2007", "qes2012", "qes2014", "qes2018", "qes2018_panel"))
   expect_equal(v$value[match(c("qes2012", "qes2014", "qes2018"), v$study)], c(8.0, 5.6, 3.2), tolerance = 0.06)
   # 1998 covers francophones only: skipped
   expect_identical(unique(rec$status[rec$study == "qes1998" & is.na(rec$level)]), "skipped")
@@ -98,8 +108,9 @@ test_that("the recorded report ships no qes2022 aggregate and matches the benchm
   for (k in which(rec$check %in% c("recall", "census") & is.na(rec$level) & !is.na(rec$value))) {
     parts <- rec[rec$study == rec$study[k] & rec$check == rec$check[k] & rec$variable == rec$variable[k] &
                    rec$weight == rec$weight[k] & !is.na(rec$level), ]
-    expect_equal(rec$value[k], 0.5 * sum(abs(parts$estimate - parts$benchmark)), tolerance = 0.03,
-                 label = paste(rec$study[k], rec$variable[k]))
+    # the shares are rounded to 2 decimals: allow a few hundredths of a point
+    expect_lt(abs(rec$value[k] - 0.5 * sum(abs(parts$estimate - parts$benchmark))), 0.03,
+              label = paste(rec$study[k], rec$variable[k]))
   }
   # no gated row fails its own record; turnout over-reporting within 0-35
   expect_false(any(rec$status %in% "fail"))
@@ -140,11 +151,11 @@ test_that("the report runs offline on qes_demo and the gate compares with the re
   lv <- rc[!is.na(rc$level) & rc$weight == "none", ]
   expect_equal(idx$value[1], 0.5 * sum(abs(lv$estimate - lv$benchmark)), tolerance = 0.02)
   expect_identical(sum(lv$n), idx$n[1])
-  # the census before the 2014 election is 2011: gender 20+, ages 25+
+  # the census before the 2014 election is 2011: gender and ages 18+
   cz <- r[r$check == "census", ]
   expect_identical(unique(cz$reference), "Census 2011")
-  expect_identical(unique(cz$universe[cz$variable == "age_group6"]), "25+")
-  expect_false("a18_24" %in% cz$level)
+  expect_identical(unique(cz$universe[cz$variable %in% c("gender", "age_group6")]), "18+")
+  expect_true("a18_24" %in% cz$level)
 
   # the gate: a recorded value + 2.0 points passes, more fails, none is new
   g <- r[r$status %in% "gate", ]

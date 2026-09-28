@@ -129,9 +129,14 @@ reviewed study by study and may still change. A crosswalk row is applied
 only once a reviewer has signed it off (status \code{"stable"}); rows checked
 against the files but not yet signed off (status \code{"review"} or \code{"draft"})
 are applied only with \code{include_draft = TRUE}, and a message says so. In
-this version no row of the shipped spec is signed off yet, so the default
-call gives missing values (reason \code{not_reviewed}) and the examples pass
-\code{include_draft = TRUE}. When no cell of the result is applied for that
+spec 4.0.0 most rows are signed off, after an automated double review
+against the original files and documents (not a human review; the
+crosswalk's \code{reviewed_by} says so). The rows of \code{qes1998},
+\code{qes2007_panel}, \code{qes2012_panel} and the CROP polls stay in review until
+their recommended weights are reviewed, and the \code{qes2014} gender row until
+a second reviewer confirms its grade; by default their values are missing
+(reason \code{not_reviewed}), and \code{qes_spec("crosswalk")$review_note} says why
+each is held. When no cell of the result is applied for that
 reason, a warning of class \code{qesR_warning_all_unreviewed} gives the number
 of values left \code{NA} and names \code{include_draft = TRUE}; otherwise a message
 counts the cells (study and target) and values left out.
@@ -369,10 +374,16 @@ colonnes (sinon, une erreur de classe \code{qesR_error_input}). Une ligne de
 correspondance n'est appliquée qu'une fois approuvée par un réviseur
 (statut \code{"stable"}) ; \code{include_draft = TRUE} applique aussi les lignes
 vérifiées mais pas encore approuvées (statut \code{"review"} ou \code{"draft"}).
-Aucune ligne de la spécification livrée n'est encore approuvée : sans
-\code{include_draft = TRUE}, les valeurs sont NA (motif \code{not_reviewed}), et un
-avertissement de classe \code{qesR_warning_all_unreviewed} le signale quand
-tout le résultat est NA. Les autres conditions ont des classes (section
+Dans la spécification 4.0.0, la plupart des lignes sont approuvées, après
+une double révision automatisée sur les fichiers et documents originaux
+(et non une révision humaine ; la colonne \code{reviewed_by} le dit) ; les
+lignes de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et des sondages
+CROP restent en révision jusqu'à ce que leurs pondérations recommandées
+soient révisées, et la ligne gender de \code{qes2014} jusqu'à ce qu'un second
+réviseur confirme son niveau. Sans \code{include_draft = TRUE}, leurs valeurs
+sont NA (motif \code{not_reviewed}), \code{qes_spec("crosswalk")$review_note} dit
+pourquoi chacune est retenue, et un avertissement de classe
+\code{qesR_warning_all_unreviewed} le signale quand tout le résultat est NA. Les autres conditions ont des classes (section
 \emph{Conditions}) : erreurs \code{qesR_error_unmapped}, \code{qesR_error_spec} et
 \code{qesR_error_duplicate_id} (variables d'identification qui n'identifient
 pas les lignes de façon unique) ; avertissements \code{qesR_warning_unmapped},
@@ -384,33 +395,35 @@ pondération choisie. Voir
 }
 
 \examples{
-# the synthetic demonstration study, harmonized with the qes2014 rows
-# (include_draft = TRUE: the shipped rows are not yet signed off)
-h <- qes_harmonize("qes_demo", include_draft = TRUE)
+# the synthetic demonstration study, harmonized with the signed-off
+# qes2014 rows (its gender row, still in review, is left NA)
+h <- qes_harmonize("qes_demo")
 h
 table(h$vote_prov_recall, useNA = "ifany")
 
 # why values are missing, and the grade of each cell
 h <- qes_harmonize("qes_demo", targets = c("vote", "sov_indep"),
-                   missing = "reasons", include_draft = TRUE, quiet = TRUE)
+                   missing = "reasons", quiet = TRUE)
 table(h$vote_prov_recall__na)
 cells <- qes_provenance(h, level = "cell")
 cells[, c("study", "target", "source_var", "grade", "n_valid")]
 
 # French labels, same codes
-h_fr <- qes_harmonize("qes_demo", targets = "interest_4pt", lang = "fr",
-                      include_draft = TRUE, quiet = TRUE)
+h_fr <- qes_harmonize("qes_demo", targets = "interest_4pt", lang = "fr", quiet = TRUE)
 levels(h_fr$interest_4pt)
 
 # weights and eligibility: every question of the demonstration study was
 # asked after the election, so weight_post is its weight (mean 1)
-h <- qes_harmonize("qes_demo", targets = "sov_indep", include_draft = TRUE, quiet = TRUE)
+h <- qes_harmonize("qes_demo", targets = "sov_indep", quiet = TRUE)
 h[1:3, c("study", "waves", "eligible_voter", "sov_indep", "weight_post", "weight_post_var")]
 attr(h, "qes_weight_guide")
 
 # one row per respondent and wave
-l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long",
-                   include_draft = TRUE, quiet = TRUE)
+l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
+
+# the rows still in review, and why each is held
+xw <- qes_spec("crosswalk")
+head(xw[xw$status == "review", c("study", "target", "review_note")])
 table(l$wave, l$wave_timing)
 }
 \seealso{

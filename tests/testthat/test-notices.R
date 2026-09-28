@@ -11,7 +11,7 @@ test_that("the deprecation registry lists the 11 legacy wrappers", {
   # get_decon() is soft-deprecated from the engine-based legacy switch (0.7.0)
   expect_true(reg$shipped[reg$name == "get_decon"])
   expect_identical(reg$since[reg$name == "get_decon"], "0.7.0")
-  expect_identical(reg$replacement[reg$name == "get_decon"], "qes_harmonize(srvy, targets = \"decon\", include_draft = TRUE)")
+  expect_identical(reg$replacement[reg$name == "get_decon"], "qes_harmonize(srvy, targets = \"decon\")")
   # a shipped replacement must name a function that exists now
   for (i in which(reg$shipped)) {
     fn <- sub("\\(.*$", "", sub("^head\\(", "", reg$replacement[i]))

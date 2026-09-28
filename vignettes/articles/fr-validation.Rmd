@@ -97,11 +97,13 @@ knitr::kable(
 ```
 
 L'indice pondéré utilise la pondération que la spécification recommande
-pour la vague qui a posé la question ; seules `qes2012`, `qes2014`,
-`qes2018` et `qes2022` ont pour l'instant une pondération révisée. Les
-pondérations des autres études ne sont pas assez documentées pour être
-utilisées (leurs lignes sont `needs_review`) : leur indice est non
-pondéré. `qes1998` n'a interrogé que des francophones, une population que
+pour la vague qui a posé la question ; `qes2007`, `qes2012`, `qes2014`,
+`qes2018`, `qes2022` et le panel de 2018 ont pour l'instant une
+pondération révisée. Les pondérations de `qes2007_panel`, de
+`qes2012_panel`, des sondages CROP et de `qes1998` ne sont pas assez
+documentées pour être utilisées (leurs lignes sont `needs_review`), et les
+deux pondérations de `qes2008` sont calées sur le vote ou sur la
+participation : leur indice est non pondéré. `qes1998` n'a interrogé que des francophones, une population que
 les résultats officiels ne décrivent pas : l'étude est montrée à titre
 indicatif, sans être vérifiée.
 
@@ -157,22 +159,27 @@ pas ou n'ont pas voulu répondre, sont laissées de côté.
 ## 3. Répondants et recensement
 
 Chaque étude est comparée au recensement qui précède son élection (2006,
-2011, 2016 ou 2021). Statistique Canada ne publie des effectifs de 18 ans
-et plus que pour le genre et l'âge en 2016 et 2021 ; ailleurs, la coupure
-d'âge publiée la plus proche est utilisée, et les répondants sont coupés
-de la même façon lorsque leur âge est connu :
+2011, 2016 ou 2021). Le genre et l'âge sont comparés chez les 18 ans et
+plus ; pour la langue maternelle et la scolarité, dont les tableaux n'ont
+pas de coupure à 18 ans, la coupure d'âge publiée la plus proche est
+utilisée, et les répondants sont coupés de la même façon lorsque leur âge
+est connu :
 
 | Marge | Recensement | Population comparée | Tableau |
 |---|---|---|---|
-| Genre | 2016, 2021 | 18 ans et plus | 98-10-0020-01 |
-| Genre | 2006, 2011 | 20 ans et plus, ménages privés | 98-10-0384-01 |
-| Âge (six tranches) | 2016, 2021 | 18 ans et plus | 98-10-0020-01 |
-| Âge (cinq tranches) | 2006, 2011 | 25 ans et plus, ménages privés | 98-10-0384-01 |
+| Genre, âge (six tranches) | 2016, 2021 | 18 ans et plus | 98-10-0020-01 |
+| Genre, âge (six tranches) | 2011 | 18 ans et plus | Profil du recensement 98-316-XWE2011001 |
+| Genre, âge (six tranches) | 2006 | 18 ans et plus | 97-551-XCB2006009 |
 | Langue maternelle | 2011, 2016, 2021 | 20 ans et plus, hors établissements, une seule langue maternelle | 98-10-0218-01 |
 | Scolarité | 2006 à 2021 | 25 ans et plus, ménages privés | 98-10-0384-01 |
 
-Les effectifs de scolarité et de genre de 2011 viennent de l'Enquête
-nationale auprès des ménages, qui était facultative. La langue maternelle
+Les effectifs de scolarité de 2011 viennent de l'Enquête nationale auprès
+des ménages, qui était facultative. Le tableau de 2006 97-551-XCB2006009
+n'est plus sur le site de Statistique Canada ; son fichier a été récupéré
+dans l'Internet Archive. Le seul tableau de 2006 trouvé avec la langue
+maternelle selon l'âge compte les résidents des établissements et beaucoup
+plus de langues maternelles multiples : 2006 n'a donc pas de comparaison
+de la langue maternelle. La langue maternelle
 est comparée parmi les personnes qui déclarent une seule langue
 maternelle : les réponses multiples du recensement et les réponses des
 enquêtes qui nomment deux langues sont laissées de côté. La scolarité est
@@ -205,7 +212,7 @@ concordance parfaite) ; une cellule vide est une marge que l'étude n'a pas
 mesurée, ou que les tableaux du recensement recueillis ne publient pas pour
 cette année (la langue maternelle en 2006).
 
-```{r census-plot, fig.height = 7, fig.alt = tr("For the four studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les quatre études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
+```{r census-plot, fig.height = 7, fig.alt = tr("For the studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
 cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
 cl$variable <- factor(vars[cl$variable], unname(vars))
 cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
@@ -333,7 +340,11 @@ rapport au questionnaire.
   [98-10-0218-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=9810021801)
   (langue maternelle selon l'âge, 2011 à 2021) et
   [98-10-0384-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=9810038401)
-  (plus haut niveau de scolarité selon l'âge et le genre, 2006 à 2021).
+  (plus haut niveau de scolarité selon l'âge et le genre, 2006 à 2021) ;
+  le Profil du recensement de 2011 (catalogue 98-316-XWE2011001 : âge
+  selon le sexe) ; et le tableau de 2006 97-551-XCB2006009 (âge selon le
+  sexe ; la copie du fichier de Statistique Canada conservée par
+  l'Internet Archive).
 
 Les tableaux de référence se trouvent dans `inst/extdata/validation/` du
 dépôt source, avec la source de chaque ligne ; le paquet installé

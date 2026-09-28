@@ -70,15 +70,14 @@ All these deposits are on Borealis (https://borealisdata.ca).
 
 The three 1998 surveys cover francophones only. The codebook of the deposit
 says it was decided to keep only francophones ("retenir uniquement les
-francophones"); the CROP file interviewed 450 respondents in French and
-kept, for its post-election wave, the 426 whose language of use (the
-language spoken most often at home) is French, and the CREATEC file
-respondents whose mother tongue is French. The combined qes1998 panel file
-pools the 1,057 CREATEC respondents and 426 CROP respondents, the number of
-CROP respondents who speak French most often at home; it has no variable
-linking its rows to the CROP file, and the deposit does not state one
-definition for it, so the definition is inferred from these counts,
-unconfirmed, and remains pending.
+francophones"), because CREATEC had surveyed only the francophone
+population. The CREATEC file holds respondents whose mother tongue is
+French (question Q17: all 1,057); the CROP file interviewed 450
+respondents in French and kept, for its post-election wave, the 426 whose
+language spoken most often in the household is French (question q22). The
+combined qes1998 panel file pools these 1,057 CREATEC and 426 CROP
+respondents: its rows link one to one to the firms' files (quetr; for CROP,
+quest = quetr - 60000), which confirms the definition firm by firm.
 
 
 2. The 2022 study (CC BY-NC 4.0): no labels, question text or counts ship
@@ -148,26 +147,60 @@ attribution above, and are not covered by the MIT licence of qesR
     files; each row gives its source URL). Parties other than those the
     harmonization spec names are summed into one row. Source: Élections
     Québec, official results of the general elections, © Directeur général
-    des élections du Québec. Élections Québec's terms of use
-    (https://www.electionsquebec.qc.ca/en/our-institution/terms-of-use/,
-    consulted 2026-09-27) allow reproduction for non-profit purposes with
-    mention of the source and copyright; other uses and adaptations need
-    its written permission. Until that permission covers their
-    redistribution under the MIT licence of qesR, these two files, and the
-    validation report computed from them (below), are excluded from the
-    package build; they are used only in the source repository (its tests,
+    des élections du Québec. Two sets of terms apply (consulted
+    2026-09-27):
+      (a) 2014, 2018 and 2022. Their results files are listed on dgeq.org,
+      Élections Québec's open-data site, and are covered by its open-data
+      licence, the "Licence d'utilisation des données ouvertes du
+      directeur général des élections" (https://www.dgeq.org/licence.html;
+      in English, https://www.dgeq.org/en/licence.html): free,
+      non-exclusive and non-transferable, for any lawful purpose, commercial
+      use included, with the rights to reproduce, translate, compile,
+      communicate to the public and sub-license. It requires this notice at
+      all times: « Comprend des données ouvertes octroyées sous la licence
+      d'utilisation des données ouvertes du directeur général des
+      élections disponible à l'adresse Web dgeq.org. L'octroi de la
+      licence n'implique aucune approbation par le directeur général des
+      élections de l'utilisation des données ouvertes qui en est faite. »
+      ("Contains open data granted under the Chief Electoral Officer's Open
+      Data User Licence available at http://dgeq.org/en/. The fact of
+      granting the licence in no way implies that the Chief Electoral
+      Officer approves the use made of the open data.") The user must also
+      indemnify the Chief Electoral Officer, and the Chief Electoral
+      Officer may cancel the licence without giving a reason, which cancels
+      every sub-licence. It is not a Creative Commons or open-source
+      licence.
+      (b) 1998, 2007, 2008 and 2012. Their results files are not listed on
+      dgeq.org (for 2012 it lists only the poll-level results and the
+      candidate lists), so, on a cautious reading of the licence, which
+      covers the data "available or referenced" on dgeq.org, they fall under
+      Élections Québec's terms of use for its site
+      (https://www.electionsquebec.qc.ca/en/our-institution/terms-of-use/),
+      which allow reproduction for non-profit purposes with mention of the
+      source and copyright and need its written permission for other uses
+      and for adaptations.
+    Because the two files mix the years of (a) and (b), and because the
+    licence of (a) can be withdrawn and requires an indemnity, which the
+    MIT licence of qesR cannot pass on, these two files, and the validation
+    report computed from them (below), are excluded from the package build;
+    they are used only in the source repository (its tests,
     data-raw/build_validation.R and the website) and are not covered by
     the MIT licence.
   - inst/extdata/validation/census_margins.csv: counts of the Quebec
     population by gender, age group, mother tongue and highest certificate
-    at the censuses of 2006, 2011 (with the 2011 National Household Survey)
-    2016 and 2021, summed from Statistics Canada tables 98-10-0020-01,
-    98-10-0218-01 and 98-10-0384-01 (each row gives its table and URL),
-    used under the Statistics Canada Open Licence
+    at the censuses of 2006, 2011 (education from the 2011 National
+    Household Survey), 2016 and 2021, summed from Statistics Canada tables
+    98-10-0020-01, 98-10-0218-01 and 98-10-0384-01, the 2011 Census Profile
+    (catalogue 98-316-XWE2011001) and the 2006 Census topic-based table
+    97-551-XCB2006009 (each row gives its table and URL; the 2006 table is
+    no longer on Statistics Canada's site, and its Beyond 20/20 file was
+    retrieved from the Internet Archive's capture of Statistics Canada's
+    download link), used under the Statistics Canada Open Licence
     (https://www.statcan.gc.ca/en/terms-conditions/open-licence). The sums
     and shares are qesR's. Adapted from Statistics Canada, Census of
     Population, tables 98-10-0020-01, 98-10-0218-01 and 98-10-0384-01
-    (2006, 2011 NHS, 2016, 2021). This does not constitute an endorsement
+    (2006, 2011 NHS, 2016, 2021), Census Profile 98-316-XWE2011001 (2011)
+    and table 97-551-XCB2006009 (2006). This does not constitute an endorsement
     by Statistics Canada of this product.
   - Not in the package: inst/extdata/validation/validation_report.csv of
     the source repository: aggregates computed by qesR from the CC0

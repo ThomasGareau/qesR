@@ -172,8 +172,9 @@ reference:
 - title: Harmonization (experimental)
   desc: >
     One data frame across the 11 studies, from a specification checked
-    against the original files (rows not yet signed off by a reviewer are
-    applied only with `include_draft = TRUE`): `qes_spec()` shows which
+    against the original files (rows signed off by a reviewer are applied
+    by default, the rows still in review only with `include_draft = TRUE`):
+    `qes_spec()` shows which
     studies have which harmonized variable and how comparable each study's
     question is; `qes_harmonize()` applies it, with a reason for every
     missing value and each respondent's waves and weights; `qes_design()`
@@ -219,7 +220,7 @@ reference:
     | `download_codebook()` | `qes_download(what = "docs")` |
     | `get_preview()` | `head(get_qes())` |
     | `get_qescodes()` | `qes_studies()` |
-    | `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` |
+    | `get_decon()` | `qes_harmonize(srvy, targets = "decon")` |
   contents:
   - qesR-deprecated
   - get_qescodes

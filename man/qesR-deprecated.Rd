@@ -18,7 +18,7 @@ short notice naming its replacement, once per session.\tabular{lll}{
    \code{get_qes_codebook_files()} \tab \code{qes_docs()} \tab 0.5.0 \cr
    \code{download_codebook()} \tab \code{qes_download(what = "docs")} \tab 0.5.0 \cr
    \code{get_qescodes()} \tab \code{qes_studies()} \tab 0.5.0 \cr
-   \code{get_decon()} \tab \code{qes_harmonize(srvy, targets = "decon", include_draft = TRUE)} \tab 0.7.0 \cr
+   \code{get_decon()} \tab \code{qes_harmonize(srvy, targets = "decon")} \tab 0.7.0 \cr
 }
 }
 \section{Notices}{

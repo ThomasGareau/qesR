@@ -146,7 +146,8 @@
       dk_offered = xw$dk_offered, levels_offered = xw$levels_offered,
       levels_not_offered = .qes_not_offered(spec, xw),
       wording = wording, wording_ref = xw$wording_ref,
-      weight_var = .qes_row_weight(spec, xw), status = xw$status, evidence = xw$evidence,
+      weight_var = .qes_row_weight(spec, xw), status = xw$status, reviewed_by = xw$reviewed_by,
+      reviewed_on = xw$reviewed_on, review_note = xw$review_note, evidence = xw$evidence,
       notes = .qes_pick_lang(xw, "notes", lang),
       stringsAsFactors = FALSE
     )
@@ -328,8 +329,8 @@ print.qes_crosswalk <- function(x, ...) {
   draft = c(en = "draft", fr = "provisoire"),
   review = c(en = "in review", fr = "en r\u00e9vision"),
   status_note = c(
-    en = "A row marked \"in review\" was checked against the original files and documents but is not yet signed off by a reviewer; a row marked \"draft\" is not yet checked. `qes_harmonize()` applies such rows only with `include_draft = TRUE`.",
-    fr = "Une ligne marqu\u00e9e \u00ab\u00a0en r\u00e9vision\u00a0\u00bb a \u00e9t\u00e9 v\u00e9rifi\u00e9e sur les fichiers et documents originaux mais n'est pas encore approuv\u00e9e par un r\u00e9viseur\u00a0; une ligne marqu\u00e9e \u00ab\u00a0provisoire\u00a0\u00bb n'est pas encore v\u00e9rifi\u00e9e. `qes_harmonize()` n'applique ces lignes qu'avec `include_draft = TRUE`."
+    en = "A row with no mark is signed off by a reviewer (status stable; in spec 4.0.0, by an automated double review against the original files and documents, not a human review), and `qes_harmonize()` applies it by default. A row marked \"in review\" was checked against the original files and documents but is not signed off (the `review_note` column of `qes_spec(\"crosswalk\")` says why it is held); a row marked \"draft\" is not yet checked. `qes_harmonize()` applies these only with `include_draft = TRUE`.",
+    fr = "Une ligne sans mention est approuv\u00e9e par un r\u00e9viseur (statut stable\u00a0; dans la sp\u00e9cification 4.0.0, par une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non par une r\u00e9vision humaine), et `qes_harmonize()` l'applique par d\u00e9faut. Une ligne marqu\u00e9e \u00ab\u00a0en r\u00e9vision\u00a0\u00bb a \u00e9t\u00e9 v\u00e9rifi\u00e9e sur les fichiers et documents originaux mais n'est pas approuv\u00e9e (la colonne `review_note` de `qes_spec(\"crosswalk\")` dit pourquoi elle est retenue)\u00a0; une ligne marqu\u00e9e \u00ab\u00a0provisoire\u00a0\u00bb n'est pas encore v\u00e9rifi\u00e9e. `qes_harmonize()` n'applique celles-ci qu'avec `include_draft = TRUE`."
   ),
   document = c(en = "document %s, %s", fr = "document %s, %s"),
   none = c(en = "No study has a question for this target yet.", fr = "Aucune \u00e9tude n'a encore de question pour cette cible."),
@@ -368,6 +369,14 @@ print.qes_crosswalk <- function(x, ...) {
   cov_status_note = c(
     en = "%d of the %d cells use crosswalk rows that are checked against the original files and documents but not yet signed off by a reviewer; `qes_harmonize()` applies them only with `include_draft = TRUE`.",
     fr = "%d des %d cellules utilisent des lignes de correspondance v\u00e9rifi\u00e9es sur les fichiers et documents originaux, mais pas encore approuv\u00e9es par un r\u00e9viseur\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
+  ),
+  cov_stable_all = c(
+    en = "All %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (spec 4.0.0: an automated double review against the original files and documents, not a human review).",
+    fr = "Les %d cellules utilisent toutes des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cification 4.0.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
+  ),
+  cov_stable_note = c(
+    en = "%d of the %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (spec 4.0.0: an automated double review against the original files and documents, not a human review).",
+    fr = "%d des %d cellules utilisent des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cification 4.0.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
   ),
   cov_waves = c(en = "Waves and recommended weights", fr = "Vagues et pond\u00e9rations recommand\u00e9es"),
   cov_n_targets = c(en = "Targets", fr = "Cibles"),
@@ -620,6 +629,7 @@ print.qes_crosswalk <- function(x, ...) {
     paste("##", t_("cov_grid_title")), "",
     .qes_md_table(c(t_("cov_target"), studies), grid), "",
     t_("cov_wave_note"), "", t_("cov_zero_note"), "",
+    status_line(sum(applied$status == "stable"), "cov_stable_all", "cov_stable_note"),
     status_line(sum(applied$status == "review"), "cov_status_all", "cov_status_note"),
     status_line(sum(applied$status == "draft"), "cov_draft_all", "cov_draft_note"),
     paste("##", t_("cov_studies_title")), "",

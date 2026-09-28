@@ -93,10 +93,12 @@ knitr::kable(
 ```
 
 The weighted index uses the weight the specification recommends for the
-wave that asked the question; only `qes2012`, `qes2014`, `qes2018` and
-`qes2022` have reviewed weights so far. The other studies' weights are not
-documented well enough to be used (their rows are `needs_review`), so their
-index is unweighted. `qes1998` interviewed francophones only, a population
+wave that asked the question; `qes2007`, `qes2012`, `qes2014`, `qes2018`,
+`qes2022` and the 2018 panel have reviewed weights so far. The weights of
+`qes2007_panel`, `qes2012_panel`, the CROP polls and `qes1998` are not
+documented well enough to be used (their rows are `needs_review`), and
+both weights of `qes2008` are calibrated on the vote or on turnout, so
+their index is unweighted. `qes1998` interviewed francophones only, a population
 the official results do not describe: it is shown for reference but not
 checked.
 
@@ -151,22 +153,25 @@ not say, are left out.
 ## 3. Respondents and the census
 
 Each study is compared with the census that precedes its election (2006,
-2011, 2016 or 2021). Statistics Canada publishes 18-and-over counts only
-for gender and age in 2016 and 2021, so the nearest published age cut is
-used elsewhere, and respondents are cut the same way when their age is
-known:
+2011, 2016 or 2021). Gender and age are compared at 18 and over; for
+mother tongue and education, whose tables have no 18-and-over cut, the
+nearest published age cut is used, and respondents are cut the same way
+when their age is known:
 
 | Margin | Census | Population compared | Table |
 |---|---|---|---|
-| Gender | 2016, 2021 | 18 and over | 98-10-0020-01 |
-| Gender | 2006, 2011 | 20 and over, private households | 98-10-0384-01 |
-| Age (six bands) | 2016, 2021 | 18 and over | 98-10-0020-01 |
-| Age (five bands) | 2006, 2011 | 25 and over, private households | 98-10-0384-01 |
+| Gender, age (six bands) | 2016, 2021 | 18 and over | 98-10-0020-01 |
+| Gender, age (six bands) | 2011 | 18 and over | Census Profile 98-316-XWE2011001 |
+| Gender, age (six bands) | 2006 | 18 and over | 97-551-XCB2006009 |
 | Mother tongue | 2011, 2016, 2021 | 20 and over, outside institutions, one mother tongue | 98-10-0218-01 |
 | Education | 2006 to 2021 | 25 and over, private households | 98-10-0384-01 |
 
-The 2011 education and gender counts come from the National Household
-Survey, which was voluntary. Mother tongue is compared among people who
+The 2011 education counts come from the National Household Survey, which
+was voluntary. The 2006 table 97-551-XCB2006009 is no longer on Statistics
+Canada's site; its file was retrieved from the Internet Archive. The one
+2006 table found with mother tongue by age counts institutional residents
+and many more multiple mother tongues, so 2006 has no mother-tongue
+comparison. Mother tongue is compared among people who
 report one mother tongue: the census's multiple answers and the surveys'
 answers naming two languages are left out. Education is compared as
 university (any university certificate, diploma or degree) or below.
@@ -196,7 +201,7 @@ Each cell is a dissimilarity index in points (0 is a perfect match); a
 blank cell is a margin the study did not ask, or one the collected census
 tables do not publish for that year (mother tongue in 2006).
 
-```{r census-plot, fig.height = 7, fig.alt = tr("For the four studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les quatre études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
+```{r census-plot, fig.height = 7, fig.alt = tr("For the studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
 cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
 cl$variable <- factor(vars[cl$variable], unname(vars))
 cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
@@ -313,7 +318,10 @@ questionnaire.
   [98-10-0218-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810021801)
   (mother tongue by age, 2011 to 2021) and
   [98-10-0384-01](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=9810038401)
-  (highest certificate by age and gender, 2006 to 2021).
+  (highest certificate by age and gender, 2006 to 2021); the 2011 Census
+  Profile (catalogue 98-316-XWE2011001: age by sex); and the 2006 table
+  97-551-XCB2006009 (age by sex; the Internet Archive's copy of Statistics
+  Canada's file).
 
 The benchmark tables are in `inst/extdata/validation/` of the source
 repository, with the source of every row; the installed package

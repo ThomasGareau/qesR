@@ -107,7 +107,7 @@
     instrument = "chr", election_ref = "chr", mode = "chr", dk_offered = "chr",
     levels_offered = "chr", wording_en = "chr", wording_fr = "chr",
     wording_ref = "chr", evidence = "chr", notes_en = "chr", notes_fr = "chr",
-    reviewed_by = "chr", reviewed_on = "date", status = "chr"
+    reviewed_by = "chr", reviewed_on = "date", review_note = "chr", status = "chr"
   ),
   spec_valuemaps = c(
     map_id = "chr", source_code = "chr", source_label = "chr",

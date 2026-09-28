@@ -680,6 +680,10 @@
   }
   bad <- which(!xw$status %in% "draft" & !has(xw$evidence))
   add("V-S11", "crosswalk", bad, xkeys[bad], "a row in review or stable needs evidence")
+  # a row a reviewer has seen (reviewed_by) but left in review says why in
+  # review_note
+  bad <- which(xw$status %in% "review" & has(xw$reviewed_by) & !has(xw$review_note))
+  add("V-S11", "crosswalk", bad, xkeys[bad], "a reviewed row left in review needs review_note (why it is held)")
   for (i in which(vm$source_label_origin %in% "ddi")) {
     st <- xw$status[xw$map_id %in% vm$map_id[i]]
     if (any(st != "draft")) {
@@ -733,11 +737,14 @@
   rec <- wt$recommended %in% TRUE
   bad <- which(rec & wt$role %in% c("vote_calibrated", "turnout_calibrated"))
   add("V-S13", "weights", bad, tkeys[bad], "a recommended weight cannot be calibrated on vote or turnout")
+  # a study-wave whose registered weights are all calibrated on vote or
+  # turnout (qes2008) has none to recommend: its harmonized weights are NA
+  calibrated <- wt$role %in% c("vote_calibrated", "turnout_calibrated")
   for (k in unique(paste(wt$study, wt$wave, sep = "/"))) {
     rows <- which(paste(wt$study, wt$wave, sep = "/") == k)
     n_rec <- sum(rec[rows])
-    if (n_rec != 1L) {
-      add("V-S13", "weights", NA, k, sprintf("%d recommended weights; each study-wave with weights has exactly one", n_rec))
+    if (n_rec > 1L || (n_rec == 0L && !all(calibrated[rows]))) {
+      add("V-S13", "weights", NA, k, sprintf("%d recommended weights; each study-wave with a weight not calibrated on vote or turnout has exactly one", n_rec))
     }
   }
   weighted <- c(paste(wt$study, wt$wave, sep = "/"), wkeys[wv$study %in% wt$study[wt$wave %in% .qes_all_waves]])

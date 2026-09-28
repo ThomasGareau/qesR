@@ -55,7 +55,7 @@ test_that("the respondent layout has the wave, date, mode, eligibility and weigh
 })
 
 test_that("weights that need review are NA, with a message; the guide says which weight fits", {
-  syn <- hz_syn(c("qes2018_panel", "qes2012"))
+  syn <- hz_syn(c("qes2012_panel", "qes2012"))
   classes <- character(0)
   h <- withCallingHandlers(
     hz_run(syn, targets = c("vote_prov_intent", "vote_prov_recall", "lr_self"), quiet = FALSE),
@@ -65,16 +65,16 @@ test_that("weights that need review are NA, with a message; the guide says which
     }
   )
   expect_true("qesR_message_weight_review" %in% classes)
-  p <- h[h$study == "qes2018_panel", ]
+  p <- h[h$study == "qes2012_panel", ]
   expect_true(all(is.na(p$weight_pre)) && all(is.na(p$weight_post)))
   expect_false(all(is.na(h$weight_post[h$study == "qes2012"])))
   guide <- attr(h, "qes_weight_guide")
   expect_identical(names(guide), c("target", "study", "wave", "target_timing", "weight_column",
                                    "weight_var", "weight_status"))
-  g <- guide[guide$study == "qes2018_panel", ]
+  g <- guide[guide$study == "qes2012_panel", ]
   expect_identical(g$weight_column[g$target == "vote_prov_intent"], "weight_pre")
   expect_identical(g$weight_column[g$target == "vote_prov_recall"], "weight_post")
-  expect_identical(g$weight_var[g$target == "vote_prov_intent"], "weight")
+  expect_identical(g$weight_var[g$target == "vote_prov_intent"], "pondam1")
   expect_identical(g$weight_status[g$target == "vote_prov_intent"], "needs_review")
   # a target the study has no question for has no weight
   g <- guide[guide$study == "qes2012", ]
@@ -85,7 +85,7 @@ test_that("weights that need review are NA, with a message; the guide says which
   expect_true(any(grepl("Weights awaiting review", capture.output(print(h)), fixed = TRUE)))
   # cell provenance records the weight's status and raw mean
   cell <- qes_provenance(h, level = "cell")
-  k <- cell$study == "qes2018_panel" & cell$target == "vote_prov_intent"
+  k <- cell$study == "qes2012_panel" & cell$target == "vote_prov_intent"
   expect_identical(cell$weight_status[k], "needs_review")
   expect_equal(cell$weight_mean_raw[k], 1)
   expect_true(all(c("weight_status", "weight_mean_raw", "n_outside_universe") %in% names(cell)))
@@ -190,11 +190,17 @@ test_that("the interview mode varies by respondent where the wave says so", {
   expect_identical(unique(l$survey_mode[l$wave == "post"]), "mixed")
   # the mode row is a crosswalk row like any other: not applied until signed off
   h0 <- suppressMessages(withCallingHandlers(
-    qes_harmonize(data = syn, targets = "vote_prov_intent", quiet = TRUE),
+    qes_harmonize(data = syn, targets = "vote_prov_intent", quiet = TRUE, spec = hz_spec_unsigned()),
     qesR_warning_unverified_source = function(w) invokeRestart("muffleWarning"),
     qesR_warning_all_unreviewed = function(w) invokeRestart("muffleWarning")
   ))
   expect_true(all(is.na(h0$survey_mode)))
+  # signed off in the shipped spec: applied by default
+  h1 <- suppressMessages(withCallingHandlers(
+    qes_harmonize(data = syn, targets = "vote_prov_intent", quiet = TRUE),
+    qesR_warning_unverified_source = function(w) invokeRestart("muffleWarning")
+  ))
+  expect_identical(h1$survey_mode, h$survey_mode)
   # the spec requires a survey_mode row on the variable a var: mode names
   s <- hz_spec()
   s$tables$crosswalk <- s$tables$crosswalk[s$tables$crosswalk$target != "survey_mode", ]

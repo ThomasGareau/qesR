@@ -17,6 +17,20 @@
 #       tongue by age, 2011, 2016 and 2021) and 98-10-0384-01 (highest
 #       certificate by age and gender, 2006, 2011 (National Household
 #       Survey), 2016 and 2021): https://www150.statcan.gc.ca/n1/tbl/csv/<pid>-eng.zip
+#   zips/98-316-XWE2011001-101_CSV.zip
+#       the 2011 Census Profile, provinces and territories (catalogue
+#       98-316-XWE2011001, file 101), from the Profile's comprehensive
+#       download (a plain GET of profile_2011_url below);
+#   ivt/97-551-XCB2006009.IVT
+#       the 2006 Census topic-based table 97-551-XCB2006009 (Age (123) and
+#       Sex (3), 2001 and 2006), as Statistics Canada published it in
+#       Beyond 20/20 format; the table is gone from the Statistics Canada
+#       site, so the file is the Internet Archive's capture of its download
+#       link (ivt_2006_url below). Its Quebec 2006 block is read at a fixed
+#       offset, and the script checks the decoded values (md5 of the file,
+#       the Quebec total and median ages of the 2006 Census, male plus female
+#       equal to the total, each five-year band equal to the sum of its
+#       single years).
 #
 # It writes three tables to inst/extdata/validation/ (read by
 # R/validation.R):
@@ -30,22 +44,25 @@
 #   census_margins.csv    Quebec margins of gender, age, mother tongue and
 #       education at the census that precedes each study.
 #
-# Age cuts. The electorate is 18 and over, but only table 98-10-0020-01 (2016
-# and 2021) has single years of age. Elsewhere the nearest published cut is
-# used, and the survey side of each comparison is cut the same way where the
-# respondent's age is known (R/validation.R):
-#   gender       18+ in 2016 and 2021 (98-10-0020-01, whole population);
-#                20+ in 2006 and 2011 (98-10-0384-01, private households;
-#                the 2011 count is from the National Household Survey);
-#   age_group6   18+ in 2016 and 2021 (six bands 18-24 to 65+); 25+ in 2006
-#                and 2011 (98-10-0384-01 starts its bands at 15-19 and
-#                20-24, so the 18-24 band cannot be formed: five bands
-#                25-34 to 65+);
+# Age cuts. The electorate is 18 and over. Tables 98-10-0020-01 (2016 and
+# 2021), 97-551-XCB2006009 (2006) and the 2011 Census Profile (single years
+# 15 to 19, then five-year bands) give 18 and over; for mother tongue and
+# education the nearest published cut is used, and the survey side of each
+# comparison is cut the same way where the respondent's age is known
+# (R/validation.R):
+#   gender       18+ in every census (2016 and 2021: men+ and women+ of
+#                98-10-0020-01; 2006 and 2011: sex, 100% data, whole
+#                population);
+#   age_group6   18+ in every census (six bands 18-24 to 65+), from the same
+#                tables;
 #   lang_mother  20+ (98-10-0218-01 has 15-19 and 20-24 bands), persons
 #                outside institutions, single answers only (French, English,
 #                a non-official language); multiple mother tongues are left
 #                out, as the surveys' multiple answers are (not_mappable);
-#                not published for 2006 in the collected tables;
+#                2011, 2016 and 2021 only: the one 2006 table found with
+#                mother tongue by age (97-555-XCB2006019) counts institutional
+#                residents and records far more multiple mother tongues, so it
+#                is not used (dev/open-questions.md);
 #   education    25+ (25-64 and 65+ of 98-10-0384-01), private households,
 #                highest certificate in two groups: university (any
 #                university certificate, diploma or degree) and below
@@ -63,7 +80,7 @@ args <- commandArgs(trailingOnly = TRUE)
 check_only <- "--check" %in% args
 src <- Sys.getenv("QESR_BENCH_SRC")
 if (!nzchar(src) || !dir.exists(src)) {
-  stop("Set QESR_BENCH_SRC to the directory holding dgeq_json/ and zips/.", call. = FALSE)
+  stop("Set QESR_BENCH_SRC to the directory holding dgeq_json/, zips/ and ivt/.", call. = FALSE)
 }
 pkgload::load_all(".", quiet = TRUE, export_all = TRUE)
 out_dir <- file.path("inst", "extdata", "validation")
@@ -142,15 +159,83 @@ read_zip <- function(pid) {
   x[x$GEO == "Quebec", , drop = FALSE]
 }
 table_url <- function(pid) sprintf("https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=%s01", pid)
+profile_2011_url <- paste0(
+  "https://www12.statcan.gc.ca/census-recensement/2011/dp-pd/prof/details/download-telecharger/comprehensive/",
+  "comp_download.cfm?CTLG=98-316-XWE2011001&FMT=CSV101&Lang=E&Tab=1&Geo1=PR&Code1=01&Geo2=PR&Code2=01&Data=Count",
+  "&SearchText=&SearchType=Begins&SearchPR=01&B1=All&Custom=&TABID=1"
+)
+ivt_2006_url <- paste0("https://web.archive.org/web/20130701214950id_/",
+                       "http://www12.statcan.gc.ca/census-recensement/2006/dp-pd/tbt/Download.cfm?PID=88984")
 census <- list()
-add <- function(year, variable, universe, counts, table, note) {
+add <- function(year, variable, universe, counts, table, note, source_table = NULL, source_url = NULL) {
   census[[length(census) + 1L]] <<- data.frame(
     census_year = as.integer(year), variable = variable, level = names(counts), universe = universe,
     count = as.numeric(counts), share = round(100 * as.numeric(counts) / sum(counts), 4),
-    source_table = sprintf("%s-%s-%s-01", substr(table, 1, 2), substr(table, 3, 4), substr(table, 5, 8)),
-    source_url = table_url(table), note = note, stringsAsFactors = FALSE
+    source_table = source_table %||% sprintf("%s-%s-%s-01", substr(table, 1, 2), substr(table, 3, 4), substr(table, 5, 8)),
+    source_url = source_url %||% table_url(table), note = note, stringsAsFactors = FALSE
   )
 }
+bands6 <- c("a18_24", "a25_34", "a35_44", "a45_54", "a55_64", "a65_plus")
+
+# 97-551-XCB2006009 (2006): Beyond 20/20 file; the Quebec 2006 block is 123
+# ages (the total, then each five-year band followed by its single years,
+# then 100 and over and the median age) by 3 sexes (total, male, female), in
+# little-endian doubles
+ivt <- file.path(src, "ivt", "97-551-XCB2006009.IVT")
+stopifnot(unname(tools::md5sum(ivt)) == "899bc736d3e590a5658a05a9c00bf08a")
+con <- file(ivt, "rb")
+invisible(readBin(con, "raw", 11239L))
+cells <- matrix(readBin(con, "double", 369L, size = 8L, endian = "little"), ncol = 3L, byrow = TRUE)
+close(con)
+starts <- seq(0L, 95L, by = 5L)
+age_lab <- c("total", unlist(lapply(starts, function(a) c(sprintf("band%d", a), as.character(a + 0:4)))), "100", "median")
+stopifnot(length(age_lab) == 123L)
+rownames(cells) <- age_lab
+cells <- round(cells, 1)
+# the Quebec total and median ages of the 2006 Census (2006 Census Profile, 92-591-XE)
+stopifnot(cells["total", 1] == 7546135, all(cells["median", ] == c(41.0, 39.9, 41.9)),
+          all(abs(cells[age_lab != "median", 2] + cells[age_lab != "median", 3] - cells[age_lab != "median", 1]) <= 10))
+for (a in starts) {
+  stopifnot(all(abs(colSums(cells[as.character(a + 0:4), , drop = FALSE]) - cells[sprintf("band%d", a), ]) <= 10))
+}
+single <- cells[as.character(0:100), , drop = FALSE]
+age06 <- 0:100
+ad <- age06 >= 18
+note06 <- paste("2006 Census, 100% data, whole population; table 97-551-XCB2006009 (Age (123) and Sex (3)), the",
+                "Statistics Canada Beyond 20/20 file in the Internet Archive's capture of 2013-07-01, decoded; single years",
+                "from 18 summed.")
+add(2006L, "gender", "18+", c(man = sum(single[ad, 2]), woman = sum(single[ad, 3])), NULL, note06,
+    "97-551-XCB2006009", ivt_2006_url)
+band06 <- cut(age06[ad], c(17, 24, 34, 44, 54, 64, Inf), labels = bands6)
+add(2006L, "age_group6", "18+", tapply(single[ad, 1], band06, sum), NULL, note06, "97-551-XCB2006009", ivt_2006_url)
+
+# 98-316-XWE2011001 (2011 Census Profile): age by sex, single years 15 to 19,
+# then five-year bands
+pz <- file.path(src, "zips", "98-316-XWE2011001-101_CSV.zip")
+stopifnot(unname(tools::md5sum(pz)) == "290269093e4383386ead96eeedb11912")
+pl <- readLines(unz(pz, "98-316-XWE2011001-101.CSV"), encoding = "latin1", warn = FALSE)
+pr <- utils::read.csv(text = iconv(pl[-1L], "latin1", "UTF-8"), colClasses = "character", check.names = FALSE)
+pr <- pr[pr$Geo_Code == "24" & pr$Topic == "Age characteristics", , drop = FALSE]
+pr$Characteristic <- trimws(pr$Characteristic)
+p11 <- function(labels, col) {
+  r <- pr[pr$Characteristic %in% labels, , drop = FALSE]
+  stopifnot(nrow(r) == length(labels), !anyDuplicated(r$Characteristic))
+  sum(as.numeric(trimws(r[[col]])))
+}
+b11 <- list(a18_24 = c("18 years", "19 years", "20 to 24 years"), a25_34 = c("25 to 29 years", "30 to 34 years"),
+            a35_44 = c("35 to 39 years", "40 to 44 years"), a45_54 = c("45 to 49 years", "50 to 54 years"),
+            a55_64 = c("55 to 59 years", "60 to 64 years"),
+            a65_plus = c("65 to 69 years", "70 to 74 years", "75 to 79 years", "80 to 84 years", "85 years and over"))
+# the bands sum to the total, within Statistics Canada's random rounding
+all11 <- c("0 to 4 years", "5 to 9 years", "10 to 14 years", "15 to 19 years", unlist(b11[-1]), "20 to 24 years")
+stopifnot(abs(p11(all11, "Total") - p11("Total population by age groups", "Total")) <= 50)
+note11 <- paste("2011 Census, 100% data, whole population; age at last birthday before 10 May 2011; 18+ is 18 years",
+                "plus 19 years plus the five-year bands from 20.")
+add(2011L, "gender", "18+", c(man = sum(vapply(b11, p11, numeric(1), col = "Male")),
+                              woman = sum(vapply(b11, p11, numeric(1), col = "Female"))),
+    NULL, note11, "98-316-XWE2011001", profile_2011_url)
+add(2011L, "age_group6", "18+", vapply(b11, p11, numeric(1), col = "Total"), NULL, note11, "98-316-XWE2011001",
+    profile_2011_url)
 
 # 98-10-0020-01: single years of age by gender, 2016 and 2021
 a <- read_zip("98100020")
@@ -183,16 +268,6 @@ ed_count <- function(yr, age, gender = "Total - Gender", certificate = "Total - 
   r <- ed[ed[["Age (15A)"]] %in% age & ed[["Gender (3a)"]] == gender & ed[[cert]] %in% certificate, , drop = FALSE]
   stopifnot(nrow(r) == length(age) * length(certificate))
   sum(as.numeric(r[[year_col(yr)]]))
-}
-for (yr in c(2006L, 2011L)) {
-  src_note <- if (yr == 2011L) "National Household Survey 2011 (voluntary), " else ""
-  a20 <- c("20 to 24 years", "25 to 64 years", "65 years and over")
-  add(yr, "gender", "20+", c(man = ed_count(yr, a20, "Men+"), woman = ed_count(yr, a20, "Women+")), "98100384",
-      paste0(src_note, "private households; the nearest cut to 18+ in the published tables."))
-  bands <- c(a25_34 = "25 to 34 years", a35_44 = "35 to 44 years", a45_54 = "45 to 54 years",
-             a55_64 = "55 to 64 years", a65_plus = "65 years and over")
-  add(yr, "age_group6", "25+", vapply(bands, function(b) ed_count(yr, b), numeric(1)), "98100384",
-      paste0(src_note, "private households; five bands from 25, as the tables cannot form 18-24."))
 }
 groups <- list(
   below_university = c("No certificate, diploma or degree",

@@ -371,8 +371,21 @@ test_that("V-S10 requires a registered function and caps fn: rules", {
 })
 
 test_that("V-S11 sets the review requirements and the licence limits", {
+  # a stable row needs a reviewer and a date
   expect_true("V-S11" %in% rules_after(function(t) {
-    t$crosswalk$status[1] <- "stable"
+    i <- which(t$crosswalk$status == "stable")[1]
+    t$crosswalk$reviewed_by[i] <- NA
+    t
+  }))
+  expect_true("V-S11" %in% rules_after(function(t) {
+    i <- which(t$crosswalk$status == "stable")[1]
+    t$crosswalk$reviewed_on[i] <- as.Date(NA)
+    t
+  }))
+  # a reviewed row left in review says why (review_note)
+  expect_true("V-S11" %in% rules_after(function(t) {
+    i <- which(t$crosswalk$status == "review" & !is.na(t$crosswalk$reviewed_by))[1]
+    t$crosswalk$review_note[i] <- NA
     t
   }))
   expect_true("V-S11" %in% rules_after(function(t) {
@@ -430,9 +443,22 @@ test_that("V-S13 checks weight roles and one recommended weight per wave", {
     t$weights$recommended[t$weights$study == "qes2007_panel" & t$weights$weight_var == "pondam1"] <- FALSE
     t
   }))
+  # a study-wave with a weight not calibrated on vote or turnout needs one
+  # recommended weight; one whose weights are all calibrated (qes2008) has none
+  expect_true("V-S13" %in% rules_after(function(t) {
+    t$weights$recommended[t$weights$study == "qes2007" & t$weights$weight_var == "pond"] <- FALSE
+    t
+  }))
+  wt <- shipped_spec()$tables$weights
+  expect_false(any(wt$recommended[wt$study == "qes2008"]))
+  expect_false("V-S13" %in% rules_after(function(t) t))
+  expect_true("V-S13" %in% rules_after(function(t) {
+    t$weights$role[t$weights$study == "qes2008" & t$weights$weight_var == "pond"] <- NA
+    t
+  }))
   # released stable rows may not use a weight that needs review
   expect_true("V-S13" %in% rules_after(function(t) {
-    i <- xw_row(t, "qes2018_panel", "vote_prov_intent")
+    i <- xw_row(t, "qes2012_panel", "vote_prov_intent")
     t$crosswalk$status[i] <- "stable"
     t$crosswalk$reviewed_by[i] <- "reviewer"
     t$crosswalk$reviewed_on[i] <- as.Date("2026-09-27")

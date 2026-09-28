@@ -32,7 +32,8 @@ test_that("the demonstration master is rendered from the engine, offline", {
   expect_equal(m$survey_weight, as.numeric(unclass(demo$POND)), ignore_attr = TRUE)
   expect_true(all(m$political_interest %in% c(NA, 0, 3, 7, 10)))
   expect_identical(m$age, 2014 - m$year_of_birth)
-  expect_true(all(m$gender %in% c("Man", "Woman")))
+  # the qes2014 gender row is held in review (spec 4.0.0): NA, not_reviewed
+  expect_true(all(is.na(m$gender)))
   expect_true(all(m$province_territory == "Quebec"))
   expect_true(all(m$vote_choice_timing == "post"))
   expect_true(all(m$sovereignty_item == "sov_indep"))
@@ -51,7 +52,7 @@ test_that("source_map, legacy_na_columns and legacy_column_map describe every co
   m <- with_shipped(get_qes_master(surveys = "qes_demo", quiet = TRUE))
   sm <- attr(m, "source_map")
   expect_identical(names(sm), c("qes_code", "qes_year", "qes_name_en", "harmonized_variable", "source_variable",
-                                "target", "map_id", "grade", "render", "file_md5", "spec_version"))
+                                "target", "map_id", "grade", "status", "render", "file_md5", "spec_version"))
   expect_identical(sm$harmonized_variable, names(m))
   expect_identical(sm$source_variable[sm$harmonized_variable == "vote_choice"], "Q3")
   expect_identical(sm$target[sm$harmonized_variable == "vote_choice"], "vote_prov_recall")
@@ -60,7 +61,14 @@ test_that("source_map, legacy_na_columns and legacy_column_map describe every co
   expect_identical(sm$target[sm$harmonized_variable == "age"], "birth_year")
   na <- attr(m, "legacy_na_columns")
   expect_identical(names(na), c("column", "study", "reason", "n_cells", "cause", "basis"))
-  expect_true(all(na$reason %in% c("no_source", "na_column", "all_missing")))
+  expect_true(all(na$reason %in% c("no_source", "na_column", "all_missing", "not_reviewed")))
+  # a column whose row is held in review: not_reviewed, with the row's
+  # review_note as the basis, and the row's status in source_map
+  expect_identical(na$reason[na$column == "gender"], "not_reviewed")
+  expect_identical(na$cause[na$column == "gender"], "not_signed_off")
+  expect_match(na$basis[na$column == "gender"], "second reviewer", fixed = TRUE)
+  expect_identical(sm$status[sm$harmonized_variable == "gender"], "review")
+  expect_identical(sm$status[sm$harmonized_variable == "vote_choice"], "stable")
   # every column that is NA throughout is listed, and only those
   all_na <- names(m)[vapply(m, function(x) all(is.na(x)), logical(1))]
   expect_setequal(na$column, all_na)
@@ -139,6 +147,38 @@ test_that("a study's rows do not depend on the studies loaded with it, and no ro
     rownames(part) <- NULL
     expect_equal(as.data.frame(one), as.data.frame(part), ignore_attr = TRUE, info = s)
   }
+})
+
+test_that("the columns of rows held in review are NA, with the reason, and announced", {
+  local_qes_notices_shown()
+  local_fake_legacy(signed = FALSE)
+  msgs <- list()
+  m <- withCallingHandlers(
+    get_qes_master(surveys = c("qes1998", "qes2014")),
+    message = function(cnd) {
+      msgs[[length(msgs) + 1L]] <<- cnd
+      invokeRestart("muffleMessage")
+    }
+  )
+  by <- function(s, col) m[[col]][m$qes_code == s]
+  # qes1998: every row is held (its recommended weight needs review)
+  expect_true(all(is.na(by("qes1998", "vote_choice"))))
+  expect_true(all(is.na(by("qes1998", "gender"))))
+  # qes2014: its rows are signed off but gender
+  expect_true(any(!is.na(by("qes2014", "vote_choice"))))
+  expect_true(all(is.na(by("qes2014", "gender"))))
+  na <- attr(m, "legacy_na_columns")
+  hit <- na[na$study == "qes1998" & na$column == "vote_choice", , drop = FALSE]
+  expect_identical(hit$reason, "not_reviewed")
+  expect_identical(hit$cause, "not_signed_off")
+  expect_match(hit$basis, "V-S13", fixed = TRUE)
+  expect_identical(na$reason[na$study == "qes2014" & na$column == "gender"], "not_reviewed")
+  # no later target stands in for one whose row is held
+  expect_true(all(is.na(by("qes1998", "vote_choice_timing"))))
+  held <- Filter(function(cnd) identical(cnd$study, "qes1998") && !is.null(cnd$columns), msgs)
+  expect_length(held, 1L)
+  expect_s3_class(held[[1]], "qesR_message_values_changed")
+  expect_true("vote_choice" %in% held[[1]]$columns)
 })
 
 test_that("the recall targets fill vote_choice and turnout; the 1998 recall is used", {

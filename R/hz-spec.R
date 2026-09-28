@@ -41,7 +41,8 @@
 # of its files.
 
 # Schema version this engine reads, and the files of a spec directory.
-.qes_spec_schema_version <- "1"
+# Schema 2 (spec 4.0.0) adds the crosswalk column review_note.
+.qes_spec_schema_version <- "2"
 .qes_spec_files <- c(
   targets = "targets.csv", levels = "levels.csv", crosswalk = "crosswalk.csv",
   valuemaps = "valuemaps.csv", waves = "waves.csv", weights = "weights.csv",
@@ -464,7 +465,9 @@
 #'     `map_id`, `args`, `na_codes`, `gate`, `primary`, `grade`,
 #'     `grade_reason`, `instrument`, `election_ref`, `mode`, `dk_offered`,
 #'     `levels_offered`, `levels_not_offered`, `wording`, `wording_ref`,
-#'     `weight_var`, `status`, `evidence`, `notes`. With `level = "code"`:
+#'     `weight_var`, `status`, `reviewed_by`, `reviewed_on`, `review_note`
+#'     (what the review corrected, and why a reviewed row is held in review),
+#'     `evidence`, `notes`. With `level = "code"`:
 #'     `study`, `wave`, `target`, `variable`, `source_code`, `source_label`,
 #'     `origin` (`map`, `na_codes`, `range` or `gate`), `target_code`,
 #'     `target_level`, `target_label`, `na_reason`, `note`. A `wave` of `"*"`

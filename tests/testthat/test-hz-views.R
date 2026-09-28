@@ -263,8 +263,11 @@ test_that("the coverage grid lists each study's waves, weights and grades", {
   }
   waves <- setNames(vapply(rows, `[`, "", 2), studies)
   expect_identical(waves[["qes2022"]], "cps (n = 1,521): `cps_weight_general`; pes (n = 1,220): `pes_weight_general`")
-  expect_match(waves[["qes2018_panel"]], "`weight` (needs review, not applied)", fixed = TRUE)
-  expect_match(waves[["qes2007_panel"]], "post (n = 2,054): no recommended weight", fixed = TRUE)
+  expect_identical(waves[["qes2018_panel"]], "pre (n = 1,250): `weight`; post (n = 842): `weight_rts`")
+  expect_match(waves[["qes2012_panel"]], "`pondam1` (needs review, not applied)", fixed = TRUE)
+  expect_match(waves[["qes2007_panel"]], "post (n = 2,054): `pond_tot_am1` (needs review, not applied)", fixed = TRUE)
+  # both qes2008 weights are calibrated on vote or turnout: none is recommended
+  expect_match(waves[["qes2008"]], "post (n = 1,151): no recommended weight", fixed = TRUE)
   # the catalog's studies without a spec row are named
   others <- setdiff(.qes_study_codes(), studies)
   expect_true(length(others) > 0L)
@@ -323,7 +326,10 @@ test_that("the coverage grid counts the rows qes_harmonize() applies, and says w
   for (lang in c("en", "fr")) {
     md <- .spec_coverage_md(lang, spec = s)
     key <- function(k) .qes_rt(k, lang)
-    expect_true(grepl(sprintf(key("cov_status_note"), n - 1L, n), md, fixed = TRUE), label = lang)
+    n_review <- sum(xw$status[mapped] == "review")
+    n_stable <- sum(xw$status[mapped] == "stable")
+    expect_true(grepl(sprintf(key("cov_status_note"), n_review, n), md, fixed = TRUE), label = lang)
+    expect_true(grepl(sprintf(key("cov_stable_note"), n_stable, n), md, fixed = TRUE), label = lang)
     expect_true(grepl(sprintf(key("cov_draft_note"), 1L, n), md, fixed = TRUE), label = lang)
     expect_false(grepl(sprintf(key("cov_status_all"), n), md, fixed = TRUE), label = lang)
   }

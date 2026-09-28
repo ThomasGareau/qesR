@@ -186,16 +186,17 @@ xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
-The rows of this first specification are checked against the original
-files but not yet signed off by a reviewer, so they are applied only with
-`include_draft = TRUE`; without it every value is `NA` (reason
-`not_reviewed`), and a warning says so. On the demonstration study, which stands in for
-`qes2014`:
+A row is applied once a reviewer has signed it off. In specification 4.0.0
+most rows are signed off, after an automated double review against the
+original files and documents (not a human review); the rows still in review
+(those of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls,
+whose recommended weights need review first) give `NA` with the reason
+`not_reviewed`, unless `include_draft = TRUE`. On the demonstration study,
+which stands in for `qes2014`:
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
-                   lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = params$lang)
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
 ```

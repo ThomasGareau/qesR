@@ -23,10 +23,14 @@ Dataverse par son cache.
 Le moteur d'harmonisation est **expérimental**. Sa spécification indique,
 pour chaque étude et chaque variable harmonisée (« cible »), quelle
 question alimente la cible et comment chacun de ses codes correspond aux
-niveaux de la cible ; rien n'est apparié par le nom. Les lignes de cette
-première spécification ont été vérifiées sur les fichiers et documents
-originaux, mais ne sont pas encore approuvées par un réviseur : cette page
-les applique donc avec `include_draft = TRUE`.
+niveaux de la cible ; rien n'est apparié par le nom. Dans la spécification
+4.0.0, la plupart des lignes sont approuvées, après une double révision
+automatisée sur les fichiers et documents originaux (et non une révision
+humaine), et `qes_harmonize()` les applique par défaut ; les lignes de
+`qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages CROP restent en
+révision jusqu'à ce que leurs pondérations recommandées soient révisées.
+Pour que toutes les études y figurent, cette page applique aussi ces lignes,
+avec `include_draft = TRUE`.
 
 ```{r packages, message = FALSE}
 library(qesR)
@@ -69,9 +73,10 @@ libellé et les niveaux de la question de chaque étude.
 `studies = NULL`, la valeur par défaut, retient les Études électorales
 québécoises qui ont une question pour au moins une des cibles ; les panels
 Durand, les sondages CROP et le panel de 1998 sont laissés de côté à moins
-de les nommer. Les pondérations de `qes2007` et de `qes2008` ne sont pas
-encore documentées : leurs lignes n'ont pas de pondération et
-`qes_design()` les laisse de côté plus bas, avec un message.
+de les nommer. `qes2008` n'a aucune pondération recommandée (ses deux
+pondérations sont calées sur le vote ou sur la participation) : ses lignes
+n'ont pas de pondération et `qes_design()` les laisse de côté plus bas,
+avec un message.
 `layout = "long"` donne une ligne par répondant et par vague : chaque
 réponse se trouve sur la ligne de la vague qui l'a posée, à côté de la
 pondération de cette vague. `missing = "reasons"` ajoute une colonne
@@ -263,8 +268,9 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 `sov_partnership_1995` reprend la question du référendum de 1995, la
 souveraineté assortie d'une offre de partenariat au reste du Canada
 (`qes2007`, `qes2008`, `qes2007_panel` et les répondants CROP de `qes1998`).
-Leurs pondérations ne sont pas encore documentées :
-`qes_harmonize()` renvoie `NA` pour ces pondérations et `qes_design()`
-laisse ces répondants de côté, avec un message, tant qu'elles ne sont pas
-révisées. Placez les
+Parmi ces études, seules `qes2007` et `qes2018_panel` ont une pondération
+révisée ; `qes2008` n'en a aucune à recommander et les pondérations des
+autres sont encore à réviser : `qes_harmonize()` renvoie `NA` pour
+celles-ci et `qes_design()` laisse ces répondants de côté, avec un
+message. Placez les
 cibles côte à côte et lisez chacune à la lumière de sa propre question.

@@ -23,8 +23,12 @@ test_that("the engine-rendered master keeps every row and the 0.4.4 schema (live
     as.vector(table(factor(by("qes2012", "vote_choice"), c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON", "Other party")))),
     c(278L, 509L, 324L, 96L, 13L, 39L, 15L)
   )
-  expect_identical(sum(!is.na(by("qes1998", "vote_choice"))), 1126L)
-  expect_true(all(by("qes1998", "vote_choice_timing") == "post"))
+  # qes1998's rows are held in review (its recommended weight needs review,
+  # V-S13): its columns from the spec are NA, with the reason
+  expect_true(all(is.na(by("qes1998", "vote_choice"))))
+  na <- attr(m, "legacy_na_columns")
+  expect_identical(na$reason[na$column == "vote_choice" & na$study == "qes1998"], "not_reviewed")
+  expect_identical(na$cause[na$column == "vote_choice" & na$study == "qes1998"], "not_signed_off")
   expect_true(all(is.na(by("qes_crop_2007_2010", "vote_choice"))))
   # columns filled from the spec
   expect_identical(sum(!is.na(by("qes2018", "ideology"))), 2490L)
@@ -47,7 +51,10 @@ test_that("get_decon() of the originals: reported vote, and the qes2022 campaign
   d22 <- get_decon("qes2022", quiet = TRUE)
   expect_identical(attr(d22, "timing")[["votechoice"]], "pre")
   expect_true(is.numeric(d22$income))
-  expect_false(any(d22$income %in% -99))
+  # -99 (not answered) and 0 (a blank amount, sent to the follow-up) are NA
+  expect_false(any(d22$income %in% c(-99, 0)))
   d98 <- get_decon("qes1998", quiet = TRUE)
-  expect_identical(sum(!is.na(d98$votechoice)), 1126L)
+  expect_true(all(is.na(d98$votechoice)))
+  expect_identical(attr(d98, "legacy_na_columns")$reason[attr(d98, "legacy_na_columns")$column == "votechoice"],
+                   "not_reviewed")
 })

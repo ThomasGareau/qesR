@@ -119,8 +119,7 @@ disposition longue ; les sondages regroupés comptent pour une seule
 }
 
 \examples{
-h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   include_draft = TRUE, quiet = TRUE)
+h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"), quiet = TRUE)
 # every target of the demonstration study was asked after the election
 attr(h, "qes_weight_guide")
 if (requireNamespace("survey", quietly = TRUE)) {

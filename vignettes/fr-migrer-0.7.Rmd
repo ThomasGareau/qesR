@@ -152,8 +152,20 @@ sont jamais retirées. Ses valeurs ont changé deux fois.
 **Avec 0.7.0**, le fichier fusionné est produit par le moteur
 d'harmonisation (`qes_harmonize()`) pour les 11 études : chaque colonne est
 construite à partir des variables harmonisées (« cibles ») dont elle a
-besoin, et un code que la spécification n'apparie pas vaut `NA`. Les
-colonnes qui changent les estimations :
+besoin, et un code que la spécification n'apparie pas vaut `NA`.
+
+Seules les lignes de la spécification approuvées par un réviseur sont
+appliquées. Dans la spécification 4.0.0, elles ont été approuvées après une
+double révision automatisée sur les fichiers et documents originaux (et non
+une révision humaine). Les lignes de `qes1998`, `qes2007_panel`,
+`qes2012_panel` et des sondages CROP restent en révision jusqu'à ce que
+leurs pondérations recommandées soient révisées : toutes les colonnes de ces
+études qui viennent de la spécification valent donc `NA` pour l'instant,
+avec le motif `not_reviewed` dans `attr(master, "legacy_na_columns")` (les
+identifiants, les dates et la pondération, lus dans le fichier, sont
+conservés) ; de même pour `gender` de `qes2014`, dont le niveau attend un
+second réviseur. Un message nomme ces colonnes. Les colonnes qui changent
+les estimations :
 
 | Colonne | Depuis 0.7.0 | Modifiée dans |
 |---|---|---|
@@ -221,8 +233,7 @@ colonne du fichier fusionné. `ideology` et `vote_choice` deviennent :
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
-                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
-                   lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = params$lang)
 table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column")]
 ```
@@ -240,9 +251,10 @@ means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
 round(means, 2)
 ```
 
-Les lignes de la spécification sont vérifiées sur les fichiers originaux,
-mais pas encore approuvées par un réviseur : `include_draft = TRUE` est
-nécessaire pour l'instant. `qes_spec()` montre quelle étude a quelle cible
+La plupart des lignes de la spécification sont approuvées ; les lignes
+encore en révision ne sont appliquées qu'avec `include_draft = TRUE`, et la
+colonne `review_note` de `qes_spec("crosswalk")` dit pourquoi chacune est
+retenue. `qes_spec()` montre quelle étude a quelle cible
 et à quel point sa question est comparable, et
 `vignette("fr-reference-harmonisation", package = "qesR")` donne les
 questions, les formulations et les niveaux de comparabilité de chaque
@@ -265,7 +277,7 @@ ces notes).
 | `download_codebook()` | `qes_download(what = "docs")` | `file` choisit maintenant des documents par leur nom ; fichiers vérifiés par md5 |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` | |
 | `get_qescodes()` | `qes_studies()` | les fichiers des firmes de 1998 s'ajoutent après les 11 anciens codes |
-| `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | obsolète (dépréciation douce) depuis 0.7.0 ; valeurs modifiées (plus haut) |
+| `get_decon()` | `qes_harmonize(srvy, targets = "decon")` | obsolète (dépréciation douce) depuis 0.7.0 ; valeurs modifiées (plus haut) |
 
 `get_qes()`, `get_qes_master()` et `qes_codebook()` gardent leur nom. Une
 fonction héritée retourne ce que retourne sa remplaçante. Dans une nouvelle

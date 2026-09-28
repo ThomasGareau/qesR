@@ -538,7 +538,7 @@ utils::read.csv(f, colClasses = "character", na.strings = character(),
 
 - **Target:** one construct with one stimulus and one anchor source row. Example: `sov_indep`, "referendum vote, Quebec as an independent country", anchored on 2012 `q52`.
 - **Family:** groups targets for discovery and splicing. Example: `sovereignty` = {`sov_indep`, `sov_sovereign_country`, `sov_partnership_1995`, `sov_favour`}.
-- **Instrument:** a crosswalk column naming the concrete item format (`lr_0_10_slider`, `turnout_excuse_format`, `intent_lean_push`, ...).
+- **Instrument:** a crosswalk column naming the concrete item format (`interest_0_10_slider`, `turnout_excuse_format`, `intent_lean_push`, ...).
 
 **Grades**, set per crosswalk row against the target's anchor:
 
@@ -546,7 +546,7 @@ utils::read.csv(f, colClasses = "character", na.strings = character(),
 |---|---|---|
 | `identical` | Same stem in every fielded language, same substantive options (the same `levels_offered`), same `dk_offered`, same universe rule and same mode family | 2014 `Q19` vs anchor 2012 `q52` (same FR stem) |
 | `comparable` | Same construct and stimulus. Differences such as a temporal adverb, option order, whether DK is offered, or which minor parties are listed are not expected to move the marginals of the shared levels. Levels may collapse but are never inferred. | • 2018 `q26` and 2022 `cps_qc_referendum` ("today"/"aujourd'hui")<br>• 2014 `Q3` (no DK offered)<br>• 2018 `q27` ("la politique et les enjeux publics") |
-| `approximate` | Same construct, but format, filter or mode is expected to move marginals | • 2018 `q5` and 2022 `pes_turnout` (face-saving formats)<br>• 2022 `cps_ideoself_1` (standalone slider without DK: 2.2% skipped vs 19-21% DK/refused in 2012-2018)<br>• years-of-schooling education (2007p, CROP, 1998) vs highest diploma<br>• any administrative-region → CMA mapping |
+| `approximate` | Same construct, but format, filter or mode is expected to move marginals | • 2018 `q5` and 2022 `pes_turnout` (face-saving formats)<br>• 2022 `cps_ideoself_1` (standalone item without DK: 2.2% skipped vs 19-21% DK/refused in 2012-2018)<br>• years-of-schooling education (2007p, CROP, 1998) vs highest diploma<br>• any administrative-region → CMA mapping |
 | `not_comparable` | A different construct, or a source that must not be used. It is recorded for the docs and **never mapped**. | • 2012 panel `interetrec` (derived from debate viewing)<br>• 2018 `q8` as "best party"<br>• 1998 `intvote2` (value labels shifted in the source)<br>• 2018p `independance` (a recode of `rts_q7`) |
 
 **Grading rules:**
@@ -658,12 +658,13 @@ qes2007_panel,pre,pondam1,,mean1,,,,TRUE,needs_review,file label pondération à
 ```
 
 **Notes on these rows:**
-- **qes2007_panel:** `pond_tot_am1` has a value for every row, including the 387 pre-only cases, so it is not a post-wave weight. The recommended 2007 post-wave weight is unknown (R4).
-- **qes1998:** weights (`poids`, `ponder2` for CROP only, `ponderc`) are registered per firm at HZ5 (R2).
+- **qes2007_panel:** `pond_tot_am1` has a value for every row, including the 387 pre-only cases, so it is not a post-wave weight. The recommended 2007 post-wave weight is unknown (R4). *Spec 3.0.0:* `pond_tot_am1` (`ponderation_totale` rescaled to mean 1 within each poll) is registered as the post wave's recommended weight, `needs_review`: it is the only weight with values for the 391 converted refusals, and no weight is calibrated on the post-wave completers.
+- **qes1998:** weights (`poids`, `ponder2` for CROP only, `ponderc`) are registered per firm at HZ5 (R2). *Spec 3.0.0:* from the file, `ponder3 = ponderc x poids / c` (c per firm), `poids` is constant within the pre-election intention strata of the stratified recontact; `ponder3` reproduces the PIs' published tables, but the deposit advises `ponderc`, so every 1998 weight stays `needs_review` (open-questions, Needs the owner).
+- **Spec 3.0.0, from the gap research:** `qes2007` `pond` (the PIs' book: sex, age, mother tongue, region, by mode) and the 2018 panel's `weight`/`weight_rts` (Ipsos report, Durand and Blais 2020) are `reviewed`; `qes2008` `pond` reproduces the official 2008 vote and is `vote_calibrated`, so `qes2008` has no recommended weight (V-S13 below); CROP `XPOND` is described from CROP's reports and stays `needs_review`.
 - **qes2014:** the `POND` margins come from the cached Léger note: "SEXE, ÂGE, RÉGION et LANGUE, selon le dernier recensement".
 
 **Rules:**
-- **V-S13:** a recommended weight never has role `vote_calibrated` or `turnout_calibrated`, and each study-wave has exactly one recommended weight.
+- **V-S13:** a recommended weight never has role `vote_calibrated` or `turnout_calibrated`, and each study-wave has exactly one recommended weight, except a study-wave whose registered weights are all vote- or turnout-calibrated (`qes2008` from spec 3.0.0), which has none (its harmonized weights are `NA`).
 - **Weight lint:** every `weight_var` must exist in the dictionary or shard names of the pinned file. This catches `POND` vs `pond` in 2012.
 - **`needs_review` blocks output:** a target in a study-wave whose recommended weight is `needs_review` gets NA weights and a message until the row is reviewed (R4).
 
@@ -748,7 +749,7 @@ interest4,4,not_at_all,Not at all interested,Pas du tout intéressé(e),4,TRUE,n
 - **Output:** `primary` (≤ 1 per (study, target)).
 - **Validity:** `grade`, `grade_reason_en`, `grade_reason_fr`, `instrument`, `election_ref`, `mode`, `dk_offered` (`explicit`/`volunteered`/`none`), `levels_offered` (`;`-list).
 - **Wording:** `wording_en`, `wording_fr`, `wording_ref` (only `wording_ref` for qes2022 under OD3).
-- **Review:** `evidence`, `notes_en`, `notes_fr`, `reviewed_by`, `reviewed_on`, `status` (`draft`/`review`/`stable`).
+- **Review:** `evidence`, `notes_en`, `notes_fr`, `reviewed_by`, `reviewed_on`, `review_note` (English: what the review corrected, and why a reviewed row is held in `review`), `status` (`draft`/`review`/`stable`). `reviewed_by` says who or what reviewed the row; the review of 2026-09-27 was an automated double review against the original files and documents, not a human review, and says so there.
 
 **Non-voters get the same NA reasons in every study:**
 - "no" → `not_voted`;
@@ -776,10 +777,10 @@ qes2018,post,income_native,map,q61,income_qes2018_q61,,99=refused,,,,TRUE,compar
 qes2018,post,religion,map,q67,relig_qes2018_q67,,,q66,2;9,2=none;9=refused,TRUE,comparable,religion_denom,,explicit,,"q67 non-NA 1245 = q66==1; q66 2 -> 1737, 9 -> 90"
 qes2022,pes,vote_prov_recall,map,pes_votechoice,vote_qes2022_pes,,,pes_turnout,2;3;4;5;6,2=not_voted;3=not_voted;4=not_voted;5=not_registered;6=dk,TRUE,comparable,vote_recall_v1,QC2022,none,PLQ;PQ;CAQ;QS;PCQ;other,"1109 = pes_turnout==1; 47/47/12/3/2"
 qes2022,cps,vote_prov_intent,map,cps_votechoice1,vote_qes2022_cps,,,cps_turnout,3;4;5,3=inapplicable;4=inapplicable;5=inapplicable,TRUE,comparable,vote_intent_v1,QC2022,explicit,PLQ;PQ;CAQ;QS;PCQ;other,"asked if cps_turnout 1-2; 89 NA = cps_turnout 3 (62), 4 (26), 5 (1); no 'would not vote' option"
-qes2022,cps,lr_self,numeric,cps_ideoself_1,,min=0;max=10,-99=no_answer,,,,TRUE,approximate,lr_0_10_slider,,none,,"standalone slider, no DK; -99 = 34 (2.2%)"
+qes2022,cps,lr_self,numeric,cps_ideoself_1,,min=0;max=10,-99=no_answer,,,,TRUE,approximate,lr_0_10,,none,,"standalone item, no DK; -99 = 34 (2.2%)"
 qes2022,cps,birth_year,numeric,cps_yob,,from_label=TRUE,-99=no_answer,,,,TRUE,identical,yob,,none,,"91 labels 1920-2010; codes 1..85, -99"
-qes2018_panel,pre,vote_prov_intent,map,rv1a,vote_qes2018p_rv1a,,,,,,TRUE,comparable,vote_intent_v1,QC2018,volunteered,,"all 1250 rows; draft until codes reviewed"
-qes2018_panel,pre,vote_prov_intent_push,map,rv1ab,vote_qes2018p_rv1ab,,,,,,TRUE,comparable,intent_lean_push,QC2018,volunteered,,"rv1a + lean push; draft"
+qes2018_panel,pre,vote_prov_intent,map,rv1a,vote_qes2018p_rv1a,,,,,,TRUE,approximate,vote_intent_v1,QC2018,volunteered,,"all 1250 rows; draft until codes reviewed"
+qes2018_panel,pre,vote_prov_intent_push,map,rv1ab,vote_qes2018p_rv1ab,,,,,,TRUE,approximate,intent_lean_push,QC2018,volunteered,,"rv1a + lean push; draft"
 qes2018_panel,post,turnout_prov_recall,map,rts_q1,turnout_qes2018p_rtsq1,,,,,,TRUE,approximate,turnout_excuse_format,QC2018,explicit,,"1 couldn't 56; 2 decided not 55; 3 voted 731"
 qes2018_panel,post,vote_prov_recall,map,rts_q2,vote_qes2018p_rtsq2,,,rts_q1,1;2,1=not_voted;2=not_voted,TRUE,comparable,vote_recall_v1,QC2018,explicit,,"rts_q2 non-NA 731 = rts_q1==3"
 qes2018_panel,post,sov_favour,map,rts_q7,sov_qes2018p_rtsq7,,5=dk,,,,TRUE,comparable,sov_favour_4pt,,explicit,,"1-2 favour 234; 3-4 oppose 546; 5 = 62"
@@ -886,7 +887,7 @@ sov_qes2012p,98,Je préfère ne pas répondre,,file,,refused,,
 | attitudes | `sov_partnership_1995` | 2007/2008 `q19`, 2007p `intref1`, **1998 `voteref`** (CROP subsample only, 426 of 1,483) |
 | attitudes | `sov_favour` | 2018p `rts_q7` ✓. `independance` is a recode of it and is never mapped |
 | attitudes | separate `*_push` sovereignty instruments | 2007/2008 `q20`, CROP `intvoteref`/`intvoterefb`, 2007p `intref`, 1998 `q16b`. They are **never** rows of the `sov_*` targets above |
-| attitudes | `lr_self` (0-10) | 2012 `q71` ✓ (anchor), 2014 `Q32` ✓, 2018 `q36_1` ✓, 2018p `rts_q8` ✓, 2022 `cps_ideoself_1` ✓ (**approximate**: slider, no DK) |
+| attitudes | `lr_self` (0-10) | 2012 `q71` ✓ (anchor), 2014 `Q32` ✓, 2018 `q36_1` ✓, 2018p `rts_q8` ✓, 2022 `cps_ideoself_1` ✓ (**approximate**: standalone, no DK) |
 | attitudes | `interest_4pt`, `interest_0_10`, `interest_campaign_4pt` | 2012 `q67` ✓ (anchor), 2014 `Q28` ✓ (identical pending the stem check: "la politique en général"), 2018 `q27` ✓ (**comparable**: "et les enjeux publics"; same code direction); 2022 `cps_interest_1` ✓ (0-10 only, never binned); 2007p `interet` (campaign); 2012p `interetrec` not_comparable |
 | socio | `birth_year`, `age`, `age_group6`, `age_group3` | 2022 `cps_yob` ✓/`cps_age_in_years`; 2018 `agecalc` (999 → refused); 2014 `QAGE` (9999); 2018p `age` ✓ (3 bands only, 4 = dk_refused) |
 | socio | `gender` | all studies |
@@ -951,9 +952,9 @@ These are followed by the targets, then their companion columns (`__na` with `mi
 | V-S8 | **Alias contradiction:** a map row whose source label matches a *different* level's alias is an error unless `alias_exception` is set | tests, CI |
 | V-S9 | Target timing vs wave timing; `election_ref` vs `election_ref_rule` | tests, CI |
 | V-S10 | Every `fn:` has a registered function and a test file; `fn:` rows ≤ 10% | CI |
-| V-S11 | `stable` requires `evidence`, reviewer, date and wording (or `wording_ref`). `ddi` label origin is only allowed in `draft`. Release builds refuse `draft`. | CI (tags) |
+| V-S11 | `stable` requires `evidence`, reviewer, date and wording (or `wording_ref`). A row with a reviewer that stays in `review` needs `review_note` (why it is held). `ddi` label origin is only allowed in `draft`. Release builds refuse `draft`. | CI (tags) |
 | V-S12 | `constant` only where allowed; `not_comparable` rows use rule `none` | tests, CI |
-| V-S13 | Weight roles and one recommended weight per study-wave; no active target uses a `needs_review` weight in a released spec | tests, CI |
+| V-S13 | Weight roles and one recommended weight per study-wave (none where every weight is vote- or turnout-calibrated); no active target uses a `needs_review` weight in a released spec | tests, CI |
 | V-S14 | Ordinal maps are monotone in source order unless a note explains otherwise | tests, CI |
 | V-S15 | Target, family and set names are pairwise disjoint, match `^[a-z][a-z0-9]*(_[a-z0-9]+)*$`, and never equal a study code | tests, CI |
 | V-S16 | `levels_offered` ⊆ the target's level set; every mapped target code is in `levels_offered` or is `other` | tests, CI |
@@ -1851,3 +1852,5 @@ Local actions that the binding rules leave to the owner. Nothing here blocks a s
   - **Age cuts** where 18+ is not published (gender 20+ and age bands from 25 in 2006/2011, mother tongue 20+, education 25+), education compared as university or below, and census rows gated like V-L2: *to confirm* (open-questions V1-V4).
   - **The report lives in `inst/extdata/validation/`**, not `inst/validation/` (V5); the article shows qes2022 aggregates computed at build time, as the analysis articles do (V6).
   - **One finding to judge:** in qes2018 the English mother tongue is 16.7% weighted against 7.3% at the census, and other languages 6.7% against 14.0%; the map follows the programmed questionnaire and the weight corrects only French against the rest (F1).
+- **Gap research (spec 3.0.0; resolved items and the owner's requests and decisions in `dev/open-questions.md`, parts 1 and 2).** The research of 2026-09-27 on the documents the deposits lack, each finding checked on the pinned originals. Weights: `qes2007` `pond` and the 2018 panel's `weight`/`weight_rts` are `reviewed` (the authors' book; Ipsos's report and Durand and Blais 2020); `qes2008` `pond` reproduces the official 2008 vote and is `vote_calibrated`, so `qes2008` has no recommended weight and V-S13 allows none where every weight of a study-wave is calibrated on vote or turnout (MAJOR, spec 3.0.0); the 1998 weights are decomposed (`ponder3 = ponderc x poids / c`) but stay `needs_review`, the deposit advising `ponderc`; CROP `XPOND`, the 2007 panel's new post-wave `pond_tot_am1` and the 2012 panel's weights are described and stay `needs_review`. Waves: the 24 CROP polls' fieldwork dates and the election of their previous-vote question; the 2018 panel's dates; the 1998 francophone definition confirmed by record linkage (closes OD16's pending). The CROP `intvoterefa` is the sovereign-country question in 19 of 24 polls but stays unmapped: one primary row per study and target (V-S5) and gates that must be true routing (V-D7) cannot leave five polls out. `qes2018` `qlangue` codes are not swapped (F1 closed). Validation: gender and six age bands at 18+ for 2006 (97-551-XCB2006009, the Internet Archive's copy, decoded and checked by `data-raw/build_benchmarks.R`) and 2011 (Census Profile 98-316-XWE2011001), replacing the 20+/25+ cuts of HZ7; mother tongue stays 20+ without 2006, education 25+. Élections Québec's dgeq.org open-data licence covers its 2014, 2018 and 2022 files only; the official results stay build-ignored.
+- **Review sign-off and release prep (spec 4.0.0, qesR 0.7.0; the held rows and the owner's decisions in `dev/open-questions.md`, D1 and D12).** An automated double review of the 132 crosswalk rows against the original files and documents (codes and data; wording and comparability; adjudicated where the two passes disagreed), not a human review: 96 rows signed off as they were, 36 corrected first (each correction checked on the originals and the documents, and named in the row's new `review_note`). `reviewed_by` records the review as automated and `reviewed_on` its date (2026-09-27). 93 rows are `stable`. 39 stay in `review`: the 38 rows of `qes1998`, `qes2007_panel`, `qes2012_panel` and `qes_crop_2007_2010`, because their recommended weights are `needs_review` and V-S13 fails a released stable row there, and `qes2014` `QSEXE`, raised to `identical`, which §11.1 step 3 gives to a second reviewer. The legacy builders now apply signed-off rows only (the HZ6 "to confirm" above is superseded): a column whose question is in a held row is `NA`, reason `not_reviewed`, cause `not_signed_off`, basis the row's `review_note`, with a message; a render no longer falls back on a later target when the first one's row is held; `source_map` gains `status`. MAJOR (hashes): `qes2022` `cps_income` code 0 is `no_answer` (a blank sent to `cps_income2`), and `cps_votechoice1_8_TEXT` is gated like its parent row. Schema version 2 (the column `review_note`; V-S11 requires it on a reviewed row left in review). `gates.csv` counts typed text as one token and empty text as system missing, so no typed answer is kept in `data-raw/nc/`. Dictionary 1.0.3 (the CROP intention wording, the 2018 panel's `rv1a` stem, the 2008 `q75` example). Every legacy difference from 0.5.0 is explained in `dev/legacy-diff.md` (new causes `not_signed_off`, `review_correction`).

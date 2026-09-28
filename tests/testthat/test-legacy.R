@@ -232,7 +232,8 @@ test_that("changes.csv and removed.csv match their schemas; the column map reads
   causes <- unique(unlist(strsplit(ch$cause, ";", fixed = TRUE)))
   expect_true(all(causes %in% c("0.5.0", "harmonization_engine", "all_rows_kept", "reported_vote_only",
                                 "interest_on_0_10", "two_first_languages", "campaign_period_vote",
-                                "scale_corrected", "coding_error_fixed", "other_question_fixed")))
+                                "scale_corrected", "coding_error_fixed", "other_question_fixed",
+                                "not_signed_off", "review_correction")))
   expect_length(qesR:::.qes_legacy_removed()$column, 70L)
   map <- qesR:::.qes_legacy_column_map("master")
   expect_identical(names(map), c("column", "target", "definition", "studies_changed", "flag", "note", "render"))

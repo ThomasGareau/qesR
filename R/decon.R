@@ -2,7 +2,7 @@
 # harmonization engine since qesR 0.7.0 (design.md sections 2.3 and 5.12,
 # slice HZ6; the renderer is R/legacy.R and the spec's legacy.csv, profile
 # "decon"). Soft-deprecated from 0.7.0: its replacement is
-# qes_harmonize(srvy, targets = "decon", include_draft = TRUE).
+# qes_harmonize(srvy, targets = "decon").
 
 #' Create a Prepared Non-Exhaustive qesR Dataset
 #'
@@ -13,10 +13,16 @@
 #' will not be removed, and a message names its replacement once per
 #' session. The same variables, with a reason for every missing value and a
 #' grade for every study's question, come from
-#' `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`
-#' (`include_draft = TRUE` applies the crosswalk rows still in review, as
-#' `get_decon()` does; without it the columns are `NA` until those rows are
-#' signed off).
+#' `qes_harmonize(srvy, targets = "decon")`. Both apply only the crosswalk
+#' rows signed off by a reviewer (status `stable`); a column whose question
+#' is in a row still in review is `NA` (reason `not_reviewed` in
+#' `attr(, "legacy_na_columns")`, which says why the row is held), and
+#' `include_draft = TRUE` in [qes_harmonize()] applies those rows too. In
+#' spec 4.0.0 the rows were signed off after an automated double review
+#' against the original files and documents (not a human review); the rows
+#' of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls are held
+#' until their recommended weights are reviewed, and `gender` of `qes2014`
+#' until a second reviewer confirms its grade.
 #'
 #' `get_decon()` returns the data and assigns nothing unless
 #' `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
@@ -48,17 +54,28 @@
 #' does not map (such as the `-99` of `qes2022`) are `NA`. `turnout` and
 #' `votechoice` are filled for every study that asked the reported vote
 #' (`qes2018` from `q5` and `q6`), and `get_decon("qes1998")` returns real
-#' rows. `party_best` and `partylean` are `NA` everywhere (their 0.4.4
-#' sources were other questions in each study).
+#' rows (its columns from the spec are `NA` until its rows are signed off).
+#' `party_best` and `partylean` are `NA` everywhere (their 0.4.4
+#' sources were other questions in each study). Only signed-off crosswalk
+#' rows are applied (see above).
 #'
 #' @section En français:
 #' `get_decon()` construit un petit jeu de données d'enseignement de 19
 #' colonnes à partir d'une étude de qesR 0.4.4. Depuis qesR 0.7.0, elle est
 #' obsolète (dépréciation douce) : elle continue de fonctionner et ne sera
 #' pas retirée, et un message nomme son remplacement une fois par session,
-#' `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)`
-#' (`include_draft = TRUE` applique les lignes de correspondance encore en
-#' révision, comme `get_decon()`). Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+#' `qes_harmonize(srvy, targets = "decon")`. Les deux n'appliquent que les
+#' lignes de correspondance approuvées par un réviseur (statut `stable`) ;
+#' une colonne dont la question est dans une ligne encore en révision vaut
+#' `NA` (motif `not_reviewed` dans `attr(, "legacy_na_columns")`, qui dit
+#' pourquoi la ligne est retenue), et `include_draft = TRUE` dans
+#' [qes_harmonize()] applique aussi ces lignes. Dans la spécification 4.0.0,
+#' les lignes ont été approuvées après une double révision automatisée sur
+#' les fichiers et documents originaux (et non une révision humaine) ; les
+#' lignes de `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages
+#' CROP sont retenues jusqu'à ce que leurs pondérations recommandées soient
+#' révisées, et `gender` de `qes2014` jusqu'à ce qu'un second réviseur
+#' confirme son niveau. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
 #' anglais des cibles, nombres, et texte pour `income` et `religion` (le
 #' montant du revenu de `qes2022` reste un nombre).
 #' `turnout` et `votechoice` sont la participation et le vote déclarés
@@ -80,7 +97,8 @@
 #'   the attributes `timing` (what `turnout`, `votechoice` and
 #'   `votechoice_text` hold: `"pre"`, `"post"` or `NA` where the column has
 #'   no value), `source_map` (`qes_code`, `column`, `source_variable`,
-#'   `target`, `grade`), `legacy_na_columns` and `qes_provenance` (the file
+#'   `target`, `grade`, `status` of the crosswalk row), `legacy_na_columns`
+#'   (as for [get_qes_master()]) and `qes_provenance` (the file
 #'   read; see [qes_provenance()]).
 #' @family legacy
 #' @seealso [qesR-deprecated] for the legacy functions and their replacements.
@@ -91,7 +109,7 @@
 #' attr(decon, "source_map")[, c("column", "source_variable", "target")]
 #'
 #' # the replacement
-#' h <- qes_harmonize("qes_demo", targets = "decon", include_draft = TRUE, quiet = TRUE)
+#' h <- qes_harmonize("qes_demo", targets = "decon", quiet = TRUE)
 #' names(h)
 #' @export
 get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
@@ -134,7 +152,7 @@ get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
   sm <- built$source_map
   attr(decon, "source_map") <- data.frame(
     qes_code = sm$qes_code, column = sm$harmonized_variable, source_variable = sm$source_variable,
-    target = sm$target, grade = sm$grade, stringsAsFactors = FALSE
+    target = sm$target, grade = sm$grade, status = sm$status, stringsAsFactors = FALSE
   )
   na_cols <- built$na_rows
   if (is.null(na_cols)) {

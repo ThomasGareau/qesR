@@ -101,8 +101,7 @@
 #' @seealso [qes_harmonize()] for the weight columns and
 #'   `attr(, "qes_weight_guide")`, which says which weight fits each target.
 #' @examples
-#' h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-#'                    include_draft = TRUE, quiet = TRUE)
+#' h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"), quiet = TRUE)
 #' # every target of the demonstration study was asked after the election
 #' attr(h, "qes_weight_guide")
 #' if (requireNamespace("survey", quietly = TRUE)) {

@@ -29,16 +29,16 @@ library(qesR)
 qes_spec()                        # which study has which variable, and its grade
 h <- qes_harmonize(studies = c("qes2012", "qes2014", "qes2018", "qes2022"),
                    targets = c("vote_prov_recall", "turnout_prov_recall"),
-                   min_grade = "comparable", missing = "reasons",
-                   include_draft = TRUE)
+                   min_grade = "comparable", missing = "reasons")
 # both targets were asked after the election: the post-election weight
 d <- qes_design(h, weight = "weight_post")   # for the survey package
 ```
 
-Only `qes2012`, `qes2014`, `qes2018` and `qes2022` have reviewed weights so
-far. The other studies (the three Durand panels `qes2007_panel`,
-`qes2012_panel` and `qes2018_panel`, plus `qes2007`, `qes2008`, the CROP
-polls and the 1998 polls) have `NA` weights, and `qes_design()` leaves out
+`qes2007`, `qes2012`, `qes2014`, `qes2018`, `qes2022` and the 2018 panel
+`qes2018_panel` have reviewed weights so far. The other studies (the
+Durand panels `qes2007_panel` and `qes2012_panel`, `qes2008`, whose two
+weights are calibrated on the vote or on turnout, the CROP polls and the
+1998 polls) have `NA` weights, and `qes_design()` leaves out
 every row without the chosen weight; `studies = NULL` means the six Quebec
 Election Studies. Estimate within one study before comparing studies.
 
@@ -62,9 +62,12 @@ specification that ships with qesR:
   Statistics Canada: see [Validation against official
   results](articles/validation.html).
 
-The rows of the specification are checked against the original files and
-documents but not yet signed off by a reviewer, so they are applied only
-with `include_draft = TRUE`. The grade of each study's question for each
+Most rows of the specification are signed off, after an automated double
+review against the original files and documents (not a human review), and
+are applied by default; the rows of `qes1998`, `qes2007_panel`,
+`qes2012_panel` and the CROP polls stay in review until their recommended
+weights are reviewed, and are applied only with `include_draft = TRUE`.
+The grade of each study's question for each
 target (I identical, C comparable, A approximate; a dash: no question in
 the specification); each target links to its questions, wordings and
 grades in the [harmonization reference](articles/harmonization-reference.html):
@@ -76,8 +79,8 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | [`survey_mode`](articles/harmonization-reference.html#target-survey_mode) | — | — | I | — | — | — | — | — | I | — | — |
 | [`vote_prov_recall`](articles/harmonization-reference.html#target-vote_prov_recall) | C | C | C | C | I | A | — | C | C | A | C |
-| [`vote_prov_intent`](articles/harmonization-reference.html#target-vote_prov_intent) | A | — | C | — | — | A | C | — | — | I | — |
-| [`vote_prov_intent_push`](articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | C | — | — | A | C | — | — | I | A |
+| [`vote_prov_intent`](articles/harmonization-reference.html#target-vote_prov_intent) | A | — | A | — | — | A | C | — | — | I | — |
+| [`vote_prov_intent_push`](articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | A | — | — | A | C | — | — | I | A |
 | [`turnout_prov_recall`](articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | C | C |
 | [`turnout_prov_likely`](articles/harmonization-reference.html#target-turnout_prov_likely) | I | — | — | — | — | — | — | — | — | — | — |
 | [`vote_prov_intent_other`](articles/harmonization-reference.html#target-vote_prov_intent_other) | I | — | — | — | — | — | — | — | — | — | — |
@@ -98,7 +101,7 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`age_group3`](articles/harmonization-reference.html#target-age_group3) | — | — | I | — | — | C | C | C | — | C | C |
 | [`citizen`](articles/harmonization-reference.html#target-citizen) | I | — | — | — | — | — | — | — | — | — | — |
 | [`age_group6`](articles/harmonization-reference.html#target-age_group6) | — | — | — | — | — | C | I | C | — | C | C |
-| [`gender`](articles/harmonization-reference.html#target-gender) | C | C | C | C | I | C | C | C | C | C | C |
+| [`gender`](articles/harmonization-reference.html#target-gender) | C | C | C | I | I | C | C | C | C | C | C |
 | [`education4`](articles/harmonization-reference.html#target-education4) | C | C | A | I | C | — | A | C | C | A | — |
 | [`lang_mother`](articles/harmonization-reference.html#target-lang_mother) | — | C | C | C | I | C | C | C | C | C | — |
 | [`born_canada`](articles/harmonization-reference.html#target-born_canada) | I | C | — | C | C | — | — | — | — | — | — |

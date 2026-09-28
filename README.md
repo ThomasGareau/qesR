@@ -116,12 +116,14 @@ specification that ships with qesR: for each study and harmonized variable
 grade, a reason for every missing value and each wave's weight;
 `qes_design()` turns the result into a design for the `survey` package, and
 `qes_spec()` shows the specification. It applies only the rows a reviewer
-has signed off, and none is signed off yet: the rows are checked against
-the original files, and `include_draft = TRUE` applies them.
+has signed off. In specification 4.0.0 most rows are signed off, after an
+automated double review against the original files and documents (not a
+human review); the rows of `qes1998`, `qes2007_panel`, `qes2012_panel` and
+the CROP polls stay in review until their recommended weights are reviewed,
+and `include_draft = TRUE` applies them too.
 
 ```r
-h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"),
-                   include_draft = TRUE)
+h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"))
 qes_spec()                         # which study has which target, and its grade
 ```
 
@@ -134,8 +136,8 @@ comparable, A approximate; a dash: no question in the specification):
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | `survey_mode` | — | — | I | — | — | — | — | — | I | — | — |
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
-| `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
-| `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
+| `vote_prov_intent` | A | — | A | — | — | A | C | — | — | I | — |
+| `vote_prov_intent_push` | — | — | A | — | — | A | C | — | — | I | A |
 | `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
@@ -156,7 +158,7 @@ comparable, A approximate; a dash: no question in the specification):
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
-| `gender` | C | C | C | C | I | C | C | C | C | C | C |
+| `gender` | C | C | C | I | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
 | `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
@@ -265,13 +267,16 @@ variable harmonisée (« cible »), une question, dont les codes sont mis en
 correspondance un à un, avec un niveau de comparabilité, un motif pour
 chaque valeur manquante et la pondération de chaque vague ; `qes_design()`
 en fait un plan de sondage pour le package `survey`, et `qes_spec()` montre
-la spécification. Il n'applique que les lignes approuvées par un réviseur,
-et aucune ne l'est encore : les lignes sont vérifiées sur les fichiers
-originaux, et `include_draft = TRUE` les applique.
+la spécification. Il n'applique que les lignes approuvées par un réviseur.
+Dans la spécification 4.0.0, la plupart des lignes sont approuvées, après
+une double révision automatisée sur les fichiers et documents originaux (et
+non une révision humaine) ; les lignes de `qes1998`, `qes2007_panel`,
+`qes2012_panel` et des sondages CROP restent en révision jusqu'à ce que
+leurs pondérations recommandées soient révisées, et `include_draft = TRUE`
+les applique aussi.
 
 ```r
-h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"),
-                   include_draft = TRUE, lang = "fr")
+h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), lang = "fr")
 qes_spec(lang = "fr")              # quelle étude a quelle cible, et son niveau
 ```
 
@@ -285,8 +290,8 @@ question dans la spécification) :
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | `survey_mode` | — | — | I | — | — | — | — | — | I | — | — |
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
-| `vote_prov_intent` | A | — | C | — | — | A | C | — | — | I | — |
-| `vote_prov_intent_push` | — | — | C | — | — | A | C | — | — | I | A |
+| `vote_prov_intent` | A | — | A | — | — | A | C | — | — | I | — |
+| `vote_prov_intent_push` | — | — | A | — | — | A | C | — | — | I | A |
 | `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
@@ -307,7 +312,7 @@ question dans la spécification) :
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
-| `gender` | C | C | C | C | I | C | C | C | C | C | C |
+| `gender` | C | C | C | I | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
 | `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |

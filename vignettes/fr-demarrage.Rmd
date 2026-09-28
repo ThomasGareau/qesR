@@ -198,17 +198,18 @@ xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
-Les lignes de cette première spécification sont vérifiées sur les fichiers
-originaux, mais pas encore approuvées par un réviseur : elles ne sont
-appliquées qu'avec `include_draft = TRUE` ; sans lui, toutes les valeurs
-sont `NA` (motif `not_reviewed`), et un avertissement le signale. Sur
-l'étude de démonstration, qui
-tient lieu de `qes2014` :
+Une ligne est appliquée une fois approuvée par un réviseur. Dans la
+spécification 4.0.0, la plupart des lignes sont approuvées, après une double
+révision automatisée sur les fichiers et documents originaux (et non une
+révision humaine) ; les lignes encore en révision (celles de `qes1998`,
+`qes2007_panel`, `qes2012_panel` et des sondages CROP, dont les
+pondérations recommandées doivent d'abord être révisées) donnent `NA` avec
+le motif `not_reviewed`, sauf avec `include_draft = TRUE`. Sur l'étude de
+démonstration, qui tient lieu de `qes2014` :
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", include_draft = TRUE, quiet = TRUE,
-                   lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = params$lang)
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
 ```

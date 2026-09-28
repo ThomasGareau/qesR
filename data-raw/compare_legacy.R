@@ -77,6 +77,12 @@ cc0 <- catalog$studies$study[catalog$studies$metadata_shipped %in% TRUE]
 # study. Every other difference fails the gate.
 explained <- read.csv(text = '
 profile,column,study,kind,cause,explanation
+master,*,qes1998;qes2007_panel;qes2012_panel;qes_crop_2007_2010,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: the study\'s recommended weight needs review (release check V-S13), so its crosswalk rows are not applied (legacy_na_columns reason not_reviewed)"
+master,gender,qes2014,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: its grade was raised to identical and needs a second reviewer (legacy_na_columns reason not_reviewed)"
+master,income,qes2022,to_na,REV,"An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0)"
+decon,*,qes1998;qes2007_panel;qes2012_panel;qes_crop_2007_2010,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: the study\'s recommended weight needs review (release check V-S13), so its crosswalk rows are not applied"
+decon,gender,qes2014,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: its grade was raised to identical and needs a second reviewer"
+decon,income,qes2022,to_na,REV,"An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0)"
 master,respondent_id,qes2018_panel,changed,HZ6,"The file\'s identifier (interview mode and id, qes_id) instead of a made-up <study>_<row>"
 master,respondent_id,qes2007_panel,changed,HZ6,"The project and questionnaire number (nompn-quest, qes_id), unique, instead of quest, which repeats across the two subsamples"
 master,*,qes2007_panel,to_na,P5,"The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave"
@@ -147,7 +153,7 @@ cause_names <- c(
   "0.5.0" = "0.5.0", HZ6 = "harmonization_engine", P5 = "all_rows_kept",
   OD4 = "reported_vote_only", OD7 = "interest_on_0_10", OD8 = "two_first_languages",
   OD9 = "campaign_period_vote", "A:H3" = "scale_corrected", "A:H4" = "coding_error_fixed",
-  "A:H6" = "other_question_fixed"
+  "A:H6" = "other_question_fixed", SIGNOFF = "not_signed_off", REV = "review_correction"
 )
 stopifnot(all(explained$cause %in% names(cause_names)))
 explained$cause <- unname(cause_names[explained$cause])
@@ -157,7 +163,9 @@ explain <- function(profile, column, study, kind) {
   in_study <- vapply(strsplit(explained$study, ";", fixed = TRUE), function(x) any(x %in% c(study, "*")), logical(1))
   hit <- explained$profile == profile & explained$column %in% c(column, "*") &
     in_study & explained$kind == kind
-  if (any(hit)) explained$cause[which(hit)[1]] else NA_character_
+  # every cause that applies (a column of qes2007_panel may be NA both for
+  # the row in no wave and for the rows held in review)
+  if (any(hit)) unique(explained$cause[hit]) else NA_character_
 }
 
 # Cell classification of two aligned columns.
@@ -191,7 +199,7 @@ compare_cell <- function(profile, s, v, o44, o50, n, kept = rep(TRUE, length(n))
   for (kind in c("to_na", "from_na", "changed")) {
     if (k50[[kind]] > 0) {
       c_ <- explain(profile, v, s, kind)
-      if (is.na(c_)) {
+      if (all(is.na(c_))) {
         problems <<- c(problems, sprintf("%s %s %s: UNEXPLAINED %s (%d cells) against 0.5.0", profile, s, v, kind, k50[[kind]]))
       } else {
         cause50 <- c(cause50, c_)
@@ -435,13 +443,16 @@ join_notes <- function(x) {
   paste(c(x[1], lower_first(x[-1])), collapse = "; ")
 }
 
+# the explained rows whose study field (a study, a ";"-list or "*") covers `study`
+covers <- function(field, study) vapply(strsplit(field, ";", fixed = TRUE), function(x) any(x %in% c(study, "*")), logical(1))
+
 # NEWS: master columns of the CC0 studies whose values changed
 fmt_n <- function(x) ifelse(is.na(x), "", formatC(as.numeric(x), format = "d", big.mark = ","))
 news_rows <- cells[cells$profile == "master" & cells$study %in% cc0 &
                      (cells$to_na + cells$from_na + cells$changed > 0), , drop = FALSE]
 why <- vapply(seq_len(nrow(news_rows)), function(i) {
   e <- explained[explained$profile == "master" & explained$column %in% c(news_rows$column[i], "*") &
-                   explained$study %in% c(news_rows$study[i], "*"), , drop = FALSE]
+                   covers(explained$study, news_rows$study[i]), , drop = FALSE]
   e <- e[e$kind %in% c(if (news_rows$to_na[i] > 0) "to_na", if (news_rows$from_na[i] > 0) "from_na",
                        if (news_rows$changed[i] > 0) "changed"), , drop = FALSE]
   join_notes(e$explanation)
@@ -456,7 +467,7 @@ news_tab$`0.4.4`[is.na(news_rows$valid_044)] <- ""
 nc <- cells[cells$profile == "master" & !cells$study %in% cc0 & (cells$to_na + cells$from_na + cells$changed > 0), , drop = FALSE]
 nc_why <- vapply(seq_len(nrow(nc)), function(i) {
   e <- explained[explained$profile == "master" & explained$column %in% c(nc$column[i], "*") &
-                   explained$study %in% c(nc$study[i], "*"), , drop = FALSE]
+                   covers(explained$study, nc$study[i]), , drop = FALSE]
   e <- e[e$kind %in% c(if (nc$to_na[i] > 0) "to_na", if (nc$from_na[i] > 0) "from_na",
                        if (nc$changed[i] > 0) "changed"), , drop = FALSE]
   sprintf("`%s`, %s", nc$column[i], lower_first(join_notes(e$explanation)))

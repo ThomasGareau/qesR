@@ -52,9 +52,12 @@
 #   cause       the finding or decision behind an NA column;
 #   definition, note  the legacy_column_map attribute (English).
 #
-# The engine runs with include_draft = TRUE: the crosswalk rows are checked
-# against the original files but not all signed off by a reviewer yet, and
-# the legacy columns have always been built from unreviewed code. Every
+# The engine runs with include_draft = FALSE (since spec 4.0.0): only the
+# crosswalk rows signed off by a reviewer (status stable) are applied. A
+# column whose question is in a row still in review is NA with reason
+# not_reviewed in attr(, "legacy_na_columns"), its cause not_signed_off and
+# its basis the row's review_note (why it is held); a render never falls
+# through to a later target when an earlier one has a row in review. Every
 # value keeps the engine's semantics (a code the spec does not map is NA,
 # never passed through); unmapped codes warn (unmapped = "warn").
 
@@ -254,9 +257,19 @@
 # The target a row uses in the study: the first of its targets whose cell
 # was applied (NA when none was).
 .qes_legacy_pick <- function(targets, cell) {
-  used <- cell$target[cell$included %in% TRUE]
+  # the first target with a signed-off row, or with a row in review (then
+  # NA: a later target is not a stand-in for a question not signed off)
+  held <- .qes_legacy_unreviewed(targets, cell)
+  used <- c(cell$target[cell$included %in% TRUE], held)
   hit <- targets[targets %in% used]
-  if (length(hit) == 0L) NA_character_ else hit[1]
+  if (length(hit) == 0L) return(NA_character_)
+  if (hit[1] %in% cell$target[cell$included %in% TRUE]) hit[1] else NA_character_
+}
+
+# The targets of `targets` whose row in the study is in review (not applied).
+.qes_legacy_unreviewed <- function(targets, cell) {
+  if (is.null(cell$excluded)) return(character(0))
+  targets[targets %in% cell$target[cell$excluded %in% "not_reviewed"]]
 }
 
 # Age in years (render age_years): the age target, else year minus the
@@ -403,6 +416,10 @@
       target = if (length(targets) > 0L) paste(targets, collapse = ";") else NA_character_,
       map_id = if (nrow(ci) > 0L && any(!is.na(ci$map_id))) paste(stats::na.omit(ci$map_id), collapse = ";") else NA_character_,
       grade = if (nrow(ci) > 0L) paste(ci$grade, collapse = ";") else NA_character_,
+      status = if (nrow(ci) > 0L) paste(ci$status, collapse = ";") else {
+        held <- cell[match(.qes_legacy_unreviewed(.qes_split_list(r$target), cell), cell$target), , drop = FALSE]
+        if (nrow(held) > 0L) paste(held$status, collapse = ";") else NA_character_
+      },
       render = r$render,
       file_md5 = if (is.null(prov)) NA_character_ else prov$md5_observed[1],
       spec_version = attr(h, "qes_spec", exact = TRUE)$version,
@@ -415,11 +432,25 @@
       no_raw <- res$kind == "raw" && !arg %in% names(raw)
       var_col <- paste0(arg, "_var")
       no_weight <- res$kind == "lead" && grepl("^weight_", arg) && var_col %in% names(h) && all(is.na(h[[var_col]]))
-      reason <- if (res$kind == "na_column") "na_column" else if (no_raw || no_weight || (is.na(res$target) && !is.na(r$target) &&
-        !any(.qes_split_list(r$target) %in% cell$target[cell$included %in% TRUE]))) "no_source" else "all_missing"
+      held <- .qes_legacy_unreviewed(.qes_split_list(r$target), cell)
+      reason <- if (res$kind == "na_column") "na_column" else if (no_raw || no_weight) "no_source" else
+        if (is.na(res$target) && length(held) > 0L) "not_reviewed" else if (is.na(res$target) && !is.na(r$target) &&
+        !any(.qes_split_list(r$target) %in% cell$target[cell$included %in% TRUE])) "no_source" else "all_missing"
+      cause <- r$cause
+      basis <- r$note %|NA|% r$definition
+      if (reason == "not_reviewed") {
+        # why the row is held, from the crosswalk (review_note)
+        cause <- "not_signed_off"
+        xw <- spec$tables$crosswalk
+        spec_study <- if (study %in% names(.qes_hz_stand_ins)) .qes_hz_stand_ins[[study]] else study
+        k <- which(xw$study == spec_study & xw$target %in% held & xw$primary %in% TRUE & xw$status != "stable")
+        notes <- unique(stats::na.omit(xw$review_note[k]))
+        basis <- if (length(notes) > 0L) paste(notes, collapse = " ") else
+          sprintf("The crosswalk row of %s is not signed off by a reviewer yet.", paste(held, collapse = ", "))
+      }
       na_rows[[length(na_rows) + 1L]] <- data.frame(
         column = r$column, study = study, reason = reason, n_cells = as.integer(n),
-        cause = r$cause, basis = r$note %|NA|% r$definition, stringsAsFactors = FALSE
+        cause = cause, basis = basis, stringsAsFactors = FALSE
       )
     }
   }
@@ -445,11 +476,14 @@
   on.exit(.qes_hz_preread$frames <- NULL, add = TRUE)
   muffle <- c("qesR_message_approximate_cells", "qesR_message_structural_zeros", "qesR_message_unreviewed_cells",
               "qesR_message_unreviewed_skipped", "qesR_message_weight_review", "qesR_message_weight_timing")
+  # the columns left NA by rows not signed off are listed, with the reason
+  # not_reviewed, in legacy_na_columns, and announced by the builder
   h <- withCallingHandlers(
     qes_harmonize(study, targets = targets, layout = "respondent", values = "code", missing = "reasons",
                   min_grade = "approximate", weights = "raw", unmapped = "warn", on_fail = "stop",
-                  include_draft = TRUE, lang = "en", quiet = quiet),
-    message = function(m) if (inherits(m, muffle)) invokeRestart("muffleMessage")
+                  include_draft = FALSE, lang = "en", quiet = quiet),
+    message = function(m) if (inherits(m, muffle)) invokeRestart("muffleMessage"),
+    qesR_warning_all_unreviewed = function(w) invokeRestart("muffleWarning")
   )
   raw_vars <- unique(stats::na.omit(vapply(lg$render, function(x) {
     p <- .qes_legacy_parse_render(x)
@@ -497,6 +531,12 @@
     parts[[study]] <- part
     .qes_inform("master_rows_loaded", class = "qesR_message_download", args = list(study, nrow(part$data)),
                 data = list(study = study), quiet = quiet)
+    held <- part$na_rows$column[part$na_rows$reason %in% "not_reviewed"]
+    if (length(held) > 0L) {
+      .qes_inform("legacy_unreviewed", class = "qesR_message_values_changed",
+                  args = list(study, length(held), paste(held, collapse = ", ")),
+                  data = list(study = study, columns = held), quiet = quiet)
+    }
   }
   bind <- function(field) {
     x <- lapply(unname(parts), `[[`, field)

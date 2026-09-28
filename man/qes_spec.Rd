@@ -56,7 +56,9 @@ By \code{view}:
 \code{map_id}, \code{args}, \code{na_codes}, \code{gate}, \code{primary}, \code{grade},
 \code{grade_reason}, \code{instrument}, \code{election_ref}, \code{mode}, \code{dk_offered},
 \code{levels_offered}, \code{levels_not_offered}, \code{wording}, \code{wording_ref},
-\code{weight_var}, \code{status}, \code{evidence}, \code{notes}. With \code{level = "code"}:
+\code{weight_var}, \code{status}, \code{reviewed_by}, \code{reviewed_on}, \code{review_note}
+(what the review corrected, and why a reviewed row is held in review),
+\code{evidence}, \code{notes}. With \code{level = "code"}:
 \code{study}, \code{wave}, \code{target}, \code{variable}, \code{source_code}, \code{source_label},
 \code{origin} (\code{map}, \code{na_codes}, \code{range} or \code{gate}), \code{target_code},
 \code{target_level}, \code{target_label}, \code{na_reason}, \code{note}. A \code{wave} of \code{"*"}
@@ -124,7 +126,7 @@ L'ensemble de cibles \code{"decon"} réunit les cibles des colonnes de
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 2.0.1)}{
+\section{Targets in the shipped spec (version 4.0.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{

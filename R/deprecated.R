@@ -17,7 +17,7 @@
 #' | `get_qes_codebook_files()` | `qes_docs()` | 0.5.0 |
 #' | `download_codebook()` | `qes_download(what = "docs")` | 0.5.0 |
 #' | `get_qescodes()` | `qes_studies()` | 0.5.0 |
-#' | `get_decon()` | `qes_harmonize(srvy, targets = "decon", include_draft = TRUE)` | 0.7.0 |
+#' | `get_decon()` | `qes_harmonize(srvy, targets = "decon")` | 0.7.0 |
 #'
 #' @section Notices:
 #' The notice is a message of class `qesR_message_deprecated`, not a warning,
@@ -68,7 +68,7 @@ NULL
     "qes_codebook(codebook, layout = )", "qes_codebook(layout = \"long\")",
     "qes_question()",
     "qes_docs()", "qes_docs()", "qes_download(what = \"docs\")",
-    "qes_studies()", "qes_harmonize(srvy, targets = \"decon\", include_draft = TRUE)"
+    "qes_studies()", "qes_harmonize(srvy, targets = \"decon\")"
   ),
   since = c(
     "0.5.0", "0.5.0", "0.5.0",

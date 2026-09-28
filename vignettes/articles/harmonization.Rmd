@@ -22,9 +22,12 @@ Dataverse deposits through its cache.
 The harmonization engine is **experimental**. Its specification says, for
 each study and harmonized variable ("target"), which question feeds the
 target and how each of its codes maps to the target's levels; nothing is
-matched by name. The rows of this first specification were checked against
-the original files and documents but are not yet signed off by a reviewer,
-so this page applies them with `include_draft = TRUE`.
+matched by name. In specification 4.0.0 most rows are signed off, after an
+automated double review against the original files and documents (not a
+human review), and `qes_harmonize()` applies them by default; the rows of
+`qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls stay in
+review until their recommended weights are reviewed. So that every study
+appears, this page applies those rows too, with `include_draft = TRUE`.
 
 ```{r packages, message = FALSE}
 library(qesR)
@@ -63,9 +66,10 @@ and levels of every study's question.
 
 `studies = NULL`, the default, takes the Quebec Election Studies that have
 a question for at least one of the targets; the Durand panels, the CROP
-polls and the 1998 panel are left out unless you name them. The weights of
-`qes2007` and `qes2008` are not documented yet, so their rows have no
-weight and `qes_design()` leaves them out below, with a message.
+polls and the 1998 panel are left out unless you name them. `qes2008` has
+no recommended weight (both of its weights are calibrated on the vote or
+on turnout), so its rows have no weight and `qes_design()` leaves them out
+below, with a message.
 `layout = "long"` gives one row
 per respondent and wave, so each answer sits on the row of the wave that
 asked it, next to that wave's weight. `missing = "reasons"` adds a column
@@ -243,8 +247,9 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 `sov_favour` is a four-point scale of favour (`qes2018_panel`), and
 `sov_partnership_1995` repeats the question of the 1995 referendum,
 sovereignty with an offer of partnership to the rest of Canada (`qes2007`,
-`qes2008`, `qes2007_panel` and the CROP respondents of `qes1998`). Their
-weights are not documented yet, so `qes_harmonize()` returns `NA` for them
-and `qes_design()` leaves these respondents out, with a message, until the
-weights are reviewed. Put the targets side by side and read each one
+`qes2008`, `qes2007_panel` and the CROP respondents of `qes1998`). Only
+`qes2007` and `qes2018_panel` among them have reviewed weights; `qes2008`
+has none to recommend and the others' weights still need review, so
+`qes_harmonize()` returns `NA` for them and `qes_design()` leaves these
+respondents out, with a message. Put the targets side by side and read each one
 against its own question.
