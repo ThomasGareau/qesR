@@ -1,6 +1,6 @@
 # Open questions for the owner
 
-State at qesR 0.7.0, harmonization spec 4.0.0 (2026-09-28). The file
+State at qesR 0.7.0, harmonization spec 4.1.0 (2026-09-28). The file
 has two parts:
 
 1. **Resolved (with sources):** what the public deposits, the producers'
@@ -431,15 +431,27 @@ owner reopens one)
   2026-09-27, not a human review: `reviewed_by` says so on every row. 96
   rows were signed off as they were and 36 after a correction, each
   checked on the originals and the documents before it was applied and
-  named in the row's `review_note` (schema version 2). 93 rows are
-  `stable`; the 39 held in review are listed in D12. `get_qes_master()`
-  and `get_decon()` apply signed-off rows only (`include_draft = FALSE`):
+  named in the row's `review_note` (schema version 2). 93 rows were
+  `stable`; the 39 it held in review (D12) are `stable` since 4.1.0
+  (below). `get_qes_master()` and `get_decon()` apply signed-off rows only (`include_draft = FALSE`):
   a column whose question is in a held row is `NA`, reason `not_reviewed`,
   cause `not_signed_off`, basis the row's `review_note`; every difference
   from 0.5.0 is explained in `dev/legacy-diff.md`. MAJOR: `qes2022`
   `cps_income` code 0 is `no_answer` (a blank sent to the follow-up
   `cps_income2`) and `cps_votechoice1_8_TEXT` is gated like its parent
   row.
+- **Content sign-off apart from the weights (4.1.0, the owner's decision
+  of 2026-09-28; design.md OD20).** The release rule of V-S13 that failed
+  a stable row on a study-wave whose recommended weight needs review is
+  removed. The 38 rows it held (D12 (a)) are `stable`: their `review_note`
+  still says the review was automated, not human, and that the weight is
+  tracked apart (Q1). The weights stay `needs_review` and unapplied (`NA`,
+  with a message; `qes_design()` leaves their rows out; in
+  `get_qes_master()` `weight_pre` and `weight_post` have reason
+  `not_reviewed`, cause `weight_needs_review`). `qes2014` `QSEXE` is
+  `stable` at `comparable`, the grade it had before the review, with the
+  English stem the review filled; `identical` waits for a human second
+  reviewer (D12 (b)). All 132 rows are `stable`.
 
 ## 1.9 Deferred work (other slices; no owner action)
 
@@ -638,19 +650,23 @@ no longer published.
 
 ## 2.2 Decisions only the owner can take
 
-**D1. Sign-off.** 93 rows are `stable` after the automated double review
-of spec 4.0.0 (1.8), which is not a human review; design.md made the
-owner's review the sign-off. To decide: (a) whether the automated review
-stands as the sign-off for the release, or which rows the owner reviews by
-hand first (setting `reviewed_by` to the reviewer and, for a row that
-changes, a CHANGES.csv entry); (b) whether to accept as `reviewed` the
-weights described from CROP's reports (`XPOND`, 1.1) and from the files
-only (the 2007 and 2012 panels, 1.4), or keep them `needs_review` until Q1
-is answered: this releases the rows held in D12 (a). Weights set to `reviewed` in this
-round, on producer documents checked on the file: `qes2007` `pond`, the
-2018 panel's `weight` and `weight_rts`; the owner may revert them. A
-stable row on a study-wave whose weight needs review fails the release
-check (V-S13).
+**D1. Sign-off.** All 132 rows are `stable` after the automated double
+review of spec 4.0.0 (1.8), which is not a human review; design.md made
+the owner's review the sign-off. To decide: (a) whether the automated
+review stands as the sign-off for the release, or which rows the owner
+reviews by hand first (setting `reviewed_by` to the reviewer and, for a
+row that changes, a CHANGES.csv entry); (b) whether to accept as
+`reviewed` the weights described from CROP's reports (`XPOND`, 1.1) and
+from the files only (the 2007 and 2012 panels, 1.4), or keep them
+`needs_review` until Q1 is answered. Since spec 4.1.0 (the owner's
+decision of 2026-09-28, design.md OD20) this choice is about the weights
+only: the content sign-off of a row no longer depends on its weight, and
+the rows of these studies are `stable` either way. Until a weight is
+accepted, its values are `NA` (in `qes_harmonize()` and in `weight_pre`
+and `weight_post` of `get_qes_master()`) and `qes_design()` leaves its
+rows out. Weights set to `reviewed` in the round of spec 3.0.0, on
+producer documents checked on the file: `qes2007` `pond`, the 2018
+panel's `weight` and `weight_rts`; the owner may revert them.
 
 **D2. CROP sovereign-country item.** `intvoterefa` is documented as the
 sovereign-country question in 19 of 24 polls (1.1) but cannot be mapped
@@ -729,53 +745,44 @@ codebook p. 5) and the grade reasons in qesR's own words may stay, and that
 the website article may show `qes2022` aggregates computed at build time;
 or drop `n` for `qes2022`, reword the reasons and drop those article rows.
 
-**D12. Rows held in review (spec 4.0.0).** The automated review signed
-these rows off on their content, but they stay `review`, so
-`qes_harmonize()` applies them only with `include_draft = TRUE` and the
-legacy columns they feed are `NA` (reason `not_reviewed`). Each row's
-`review_note` says why. A person must act on each group:
+**D12. Rows held in review (spec 4.0.0; released in spec 4.1.0).** The
+automated review signed 39 rows off on their content but left them in
+`review`. Spec 4.1.0 (the owner's decision of 2026-09-28, design.md OD20)
+makes all of them `stable`; what is left for a person:
 
-(a) Held by the release check V-S13 (a stable row on a study-wave whose
-recommended weight needs review fails it). They become `stable` when the
-weight is accepted (D1 (b) for `qes2007_panel`, `qes2012_panel` and the
-CROP polls; D3 for `qes1998`), or after Q1 is answered:
-- `qes1998` (weight `ponder3`, D3): `intvote` and `intvote2`
-  (`vote_prov_intent_push`), `q3post` (`vote_prov_recall`), `q1post`
-  (`turnout_prov_recall`), `q16a_crop` (`sov_partnership_1995`), `age`
-  (`age_group3`, `age_group6`), `sexe_post` (`gender`).
-- `qes2007_panel` (weights `pondam1`, `pond_tot_am1`): `intvote1`
-  (`vote_prov_intent`), `intvote` (`vote_prov_intent_push`), `vote`
-  (`vote_prov_recall`), `voteoui` (`turnout_prov_recall`), `intref1`
-  (`sov_partnership_1995`), `age` (`age_group3`, `age_group6`), `sexe`
-  (`gender`), `scol` (`education4`), `lmat` (`lang_mother`), `revenu`
-  (`income_native`), `interet` (`interest_campaign_4pt`).
-- `qes2012_panel` (weights `pondam1`, `pond_post`): `intvoteref`
-  (`sov_sovereign_country`), `intvoteprov1` (`vote_prov_intent`),
-  `intvoteprov` (`vote_prov_intent_push`), `voteprov`
-  (`vote_prov_recall`), `participation` (`turnout_prov_recall`),
-  `interetrec` (`interest_4pt`, documentation only), `age` (`age_group3`,
-  `age_group6`), `sexe` (`gender`; its instrument `sex_recorded` is
-  inferred: keep it, or use `gender_2` as the 2018 panel does), `lmat`
-  (`lang_mother`).
-- `qes_crop_2007_2010` (weight `XPOND`): `intvoteprova`
-  (`vote_prov_intent`), `intvoteprov` (`vote_prov_intent_push`), `QAGE`
-  (`age_group3`, `age_group6`), `SEXE` (`gender`), `scol`
-  (`education4`), `lmat` (`lang_mother`), `revenu` (`income_native`).
+(a) The 38 rows of `qes1998`, `qes2007_panel`, `qes2012_panel` and the
+CROP polls were held only by the release rule of V-S13 (a stable row on a
+study-wave whose recommended weight needs review), which is removed: the
+content sign-off of a row is now separate from the review of its wave's
+weight. They are `stable`, with a `review_note` that says the review was
+automated (not human) and that the weight is tracked apart. No row is
+held for a decision (one choice of instrument is below, with the other
+decisions the review raised); their weights are D1 (b) (`qes2007_panel`
+`pondam1` and `pond_tot_am1`, `qes2012_panel` `pondam1` and `pond_post`,
+CROP `XPOND`) and D3 (`qes1998` `ponder3`), and Q1 asks the producer. The
+rows were: `qes1998` `intvote` and `intvote2` (`vote_prov_intent_push`),
+`q3post` (`vote_prov_recall`), `q1post` (`turnout_prov_recall`),
+`q16a_crop` (`sov_partnership_1995`), `age` (`age_group3`, `age_group6`),
+`sexe_post` (`gender`); `qes2007_panel` `intvote1`, `intvote`, `vote`,
+`voteoui`, `intref1`, `age` (two rows), `sexe`, `scol`, `lmat`, `revenu`,
+`interet`; `qes2012_panel` `intvoteref`, `intvoteprov1`, `intvoteprov`,
+`voteprov`, `participation`, `interetrec` (documentation only), `age` (two
+rows), `sexe`, `lmat`; CROP `intvoteprova`,
+`intvoteprov`, `QAGE` (two rows), `SEXE`, `scol`, `lmat`, `revenu`.
 
-The consequence for the release: `get_qes_master()` and `get_decon()`
-return `NA` in every column these four studies take from the spec (their
-identifiers, dates and weights are kept), where 0.5.0 had values. The
-alternative is to accept their weights before the release.
-
-(b) Held for a second reviewer (design.md section 11.1, step 3: an
-`identical` row that pools fielding languages): `qes2014` `QSEXE`
-(`gender`), raised from `comparable` to `identical` in this review (the
-anchor's stems in both languages: "What is your gender?" / "Quel est votre
-sexe?"). Confirm the grade and set it `stable`, or set it back to
-`comparable` with the corrected reasons. Until then `gender` of `qes2014`
-(and of `qes_demo`) is `NA` in the legacy functions.
+(b) `qes2014` `QSEXE` (`gender`): the review raised it from `comparable` to
+`identical` (the anchor's stems in both languages: "What is your
+gender?" / "Quel est votre sexe?"), and design.md section 11.1, step 3,
+gives an `identical` row that pools fielding languages to a second
+reviewer. Spec 4.1.0 keeps the conservative grade, `comparable`, with the
+English stem the review filled, and makes the row `stable`. To decide: a
+human second reviewer confirms `identical` (a grade change that does not
+cross the default `min_grade`, so not MAJOR under design.md section 5.11:
+MINOR, with a CHANGES.csv entry) or leaves it at `comparable`.
 
 Other decisions the review raised (no row is held for them): whether to
+keep the instrument `sex_recorded` of `qes2012_panel` `sexe`, which is
+inferred, or use `gender_2` as the 2018 panel does; whether to
 use the `cps_income2` brackets for the `qes2022` respondents who left the
 amount blank (a two-source rule the spec does not have yet; the 17 whose
 follow-up says "no income" are `no_answer` for now); whether the
@@ -783,5 +790,5 @@ two-language options that `qes2012` and `qes2008` list in their
 questionnaires but not in their files call for another instrument name
 (`lang_first_multi`) for both.
 
-**Held pending evidence:** none. Every row held in review needs a person
-(D12); no row waits only for a document.
+**Held pending evidence:** none. No row is held in review (spec 4.1.0);
+the weights that need review wait for Q1 (D1 (b), D3).

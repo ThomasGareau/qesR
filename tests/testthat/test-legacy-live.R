@@ -23,12 +23,19 @@ test_that("the engine-rendered master keeps every row and the 0.4.4 schema (live
     as.vector(table(factor(by("qes2012", "vote_choice"), c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON", "Other party")))),
     c(278L, 509L, 324L, 96L, 13L, 39L, 15L)
   )
-  # qes1998's rows are held in review (its recommended weight needs review,
-  # V-S13): its columns from the spec are NA, with the reason
-  expect_true(all(is.na(by("qes1998", "vote_choice"))))
+  # qes1998's rows are signed off (spec 4.1.0): the reported vote of its
+  # recontact; its recommended weight still needs review, so weight_pre and
+  # weight_post are NA, with the reason, and survey_weight is ponderc
+  expect_true(any(!is.na(by("qes1998", "vote_choice"))))
   na <- attr(m, "legacy_na_columns")
-  expect_identical(na$reason[na$column == "vote_choice" & na$study == "qes1998"], "not_reviewed")
-  expect_identical(na$cause[na$column == "vote_choice" & na$study == "qes1998"], "not_signed_off")
+  expect_false(any(na$study == "qes1998" & na$cause %in% "not_signed_off"))
+  for (col in c("weight_pre", "weight_post")) {
+    expect_true(all(is.na(by("qes1998", col))), info = col)
+    expect_identical(na$reason[na$column == col & na$study == "qes1998"], "not_reviewed", info = col)
+    expect_identical(na$cause[na$column == col & na$study == "qes1998"], "weight_needs_review", info = col)
+    expect_match(na$basis[na$column == col & na$study == "qes1998"], "ponder3", fixed = TRUE)
+  }
+  expect_false(all(is.na(by("qes1998", "survey_weight"))))
   expect_true(all(is.na(by("qes_crop_2007_2010", "vote_choice"))))
   # columns filled from the spec
   expect_identical(sum(!is.na(by("qes2018", "ideology"))), 2490L)
@@ -54,7 +61,6 @@ test_that("get_decon() of the originals: reported vote, and the qes2022 campaign
   # -99 (not answered) and 0 (a blank amount, sent to the follow-up) are NA
   expect_false(any(d22$income %in% c(-99, 0)))
   d98 <- get_decon("qes1998", quiet = TRUE)
-  expect_true(all(is.na(d98$votechoice)))
-  expect_identical(attr(d98, "legacy_na_columns")$reason[attr(d98, "legacy_na_columns")$column == "votechoice"],
-                   "not_reviewed")
+  expect_true(any(!is.na(d98$votechoice)))
+  expect_false("not_reviewed" %in% attr(d98, "legacy_na_columns")$reason)
 })

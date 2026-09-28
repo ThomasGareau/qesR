@@ -41,12 +41,10 @@ grade for every study's question, come from
 rows signed off by a reviewer (status \code{stable}); a column whose question
 is in a row still in review is \code{NA} (reason \code{not_reviewed} in
 \code{attr(, "legacy_na_columns")}, which says why the row is held), and
-\code{include_draft = TRUE} in \code{\link[=qes_harmonize]{qes_harmonize()}} applies those rows too. In
-spec 4.0.0 the rows were signed off after an automated double review
-against the original files and documents (not a human review); the rows
-of \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} and the CROP polls are held
-until their recommended weights are reviewed, and \code{gender} of \code{qes2014}
-until a second reviewer confirms its grade.
+\code{include_draft = TRUE} in \code{\link[=qes_harmonize]{qes_harmonize()}} applies those rows too. The
+rows were signed off after an automated double review against the
+original files and documents (not a human review); since spec 4.1.0
+every row is signed off.
 
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
@@ -98,13 +96,10 @@ lignes de correspondance approuvées par un réviseur (statut \code{stable}) ;
 une colonne dont la question est dans une ligne encore en révision vaut
 \code{NA} (motif \code{not_reviewed} dans \code{attr(, "legacy_na_columns")}, qui dit
 pourquoi la ligne est retenue), et \code{include_draft = TRUE} dans
-\code{\link[=qes_harmonize]{qes_harmonize()}} applique aussi ces lignes. Dans la spécification 4.0.0,
-les lignes ont été approuvées après une double révision automatisée sur
-les fichiers et documents originaux (et non une révision humaine) ; les
-lignes de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et des sondages
-CROP sont retenues jusqu'à ce que leurs pondérations recommandées soient
-révisées, et \code{gender} de \code{qes2014} jusqu'à ce qu'un second réviseur
-confirme son niveau. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+\code{\link[=qes_harmonize]{qes_harmonize()}} applique aussi ces lignes. Les lignes ont été
+approuvées après une double révision automatisée sur les fichiers et
+documents originaux (et non une révision humaine) ; toutes le sont depuis
+la spécification 4.1.0. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
 anglais des cibles, nombres, et texte pour \code{income} et \code{religion} (le
 montant du revenu de \code{qes2022} reste un nombre).
 \code{turnout} et \code{votechoice} sont la participation et le vote déclarés

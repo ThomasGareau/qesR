@@ -36,7 +36,7 @@ test_that("the shipped spec passes V-S1 to V-S17 and the hash check", {
   p <- .qes_spec_check(s)
   expect_identical(p$rule[p$severity == "error"], character(0))
   expect_identical(p$rule[p$severity == "warning"], character(0))
-  # release rules: no draft rows, no stable row on a weight that needs review
+  # release rules: no draft rows (V-S11)
   p <- .qes_spec_check(s, release = TRUE)
   expect_identical(p$rule[p$severity == "error"], character(0))
 })
@@ -384,7 +384,8 @@ test_that("V-S11 sets the review requirements and the licence limits", {
   }))
   # a reviewed row left in review says why (review_note)
   expect_true("V-S11" %in% rules_after(function(t) {
-    i <- which(t$crosswalk$status == "review" & !is.na(t$crosswalk$reviewed_by))[1]
+    i <- which(!is.na(t$crosswalk$reviewed_by))[1]
+    t$crosswalk$status[i] <- "review"
     t$crosswalk$review_note[i] <- NA
     t
   }))
@@ -456,14 +457,13 @@ test_that("V-S13 checks weight roles and one recommended weight per wave", {
     t$weights$role[t$weights$study == "qes2008" & t$weights$weight_var == "pond"] <- NA
     t
   }))
-  # released stable rows may not use a weight that needs review
-  expect_true("V-S13" %in% rules_after(function(t) {
-    i <- xw_row(t, "qes2012_panel", "vote_prov_intent")
-    t$crosswalk$status[i] <- "stable"
-    t$crosswalk$reviewed_by[i] <- "reviewer"
-    t$crosswalk$reviewed_on[i] <- as.Date("2026-09-27")
-    t
-  }, release = TRUE))
+  # a weight that needs review does not hold the rows of its waves (spec
+  # 4.1.0): a released spec may have stable rows there
+  wt <- shipped_spec()$tables$weights
+  expect_true(any(wt$recommended & wt$status == "needs_review" & wt$study == "qes2012_panel"))
+  expect_identical(shipped_spec()$tables$crosswalk$status[xw_row(shipped_spec()$tables, "qes2012_panel", "vote_prov_intent")],
+                   "stable")
+  expect_false("V-S13" %in% rules_after(function(t) t, release = TRUE))
 })
 
 test_that("V-S14 requires ordinal maps to be monotone", {

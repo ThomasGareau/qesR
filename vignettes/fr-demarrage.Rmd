@@ -199,12 +199,12 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
 Une ligne est appliquée une fois approuvée par un réviseur. Dans la
-spécification 4.0.0, la plupart des lignes sont approuvées, après une double
+spécification 4.1.0, toutes les lignes sont approuvées, après une double
 révision automatisée sur les fichiers et documents originaux (et non une
-révision humaine) ; les lignes encore en révision (celles de `qes1998`,
-`qes2007_panel`, `qes2012_panel` et des sondages CROP, dont les
-pondérations recommandées doivent d'abord être révisées) donnent `NA` avec
-le motif `not_reviewed`, sauf avec `include_draft = TRUE`. Sur l'étude de
+révision humaine) ; une ligne encore en révision donnerait `NA` avec le
+motif `not_reviewed`, sauf avec `include_draft = TRUE`. Les pondérations
+recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages
+CROP restent à réviser, et valent donc `NA`. Sur l'étude de
 démonstration, qui tient lieu de `qes2014` :
 
 ```{r harmonize}

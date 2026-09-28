@@ -266,6 +266,22 @@
   if (hit[1] %in% cell$target[cell$included %in% TRUE]) hit[1] else NA_character_
 }
 
+# The recommended weights of the waves of `study` that fill `col`
+# (weight_pre or weight_post) whose registry status is needs_review: they
+# are registered but not applied until they are reviewed. A study that
+# stands in for another (qes_demo) has the other's weights.
+.qes_legacy_pending_weight <- function(spec, study, col) {
+  if (study %in% names(.qes_hz_stand_ins)) study <- .qes_hz_stand_ins[[study]]
+  wv <- spec$tables$waves
+  wt <- spec$tables$weights
+  wv <- wv[wv$study %in% study, , drop = FALSE]
+  waves <- wv$wave[vapply(wv$wave_timing, function(tm) col %in% .qes_hz_weight_columns(tm), logical(1))]
+  if (length(waves) == 0L) return(character(0))
+  k <- wt$study %in% study & wt$recommended %in% TRUE & wt$status %in% "needs_review" &
+    (wt$wave %in% waves | wt$wave %in% .qes_all_waves)
+  unique(wt$weight_var[k])
+}
+
 # The targets of `targets` whose row in the study is in review (not applied).
 .qes_legacy_unreviewed <- function(targets, cell) {
   if (is.null(cell$excluded)) return(character(0))
@@ -433,12 +449,23 @@
       var_col <- paste0(arg, "_var")
       no_weight <- res$kind == "lead" && grepl("^weight_", arg) && var_col %in% names(h) && all(is.na(h[[var_col]]))
       held <- .qes_legacy_unreviewed(.qes_split_list(r$target), cell)
-      reason <- if (res$kind == "na_column") "na_column" else if (no_raw || no_weight) "no_source" else
+      # a recommended weight that is registered but needs review is not
+      # applied (qes_harmonize() leaves it NA) until it is accepted
+      pending <- if (no_weight) .qes_legacy_pending_weight(spec, study, arg) else character(0)
+      reason <- if (res$kind == "na_column") "na_column" else if (length(pending) > 0L) "not_reviewed" else
+        if (no_raw || no_weight) "no_source" else
         if (is.na(res$target) && length(held) > 0L) "not_reviewed" else if (is.na(res$target) && !is.na(r$target) &&
         !any(.qes_split_list(r$target) %in% cell$target[cell$included %in% TRUE])) "no_source" else "all_missing"
       cause <- r$cause
       basis <- r$note %|NA|% r$definition
-      if (reason == "not_reviewed") {
+      if (length(pending) > 0L) {
+        cause <- "weight_needs_review"
+        basis <- sprintf(paste("The spec's recommended weight of this wave (%s) needs review: it is registered",
+                               "but not applied until it is accepted (status needs_review in",
+                               "qes_spec(\"spec\")$tables$weights, whose source_ref says what is known of it).",
+                               "The study's answers do not depend on it."),
+                         paste(pending, collapse = ", "))
+      } else if (reason == "not_reviewed") {
         # why the row is held, from the crosswalk (review_note)
         cause <- "not_signed_off"
         xw <- spec$tables$crosswalk
@@ -531,7 +558,9 @@
     parts[[study]] <- part
     .qes_inform("master_rows_loaded", class = "qesR_message_download", args = list(study, nrow(part$data)),
                 data = list(study = study), quiet = quiet)
-    held <- part$na_rows$column[part$na_rows$reason %in% "not_reviewed"]
+    # the columns of rows not signed off (a weight that needs review is not
+    # announced: legacy_na_columns gives it, with the cause weight_needs_review)
+    held <- part$na_rows$column[part$na_rows$reason %in% "not_reviewed" & part$na_rows$cause %in% "not_signed_off"]
     if (length(held) > 0L) {
       .qes_inform("legacy_unreviewed", class = "qesR_message_values_changed",
                   args = list(study, length(held), paste(held, collapse = ", ")),

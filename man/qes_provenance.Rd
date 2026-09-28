@@ -38,7 +38,7 @@ For \code{level = "cell"} (harmonized data), one row per study and target:
 \code{status} (of the crosswalk row: \code{stable}, or \code{review} and \code{draft} for
 rows not yet signed off), \code{instrument}, \code{weight_var} (the wave's
 recommended weight), \code{weight_status} (\code{reviewed}, or \code{needs_review}
-when the weight is not documented yet and is \code{NA} in the data),
+when the weight is not reviewed yet and is \code{NA} in the data),
 \code{weight_mean_raw} (the mean of the raw weight over the wave's members),
 \code{levels_not_offered} (structural zeros, \verb{;}-separated; empty when
 every level was offered, \code{NA} for targets without levels), \code{included}

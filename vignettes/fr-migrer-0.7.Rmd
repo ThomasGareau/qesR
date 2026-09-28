@@ -155,17 +155,16 @@ construite à partir des variables harmonisées (« cibles ») dont elle a
 besoin, et un code que la spécification n'apparie pas vaut `NA`.
 
 Seules les lignes de la spécification approuvées par un réviseur sont
-appliquées. Dans la spécification 4.0.0, elles ont été approuvées après une
-double révision automatisée sur les fichiers et documents originaux (et non
-une révision humaine). Les lignes de `qes1998`, `qes2007_panel`,
-`qes2012_panel` et des sondages CROP restent en révision jusqu'à ce que
-leurs pondérations recommandées soient révisées : toutes les colonnes de ces
-études qui viennent de la spécification valent donc `NA` pour l'instant,
-avec le motif `not_reviewed` dans `attr(master, "legacy_na_columns")` (les
-identifiants, les dates et la pondération, lus dans le fichier, sont
-conservés) ; de même pour `gender` de `qes2014`, dont le niveau attend un
-second réviseur. Un message nomme ces colonnes. Les colonnes qui changent
-les estimations :
+appliquées ; dans la spécification 4.1.0, toutes le sont, après une double
+révision automatisée sur les fichiers et documents originaux (et non une
+révision humaine). Une colonne dont la ligne serait encore en révision
+vaudrait `NA`, avec le motif `not_reviewed` dans
+`attr(master, "legacy_na_columns")`, et un message la nommerait. Les
+pondérations recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel` et
+des sondages CROP restent à réviser : leurs réponses sont remplies, mais
+`weight_pre` et `weight_post` y valent `NA` (motif `not_reviewed`, cause
+`weight_needs_review`), et `survey_weight` garde la pondération propre à
+chaque étude, comme dans 0.4.4. Les colonnes qui changent les estimations :
 
 | Colonne | Depuis 0.7.0 | Modifiée dans |
 |---|---|---|
@@ -251,10 +250,10 @@ means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
 round(means, 2)
 ```
 
-La plupart des lignes de la spécification sont approuvées ; les lignes
-encore en révision ne sont appliquées qu'avec `include_draft = TRUE`, et la
-colonne `review_note` de `qes_spec("crosswalk")` dit pourquoi chacune est
-retenue. `qes_spec()` montre quelle étude a quelle cible
+Toutes les lignes de la spécification sont approuvées ; une ligne en
+révision ne serait appliquée qu'avec `include_draft = TRUE`, et la colonne
+`review_note` de `qes_spec("crosswalk")` dit ce que la révision a corrigé
+dans chaque ligne. `qes_spec()` montre quelle étude a quelle cible
 et à quel point sa question est comparable, et
 `vignette("fr-reference-harmonisation", package = "qesR")` donne les
 questions, les formulations et les niveaux de comparabilité de chaque

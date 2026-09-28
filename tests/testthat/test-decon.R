@@ -24,10 +24,10 @@ test_that("get_decon() runs on the demo offline and refuses the studies added si
   expect_identical(names(sm), c("qes_code", "column", "source_variable", "target", "grade", "status"))
   expect_identical(sm$target[sm$column == "votechoice"], "vote_prov_recall")
   expect_identical(sm$status[sm$column == "votechoice"], "stable")
-  # the qes2014 gender row is held in review (spec 4.0.0): NA, not_reviewed
-  expect_true(all(is.na(decon$gender)))
-  expect_identical(attr(decon, "legacy_na_columns")$reason[attr(decon, "legacy_na_columns")$column == "gender"],
-                   "not_reviewed")
+  # the qes2014 gender row is signed off (spec 4.1.0)
+  expect_true(any(!is.na(decon$gender)))
+  expect_identical(sm$status[sm$column == "gender"], "stable")
+  expect_false("gender" %in% attr(decon, "legacy_na_columns")$column)
   expect_identical(attr(decon, "qes_provenance")$study, "qes_demo")
   # party_best and partylean have no valid source anywhere
   na <- attr(decon, "legacy_na_columns")
@@ -87,8 +87,8 @@ test_that("the replacement that the get_decon() notice names returns values for 
   for (col in c("vote_prov_recall", "turnout_prov_recall", "lr_self", "birth_year")) {
     expect_true(any(!is.na(h[[col]])), info = col)
   }
-  # the qes2014 gender row is held in review (spec 4.0.0)
-  expect_true(all(is.na(h$gender)))
+  # the qes2014 gender row is signed off (spec 4.1.0)
+  expect_true(any(!is.na(h$gender)))
 })
 
 test_that("get_decon() raises the error of its one study, without a 'skipping' message", {

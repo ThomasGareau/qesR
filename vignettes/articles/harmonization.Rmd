@@ -22,12 +22,12 @@ Dataverse deposits through its cache.
 The harmonization engine is **experimental**. Its specification says, for
 each study and harmonized variable ("target"), which question feeds the
 target and how each of its codes maps to the target's levels; nothing is
-matched by name. In specification 4.0.0 most rows are signed off, after an
+matched by name. In specification 4.1.0 every row is signed off, after an
 automated double review against the original files and documents (not a
-human review), and `qes_harmonize()` applies them by default; the rows of
-`qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls stay in
-review until their recommended weights are reviewed. So that every study
-appears, this page applies those rows too, with `include_draft = TRUE`.
+human review), and `qes_harmonize()` applies them by default. The
+recommended weights of `qes1998`, `qes2007_panel`, `qes2012_panel` and the
+CROP polls still need review, so their weights are `NA`; their answers are
+harmonized like the others'.
 
 ```{r packages, message = FALSE}
 library(qesR)
@@ -77,7 +77,7 @@ asked it, next to that wave's weight. `missing = "reasons"` adds a column
 
 ```{r harmonize}
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), layout = "long",
-                   missing = "reasons", include_draft = TRUE, lang = params$lang)
+                   missing = "reasons", lang = params$lang)
 table(h$study, h$wave)
 ```
 
@@ -111,7 +111,7 @@ studies that asked the anchor question itself remain:
 
 ```{r min-grade}
 strict <- qes_harmonize(targets = "sov_indep", layout = "long", missing = "reasons",
-                        min_grade = "identical", include_draft = TRUE, quiet = TRUE,
+                        min_grade = "identical", quiet = TRUE,
                         lang = params$lang)
 table(strict$study, strict$sov_indep__na)[, c("dk", "refused", "below_grade")]
 ```

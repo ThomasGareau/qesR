@@ -24,13 +24,12 @@ Le moteur d'harmonisation est **expérimental**. Sa spécification indique,
 pour chaque étude et chaque variable harmonisée (« cible »), quelle
 question alimente la cible et comment chacun de ses codes correspond aux
 niveaux de la cible ; rien n'est apparié par le nom. Dans la spécification
-4.0.0, la plupart des lignes sont approuvées, après une double révision
+4.1.0, toutes les lignes sont approuvées, après une double révision
 automatisée sur les fichiers et documents originaux (et non une révision
-humaine), et `qes_harmonize()` les applique par défaut ; les lignes de
-`qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages CROP restent en
-révision jusqu'à ce que leurs pondérations recommandées soient révisées.
-Pour que toutes les études y figurent, cette page applique aussi ces lignes,
-avec `include_draft = TRUE`.
+humaine), et `qes_harmonize()` les applique par défaut. Les pondérations
+recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages
+CROP restent à réviser et valent donc `NA` ; leurs réponses sont
+harmonisées comme les autres.
 
 ```{r packages, message = FALSE}
 library(qesR)
@@ -84,7 +83,7 @@ pondération de cette vague. `missing = "reasons"` ajoute une colonne
 
 ```{r harmonize}
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), layout = "long",
-                   missing = "reasons", include_draft = TRUE, lang = params$lang)
+                   missing = "reasons", lang = params$lang)
 table(h$study, h$wave)
 ```
 
@@ -121,7 +120,7 @@ question d'ancrage elle-même :
 
 ```{r min-grade}
 strict <- qes_harmonize(targets = "sov_indep", layout = "long", missing = "reasons",
-                        min_grade = "identical", include_draft = TRUE, quiet = TRUE,
+                        min_grade = "identical", quiet = TRUE,
                         lang = params$lang)
 table(strict$study, strict$sov_indep__na)[, c("dk", "refused", "below_grade")]
 ```

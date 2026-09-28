@@ -143,16 +143,16 @@ Its values changed twice.
 harmonized variables ("targets") it needs, and a code the specification
 does not map is `NA`.
 
-Only the specification's rows signed off by a reviewer are applied. In
-specification 4.0.0 they were signed off after an automated double review
-against the original files and documents (not a human review). The rows of
-`qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls are held in
-review until their recommended weights are reviewed, so every column of
-these studies that comes from the specification is `NA` for now, with the
-reason `not_reviewed` in `attr(master, "legacy_na_columns")` (identifiers,
-dates and the survey weight, read from the file, are kept); so is `gender`
-of `qes2014`, whose grade awaits a second reviewer. A message names these
-columns. The columns that change estimates:
+Only the specification's rows signed off by a reviewer are applied; in
+specification 4.1.0 every row is signed off, after an automated double
+review against the original files and documents (not a human review). A
+column whose row were still in review would be `NA`, with the reason
+`not_reviewed` in `attr(master, "legacy_na_columns")`, and a message would
+name it. The recommended weights of `qes1998`, `qes2007_panel`,
+`qes2012_panel` and the CROP polls still need review: their answers are
+filled, but `weight_pre` and `weight_post` are `NA` there (reason
+`not_reviewed`, cause `weight_needs_review`), and `survey_weight` keeps each
+study's own weight, as in 0.4.4. The columns that change estimates:
 
 | Column | Since 0.7.0 | Changed in |
 |---|---|---|
@@ -234,9 +234,10 @@ means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
 round(means, 2)
 ```
 
-Most rows of the specification are signed off; the rows still in review are
+Every row of the specification is signed off; a row in review would be
 applied only with `include_draft = TRUE`, and the `review_note` column of
-`qes_spec("crosswalk")` says why each is held. `qes_spec()` shows which study has which target and how comparable its
+`qes_spec("crosswalk")` says what the review corrected in each row.
+`qes_spec()` shows which study has which target and how comparable its
 question is, and `vignette("harmonization-reference", package = "qesR")`
 gives each target's questions, wordings and grades.
 

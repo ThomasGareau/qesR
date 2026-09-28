@@ -91,6 +91,40 @@ test_that("weights that need review are NA, with a message; the guide says which
   expect_true(all(c("weight_status", "weight_mean_raw", "n_outside_universe") %in% names(cell)))
 })
 
+test_that("stable rows on a wave whose weight needs review are applied; the weight is not", {
+  # spec 4.1.0 (design.md OD20): the content sign-off of a row does not
+  # depend on its wave's weight, and a weight that needs review stays NA
+  syn <- hz_syn(c("qes2012_panel", "qes1998"))
+  xw <- hz_spec()$tables$crosswalk
+  wt <- hz_spec()$tables$weights
+  expect_true(all(wt$status[wt$study %in% c("qes2012_panel", "qes1998") & wt$recommended %in% TRUE] == "needs_review"))
+  targets <- c("vote_prov_intent_push", "vote_prov_recall", "gender")
+  expect_true(all(xw$status[xw$study %in% c("qes2012_panel", "qes1998") & xw$target %in% targets] == "stable"))
+  classes <- character(0)
+  h <- withCallingHandlers(
+    hz_run(syn, targets = targets, include_draft = FALSE, quiet = FALSE),
+    message = function(m) {
+      classes <<- c(classes, class(m)[1])
+      invokeRestart("muffleMessage")
+    }
+  )
+  for (st in c("qes2012_panel", "qes1998")) {
+    p <- h[h$study == st, , drop = FALSE]
+    # the answers of the stable rows are applied by default
+    for (t in targets) expect_true(any(!is.na(p[[t]])), info = paste(st, t))
+    # the weights are not
+    expect_true(all(is.na(p$weight_pre)) && all(is.na(p$weight_post)), info = st)
+  }
+  expect_true("qesR_message_weight_review" %in% classes)
+  # no advice to use weight_pre and weight_post, which are both NA
+  expect_false("qesR_message_weight_timing" %in% classes)
+  expect_false("qesR_message_unreviewed_skipped" %in% classes)
+  # qes_design() refuses a weight that no row has
+  skip_if_not_installed("survey")
+  expect_error(qes_design(h, weight = "weight_post"), class = "qesR_error_input")
+  expect_error(qes_design(h, weight = "weight_pre"), class = "qesR_error_input")
+})
+
 test_that("targets of waves with different weights are announced", {
   syn <- hz_syn("qes2022")
   classes <- character(0)

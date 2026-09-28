@@ -116,11 +116,12 @@ specification that ships with qesR: for each study and harmonized variable
 grade, a reason for every missing value and each wave's weight;
 `qes_design()` turns the result into a design for the `survey` package, and
 `qes_spec()` shows the specification. It applies only the rows a reviewer
-has signed off. In specification 4.0.0 most rows are signed off, after an
+has signed off. In specification 4.1.0 every row is signed off, after an
 automated double review against the original files and documents (not a
-human review); the rows of `qes1998`, `qes2007_panel`, `qes2012_panel` and
-the CROP polls stay in review until their recommended weights are reviewed,
-and `include_draft = TRUE` applies them too.
+human review). The recommended weights of `qes1998`, `qes2007_panel`,
+`qes2012_panel` and the CROP polls still need review: their answers are
+harmonized, but their weights are `NA` until they are accepted (the
+registry, `qes_spec("spec")$tables$weights`, says what is known of each).
 
 ```r
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"))
@@ -158,7 +159,7 @@ comparable, A approximate; a dash: no question in the specification):
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
-| `gender` | C | C | C | I | I | C | C | C | C | C | C |
+| `gender` | C | C | C | C | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
 | `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
@@ -268,12 +269,12 @@ correspondance un à un, avec un niveau de comparabilité, un motif pour
 chaque valeur manquante et la pondération de chaque vague ; `qes_design()`
 en fait un plan de sondage pour le package `survey`, et `qes_spec()` montre
 la spécification. Il n'applique que les lignes approuvées par un réviseur.
-Dans la spécification 4.0.0, la plupart des lignes sont approuvées, après
-une double révision automatisée sur les fichiers et documents originaux (et
-non une révision humaine) ; les lignes de `qes1998`, `qes2007_panel`,
-`qes2012_panel` et des sondages CROP restent en révision jusqu'à ce que
-leurs pondérations recommandées soient révisées, et `include_draft = TRUE`
-les applique aussi.
+Dans la spécification 4.1.0, toutes les lignes sont approuvées, après une
+double révision automatisée sur les fichiers et documents originaux (et non
+une révision humaine). Les pondérations recommandées de `qes1998`,
+`qes2007_panel`, `qes2012_panel` et des sondages CROP restent à réviser :
+leurs réponses sont harmonisées, mais leurs pondérations valent `NA`
+jusqu'à ce que la documentation des producteurs les établisse.
 
 ```r
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), lang = "fr")
@@ -312,7 +313,7 @@ question dans la spécification) :
 | `age_group3` | — | — | I | — | — | C | C | C | — | C | C |
 | `citizen` | I | — | — | — | — | — | — | — | — | — | — |
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
-| `gender` | C | C | C | I | I | C | C | C | C | C | C |
+| `gender` | C | C | C | C | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
 | `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |

@@ -104,10 +104,15 @@ test_that("the generated reference covers every target, in English and French al
   xw <- s$tables$crosswalk
   expect_identical(sum(grepl("^\\| qes", lines_en)), sum(xw$rule != "none"))
   expect_true(grepl("document 7449514, p.68", en, fixed = TRUE))
-  # structural zeros and review status are marked
+  # structural zeros and review status are marked (no shipped row is in
+  # review since spec 4.1.0, so one is put back in review)
   expect_true(grepl("not offered: PVQ, PCQ, ON, ADQ", en, fixed = TRUE))
-  expect_true(grepl("(in review)", en, fixed = TRUE))
-  expect_true(grepl("(en r\u00e9vision)", fr, fixed = TRUE))
+  expect_false(grepl("(in review)", en, fixed = TRUE))
+  held <- s
+  j <- which(held$tables$crosswalk$rule != "none" & held$tables$crosswalk$study == "qes2012")[1]
+  held$tables$crosswalk$status[j] <- "review"
+  expect_true(grepl("(in review)", .spec_reference_md("en", spec = held), fixed = TRUE))
+  expect_true(grepl("(en r\u00e9vision)", .spec_reference_md("fr", spec = held), fixed = TRUE))
   # French typography: a no-break space before each colon, none before in English
   expect_false(grepl("\u00a0:", en, fixed = TRUE))
   expect_true(grepl("**Plage valide**\u00a0: 0-10", fr, fixed = TRUE))
@@ -318,6 +323,8 @@ test_that("the coverage grid counts the rows qes_harmonize() applies, and says w
   # one draft row, and a second, non-primary row for the same study and target
   i <- mapped[1]
   xw$status[i] <- "draft"
+  # and a primary row in review (no shipped row is in review since spec 4.1.0)
+  xw$status[mapped[2]] <- "review"
   extra <- xw[i, , drop = FALSE]
   extra$primary <- FALSE
   extra$status <- "review"

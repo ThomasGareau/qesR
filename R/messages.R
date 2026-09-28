@@ -452,8 +452,8 @@
   ),
 
   weight_review = c(
-    en = "The recommended weights of these waves are not documented yet and are NA until they are reviewed: %1$s. qes_spec(\"spec\")$tables$weights gives the registry.",
-    fr = "Les pond\u00e9rations recommand\u00e9es de ces vagues ne sont pas encore document\u00e9es et valent NA jusqu'\u00e0 leur r\u00e9vision\u00a0: %1$s. qes_spec(\"spec\")$tables$weights donne le registre."
+    en = "The recommended weights of these waves need review: they are registered but NA until they are accepted: %1$s. qes_spec(\"spec\")$tables$weights gives the registry and what is known of each.",
+    fr = "Les pond\u00e9rations recommand\u00e9es de ces vagues sont \u00e0 r\u00e9viser\u00a0: elles sont enregistr\u00e9es, mais valent NA jusqu'\u00e0 leur acceptation\u00a0: %1$s. qes_spec(\"spec\")$tables$weights donne le registre et ce que l'on sait de chacune."
   ),
   weight_timing = c(
     en = "In %1$s the requested targets come from waves with different weights (before and after the election). Use weight_pre for the pre-election targets and weight_post for the post-election ones; attr(, \"qes_weight_guide\") says which.",

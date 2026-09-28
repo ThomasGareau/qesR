@@ -129,14 +129,16 @@ reviewed study by study and may still change. A crosswalk row is applied
 only once a reviewer has signed it off (status \code{"stable"}); rows checked
 against the files but not yet signed off (status \code{"review"} or \code{"draft"})
 are applied only with \code{include_draft = TRUE}, and a message says so. In
-spec 4.0.0 most rows are signed off, after an automated double review
+spec 4.1.0 every row is signed off, after an automated double review
 against the original files and documents (not a human review; the
-crosswalk's \code{reviewed_by} says so). The rows of \code{qes1998},
-\code{qes2007_panel}, \code{qes2012_panel} and the CROP polls stay in review until
-their recommended weights are reviewed, and the \code{qes2014} gender row until
-a second reviewer confirms its grade; by default their values are missing
-(reason \code{not_reviewed}), and \code{qes_spec("crosswalk")$review_note} says why
-each is held. When no cell of the result is applied for that
+crosswalk's \code{reviewed_by} says so, and \code{review_note} what the review
+corrected). A row's sign-off is about its content: the recommended
+weights that still need review (those of \code{qes1998}, \code{qes2007_panel},
+\code{qes2012_panel} and the CROP polls) do not hold the rows of their waves,
+but are themselves \code{NA} until they are reviewed (see \emph{Weights}). A row
+in review has its values missing by default (reason \code{not_reviewed}), and
+\code{qes_spec("crosswalk")$review_note} says why it is held. When no cell of
+the result is applied for that
 reason, a warning of class \code{qesR_warning_all_unreviewed} gives the number
 of values left \code{NA} and names \code{include_draft = TRUE}; otherwise a message
 counts the cells (study and target) and values left out.
@@ -266,7 +268,7 @@ long layout has \code{weight} and \code{weight_var}. \code{weights = "normalized
 with a weight, so it has mean 1 in each study and wave; this fixes the
 scale only (it does not give studies equal shares when pooled: see
 \code{\link[=qes_design]{qes_design()}}). \code{weights = "raw"} keeps the weights as deposited. A
-weight whose method is not documented yet (registry status
+weight that is registered but not accepted yet (registry status
 \code{needs_review}) is \code{NA}, with a message, until it is reviewed; the raw
 variables are still in the data read by \code{\link[=get_qes]{get_qes()}}, to join by
 \code{source_row}.
@@ -327,7 +329,7 @@ graded approximate are included), \code{qesR_message_structural_zeros}
 (levels a question did not offer), \code{qesR_message_weight_review}
 (recommended weights that need review, left \code{NA}) and
 \code{qesR_message_weight_timing} (targets of one study that need different
-weights).
+weights; not sent when all of the study's weights need review).
 }
 
 \code{\link[=qes_design]{qes_design()}} sends \code{qesR_message_design_dropped} (fields \code{study}, \code{n})
@@ -360,7 +362,7 @@ ligne, \code{year} est l'année où il a commencé, et sa pondération est
 normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 \code{weight_pre} et \code{weight_post} (ou \code{weight} en disposition longue),
 ramenées à une moyenne de 1 par étude et par vague ; une pondération
-non encore documentée vaut NA. \code{attr(, "qes_weight_guide")} donne, pour
+encore à réviser (statut \code{needs_review}) vaut NA. \code{attr(, "qes_weight_guide")} donne, pour
 chaque cible et étude, la colonne de pondération qui convient ; pour une
 question qui couvre toutes les vagues d'un panel (vague \code{"*"}), elle vaut
 NA quand ces vagues n'ont pas la même pondération. \code{eligible_voter} indique si la personne
@@ -374,15 +376,16 @@ colonnes (sinon, une erreur de classe \code{qesR_error_input}). Une ligne de
 correspondance n'est appliquée qu'une fois approuvée par un réviseur
 (statut \code{"stable"}) ; \code{include_draft = TRUE} applique aussi les lignes
 vérifiées mais pas encore approuvées (statut \code{"review"} ou \code{"draft"}).
-Dans la spécification 4.0.0, la plupart des lignes sont approuvées, après
+Dans la spécification 4.1.0, toutes les lignes sont approuvées, après
 une double révision automatisée sur les fichiers et documents originaux
-(et non une révision humaine ; la colonne \code{reviewed_by} le dit) ; les
-lignes de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et des sondages
-CROP restent en révision jusqu'à ce que leurs pondérations recommandées
-soient révisées, et la ligne gender de \code{qes2014} jusqu'à ce qu'un second
-réviseur confirme son niveau. Sans \code{include_draft = TRUE}, leurs valeurs
-sont NA (motif \code{not_reviewed}), \code{qes_spec("crosswalk")$review_note} dit
-pourquoi chacune est retenue, et un avertissement de classe
+(et non une révision humaine ; la colonne \code{reviewed_by} le dit).
+L'approbation d'une ligne porte sur son contenu : les pondérations
+recommandées encore à réviser (celles de \code{qes1998}, \code{qes2007_panel},
+\code{qes2012_panel} et des sondages CROP) ne retiennent pas les lignes de
+leurs vagues, mais valent elles-mêmes NA jusqu'à leur révision. Sans
+\code{include_draft = TRUE}, les valeurs d'une ligne en révision sont NA
+(motif \code{not_reviewed}), \code{qes_spec("crosswalk")$review_note} dit
+pourquoi elle est retenue, et un avertissement de classe
 \code{qesR_warning_all_unreviewed} le signale quand tout le résultat est NA. Les autres conditions ont des classes (section
 \emph{Conditions}) : erreurs \code{qesR_error_unmapped}, \code{qesR_error_spec} et
 \code{qesR_error_duplicate_id} (variables d'identification qui n'identifient
@@ -421,9 +424,10 @@ attr(h, "qes_weight_guide")
 # one row per respondent and wave
 l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
 
-# the rows still in review, and why each is held
+# what the review corrected in each row, and which rows are in review
 xw <- qes_spec("crosswalk")
-head(xw[xw$status == "review", c("study", "target", "review_note")])
+table(xw$status)
+head(xw[!is.na(xw$review_note), c("study", "target", "review_note")])
 table(l$wave, l$wave_timing)
 }
 \seealso{

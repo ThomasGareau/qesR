@@ -64,11 +64,14 @@ The full conditions are in the \code{failures} field of the
 (no rows): kept for code written for 0.4.4;
 \item \code{legacy_na_columns}: one row per column and study whose cells are all
 \code{NA} (\code{column}, \code{study}, \code{reason}, \code{n_cells}, \code{cause}, \code{basis});
-\code{reason} is \code{"no_source"} (the spec has no question for it in the
-study, the file lacks the variable, or the study has no registered
-weight), \code{"not_reviewed"} (the study has the question, but its
-crosswalk row is not signed off by a reviewer yet; \code{cause} is then
-\code{"not_signed_off"} and \code{basis} says why the row is held),
+\code{reason} is \code{"no_source"} (the spec has no applied question for it
+in the study, the file lacks the variable, or the study has no
+registered weight), \code{"not_reviewed"} (the study has the question, but its
+crosswalk row is not signed off by a reviewer yet: \code{cause} is then
+\code{"not_signed_off"} and \code{basis} says why the row is held; or, for
+\code{weight_pre} and \code{weight_post}, the study's recommended weight is
+registered but still needs review: \code{cause} is then
+\code{"weight_needs_review"} and \code{basis} names the weight),
 \code{"na_column"} (no valid source in any study) or
 \code{"all_missing"} (the question's every answer is a missing value);
 \code{cause} names the rule behind it where there is one:
@@ -77,7 +80,11 @@ reported vote and turnout, which the CROP polls did not ask),
 \code{"independence_question_only"} (\code{sovereignty_support} and
 \code{sovereignty} hold only the referendum question on an independent
 country, which the study did not ask), \code{"no_valid_source"} (no study
-has a valid source for the column) or \code{"not_harmonized_yet"}; \code{basis}
+has a valid source for the column), \code{"invalid_044_source"} (the
+source qesR 0.4.4 read was verified wrong in 0.5.0, and the spec has
+no row for the column in the study since), \code{"not_comparable_source"}
+(the study's only source is graded \code{not_comparable}) or
+\code{"not_harmonized_yet"}; \code{basis}
 says in words why the column is \code{NA} in the study.
 0.5.0's \code{"blanked"} reason is gone: no value is blanked after it is
 read;
@@ -130,17 +137,24 @@ contributes exactly its number of respondents (\code{qes2007_panel}: 2,442
 rows).
 
 The engine applies only the crosswalk rows signed off by a reviewer
-(status \code{stable}), as \code{\link[=qes_harmonize]{qes_harmonize()}} does by default. In spec 4.0.0
-the rows were signed off after an automated double review against the
-original files and documents (not a human review). The rows still in
-review are not applied, and the columns they would fill are \code{NA}: every
-column of \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} and the CROP polls
-that comes from the spec (their rows are held until their recommended
-weights are reviewed), and \code{gender} of \code{qes2014} (held until a second
-reviewer confirms its grade). \code{attr(, "legacy_na_columns")} lists these
+(status \code{stable}), as \code{\link[=qes_harmonize]{qes_harmonize()}} does by default. The rows were
+signed off after an automated double review against the original files
+and documents (not a human review); since spec 4.1.0 every row is signed
+off. A row still in review would not be applied, and the columns it
+would fill would be \code{NA}: \code{attr(, "legacy_na_columns")} lists such
 columns with the reason \code{not_reviewed} and says why each row is held, and
-a message names them. \code{attr(, "source_map")} gives the grade and review
-status of each column's question in each study, and
+a message names them. The recommended weights that still need review
+(those of \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} and the CROP polls,
+registered but not accepted yet: \code{qes_spec("spec")$tables$weights} says
+what is known of each) are not applied: \code{weight_pre} and \code{weight_post}
+are \code{NA} there, with the reason \code{not_reviewed} and the cause
+\code{weight_needs_review}. \code{survey_weight} keeps each study's own weight, as
+in qesR 0.4.4, and is not reviewed: in some studies it is a weight that
+needs review (\code{qes2012_panel}, the CROP polls) or one calibrated on the
+vote (\code{qes2008}), and \code{qes_design()} never uses it; the note of each
+study's row of \code{qes_spec("spec")$tables$legacy} says which weight it
+is. \code{attr(, "source_map")} gives
+the grade and review status of each column's question in each study, and
 \code{attr(, "legacy_column_map")} says what each column holds.
 }
 
@@ -185,7 +199,7 @@ neither).
 \item Columns appended: \code{family}, \code{study_design}, \code{waves}, \code{subsample},
 \code{source_row} (to join raw variables from \code{\link[=get_qes]{get_qes()}}), \code{weight_pre} and
 \code{weight_post} (the spec's recommended weights, as deposited; \code{NA} where
-they are not documented yet), \code{vote_intent}, \code{turnout_intent} and
+they are not reviewed yet), \code{vote_intent}, \code{turnout_intent} and
 \code{sov_partnership_1995}.
 }
 
@@ -221,16 +235,21 @@ lignes). \code{attr(, "legacy_column_map")} décrit chaque colonne et
 étude, avec son niveau de comparabilité et son statut de révision.
 Seules les lignes de correspondance approuvées par un réviseur (statut
 \code{stable}) sont appliquées, comme le fait \code{\link[=qes_harmonize]{qes_harmonize()}} par défaut ;
-dans la spécification 4.0.0, elles ont été approuvées après une double
-révision automatisée sur les fichiers et documents originaux (et non une
-révision humaine). Les colonnes des lignes encore en révision valent
-\code{NA} : toutes celles de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel} et
-des sondages CROP qui viennent de la spécification (retenues jusqu'à ce
-que leurs pondérations recommandées soient révisées), et \code{gender} de
-\code{qes2014} (retenue jusqu'à ce qu'un second réviseur confirme son
-niveau) ; \code{attr(, "legacy_na_columns")} les énumère avec le motif
-\code{not_reviewed} et dit pourquoi chaque ligne est retenue, et un message
-les nomme.
+elles ont été approuvées après une double révision automatisée sur les
+fichiers et documents originaux (et non une révision humaine), et toutes
+le sont depuis la spécification 4.1.0. Les colonnes d'une ligne encore
+en révision vaudraient \code{NA} ; \code{attr(, "legacy_na_columns")} les
+énumérerait avec le motif \code{not_reviewed} en disant pourquoi la ligne est
+retenue, et un message les nommerait. Les pondérations recommandées
+encore à réviser (celles de \code{qes1998}, \code{qes2007_panel}, \code{qes2012_panel}
+et des sondages CROP, enregistrées mais pas encore acceptées) ne sont
+pas appliquées : \code{weight_pre} et \code{weight_post} y valent \code{NA}, avec le
+motif \code{not_reviewed} et la cause \code{weight_needs_review}. \code{survey_weight}
+garde la pondération propre à chaque étude, comme dans qesR 0.4.4, et
+n'est pas révisée : dans certaines études, c'est une pondération à
+réviser (\code{qes2012_panel}, sondages CROP) ou calée sur le vote
+(\code{qes2008}), et \code{qes_design()} ne l'utilise jamais ; la note de la ligne
+de chaque étude dans \code{qes_spec("spec")$tables$legacy} dit laquelle.
 
 Autres changements de 0.7.0 par rapport à 0.5.0 :
 \itemize{
@@ -256,7 +275,7 @@ aucune des deux) ;
 \code{source_row} (pour joindre des variables brutes de \code{\link[=get_qes]{get_qes()}}),
 \code{weight_pre} et \code{weight_post} (pondérations recommandées de la
 spécification, telles que déposées ; \code{NA} si elles ne sont pas encore
-documentées), \code{vote_intent}, \code{turnout_intent} et \code{sov_partnership_1995}.
+révisées), \code{vote_intent}, \code{turnout_intent} et \code{sov_partnership_1995}.
 }
 
 Les résultats de qesR 0.4.4 ne

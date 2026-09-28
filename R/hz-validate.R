@@ -750,15 +750,10 @@
   weighted <- c(paste(wt$study, wt$wave, sep = "/"), wkeys[wv$study %in% wt$study[wt$wave %in% .qes_all_waves]])
   no_weight <- setdiff(wkeys, weighted)
   add("V-S13", "waves", NA, no_weight, "no registered weight: harmonized weights will be NA", severity = "note")
-  if (isTRUE(release)) {
-    review <- paste(wt$study, wt$wave, sep = "/")[rec & wt$status %in% "needs_review"]
-    # a weight of wave "*" is each poll wave's, and a row of wave "*" uses
-    # every poll wave's
-    review <- c(review, wkeys[paste(wv$study, .qes_all_waves, sep = "/") %in% review])
-    row_waves <- lapply(seq_len(nrow(xw)), function(i) paste(xw$study[i], wv$wave[.qes_wave_rows(wv, xw$wave[i], xw$study[i])], sep = "/"))
-    bad <- which(xw$status %in% "stable" & vapply(row_waves, function(k) any(k %in% review), logical(1)))
-    add("V-S13", "crosswalk", bad, xkeys[bad], "a released stable row uses a study-wave whose recommended weight needs review")
-  }
+  # A weight that needs review does not hold the crosswalk rows of its waves
+  # (spec 4.1.0): the sign-off of a row is about its content, and the weight
+  # is applied only once it is reviewed (its harmonized values are NA, with
+  # qesR_message_weight_review, until then).
 
   # ---- V-S14: ordinal maps are monotone -------------------------------------------------------
   for (i in which(xw$rule %in% "map" & xw$target %in% tg$target[tg$type %in% "ordinal"])) {

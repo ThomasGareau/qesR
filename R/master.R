@@ -63,17 +63,24 @@
 #' rows).
 #'
 #' The engine applies only the crosswalk rows signed off by a reviewer
-#' (status `stable`), as [qes_harmonize()] does by default. In spec 4.0.0
-#' the rows were signed off after an automated double review against the
-#' original files and documents (not a human review). The rows still in
-#' review are not applied, and the columns they would fill are `NA`: every
-#' column of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls
-#' that comes from the spec (their rows are held until their recommended
-#' weights are reviewed), and `gender` of `qes2014` (held until a second
-#' reviewer confirms its grade). `attr(, "legacy_na_columns")` lists these
+#' (status `stable`), as [qes_harmonize()] does by default. The rows were
+#' signed off after an automated double review against the original files
+#' and documents (not a human review); since spec 4.1.0 every row is signed
+#' off. A row still in review would not be applied, and the columns it
+#' would fill would be `NA`: `attr(, "legacy_na_columns")` lists such
 #' columns with the reason `not_reviewed` and says why each row is held, and
-#' a message names them. `attr(, "source_map")` gives the grade and review
-#' status of each column's question in each study, and
+#' a message names them. The recommended weights that still need review
+#' (those of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls,
+#' registered but not accepted yet: `qes_spec("spec")$tables$weights` says
+#' what is known of each) are not applied: `weight_pre` and `weight_post`
+#' are `NA` there, with the reason `not_reviewed` and the cause
+#' `weight_needs_review`. `survey_weight` keeps each study's own weight, as
+#' in qesR 0.4.4, and is not reviewed: in some studies it is a weight that
+#' needs review (`qes2012_panel`, the CROP polls) or one calibrated on the
+#' vote (`qes2008`), and `qes_design()` never uses it; the note of each
+#' study's row of `qes_spec("spec")$tables$legacy` says which weight it
+#' is. `attr(, "source_map")` gives
+#' the grade and review status of each column's question in each study, and
 #' `attr(, "legacy_column_map")` says what each column holds.
 #'
 #' @section What changed in 0.7.0:
@@ -115,7 +122,7 @@
 #' * Columns appended: `family`, `study_design`, `waves`, `subsample`,
 #'   `source_row` (to join raw variables from [get_qes()]), `weight_pre` and
 #'   `weight_post` (the spec's recommended weights, as deposited; `NA` where
-#'   they are not documented yet), `vote_intent`, `turnout_intent` and
+#'   they are not reviewed yet), `vote_intent`, `turnout_intent` and
 #'   `sov_partnership_1995`.
 #'
 #' Results from qesR 0.4.4 can be reproduced only by installing that version
@@ -148,16 +155,21 @@
 #' étude, avec son niveau de comparabilité et son statut de révision.
 #' Seules les lignes de correspondance approuvées par un réviseur (statut
 #' `stable`) sont appliquées, comme le fait [qes_harmonize()] par défaut ;
-#' dans la spécification 4.0.0, elles ont été approuvées après une double
-#' révision automatisée sur les fichiers et documents originaux (et non une
-#' révision humaine). Les colonnes des lignes encore en révision valent
-#' `NA` : toutes celles de `qes1998`, `qes2007_panel`, `qes2012_panel` et
-#' des sondages CROP qui viennent de la spécification (retenues jusqu'à ce
-#' que leurs pondérations recommandées soient révisées), et `gender` de
-#' `qes2014` (retenue jusqu'à ce qu'un second réviseur confirme son
-#' niveau) ; `attr(, "legacy_na_columns")` les énumère avec le motif
-#' `not_reviewed` et dit pourquoi chaque ligne est retenue, et un message
-#' les nomme.
+#' elles ont été approuvées après une double révision automatisée sur les
+#' fichiers et documents originaux (et non une révision humaine), et toutes
+#' le sont depuis la spécification 4.1.0. Les colonnes d'une ligne encore
+#' en révision vaudraient `NA` ; `attr(, "legacy_na_columns")` les
+#' énumérerait avec le motif `not_reviewed` en disant pourquoi la ligne est
+#' retenue, et un message les nommerait. Les pondérations recommandées
+#' encore à réviser (celles de `qes1998`, `qes2007_panel`, `qes2012_panel`
+#' et des sondages CROP, enregistrées mais pas encore acceptées) ne sont
+#' pas appliquées : `weight_pre` et `weight_post` y valent `NA`, avec le
+#' motif `not_reviewed` et la cause `weight_needs_review`. `survey_weight`
+#' garde la pondération propre à chaque étude, comme dans qesR 0.4.4, et
+#' n'est pas révisée : dans certaines études, c'est une pondération à
+#' réviser (`qes2012_panel`, sondages CROP) ou calée sur le vote
+#' (`qes2008`), et `qes_design()` ne l'utilise jamais ; la note de la ligne
+#' de chaque étude dans `qes_spec("spec")$tables$legacy` dit laquelle.
 #'
 #' Autres changements de 0.7.0 par rapport à 0.5.0 :
 #' * les abstentionnistes, bulletins rejetés, « ne sait pas » et refus valent
@@ -182,7 +194,7 @@
 #'   `source_row` (pour joindre des variables brutes de [get_qes()]),
 #'   `weight_pre` et `weight_post` (pondérations recommandées de la
 #'   spécification, telles que déposées ; `NA` si elles ne sont pas encore
-#'   documentées), `vote_intent`, `turnout_intent` et `sov_partnership_1995`.
+#'   révisées), `vote_intent`, `turnout_intent` et `sov_partnership_1995`.
 #'
 #' Les résultats de qesR 0.4.4 ne
 #' se reproduisent qu'en installant cette version
@@ -236,11 +248,14 @@
 #'     (no rows): kept for code written for 0.4.4;
 #'   * `legacy_na_columns`: one row per column and study whose cells are all
 #'     `NA` (`column`, `study`, `reason`, `n_cells`, `cause`, `basis`);
-#'     `reason` is `"no_source"` (the spec has no question for it in the
-#'     study, the file lacks the variable, or the study has no registered
-#'     weight), `"not_reviewed"` (the study has the question, but its
-#'     crosswalk row is not signed off by a reviewer yet; `cause` is then
-#'     `"not_signed_off"` and `basis` says why the row is held),
+#'     `reason` is `"no_source"` (the spec has no applied question for it
+#'     in the study, the file lacks the variable, or the study has no
+#'     registered weight), `"not_reviewed"` (the study has the question, but its
+#'     crosswalk row is not signed off by a reviewer yet: `cause` is then
+#'     `"not_signed_off"` and `basis` says why the row is held; or, for
+#'     `weight_pre` and `weight_post`, the study's recommended weight is
+#'     registered but still needs review: `cause` is then
+#'     `"weight_needs_review"` and `basis` names the weight),
 #'     `"na_column"` (no valid source in any study) or
 #'     `"all_missing"` (the question's every answer is a missing value);
 #'     `cause` names the rule behind it where there is one:
@@ -249,7 +264,11 @@
 #'     `"independence_question_only"` (`sovereignty_support` and
 #'     `sovereignty` hold only the referendum question on an independent
 #'     country, which the study did not ask), `"no_valid_source"` (no study
-#'     has a valid source for the column) or `"not_harmonized_yet"`; `basis`
+#'     has a valid source for the column), `"invalid_044_source"` (the
+#'     source qesR 0.4.4 read was verified wrong in 0.5.0, and the spec has
+#'     no row for the column in the study since), `"not_comparable_source"`
+#'     (the study's only source is graded `not_comparable`) or
+#'     `"not_harmonized_yet"`; `basis`
 #'     says in words why the column is `NA` in the study.
 #'     0.5.0's `"blanked"` reason is gone: no value is blanked after it is
 #'     read;

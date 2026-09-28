@@ -30,7 +30,7 @@
 #' In the long layout the weight is the `weight` column.
 #'
 #' Rows without a value of the weight (respondents outside the waves that
-#' have it, or waves whose weight is not documented yet) are left out of
+#' have it, or waves whose weight needs review) are left out of
 #' the design, with a message that counts them by study.
 #'
 #' @section Pooling studies:

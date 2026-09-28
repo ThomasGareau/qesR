@@ -14,8 +14,8 @@
 #   1. the one validator (.qes_spec_check(), R/hz-validate.R) on
 #      inst/extdata/harmonize/, with the source-tree parts of V-S10 (every
 #      fn: rule has tests/testthat/test-hz-fn-<name>.R) and, with --release,
-#      the release rules of V-S11 and V-S13 (no draft row; no stable row on a
-#      study-wave whose recommended weight needs review);
+#      the release rule of V-S11 (no draft row; since spec 4.1.0 a weight
+#      that needs review no longer holds the stable rows of its waves);
 #   2. the data checks V-D1 to V-D4, V-D7 and V-D8 (R/hz-data.R) and V-P1,
 #      the projected marginals against expected/marginals.csv, on the shipped
 #      dictionary and gates.csv, and on the aggregates of the studies whose

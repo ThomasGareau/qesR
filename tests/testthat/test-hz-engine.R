@@ -224,14 +224,14 @@ test_that("rows not signed off by a reviewer are applied only with include_draft
   expect_false(all(is.na(h2$vote_prov_recall)))
   expect_true(all(is.na(h2$sov_indep)))
   expect_true(attr(h2, "qes_spec")$custom)
-  # the shipped spec: the signed-off rows are applied by default, the one
-  # qes2014 row still in review (gender) is not
+  # the shipped spec: every row is signed off (spec 4.1.0) and applied by
+  # default
   h3 <- hz_run(syn, include_draft = FALSE, missing = "reasons")
   expect_false(all(is.na(h3$vote_prov_recall)))
   expect_false(all(is.na(h3$sov_indep)))
-  expect_true(all(h3$gender__na == "not_reviewed"))
+  expect_false(any(h3$gender__na %in% "not_reviewed"))
   xw <- hz_spec()$tables$crosswalk
-  expect_identical(xw$status[xw$study == "qes2014" & xw$target == "gender"], "review")
+  expect_true(all(xw$status == "stable"))
 })
 
 test_that("cells left out for another reason are not counted as not signed off", {
@@ -392,10 +392,11 @@ test_that("the demonstration study is harmonized offline with the qes2014 rows",
   expect_true(all(h$vote_prov_recall__na[unclass(demo$Q2) %in% 2] == "not_voted"))
   # the file was read from the package and checked by md5
   expect_true(qes_provenance(h)$md5_verified)
-  # default: the signed-off rows are applied, the rows still in review are not
+  # default: the signed-off rows are applied (every row since spec 4.1.0)
   h0 <- qes_harmonize("qes_demo", missing = "reasons", quiet = TRUE)
   expect_identical(h0$vote_prov_recall, h$vote_prov_recall)
-  expect_true(all(h0$gender__na == "not_reviewed"))
+  expect_identical(h0$gender, h$gender)
+  expect_false(any(h0$gender__na %in% "not_reviewed"))
 })
 
 test_that("printing shows the spec, the approximate and structural-zero cells, and the licence", {

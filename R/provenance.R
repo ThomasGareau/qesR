@@ -92,7 +92,7 @@
 #'   `status` (of the crosswalk row: `stable`, or `review` and `draft` for
 #'   rows not yet signed off), `instrument`, `weight_var` (the wave's
 #'   recommended weight), `weight_status` (`reviewed`, or `needs_review`
-#'   when the weight is not documented yet and is `NA` in the data),
+#'   when the weight is not reviewed yet and is `NA` in the data),
 #'   `weight_mean_raw` (the mean of the raw weight over the wave's members),
 #'   `levels_not_offered` (structural zeros, `;`-separated; empty when
 #'   every level was offered, `NA` for targets without levels), `included`

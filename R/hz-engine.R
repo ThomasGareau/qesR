@@ -943,14 +943,16 @@
 #' only once a reviewer has signed it off (status `"stable"`); rows checked
 #' against the files but not yet signed off (status `"review"` or `"draft"`)
 #' are applied only with `include_draft = TRUE`, and a message says so. In
-#' spec 4.0.0 most rows are signed off, after an automated double review
+#' spec 4.1.0 every row is signed off, after an automated double review
 #' against the original files and documents (not a human review; the
-#' crosswalk's `reviewed_by` says so). The rows of `qes1998`,
-#' `qes2007_panel`, `qes2012_panel` and the CROP polls stay in review until
-#' their recommended weights are reviewed, and the `qes2014` gender row until
-#' a second reviewer confirms its grade; by default their values are missing
-#' (reason `not_reviewed`), and `qes_spec("crosswalk")$review_note` says why
-#' each is held. When no cell of the result is applied for that
+#' crosswalk's `reviewed_by` says so, and `review_note` what the review
+#' corrected). A row's sign-off is about its content: the recommended
+#' weights that still need review (those of `qes1998`, `qes2007_panel`,
+#' `qes2012_panel` and the CROP polls) do not hold the rows of their waves,
+#' but are themselves `NA` until they are reviewed (see *Weights*). A row
+#' in review has its values missing by default (reason `not_reviewed`), and
+#' `qes_spec("crosswalk")$review_note` says why it is held. When no cell of
+#' the result is applied for that
 #' reason, a warning of class `qesR_warning_all_unreviewed` gives the number
 #' of values left `NA` and names `include_draft = TRUE`; otherwise a message
 #' counts the cells (study and target) and values left out.
@@ -1047,7 +1049,7 @@
 #' with a weight, so it has mean 1 in each study and wave; this fixes the
 #' scale only (it does not give studies equal shares when pooled: see
 #' [qes_design()]). `weights = "raw"` keeps the weights as deposited. A
-#' weight whose method is not documented yet (registry status
+#' weight that is registered but not accepted yet (registry status
 #' `needs_review`) is `NA`, with a message, until it is reviewed; the raw
 #' variables are still in the data read by [get_qes()], to join by
 #' `source_row`.
@@ -1103,7 +1105,7 @@
 #'   (levels a question did not offer), `qesR_message_weight_review`
 #'   (recommended weights that need review, left `NA`) and
 #'   `qesR_message_weight_timing` (targets of one study that need different
-#'   weights).
+#'   weights; not sent when all of the study's weights need review).
 #'
 #' [qes_design()] sends `qesR_message_design_dropped` (fields `study`, `n`)
 #' when it leaves out rows without the chosen weight.
@@ -1133,7 +1135,7 @@
 #' normalisée à l'intérieur du sondage. Les pondérations recommandées de chaque vague sont dans
 #' `weight_pre` et `weight_post` (ou `weight` en disposition longue),
 #' ramenées à une moyenne de 1 par étude et par vague ; une pondération
-#' non encore documentée vaut NA. `attr(, "qes_weight_guide")` donne, pour
+#' encore à réviser (statut `needs_review`) vaut NA. `attr(, "qes_weight_guide")` donne, pour
 #' chaque cible et étude, la colonne de pondération qui convient ; pour une
 #' question qui couvre toutes les vagues d'un panel (vague `"*"`), elle vaut
 #' NA quand ces vagues n'ont pas la même pondération. `eligible_voter` indique si la personne
@@ -1147,15 +1149,16 @@
 #' correspondance n'est appliquée qu'une fois approuvée par un réviseur
 #' (statut `"stable"`) ; `include_draft = TRUE` applique aussi les lignes
 #' vérifiées mais pas encore approuvées (statut `"review"` ou `"draft"`).
-#' Dans la spécification 4.0.0, la plupart des lignes sont approuvées, après
+#' Dans la spécification 4.1.0, toutes les lignes sont approuvées, après
 #' une double révision automatisée sur les fichiers et documents originaux
-#' (et non une révision humaine ; la colonne `reviewed_by` le dit) ; les
-#' lignes de `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages
-#' CROP restent en révision jusqu'à ce que leurs pondérations recommandées
-#' soient révisées, et la ligne gender de `qes2014` jusqu'à ce qu'un second
-#' réviseur confirme son niveau. Sans `include_draft = TRUE`, leurs valeurs
-#' sont NA (motif `not_reviewed`), `qes_spec("crosswalk")$review_note` dit
-#' pourquoi chacune est retenue, et un avertissement de classe
+#' (et non une révision humaine ; la colonne `reviewed_by` le dit).
+#' L'approbation d'une ligne porte sur son contenu : les pondérations
+#' recommandées encore à réviser (celles de `qes1998`, `qes2007_panel`,
+#' `qes2012_panel` et des sondages CROP) ne retiennent pas les lignes de
+#' leurs vagues, mais valent elles-mêmes NA jusqu'à leur révision. Sans
+#' `include_draft = TRUE`, les valeurs d'une ligne en révision sont NA
+#' (motif `not_reviewed`), `qes_spec("crosswalk")$review_note` dit
+#' pourquoi elle est retenue, et un avertissement de classe
 #' `qesR_warning_all_unreviewed` le signale quand tout le résultat est NA. Les autres conditions ont des classes (section
 #' *Conditions*) : erreurs `qesR_error_unmapped`, `qesR_error_spec` et
 #' `qesR_error_duplicate_id` (variables d'identification qui n'identifient
@@ -1273,9 +1276,10 @@
 #' # one row per respondent and wave
 #' l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
 #'
-#' # the rows still in review, and why each is held
+#' # what the review corrected in each row, and which rows are in review
 #' xw <- qes_spec("crosswalk")
-#' head(xw[xw$status == "review", c("study", "target", "review_note")])
+#' table(xw$status)
+#' head(xw[!is.na(xw$review_note), c("study", "target", "review_note")])
 #' table(l$wave, l$wave_timing)
 #' @export
 qes_harmonize <- function(studies = NULL, targets = "core", layout = c("respondent", "long"),
@@ -1481,7 +1485,8 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
 # (their weights are NA), and, in the respondent layout, studies where the
 # requested targets (static ones aside) come from waves with different
 # weight columns (qesR_message_weight_timing), so that one weight column
-# cannot serve them all.
+# cannot serve them all. A study whose weights all need review gets no
+# timing notice: both of its weight columns are NA.
 .qes_hz_weight_notices <- function(parts, guide, quiet, layout = "respondent") {
   review <- character(0)
   for (part in parts) {
@@ -1510,7 +1515,7 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   mixed <- character(0)
   for (st in unique(g$study)) {
     x <- g[g$study == st, , drop = FALSE]
-    if (length(unique(x$weight_column)) > 1L) mixed <- c(mixed, st)
+    if (length(unique(x$weight_column)) > 1L && !all(x$weight_status %in% "needs_review")) mixed <- c(mixed, st)
   }
   if (length(mixed) > 0L) {
     .qes_inform("weight_timing", class = "qesR_message_weight_timing",

@@ -77,11 +77,7 @@ cc0 <- catalog$studies$study[catalog$studies$metadata_shipped %in% TRUE]
 # study. Every other difference fails the gate.
 explained <- read.csv(text = '
 profile,column,study,kind,cause,explanation
-master,*,qes1998;qes2007_panel;qes2012_panel;qes_crop_2007_2010,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: the study\'s recommended weight needs review (release check V-S13), so its crosswalk rows are not applied (legacy_na_columns reason not_reviewed)"
-master,gender,qes2014,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: its grade was raised to identical and needs a second reviewer (legacy_na_columns reason not_reviewed)"
 master,income,qes2022,to_na,REV,"An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0)"
-decon,*,qes1998;qes2007_panel;qes2012_panel;qes_crop_2007_2010,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: the study\'s recommended weight needs review (release check V-S13), so its crosswalk rows are not applied"
-decon,gender,qes2014,to_na,SIGNOFF,"Held in review by the sign-off of spec 4.0.0: its grade was raised to identical and needs a second reviewer"
 decon,income,qes2022,to_na,REV,"An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0)"
 master,respondent_id,qes2018_panel,changed,HZ6,"The file\'s identifier (interview mode and id, qes_id) instead of a made-up <study>_<row>"
 master,respondent_id,qes2007_panel,changed,HZ6,"The project and questionnaire number (nompn-quest, qes_id), unique, instead of quest, which repeats across the two subsamples"
@@ -163,8 +159,8 @@ explain <- function(profile, column, study, kind) {
   in_study <- vapply(strsplit(explained$study, ";", fixed = TRUE), function(x) any(x %in% c(study, "*")), logical(1))
   hit <- explained$profile == profile & explained$column %in% c(column, "*") &
     in_study & explained$kind == kind
-  # every cause that applies (a column of qes2007_panel may be NA both for
-  # the row in no wave and for the rows held in review)
+  # every cause that applies (a row for the column and a row for every
+  # column, "*", may both match)
   if (any(hit)) unique(explained$cause[hit]) else NA_character_
 }
 

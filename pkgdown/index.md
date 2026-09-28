@@ -62,11 +62,11 @@ specification that ships with qesR:
   Statistics Canada: see [Validation against official
   results](articles/validation.html).
 
-Most rows of the specification are signed off, after an automated double
+Every row of the specification is signed off, after an automated double
 review against the original files and documents (not a human review), and
-are applied by default; the rows of `qes1998`, `qes2007_panel`,
-`qes2012_panel` and the CROP polls stay in review until their recommended
-weights are reviewed, and are applied only with `include_draft = TRUE`.
+is applied by default; the weights that still need review (`qes1998`,
+`qes2007_panel`, `qes2012_panel` and the CROP polls) are `NA` until they
+are reviewed, but they do not hold back the answers.
 The grade of each study's question for each
 target (I identical, C comparable, A approximate; a dash: no question in
 the specification); each target links to its questions, wordings and
@@ -101,7 +101,7 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`age_group3`](articles/harmonization-reference.html#target-age_group3) | — | — | I | — | — | C | C | C | — | C | C |
 | [`citizen`](articles/harmonization-reference.html#target-citizen) | I | — | — | — | — | — | — | — | — | — | — |
 | [`age_group6`](articles/harmonization-reference.html#target-age_group6) | — | — | — | — | — | C | I | C | — | C | C |
-| [`gender`](articles/harmonization-reference.html#target-gender) | C | C | C | I | I | C | C | C | C | C | C |
+| [`gender`](articles/harmonization-reference.html#target-gender) | C | C | C | C | I | C | C | C | C | C | C |
 | [`education4`](articles/harmonization-reference.html#target-education4) | C | C | A | I | C | — | A | C | C | A | — |
 | [`lang_mother`](articles/harmonization-reference.html#target-lang_mother) | — | C | C | C | I | C | C | C | C | C | — |
 | [`born_canada`](articles/harmonization-reference.html#target-born_canada) | I | C | — | C | C | — | — | — | — | — | — |

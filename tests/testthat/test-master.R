@@ -32,8 +32,8 @@ test_that("the demonstration master is rendered from the engine, offline", {
   expect_equal(m$survey_weight, as.numeric(unclass(demo$POND)), ignore_attr = TRUE)
   expect_true(all(m$political_interest %in% c(NA, 0, 3, 7, 10)))
   expect_identical(m$age, 2014 - m$year_of_birth)
-  # the qes2014 gender row is held in review (spec 4.0.0): NA, not_reviewed
-  expect_true(all(is.na(m$gender)))
+  # the qes2014 gender row is signed off (spec 4.1.0)
+  expect_true(all(m$gender %in% c("Man", "Woman")))
   expect_true(all(m$province_territory == "Quebec"))
   expect_true(all(m$vote_choice_timing == "post"))
   expect_true(all(m$sovereignty_item == "sov_indep"))
@@ -62,13 +62,11 @@ test_that("source_map, legacy_na_columns and legacy_column_map describe every co
   na <- attr(m, "legacy_na_columns")
   expect_identical(names(na), c("column", "study", "reason", "n_cells", "cause", "basis"))
   expect_true(all(na$reason %in% c("no_source", "na_column", "all_missing", "not_reviewed")))
-  # a column whose row is held in review: not_reviewed, with the row's
-  # review_note as the basis, and the row's status in source_map
-  expect_identical(na$reason[na$column == "gender"], "not_reviewed")
-  expect_identical(na$cause[na$column == "gender"], "not_signed_off")
-  expect_match(na$basis[na$column == "gender"], "second reviewer", fixed = TRUE)
-  expect_identical(sm$status[sm$harmonized_variable == "gender"], "review")
+  # the row's status in source_map (every shipped row is signed off since
+  # spec 4.1.0; the held rows are tested with local_fake_legacy(held = TRUE))
+  expect_identical(sm$status[sm$harmonized_variable == "gender"], "stable")
   expect_identical(sm$status[sm$harmonized_variable == "vote_choice"], "stable")
+  expect_false("gender" %in% na$column)
   # every column that is NA throughout is listed, and only those
   all_na <- names(m)[vapply(m, function(x) all(is.na(x)), logical(1))]
   expect_setequal(na$column, all_na)
@@ -151,7 +149,7 @@ test_that("a study's rows do not depend on the studies loaded with it, and no ro
 
 test_that("the columns of rows held in review are NA, with the reason, and announced", {
   local_qes_notices_shown()
-  local_fake_legacy(signed = FALSE)
+  local_fake_legacy(held = TRUE)
   msgs <- list()
   m <- withCallingHandlers(
     get_qes_master(surveys = c("qes1998", "qes2014")),
@@ -161,7 +159,7 @@ test_that("the columns of rows held in review are NA, with the reason, and annou
     }
   )
   by <- function(s, col) m[[col]][m$qes_code == s]
-  # qes1998: every row is held (its recommended weight needs review)
+  # qes1998: every row is held (legacy_held_spec())
   expect_true(all(is.na(by("qes1998", "vote_choice"))))
   expect_true(all(is.na(by("qes1998", "gender"))))
   # qes2014: its rows are signed off but gender
@@ -171,8 +169,11 @@ test_that("the columns of rows held in review are NA, with the reason, and annou
   hit <- na[na$study == "qes1998" & na$column == "vote_choice", , drop = FALSE]
   expect_identical(hit$reason, "not_reviewed")
   expect_identical(hit$cause, "not_signed_off")
-  expect_match(hit$basis, "V-S13", fixed = TRUE)
+  # the basis is the row's review_note
+  expect_identical(hit$basis, legacy_held_note)
   expect_identical(na$reason[na$study == "qes2014" & na$column == "gender"], "not_reviewed")
+  expect_identical(attr(m, "source_map")$status[attr(m, "source_map")$qes_code == "qes2014" &
+                                                  attr(m, "source_map")$harmonized_variable == "gender"], "review")
   # no later target stands in for one whose row is held
   expect_true(all(is.na(by("qes1998", "vote_choice_timing"))))
   held <- Filter(function(cnd) identical(cnd$study, "qes1998") && !is.null(cnd$columns), msgs)
@@ -208,6 +209,76 @@ test_that("the recall targets fill vote_choice and turnout; the 1998 recall is u
   # the qes2022 weight of 0.4.4 (OD6) and its interview dates as text
   expect_true(all(!is.na(by("qes2022", "survey_weight"))))
   expect_match(by("qes2022", "interview_start")[1], "^2022-09-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$")
+})
+
+test_that("a weight that needs review is NA in the master, with its cause, and not announced as held", {
+  # spec 4.1.0 (design.md OD20): the rows of qes1998 and the CROP polls are
+  # stable and applied; their recommended weights (ponder3, XPOND) need
+  # review and stay NA
+  local_qes_notices_shown()
+  local_fake_legacy()
+  msgs <- list()
+  m <- withCallingHandlers(
+    get_qes_master(surveys = c("qes1998", "qes_crop_2007_2010")),
+    message = function(cnd) {
+      msgs[[length(msgs) + 1L]] <<- cnd
+      invokeRestart("muffleMessage")
+    }
+  )
+  by <- function(s, col) m[[col]][m$qes_code == s]
+  # the answers are applied
+  expect_true(any(!is.na(by("qes1998", "vote_choice"))))
+  expect_true(any(!is.na(by("qes1998", "gender"))))
+  expect_true(any(!is.na(by("qes_crop_2007_2010", "gender"))))
+  expect_true(any(!is.na(by("qes_crop_2007_2010", "vote_intent"))))
+  sm <- attr(m, "source_map")
+  expect_false(any(grepl("review", sm$status[sm$qes_code %in% c("qes1998", "qes_crop_2007_2010")], fixed = TRUE)))
+  # the recommended weights are not
+  na <- attr(m, "legacy_na_columns")
+  cell <- function(s, col) na[na$study == s & na$column == col, , drop = FALSE]
+  for (col in c("weight_pre", "weight_post")) {
+    expect_true(all(is.na(by("qes1998", col))), info = col)
+    hit <- cell("qes1998", col)
+    expect_identical(hit$reason, "not_reviewed", info = col)
+    expect_identical(hit$cause, "weight_needs_review", info = col)
+    expect_match(hit$basis, "ponder3", fixed = TRUE, info = col)
+  }
+  expect_true(all(is.na(by("qes_crop_2007_2010", "weight_pre"))))
+  hit <- cell("qes_crop_2007_2010", "weight_pre")
+  expect_identical(hit$cause, "weight_needs_review")
+  expect_match(hit$basis, "XPOND", fixed = TRUE)
+  # the polls have no post-election wave: no weight to review
+  hit <- cell("qes_crop_2007_2010", "weight_post")
+  expect_identical(hit$reason, "no_source")
+  expect_true(is.na(hit$cause))
+  # survey_weight keeps each study's own weight (0.4.4), with a note
+  expect_true(any(!is.na(by("qes1998", "survey_weight"))))
+  expect_true(all(!is.na(by("qes_crop_2007_2010", "survey_weight"))))
+  lg <- qes_spec("spec")$tables$legacy
+  expect_match(lg$note[lg$column == "survey_weight" & lg$studies %in% "qes_crop_2007_2010"], "needs review", fixed = TRUE)
+  # the message on rows held in review does not name the weights
+  held <- Filter(function(cnd) !is.null(cnd$columns), msgs)
+  expect_false(any(vapply(held, function(cnd) any(c("weight_pre", "weight_post") %in% cnd$columns), logical(1))))
+})
+
+test_that("the intended blanks of the master say why in cause and basis", {
+  local_qes_notices_shown()
+  local_fake_legacy()
+  m <- get_qes_master(surveys = c("qes1998", "qes2012_panel", "qes2018", "qes2022"), quiet = TRUE)
+  na <- attr(m, "legacy_na_columns")
+  cell <- function(s, col) na[na$study == s & na$column == col, , drop = FALSE]
+  for (x in list(c("qes1998", "education", "invalid_044_source"), c("qes2018", "income", "invalid_044_source"),
+                 c("qes2018", "religion", "invalid_044_source"),
+                 c("qes2012_panel", "political_interest", "not_comparable_source"),
+                 c("qes2022", "language", "not_harmonized_yet"))) {
+    hit <- cell(x[1], x[2])
+    expect_identical(nrow(hit), 1L, info = paste(x[1:2], collapse = " "))
+    expect_true(all(is.na(m[[x[2]]][m$qes_code == x[1]])), info = paste(x[1:2], collapse = " "))
+    expect_identical(hit$cause, x[3], info = paste(x[1:2], collapse = " "))
+    # the basis is the study's own note: what 0.4.4 read and why it is NA
+    expect_match(hit$basis, "0.5.0", fixed = TRUE, info = paste(x[1:2], collapse = " "))
+  }
+  expect_match(cell("qes2012_panel", "political_interest")$basis, "interetrec", fixed = TRUE)
 })
 
 test_that("a code the spec does not map is NA with a warning, never passed through", {
