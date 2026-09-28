@@ -8,15 +8,15 @@
 #'
 #' | Group | Function | What it does |
 #' |---|---|---|
-#' | Discover | [qes_studies()] | Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; `check_updates = TRUE` asks Dataverse whether a newer version exists. |
-#' | Discover | [qes_docs()] | Lists the codebooks, questionnaires and reports of each study, offline. |
-#' | Get data | [get_qes()] | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
-#' | Get data | [qes_download()] | Saves the original files (data and documents), md5-checked, in a folder you choose. |
-#' | Get data | [get_qes_master()] | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see `NEWS`). |
-#' | Metadata and search | [qes_codebook()] | A study's codebook: labels, question text (English and French), value labels, missing codes. |
-#' | Metadata and search | [qes_question()] | The exact wording of one or more questions, in English or French. |
-#' | Metadata and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
-#' | Metadata and search | [qes_missing()] | Sets "don't know", "refused" and declared missing codes to `NA`. |
+#' | Data | [get_qes()] | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
+#' | Data | [get_qes_master()] | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see `NEWS`). |
+#' | Studies and documents | [qes_studies()] | Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; `check_updates = TRUE` asks Dataverse whether a newer version exists. |
+#' | Studies and documents | [qes_docs()] | Lists the codebooks, questionnaires and reports of each study, offline. |
+#' | Studies and documents | [qes_download()] | Saves the original files (data and documents), md5-checked, in a folder you choose. |
+#' | Codebooks and search | [qes_codebook()] | A study's codebook: labels, question text (English and French), value labels, missing codes. |
+#' | Codebooks and search | [qes_question()] | The exact wording of one or more questions, in English or French. |
+#' | Codebooks and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
+#' | Codebooks and search | [qes_missing()] | Sets "don't know", "refused" and declared missing codes to `NA`. |
 #' | Harmonization (experimental) | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
 #' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
 #' | Harmonization (experimental) | [qes_design()] | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
@@ -35,7 +35,7 @@
 #'
 #' Guides: `vignette("get-started", package = "qesR")` (from a study code to a
 #' weighted estimate), `vignette("citations", package = "qesR")`,
-#' `vignette("migrating-0.5", package = "qesR")` and
+#' `vignette("migrating-0.7", package = "qesR")` and
 #' `vignette("harmonization-reference", package = "qesR")` (the reference
 #' generated from the harmonization spec). The website,
 #' <https://thomasgareau.github.io/qesR/>, also has the study catalog and

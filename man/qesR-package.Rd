@@ -13,15 +13,15 @@ study datasets available via Dataverse repositories.
 
 Grouped as in the reference index of the website.\tabular{lll}{
    Group \tab Function \tab What it does \cr
-   Discover \tab \code{\link[=qes_studies]{qes_studies()}} \tab Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; \code{check_updates = TRUE} asks Dataverse whether a newer version exists. \cr
-   Discover \tab \code{\link[=qes_docs]{qes_docs()}} \tab Lists the codebooks, questionnaires and reports of each study, offline. \cr
-   Get data \tab \code{\link[=get_qes]{get_qes()}} \tab Loads a study: \code{qes2018 <- get_qes("qes2018")}. The data are returned, never written into your workspace by default. \cr
-   Get data \tab \code{\link[=qes_download]{qes_download()}} \tab Saves the original files (data and documents), md5-checked, in a folder you choose. \cr
-   Get data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see \code{NEWS}). \cr
-   Metadata and search \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab A study's codebook: labels, question text (English and French), value labels, missing codes. \cr
-   Metadata and search \tab \code{\link[=qes_question]{qes_question()}} \tab The exact wording of one or more questions, in English or French. \cr
-   Metadata and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
-   Metadata and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
+   Data \tab \code{\link[=get_qes]{get_qes()}} \tab Loads a study: \code{qes2018 <- get_qes("qes2018")}. The data are returned, never written into your workspace by default. \cr
+   Data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see \code{NEWS}). \cr
+   Studies and documents \tab \code{\link[=qes_studies]{qes_studies()}} \tab Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; \code{check_updates = TRUE} asks Dataverse whether a newer version exists. \cr
+   Studies and documents \tab \code{\link[=qes_docs]{qes_docs()}} \tab Lists the codebooks, questionnaires and reports of each study, offline. \cr
+   Studies and documents \tab \code{\link[=qes_download]{qes_download()}} \tab Saves the original files (data and documents), md5-checked, in a folder you choose. \cr
+   Codebooks and search \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab A study's codebook: labels, question text (English and French), value labels, missing codes. \cr
+   Codebooks and search \tab \code{\link[=qes_question]{qes_question()}} \tab The exact wording of one or more questions, in English or French. \cr
+   Codebooks and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
+   Codebooks and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
    Harmonization (experimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
    Harmonization (experimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. \cr
    Harmonization (experimental) \tab \code{\link[=qes_design]{qes_design()}} \tab Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. \cr
@@ -42,7 +42,7 @@ removed; \link{qesR-deprecated} gives the replacement of each one.
 
 Guides: \code{vignette("get-started", package = "qesR")} (from a study code to a
 weighted estimate), \code{vignette("citations", package = "qesR")},
-\code{vignette("migrating-0.5", package = "qesR")} and
+\code{vignette("migrating-0.7", package = "qesR")} and
 \code{vignette("harmonization-reference", package = "qesR")} (the reference
 generated from the harmonization spec). The website,
 \url{https://thomasgareau.github.io/qesR/}, also has the study catalog and

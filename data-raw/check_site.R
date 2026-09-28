@@ -57,6 +57,36 @@ indexed <- unlist(lapply(config$reference, `[[`, "contents"))
 for (t in setdiff(topics, indexed)) problem("reference index: help page %s is not listed", t)
 for (t in setdiff(indexed, topics)) problem("reference index: %s is not a help page", t)
 
+# One reference section per @family (design.md section 9.1): the pages of a
+# family are all in one section, and a section holds one family. Only the
+# package overviews and ?qesR-deprecated have no family.
+concept_of <- vapply(topics, function(t) {
+  lines <- readLines(file.path(root, "man", paste0(t, ".Rd")), warn = FALSE)
+  hit <- sub("^\\\\concept\\{(.*)\\}$", "\\1", grep("^\\\\concept\\{", lines, value = TRUE))
+  if (length(hit)) hit[[1]] else NA_character_
+}, character(1))
+no_family <- c("qesR-package", "qesR-fr", "qesR-deprecated")
+for (t in setdiff(names(concept_of)[is.na(concept_of)], no_family)) {
+  problem("reference index: help page %s has no @family", t)
+}
+section_of <- rep(vapply(config$reference, `[[`, "", "title"),
+                  lengths(lapply(config$reference, `[[`, "contents")))
+names(section_of) <- indexed
+for (f in unique(stats::na.omit(concept_of))) {
+  in_sections <- unique(section_of[intersect(names(concept_of)[concept_of %in% f], indexed)])
+  if (length(in_sections) > 1L) {
+    problem("reference index: family '%s' is split across sections %s", f,
+            paste(in_sections, collapse = ", "))
+  }
+}
+for (sec in config$reference) {
+  fams <- unique(stats::na.omit(concept_of[intersect(unlist(sec$contents), names(concept_of))]))
+  if (length(fams) > 1L) {
+    problem("reference index: section '%s' mixes the families %s", sec$title,
+            paste(fams, collapse = ", "))
+  }
+}
+
 rmd_stems <- function(dir, prefix = "") {
   f <- list.files(file.path(root, dir), pattern = "^[^.].*\\.Rmd$")
   paste0(prefix, sub("\\.Rmd$", "", f))

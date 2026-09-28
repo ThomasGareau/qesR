@@ -217,6 +217,7 @@
 #'     spec levels (see [qes_provenance()]);
 #'   * `qes_spec`: the spec version and content hash that built the data;
 #'   * `saved_to`: the output path when `save_path` is given.
+#' @family data
 #' @seealso [qes_harmonize()] for harmonized data with grades and reasons,
 #'   [get_qes()] for the study files, [qes_provenance()] and [qes_cite()] to
 #'   record and cite the files read.

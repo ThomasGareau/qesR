@@ -121,9 +121,9 @@ ggplot(age, aes(x = year, y = pct, colour = age3, shape = family)) +
 
 ## Table 3: reported turnout
 
-`turnout` is the vote reported after the election (1 voted, 0 did not). It
-is `NA` in the CROP polls, which have no such question, and in `qes2022`,
-whose 0.4.4 source was the campaign-period likelihood of voting (see
+`turnout` is the turnout reported after the election (1 voted, 0 did not),
+in every study that asked it; `qes2022` answers in its post-election wave.
+It is `NA` in the CROP polls, which asked only about intentions (see
 `attr(master, "legacy_na_columns")`). Surveys overestimate turnout: people
 who vote are more likely to answer, and some who did not vote say they did.
 
@@ -160,5 +160,6 @@ ggplot(turnout, aes(x = year, y = pct, colour = family, shape = family)) +
 
 - `survey_weight` is the weight variable qesR 0.4.4 read for each study, on
   that study's own scale; `attr(master, "legacy_column_map")` describes it.
-- The legacy merged file is kept for code written for qesR 0.4.4. What
-  changed in 0.5.0 is in `vignette("migrating-0.5", package = "qesR")`.
+- The legacy merged file is kept for code written for qesR 0.4.4; since
+  0.7.0 it is rendered from the harmonization engine. What changed since
+  0.4.4 is in `vignette("migrating-0.7", package = "qesR")`.

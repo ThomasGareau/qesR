@@ -277,4 +277,4 @@ tryCatch(
 fonctionner ; depuis qesR 0.7.0, le fichier fusionné est produit par le
 moteur d'harmonisation. Ce qui a changé, et comment garder des résultats
 reproductibles, est expliqué dans
-`vignette("fr-migrer-0.5", package = "qesR")`.
+`vignette("fr-migrer-0.7", package = "qesR")`.

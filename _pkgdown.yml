@@ -22,8 +22,9 @@ home:
   title: qesR
   description: >
     Load the Quebec Election Studies and related Quebec election surveys in
-    R, pinned to their original files, with offline codebooks, bilingual
-    search and citations.
+    R, pinned to their original files, and harmonize 11 of them into one
+    data frame with a comparability grade for every question, offline
+    codebooks, bilingual search and citations.
   sidebar:
     structure: [links, license, citation, authors, dev]
   links:
@@ -58,8 +59,8 @@ navbar:
         href: articles/studies.html
       - text: Study citations
         href: articles/citations.html
-      - text: Moving from qesR 0.4.4
-        href: articles/migrating-0.5.html
+      - text: Moving from qesR 0.4.4 to 0.7.0
+        href: articles/migrating-0.7.html
       - text: Legacy merged file
         href: articles/merged-dataset.html
       - text: "-------"
@@ -92,8 +93,8 @@ navbar:
         href: articles/fr-etudes.html
       - text: Citations des études
         href: articles/fr-citations.html
-      - text: Passer de qesR 0.4.4 à 0.5.0
-        href: articles/fr-migrer-0.5.html
+      - text: Passer de qesR 0.4.4 à 0.7.0
+        href: articles/fr-migrer-0.7.html
       - text: Fichier fusionné hérité
         href: articles/fr-donnees-fusionnees.html
       - text: "-------"
@@ -126,26 +127,33 @@ navbar:
       aria-label: GitHub repository
 
 reference:
-- title: Discover
+# One section per @family of the help pages (check_site.R checks it), in the
+# order of design.md section 9.1, after the package overview.
+- title: Package overview
   desc: >
-    Start here: the package overview (in English, and in French on
-    `?qesR-fr`) and the offline catalog of the studies qesR can load, with
-    their documents. No network request unless you ask for one.
+    What qesR does, its options and its conditions, in English and in French
+    (`?qesR-fr`), with a table of every function.
   contents:
   - qesR-package
   - qesR-fr
-  - qes_studies
-  - qes_docs
-- title: Get data
+- title: Data
   desc: >
-    Load a study from its pinned original file, save the original files
-    themselves, or build the legacy merged file of qesR 0.4.4. Data are
-    returned, never written into your workspace unless you ask.
+    Load a study from its pinned original file, or build the legacy merged
+    file of qesR 0.4.4. Data are returned, never written into your workspace
+    unless you ask.
   contents:
   - get_qes
-  - qes_download
   - get_qes_master
-- title: Metadata and search
+- title: Studies and documents
+  desc: >
+    The offline catalog of the studies qesR can load, their codebooks,
+    questionnaires and reports, and the original files themselves. No
+    network request unless you ask for one.
+  contents:
+  - qes_studies
+  - qes_docs
+  - qes_download
+- title: Codebooks and search
   desc: >
     What each variable measures, the exact question asked, in English and
     French, and which codes mean "don't know" or "refused". Offline for every
@@ -157,20 +165,21 @@ reference:
   - qes_missing
 - title: Harmonization (experimental)
   desc: >
-    A cross-study engine driven by a specification checked against the
-    original files (rows not yet signed off by a reviewer are applied only
-    with `include_draft = TRUE`): `qes_spec()`
-    shows which studies have which harmonized variable and how comparable
-    each study's question is; `qes_harmonize()` applies it, with a reason
-    for every missing value, each respondent's waves and weights, and
-    `qes_design()` turns the result into a survey design. Three articles
-    go with them, in English and French, the last two generated from the
-    spec: [Harmonizing across studies](../articles/harmonization.html),
-    from `qes_harmonize()` to a weighted estimate;
+    One data frame across the 11 studies, from a specification checked
+    against the original files (rows not yet signed off by a reviewer are
+    applied only with `include_draft = TRUE`): `qes_spec()` shows which
+    studies have which harmonized variable and how comparable each study's
+    question is; `qes_harmonize()` applies it, with a reason for every
+    missing value and each respondent's waves and weights; `qes_design()`
+    turns the result into a survey design. Articles, in English and French:
+    [Harmonizing across studies](../articles/harmonization.html), from
+    `qes_harmonize()` to a weighted estimate;
     [Coverage by study](../articles/coverage.html), the grade of every
-    target in every study; and the
+    target in every study;
+    [Validation against official results](../articles/validation.html),
+    the harmonized studies against the official results and the census;
+    and the
     [Harmonization reference](../articles/harmonization-reference.html).
-    `get_qes_master()` is kept for code written for qesR 0.4.4.
   contents:
   - qes_spec
   - qes_harmonize
@@ -188,10 +197,23 @@ reference:
   - qes_cache_info
   - qes_cache_clear
 - title: Legacy and deprecated
-  desc: >
+  desc: |
     Functions from qesR 0.4.4. They keep working, with the same arguments,
-    and will not be removed. `?qesR-deprecated` gives the replacement of
-    each one.
+    and will not be removed; each prints a one-time notice naming its
+    replacement. [Moving from qesR 0.4.4 to 0.7.0](../articles/migrating-0.7.html)
+    says what changed in their results.
+
+    | 0.4.4 | Replacement |
+    |---|---|
+    | `get_codebook()`, `get_qes_codebook()` | `qes_codebook()` |
+    | `format_codebook()` | `qes_codebook(codebook, layout = )` |
+    | `get_value_labels()` | `qes_codebook(layout = "long")` |
+    | `get_question()` | `qes_question()` |
+    | `get_codebook_files()`, `get_qes_codebook_files()` | `qes_docs()` |
+    | `download_codebook()` | `qes_download(what = "docs")` |
+    | `get_preview()` | `head(get_qes())` |
+    | `get_qescodes()` | `qes_studies()` |
+    | `get_decon()` | `qes_harmonize(targets = "decon", include_draft = TRUE)` |
   contents:
   - qesR-deprecated
   - get_qescodes
@@ -211,7 +233,7 @@ articles:
   - get-started
   - articles/studies
   - citations
-  - migrating-0.5
+  - migrating-0.7
   - articles/merged-dataset
 - title: Harmonization (experimental)
   desc: >
@@ -241,7 +263,7 @@ articles:
   - fr-demarrage
   - articles/fr-etudes
   - fr-citations
-  - fr-migrer-0.5
+  - fr-migrer-0.7
   - articles/fr-donnees-fusionnees
 - title: Harmonisation en français (expérimental)
   desc: >

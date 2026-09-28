@@ -39,4 +39,15 @@ head(get_qes("qes_demo", quiet = TRUE), 3)
 }
 \seealso{
 \link{qesR-deprecated} for the legacy functions and their replacements.
+
+Other legacy: 
+\code{\link{download_codebook}()},
+\code{\link{format_codebook}()},
+\code{\link{get_codebook}()},
+\code{\link{get_codebook_files}()},
+\code{\link{get_decon}()},
+\code{\link{get_qescodes}()},
+\code{\link{get_question}()},
+\code{\link{get_value_labels}()}
 }
+\concept{legacy}

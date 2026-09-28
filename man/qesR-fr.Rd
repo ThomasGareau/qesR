@@ -20,15 +20,15 @@ en anglais ; certaines ont une section « En français ».
 
 Les fonctions sont regroupées comme dans la référence du site web.\tabular{lll}{
    Groupe \tab Fonction \tab Rôle \cr
-   Découvrir \tab \code{\link[=qes_studies]{qes_studies()}} \tab Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; \code{check_updates = TRUE} demande à Dataverse si une version plus récente existe. \cr
-   Découvrir \tab \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
-   Obtenir les données \tab \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
-   Obtenir les données \tab \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
-   Obtenir les données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir \code{NEWS}). \cr
-   Métadonnées et recherche \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. \cr
-   Métadonnées et recherche \tab \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
-   Métadonnées et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr
-   Métadonnées et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
+   Données \tab \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
+   Données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir \code{NEWS}). \cr
+   Études et documents \tab \code{\link[=qes_studies]{qes_studies()}} \tab Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; \code{check_updates = TRUE} demande à Dataverse si une version plus récente existe. \cr
+   Études et documents \tab \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
+   Études et documents \tab \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
+   Codebooks et recherche \tab \code{\link[=qes_codebook]{qes_codebook()}} \tab Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. \cr
+   Codebooks et recherche \tab \code{\link[=qes_question]{qes_question()}} \tab Texte exact d'une ou de plusieurs questions, en français ou en anglais. \cr
+   Codebooks et recherche \tab \code{\link[=qes_search]{qes_search()}} \tab Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : \code{qes_search("souverain")}. \cr
+   Codebooks et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
    Harmonisation (expérimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. \cr
    Harmonisation (expérimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. \cr
    Harmonisation (expérimental) \tab \code{\link[=qes_design]{qes_design()}} \tab Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. \cr
@@ -69,8 +69,8 @@ valeur ne vient d'un vrai répondant.
 
 \code{vignette("fr-demarrage", package = "qesR")} (démarrage : du code d'étude
 à une estimation pondérée), \code{vignette("fr-citations", package = "qesR")}
-(citations), \code{vignette("fr-migrer-0.5", package = "qesR")} (passer de
-qesR 0.4.4 à 0.5.0) et
+(citations), \code{vignette("fr-migrer-0.7", package = "qesR")} (passer de
+qesR 0.4.4 à 0.7.0) et
 \code{vignette("fr-reference-harmonisation", package = "qesR")} (référence de
 l'harmonisation, générée à partir de la spécification). Le site web, \url{https://thomasgareau.github.io/qesR/},
 offre aussi en français le catalogue des études et des exemples

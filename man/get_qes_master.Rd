@@ -233,4 +233,8 @@ attr(demo_master, "legacy_column_map")[1:5, c("column", "target", "definition")]
 \code{\link[=qes_harmonize]{qes_harmonize()}} for harmonized data with grades and reasons,
 \code{\link[=get_qes]{get_qes()}} for the study files, \code{\link[=qes_provenance]{qes_provenance()}} and \code{\link[=qes_cite]{qes_cite()}} to
 record and cite the files read.
+
+Other data: 
+\code{\link{get_qes}()}
 }
+\concept{data}

@@ -87,6 +87,7 @@
 #'   name, md5, UNF, dimensions, where the file came from and when, the
 #'   licence, the source of the labels and the reader used; see
 #'   [qes_provenance()]) and, with `with_codebook = TRUE`, `qes_codebook`.
+#' @family data
 #' @seealso [qes_studies()] for the study codes and their pinned files,
 #'   [qes_provenance()] for the record of the file read, [qes_download()] to
 #'   save the original files, [qes_cache_info()] for the download cache.
@@ -182,6 +183,7 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
 #' @return A base data frame with the first `obs` rows, and the attributes
 #'   of [get_qes()] data (`qes_survey_code`, `qes_provenance`,
 #'   `qes_codebook`).
+#' @family legacy
 #' @seealso [qesR-deprecated] for the legacy functions and their replacements.
 #' @examples
 #' # the synthetic demonstration study, offline

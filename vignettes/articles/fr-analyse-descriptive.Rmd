@@ -125,10 +125,10 @@ ggplot(age, aes(x = year, y = pct, colour = age3, shape = family)) +
 
 ## Tableau 3 : participation déclarée
 
-`turnout` est le vote déclaré après l'élection (1 a voté, 0 n'a pas voté).
-Il vaut `NA` dans les sondages CROP, qui n'ont pas cette question, et dans
-`qes2022`, dont la source dans 0.4.4 était la probabilité d'aller voter
-pendant la campagne (voir `attr(master, "legacy_na_columns")`). Les enquêtes
+`turnout` est la participation déclarée après l'élection (1 a voté, 0 n'a
+pas voté), dans toutes les études qui l'ont demandée ; `qes2022` y répond
+dans sa vague postélectorale. Il vaut `NA` dans les sondages CROP, qui n'ont
+demandé que les intentions (voir `attr(master, "legacy_na_columns")`). Les enquêtes
 surestiment la participation : les personnes qui votent répondent plus
 volontiers, et certaines qui n'ont pas voté disent l'avoir fait.
 
@@ -166,6 +166,7 @@ ggplot(turnout, aes(x = year, y = pct, colour = family, shape = family)) +
 - `survey_weight` est la variable de pondération que qesR 0.4.4 lisait pour
   chaque étude, sur l'échelle propre à cette étude ;
   `attr(master, "legacy_column_map")` la décrit.
-- Le fichier fusionné hérité est gardé pour le code écrit pour qesR 0.4.4.
-  Ce qui a changé dans 0.5.0 est expliqué dans
-  `vignette("fr-migrer-0.5", package = "qesR")`.
+- Le fichier fusionné hérité est gardé pour le code écrit pour qesR 0.4.4 ;
+  depuis 0.7.0, il est produit par le moteur d'harmonisation. Ce qui a
+  changé depuis 0.4.4 est expliqué dans
+  `vignette("fr-migrer-0.7", package = "qesR")`.

@@ -122,4 +122,8 @@ attr(demo, "qes_provenance")[, c("study", "file_name", "md5_verified")]
 \code{\link[=qes_studies]{qes_studies()}} for the study codes and their pinned files,
 \code{\link[=qes_provenance]{qes_provenance()}} for the record of the file read, \code{\link[=qes_download]{qes_download()}} to
 save the original files, \code{\link[=qes_cache_info]{qes_cache_info()}} for the download cache.
+
+Other data: 
+\code{\link{get_qes_master}()}
 }
+\concept{data}

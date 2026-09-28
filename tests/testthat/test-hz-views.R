@@ -323,6 +323,23 @@ test_that("the coverage grid counts the rows qes_harmonize() applies, and says w
   expect_identical(as.integer(r[3]), sum(xw$study[mapped] == st))
 })
 
+test_that("the home page grid links each target to its section of the reference", {
+  plain <- strsplit(.spec_readme_md(hz_spec()), "\n", fixed = TRUE)[[1]]
+  linked <- strsplit(.spec_readme_md(hz_spec(), reference = "articles/ref.html"), "\n", fixed = TRUE)[[1]]
+  expect_identical(length(linked), length(plain))
+  expect_identical(linked[2], plain[2])
+  # the same study codes, which may wrap only after "qes" and at "_"
+  expect_identical(gsub("<wbr>|</?code>", "", linked[1]), gsub("`", "", plain[1]))
+  expect_false(grepl("<wbr>[^_q]*<wbr>[0-9]", linked[1]))
+  targets <- sub("^\\| `([a-z0-9_]+)` \\|.*$", "\\1", plain[-(1:2)])
+  expect_identical(linked[-(1:2)],
+                   sprintf("| [`%s`](articles/ref.html#target-%s) |%s", targets, targets,
+                           sub("^\\| `[a-z0-9_]+` \\|", "", plain[-(1:2)])))
+  # the anchors are those of the reference sections
+  ref <- .spec_reference_md("en", spec = hz_spec())
+  for (t in targets) expect_match(ref, sprintf("{#target-%s}", t), fixed = TRUE)
+})
+
 test_that("the README grid gives the first letter of each grade qes_spec() gives", {
   v <- qes_spec()
   md <- .spec_readme_md(hz_spec())

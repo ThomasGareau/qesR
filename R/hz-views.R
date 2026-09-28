@@ -630,9 +630,13 @@ print.qes_crosswalk <- function(x, ...) {
 # target in block order, one column per study of the spec, each cell the
 # first letter of the grade of the row qes_harmonize() applies (I, C or A,
 # the same in English and French) or a dash. data-raw/readme_coverage.R
-# writes it between the "coverage" markers of README.md, and
-# data-raw/spec_check.R (V-P3) checks that README.md is current.
-.spec_readme_md <- function(spec = NULL) {
+# writes it between the "coverage" markers of README.md and of the website's
+# home page (pkgdown/index.md), and data-raw/spec_check.R (V-P3) checks that
+# both are current. With `reference` (the path of the harmonization reference
+# page), each target's name links to its section there, as on the website,
+# and the study codes of the header may wrap after "qes" and at "_", so that
+# the 11 studies fit the width of the home page.
+.spec_readme_md <- function(spec = NULL, reference = NULL) {
   spec <- if (inherits(spec, "qes_spec")) spec else .qes_spec_get(spec, "none")
   tg <- spec$tables$targets
   xw <- spec$tables$crosswalk
@@ -643,12 +647,19 @@ print.qes_crosswalk <- function(x, ...) {
   tg <- tg[order(match(tg$block, .qes_enum("block")$value), seq_len(nrow(tg))), , drop = FALSE]
   letter <- c(identical = "I", comparable = "C", approximate = "A")
   rows <- lapply(tg$target, function(t) {
-    c(paste0("`", t, "`"), vapply(studies, function(s) {
+    name <- paste0("`", t, "`")
+    if (!is.null(reference)) name <- sprintf("[%s](%s#target-%s)", name, reference, t)
+    c(name, vapply(studies, function(s) {
       g <- applied$grade[applied$study == s & applied$target == t]
       if (length(g) == 0L || is.na(letter[g[1]])) "\u2014" else letter[[g[1]]]
     }, character(1), USE.NAMES = FALSE))
   })
-  paste0(paste(.qes_md_table(c("", paste0("`", studies, "`")), rows), collapse = "\n"), "\n")
+  header <- paste0("`", studies, "`")
+  if (!is.null(reference)) {
+    # on the website the study codes may wrap, only after "qes" and at "_"
+    header <- sprintf("<code>%s</code>", gsub("_", "_<wbr>", sub("^qes([0-9])", "qes<wbr>\\1", studies)))
+  }
+  paste0(paste(.qes_md_table(c("", header), rows), collapse = "\n"), "\n")
 }
 
 # The list of targets for the Rd page of qes_spec() (roxygen @eval), from

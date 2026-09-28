@@ -1408,7 +1408,7 @@ Results are written as aggregates (CC0 studies only) to `inst/validation/validat
   |---|---|---|---|
   | `get-started` | `demarrage` | `qes_demo`; then `qes_studies()`, `qes_search()`, `qes_codebook("qes2014")`. The `qes_spec()` and `qes_harmonize("qes_demo", ..., weight = ...)` sections are added in 0.6.0 | 0.5.0 |
   | `citations` | `fr-citations` | `qes_cite()` over the catalog (reviewer request 3) | 0.5.0 |
-  | `migrating-0.5` | `fr-migrer-0.5` | the §2.3 table, `x <- get_qes("x")`, pinning v0.4.4 | 0.5.0 |
+  | `migrating-0.5` | `fr-migrer-0.5` | the §2.3 table, `x <- get_qes("x")`, pinning v0.4.4. Renamed `migrating-0.7` / `fr-migrer-0.7` in W.2 and extended to 0.4.4 → 0.7.0 (the engine-rendered master, column by column; moving master code to `qes_harmonize()`) | 0.5.0 (W.2) |
   | `harmonization-reference` | `fr-reference-harmonisation` | generated (above) | 0.6.0 |
 
 - **EN/FR sync:**

@@ -103,7 +103,7 @@ head(attr(master, "legacy_column_map"))
 ```
 
 Results computed with qesR 0.4.4 change under 0.5.0 and 0.7.0. See
-`vignette("migrating-0.5", package = "qesR")` and NEWS; to reproduce a 0.4.4
+`vignette("migrating-0.7", package = "qesR")` and NEWS; to reproduce a 0.4.4
 result exactly, install that version:
 `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`.
 
@@ -188,7 +188,7 @@ goes from `qes_harmonize()` to a weighted estimate.
 - Website: <https://thomasgareau.github.io/qesR/>
 - Vignettes: `vignette("get-started", package = "qesR")`,
   `vignette("citations", package = "qesR")`,
-  `vignette("migrating-0.5", package = "qesR")`.
+  `vignette("migrating-0.7", package = "qesR")`.
 
 ## Data and licences
 
@@ -339,7 +339,7 @@ pondérée.
 - Les fonctions de qesR 0.4.4 continuent de fonctionner et affichent une
   note unique qui nomme leur remplacement (`?qesR-deprecated`).
 - Les résultats de `get_qes_master()` changent avec 0.5.0 et 0.7.0 : voir
-  `vignette("fr-migrer-0.5", package = "qesR")` ; pour reproduire
+  `vignette("fr-migrer-0.7", package = "qesR")` ; pour reproduire
   exactement un résultat de 0.4.4, installez cette version
   (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
 
@@ -349,7 +349,7 @@ pondérée.
 - La page `?qesR-fr` présente toutes les fonctions en français. Guides :
   `vignette("fr-demarrage", package = "qesR")`,
   `vignette("fr-citations", package = "qesR")`,
-  `vignette("fr-migrer-0.5", package = "qesR")`.
+  `vignette("fr-migrer-0.7", package = "qesR")`.
 
 Les données ne font pas partie du package : qesR les télécharge depuis
 leurs dépôts. L'étude de 2022 est sous licence CC BY-NC 4.0 (attribution,

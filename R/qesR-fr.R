@@ -18,15 +18,15 @@
 #'
 #' | Groupe | Fonction | Rôle |
 #' |---|---|---|
-#' | Découvrir | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
-#' | Découvrir | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
-#' | Obtenir les données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
-#' | Obtenir les données | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
-#' | Obtenir les données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir `NEWS`). |
-#' | Métadonnées et recherche | [qes_codebook()] | Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. |
-#' | Métadonnées et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
-#' | Métadonnées et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
-#' | Métadonnées et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
+#' | Données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
+#' | Données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir `NEWS`). |
+#' | Études et documents | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
+#' | Études et documents | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
+#' | Études et documents | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
+#' | Codebooks et recherche | [qes_codebook()] | Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants. |
+#' | Codebooks et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
+#' | Codebooks et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
+#' | Codebooks et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
 #' | Harmonisation (expérimental) | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
 #' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
 #' | Harmonisation (expérimental) | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
@@ -59,8 +59,8 @@
 #' @section Guides:
 #' `vignette("fr-demarrage", package = "qesR")` (démarrage : du code d'étude
 #' à une estimation pondérée), `vignette("fr-citations", package = "qesR")`
-#' (citations), `vignette("fr-migrer-0.5", package = "qesR")` (passer de
-#' qesR 0.4.4 à 0.5.0) et
+#' (citations), `vignette("fr-migrer-0.7", package = "qesR")` (passer de
+#' qesR 0.4.4 à 0.7.0) et
 #' `vignette("fr-reference-harmonisation", package = "qesR")` (référence de
 #' l'harmonisation, générée à partir de la spécification). Le site web, <https://thomasgareau.github.io/qesR/>,
 #' offre aussi en français le catalogue des études et des exemples

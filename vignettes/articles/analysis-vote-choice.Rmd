@@ -21,13 +21,19 @@ For estimates with the harmonization engine (experimental), with a
 comparability grade for each study's question and the weight of the wave
 that asked it, see [Harmonizing across studies](harmonization.html).
 
-Since qesR 0.5.0, `vote_choice` holds the vote reported after the election
-only (`vote_choice_timing` is `"post"`). It is `NA` in the studies whose
-source was a vote intention: `qes2022`, the CROP polls and `qes1998`. Each
-estimate is computed within one study, with that study's own weight
+Since qesR 0.7.0, `vote_choice` is rendered from the harmonization engine:
+it holds the vote reported after the election in every study that asked it
+(`vote_choice_timing` is `"post"`), `qes2022` and `qes1998` included, and is
+`NA` for respondents who did not vote, did not know or refused to say. The
+CROP polls asked only vote intentions, so they are not shown. Each estimate
+is computed within one study, with that study's own weight
 (`survey_weight`); it is a point estimate that ignores the survey's design.
-The Quebec Election Studies and the Durand panels are shown apart, because
-their designs differ.
+The Quebec Election Studies, the Durand panels and the 1998 polls are shown
+apart, because their designs differ. The 1998 polls sampled francophones
+only, and the firms over-selected the undecided and those who refused to
+say; their weight (`survey_weight`, as read by 0.4.4) is not reviewed, so
+their shares are not comparable with the other studies or with the
+official results.
 
 ```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
@@ -47,37 +53,38 @@ master$year <- as.integer(master$qes_year)
 
 Shares are among respondents who reported voting for a party, including
 "Other party". Respondents who did not vote, did not know or refused to say
-are left out of the denominator.
+are `NA` and left out of the denominator.
 
 Two kinds of cell are structural zeros, not estimates, and are not shown as
 0:
 
-- **—** the party did not run in that election (official results of
-  Élections Québec). The ADQ merged into the CAQ in 2012, and Option
-  nationale ran only in 2012 and 2014.
+- **—** the party did not run in that election, according to the official
+  results of Élections Québec that ship with qesR
+  (`inst/extdata/validation/official_results.csv`). The ADQ merged into the
+  CAQ in 2012, and Option nationale ran only in 2012 and 2014.
 - **n.l.** the party ran, but the study's question did not list it as an
-  answer, so its voters could only answer "Other party". Both 2018 studies
-  omit the Green Party (PVQ): see
-  `qes_codebook("qes2018", layout = "long", variables = "q6")`.
+  answer, so its voters could only answer "Other party". The answers each
+  question offered come from the harmonization specification
+  (`qes_spec("crosswalk", targets = "vote_prov_recall")`): the 2012, 2014
+  and 2018 studies omit the Conservative Party (PCQ), and the 2018 and 2022
+  studies the Green Party (PVQ).
 
 A 0.0 is a party that was listed but that no respondent of the study
 reported.
 
 ```{r vote}
-parties <- c("PLQ", "PQ", "ADQ", "CAQ", "QS", "PVQ", "ON", "Other party")
-# Parties with candidates at each general election (official results of
-# Elections Quebec). A party that did not run cannot be reported.
-ran <- list(
-  QC2007 = c("PLQ", "PQ", "ADQ", "QS", "PVQ"),
-  QC2008 = c("PLQ", "PQ", "ADQ", "QS", "PVQ"),
-  QC2012 = c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON"),
-  QC2014 = c("PLQ", "PQ", "CAQ", "QS", "PVQ", "ON"),
-  QC2018 = c("PLQ", "PQ", "CAQ", "QS", "PVQ"),
-  QC2022 = c("PLQ", "PQ", "CAQ", "QS", "PVQ")
-)
-# Parties that ran but that the study's question did not list as an answer
-# (value labels of the source variable, from qes_codebook())
-not_listed <- list(qes2018 = "PVQ", qes2018_panel = "PVQ")
+parties <- c("PLQ", "PQ", "ADQ", "CAQ", "QS", "PVQ", "ON", "PCQ", "Other party")
+# Parties with candidates at each general election: the official results of
+# Elections Quebec that ship with qesR. A party that did not run cannot be
+# reported.
+official <- read.csv(system.file("extdata", "validation", "official_results.csv",
+                                 package = "qesR"))
+ran <- split(official$party, official$election_id)
+# The answers each study's question offered, from the harmonization spec
+# (the levels of the reported-vote target); "other" is "Other party"
+xw <- qes_spec("crosswalk", targets = "vote_prov_recall")
+offered <- lapply(setNames(strsplit(xw$levels_offered, ";"), xw$study),
+                  function(x) sub("^other$", "Other party", x))
 
 voters <- master[master$vote_choice %in% parties & !is.na(master$survey_weight), ]
 vote <- do.call(rbind, lapply(split(voters, voters$qes_code), function(d) {
@@ -85,7 +92,7 @@ vote <- do.call(rbind, lapply(split(voters, voters$qes_code), function(d) {
   w[is.na(w)] <- 0
   election <- studies$election_id[match(d$qes_code[1], studies$study)]
   status <- ifelse(!parties %in% c(ran[[election]], "Other party"), "not_run",
-                   ifelse(parties %in% not_listed[[d$qes_code[1]]], "not_listed", "offered"))
+                   ifelse(parties %in% offered[[d$qes_code[1]]], "offered", "not_listed"))
   data.frame(study = d$qes_code[1], year = d$year[1], family = d$family[1],
              n = nrow(d), party = parties, pct = round(100 * as.numeric(w) / sum(w), 1),
              status = status)
@@ -109,17 +116,19 @@ knitr::kable(
 
 ## Figure 1: the main parties
 
-```{r vote-plot, fig.alt = tr("Weighted reported vote share of the PLQ, PQ, ADQ, CAQ and QS in each study, by year, with Quebec Election Studies and Durand panels in separate panels.", "Part pondérée du vote déclaré pour le PLQ, le PQ, l'ADQ, la CAQ et QS dans chaque étude, par année, les Études électorales québécoises et les panels Durand dans des panneaux distincts.")}
+```{r vote-plot, fig.alt = tr("Weighted reported vote share of the PLQ, PQ, ADQ, CAQ and QS in each study, by year, with the Quebec Election Studies, the Durand panels and the 1998 polls in separate panels.", "Part pondérée du vote déclaré pour le PLQ, le PQ, l'ADQ, la CAQ et QS dans chaque étude, par année, les Études électorales québécoises, les panels Durand et les sondages de 1998 dans des panneaux distincts."), fig.height = 7}
 main <- vote[vote$status == "offered" & vote$party %in% c("PLQ", "PQ", "ADQ", "CAQ", "QS"), ]
-main$family <- ifelse(main$family == "qes",
-                      tr("Quebec Election Studies", "Études électorales québécoises"),
-                      tr("Durand panels", "Panels Durand"))
+families <- c(qes = tr("Quebec Election Studies", "Études électorales québécoises"),
+              durand_panel = tr("Durand panels", "Panels Durand"),
+              polls_1998 = tr("1998 polls", "Sondages de 1998"))
+main$family <- factor(families[main$family], levels = families)
 ggplot(main, aes(x = year, y = pct, colour = party, shape = party)) +
   geom_line() +
   geom_point(size = 2.4) +
   facet_wrap(~family, ncol = 1) +
   scale_colour_manual(values = c(PLQ = "#d71920", PQ = "#004c9d", ADQ = "#6d9eeb",
                                  CAQ = "#00a3c7", QS = "#ff6f00")) +
+  scale_x_continuous(breaks = sort(unique(main$year))) +
   scale_y_continuous(limits = c(0, NA)) +
   labs(
     x = tr("Year of the study", "Année de l'étude"),
@@ -134,8 +143,11 @@ ggplot(main, aes(x = year, y = pct, colour = party, shape = party)) +
 
 - A line joins studies of the same family only; the ADQ and the CAQ are
   separate parties, and their lines are not joined.
-- "Don't know / Refused" is a category qesR 0.4.4 coded on purpose, kept as
-  it is in `vote_choice` until the harmonized variables of qesR 0.7.0.
+- qesR 0.4.4 coded "Did not vote / None" and "Don't know / Refused" as
+  categories of `vote_choice`, and used the campaign-period vote intention
+  for `qes2022` and `qes1998`; since 0.7.0 these respondents are `NA` and
+  both studies give the reported vote
+  (`vignette("migrating-0.7", package = "qesR")`).
 - Reported votes differ from official results: compare them with the
   results published by Élections Québec, not with each other across
   designs.

@@ -79,6 +79,35 @@ main table td code {
   white-space: nowrap;
 }
 
+/* The coverage grid of the home page (11 studies): compact, so that every
+   study fits in the column on a laptop; the study codes of the header wrap
+   only where the generated grid allows it (after "qes" and at "_"). */
+.qesr-grid table {
+  font-size: 0.8rem;
+}
+
+.qesr-grid th,
+.qesr-grid td {
+  padding: 0.25rem 0.3rem;
+  text-align: center;
+  hyphens: none;
+}
+
+.qesr-grid th {
+  white-space: normal;
+  vertical-align: bottom;
+}
+
+.qesr-grid th code {
+  white-space: normal;
+  padding: 0;
+  background: none;
+}
+
+.qesr-grid td:first-child {
+  text-align: left;
+}
+
 /* The EN/FR link at the top of each guide. */
 main .contents > p:first-of-type > em:only-child > a {
   font-style: normal;

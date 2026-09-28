@@ -529,6 +529,7 @@ qes_studies <- function(family = NULL, check_updates = FALSE, quiet = FALSE) {
 #' @param detailed If TRUE, include year, names, DOI, and documentation columns.
 #'
 #' @return A data frame of qesR survey codes (cesR-style by default).
+#' @family legacy
 #' @seealso [qes_studies()], and [qesR-deprecated] for the legacy functions
 #'   and their replacements.
 #' @examples

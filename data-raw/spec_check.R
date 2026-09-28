@@ -32,7 +32,7 @@
 #   4. V-P3, the generated documentation is current: the target list of
 #      man/qes_spec.Rd (roxygen @eval .rd_targets()) names the spec version
 #      and every target (re-run roxygen otherwise), and the coverage grids
-#      of README.md are the grid of the spec (re-run
+#      of README.md and pkgdown/index.md are the grid of the spec (re-run
 #      data-raw/readme_coverage.R otherwise). The reference vignettes
 #      are generated when they are built, so they cannot be stale;
 #   5. the source grep: the calls that tests/testthat/test-forbidden-calls.R
@@ -193,19 +193,25 @@ if (file.exists(rd_path)) {
   failed <- TRUE
 }
 
-# The coverage grids of README.md (between the "coverage" markers) are the
-# grid of the spec, .spec_readme_md(); data-raw/readme_coverage.R writes them.
-readme <- if (file.exists("README.md")) enc2utf8(readLines("README.md", encoding = "UTF-8", warn = FALSE)) else character(0)
-start <- grep("^<!-- coverage: start", readme)
-end <- grep("^<!-- coverage: end", readme)
-grid <- c("", strsplit(sub("\n$", "", .spec_readme_md(spec)), "\n", fixed = TRUE)[[1]], "")
-readme_ok <- length(start) > 0L && length(start) == length(end) && all(end > start) &&
-  all(vapply(seq_along(start), function(k) identical(readme[seq_len(end[k] - start[k] - 1L) + start[k]], grid), logical(1)))
-if (readme_ok) {
-  cat("V-P3: the coverage grid of README.md is current.\n")
-} else {
-  cat("V-P3 error: the coverage grid of README.md is not current (or its markers are missing); run Rscript data-raw/readme_coverage.R.\n")
-  failed <- TRUE
+# The coverage grids of README.md and of the website's home page
+# (pkgdown/index.md), between the "coverage" markers, are the grid of the
+# spec, .spec_readme_md(); data-raw/readme_coverage.R writes them (on the
+# home page, the target names link to the harmonization reference).
+for (f in list(list(path = "README.md", reference = NULL),
+               list(path = file.path("pkgdown", "index.md"),
+                    reference = "articles/harmonization-reference.html"))) {
+  readme <- if (file.exists(f$path)) enc2utf8(readLines(f$path, encoding = "UTF-8", warn = FALSE)) else character(0)
+  start <- grep("^<!-- coverage: start", readme)
+  end <- grep("^<!-- coverage: end", readme)
+  grid <- c("", strsplit(sub("\n$", "", .spec_readme_md(spec, reference = f$reference)), "\n", fixed = TRUE)[[1]], "")
+  readme_ok <- length(start) > 0L && length(start) == length(end) && all(end > start) &&
+    all(vapply(seq_along(start), function(k) identical(readme[seq_len(end[k] - start[k] - 1L) + start[k]], grid), logical(1)))
+  if (readme_ok) {
+    cat(sprintf("V-P3: the coverage grid of %s is current.\n", f$path))
+  } else {
+    cat(sprintf("V-P3 error: the coverage grid of %s is not current (or its markers are missing); run Rscript data-raw/readme_coverage.R.\n", f$path))
+    failed <- TRUE
+  }
 }
 
 # ---- 5. the source grep --------------------------------------------------------------

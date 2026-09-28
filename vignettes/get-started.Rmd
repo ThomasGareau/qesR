@@ -261,4 +261,4 @@ tryCatch(
 `get_qes_master()` and the other functions of qesR 0.4.4 keep working; since
 qesR 0.7.0 the master is rendered from the harmonization engine. What
 changed, and how to keep results reproducible, is in
-`vignette("migrating-0.5", package = "qesR")`.
+`vignette("migrating-0.7", package = "qesR")`.
