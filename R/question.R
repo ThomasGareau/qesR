@@ -4,28 +4,29 @@
 #' The exact wording of survey questions
 #'
 #' `qes_question()` returns the question asked for each of the variables you
-#' name, as the study's questionnaire gives it, with where it comes from.
-#' Variable names must match exactly; there is no partial or fuzzy matching.
+#' name, as the study's questionnaire (for `qes2022`, its codebook) gives it,
+#' with where it comes from. Variable names must match exactly; there is no
+#' partial or fuzzy matching.
 #'
-#' The wording comes from the metadata of [qes_codebook()]: offline for the
-#' studies shipped with qesR; for `qes2022`, from its data file, which is
-#' downloaded (with a message, as [qes_codebook()] gives) and cached on first
-#' use when it is not already cached. `qes2022`'s question text is its data file's variable label,
-#' which Stata cuts at 80 characters: such rows have `truncated = TRUE` and
-#' `doc_ref` names the codebook document that has the full wording (see
-#' [qes_docs()]). qesR never guesses the end of a cut question.
+#' The wording comes from the metadata of [qes_codebook()], which ships with
+#' qesR for every study: no download and no network. `doc_ref` names the
+#' document and question (see [qes_docs()]). A text the source cut has
+#' `truncated = TRUE`; qesR never guesses the end of a cut question. The
+#' wording of `qes2022` is quoted from its codebook under the study's
+#' licence, CC BY-NC 4.0 (see `qes_cite("qes2022")`); the result then has
+#' the attribute `licence_notice`, the attribution that licence requires.
 #'
 #' @section En français:
 #' `qes_question()` renvoie le libellé exact de la question posée pour
 #' chaque variable nommée, tel que le donne le questionnaire de l'étude,
 #' avec sa source. Les noms de variables doivent correspondre exactement.
 #' `lang = "fr"` donne le libellé français, `lang = "en"` l'anglais ; par
-#' défaut, la langue de l'étude. Un libellé coupé à 80 caractères dans le
-#' fichier (`qes2022`) est signalé par `truncated = TRUE`. Le libellé vient
-#' des métadonnées de [qes_codebook()] : hors ligne pour les études livrées
-#' avec qesR ; pour `qes2022`, de son fichier de données, téléchargé (avec un
-#' message, comme pour [qes_codebook()]) et mis en cache à la première
-#' utilisation s'il n'est pas déjà en cache. `doc_ref` donne
+#' défaut, la langue de l'étude. Un libellé coupé par la source est signalé
+#' par `truncated = TRUE`. Le libellé vient des métadonnées de
+#' [qes_codebook()], livrées avec qesR pour chaque étude (pour `qes2022`, le
+#' livre de codes bilingue de l'étude, cité sous sa licence CC BY-NC 4.0 ;
+#' le résultat porte alors l'attribut `licence_notice`, l'attribution
+#' qu'exige cette licence) : aucun téléchargement n'est nécessaire. `doc_ref` donne
 #' une ou plusieurs références `<file_id>:<question>` séparées par `;` (par
 #' exemple `"352010:Q19;352009:Q19"`, questionnaires anglais et français).
 #'
@@ -46,7 +47,9 @@
 #'   Dataverse file id and the question number, separated by `;`, e.g.
 #'   `"352010:Q19;352009:Q19"` for the English and French questionnaires; a
 #'   bare file id when the item is not known) and `universe` (who was asked,
-#'   when the questionnaire says so).
+#'   when the questionnaire says so). For `qes2022`, the attribute
+#'   `licence_notice` gives the attribution and licence (CC BY-NC 4.0) of the
+#'   wording.
 #'
 #' @family codebooks and search
 #' @seealso [qes_codebook()] for every variable of a study, [qes_search()] to
@@ -68,7 +71,8 @@ qes_question <- function(x, variables, lang = NULL) {
     if (length(study) != 1L) {
       .qes_abort("input_string", class = "qesR_error_input", args = list("x"), data = list(arg = "x", value = x))
     }
-    # a first-use download of qes2022 is announced, as qes_codebook() does
+    # a study whose description does not ship (a test catalog's) announces
+    # the download of its data, as qes_codebook() does
     dict <- .qes_dict_study(study, quiet = FALSE)
   }
   vars <- .qes_match_variables(variables, dict$variables$variable, study = study,
@@ -89,7 +93,8 @@ qes_question <- function(x, variables, lang = NULL) {
     stringsAsFactors = FALSE
   )
   rownames(out) <- NULL
-  out
+  # the attribution of metadata that is not CC0 (qes2022)
+  .qes_with_licence_notice(out, study)
 }
 
 #' Get survey question text (legacy)
@@ -102,8 +107,8 @@ qes_question <- function(x, variables, lang = NULL) {
 #' An unknown name is an error of class `qesR_error_unknown_variable` that
 #' suggests near matches. The text returned is the question of
 #' [qes_question()] when the study is known, else the column's label; when
-#' the source cut the question (the 80-character labels of `qes2022`), a
-#' warning of class `qesR_warning_truncated` says so. `full` no longer
+#' the source cut the question, a warning of class `qesR_warning_truncated`
+#' says so. `full` no longer
 #' changes the result: the text is always the most complete one qesR has.
 #'
 #' @param do A data.frame, or the name of one, looked up (read only) in the

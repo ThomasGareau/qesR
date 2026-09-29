@@ -18,13 +18,10 @@
 # review are covered too), with values = "code" and missing = "reasons", and
 #   1. checks V-L1 on marginals: among each wave's members, the count of
 #      every level and NA reason of every projectable row equals
-#      expected/marginals.csv (CC0 studies) or data-raw/nc/marginals_<study>.csv
-#      (a study whose metadata cannot ship, qes2022, OD3; skipped with a note
-#      when the build-ignored file is absent);
+#      expected/marginals.csv (every study);
 #   2. writes inst/extdata/harmonize/expected/hashes.csv: for each (study,
 #      target) cell, the md5 of the column (each row's level name or number,
-#      or "NA:<reason>", in file order; .qes_hz_column_md5()). A hash is not
-#      data: it ships for every study, qes2022 included.
+#      or "NA:<reason>", in file order; .qes_hz_column_md5()).
 # With --check it writes nothing and fails when the file differs.
 #
 # expected/ is part of the spec: after a change, bump SPEC by the rule of
@@ -45,8 +42,6 @@ spec$custom <- FALSE
 # the recorded Hash is refreshed afterwards (spec_check.R --write-hash); the
 # column hashes do not depend on it
 spec$hash_recorded <- spec$hash
-cat_ <- .qes_catalog()
-shipped <- cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE]
 failed <- FALSE
 
 # every target except the leading columns (survey_mode), whose rows are
@@ -113,17 +108,8 @@ compare <- function(study, expected, what) {
   }
 }
 for (study in unique(c(cell$study, spec$tables$crosswalk$study[spec$tables$crosswalk$target %in% leading]))) {
-  if (study %in% shipped) {
-    compare(study, spec$tables$expected[spec$tables$expected$study == study, , drop = FALSE],
-            paste(study, "expected/marginals.csv"))
-  } else {
-    marg <- file.path("data-raw", "nc", sprintf("marginals_%s.csv", study))
-    if (!file.exists(marg)) {
-      cat(sprintf("V-L1 marginals %s: no %s (build-ignored); skipped.\n", study, marg))
-      next
-    }
-    compare(study, .qes_read_csv(marg, "spec_expected"), paste(study, marg))
-  }
+  compare(study, spec$tables$expected[spec$tables$expected$study == study, , drop = FALSE],
+          paste(study, "expected/marginals.csv"))
 }
 
 # ---- 2. expected/hashes.csv ---------------------------------------------------------------

@@ -1,7 +1,7 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.7.0
+Version: 0.7.1
 Maintainer: Thomas Gareau-Paquette <tg454@cornell.edu>
 Authors@R:
     person(
@@ -12,34 +12,42 @@ Authors@R:
     )
 Description: Load the Quebec Election Studies and related Quebec election
     surveys from their 'Dataverse' deposits ('Borealis' and the 'Harvard
-    Dataverse') by study code. Each study is pinned to one dataset version
-    and one original 'SPSS' or 'Stata' data file, checked by its 'MD5'
-    checksum before use. An offline catalog lists the studies, their
-    documents and their citations, and shipped metadata give codebooks,
-    question wording and search in English and French without network
-    access. An experimental engine harmonizes selected variables across
-    studies from a versioned specification whose rows record their review
-    status (the legacy master also applies rows still in review), with
-    each study's waves,
-    weights and comparability grades, and returns survey designs for the
-    'survey' and 'srvyr' packages. Data come from the Quebec Election
-    Studies of 2007 (Bélanger et al. 2023) <doi:10.5683/SP2/6XGOKA>, 2008 (Bélanger and Nadeau 2023)
+    Dataverse') by study code. Each study is pinned to one dataset version and
+    one original 'SPSS' or 'Stata' data file, checked by its 'MD5' checksum
+    before use. An offline catalog lists the studies, their documents and their
+    citations, and shipped metadata give codebooks, question wording and search
+    in English and French without network access. An experimental engine
+    harmonizes selected variables across studies from a versioned specification
+    whose rows record their review status (the legacy master also applies rows
+    still in review), with each study's waves, weights and comparability grades,
+    and returns survey designs for the 'survey' and 'srvyr' packages. Data come
+    from the Quebec Election Studies of 2007 (Bélanger et al. 2023)
+    <doi:10.5683/SP2/6XGOKA>, 2008 (Bélanger and Nadeau 2023)
     <doi:10.5683/SP2/8KEYU3>, 2012 (Bélanger et al. 2023)
     <doi:10.5683/SP2/WXUPXT>, 2014 (Bélanger and Nadeau 2023)
     <doi:10.5683/SP3/64F7WR>, 2018 (Bélanger et al. 2023)
     <doi:10.5683/SP3/NWTGWS> and 2022 (Mahéo et al. 2023)
-    <doi:10.7910/DVN/PAQBDR>; the panel surveys on the 2007 and 2012
-    Quebec elections (Durand and Goyder 2023) <doi:10.5683/SP3/NDS6VT>
-    <doi:10.5683/SP3/RKHPVL> and on the 2018 election (Durand and Blais
-    2023) <doi:10.5683/SP3/XDDMMR>; the 'CROP' polls of 2007-2010 (Durand 2023)
+    <doi:10.7910/DVN/PAQBDR>; the panel surveys on the 2007 and 2012 Quebec
+    elections (Durand and Goyder 2023) <doi:10.5683/SP3/NDS6VT>
+    <doi:10.5683/SP3/RKHPVL> and on the 2018 election (Durand and Blais 2023)
+    <doi:10.5683/SP3/XDDMMR>; the 'CROP' polls of 2007-2010 (Durand 2023)
     <doi:10.5683/SP3/IRZ1PF>; and the 1998 election polls (Durand 2023)
-    <doi:10.5683/SP2/QFUAWG>. The studies are catalogued by the Centre for
-    the Study of Democratic Citizenship
-    <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>.
+    <doi:10.5683/SP2/QFUAWG>. The studies are catalogued by the Centre for the
+    Study of Democratic Citizenship
+    <https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/>. The MIT
+    licence covers the package code only: the metadata shipped for the 2022
+    study keep its licence, CC BY-NC 4.0 (see the file COPYRIGHTS).
 License: MIT + file LICENSE
-Copyright: See file COPYRIGHTS for the third-party content shipped in
-    inst/extdata: CC0 study metadata, and census counts (Statistics
-    Canada, Open Licence) used as validation benchmarks.
+License_restricts_use: yes
+License_is_FOSS: no
+Copyright: The MIT licence (file LICENSE) covers the package code only.
+    See inst/COPYRIGHTS for the third-party content shipped in inst/extdata,
+    the vignettes and tests/testthat/fixtures, and its licences: CC0 study
+    metadata; the metadata of the 2022 Quebec Election Study (Mahéo,
+    Bélanger, Stephenson and Harell 2023, doi:10.7910/DVN/PAQBDR), licensed
+    CC BY-NC 4.0 and not covered by the MIT licence (inst/COPYRIGHTS,
+    section 2, gives the attribution and the list of files); and census
+    counts (Statistics Canada, Open Licence) used as validation benchmarks.
 Encoding: UTF-8
 Depends: R (>= 4.1)
 Imports:

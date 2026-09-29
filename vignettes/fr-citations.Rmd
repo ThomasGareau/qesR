@@ -67,7 +67,9 @@ knitr::kable(table, col.names = if (identical(params$lang, "fr")) {
 L'étude de 2022 est diffusée sous licence CC BY-NC 4.0, qui exige
 l'attribution et exclut l'usage commercial ; les autres études sont sous CC0
 (domaine public). La licence de chaque étude figure dans
-`qes_studies()$licence`.
+`qes_studies()$licence`. Les métadonnées de l'étude de 2022 que qesR livre
+(son codebook, le texte des questions, les étiquettes de valeurs et les
+effectifs) sont sous la même licence et demandent la même citation.
 
 ## Citer seulement ce que vous avez utilisé
 

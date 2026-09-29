@@ -50,9 +50,8 @@
 #' types, to `NA`.
 #'
 #' The `qes_codebook` attribute is built offline from the metadata shipped
-#' with qesR. `qes2022`'s metadata is not shipped (CC BY-NC 4.0): it is
-#' built from the file just read and kept in the download cache, so that
-#' [qes_codebook()] and [qes_search()] can use it later.
+#' with qesR, for every study (`qes2022`'s under the study's licence, CC
+#' BY-NC 4.0; see `qes_cite("qes2022")`).
 #'
 #' @param srvy A qesR survey code from `qes_studies()`, or `"qes_demo"` for
 #'   the small synthetic study shipped with the package. Codes are trimmed
@@ -217,7 +216,8 @@ get_preview <- function(srvy, obs = 6L, file = NULL) {
 # The codebook attached by get_qes(): the study's metadata for the columns of
 # `data` (read from `file_row`), laid out compact, with the data's provenance.
 # When `data` is the pinned file, it also serves to build the metadata of a
-# study whose metadata is not shipped (a qes2022 shard), with no second read.
+# study whose metadata is not shipped (a study of a test catalog), with no
+# second read.
 .qes_data_codebook <- function(data, code, file_row, quiet = TRUE) {
   pinned <- .qes_default_data_file(code, demo = .qes_is_demo_code(code))
   dict <- .qes_dict_study(

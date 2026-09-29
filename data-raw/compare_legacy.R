@@ -30,19 +30,19 @@
 # re-explained.
 #
 # Writes
-#   dev/legacy-diff.md                 the full report (build-ignored; it holds
-#                                      counts for qes2022, CC BY-NC: never
-#                                      shipped, OD3);
+#   dev/legacy-diff.md                 the full report (build-ignored);
 #   inst/extdata/legacy/changes.csv    per (profile, column, study) whose
 #                                      values differ from qesR 0.4.4 (beyond
-#                                      precision), the causes; no counts,
-#                                      so nothing of qes2022 ships. It feeds
-#                                      the studies_changed column of
-#                                      attr(, "legacy_column_map");
+#                                      precision), the causes; no counts.
+#                                      It feeds the studies_changed column
+#                                      of attr(, "legacy_column_map");
 #   NEWS.md                            the "What changed" table, between the
 #                                      lines <!-- legacy-table: start ... -->
 #                                      and <!-- legacy-table: end -->: counts
-#                                      of values for the CC0 studies only.
+#                                      of values of every study whose
+#                                      metadata ships (all of them; the
+#                                      counts of qes2022 are CC BY-NC 4.0,
+#                                      inst/COPYRIGHTS, section 2).
 # With --check it writes nothing and fails when a file differs from what it
 # would write. It exits with status 1 if any difference is unexplained.
 
@@ -71,7 +71,9 @@ options(qesR.lang = "en", qesR.quiet_deprecated = TRUE)
 ns <- asNamespace("qesR")
 legacy_codes <- get(".qes_legacy_codes", envir = ns)
 catalog <- get(".qes_catalog", envir = ns)()
-cc0 <- catalog$studies$study[catalog$studies$metadata_shipped %in% TRUE]
+# the studies whose counts and means may be published (their metadata
+# ships: every study since OD3 was lifted)
+shipped <- catalog$studies$study[catalog$studies$metadata_shipped %in% TRUE]
 
 # Differences from qesR 0.5.0, with their cause. `study` "*" means every
 # study. Every other difference fails the gate.
@@ -204,7 +206,7 @@ compare_cell <- function(profile, s, v, o44, o50, n, kept = rep(TRUE, length(n))
   }
   diff44 <- !is.null(o44) && any(k44[c("to_na", "from_na", "changed")] > 0)
   if (all(k50[c("to_na", "from_na", "changed")] == 0) && !diff44) return(invisible())
-  numeric_col <- is.numeric(n) && s %in% cc0
+  numeric_col <- is.numeric(n) && s %in% shipped
   before <- diff44 && any(classify(o44, o50[kept])[c("to_na", "from_na", "changed")] > 0)
   cause <- unique(c(if (before) "0.5.0", cause50))
   rows_out[[length(rows_out) + 1L]] <<- data.frame(
@@ -385,7 +387,7 @@ report <- c(
           unname(tools::md5sum(file.path(base050, "legacy_master_050.rds")))),
   sprintf("- New: qesR %s from the working tree, spec %s (content hash %s).",
           as.character(utils::packageVersion("qesR")), attr(new, "qes_spec")$version, attr(new, "qes_spec")$hash),
-  "- Aggregates only: counts per column and study, and means of numeric columns for the CC0 studies (none for `qes2022`, CC BY-NC).",
+  "- Aggregates only: counts per column and study, and means of numeric columns (those of `qes2022` are CC BY-NC 4.0, inst/COPYRIGHTS, section 2).",
   "- `to_na`, `from_na`, `changed`: cells that differ from qesR 0.5.0 (same rows); every such (column, study, kind) is explained in section 4. `valid_044` counts the rows 0.4.4 kept.",
   "",
   sprintf("**Gate: %s.**", if (length(problems) == 0L) "every difference from qesR 0.5.0 is explained" else "FAILED"),
@@ -442,9 +444,9 @@ join_notes <- function(x) {
 # the explained rows whose study field (a study, a ";"-list or "*") covers `study`
 covers <- function(field, study) vapply(strsplit(field, ";", fixed = TRUE), function(x) any(x %in% c(study, "*")), logical(1))
 
-# NEWS: master columns of the CC0 studies whose values changed
+# NEWS: master columns whose values changed, of the studies whose metadata ships
 fmt_n <- function(x) ifelse(is.na(x), "", formatC(as.numeric(x), format = "d", big.mark = ","))
-news_rows <- cells[cells$profile == "master" & cells$study %in% cc0 &
+news_rows <- cells[cells$profile == "master" & cells$study %in% shipped &
                      (cells$to_na + cells$from_na + cells$changed > 0), , drop = FALSE]
 why <- vapply(seq_len(nrow(news_rows)), function(i) {
   e <- explained[explained$profile == "master" & explained$column %in% c(news_rows$column[i], "*") &
@@ -460,7 +462,7 @@ news_tab <- data.frame(
   check.names = FALSE, stringsAsFactors = FALSE
 )
 news_tab$`0.4.4`[is.na(news_rows$valid_044)] <- ""
-nc <- cells[cells$profile == "master" & !cells$study %in% cc0 & (cells$to_na + cells$from_na + cells$changed > 0), , drop = FALSE]
+nc <- cells[cells$profile == "master" & !cells$study %in% shipped & (cells$to_na + cells$from_na + cells$changed > 0), , drop = FALSE]
 nc_why <- vapply(seq_len(nrow(nc)), function(i) {
   e <- explained[explained$profile == "master" & explained$column %in% c(nc$column[i], "*") &
                    covers(explained$study, nc$study[i]), , drop = FALSE]
@@ -471,12 +473,11 @@ nc_why <- vapply(seq_len(nrow(nc)), function(i) {
 news_block <- c(
   "<!-- legacy-table: start (generated by data-raw/compare_legacy.R) -->",
   "",
-  "Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0, for the studies whose metadata ships (the counts of `qes2022`, CC BY-NC, are not published here). The 0.4.4 counts are over the rows 0.4.4 kept (it dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row). Columns and studies not listed are unchanged since 0.5.0.",
+  "Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0 (the counts of `qes2022`, published since 0.7.1, are CC BY-NC 4.0 like its other metadata). The 0.4.4 counts are over the rows 0.4.4 kept (it dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row). Columns and studies not listed are unchanged since 0.5.0.",
   "",
   md_table(news_tab),
   "",
-  sprintf("In `qes2022`: %s.", paste(nc_why, collapse = "; ")),
-  "",
+  if (nrow(nc) > 0L) c(sprintf("In %s: %s.", paste0("`", unique(nc$study), "`", collapse = ", "), paste(nc_why, collapse = "; ")), ""),
   "<!-- legacy-table: end -->"
 )
 

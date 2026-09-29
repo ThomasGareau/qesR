@@ -9,9 +9,8 @@ enquêtes électorales québécoises, à partir d'un code d'étude. Chaque code
 désigne un dépôt Dataverse (Borealis ou Harvard Dataverse), fixé à une
 version du jeu de données et à un fichier de données original (SPSS ou
 Stata), vérifié par sa somme de contrôle md5 avant usage. Le catalogue des
-études, leurs documents, leurs citations et, pour les études sous licence
-CC0, la description de chaque variable sont livrés avec le package et
-s'utilisent sans réseau.
+études, leurs documents, leurs citations et la description de chaque
+variable sont livrés avec le package et s'utilisent sans réseau.
 
 Cette page est le point d'entrée en français. Les autres pages d'aide sont
 en anglais ; certaines ont une section « En français ».
@@ -95,14 +94,23 @@ d'analyse construits à partir des fichiers complets (menu « Guides
 (FR) »).
 }
 
-\section{Licences}{
+\section{Licence}{
 
-Les données ne font pas partie du package : qesR les télécharge depuis
-leurs dépôts. La plupart des études sont sous licence CC0 1.0. L'étude de
-2022 est sous licence CC BY-NC 4.0 (attribution, pas d'usage commercial) ;
-qesR ne livre aucune de ses métadonnées. Le fichier \code{COPYRIGHTS} du package
+La licence MIT de qesR (fichier \code{LICENSE}) couvre le code du package
+seulement. Les données ne font pas partie du package : qesR les
+télécharge depuis leurs dépôts. La plupart des études sont sous licence
+CC0 1.0. L'étude de 2022 est sous licence CC BY-NC 4.0 (attribution, pas
+d'usage commercial) : les métadonnées que qesR en livre (étiquettes,
+texte des questions, effectifs) sont tirées de Mahéo, Bélanger,
+Stephenson et Harell (2023), « 2022 Quebec Election Study », Harvard
+Dataverse, V1.1, \doi{10.7910/DVN/PAQBDR}, restent sous cette licence
+(\url{https://creativecommons.org/licenses/by-nc/4.0/deed.fr}) et ne sont pas
+couvertes par la licence MIT du package ; cela n'implique aucune
+approbation de qesR par les auteurs. Les effectifs du recensement
+servant de référence sont adaptés de Statistique Canada (Licence ouverte
+de Statistique Canada). Le fichier \code{COPYRIGHTS} du package
 (\code{system.file("COPYRIGHTS", package = "qesR")}) détaille le contenu
-livré et sa source.
+livré, sa source, sa licence et les modifications faites par qesR.
 }
 
 \examples{

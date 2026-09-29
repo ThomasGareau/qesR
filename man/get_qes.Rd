@@ -107,9 +107,8 @@ sets these codes, and the "don't know" and "refused" codes the codebook
 types, to \code{NA}.
 
 The \code{qes_codebook} attribute is built offline from the metadata shipped
-with qesR. \code{qes2022}'s metadata is not shipped (CC BY-NC 4.0): it is
-built from the file just read and kept in the download cache, so that
-\code{\link[=qes_codebook]{qes_codebook()}} and \code{\link[=qes_search]{qes_search()}} can use it later.
+with qesR, for every study (\code{qes2022}'s under the study's licence, CC
+BY-NC 4.0; see \code{qes_cite("qes2022")}).
 }
 
 \examples{

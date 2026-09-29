@@ -75,16 +75,22 @@ test_that("fields, regex and studies restrict the search", {
   expect_error(qes_search("x", studies = "2018"), class = "qesR_error_unknown_study")
 })
 
-test_that("studies without metadata at hand are named, and coverage is reported", {
+test_that("every study is searchable, studies without shipped metadata are named, and coverage is reported", {
   local_clear_dict_memo()
   withr::local_options(qesR.cache = "none")
   hits <- qes_search("vote")
-  expect_identical(attr(hits, "not_searchable"), "qes2022")
+  expect_identical(attr(hits, "not_searchable"), character(0))
+  expect_true("qes2022" %in% hits$study)
   cov <- attr(hits, "coverage")
   expect_true(all(c("study", "n_variables", "n_label", "n_question", "n_reviewed") %in% names(cov)))
   expect_identical(cov$n_variables[cov$study == "qes2014"], 140L)
-  out <- utils::capture.output(print(hits, n = 2))
-  expect_true(any(grepl("qes2022", out, fixed = TRUE)))
+  expect_identical(cov$n_variables[cov$study == "qes2022"], 718L)
+  # a study whose metadata does not ship (a fixture catalog's) is named
+  local_fixture_catalog()
+  fx <- qes_search("vote", studies = "qes_fixture_b")
+  expect_identical(attr(fx, "not_searchable"), "qes_fixture_b")
+  out <- utils::capture.output(print(fx, n = 2))
+  expect_true(any(grepl("qes_fixture_b", out, fixed = TRUE)))
   none <- qes_search("zzzqqqxxx")
   expect_identical(nrow(none), 0L)
   expect_true(length(utils::capture.output(print(none))) >= 1L)

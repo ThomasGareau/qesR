@@ -622,8 +622,8 @@
     fr = "... et %1$s ligne(s) de plus."
   ),
   search_not_searchable = c(
-    en = "Not searchable yet: %1$s (its metadata is built from your copy of the data by qes_codebook() or get_qes()).",
-    fr = "Pas encore consultable\u00a0: %1$s (ses m\u00e9tadonn\u00e9es sont construites \u00e0 partir de votre copie des donn\u00e9es par qes_codebook() ou get_qes())."
+    en = "Not searchable: %1$s (no description of its variables ships with qesR; qes_codebook() builds one from the data).",
+    fr = "Non consultable\u00a0: %1$s (aucune description de ses variables n'est livr\u00e9e avec qesR\u00a0; qes_codebook() en construit une \u00e0 partir des donn\u00e9es)."
   ),
 
   # ---- progress (silenced by quiet = TRUE) ---------------------------------
@@ -772,6 +772,10 @@
   hz_print_unreviewed_skipped = c(
     en = "Cells left NA because their rows are not yet signed off by a reviewer (include_draft = FALSE): %1$s (%2$s value(s)).",
     fr = "Cellules laiss\u00e9es \u00e0 NA parce que leurs lignes ne sont pas encore approuv\u00e9es par un r\u00e9viseur (include_draft = FALSE)\u00a0: %1$s (%2$s valeur(s))."
+  ),
+  metadata_licence_notice = c(
+    en = "Licence: the description of %1$s (labels, question text, counts) is derived from \"%2$s\" (%3$s, %4$s, %5$s) and licensed %6$s (%7$s): attribution, no commercial use. Adapted by qesR (extracted, reformatted, typed and tabulated). It is not covered by qesR's MIT licence. Changes and list of files: system.file(\"COPYRIGHTS\", package = \"qesR\"). Full citation: qes_cite(\"%1$s\").",
+    fr = "Licence\u00a0: la description de %1$s (\u00e9tiquettes, texte des questions, effectifs) est tir\u00e9e de \u00ab\u00a0%2$s\u00a0\u00bb (%3$s, %4$s, %5$s) et est sous licence %6$s (%7$s)\u00a0: attribution, pas d'usage commercial. Adapt\u00e9e par qesR (extraite, reformat\u00e9e, typ\u00e9e et totalis\u00e9e). Elle n'est pas couverte par la licence MIT de qesR. Modifications et liste des fichiers\u00a0: system.file(\"COPYRIGHTS\", package = \"qesR\"). Citation compl\u00e8te\u00a0: qes_cite(\"%1$s\")."
   ),
   hz_print_licence = c(
     en = "Licence: %1$s is released under CC BY-NC 4.0 (non-commercial use, with attribution; see qes_cite()).",

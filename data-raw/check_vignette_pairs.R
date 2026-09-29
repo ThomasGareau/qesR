@@ -11,7 +11,9 @@
 # for the vignettes that ship with the package (vignettes/*.Rmd) and for the
 # website-only articles (vignettes/articles/). Text that must differ by
 # language (table headers, figure alt text) is chosen in the code from
-# params$lang.
+# params$lang. A chunk marked purl = FALSE in both pages (the installation
+# chunk of get-started and fr-demarrage, shown and never run, whose comments
+# are in the page's language) is left out of the comparison by purl().
 #
 # Vignette sources are not installed with the package, so this cannot run
 # under R CMD check. It runs in CI (.github/workflows/R-CMD-check.yml) and

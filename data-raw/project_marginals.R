@@ -11,12 +11,11 @@
 #
 # Writes
 #   inst/extdata/harmonize/expected/marginals.csv
-#       the studies whose metadata ships (CC0); V-P1 compares the projection
-#       with it in the tests and in CI, and data-raw/spec_check.R diffs it
-#       against the merge-base for the MAJOR rule of section 5.11;
-#   data-raw/nc/marginals_<study>.csv
-#       the same for a study whose metadata cannot ship (qes2022, OD3), from
-#       the aggregates of data-raw/build_sources.R; build-ignored, CI only.
+#       every study with crosswalk rows (all of them ship their metadata;
+#       qes2022's counts carry its licence, CC BY-NC 4.0, inst/COPYRIGHTS);
+#       V-P1 compares the projection with it in the tests and in CI, and
+#       data-raw/spec_check.R diffs it against the merge-base for the MAJOR
+#       rule of section 5.11.
 # Every projectable row must be projected: a row the dictionary cannot
 # project needs cells in gates.csv (run data-raw/build_sources.R first).
 # With --check it writes nothing and fails when a file differs.
@@ -29,7 +28,6 @@ check_only <- "--check" %in% args
 pkgload::load_all(".", quiet = TRUE, export_all = TRUE)
 
 spec_dir <- normalizePath(file.path("inst", "extdata", "harmonize"), mustWork = TRUE)
-nc_dir <- file.path("data-raw", "nc")
 spec <- .qes_spec_load(spec_dir)
 cat_ <- .qes_catalog()
 shipped <- cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE]
@@ -63,19 +61,13 @@ report <- function(proj, what) {
   proj
 }
 
+unshipped <- setdiff(unique(spec$tables$crosswalk$study), shipped)
+if (length(unshipped) > 0L) {
+  stop(sprintf("No shipped metadata for %s.", paste(unshipped, collapse = ", ")), call. = FALSE)
+}
 studies <- intersect(unique(spec$tables$crosswalk$study), shipped)
 proj <- report(.qes_project_marginals(spec, .qes_hz_sources_shipped(spec), studies), "expected/marginals.csv")
 write_or_check(proj, file.path(spec_dir, "expected", "marginals.csv"))
-
-for (study in setdiff(unique(spec$tables$crosswalk$study), shipped)) {
-  sources <- .qes_hz_sources_read(nc_dir, study)
-  if (is.null(sources)) {
-    cat(sprintf("%s: no aggregates in %s (run data-raw/build_sources.R); skipped.\n", study, nc_dir))
-    next
-  }
-  p <- report(.qes_project_marginals(spec, sources, study), sprintf("nc/marginals_%s.csv", study))
-  write_or_check(p, file.path(nc_dir, sprintf("marginals_%s.csv", study)))
-}
 
 if (failed) {
   quit(status = 1L)

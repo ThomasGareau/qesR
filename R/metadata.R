@@ -8,21 +8,20 @@
 #              declared missing codes, label source, review flag;
 #   values     one row per (study, variable, value): the value label, its
 #              source and language, the missing type (the NA vocabulary of
-#              enums.csv) and the unweighted count n.
+#              enums.csv) and the unweighted count n. Its codes are the
+#              labelled codes of a column, plus every observed code of a
+#              numeric column with at most 50 codes, all whole numbers
+#              (never the values of a continuous column such as a weight).
 #
 # Where the tables come from:
-#   * CC0 studies (studies.metadata_shipped = TRUE): shipped in
+#   * Every study of the catalog (studies.metadata_shipped = TRUE): shipped in
 #     inst/extdata/dict/{variables,values}.csv.gz (qes_demo in
 #     inst/extdata/demo/dict/), built by data-raw/build_dictionary.R from the
 #     pinned original files and the curated data-raw/questions/*.csv. Offline.
-#   * Other studies (qes2022, CC BY-NC 4.0, decision OD3): nothing is shipped.
-#     The tables are built on first use from the user's own md5-verified copy
-#     of the pinned data file and kept as a "shard" of two CSV files in the
-#     download cache (never RDS). Missing codes come from the shipped
-#     dict/shard_rules.csv, which holds variable names and codes only, no
-#     label text.
-#   * Anything else (a study of a test catalog): built from its data in
-#     memory.
+#     The rows of qes2022 carry its licence, CC BY-NC 4.0 (inst/COPYRIGHTS;
+#     decision OD3 was lifted by the owner on 2026-09-28).
+#   * Anything else (a study of a test catalog, or a study whose licence does
+#     not let its metadata ship): built from its data in memory.
 # Labels never come from DDI metadata or from a variable name: a variable
 # label that only repeats the variable's name (253 of 254 in qes2018) is no
 # label ([A:K4]).
@@ -49,10 +48,6 @@
     )
   }
 }
-
-# Schema version of a metadata shard; part of its cache file name, so a new
-# schema never reads an old shard.
-.qes_shard_schema <- "2"
 
 # ---- codes and text --------------------------------------------------------------
 
@@ -203,8 +198,7 @@
 # The dictionary tables of a data frame read by .qes_read() (or of any data
 # frame with labelled columns). `study_row` and `file_row` are catalog rows;
 # the labels, their sources and the missing declarations come from the data.
-# Question text is left NA: it comes only from the curated files or, for a
-# shard, from the file's own label (see .qes_shard_build()).
+# Question text is left NA: it comes only from the curated files.
 .qes_dict_build <- function(data, study_row, file_row = NULL) {
   study <- study_row$study
   vars <- names(data)
@@ -270,7 +264,13 @@
     }
 
     # values: every labelled code, plus every observed code of a numeric
-    # column with at most 50 distinct codes; n is the unweighted count
+    # column with at most 50 distinct codes, all whole numbers; n is the
+    # unweighted count. A column holding a fractional value (a weight, a
+    # proportion, a residual) or measured as a weight or an id is
+    # continuous: its values are not codes, and are not listed. This also
+    # keeps every listed code a whole number, whose text ("%.0f") is the
+    # same on every platform, where 15 significant digits of a fraction
+    # ("1.43011282409") are not.
     base <- .qes_plain(x)
     codes <- character(0)
     code_labels <- character(0)
@@ -287,8 +287,11 @@
       key <- if (type == "numeric") .qes_code_chr(base) else as.character(base)
       key <- key[!is.na(key)]
       counts <- table(key)
-      if (type == "numeric" && length(counts) <= 50L) {
-        observed <- names(counts)
+      if (type == "numeric" && length(counts) <= 50L && !col_measure[j] %in% c("weight", "id")) {
+        num <- as.numeric(base[!is.na(base)])
+        if (all(num == round(num) & abs(num) < 1e15)) {
+          observed <- names(counts)
+        }
       }
     }
     all_codes <- unique(c(codes, observed))
@@ -342,7 +345,7 @@
   if (isTRUE(demo)) .qes_extdata("demo", "dict") else .qes_extdata("dict")
 }
 
-# Read the two dictionary tables of `dir` (shipped or a shard).
+# Read the two dictionary tables of `dir`.
 .qes_dict_read <- function(var_path, val_path) {
   variables <- .qes_read_csv(var_path, "dict_variables")
   values <- .qes_read_csv(val_path, "dict_values")
@@ -362,13 +365,6 @@
   .qes_dict_cache[[key]]
 }
 
-.qes_shard_rules <- function() {
-  if (is.null(.qes_dict_cache$rules)) {
-    .qes_dict_cache$rules <- .qes_read_csv(file.path(.qes_dict_dir(), "shard_rules.csv"), "dict_shard_rules")
-  }
-  .qes_dict_cache$rules
-}
-
 .qes_dict_subset <- function(dict, study) {
   list(
     variables = dict$variables[dict$variables$study == study, , drop = FALSE],
@@ -376,209 +372,14 @@
   )
 }
 
-# ---- shards (studies whose metadata is not shipped) ---------------------------------
+# ---- the tables of one study ----------------------------------------------------------
 
-# Is a variable label (as stored in the file) cut at the 80-character limit
-# of Stata labels? Exactly 80 characters, or 79 when the cut fell on a space
-# that Stata then dropped (the label then ends without closing punctuation):
-# qes2022 `cps_age_in_years` ends "... we need to get a".
-.qes_label_cut <- function(raw) {
-  raw <- sub("\\s+$", "", raw)
-  n <- nchar(raw, type = "chars")
-  !is.na(raw) & (n >= 80L | (n == 79L & !grepl("[?.!:)]$", raw)))
-}
-
-# Shard tables built from the data: question text is the file's own variable
-# label, flagged as truncated when the Stata limit cut it (.qes_label_cut(),
-# 373 of 718 qes2022 labels have exactly 80 characters) with a reference to
-# the study's codebook document; missing codes follow shard_rules.csv.
-.qes_shard_build <- function(data, study_row, file_row) {
-  dict <- .qes_dict_build(data, study_row, file_row)
-  v <- dict$variables
-  lang <- study_row$source_lang
-  q_col <- if (identical(lang, "fr")) "question_fr" else "question_en"
-  has <- !is.na(v$label)
-  raw <- vapply(data, function(x) {
-    l <- attr(x, "label", exact = TRUE)
-    if (is.character(l) && length(l) >= 1L) l[1] else NA_character_
-  }, character(1), USE.NAMES = FALSE)
-  v[[q_col]][has] <- v$label[has]
-  v$question_truncated[has] <- .qes_label_cut(raw[has])
-  v$question_source[has] <- "file"
-  docs <- .qes_catalog(demo = isTRUE(study_row$demo))$files
-  docs <- docs[docs$study == study_row$study & docs$role == "codebook", , drop = FALSE]
-  if (nrow(docs) > 0L) {
-    v$doc_ref[has] <- docs$file_id[1]
-  }
-  dict$variables <- v
-  values <- .qes_rule_rows(dict$values, data, study_row$study)
-  dict$values <- .qes_apply_shard_rules(values, study_row$study)
-  dict
-}
-
-# Rows for the codes of the study's generic ("*") missing-code rules that a
-# numeric column holds but its values table lacks: the table lists only the
-# labelled codes of a column with more than 50 distinct values, so without
-# them -99 would stay a number in qes2022's unlabelled 0-100 thermometers,
-# incomes and years of birth. The rows have no label; their missing type is
-# set by .qes_apply_shard_rules(), where a rule for the variable still wins.
-.qes_rule_rows <- function(values, data, study) {
-  rules <- tryCatch(.qes_shard_rules(), error = function(e) NULL)
-  if (is.null(rules) || !is.data.frame(data) || ncol(data) == 0L) {
-    return(values)
-  }
-  generic <- rules[rules$study == study & rules$variable == "*", , drop = FALSE]
-  if (nrow(generic) == 0L) {
-    return(values)
-  }
-  have <- paste(values$variable, values$value, sep = "\r")
-  add <- list()
-  for (v in names(data)) {
-    x <- data[[v]]
-    if (!identical(.qes_storage(x), "numeric")) {
-      next
-    }
-    base <- .qes_code_chr(.qes_plain(x))
-    for (code in unique(generic$value)) {
-      n <- sum(base == code, na.rm = TRUE)
-      if (n == 0L || paste(v, code, sep = "\r") %in% have) {
-        next
-      }
-      add[[length(add) + 1L]] <- data.frame(
-        study = study, variable = v, value = code, label = NA_character_,
-        label_source = "none", label_lang = NA_character_, label_en = NA_character_,
-        label_fr = NA_character_, missing_type = NA_character_, n = as.integer(n),
-        label_flag = NA_character_, stringsAsFactors = FALSE
-      )
-    }
-  }
-  if (length(add) == 0L) {
-    return(values)
-  }
-  added <- do.call(rbind, add)
-  out <- rbind(values[, names(added), drop = FALSE], added)
-  # the new rows go among the codes of their variable, in numeric order
-  pos <- match(out$variable, names(data))
-  touched <- out$variable %in% added$variable
-  within <- seq_len(nrow(out))
-  within[touched] <- suppressWarnings(as.numeric(out$value[touched]))
-  out <- out[order(pos, within, seq_len(nrow(out)), na.last = TRUE), , drop = FALSE]
-  rownames(out) <- NULL
-  out
-}
-
-# Apply the shipped missing-code rules of `study` to its values table: a rule
-# for a named variable wins over a rule for "*".
-.qes_apply_shard_rules <- function(values, study) {
-  rules <- tryCatch(.qes_shard_rules(), error = function(e) NULL)
-  if (is.null(rules) || nrow(values) == 0L) {
-    return(values)
-  }
-  rules <- rules[rules$study == study, , drop = FALSE]
-  if (nrow(rules) == 0L) {
-    return(values)
-  }
-  specific <- rules[rules$variable != "*", , drop = FALSE]
-  generic <- rules[rules$variable == "*", , drop = FALSE]
-  hit <- match(paste(values$variable, values$value), paste(specific$variable, specific$value))
-  typed <- !is.na(hit)
-  values$missing_type[typed] <- specific$missing_type[hit[typed]]
-  hit_g <- match(values$value, generic$value)
-  use_g <- !typed & !is.na(hit_g)
-  values$missing_type[use_g] <- generic$missing_type[hit_g[use_g]]
-  values
-}
-
-# Cache paths of the shard of `study` for its pinned file `file_row`, or NULL
-# when no cache is active.
-.qes_shard_paths <- function(study, file_row) {
-  root <- .qes_cache_root(.qes_cache_mode())
-  if (is.na(root)) {
-    return(NULL)
-  }
-  c(
-    variables = .qes_cache_shard_path(root, study, file_row$md5, .qes_shard_schema, "variables"),
-    values = .qes_cache_shard_path(root, study, file_row$md5, .qes_shard_schema, "values")
-  )
-}
-
-# The shard of `study` if it is in memory or in the cache; NULL otherwise.
-# Never builds, reads data or downloads anything.
-.qes_shard_cached <- function(study, file_row = NULL) {
-  file_row <- file_row %||% .qes_default_data_file(study, demo = .qes_is_demo_code(study))
-  memo_key <- paste0("shard:", study, ":", file_row$md5)
-  if (!is.null(.qes_dict_cache[[memo_key]])) {
-    return(.qes_dict_cache[[memo_key]])
-  }
-  paths <- .qes_shard_paths(study, file_row)
-  if (is.null(paths) || !all(file.exists(paths))) {
-    return(NULL)
-  }
-  dict <- tryCatch(.qes_dict_read(paths[["variables"]], paths[["values"]]), error = function(e) NULL)
-  if (is.null(dict) || !all(dict$variables$study == study)) {
-    return(NULL)
-  }
-  .qes_dict_cache[[memo_key]] <- dict
-  dict
-}
-
-# The shard of `study` for its pinned data file: read from the cache, or
-# built from the data (read through the cache) and written there. `data` may
-# be passed when the caller has already read the whole pinned file.
-.qes_shard <- function(study, data = NULL, quiet = TRUE) {
-  demo <- .qes_is_demo_code(study)
-  study_row <- .qes_study_row(study, demo = demo)
-  file_row <- .qes_default_data_file(study, demo = demo)
-  dict <- .qes_shard_cached(study, file_row)
-  if (!is.null(dict)) {
-    return(dict)
-  }
-  if (is.null(data)) {
-    data <- .qes_read(study, file_row$file_id, quiet = quiet)
-  }
-  dict <- .qes_shard_build(data, study_row, file_row)
-  paths <- .qes_shard_paths(study, file_row)
-  if (!is.null(paths)) {
-    mode <- .qes_cache_mode()
-    .qes_cache_prepare(.qes_cache_root(mode), mode, quiet = quiet)
-    dir.create(dirname(paths[["variables"]]), recursive = TRUE, showWarnings = FALSE)
-    written <- tryCatch({
-      .qes_write_csv(dict$variables, paths[["variables"]])
-      .qes_write_csv(dict$values, paths[["values"]])
-      TRUE
-    }, error = function(e) FALSE)
-    if (!isTRUE(written)) {
-      unlink(paths)
-    }
-  }
-  .qes_dict_cache[[paste0("shard:", study, ":", file_row$md5)]] <- dict
-  dict
-}
-
-# The shards already in the cache for the pinned files, without building or
-# downloading anything (for qes_search()).
-.qes_cached_shards <- function() {
-  out <- list()
-  studies <- .qes_catalog()$studies
-  for (study in studies$study[!studies$metadata_shipped %in% TRUE]) {
-    file_row <- tryCatch(.qes_default_data_file(study), error = function(e) NULL)
-    if (is.null(file_row)) {
-      next
-    }
-    dict <- .qes_shard_cached(study, file_row)
-    if (!is.null(dict)) {
-      out[[study]] <- dict
-    }
-  }
-  out
-}
-
-# Forget the metadata built in this session (shards, tables built from data
-# and search indexes), for `studies` or for every study. The shipped
-# dictionary stays: it is part of the package.
+# Forget the metadata built in this session (tables built from data and
+# search indexes), for `studies` or for every study. The shipped dictionary
+# stays: it is part of the package.
 .qes_dict_forget <- function(studies = NULL) {
   keys <- ls(.qes_dict_cache, all.names = TRUE)
-  runtime <- keys[grepl("^(shard|data|index):", keys)]
+  runtime <- keys[grepl("^(data|index):", keys)]
   if (!is.null(studies)) {
     runtime <- runtime[sub("^[a-z]+:([^:]+):.*$", "\\1", runtime) %in% studies]
   }
@@ -586,43 +387,35 @@
   invisible(runtime)
 }
 
-# ---- the tables of one study ----------------------------------------------------------
-
-# Where the metadata of `study` comes from: "shipped", "shard" or "data".
+# Where the metadata of `study` comes from: "shipped" (the shipped
+# dictionary) or "data" (built from the data file, for a study the shipped
+# dictionary does not hold).
 .qes_dict_origin <- function(study) {
   demo <- .qes_is_demo_code(study)
   row <- .qes_study_row(study, demo = demo)
-  if (isTRUE(row$metadata_shipped)) {
-    shipped <- .qes_dict_shipped(demo = demo)
-    if (study %in% shipped$variables$study) {
-      return("shipped")
-    }
-    return("data")
+  if (isTRUE(row$metadata_shipped) && study %in% .qes_dict_shipped(demo = demo)$variables$study) {
+    return("shipped")
   }
-  "shard"
+  "data"
 }
 
 # The dictionary tables of one study's pinned data file. `data`: the pinned
 # file's data, when the caller has read it already (it saves a read for a
-# shard or a study of a test catalog).
+# study the shipped dictionary does not hold).
 .qes_dict_study <- function(study, data = NULL, quiet = TRUE) {
   demo <- .qes_is_demo_code(study)
-  switch(
-    .qes_dict_origin(study),
-    shipped = .qes_dict_subset(.qes_dict_shipped(demo = demo), study),
-    shard = .qes_shard(study, data = data, quiet = quiet),
-    data = {
-      file_row <- .qes_default_data_file(study, demo = demo)
-      key <- paste0("data:", study, ":", file_row$md5)
-      if (is.null(.qes_dict_cache[[key]])) {
-        if (is.null(data)) {
-          data <- .qes_read(study, file_row$file_id, quiet = quiet)
-        }
-        .qes_dict_cache[[key]] <- .qes_dict_build(data, .qes_study_row(study, demo = demo), file_row)
-      }
-      .qes_dict_cache[[key]]
+  if (identical(.qes_dict_origin(study), "shipped")) {
+    return(.qes_dict_subset(.qes_dict_shipped(demo = demo), study))
+  }
+  file_row <- .qes_default_data_file(study, demo = demo)
+  key <- paste0("data:", study, ":", file_row$md5)
+  if (is.null(.qes_dict_cache[[key]])) {
+    if (is.null(data)) {
+      data <- .qes_read(study, file_row$file_id, quiet = quiet)
     }
-  )
+    .qes_dict_cache[[key]] <- .qes_dict_build(data, .qes_study_row(study, demo = demo), file_row)
+  }
+  .qes_dict_cache[[key]]
 }
 
 # Is `data` the whole pinned file `file_row` (every row and column, as
@@ -639,35 +432,24 @@
 }
 
 # The dictionary tables of `study` for describing `data`, without reading or
-# downloading anything: the shipped tables, else the shard or tables already
-# in memory or in the cache, else tables built from the columns at hand (a
-# shard's rules are keyed by variable name and its labels are on the
-# columns). Tables built from the whole pinned file are kept like any shard;
-# tables built from part of it are not.
+# downloading anything: the shipped tables, else tables already in memory,
+# else tables built from the columns at hand. Tables built from the whole
+# pinned file are kept for the session; tables built from part of it are
+# not.
 .qes_dict_at_hand <- function(data, study, quiet = TRUE) {
-  origin <- .qes_dict_origin(study)
-  if (identical(origin, "shipped")) {
+  if (identical(.qes_dict_origin(study), "shipped")) {
     return(.qes_dict_study(study, quiet = quiet))
   }
   demo <- .qes_is_demo_code(study)
   file_row <- .qes_default_data_file(study, demo = demo)
-  dict <- if (identical(origin, "shard")) {
-    .qes_shard_cached(study, file_row)
-  } else {
-    .qes_dict_cache[[paste0("data:", study, ":", file_row$md5)]]
-  }
+  dict <- .qes_dict_cache[[paste0("data:", study, ":", file_row$md5)]]
   if (!is.null(dict)) {
     return(dict)
   }
   if (.qes_is_whole_file(data, file_row)) {
     return(.qes_dict_study(study, data = data, quiet = quiet))
   }
-  study_row <- .qes_study_row(study, demo = demo)
-  if (identical(origin, "shard")) {
-    .qes_shard_build(data, study_row, file_row)
-  } else {
-    .qes_dict_build(data, study_row, file_row)
-  }
+  .qes_dict_build(data, .qes_study_row(study, demo = demo), file_row)
 }
 
 # The tables describing the columns of `data` (read from a file of `study`):
@@ -695,8 +477,6 @@
   values$variable <- vars[known][match(values$variable, old_names)]
   if (any(!known)) {
     extra <- .qes_dict_build(data[, !known, drop = FALSE], .qes_study_row(study, demo = demo))
-    # the study's missing-code rules (none for a study whose metadata ships)
-    extra$values <- .qes_apply_shard_rules(.qes_rule_rows(extra$values, data[, !known, drop = FALSE], study), study)
     extra$variables$position <- which(!known)
     variables <- rbind(variables, extra$variables)
     values <- rbind(values, extra$values)

@@ -82,8 +82,9 @@ knitr::kable(data.frame(
 their own titles, and their designs and populations differ, so check both
 before comparing studies. Codes sharing one deposit:
 `r shared_deposits`. Studies not in the public
-domain: `r not_cc0`. Studies whose metadata qesR does not ship:
-`r no_metadata`.
+domain: `r not_cc0`; the metadata qesR ships for them keeps their licence
+(the file `COPYRIGHTS` of the package lists it). Studies whose metadata qesR
+does not ship: `r no_metadata`.
 
 ## By study
 
@@ -109,11 +110,12 @@ for (i in seq_len(nrow(studies))) {
               pick("rows", "lignes"), number(f$n_cols), pick("columns", "colonnes"), f$md5))
   cat(sprintf("- **%s**%s%s\n", pick("Offline codebook", "Livre de codes hors ligne"), colon,
               if (as.logical(s$metadata_shipped)) {
-                pick("yes, shipped with qesR (`qes_codebook()`, `qes_search()`)",
-                     "oui, livré avec qesR (`qes_codebook()`, `qes_search()`)")
+                paste0(pick("yes, shipped with qesR (`qes_codebook()`, `qes_search()`)",
+                            "oui, livré avec qesR (`qes_codebook()`, `qes_search()`)"),
+                       if (s$licence != "CC0 1.0") pick(", under the study's licence", ", sous la licence de l'étude") else "")
               } else {
-                pick("no; `qes_codebook()` builds it from your copy of the data file",
-                     "non ; `qes_codebook()` le construit à partir de votre copie du fichier de données")
+                pick("no; `qes_codebook()` builds it from the data file",
+                     "non ; `qes_codebook()` le construit à partir du fichier de données")
               }))
   note <- s[[pick("notes_en", "notes_fr")]]
   if (!is.na(note) && nzchar(note)) {

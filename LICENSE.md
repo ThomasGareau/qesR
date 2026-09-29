@@ -1,3 +1,11 @@
+This MIT licence covers the qesR code only. Third-party content shipped with
+qesR keeps its own licence: the metadata of the 2022 Quebec Election Study
+(`qes2022`) are licensed CC BY-NC 4.0, not MIT. See
+[inst/COPYRIGHTS](https://github.com/ThomasGareau/qesR/blob/main/inst/COPYRIGHTS)
+for the attribution, the list of files and the licences of the other sources.
+
+---
+
 MIT License
 
 Copyright (c) 2026 Thomas Gareau-Paquette

@@ -113,29 +113,17 @@ v044_download_codebook_cols <- c(v044_codebook_files_cols, "local_path", "downlo
 # (study, position, name, type, n_na). Built by running v0.4.4 against the
 # Dataverse originals: each column's name, its storage ("numeric", "character"
 # or "logical") and its is.na() count (added in slice S2b from the same R9
-# baseline); no labels or values. The is.na() counts of qes2022 (CC BY-NC) are
-# counts from its data file, which do not ship (OD3): its rows have an empty
-# n_na, and the counts are in the build-ignored
-# data-raw/nc/v044_n_na_qes2022.csv of the source repository, which
-# `with_nc = TRUE` merges in when the tests run on the source tree (the live
-# tests; absent from an installed package). tests/testthat/fixtures/v044-get-decon-classes.csv
+# baseline); no labels or values. The counts of qes2022 are counts from its
+# data file, CC BY-NC 4.0 like its other metadata (inst/COPYRIGHTS, section
+# 2). tests/testthat/fixtures/v044-get-decon-classes.csv
 # holds the class of every get_decon() column of tag v0.4.4 per study, from the
 # same baseline. The file is UTF-8. It is read
 # with `encoding = "UTF-8"` only (no `fileEncoding`), so the bytes are kept and
 # marked UTF-8 instead of being re-encoded to the native locale; re-encoding
 # stops at the first accented name in a C / non-UTF-8 locale.
-v044_get_qes_names <- function(with_nc = FALSE) {
+v044_get_qes_names <- function() {
   path <- testthat::test_path("fixtures", "v044-get-qes-names.csv")
-  out <- utils::read.csv(path, stringsAsFactors = FALSE, encoding = "UTF-8")
-  nc <- testthat::test_path("..", "..", "data-raw", "nc", "v044_n_na_qes2022.csv")
-  if (isTRUE(with_nc) && file.exists(nc)) {
-    extra <- utils::read.csv(nc, stringsAsFactors = FALSE, encoding = "UTF-8")
-    key <- paste(out$study, out$position, sep = "\r")
-    k <- match(paste(extra$study, extra$position, sep = "\r"), key)
-    stopifnot(!anyNA(k), identical(out$name[k], extra$name))
-    out$n_na[k] <- extra$n_na
-  }
-  out
+  utils::read.csv(path, stringsAsFactors = FALSE, encoding = "UTF-8")
 }
 
 # Mark literal strings as UTF-8. A "\u00c9" escape yields UTF-8 bytes, but in a

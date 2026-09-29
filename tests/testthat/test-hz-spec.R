@@ -370,7 +370,7 @@ test_that("V-S10 requires a registered function and caps fn: rules", {
   }))
 })
 
-test_that("V-S11 sets the review requirements and the licence limits", {
+test_that("V-S11 sets the review requirements", {
   # a stable row needs a reviewer and a date
   expect_true("V-S11" %in% rules_after(function(t) {
     i <- which(t$crosswalk$status == "stable")[1]
@@ -401,13 +401,9 @@ test_that("V-S11 sets the review requirements and the licence limits", {
     t$valuemaps$source_label_origin[1] <- "ddi"
     t
   }))
-  # OD3: no qes2022 wording or label text
-  expect_true("V-S11" %in% rules_after(function(t) {
+  # qes2022 wording and labels are allowed since OD3 was lifted
+  expect_false("V-S11" %in% rules_after(function(t) {
     t$crosswalk$wording_en[xw_row(t, "qes2022", "lr_self")] <- "Some wording"
-    t
-  }))
-  expect_true("V-S11" %in% rules_after(function(t) {
-    t$valuemaps$source_label[t$valuemaps$map_id == "vote_qes2022_pes"][1] <- "Some label"
     t
   }))
   expect_true("V-S11" %in% rules_after(function(t) {
@@ -591,28 +587,29 @@ test_that("real-code regressions hold in the shipped spec", {
   expect_false(any(wt$recommended & wt$role %in% c("vote_calibrated", "turnout_calibrated")))
 })
 
-test_that("no qes2022 label text or wording ships (OD3)", {
+test_that("qes2022 rows quote its codebook wording, file labels and counts (OD3 lifted)", {
   t <- shipped_spec()$tables
   xw <- t$crosswalk
   rows <- xw$study == "qes2022"
-  expect_true(any(rows))
-  expect_true(all(is.na(xw$wording_en[rows]) & is.na(xw$wording_fr[rows])))
-  expect_true(all(!is.na(xw$wording_ref[rows])))
+  expect_identical(sum(rows), 18L)
+  expect_false(anyNA(xw$wording_en[rows]))
+  expect_false(anyNA(xw$wording_fr[rows]))
+  expect_false(anyNA(xw$wording_ref[rows]))
+  expect_identical(xw$wording_fr[rows & xw$source_var == "cps_votechoice1"],
+                   "Pour quel parti pr\u00e9voyez-vous voter?")
+  # value maps quote the pinned file's labels, as for the CC0 studies
   maps <- t$valuemaps$map_id %in% xw$map_id[rows]
-  expect_true(all(is.na(t$valuemaps$source_label[maps])))
-  expect_true(all(grepl("^[0-9a-f]{32}$", t$valuemaps$source_label_hash[maps])))
-  # no counts in the text of qes2022 rows (numbers with a thousands separator
-  # or a percentage)
-  text <- unlist(xw[rows, c("evidence", "notes_en", "notes_fr", "grade_reason_en", "grade_reason_fr")])
-  expect_false(any(grepl("[0-9],[0-9]{3}|[0-9]+ ?%", text[!is.na(text)])))
-  # waves and weights carry only what the codebook publishes (wave sizes in
-  # n_cases, dates, mode, weighting method): no counts in their text either
-  wv <- t$waves[t$waves$study == "qes2022", , drop = FALSE]
-  wt <- t$weights[t$weights$study == "qes2022", , drop = FALSE]
-  expect_true(nrow(wv) > 0L && nrow(wt) > 0L)
-  text <- c(unlist(wv[, c("notes", "target_population_en", "target_population_fr")]),
-            unlist(wt[, c("source_ref", "population")]))
-  expect_false(any(grepl("[0-9],[0-9]{3}|[0-9]+ ?%", text[!is.na(text)])))
+  expect_identical(sum(maps), 65L)
+  expect_false(anyNA(t$valuemaps$source_label[maps]))
+  expect_true(all(is.na(t$valuemaps$source_label_hash[maps])))
+  vals <- .qes_dict_shipped()$values
+  vals <- vals[vals$study == "qes2022", ]
+  vm <- t$valuemaps[maps, ]
+  src <- xw$source_var[match(vm$map_id, xw$map_id)]
+  expect_identical(vm$source_label, vals$label[match(paste(src, vm$source_code), paste(vals$variable, vals$value))])
+  # its counts ship with the others: gates.csv and expected/marginals.csv
+  expect_true("qes2022" %in% t$gates$study)
+  expect_true("qes2022" %in% t$expected$study)
 })
 
 test_that("crosswalk wording of CC0 studies is the dictionary's question text", {

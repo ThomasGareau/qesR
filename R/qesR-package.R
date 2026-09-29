@@ -186,13 +186,15 @@
 #'
 #' @section Codebooks and search:
 #' The description of every variable (label, question text in English and
-#' French, value labels, missing codes) ships with qesR for the studies
-#' released under CC0, so [qes_codebook()], [qes_question()] and
-#' [qes_search()] work offline. Question text comes from the deposited
-#' questionnaires. `qes2022` (CC BY-NC 4.0) ships no metadata: its codebook
-#' is built from your own copy of the data file and kept in the download
-#' cache. [qes_missing()] sets "don't know", "refused" and declared missing
-#' codes to `NA`.
+#' French, value labels, missing codes) ships with qesR for every study, so
+#' [qes_codebook()], [qes_question()] and [qes_search()] work offline.
+#' Question text comes from the deposited questionnaires (for `qes2022`, its
+#' bilingual codebook). The description of the CC0 studies is in the public
+#' domain; that of `qes2022` is derived from the 2022 Quebec Election Study
+#' and carries its licence, CC BY-NC 4.0 (attribution, no commercial use; the
+#' file `COPYRIGHTS` of the installed package lists the files).
+#' [qes_missing()] sets "don't know", "refused" and declared missing codes to
+#' `NA`.
 #'
 #' @section Network use:
 #' Requests go to the Dataverse servers listed in the catalog, one at a time
@@ -213,6 +215,22 @@
 #'
 #' Downloaded catalog files are kept in a cache, by default only for the
 #' session; see [qes_cache_info()] and [qes_cache_clear()].
+#'
+#' @section Licence:
+#' The MIT licence of qesR (file `LICENSE`) covers the package code only.
+#' The data are not part of the package. The metadata it ships keep the
+#' licence of their source: those of the studies released under CC0 1.0
+#' are in the public domain; those of `qes2022` (variable and value labels,
+#' question text, answer counts, and the harmonization wording, labels and
+#' counts derived from them) are derived from Mahéo, Bélanger, Stephenson
+#' and Harell (2023), "2022 Quebec Election Study", Harvard Dataverse, V1.1,
+#' \doi{10.7910/DVN/PAQBDR}, and licensed CC BY-NC 4.0
+#' (<https://creativecommons.org/licenses/by-nc/4.0/>): attribution, no
+#' commercial use; this does not imply that the authors endorse qesR. The
+#' census counts used as validation benchmarks are adapted from Statistics
+#' Canada (Statistics Canada Open Licence). The file `COPYRIGHTS`
+#' (`system.file("COPYRIGHTS", package = "qesR")`) lists each file, its
+#' source, its licence and the changes qesR made.
 #'
 #' @section En français:
 #' **Données retournées.** Chaque fonction retourne son résultat de façon
@@ -318,13 +336,15 @@
 #'
 #' **Codebooks et recherche.** La description de chaque variable
 #' (étiquette, texte de la question en anglais et en français, étiquettes de
-#' valeurs, codes manquants) est livrée avec qesR pour les études sous
-#' licence CC0 : [qes_codebook()], [qes_question()] et [qes_search()]
-#' fonctionnent sans réseau. Le texte des questions vient des questionnaires
-#' déposés. Pour `qes2022` (CC BY-NC 4.0), aucune métadonnée n'est livrée :
-#' le codebook est construit à partir de votre copie du fichier et conservé
-#' dans le cache. [qes_missing()] remplace par `NA` les codes « ne sait
-#' pas », « refus » et les codes manquants déclarés.
+#' valeurs, codes manquants) est livrée avec qesR pour chaque étude :
+#' [qes_codebook()], [qes_question()] et [qes_search()] fonctionnent sans
+#' réseau. Le texte des questions vient des questionnaires déposés (pour
+#' `qes2022`, de son livre de codes bilingue). La description des études
+#' sous CC0 est dans le domaine public ; celle de `qes2022` est tirée de
+#' l'Étude électorale québécoise 2022 et reste sous sa licence, CC BY-NC 4.0
+#' (attribution, pas d'usage commercial ; le fichier `COPYRIGHTS` du package
+#' installé en donne la liste). [qes_missing()] remplace par `NA` les codes
+#' « ne sait pas », « refus » et les codes manquants déclarés.
 #'
 #' **Réseau.** Les requêtes vont aux serveurs Dataverse du catalogue, une à la
 #' fois et à au moins une seconde d'intervalle par serveur. Elles portent
@@ -341,6 +361,22 @@
 #' téléchargé dans un navigateur. Les fichiers du catalogue sont gardés dans
 #' un cache, par défaut pour la session seulement ; voir [qes_cache_info()] et
 #' [qes_cache_clear()].
+#'
+#' **Licence.** La licence MIT de qesR (fichier `LICENSE`) couvre le code du
+#' package seulement. Les données ne font pas partie du package. Les
+#' métadonnées qu'il livre gardent la licence de leur source : celles des
+#' études sous CC0 1.0 sont dans le domaine public ; celles de `qes2022`
+#' (étiquettes de variables et de valeurs, texte des questions, effectifs,
+#' et les libellés, étiquettes et effectifs de l'harmonisation qui en sont
+#' tirés) sont tirées de Mahéo, Bélanger, Stephenson et Harell (2023),
+#' « 2022 Quebec Election Study », Harvard Dataverse, V1.1,
+#' \doi{10.7910/DVN/PAQBDR}, et sont sous licence CC BY-NC 4.0
+#' (<https://creativecommons.org/licenses/by-nc/4.0/deed.fr>) : attribution,
+#' pas d'usage commercial, ce qui n'implique aucune approbation de qesR par
+#' les auteurs. Les effectifs du recensement qui servent de repères de
+#' validation sont adaptés de Statistique Canada (Licence ouverte de
+#' Statistique Canada). Le fichier `COPYRIGHTS` donne chaque fichier, sa
+#' source, sa licence et les modifications faites par qesR.
 #'
 #' @examples
 #' qes_studies()[, c("study", "year", "title_en")]

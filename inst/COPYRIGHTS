@@ -1,10 +1,20 @@
 qesR copyright and third-party content
 ======================================
 
-The qesR code, documentation and the files it generates are Copyright (c)
-2026 Thomas Gareau-Paquette and are licensed under the MIT licence (see the
-LICENSE file). This file lists the content in the package that comes from
-the deposits of the studies qesR reads, and its licence.
+The MIT licence of qesR (the LICENSE file; "License: MIT + file LICENSE" in
+DESCRIPTION) covers the qesR code only, Copyright (c) 2026 Thomas
+Gareau-Paquette: its R code, tests and build scripts, and what was written
+for qesR itself (its documentation and harmonization rules). It does not
+cover the data and metadata that come from the studies qesR reads or from
+other sources: each keeps its own licence, given below. This file lists
+that content, where it is in the package, where it comes from and under
+which licence:
+
+  1. metadata of the studies released under CC0 1.0 (public domain);
+  2. metadata of the 2022 Quebec Election Study, licensed CC BY-NC 4.0
+     (attribution, non-commercial), NOT covered by the MIT licence;
+  3. other sources: Élections Québec results (not in the package) and
+     Statistics Canada census counts (Statistics Canada Open Licence).
 
 No survey data ship with qesR. The package contains no respondent rows from
 any study: get_qes() downloads each data file from its Dataverse deposit when
@@ -33,14 +43,15 @@ taken from the deposited data files and documents:
   - inst/extdata/catalog/: deposit titles, author lists, dataset versions,
     file names, sizes and checksums, as published on each deposit, and short
     descriptions of each study that quote its codebook;
-  - inst/extdata/harmonize/: the harmonization spec written for qesR (MIT),
-    which quotes the question text of the items it maps (the same text as
-    the dictionary), their value labels, and unweighted counts from the
-    data files: in the text of its rows, in gates.csv (how many respondents
-    of a wave gave each answer to a question and to the question that
-    filters it) and in expected/marginals.csv (how many fall in each
-    harmonized category); expected/hashes.csv holds md5 hashes of the
-    harmonized columns.
+  - inst/extdata/harmonize/: the harmonization spec written for qesR (its
+    rules are qesR's, MIT; its qes2022 content is section 2), which quotes
+    the question text of the items it maps (the same text as the
+    dictionary), their value labels, and unweighted counts from the data
+    files: in the text of its rows, in gates.csv (how many respondents of a
+    wave gave each answer to a question and to the question that filters
+    it) and in
+    expected/marginals.csv (how many fall in each harmonized category);
+    expected/hashes.csv holds md5 hashes of the harmonized columns.
 
 CC0 requires no attribution. qesR names the source of each study anyway, as
 the authors ask users to cite the data (qes_cite() gives the full citation):
@@ -80,53 +91,102 @@ respondents: its rows link one to one to the firms' files (quetr; for CROP,
 quest = quetr - 60000), which confirms the definition firm by firm.
 
 
-2. The 2022 study (CC BY-NC 4.0): no labels, question text or counts ship
---------------------------------------------------------------------------
+2. The 2022 study: metadata licensed CC BY-NC 4.0, not MIT
+-----------------------------------------------------------
 
   qes2022             2022 Quebec Election Study. Mahéo, Bélanger,        10.7910/DVN/PAQBDR
                       Stephenson, Harell (Harvard Dataverse)
 
-This study is licensed under Creative Commons Attribution-NonCommercial 4.0
-(https://creativecommons.org/licenses/by-nc/4.0/). Until its authors agree
-in writing, qesR ships none of its value labels, question text or answer
-counts.
-The package holds only its catalog entry (title, authors, version, file
-names, sizes and checksums, as published on the deposit), the names of the
-variables whose weights and interview dates get_qes_master() reads
-(inst/extdata/harmonize/legacy.csv), rules written for qesR that say which
-codes mark item nonresponse (inst/extdata/dict/shard_rules.csv), and the
-rows of the harmonization spec (inst/extdata/harmonize/): variable names,
-codes, the md5 hash of each normalized value label (used to check that the
-labels of your copy are the ones the spec was written for, without shipping
-them), page references to its codebook, and the facts about its waves and
-weights that the codebook publishes (pp. 5 and 7): the size of each wave,
-its fieldwork dates and mode, and the weighting method (raking on age,
-gender, education and language, the trimming bounds). The notes and grade
-reasons of the spec rows say, in qesR's own words and with page references
-to the codebook, how each question was asked and routed and which level or
-missing-value reason each code is given (as the value maps do); they quote
-no value label or question text. No count of answers from its data file
-ships: gates.csv and expected/marginals.csv have no qes2022 row, and the
-test fixture tests/testthat/fixtures/v044-get-qes-names.csv gives, for
-qes2022, only the variable names and storage types that qesR 0.4.4
-returned, with its column of missing-value counts left empty.
-expected/hashes.csv holds, for each of its harmonized columns, the number
-of rows of the file (1,521, the size of the study, which the codebook
-publishes on p. 5) and the md5 hash of the column that qesR computes from
-the pinned file (used to check that the harmonization gives the same
-result on your copy); a hash cannot be turned back into answers or counts.
-Its codebook
-is built on your computer from your own copy of the data file. When you use
-this study, the licence requires attribution (qes_cite("qes2022")) and rules
-out commercial use.
+The 2022 Quebec Election Study is licensed by its authors under the
+Creative Commons Attribution-NonCommercial 4.0 International licence (CC
+BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/; legal code:
+https://creativecommons.org/licenses/by-nc/4.0/legalcode). qesR ships
+metadata derived from its data file (file 7449513) and its codebook (file
+7449514). The parts of the files below that concern qes2022 (their rows
+whose study is qes2022, or whose map_id names qes2022) are derived from that
+study, are licensed under CC BY-NC 4.0, and are NOT covered by the MIT
+licence of qesR:
 
-The one exception is outside the package: the source repository of qesR
-(not the package built from it) keeps, in the folder data-raw/nc/, counts
-and other aggregates of the 2022 study and the value labels that mark its
-item nonresponse, for the checks run in GitHub CI. That folder is excluded
-from the package build. Its files are licensed under CC BY-NC 4.0, with the
-attribution above, and are not covered by the MIT licence of qesR
-(data-raw/nc/README.md).
+  - inst/extdata/dict/variables.csv.gz: variable names and labels of the
+    data file, and question text in English and French quoted from the
+    codebook (column doc_ref names the codebook entry of each text);
+  - inst/extdata/dict/values.csv.gz: value labels of the data file
+    (English), their French wording from the codebook, the missing-value
+    type of each code, and the unweighted count of each code;
+  - inst/extdata/harmonize/crosswalk.csv: the question wording quoted from
+    the codebook (wording_en, wording_fr);
+  - inst/extdata/harmonize/valuemaps.csv: the value labels of the data file
+    (source_label);
+  - inst/extdata/harmonize/gates.csv: unweighted counts of each answer to a
+    question and to the question that filters it;
+  - inst/extdata/harmonize/expected/marginals.csv: unweighted counts of
+    each harmonized category;
+  - inst/extdata/harmonize/expected/hashes.csv: md5 hashes of the
+    harmonized columns, with the number of rows of the file;
+  - inst/extdata/harmonize/waves.csv and inst/extdata/harmonize/weights.csv:
+    the size of each wave, its fieldwork dates and mode, and the weighting
+    method, as the codebook publishes them (pp. 5 and 7);
+  - inst/extdata/catalog/studies.csv: the notes of the qes2022 row
+    (notes_en, notes_fr), which give the size of its two waves from the
+    codebook's methodological note;
+  - tests/testthat/fixtures/v044-get-qes-names.csv: the number of missing
+    values of each column that qesR 0.4.4 returned for the study;
+  - tests/testthat/fixtures/spec_legacy/valuemaps.csv: md5 hashes of value
+    labels of the data file;
+  - the harmonization reference, vignettes/harmonization-reference.Rmd and
+    vignettes/fr-reference-harmonisation.Rmd (doc/harmonization-reference.html
+    and doc/fr-reference-harmonisation.html of the installed package), which
+    print the wording and value labels of crosswalk.csv and valuemaps.csv;
+  - NEWS.md and the other vignettes where they quote labels or counts of
+    qes2022: the search examples of get-started and fr-demarrage print
+    variable labels of the study, and migrating-0.7 and fr-migrer-0.7 give
+    the number of cells whose accents qesR repairs in its file;
+  - the tests of the package (the R files of tests/testthat/) where they
+    quote a variable label, question or value label of qes2022, or a count
+    of its file, to check what qesR returns for it.
+
+Attribution, as the licence requires. Source: Mahéo, Valérie-Anne;
+Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec
+Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse,
+V1.1 (qes_cite("qes2022") gives the full citation). Licensed under CC BY-NC
+4.0 (https://creativecommons.org/licenses/by-nc/4.0/). Changes made by
+qesR: the labels and texts were extracted from the data file and the
+codebook, whitespace squished and lines joined, the question of an item of
+a grid written as its stem followed by the item in brackets, typed as
+missing-value codes, matched to the English codes (for the French labels)
+and tabulated; the counts, marginals and hashes were computed by qesR; the
+catalog notes summarise the codebook's methodological note in English and
+French. The authors do not endorse qesR. The material is provided as is,
+without warranty (sections 5 and 6 of the licence).
+
+The licence allows these files to be copied and adapted for non-commercial
+purposes only, with the attribution above. When you use the study's data,
+the same licence applies (qes_cite("qes2022"), whose text citation ends
+with the licence and its URL). qesR repeats this notice, which says that
+the material was adapted and points to this file for the changes and the
+list of files, where it shows the study's metadata: a printed codebook of
+qes2022 (print(qes_codebook("qes2022"))) and printed qes_search() results
+that include it; the attribute "licence_notice" of its codebooks and of the
+qes_question() and qes_search() results that include it, so that a saved
+copy keeps it; and the harmonization reference
+(vignettes/harmonization-reference.Rmd and fr-reference-harmonisation.Rmd,
+built as doc/harmonization-reference.html and
+doc/fr-reference-harmonisation.html of the installed package, which quote
+the wording and labels of the spec, qes2022's included). The rest of qesR,
+including the other rows of these files, stays under the MIT licence. The
+files of qesR that only name the study, its variables or its codes (the
+render rules of inst/extdata/harmonize/legacy.csv, targets.csv,
+CHANGES.csv and inst/extdata/legacy/changes.csv, which hold no label,
+wording or count) are qesR's own and are MIT. The rest of the catalog
+entry of the study (title, authors, version, file names, sizes and
+checksums, inst/extdata/catalog/) is the deposit's published metadata.
+
+The development repository of qesR (not the package) also holds the rows of
+qes2022 in inst/extdata/validation/validation_report.csv (section 3), under
+the same licence and attribution, and the curated tables it builds the
+dictionary from (data-raw/questions/qes2022.csv,
+data-raw/questions/qes2022_values.csv and the qes2022 rows of
+data-raw/questions/missing_labels.csv and missing_codes.csv).
 
 
 3. Other sources
@@ -203,9 +263,9 @@ attribution above, and are not covered by the MIT licence of qesR
     and table 97-551-XCB2006009 (2006). This does not constitute an endorsement
     by Statistics Canada of this product.
   - Not in the package: inst/extdata/validation/validation_report.csv of
-    the source repository: aggregates computed by qesR from the CC0
-    studies of section 1 (weighted and unweighted shares and differences
-    from the tables above, the official shares and turnout of Élections
-    Québec among them; no respondent rows), and no aggregate of qes2022
-    (section 2). It is excluded from the package build with the official
-    results.
+    the source repository: aggregates computed by qesR from the studies of
+    sections 1 and 2 (weighted and unweighted shares and differences from
+    the tables above, the official shares and turnout of Élections Québec
+    among them; no respondent rows). Its qes2022 rows are CC BY-NC 4.0,
+    with the attribution of section 2. It is excluded from the package
+    build with the official results.

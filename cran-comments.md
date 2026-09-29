@@ -67,17 +67,14 @@ review:
    (it named "Quebec Election Study/Étude électorale québécoise rightful
    owners"). The file `inst/COPYRIGHTS` lists the third-party content that
    does ship: variable and value labels, question wording and counts of the
-   studies released by their authors under CC0 1.0 (each with its DOI).
-   The 2022 study is licensed CC BY-NC 4.0, so none of its labels, wording
-   or counts ship; the file `inst/extdata/qes_master.csv`, which held rows
-   derived from it, is removed, and the package contains no respondent
-   data. qesR downloads the data files from their Dataverse deposits
-   (Borealis and the Harvard Dataverse) at the user's request. For the 2022
-   study the harmonization specification holds only variable names, codes,
-   md5 hashes of its value labels, page references to its codebook, the
-   wave sizes and fieldwork facts the codebook publishes, and md5 hashes
-   of the harmonized columns (each with the number of rows of the file,
-   the published size of the study).
+   studies released by their authors under CC0 1.0 (each with its DOI), and
+   the same metadata of the 2022 study, which is licensed CC BY-NC 4.0
+   (see the section "Question for the CRAN team" below: we ask you whether
+   this is acceptable). The file
+   `inst/extdata/qes_master.csv`, which held respondent rows derived from
+   the 2022 study, is removed, and the package contains no respondent data.
+   qesR downloads the data files from their Dataverse deposits (Borealis
+   and the Harvard Dataverse) at the user's request.
 
    **Third-party benchmark data.** `inst/extdata/validation/` ships one
    third-party table, `census_margins.csv`: counts of the Quebec population
@@ -97,14 +94,56 @@ review:
    sub-licensing, but it requires an indemnity and a fixed notice, and
    Élections Québec may cancel it without giving a reason, which would
    cancel every sub-licence, so it probably does not meet the terms CRAN
-   expects of a data licence, and the package does not rely on it. The elections of 1998, 2007, 2008
-   and 2012 fall under the terms of use of its site, which need its written
+   expects of a data licence, and the package does not rely on it. The
+   elections of 1998, 2007, 2008 and 2012 fall under the terms of use of its site, which need its written
    permission for uses other than non-profit reproduction and for
    adaptations; that permission has not been asked for or obtained. The
    internal checks that read these files are skipped when they are absent,
    and the tests that need them run only on the source tree. The election
    dates in `inst/extdata/catalog/elections.csv` are facts taken from the
    official results pages, each row with its source URL.
+
+## Question for the CRAN team: data files under CC BY-NC 4.0
+
+From version 0.7.1, qesR ships metadata of the 2022 Quebec Election Study
+(Mahéo, Bélanger, Stephenson and Harell 2023, <doi:10.7910/DVN/PAQBDR>),
+which its authors license under CC BY-NC 4.0
+(<https://creativecommons.org/licenses/by-nc/4.0/>). These data files carry
+that licence, not the package's MIT licence: the rows of the 2022 study in
+`inst/extdata/dict/variables.csv.gz` and `values.csv.gz` (variable and value
+labels, question wording quoted from the study's codebook in English and
+French, and the unweighted count of each answer code), in
+`inst/extdata/harmonize/crosswalk.csv`, `valuemaps.csv`, `gates.csv`,
+`waves.csv`, `weights.csv`, `expected/marginals.csv` and
+`expected/hashes.csv` (wording, labels, counts and hashes used to check the
+harmonization), in the notes of `inst/extdata/catalog/studies.csv` (the
+size of its two waves, from its codebook), and in the test fixtures
+`tests/testthat/fixtures/v044-get-qes-names.csv` and
+`tests/testthat/fixtures/spec_legacy/valuemaps.csv`, and in the two
+harmonization-reference vignettes (`harmonization-reference`,
+`fr-reference-harmonisation`), which print the wording and labels of the
+specification (a few labels and counts are also quoted in the other
+vignettes, in the tests and in NEWS.md). No respondent rows ship. Section 2 of `inst/COPYRIGHTS`
+lists these files exactly (a test checks the list against the package),
+gives the attribution the licence requires and says that this content is not covered by the MIT licence; the
+`Copyright` field of `DESCRIPTION` says that the MIT licence covers the
+package code only and points to it. `License` stays `MIT + file LICENSE`.
+
+This is a change in the licensing of included third-party material: until
+0.7.0 the package shipped only CC0 study metadata. R's licence database
+(`share/licenses/license.db`) classes CC BY-NC 4.0 as not FOSS and as
+restricting use, so `DESCRIPTION` now declares `License_restricts_use: yes`
+and `License_is_FOSS: no` for the package as distributed, while its code
+stays under MIT.
+
+CC BY-NC 4.0 restricts commercial use, so these files are not free in the
+sense of the CRAN policy. Is it acceptable for the package to include them
+as documented third-party data under their own licence? If it is not, we
+will remove them from the package and have qesR fetch them at runtime
+instead (from the study's deposit, into the user's cache, as versions 0.5.0
+to 0.7.0 did, which built them from the user's copy of the data file), so
+that no CC BY-NC 4.0 content remains in the tarball. We will follow your
+answer.
 
 Other changes since the first submission are in NEWS.md. Every exported
 function of 0.4.4 keeps its name and arguments.
@@ -122,20 +161,24 @@ function of 0.4.4 keeps its name and arguments.
 
 ## R CMD check results
 
-`_R_CHECK_CRAN_INCOMING_REMOTE_=true R CMD check --as-cran qesR_0.7.0.tar.gz`
-on the local machine (macOS, R 4.4.0), run on 2026-09-28 on the release
-tarball, built by `data-raw/build_tarball.sh` (a copy of the tree with
-git's file modes): 0 errors | 0 warnings | 3 NOTEs: the incoming-feasibility
-NOTE ("New submission"), and 2 NOTEs from the local machine (below). The
-incoming check, with the remote URL and DOI checks on, reported no URL or
-DOI problem.
+`_R_CHECK_CRAN_INCOMING_REMOTE_=false R CMD check --as-cran qesR_0.7.1.tar.gz`
+on the local machine (macOS, R 4.4.0), run on 2026-09-29 on the release
+tarball of 0.7.1, built by `data-raw/build_tarball.sh` (a copy of the tree
+with git's file modes), without network access: 0 errors | 0 warnings |
+2 NOTEs, both from the local machine (future file timestamps and the HTML
+version of the manual, below). Without network access the incoming check
+could not read the CRAN package index, so its "New submission" NOTE and its
+remote URL and DOI checks did not run here. TO RERUN BEFORE SUBMISSION
+(maintainer): `sh data-raw/build_tarball.sh <dir> --check`, with network
+access, and update this section with its result.
 
-The tests pass (6,886 expectations, 0 failures, 0 warnings, in about 90
+The tests pass (7,572 expectations, 0 failures, 0 warnings, in about 110
 seconds; 23 skipped with their reason: network tests and the tests that
 need the build-ignored official results, skipped on CRAN). The examples
 and the vignettes run without errors.
 
-* checking CRAN incoming feasibility ... NOTE
+* checking CRAN incoming feasibility ... NOTE (expected on CRAN's machines;
+  not reached locally without network access, see above)
 
   New submission.
 

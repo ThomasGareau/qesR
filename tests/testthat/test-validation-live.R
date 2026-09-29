@@ -5,19 +5,11 @@
 # CRAN; see helper-live.R. The weekly job is .github/workflows/live.yml.
 #
 # The recorded values (baselines) are inst/extdata/validation/
-# validation_report.csv, written by data-raw/build_validation.R, and, for
-# qes2022, whose aggregates do not ship (OD3), the build-ignored
-# data-raw/nc/validation_qes2022.csv: its rows are gated only when the tests
-# run from the source tree. The gate is one-sided: a gated row fails only
+# validation_report.csv, written by data-raw/build_validation.R, for every
+# study (qes2022 included). The gate is one-sided: a gated row fails only
 # when it rises more than 2.0 points above its recorded value. The official
 # results and the recorded report are not in the package build
 # (inst/COPYRIGHTS, section 3): the first test needs the source tree.
-
-recorded_with_nc <- function() {
-  nc <- testthat::test_path("..", "..", "data-raw", "nc", "validation_qes2022.csv")
-  extra <- if (file.exists(nc)) .qes_read_csv(nc, "validation_report") else NULL
-  .qes_validation_recorded(extra)
-}
 
 describe_rows <- function(x) {
   paste(sprintf("%s %s %s (%s): %.2f, recorded %.2f", x$study, x$check, x$variable, x$weight,
@@ -29,13 +21,10 @@ test_that("V-L2, turnout and census margins stay within 2.0 points of the record
   skip_if_not(.qes_validation_has("official_results.csv") && .qes_validation_has("validation_report.csv"),
               "the official results and the recorded report are not installed (build-ignored)")
   r <- .qes_validation_run("all")
-  rec <- recorded_with_nc()
+  rec <- .qes_validation_recorded()
   g <- .qes_validation_gate(r, rec)
   gated <- r$status %in% "gate"
-  # studies whose record is not available here (qes2022 outside the source
-  # tree) are not gated
-  missing_record <- gated & g$status %in% "new" & !(g$study %in% rec$study)
-  fails <- g[gated & !missing_record & !(g$status %in% "pass"), ]
+  fails <- g[gated & !(g$status %in% "pass"), ]
   expect(nrow(fails) == 0L, paste("above the recorded value + 2.0 points, or not recorded (run data-raw/build_validation.R):",
                                   describe_rows(fails)))
   # V-L2 runs on every study with a reviewed weight; 1998 (francophones

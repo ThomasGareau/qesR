@@ -22,6 +22,11 @@ test_that("dataset citations follow the Dataverse citation", {
     )
   )
   expect_match(txt[3], "Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw==", fixed = TRUE)
+  # a licence other than CC0 ends the text citation, with its URL
+  expect_true(endsWith(txt[3], " [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]"))
+  expect_true(endsWith(qes_cite("qes2022", lang = "fr")[2],
+                       " [licence\u00a0: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]"))
+  expect_false(grepl("licence", txt[2], fixed = TRUE))
 })
 
 test_that("the three 1998 surveys cite the shared deposit and their file", {
@@ -75,7 +80,10 @@ test_that("qes_cite() reads the study of a data frame, or refuses one without it
 test_that("qes_cite() is served by the .qes_catalog() seam", {
   local_fixture_catalog()
   txt <- qes_cite("qes_fixture_b")
-  expect_match(txt[2], "^Doe, Jane, 2024, \"Fixture study B\", https://doi.org/10.9999/FIX/BBBBBB, Example Dataverse, V2.1, UNF:6:fixtureB==$")
+  # the fixture study is licensed CC BY-NC 4.0, which ends its citation
+  expect_identical(txt[2], paste0("Doe, Jane, 2024, \"Fixture study B\", https://doi.org/10.9999/FIX/BBBBBB, ",
+                                  "Example Dataverse, V2.1, UNF:6:fixtureB== ",
+                                  "[licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]"))
 })
 
 test_that("qes_cite() of harmonized data gives the spec version and content hash", {

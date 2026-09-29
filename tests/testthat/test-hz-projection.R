@@ -16,9 +16,9 @@ test_that("the projection of the shipped spec is exactly expected/marginals.csv 
   xw <- s$tables$crosswalk
   rows <- xw[xw$rule %in% c("map", "numeric") & xw$study %in% shipped, ]
   expect_setequal(unique(paste(proj$study, proj$wave, proj$target)), paste(rows$study, rows$wave, rows$target))
-  # no qes2022 aggregate ships (OD3)
-  expect_false(any(s$tables$expected$study == "qes2022"))
-  expect_false(any(s$tables$gates$study == "qes2022"))
+  # every study ships its aggregates, qes2022 included (OD3 lifted)
+  expect_setequal(unique(s$tables$expected$study), unique(rows$study))
+  expect_true(any(s$tables$gates$study == "qes2022"))
 })
 
 test_that("each projected row counts every member of its wave once", {

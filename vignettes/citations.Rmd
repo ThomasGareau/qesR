@@ -65,7 +65,9 @@ knitr::kable(table, col.names = if (identical(params$lang, "fr")) {
 
 The 2022 study is released under CC BY-NC 4.0, which requires attribution and
 rules out commercial use; the other studies are CC0 (public domain). The
-licence of each study is in `qes_studies()$licence`.
+licence of each study is in `qes_studies()$licence`. The metadata of the 2022
+study that qesR ships (its codebook, question text, value labels and counts)
+carries the same licence and needs the same citation.
 
 ## Citing only what you used
 

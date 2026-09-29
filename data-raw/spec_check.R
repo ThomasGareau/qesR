@@ -18,11 +18,7 @@
 #      that needs review no longer holds the stable rows of its waves);
 #   2. the data checks V-D1 to V-D4, V-D7 and V-D8 (R/hz-data.R) and V-P1,
 #      the projected marginals against expected/marginals.csv, on the shipped
-#      dictionary and gates.csv, and on the aggregates of the studies whose
-#      metadata cannot ship (qes2022, OD3) in the build-ignored data-raw/nc/
-#      (sources_*.csv, gates_*.csv, against marginals_*.csv). When those
-#      files are absent the check is skipped with a note, and is an error
-#      only with QESR_REQUIRE_NC=true;
+#      dictionary and gates.csv (every study, qes2022 included);
 #   3. V-P2 against the merge-base with origin/main: when the spec content
 #      changed, Spec-Version must be higher and have a CHANGES.csv row; and
 #      the MAJOR rule of section 5.11 on expected/marginals.csv and
@@ -91,23 +87,11 @@ sources <- .qes_hz_sources_shipped(spec)
 failed <- report(.qes_data_check(spec, sources), "Data checks (dictionary, gates.csv)") || failed
 failed <- report(.qes_projection_check(spec, sources), "V-P1 (expected/marginals.csv)") || failed
 cat_ <- .qes_catalog()
-closed <- setdiff(unique(spec$tables$crosswalk$study),
-                  cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE])
-for (study in closed) {
-  nc <- .qes_hz_sources_read(file.path("data-raw", "nc"), study)
-  marg <- file.path("data-raw", "nc", sprintf("marginals_%s.csv", study))
-  if (is.null(nc) || !file.exists(marg)) {
-    # the owner may keep these aggregates out of the repository (OD3): the
-    # check is then skipped, unless QESR_REQUIRE_NC=true asks for it
-    required <- identical(Sys.getenv("QESR_REQUIRE_NC"), "true")
-    cat(sprintf("V-D/V-P1 %s: no aggregates in data-raw/nc (run data-raw/build_sources.R and data-raw/project_marginals.R); %s.\n",
-                study, if (required) "required, error" else "skipped"))
-    failed <- failed || required
-    next
-  }
-  failed <- report(.qes_data_check(spec, nc, studies = study), sprintf("Data checks (%s, data-raw/nc)", study)) || failed
-  failed <- report(.qes_projection_check(spec, nc, .qes_read_csv(marg, "spec_expected"), studies = study),
-                   sprintf("V-P1 (%s, data-raw/nc)", study)) || failed
+unshipped <- setdiff(unique(spec$tables$crosswalk$study),
+                     cat_$studies$study[cat_$studies$metadata_shipped %in% TRUE])
+if (length(unshipped) > 0L) {
+  cat(sprintf("V-D/V-P1 error: no shipped metadata for %s.\n", paste(unshipped, collapse = ", ")))
+  failed <- TRUE
 }
 
 # ---- 3. V-P2 and the MAJOR rule against the merge-base -------------------------------------

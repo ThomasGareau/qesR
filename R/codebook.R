@@ -1,8 +1,8 @@
 # Codebooks (design.md sections 2.3 and 6.2, slice S3).
 #
-# A codebook is built from the dictionary (R/metadata.R): offline for the
-# shipped studies, from a cached shard for qes2022. It is a data frame of
-# class "qes_codebook" in one of three layouts:
+# A codebook is built from the dictionary (R/metadata.R), offline for every
+# study of the catalog. It is a data frame of class "qes_codebook" in one of
+# three layouts:
 #   compact  one row per variable: the columns of qesR 0.4.4 (variable, label,
 #            question, n_value_labels), then study, position, type,
 #            question_lang, question_truncated, value_labels ("1=Oui | 2=Non"),
@@ -179,6 +179,9 @@
   }
   attr(out, "value_labels_map") <- .qes_value_map(dict$variables, dict$values)
   attr(out, "qes_dict") <- list(variables = dict$variables, values = dict$values, lang = lang, layout = layout)
+  # the attribution of metadata that is not CC0 (qes2022), kept when the
+  # codebook is saved
+  out <- .qes_with_licence_notice(out, code)
   class(out) <- c("qes_codebook", "data.frame")
   out
 }
@@ -381,10 +384,9 @@
 #'
 #' `qes_codebook()` describes every variable of a study: its label, the
 #' question asked (in English or French), its value labels and which codes
-#' mean "don't know", "refused" or another reason for a missing answer. For
-#' the studies released under CC0 (every study except `qes2022`), the
-#' description ships with qesR, so the codebook needs no download and no
-#' network.
+#' mean "don't know", "refused" or another reason for a missing answer. The
+#' description of every study ships with qesR, so the codebook needs no
+#' download and no network.
 #'
 #' @section Where the description comes from:
 #' Variable and value labels are those of the study's pinned data file, as
@@ -393,31 +395,42 @@
 #' then `NA`. Question text comes from the questionnaires deposited with the
 #' study (`question_source = "questionnaire"`; `doc_ref` holds one or more
 #' `<file_id>:<question>` references separated by `;`, e.g.
-#' `"352010:Q19;352009:Q19"`); `question` is `NA` when the questionnaire does not
-#' give it, never a copy of the variable name or of `label`, and never a
-#' machine translation. `qes2018`'s data file has no value labels for most
-#' variables: they come from the study's French questionnaire with its
-#' programmed answer codes (`label_source = "supplement"`).
+#' `"352010:Q19;352009:Q19"`), and for `qes2022` from its bilingual codebook
+#' (`question_source = "codebook"`, `doc_ref` `"7449514:<question>"`; the
+#' item of a grid is its stem followed by the item in brackets); `question`
+#' is `NA` when the document does not give it, never a copy of the variable
+#' name or of `label`, and never a machine translation. `qes2018`'s data file
+#' has no value labels for most variables: they come from the study's French
+#' questionnaire with its programmed answer codes
+#' (`label_source = "supplement"`).
 #'
-#' `qes2022` is licensed CC BY-NC 4.0, so qesR ships none of its metadata. Its
-#' codebook is built the first time you ask for it, from your own copy of the
-#' data file (downloaded into the cache like [get_qes()] does), and kept in
-#' the cache (see [qes_cache_info()]). Its question text is the file's
-#' variable label, which the Stata format cuts at 80 characters: such
-#' questions have `question_truncated = TRUE`, and the full wording is in
-#' the codebook document named in `doc_ref` (see [qes_docs()]).
+#' The CC0 studies' description is in the public domain. The description of
+#' `qes2022` (its labels, question text and answer counts) is derived from
+#' the 2022 Quebec Election Study and carries its licence, CC BY-NC 4.0:
+#' cite the study (`qes_cite("qes2022")`) and do not use it commercially
+#' (see the file `COPYRIGHTS` of the installed package). A printed codebook
+#' of `qes2022` ends its header with this licence and the attribution it
+#' requires, which its attribute `licence_notice` also holds, so that a
+#' saved codebook keeps it. Its variable labels are those of its Stata file, which cuts them
+#' at 80 characters; its question text, from the codebook, is not cut.
 #'
 #' @section En français:
 #' `qes_codebook()` décrit chaque variable d'une étude : son étiquette, la
 #' question posée (en anglais ou en français), ses étiquettes de valeurs et
 #' les codes qui signifient « ne sait pas », « refus » ou une autre raison de
-#' non-réponse. Pour les études sous licence CC0 (toutes sauf `qes2022`), la
-#' description est livrée avec qesR : aucun téléchargement n'est nécessaire.
-#' Le texte des questions vient des questionnaires déposés (`doc_ref` : une
-#' ou plusieurs références `<file_id>:<question>` séparées par `;`) ; il vaut `NA`
-#' lorsqu'il est inconnu, sans traduction automatique. `lang = "fr"` donne
-#' le texte français. Pour `qes2022` (CC BY-NC 4.0), le codebook est construit
-#' à partir de votre copie du fichier de données et conservé dans le cache.
+#' non-réponse. La description de chaque étude est livrée avec qesR : aucun
+#' téléchargement n'est nécessaire. Le texte des questions vient des
+#' questionnaires déposés et, pour `qes2022`, de son livre de codes bilingue
+#' (`doc_ref` : une ou plusieurs références `<file_id>:<question>` séparées
+#' par `;`) ; il vaut `NA` lorsqu'il est inconnu, sans traduction
+#' automatique. `lang = "fr"` donne le texte français. La description de
+#' `qes2022` (étiquettes, texte des questions, effectifs) est tirée de
+#' l'Étude électorale québécoise 2022 et reste sous sa licence, CC BY-NC
+#' 4.0 : citez l'étude (`qes_cite("qes2022")`) et n'en faites pas d'usage
+#' commercial (voir le fichier `COPYRIGHTS` du package installé) ; le
+#' codebook imprimé de `qes2022` rappelle cette licence et l'attribution
+#' qu'elle exige, que garde aussi son attribut `licence_notice` (à
+#' conserver avec le codebook enregistré).
 #' L'attribut `selected_data_file` garde le nom Dataverse du fichier décrit
 #' (la copie `.tab` d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
 #' affiché nomme aussi le fichier original (`.sav` ou `.dta`) que
@@ -445,8 +458,8 @@
 #'   (the global environment only when called at top level), where `<code>` is
 #'   the canonical study code. Defaults to FALSE.
 #' @param quiet If TRUE, suppress informational output.
-#' @param refresh Ignored: the description is shipped with qesR (or kept in
-#'   the cache). Setting it prints a one-time note.
+#' @param refresh Ignored: the description is shipped with qesR. Setting it
+#'   prints a one-time note.
 #' @param layout `"compact"` (default: one row per variable), `"wide"` (the
 #'   same, with the value labels as a list column) or `"long"` (one row per
 #'   value).
@@ -485,7 +498,9 @@
 #'   `variable_names_file` (the data file whose
 #'   variable names the codebook uses), `files` (the study's files),
 #'   `codebook_files` (its documents, as [qes_docs()] lists them) and
-#'   `qes_provenance`.
+#'   `qes_provenance`. The codebook of `qes2022` also has the attribute
+#'   `licence_notice`: the attribution and licence (CC BY-NC 4.0) of its
+#'   description, named by the study; keep it with any copy you share.
 #'
 #' @family codebooks and search
 #' @seealso [qes_question()] for the exact wording of some variables,
@@ -847,6 +862,11 @@ print.qes_codebook <- function(x, n = 10L, ...) {
   cat("Variables:", n_var, "\n")
   if (nrow(x) != n_var) cat("Rows:", nrow(x), "\n")
   cat("Codebook/support files:", if (is.null(files)) 0L else nrow(files), "\n")
+  # the attribution and licence of metadata that is not CC0 (qes2022)
+  notice <- .qes_licence_notice(if (is.character(survey_code)) survey_code[1] else NA_character_)
+  if (!is.null(notice)) {
+    cat(strwrap(notice, width = max(40L, getOption("width", 80L) - 2L)), sep = "\n")
+  }
 
   preview <- as.data.frame(unclass(x), stringsAsFactors = FALSE)
   if ("value_labels" %in% names(preview) && is.list(preview$value_labels)) {

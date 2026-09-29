@@ -40,9 +40,24 @@ shipped with qesR; no network request is made.
 The three 1998 surveys (\code{qes1998}, \code{qes1998_crop}, \code{qes1998_createc})
 share one deposit, so their citations add the data file used.
 
+A study released under a licence other than CC0 has its licence and the
+licence's URL at the end of its text citation: \code{qes2022} is licensed CC
+BY-NC 4.0, which also covers the description of it that qesR ships (see
+the file \code{COPYRIGHTS} of the installed package).
+
 For data from \code{\link[=qes_harmonize]{qes_harmonize()}}, the qesR citation also gives the
 harmonization spec version and content hash the values depend on.
 }
+\section{En français}{
+
+\code{qes_cite()} donne la citation de qesR et, pour chaque étude nommée ou
+chargée, celle de son dépôt Dataverse. Une étude diffusée sous une autre
+licence que CC0 termine sa citation texte par sa licence et l'adresse de
+celle-ci : \code{qes2022} est sous licence CC BY-NC 4.0, qui couvre aussi la
+description de l'étude livrée avec qesR (voir le fichier \code{COPYRIGHTS} du
+package installé).
+}
+
 \examples{
 qes_cite()
 qes_cite(c("qes2018", "qes2014"))

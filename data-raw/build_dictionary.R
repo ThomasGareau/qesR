@@ -12,17 +12,13 @@
 #
 # Writes
 #   inst/extdata/dict/variables.csv.gz, values.csv.gz
-#       every study whose catalog row has metadata_shipped = TRUE (the CC0
-#       studies), from its pinned data file (with its label donor) and the
-#       curated files below;
+#       every study whose catalog row has metadata_shipped = TRUE (all of
+#       them: the CC0 studies and qes2022, CC BY-NC 4.0, whose files carry
+#       that licence; inst/COPYRIGHTS), from its pinned data file (with its
+#       label donor) and the curated files below;
 #   inst/extdata/demo/dict/variables.csv.gz, values.csv.gz
 #       the synthetic qes_demo, whose variables are a subset of qes2014's
 #       (same names and labels), with qes2014's curated wording;
-#   inst/extdata/dict/shard_rules.csv
-#       missing-code rules for the studies whose metadata is not shipped
-#       (qes2022, OD3): variable names and codes only, no label text. Built
-#       from the cached qes2022 file and data-raw/nc/; kept as is when that
-#       file is not in the cache;
 # and updates inst/extdata/VERSIONS (data-raw/versions.R). With --check it
 # writes nothing and fails if a shipped table differs from what it would
 # write.
@@ -33,9 +29,9 @@
 #       none), question_en, question_fr, question_truncated, universe_en,
 #       universe_fr, question_source, doc_ref (<file_id>:<question>),
 #       measure, var_timing, derived_from, reviewed, notes. Drafted by
-#       data-raw/extract_questions.R from the deposited questionnaires;
-#       reviewed = TRUE once the wording was checked by hand against the
-#       document.
+#       data-raw/extract_questions.R from the deposited questionnaires (for
+#       qes2022, from its bilingual codebook); reviewed = TRUE once the
+#       wording was checked by hand against the document.
 #   data-raw/questions/<study>_values.csv
 #       variable, value, label, label_lang, label_en, label_fr,
 #       missing_type, label_flag, notes. A label is used only for a
@@ -51,11 +47,18 @@
 #       in that study, e.g. qes2014 "Je ne sais pas" -> dk. Codes that a
 #       file declares missing (SPSS user-missing) and that no rule types
 #       are "user_na".
-#   data-raw/nc/missing_labels_qes2022.csv
-#       the same for qes2022; used only to write shard_rules.csv.
+#   data-raw/questions/missing_codes.csv
+#       study, variable, value, missing_type, notes: the missing type of a
+#       code in every numeric variable of a study (variable "*"), for a
+#       file that marks item nonresponse with a code it does not label
+#       (qes2022: -99). A row is added to the values table for such a code
+#       wherever a column holds it and the table lacks it (the table lists
+#       every observed code only for columns with at most 50 codes, all
+#       whole numbers; R/metadata.R).
 # Precedence of a code's missing type: <study>_values.csv (including
 # label_flag "declared_substantive", which clears it), then
-# missing_labels.csv, then the file's declaration (user_na).
+# missing_labels.csv, then missing_codes.csv, then the file's declaration
+# (user_na).
 
 pkgload::load_all(".", quiet = TRUE, export_all = TRUE)
 
@@ -96,6 +99,36 @@ missing_types <- .qes_missing_types()
 label_flags <- c("declared_substantive", "shifted_in_source")
 missing_rules <- read_curated(file.path(q_dir, "missing_labels.csv"))
 stopifnot(all(missing_rules$missing_type %in% missing_types))
+code_rules <- read_curated(file.path(q_dir, "missing_codes.csv"))
+stopifnot(all(code_rules$missing_type %in% missing_types), all(code_rules$variable == "*"),
+          !anyDuplicated(code_rules[c("study", "value")]))
+
+# Rows for the codes of `codes` that a numeric column of `data` holds but
+# the values table lacks (no label; n counted), among the codes of their
+# variable in numeric order.
+add_code_rows <- function(values, data, study, codes) {
+  have <- paste(values$variable, values$value, sep = "\r")
+  add <- list()
+  for (v in names(data)) {
+    x <- data[[v]]
+    if (!identical(.qes_storage(x), "numeric")) next
+    base <- .qes_code_chr(.qes_plain(x))
+    for (code in codes) {
+      n <- sum(base == code, na.rm = TRUE)
+      if (n == 0L || paste(v, code, sep = "\r") %in% have) next
+      add[[length(add) + 1L]] <- data.frame(
+        study = study, variable = v, value = code, label = NA_character_,
+        label_source = "none", label_lang = NA_character_, label_en = NA_character_,
+        label_fr = NA_character_, missing_type = NA_character_, n = as.integer(n),
+        label_flag = NA_character_, stringsAsFactors = FALSE
+      )
+    }
+  }
+  if (length(add) == 0L) {
+    return(values)
+  }
+  rbind(values, do.call(rbind, add)[, names(values)])
+}
 
 # Apply the curated files of `curated_study` to the tables `d` of `study`
 # (built from `data`).
@@ -140,6 +173,14 @@ curate <- function(d, study, data, curated_study = study) {
     if (any(bad)) {
       stop(sprintf("%s: reviewed rows without question text: %s", study, paste(v$variable[bad], collapse = ", ")), call. = FALSE)
     }
+  }
+
+  # code rules: a code that marks item nonresponse in every numeric variable
+  crules <- code_rules[code_rules$study == curated_study, , drop = FALSE]
+  if (nrow(crules) > 0L) {
+    values <- add_code_rows(values, data, study, crules$value)
+    hit <- match(values$value, crules$value)
+    values$missing_type[!is.na(hit)] <- crules$missing_type[hit[!is.na(hit)]]
   }
 
   # label rules, below the file's own declarations only where they apply
@@ -252,45 +293,6 @@ demo <- curate(
   "qes_demo", demo_data, curated_study = "qes2014"
 )
 
-# ---- shard rules (qes2022) --------------------------------------------------------------
-
-rules_path <- file.path(dict_dir, "shard_rules.csv")
-shard_rules <- NULL
-nc_rules <- read_curated(file.path(root, "data-raw", "nc", "missing_labels_qes2022.csv"))
-f22 <- .qes_default_data_file("qes2022")
-cached <- qes_cache_info()
-if (f22$md5 %in% cached$md5) {
-  d22 <- .qes_read("qes2022", f22$file_id, quiet = TRUE)
-  b22 <- .qes_dict_build(d22, .qes_study_row("qes2022"), f22)
-  vals <- b22$values
-  hit <- match(vals$label, nc_rules$label)
-  typed <- vals[!is.na(hit) & vals$label_source != "none", , drop = FALSE]
-  typed$missing_type <- nc_rules$missing_type[hit[!is.na(hit) & vals$label_source != "none"]]
-  # -99 is item nonresponse, except in the "select all that apply" items,
-  # whose columns hold 1 (selected) or -99 (not selected)
-  has99 <- unique(vals$variable[vals$value == "-99"])
-  binary <- has99[vapply(has99, function(x) {
-    codes <- unique(stats::na.omit(.qes_code_chr(.qes_plain(d22[[x]]))))
-    all(codes %in% c("-99", "1"))
-  }, logical(1))]
-  shard_rules <- rbind(
-    data.frame(study = "qes2022", variable = "*", value = "-99", missing_type = "no_answer",
-      evidence = "-99 marks a question left unanswered in the web survey", stringsAsFactors = FALSE),
-    data.frame(study = "qes2022", variable = binary, value = rep("-99", length(binary)),
-      missing_type = rep("not_selected", length(binary)),
-      evidence = rep("select-all item: codes 1 and -99 only", length(binary)), stringsAsFactors = FALSE),
-    data.frame(study = "qes2022", variable = typed$variable, value = typed$value,
-      missing_type = typed$missing_type,
-      evidence = rep("value label (data-raw/nc/missing_labels_qes2022.csv)", nrow(typed)),
-      stringsAsFactors = FALSE)
-  )
-  shard_rules <- shard_rules[!duplicated(shard_rules[c("variable", "value")]), , drop = FALSE]
-  rownames(shard_rules) <- NULL
-  cat(sprintf("qes2022 shard rules: %d (%d select-all items)\n", nrow(shard_rules), length(binary)))
-} else {
-  cat("qes2022 is not in the cache: shard_rules.csv is kept as it is.\n")
-}
-
 # ---- lints -------------------------------------------------------------------------------
 
 lint <- function(v, values) {
@@ -307,7 +309,6 @@ lint <- function(v, values) {
   for (i in which(!is.na(v$derived_from))) {
     stopifnot(all(.qes_split_list(v$derived_from[i]) %in% v$variable[v$study == v$study[i]]))
   }
-  stopifnot(!any(v$study == "qes2022"), !any(values$study == "qes2022"))
 }
 lint(variables, values)
 lint(demo$variables, demo$values)
@@ -320,9 +321,6 @@ targets <- list(
   list(demo$variables, file.path(demo_dir, "variables.csv.gz")),
   list(demo$values, file.path(demo_dir, "values.csv.gz"))
 )
-if (!is.null(shard_rules)) {
-  targets[[length(targets) + 1L]] <- list(shard_rules, rules_path)
-}
 
 if (check_only) {
   bad <- character(0)

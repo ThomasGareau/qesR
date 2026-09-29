@@ -35,7 +35,7 @@ test_that("no respondent data ship: the only data file is the synthetic demo", {
   expect_true(all(grepl("^(catalog|dict|legacy|harmonize|validation|demo/catalog|demo/dict)/", csv)), info = paste(csv, collapse = ", "))
 })
 
-test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of qes2022", {
+test_that("COPYRIGHTS attributes every shipped study by DOI and gives the licence of qes2022", {
   path <- pkg_file("COPYRIGHTS")
   expect_true(nzchar(path))
   text <- paste(readLines(path, encoding = "UTF-8", warn = FALSE), collapse = "\n")
@@ -46,7 +46,10 @@ test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of
     expect_true(grepl(studies$doi[i], text, fixed = TRUE), info = studies$doi[i])
   }
   expect_true(grepl("CC BY-NC 4.0", text, fixed = TRUE))
-  expect_true(grepl("ships none of its value labels, question text or\\s+answer\\s+counts", text))
+  # OD3 lifted: the qes2022 metadata ships under its licence, with attribution
+  expect_true(grepl("https://creativecommons.org/licenses/by-nc/4.0/", text, fixed = TRUE))
+  expect_true(grepl("NOT covered by the MIT\\s+licence of qesR", text))
+  expect_true(grepl("https://doi.org/10.7910/DVN/PAQBDR", text, fixed = TRUE))
   # OD16: the 1998 population is quoted from the codebook; the definition,
   # pending until spec 3.0.0, is confirmed by linking the files
   expect_true(grepl("retenir uniquement les\\s+francophones", text))
@@ -59,6 +62,69 @@ test_that("COPYRIGHTS attributes every shipped study by DOI and ships nothing of
   expect_true(grepl("Adapted from Statistics Canada", text, fixed = TRUE))
   expect_true(grepl("does not constitute an endorsement\\s+by Statistics Canada", text))
   expect_true(grepl("\u00c9lections Qu\u00e9bec's terms\\s+of use", text))
+})
+
+test_that("the MIT licence is stated to cover the code only", {
+  desc <- utils::packageDescription("qesR")
+  expect_identical(desc[["License"]], "MIT + file LICENSE")
+  copyright <- gsub("\\s+", " ", desc[["Copyright"]])
+  expect_match(copyright, "covers the package code only", fixed = TRUE)
+  expect_match(copyright, "inst/COPYRIGHTS", fixed = TRUE)
+  expect_match(copyright, "CC BY-NC 4.0", fixed = TRUE)
+  expect_match(gsub("\\s+", " ", desc[["Description"]]), "MIT licence covers the package code only", fixed = TRUE)
+  path <- pkg_file("COPYRIGHTS")
+  text <- gsub("\\s+", " ", paste(readLines(path, encoding = "UTF-8", warn = FALSE), collapse = " "))
+  expect_match(text, "covers the qesR code only", fixed = TRUE)
+  # the attribution the licence requires: authors, title, DOI, licence, URL,
+  # changes made
+  for (x in c("Mah\u00e9o, Val\u00e9rie-Anne", "B\u00e9langer, \u00c9ric", "Stephenson, Laura B",
+              "Harell, Allison", "\"2022 Quebec Election Study\"", "Changes made by qesR",
+              "Licensed under CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/)")) {
+    expect_match(text, x, fixed = TRUE)
+  }
+})
+
+test_that("the qes2022 licence notice lists exactly the shipped files with its metadata", {
+  path <- pkg_file("COPYRIGHTS")
+  expect_true(nzchar(path))
+  text <- readLines(path, encoding = "UTF-8", warn = FALSE)
+  # the list of section 2: from "... licence of qesR:" to "Attribution"
+  from <- grep("licence of qesR:$", text)
+  to <- grep("^Attribution", text)
+  expect_length(from, 1L)
+  expect_length(to, 1L)
+  block <- text[(from + 1L):(to - 1L)]
+  listed <- unique(unlist(regmatches(block, gregexpr("(inst|tests)/[A-Za-z0-9_./-]+\\.csv(\\.gz)?", block))))
+  expect_gt(length(listed), 5L)
+  read_table <- function(file) {
+    con <- if (grepl("\\.gz$", file)) gzfile(file) else file
+    utils::read.csv(con, colClasses = "character", encoding = "UTF-8")
+  }
+  has_2022 <- function(x) {
+    any(x$study %in% "qes2022") || any(grepl("qes2022", x$map_id %||% character(0), fixed = TRUE))
+  }
+  for (p in listed) {
+    file <- if (startsWith(p, "inst/")) {
+      system.file(sub("^inst/", "", p), package = "qesR")
+    } else {
+      testthat::test_path(sub("^tests/testthat/", "", p))
+    }
+    expect_true(nzchar(file) && file.exists(file), info = p)
+    if (nzchar(file) && file.exists(file)) {
+      expect_true(has_2022(read_table(file)), info = p)
+    }
+  }
+  # every installed table with rows of qes2022 is listed, except those that
+  # only name the study (the catalog's files, the render rules, the legacy
+  # changes) and the build-ignored validation report; the catalog's
+  # studies.csv is listed, for the qes2022 notes that quote the codebook
+  ext <- system.file("extdata", package = "qesR")
+  files <- list.files(ext, pattern = "\\.csv(\\.gz)?$", recursive = TRUE)
+  files <- files[!startsWith(files, "demo/") & !grepl("(^|/)\\._", files)]
+  own <- c("catalog/files.csv", "harmonize/legacy.csv",
+           "legacy/changes.csv", "validation/validation_report.csv")
+  with_2022 <- files[vapply(file.path(ext, files), function(f) has_2022(read_table(f)), logical(1))]
+  expect_setequal(setdiff(with_2022, own), sub("^inst/extdata/", "", listed[startsWith(listed, "inst/")]))
 })
 
 test_that("the only network example is qes_studies(check_updates = TRUE), guarded", {

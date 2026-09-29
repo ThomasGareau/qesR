@@ -1,6 +1,6 @@
 # Open questions for the owner
 
-State at qesR 0.7.0, harmonization spec 4.1.0 (2026-09-28). The file
+State at qesR 0.7.1, harmonization spec 4.2.0 (2026-09-28). The file
 has two parts:
 
 1. **Resolved (with sources):** what the public deposits, the producers'
@@ -452,6 +452,38 @@ owner reopens one)
   `stable` at `comparable`, the grade it had before the review, with the
   English stem the review filled; `identical` waits for a human second
   reviewer (D12 (b)). All 132 rows are `stable`.
+- **OD3 lifted: `qes2022` metadata ships (qesR 0.7.1, spec 4.2.0, the
+  owner's decision of 2026-09-28; design.md OD3).** The package ships the
+  metadata of `qes2022` like that of the other studies, under the study's
+  licence, CC BY-NC 4.0, with the attribution the licence requires; that
+  content is not covered by the MIT licence (`inst/COPYRIGHTS`, section 2,
+  lists the files, and a test checks the list). The dictionary holds its
+  718 variables, labels, value labels, counts and missing codes, and the
+  question text of 464 variables (448 of them also in French) quoted from
+  its bilingual codebook (drafts, `reviewed = FALSE`); the runtime shard and
+  `inst/extdata/dict/shard_rules.csv` are gone. The spec quotes its wording
+  and labels (18 crosswalk rows, 65 value-map rows) and `gates.csv` and
+  `expected/marginals.csv` hold its counts; the build-ignored
+  `data-raw/nc/` is removed, its aggregates moved (identical) to the
+  shipped files, the recorded validation report and the 0.4.4 fixture.
+  D11 is resolved by this decision, Q4 becomes an optional courtesy notice,
+  and `cran-comments.md` asks CRAN whether CC BY-NC 4.0 files are
+  acceptable in the package (qesR can fetch them at runtime instead). The
+  MIT licence is stated to cover the package code only (`inst/COPYRIGHTS`,
+  `DESCRIPTION`, README, website, `?qesR-package`, `?qesR-fr`), and a
+  printed `qes2022` codebook and the harmonization reference repeat the
+  attribution and licence.
+- **Live failure of tag v0.7.0 (the owner's items of 2026-09-29).** The
+  `live` workflow failed on Ubuntu, R 4.6.1: the shipped dictionary listed
+  the observed values of continuous columns with at most 50 values (the
+  `qes2007_panel` weights, keyed as 15-significant-digit text such as
+  `"1.43011282409"`), whose text differs across platforms and R versions.
+  qesR 0.7.1 lists no value of a continuous column (a fraction, a weight or
+  an id; 564 rows of `qes1998`, `qes1998_createc`, `qes1998_crop` and
+  `qes2007_panel`), so every listed code is a whole number, and the tests
+  check it offline and live. `live.yml` also keeps its cache at an absolute
+  path (`runner.temp/qesr-cache`), since `actions/cache` rejected
+  `../qesr-cache` and never saved the originals.
 
 ## 1.9 Deferred work (other slices; no owner action)
 
@@ -605,25 +637,30 @@ parties summed).
 >
 > Thomas Gareau-Paquette
 
-**Q4. Laura B. Stephenson (Western University), dataset contact of the
-2022 QES (doi:10.7910/DVN/PAQBDR), for its authors (Mahéo, Bélanger,
-Stephenson, Harell).** Contact button of the Harvard Dataverse dataset
-page. Why: OD3 keeps every label, wording and count of `qes2022` out of the
-package until its authors agree in writing (CC BY-NC 4.0); R5 and V6 wait
-on it.
+**Q4. Optional courtesy notice to Laura B. Stephenson (Western
+University), dataset contact of the 2022 QES (doi:10.7910/DVN/PAQBDR), for
+its authors (Mahéo, Bélanger, Stephenson, Harell).** Contact button of the
+Harvard Dataverse dataset page. No longer a request for permission: the
+owner lifted OD3 on 2026-09-28 (1.8), and qesR 0.7.1 ships the study's
+labels, codebook wording and counts under its own licence, CC BY-NC 4.0,
+with the attribution it requires (non-commercial redistribution with
+attribution is what that licence allows). Nothing waits on an answer; the
+notice only tells the authors, and gives them a way to object or to ask for
+a different attribution.
 
 > Dear Professor Stephenson,
 >
-> I maintain qesR, a free R package (MIT licence, submitted to CRAN) that
-> downloads and harmonizes the Quebec Election Studies. The 2022 QES is
-> licensed CC BY-NC 4.0, so qesR currently ships none of its value labels,
-> question wording or answer counts: users build them from their own copy
-> of the file. Would you and your co-authors agree in writing that qesR may
-> ship (1) the value labels and question wording of the 2022 study, with
-> attribution, and (2) aggregate counts (unweighted frequencies of each
-> answer, used to check the harmonization), under the package's MIT
-> licence? If not, is the current approach (variable names, md5 hashes of
-> labels and codebook page references only) acceptable to you?
+> I maintain qesR, a free R package that downloads and harmonizes the
+> Quebec Election Studies. From version 0.7.1, qesR ships metadata of the
+> 2022 QES (doi:10.7910/DVN/PAQBDR): its variable and value labels, the
+> question wording of its codebook in English and French, and unweighted
+> counts of the answers (used to check the harmonization). These files keep
+> the study's licence, CC BY-NC 4.0, with an attribution to you and your
+> co-authors and a link to the licence, and they are marked as not covered
+> by the package's MIT licence. No respondent data ship: the data file is
+> downloaded from Harvard Dataverse at the user's request. If you would
+> prefer another form of attribution, or would rather these files not be
+> distributed, please tell me.
 >
 > Thank you,
 >
@@ -739,11 +776,12 @@ of `cran-comments.md` updated. Left to the owner: commit, push, run the
 GitHub checks and win-builder (their results go to the maintainer) and
 fill in their results and the spelling NOTE in `cran-comments.md`.
 
-**D11. `qes2022` under OD3 (was R5, V6).** Until Q4 is answered: confirm
-that the row count `n` of `expected/hashes.csv` (1,521, published on
-codebook p. 5) and the grade reasons in qesR's own words may stay, and that
-the website article may show `qes2022` aggregates computed at build time;
-or drop `n` for `qes2022`, reword the reasons and drop those article rows.
+**D11. `qes2022` under OD3 (was R5, V6). Resolved (2026-09-28).** The
+owner lifted OD3: the metadata of `qes2022` ships under CC BY-NC 4.0
+(1.8), so its row count in `expected/hashes.csv`, its grade reasons, its
+wording, labels and counts, and the website's aggregates of it all stay.
+What remains open is CRAN's answer on CC BY-NC 4.0 files in the package
+(`cran-comments.md`).
 
 **D12. Rows held in review (spec 4.0.0; released in spec 4.1.0).** The
 automated review signed 39 rows off on their content but left them in

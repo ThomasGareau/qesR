@@ -163,7 +163,7 @@ reference:
   desc: >
     What each variable measures, the exact question asked, in English and
     French, and which codes mean "don't know" or "refused". Offline for every
-    study released under CC0.
+    study (the metadata of the 2022 study keeps its licence, CC BY-NC 4.0).
   contents:
   - qes_codebook
   - qes_question

@@ -22,7 +22,7 @@ qesR charge dans R les Études électorales québécoises et d'autres enquêtes
 dépôt Dataverse, fixé à une version du jeu de données et à un fichier de
 données original dont la somme de contrôle md5 est vérifiée avant usage. Le
 catalogue des études, leurs documents, leurs citations et la description de
-chaque variable des études sous licence CC0 sont livrés avec le package.
+chaque variable de chaque étude sont livrés avec le package.
 
 Cette page va d'un code d'étude à une estimation pondérée. Tous ses blocs
 de code s'exécutent sans connexion réseau : ils utilisent le catalogue, les
@@ -32,10 +32,14 @@ exécutés.
 
 ## Installation
 
-```{r install, eval = FALSE}
-install.packages("qesR")
-# or the development version:
-# remotes::install_github("ThomasGareau/qesR")
+Installez qesR depuis GitHub ; une fois le paquet accepté sur le CRAN,
+`install.packages("qesR")` suffira.
+
+```{r install, eval = FALSE, purl = FALSE}
+# install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+# une fois le paquet accepté sur le CRAN :
+# install.packages("qesR")
 ```
 
 ```{r load}
@@ -91,9 +95,10 @@ attr(demo_clean, "qes_missing_log")
 
 ## Codebooks, questions et recherche, sans réseau
 
-Le codebook de chaque étude sous licence CC0 est livré avec qesR :
-étiquettes des variables, texte des questions en français et en anglais
-tiré des questionnaires déposés, étiquettes de valeurs et codes manquants.
+Le codebook de chaque étude est livré avec qesR : étiquettes des variables,
+texte des questions en français et en anglais tiré des questionnaires
+déposés (pour l'étude de 2022, de son livre de codes bilingue), étiquettes
+de valeurs et codes manquants.
 
 ```{r codebook}
 cb <- qes_codebook("qes2014")
@@ -116,9 +121,15 @@ hits <- qes_search("souverain|sovereign")
 head(hits[, c("study", "variable", "label")])
 ```
 
-L'étude de 2022 est sous licence CC BY-NC 4.0 : qesR ne livre aucune de ses
-métadonnées, et son codebook est construit à partir de votre propre copie du
-fichier de données la première fois que vous le demandez.
+L'étude de 2022 est sous licence CC BY-NC 4.0. Son codebook est lui aussi
+livré avec qesR, sous cette licence (attribution, pas d'usage commercial), et
+non sous la licence MIT de qesR, qui ne couvre que le code du package. Il
+est tiré de Mahéo, Bélanger, Stephenson et Harell (2023), *2022 Quebec
+Election Study*, Harvard Dataverse, <https://doi.org/10.7910/DVN/PAQBDR> ;
+le codebook imprimé de `qes2022` rappelle cette mention, que les codebooks
+et les résultats de `qes_question()` et de `qes_search()` qui incluent
+`qes2022` gardent aussi dans leur attribut `licence_notice`, et
+`system.file("COPYRIGHTS", package = "qesR")` donne la liste des fichiers.
 
 ## Une estimation pondérée
 

@@ -33,9 +33,10 @@ test_that("view 'crosswalk' gives the rows, their grade reasons and structural z
   expect_identical(xw$grade_reason[xw$study == "qes2012"], "Anchor row of the target.")
   fr <- qes_spec("crosswalk", targets = "vote_prov_recall", lang = "fr")
   expect_identical(fr$grade_reason[fr$study == "qes2012"], "Ligne d'ancrage de la cible.")
-  # the wording of qes2022 cannot ship: its document reference is given
-  expect_true(is.na(xw$wording[xw$study == "qes2022"]))
+  # the wording of qes2022 is quoted from its codebook, with its reference
+  expect_identical(xw$wording[xw$study == "qes2022"], "Which party did you vote for?")
   expect_identical(xw$wording_ref[xw$study == "qes2022"], "7449514:p.68")
+  expect_identical(fr$wording[fr$study == "qes2022"], "Pour quel parti avez-vous vot\u00e9?")
   # the documentation-only row is listed, and is never primary
   all_rows <- qes_spec("crosswalk", studies = "qes2018_panel")
   k <- all_rows$source_var == "independance"
@@ -100,10 +101,17 @@ test_that("the generated reference covers every target, in English and French al
   expect_identical(grepl("^\\|", lines_en), grepl("^\\|", lines_fr))
   expect_true(grepl(s$version, en, fixed = TRUE))
   expect_true(grepl(s$hash, fr, fixed = TRUE))
-  # every mapped row appears in a coverage table; the licence keeps qes2022 wording out
+  # every mapped row appears in a coverage table, qes2022's with its wording
   xw <- s$tables$crosswalk
   expect_identical(sum(grepl("^\\| qes", lines_en)), sum(xw$rule != "none"))
-  expect_true(grepl("document 7449514, p.68", en, fixed = TRUE))
+  expect_false(grepl("document 7449514, p.68", en, fixed = TRUE))
+  expect_true(grepl("Which party did you vote for?", en, fixed = TRUE))
+  # a row with a reference and no wording shows the reference
+  noref <- s
+  j <- which(noref$tables$crosswalk$study == "qes2022" & noref$tables$crosswalk$target == "vote_prov_recall")
+  noref$tables$crosswalk$wording_en[j] <- NA
+  noref$tables$crosswalk$wording_fr[j] <- NA
+  expect_true(grepl("document 7449514, p.68", .spec_reference_md("en", spec = noref), fixed = TRUE))
   # structural zeros and review status are marked (no shipped row is in
   # review since spec 4.1.0, so one is put back in review)
   expect_true(grepl("not offered: PVQ, PCQ, ON, ADQ", en, fixed = TRUE))

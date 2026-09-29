@@ -690,12 +690,6 @@
       add("V-S11", "valuemaps", i, vkeys[i], "a label from DDI metadata is allowed only in draft rows")
     }
   }
-  closed <- studies$study[studies$metadata_shipped %in% FALSE]
-  bad <- which(xw$study %in% closed & (has(xw$wording_en) | has(xw$wording_fr)))
-  add("V-S11", "crosswalk", bad, xkeys[bad], "this study's wording cannot ship (licence): use wording_ref")
-  closed_maps <- unique(xw$map_id[xw$study %in% closed & has(xw$map_id)])
-  bad <- which(vm$map_id %in% closed_maps & has(vm$source_label))
-  add("V-S11", "valuemaps", bad, vkeys[bad], "this study's labels cannot ship (licence): use source_label_hash")
   if (isTRUE(release)) {
     bad <- which(xw$status %in% "draft")
     add("V-S11", "crosswalk", bad, xkeys[bad], "a release spec has no draft rows")

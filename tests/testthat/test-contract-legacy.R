@@ -144,12 +144,9 @@ test_that("the v0.4.4 get_qes() name manifest covers the 11 legacy studies", {
   manifest <- v044_get_qes_names()
   expect_identical(names(manifest), c("study", "position", "name", "type", "n_na"))
   expect_true(all(manifest$type %in% c("numeric", "character", "logical")))
-  # the is.na() counts are counts from the data files: none ships for qes2022
-  # (CC BY-NC, OD3)
-  nc <- manifest$study == "qes2022"
-  expect_true(all(is.na(manifest$n_na[nc])))
-  expect_false(anyNA(manifest$n_na[!nc]))
-  expect_true(all(manifest$n_na[!nc] >= 0L))
+  # the is.na() counts of every study, qes2022 included (OD3 lifted)
+  expect_false(anyNA(manifest$n_na))
+  expect_true(all(manifest$n_na >= 0L))
   expect_setequal(unique(manifest$study), v044_qescodes)
   classes <- utils::read.csv(testthat::test_path("fixtures", "v044-get-decon-classes.csv"), stringsAsFactors = FALSE)
   expect_setequal(unique(classes$study), v044_qescodes)

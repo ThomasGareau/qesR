@@ -9,8 +9,8 @@ into R by study code. Each code points to one Dataverse deposit (Borealis or
 the Harvard Dataverse), pinned to a dataset version and to one original
 SPSS or Stata data file, checked against its md5 checksum before use. The
 catalog of studies, their documents, their citations and the description of
-every variable of the studies released under CC0 ship with the package, so
-codebooks, question wording and search work offline, in English and French.
+every variable of every study ship with the package, so codebooks, question
+wording and search work offline, in English and French.
 
 Une présentation en français suit la version anglaise (section *En
 français*).
@@ -18,11 +18,11 @@ français*).
 ## Installation
 
 ```r
-install.packages("qesR")
-
-# development version
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+
+# once accepted on CRAN:
+# install.packages("qesR")
 ```
 
 ## A first session
@@ -53,7 +53,7 @@ the files between sessions.
 ## Codebooks, questions and search
 
 ```r
-# the codebook, offline for every CC0 study
+# the codebook, offline for every study
 cb <- qes_codebook("qes2018")
 qes_codebook("qes2018", layout = "long", variables = c("q26", "q27"))
 
@@ -67,9 +67,10 @@ qes_search("souverain|sovereign")
 qes2018_clean <- qes_missing(qes2018)
 ```
 
-The 2022 study is licensed CC BY-NC 4.0, so qesR ships none of its
-metadata: its codebook is built from your own copy of the data file the
-first time you ask for it.
+The 2022 study is licensed CC BY-NC 4.0. Its metadata (codebook, question
+text, value labels and counts) ships with qesR under that licence
+(attribution, no commercial use), not under qesR's MIT licence:
+`system.file("COPYRIGHTS", package = "qesR")` lists the files.
 
 ## Provenance and citations
 
@@ -201,7 +202,26 @@ deposits. The 2022 study is licensed CC BY-NC 4.0 (attribution, no
 commercial use); the other studies are CC0 1.0. `qes_studies()$licence`
 gives each study's licence, and `qes_cite()` its citation, with its DOI
 link (for example <https://doi.org/10.5683/SP3/NWTGWS> for the 2018 study).
-The package's own code is MIT-licensed.
+
+## Licence
+
+The MIT licence of qesR (file `LICENSE`) covers the package code only. The
+metadata and benchmark counts qesR ships keep the licence of their source:
+
+- The metadata of the 2022 study (variable and value labels, question
+  text, answer counts, and the harmonization wording, labels and counts
+  derived from them) are derived from Mahéo, Bélanger, Stephenson and
+  Harell (2023), *2022 Quebec Election Study*, Harvard Dataverse, V1.1,
+  <https://doi.org/10.7910/DVN/PAQBDR>, and licensed
+  [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/):
+  attribution, no commercial use. qesR extracted, reformatted and tabulated
+  them; this does not imply that the authors endorse qesR.
+- The metadata of the other studies come from deposits released under
+  CC0 1.0, and the census counts used as validation benchmarks are adapted
+  from Statistics Canada under the Statistics Canada Open Licence.
+
+The file `COPYRIGHTS` (`system.file("COPYRIGHTS", package = "qesR")`) lists
+each file, its source and its licence.
 
 ## En français
 
@@ -210,11 +230,16 @@ qesR charge dans R les Études électorales québécoises et d'autres enquêtes
 dépôt Dataverse (Borealis ou Harvard Dataverse), fixé à une version du jeu
 de données et à un fichier de données original SPSS ou Stata, vérifié par
 sa somme de contrôle md5 avant usage. Le catalogue des études, leurs
-documents, leurs citations et la description de chaque variable des études
-sous licence CC0 sont livrés avec le package : codebooks, libellés des
-questions et recherche fonctionnent sans réseau, en français et en anglais.
+documents, leurs citations et la description de chaque variable de chaque
+étude sont livrés avec le package : codebooks, libellés des questions et
+recherche fonctionnent sans réseau, en français et en anglais.
 
 ```r
+# install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+# une fois le paquet accepté sur le CRAN :
+# install.packages("qesR")
+
 library(qesR)
 options(qesR.lang = "fr")          # messages et erreurs en français
 
@@ -226,9 +251,11 @@ qes_search("souverain|sovereign")  # recherche dans toutes les études
 qes2018 <- qes_missing(qes2018)    # « ne sait pas » et « refus » en NA
 ```
 
-L'étude de 2022 est sous licence CC BY-NC 4.0 : qesR ne livre aucune de
-ses métadonnées, et son codebook est construit à partir de votre copie du
-fichier de données la première fois que vous le demandez.
+L'étude de 2022 est sous licence CC BY-NC 4.0. Ses métadonnées (codebook,
+texte des questions, étiquettes de valeurs et effectifs) sont livrées avec
+qesR sous cette licence (attribution, pas d'usage commercial), et non sous
+la licence MIT de qesR : `system.file("COPYRIGHTS", package = "qesR")` en
+donne la liste.
 
 ### Provenance et citations
 
@@ -362,4 +389,28 @@ Les données ne font pas partie du package : qesR les télécharge depuis
 leurs dépôts. L'étude de 2022 est sous licence CC BY-NC 4.0 (attribution,
 pas d'usage commercial) ; les autres études sont sous licence CC0 1.0.
 `qes_studies()$licence` donne la licence de chaque étude, et `qes_cite()` sa
-citation, avec le lien de son DOI. Le code du package est sous licence MIT.
+citation, avec le lien de son DOI.
+
+### Licence
+
+La licence MIT de qesR (fichier `LICENSE`) couvre le code du package
+seulement. Les métadonnées et les effectifs de référence livrés avec qesR
+gardent la licence de leur source :
+
+- Les métadonnées de l'étude de 2022 (étiquettes de variables et de
+  valeurs, texte des questions, effectifs des réponses, et les libellés,
+  étiquettes et effectifs de l'harmonisation qui en sont tirés) sont tirées
+  de Mahéo, Bélanger, Stephenson et Harell (2023), *2022 Quebec Election
+  Study*, Harvard Dataverse, V1.1, <https://doi.org/10.7910/DVN/PAQBDR>, et
+  sont sous licence
+  [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.fr) :
+  attribution, pas d'usage commercial. qesR les a extraites, mises en forme
+  et compilées, ce qui n'implique aucune approbation de
+  qesR par les auteurs.
+- Les métadonnées des autres études viennent de dépôts sous licence
+  CC0 1.0, et les effectifs du recensement qui servent de repères de
+  validation sont adaptés de Statistique Canada selon la Licence
+  ouverte de Statistique Canada.
+
+Le fichier `COPYRIGHTS` (`system.file("COPYRIGHTS", package = "qesR")`)
+donne chaque fichier, sa source et sa licence.

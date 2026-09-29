@@ -326,8 +326,6 @@ questionnaire.
 The benchmark tables are in `inst/extdata/validation/` of the source
 repository, with the source of every row; the installed package
 (`system.file("extdata", "validation", package = "qesR")`) has only the
-census margins. The recorded results of the studies released under CC0
-are in `validation_report.csv` there; those of
-`qes2022`, whose licence (CC BY-NC 4.0) does not allow qesR to ship its
-aggregates, are computed on this page from your copy of the file at build
-time.
+census margins. The recorded results of every study are in
+`validation_report.csv` there; those of `qes2022` keep the study's licence,
+CC BY-NC 4.0 (the file `COPYRIGHTS` of the package).

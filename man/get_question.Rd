@@ -30,8 +30,8 @@ names a single column): \code{get_question(d, "q1")} never answers for \code{q10
 An unknown name is an error of class \code{qesR_error_unknown_variable} that
 suggests near matches. The text returned is the question of
 \code{\link[=qes_question]{qes_question()}} when the study is known, else the column's label; when
-the source cut the question (the 80-character labels of \code{qes2022}), a
-warning of class \code{qesR_warning_truncated} says so. \code{full} no longer
+the source cut the question, a warning of class \code{qesR_warning_truncated}
+says so. \code{full} no longer
 changes the result: the text is always the most complete one qesR has.
 }
 \examples{

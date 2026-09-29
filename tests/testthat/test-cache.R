@@ -349,7 +349,9 @@ test_that("the disk-cache tip is shown once, after the second download, in inter
 # ---- listing and clearing ------------------------------------------------------------------
 
 # Put fake files in the cache (no network): the fixture catalog's qes2018
-# questionnaire (102) and qes_fixture_b codebook (202), plus a 2022-style shard.
+# questionnaire (102) and qes_fixture_b codebook (202), plus a metadata file
+# of the kind qesR 0.5.0 to 0.7.0 built for qes2022 (v1/shards/), which qesR
+# no longer lists but still clears.
 seed_cache <- function() {
   root <- qesR:::.qes_cache_root()
   qesR:::.qes_cache_prepare(root, "session")
@@ -358,7 +360,7 @@ seed_cache <- function() {
   dir.create(file.path(root, "v1", "shards"))
   a <- file.path(host, "102-fedcba9876543210fedcba9876543210.pdf")
   b <- file.path(host, "202-ffeeddccbbaa99887766554433221100.pdf")
-  s <- qesR:::.qes_cache_shard_path(root, "qes2018", "0123456789abcdef0123456789abcdef", 1, "variables")
+  s <- file.path(root, "v1", "shards", "qes2018-0123456789abcdef0123456789abcdef-s2.variables.csv")
   writeLines("a", a)
   writeLines("bb", b)
   writeLines("variable", s)
@@ -366,17 +368,17 @@ seed_cache <- function() {
   list(root = root, a = a, b = b, shard = s)
 }
 
-test_that("qes_cache_info() lists files and shards with their study", {
+test_that("qes_cache_info() lists the files with their study, not old metadata shards", {
   local_cache_dir()
   local_fixture_catalog()
   paths <- seed_cache()
   info <- qes_cache_info()
-  expect_identical(nrow(info), 3L)
-  expect_identical(info$study, c("qes2018", "qes2018", "qes_fixture_b"))
-  expect_identical(info$kind, c("file", "shard", "file"))
-  expect_identical(info$file_id, c("102", NA, "202"))
-  expect_identical(info$md5[2], "0123456789abcdef0123456789abcdef")
-  expect_identical(info$bytes, as.numeric(file.size(c(paths$a, paths$shard, paths$b))))
+  expect_identical(nrow(info), 2L)
+  expect_identical(info$study, c("qes2018", "qes_fixture_b"))
+  expect_identical(info$kind, c("file", "file"))
+  expect_identical(info$file_id, c("102", "202"))
+  expect_identical(info$md5[1], "fedcba9876543210fedcba9876543210")
+  expect_identical(info$bytes, as.numeric(file.size(c(paths$a, paths$b))))
   expect_s3_class(info$retrieved, "POSIXct")
   expect_identical(attr(info, "mode"), "disk")
   expect_identical(attr(info, "dir"), paths$root)
@@ -400,7 +402,8 @@ test_that("qes_cache_clear(older_than =) removes only old files", {
   Sys.setFileTime(paths$b, Sys.time() - 40 * 86400)
   expect_identical(qes_cache_clear(older_than = 30), paths$b)
   expect_identical(qes_cache_clear(older_than = as.difftime(365, units = "days")), character(0))
-  expect_identical(nrow(qes_cache_info()), 2L)
+  expect_identical(nrow(qes_cache_info()), 1L)
+  expect_true(file.exists(paths$shard))
   expect_error(qes_cache_clear(older_than = -1), class = "qesR_error_input")
   expect_error(qes_cache_clear(older_than = "old"), class = "qesR_error_input")
 })
@@ -410,8 +413,8 @@ test_that("qes_cache_clear(older_than =) forgets the metadata of the files it re
   local_fixture_catalog()
   paths <- seed_cache()
   memo <- qesR:::.qes_dict_cache
-  keys <- c("shard:qes2018:0123456789abcdef0123456789abcdef", "index:qes2018:1:0",
-            "shard:qes_fixture_b:ffeeddccbbaa99887766554433221100")
+  keys <- c("data:qes2018:0123456789abcdef0123456789abcdef", "index:qes2018:1:0",
+            "data:qes_fixture_b:ffeeddccbbaa99887766554433221100")
   for (k in keys) assign(k, list(), envir = memo)
   withr::defer(suppressWarnings(rm(list = keys, envir = memo)))
   Sys.setFileTime(paths$shard, Sys.time() - 40 * 86400)
@@ -428,7 +431,7 @@ test_that("qes_cache_clear(older_than =) also removes old interrupted downloads"
   part <- file.path(dirname(paths$a), "qesR-123.part")
   Sys.setFileTime(part, Sys.time() - 40 * 86400)
   expect_identical(qes_cache_clear(older_than = 30), part)
-  expect_identical(nrow(qes_cache_info()), 3L)
+  expect_identical(nrow(qes_cache_info()), 2L)
 })
 
 test_that("qes_cache_clear() never follows a symbolic link out of the cache", {
@@ -504,7 +507,7 @@ test_that("qes_cache_info() prints compactly, with paths relative to the cache",
   # the column itself stays absolute
   expect_true(all(startsWith(info$path, paths$root)))
   # a row subset keeps the class and the attributes; a column subset is plain
-  one <- info[info$kind == "shard", ]
+  one <- info[info$study == "qes2018", ]
   expect_s3_class(one, "qes_cache_info")
   expect_identical(attr(one, "dir"), paths$root)
   expect_no_error(capture.output(print(one)))

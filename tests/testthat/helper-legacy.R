@@ -4,12 +4,9 @@
 # the spec. The fake Dataverse therefore serves, for every study of the
 # spec, the synthetic data of .qes_synthetic() (the real variable names,
 # every mapped code, each wave's n_cases members; no respondent), built
-# once per session.
-#
-# The synthetic qes2022 has no value labels: the spec holds only their
-# hashes (OD3), so its label check (V-D3) cannot pass on made-up data. The
-# fixture skips the data checks of qes2022 only; they run on the real file
-# in the live tests, and on synthetic CC0 studies here.
+# once per session. The value maps quote every study's labels (qes2022's
+# too, since OD3 was lifted), so the synthetic data carry them and pass the
+# label check (V-D3) of every study.
 
 legacy_synthetic_env <- new.env(parent = emptyenv())
 
@@ -72,13 +69,9 @@ local_fake_legacy <- function(data = list(), fail = character(0), held = FALSE, 
   syn <- legacy_synthetic()
   syn[names(data)] <- data
   log <- local_fake_dataverse(data = syn, fail = fail, .env = .env)
-  check <- getFromNamespace(".qes_hz_check_study", "qesR")
   get_spec <- getFromNamespace(".qes_spec_get", "qesR")
   test_spec <- if (isTRUE(held)) legacy_held_spec() else legacy_signed_spec()
   testthat::local_mocked_bindings(
-    .qes_hz_check_study = function(sub, d, study, verified, stand_in) {
-      if (identical(study, "qes2022")) invisible(NULL) else check(sub, d, study, verified, stand_in)
-    },
     .qes_spec_get = function(spec = NULL, validate = "error") {
       if (is.null(spec)) test_spec else get_spec(spec, validate)
     },

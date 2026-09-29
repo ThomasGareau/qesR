@@ -1,3 +1,61 @@
+# qesR 0.7.1
+
+qesR 0.7.1 ships the metadata of the 2022 Quebec Election Study
+(`qes2022`), as it does for the other studies: its codebook, question text,
+value labels and missing codes work offline, with no download. Until now
+qesR shipped none of it, because the study is licensed CC BY-NC 4.0 (design
+decision OD3), and built it at runtime from the user's own copy of the data
+file. The package's owner lifted OD3 on 2026-09-28. These files keep the
+study's licence: the `qes2022` content of the files listed in
+`inst/COPYRIGHTS` (section 2) is CC BY-NC 4.0, with the attribution given
+there, and is not covered by the MIT licence of qesR, which covers the
+package code only. `get_qes()` returns the same data as in 0.7.0, and the
+harmonized results are unchanged (specification 4.2.0: no row, map, gate,
+grade, marginal or column hash changed). The dictionary no longer lists the
+values of continuous columns such as weights, whose text differed across
+platforms and failed the live check of 0.7.0 on Linux.
+
+## `qes2022` metadata ships with the package
+
+- `qes_codebook("qes2022")`, `qes_question()`, `qes_search()`, `qes_missing()`, the codebook attached by `get_qes()` and the soft-deprecated codebook functions (`get_codebook()`, `format_codebook()`, `get_value_labels()`, `get_question()`) work offline for `qes2022`: no data file is read or downloaded to describe it, and nothing is written to the cache. The shipped dictionary (version 1.1.0) holds its 718 variables with the labels of the data file, the value labels, the unweighted count of each code and the missing type of each missing-value code, and the question text of 464 variables (448 of them also in French), quoted from the study's bilingual codebook (`question_source = "codebook"`, `doc_ref = "7449514:<question>"`). The question of an item of a grid is the grid's stem followed by the item in brackets (for `cps_leadertherm_1`, the leader thermometer's stem followed by the leader's name), and that of a typed-text box the question followed by the option that opens it (for `cps_votechoice1_8_TEXT`, "Which party do you think you will vote for? [Another party (please specify)]", as in the harmonization specification). The 16 variables worded in English only are the codebook's technical variables (start and end dates, durations, response id, language, riding). 1,294 value labels have their French wording from the codebook (`label_fr`): every labelled answer of a variable whose codebook entry gives the French options, so `qes_search(lang = "fr")` finds `qes2022` items by their French question text and French answer labels.
+- Results change: the question text of `qes2022` is the codebook's, never cut. Until 0.7.0 it was the variable label of the data file for every labelled variable, which the Stata format cuts at 80 characters (`question_truncated = TRUE` for 461 of its 716 labelled variables, `question_source = "file"`, `doc_ref = "7449514"`). The variables the codebook does not word (254: the display-order variables `*_DO_*` and `*_ADO_*`, the click timers `timer_govresp_*`, the derived `pid_fr` and `fr_pid_pr`, and the four weights) have `question = NA`, as the variables of the other studies whose questionnaire does not word them; their label is unchanged. The labels, value labels, missing types and counts are those 0.5.0 to 0.7.0 built from the data file (identical, checked on the pinned file).
+- `qes_search()` searches `qes2022` like every other study: no study is "not searchable yet" any more, and the message for a study whose description does not ship (only a test catalog has one) is reworded.
+- The runtime "shard" is gone: qesR no longer builds `qes2022` metadata from the data file or keeps it in the download cache. `qes_cache_info()` lists downloaded files only (its `kind` column is always `"file"`). The `shards` folder that 0.5.0 to 0.7.0 wrote into a disk cache is ignored, and `qes_cache_clear()` deletes it (all of it, or with `studies = "qes2022"` or `older_than`). The shipped `inst/extdata/dict/shard_rules.csv` is removed: its rules are applied to the shipped tables.
+- A printed codebook of `qes2022` (`print(qes_codebook("qes2022"))`) and the harmonization reference (`vignette("harmonization-reference", package = "qesR")` and its French version) end their header with the licence notice of its metadata: the study, its authors, year and DOI, CC BY-NC 4.0 and the licence's URL, that qesR adapted it (where `COPYRIGHTS` lists the changes and the files), and that it is not covered by qesR's MIT licence. Printed `qes_search()` results that include `qes2022` end with it. The same notice is the attribute `licence_notice` of a `qes2022` codebook and of `qes_question()` and `qes_search()` results that include `qes2022`, so that a saved or exported copy keeps it, and `qes_cite("qes2022")` ends its text citation with the licence and its URL.
+- The catalog version is now 2.3.0: `metadata_shipped` is `TRUE` for `qes2022` (and for every study of the catalog). A study's metadata ships when it is released under CC0 or under CC BY-NC 4.0.
+
+## The dictionary lists codes, not the values of continuous columns
+
+- The values table of the shipped dictionary (version 1.1.0) lists every labelled code of a variable, and every observed code of a numeric variable with at most 50 distinct codes only when they are all whole numbers and the variable is not a weight or an id. Until 0.7.0 it also listed the observed values of continuous columns with at most 50 distinct values, keyed by their text with 15 significant digits (`"1.43011282409"`): the weights of `qes2007_panel` (`pond`, `pondam1`, `pond_tot_am1`, ...), `qes1998` and `qes1998_createc` (`poids`) and `qes1998_crop` (`ponderc`), and the proportions and residual of `qes2007_panel` (`prop_*`, `s_res_ML`), 564 rows in all. That text depends on the platform and the R version, so the live check that the shipped dictionary describes the pinned files failed on Linux with R 4.6.1 (the `live` workflow on tag v0.7.0). Every listed code is now a whole number written without decimals, the same text everywhere; a test checks it, offline and on the pinned files.
+- Results change: `qes_codebook(layout = "long")` gives these 23 continuous variables one row with `value = NA`, like any variable without value labels, instead of one row per distinct value. Their labels and the data are unchanged.
+
+## Harmonization specification 4.2.0
+
+- The 18 crosswalk rows of `qes2022` give their question wording in English and French (`wording_en`, `wording_fr`), quoted from its codebook, and its 65 value-map rows the value labels of the data file (`source_label`) instead of the md5 hashes of those labels. `qes_spec("crosswalk")` and the harmonization reference show them.
+- `gates.csv` and `expected/marginals.csv` gain the counts of `qes2022` (252 gate cells, 225 marginal cells), which the offline checks V-D and V-P1 now run on with the other studies, in the tests and in CI. They are the counts the build-ignored folder `data-raw/nc/` of the source repository held until now, recomputed on the pinned file (identical).
+- The release check V-S11 no longer forbids wording and labels for a study whose metadata does not ship. MINOR: keys are only added to `expected/`.
+
+## Validation
+
+- The recorded validation report (`inst/extdata/validation/validation_report.csv`, in the source repository only, with the official results it is computed from) now holds the rows of `qes2022`, and the weekly live test gates them like those of the other studies: its weighted V-L2 index is 7.96, the baseline of 8.0 of design.md section 8.3. The weekly job uploads `inst/COPYRIGHTS` with the report, as the licence notice of its `qes2022` rows.
+- The test fixture of the columns of qesR 0.4.4 (`tests/testthat/fixtures/v044-get-qes-names.csv`) gives the `NA` count of each `qes2022` column, as it does for the other studies. The "What changed" table of 0.7.0 below now lists `qes2022` too.
+
+## Licence and CRAN
+
+- The MIT licence covers the package code only. `inst/COPYRIGHTS` says so first, then lists the third-party content by source and licence: the CC0 study metadata; in section 2 the files that hold `qes2022` metadata, licensed CC BY-NC 4.0 and not MIT, with the attribution the licence requires (authors, title, DOI, licence and its URL, the changes qesR made); and the Statistics Canada census counts, with the notice of the Statistics Canada Open Licence. A test checks that the list matches the shipped files. `DESCRIPTION` keeps `License: MIT + file LICENSE` (and `LICENSE` its two lines); its `Copyright` field and the end of its `Description` say that the MIT licence covers the code only and point to `inst/COPYRIGHTS`, and `License_restricts_use: yes` and `License_is_FOSS: no` record that the package as distributed holds CC BY-NC 4.0 content (which R's licence database classes as restricting use and not FOSS). `LICENSE.md`, the licence page of GitHub and of the website, opens with the same statement before the MIT text. The README, the website's home page, `?qesR-package` and `?qesR-fr` have a short Licence section, in English and French.
+- `cran-comments.md` tells the CRAN team that these files carry CC BY-NC 4.0 and asks whether that is acceptable; if it is not, qesR can fetch them at runtime instead.
+
+## Documentation
+
+- Installation: the README (in English and French), the website's home page and the getting-started vignettes (`get-started`, `fr-demarrage`) now give the GitHub installation first, `remotes::install_github("ThomasGareau/qesR")`, and note `install.packages("qesR")` for once qesR is accepted on CRAN.
+- The website articles on support for sovereignty (`analysis-sovereignty`, `fr-analyse-souverainete`) say that the wording of `qes2022` in their Table 1 is quoted, in English and French and not truncated, from its bilingual codebook, under the study's licence (until 0.7.0 it was its variable label, in English only, cut at 80 characters).
+
+## Development
+
+- The weekly `live` workflow keeps the originals in an absolute directory outside the checkout (`${{ runner.temp }}/qesr-cache`): `actions/cache` rejects the relative path `../qesr-cache` of 0.7.0 ("Relative pathing '.' and '..' is not allowed"), so its cache was never saved.
+- The folder `data-raw/nc/` is removed: the aggregates of `qes2022` are in the shipped files. `data-raw/build_sources.R`, `project_marginals.R`, `spec_check.R`, `build_hashes.R` and `build_validation.R` treat `qes2022` like every study (`QESR_REQUIRE_NC` is gone), and `data-raw/compare_legacy.R` counts it in NEWS.
+- `data-raw/extract_questions.R` drafts the wording of `qes2022` (`data-raw/questions/qes2022.csv`) and the French labels of its codes and its select-all items (`qes2022_values.csv`) from a `pdftotext -layout` copy of the codebook (the item of a grid or the answer option that wraps onto the next line is read whole, an option whose ")" the PDF lost or that carries a footnote marker is read, a compound word cut after its hyphen at a line end, "ci-dessous", is joined, and `cps_Duration__in_seconds_`, which the codebook spells `cps__Duration_in_seconds_`, is found); the drafts are marked `reviewed = FALSE` until checked by hand. `data-raw/questions/missing_codes.csv` holds the study-wide rule that `-99` is item nonresponse (the codebook, p. 7), and `missing_labels.csv` the labels that type `qes2022`'s "don't know" and "refused" codes.
+
 # qesR 0.7.0
 
 qesR 0.7.0 switches the legacy functions to the harmonization engine:
@@ -33,10 +91,16 @@ the census margins of Statistics Canada. `get_decon()` is soft-deprecated.
 
 <!-- legacy-table: start (generated by data-raw/compare_legacy.R) -->
 
-Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0, for the studies whose metadata ships (the counts of `qes2022`, CC BY-NC, are not published here). The 0.4.4 counts are over the rows 0.4.4 kept (it dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row). Columns and studies not listed are unchanged since 0.5.0.
+Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0 (the counts of `qes2022`, published since 0.7.1, are CC BY-NC 4.0 like its other metadata). The 0.4.4 counts are over the rows 0.4.4 kept (it dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row). Columns and studies not listed are unchanged since 0.5.0.
 
 | Column | Study | 0.4.4 | 0.5.0 | 0.7.0 | Why |
 |---|---|---|---|---|---|
+| `year_of_birth` | `qes2022` | 0 | 0 | 1,519 | cps_yob read as the year its value label gives (codes 1-91 are labelled with years) |
+| `income` | `qes2022` | 1,521 | 1,482 | 1,444 | An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0); amounts written in full (100000, not 1e+05) |
+| `turnout` | `qes2022` | 1,322 | 0 | 1,215 | Reported turnout from the post-election wave (pes_turnout) |
+| `vote_choice` | `qes2022` | 1,432 | 0 | 1,101 | The reported vote of the post-election wave (pes_votechoice) |
+| `federal_pid` | `qes2022` | 1,521 | 1,521 | 1,520 | -99 (item not answered) is a missing value (0.4.4 category Don't know / Refused) |
+| `vote_choice_timing` | `qes2022` |  | 0 | 1,521 | vote_choice now holds the reported vote in this study |
 | `age` | `qes2018` | 3,031 | 3,031 | 3,072 | The age item (agenum) of the respondents who gave no year of birth |
 | `age_group` | `qes2018` | 2,802 | 2,802 | 2,839 | Age bands of the respondents who gave their age (agenum) but no year of birth |
 | `born_canada` | `qes2018` | 3,072 | 0 | 3,047 | q69 with Canadian-born people outside Quebec as Yes (0.5.0 blanked the 0.4.4 coding) |
@@ -77,8 +141,6 @@ Values (non-missing cells) of the `get_qes_master()` columns that changed in 0.7
 | `vote_choice` | `qes2007_panel` | 2,062 | 2,055 | 1,494 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave; nonvoters, spoiled ballots, don't know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don't know / Refused) |
 | `vote_choice` | `qes1998` | 1,483 | 0 | 1,126 | The reported vote of the post-election recontact (q3post) |
 | `vote_choice_timing` | `qes1998` |  | 0 | 1,483 | vote_choice now holds the reported vote in this study |
-
-In `qes2022`: `year_of_birth`, cps_yob read as the year its value label gives (codes 1-91 are labelled with years); `income`, an amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0); amounts written in full (100000, not 1e+05); `turnout`, reported turnout from the post-election wave (pes_turnout); `vote_choice`, the reported vote of the post-election wave (pes_votechoice); `federal_pid`, -99 (item not answered) is a missing value (0.4.4 category Don't know / Refused); `vote_choice_timing`, vote_choice now holds the reported vote in this study.
 
 <!-- legacy-table: end -->
 
@@ -305,7 +367,7 @@ code as the v0.4.4 baseline of `dev/legacy-diff.md`), and record
   - Stata `float` columns (weights such as `pond` in `qes2012` and `qes2018`, `cps_time` in `qes2022`) keep their stored precision instead of 7 printed digits (relative differences below 1e-7);
   - open-text answers no longer carry stray quote characters (`qes2007_panel`, `qes2018_panel`), and blank answers are `""` instead of `" "`;
   - codes are stored as doubles instead of integers.
-- `qes2007` now reads the SPSS file of its deposit instead of the Stata twin: both hold the same data, and the SPSS file has the complete labels. Both files store most answer codes as zero-padded text (`"01"`); qesR reads them as numbers, blanks as `NA`, in both files, so `get_qes("qes2007", file = "STATA")` also gives the numbers, names and `NA` counts of 0.4.4. (Dataverse's tab-delimited copy keeps these codes as quoted text; 0.4.4 had numbers because its text reader converted them.) The same holds for the three interviewer-number columns of `qes2012_panel`. These conversions are listed in the catalog (`type_fixes.csv`). The catalog version is now 2.2.0: the `qes2007` pin changed, and `enums.csv` gained the vocabulary of the harmonization spec (`block`, `target_type`, `election_ref_rule`, `date_format`, `spec_change` and the `dk_offered` value `unknown`) and the missing-value reason `not_reviewed`, set by `qes_harmonize()`.
+- `qes2007` now reads the SPSS file of its deposit instead of the Stata twin: both hold the same data, and the SPSS file has the complete labels. Both files store most answer codes as zero-padded text (`"01"`); qesR reads them as numbers, blanks as `NA`, in both files, so `get_qes("qes2007", file = "STATA")` also gives the numbers, names and `NA` counts of 0.4.4. (Dataverse's tab-delimited copy keeps these codes as quoted text; 0.4.4 had numbers because its text reader converted them.) The same holds for the three interviewer-number columns of `qes2012_panel`. These conversions are listed in the catalog (`type_fixes.csv`). The catalog version became 2.2.0: the `qes2007` pin changed, and `enums.csv` gained the vocabulary of the harmonization spec (`block`, `target_type`, `election_ref_rule`, `date_format`, `spec_change` and the `dk_offered` value `unknown`) and the missing-value reason `not_reviewed`, set by `qes_harmonize()`.
 - Labels come from the data file itself, never from Dataverse's DDI metadata or from a variable name:
   - `qes2012`: labels in their original case and up to 256 characters, from the SPSS twin of the same data (0.4.4 returned the Stata file's labels, lowercased and cut at 80 characters); names and values are still those of the Stata file;
   - `qes1998`: the panel file's own labels (0.4.4 attached labels from another file of the deposit);

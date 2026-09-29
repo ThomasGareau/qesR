@@ -7,10 +7,11 @@
 qes_cache_info()
 }
 \value{
-A data frame with one row per cached file: \code{study}, \code{file_id}
-(\code{NA} for shards), \code{md5} (of the file, or for a shard of the data file it
-was built from), \code{bytes}, \code{retrieved} (modification time), \code{kind}
-(\code{"file"} or \code{"shard"}) and \code{path}. Attributes \code{mode} (the cache mode)
+A data frame with one row per cached file: \code{study}, \code{file_id},
+\code{md5}, \code{bytes}, \code{retrieved} (modification time), \code{kind} (always
+\code{"file"}: qesR 0.5.0 to 0.7.0 also listed the \code{qes2022} metadata they
+built, \code{"shard"}, which now ships with the package) and \code{path}.
+Attributes \code{mode} (the cache mode)
 and \code{dir} (the cache directory, \code{NA} in mode \code{"none"}). The data frame
 has class \code{c("qes_cache_info", "data.frame")} and prints compactly: the
 mode, directory and total size once, then each file with its size and
@@ -25,8 +26,8 @@ son chemin relatif au dossier du cache ; la colonne \code{path} reste
 absolue, et \code{as.data.frame()} donne toutes les colonnes.
 }
 \description{
-\code{qes_cache_info()} lists the data files, documents and metadata shards that
-qesR has kept in its download cache, with the study each belongs to. It
+\code{qes_cache_info()} lists the data files and documents that qesR has kept
+in its download cache, with the study each belongs to. It
 only reads the cache directory: it makes no network request and creates
 nothing.
 }

@@ -35,9 +35,7 @@
 #' default leaves it alone.
 #'
 #' `qes_missing()` uses the codebook [get_qes()] attached to `x`, else the
-#' study's metadata; for `qes2022`, whose metadata is not shipped, it uses
-#' the metadata already in the cache or the labels on the columns of `x`. It
-#' never downloads anything.
+#' study's metadata shipped with qesR. It never downloads anything.
 #'
 #' @section En français:
 #' `qes_missing()` remplace par `NA` les codes qui représentent une

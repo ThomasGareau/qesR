@@ -58,19 +58,13 @@
   )
 }
 
-# The recorded report (baselines); no rows where it is not installed. Rows
-# of studies whose aggregates cannot ship (qes2022, OD3) are kept in the
-# build-ignored data-raw/nc/ and passed in `extra`.
-.qes_validation_recorded <- function(extra = NULL) {
-  out <- if (.qes_validation_has("validation_report.csv")) {
+# The recorded report (baselines); no rows where it is not installed.
+.qes_validation_recorded <- function() {
+  if (.qes_validation_has("validation_report.csv")) {
     .qes_read_csv(.qes_validation_file("validation_report.csv"), "validation_report")
   } else {
     .qes_val_empty()
   }
-  if (!is.null(extra)) {
-    out <- rbind(out, extra)
-  }
-  out
 }
 
 # The targets the report reads.

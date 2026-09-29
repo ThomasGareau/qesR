@@ -135,9 +135,9 @@ ggplot(sov, aes(x = year, y = pct)) +
   `qes2022` asked it during the campaign (its `cps_` wave), the others after
   the election, and the 2018 and 2022 questions add "today" (Table 1). The
   figure shows one point per study and does not join them into a series.
-- `qes2022`'s question text is its variable label, in English only, which
-  its data file cut at 80 characters (`truncated`); the full wording is in
-  its questionnaire (`qes_docs("qes2022")`).
+- `qes2022`'s wording is quoted, in English and French and not truncated,
+  from its bilingual codebook (`qes_docs("qes2022")`). That wording ships
+  under the study's licence, CC BY-NC 4.0 (`qes_cite("qes2022")`).
 - For the other studies, read their own question with `get_qes()` and
   `qes_question()`; comparing it with the independence question needs care,
   because the wording differs.

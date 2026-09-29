@@ -13,27 +13,25 @@
 # client (User-Agent "qesR/<ver> R/<ver>", md5-verified, cached). The package
 # is loaded from the source tree with pkgload.
 #
-# It harmonizes every study the spec covers and writes the report:
-#   * inst/extdata/validation/validation_report.csv: the rows of the studies
-#     whose metadata ships (CC0). These are the recorded baselines of the
-#     gated rows (V-L2 recall and the census margins, weighted): the live
-#     test (tests/testthat/test-validation-live.R) fails when a value rises
-#     more than 2.0 points above them;
-#   * data-raw/nc/validation_qes2022.csv: the rows of qes2022, whose
-#     aggregates do not ship (OD3; data-raw/ is build-ignored).
+# It harmonizes every study the spec covers and writes the report,
+# inst/extdata/validation/validation_report.csv (build-ignored, with the
+# official results it is computed from; inst/COPYRIGHTS, section 3): every
+# study, qes2022 included (its rows are CC BY-NC 4.0, section 2). These are
+# the recorded baselines of the gated rows (V-L2 recall and the census
+# margins, weighted): the live test (tests/testthat/test-validation-live.R)
+# fails when a value rises more than 2.0 points above them.
 # With --out <file> it also writes the whole report there (the aggregates-only
 # artifact of the weekly live job, .github/workflows/live.yml), each row with
 # its recorded baseline and gate status. Its qes2022 rows are CC BY-NC 4.0,
-# not MIT: the job uploads data-raw/nc/README.md, their licence and
-# attribution notice, with the report.
+# not MIT: the job uploads inst/COPYRIGHTS, their licence and attribution
+# notice, with the report.
 # With --check it writes neither recorded file and fails when the report
 # differs from them (the recorded baselines are stale). The weekly job runs it
 # for information only: what fails the job is the 2.0-point gate of the live
 # test.
 #
 # How a baseline may move. Before writing, the new report is gated against
-# the record it replaces (with the qes2022 rows of data-raw/nc/ when
-# present). A gated row (weighted V-L2 recall or weighted census index) that
+# the record it replaces. A gated row (weighted V-L2 recall or weighted census index) that
 # rises more than 2.0 points above its recorded value stops the script with
 # status 1 and nothing is written, unless --accept-regressions is given: the
 # accepted rows are then printed and written anyway. A fall, a smaller rise,
@@ -50,22 +48,12 @@ if (nzchar(cache_dir)) {
 }
 
 report <- .qes_validation_run("all")
-cat_ <- .qes_catalog()$studies
-shipped <- cat_$study[cat_$metadata_shipped %in% TRUE]
-files <- list(
-  list(path = file.path("inst", "extdata", "validation", "validation_report.csv"),
-       rows = report$study %in% shipped),
-  list(path = file.path("data-raw", "nc", "validation_qes2022.csv"),
-       rows = report$study == "qes2022")
-)
-stopifnot(all(report$study %in% c(shipped, "qes2022")))
+path <- file.path("inst", "extdata", "validation", "validation_report.csv")
 
 gate_cols <- c("study", "check", "variable", "weight", "value", "baseline")
 if (!check_only) {
   # gate the new report against the record it replaces
-  nc_old <- files[[2]]$path
-  old_extra <- if (file.exists(nc_old)) .qes_read_csv(nc_old, "validation_report") else NULL
-  old_gate <- .qes_validation_gate(report, .qes_validation_recorded(old_extra))
+  old_gate <- .qes_validation_gate(report, .qes_validation_recorded())
   regressed <- old_gate[old_gate$status %in% "fail", gate_cols]
   if (nrow(regressed)) {
     cat("Gated rows more than 2.0 points above the recorded value:\n")
@@ -79,27 +67,23 @@ if (!check_only) {
 }
 
 failed <- FALSE
-for (f in files) {
-  x <- report[f$rows, , drop = FALSE]
-  rownames(x) <- NULL
-  if (check_only) {
-    tmp <- tempfile(fileext = ".csv")
-    .qes_write_csv(x, tmp)
-    same <- file.exists(f$path) && identical(unname(tools::md5sum(tmp)), unname(tools::md5sum(f$path)))
-    if (!same) {
-      failed <- TRUE
-      cat(f$path, ": differs from the report on the pinned files\n")
-    }
-  } else {
-    .qes_write_csv(x, f$path)
-    cat("wrote", f$path, "(", nrow(x), "rows )\n")
+x <- report
+rownames(x) <- NULL
+if (check_only) {
+  tmp <- tempfile(fileext = ".csv")
+  .qes_write_csv(x, tmp)
+  same <- file.exists(path) && identical(unname(tools::md5sum(tmp)), unname(tools::md5sum(path)))
+  if (!same) {
+    failed <- TRUE
+    cat(path, ": differs from the report on the pinned files\n")
   }
+} else {
+  .qes_write_csv(x, path)
+  cat("wrote", path, "(", nrow(x), "rows )\n")
 }
 
 if (!is.null(out_file)) {
-  nc <- file.path("data-raw", "nc", "validation_qes2022.csv")
-  extra <- if (file.exists(nc)) .qes_read_csv(nc, "validation_report") else NULL
-  gated <- .qes_validation_gate(report, .qes_validation_recorded(extra))
+  gated <- .qes_validation_gate(report, .qes_validation_recorded())
   utils::write.csv(gated, out_file, row.names = FALSE, fileEncoding = "UTF-8")
   cat("wrote", out_file, "\n")
   bad <- gated[gated$status %in% "fail", gate_cols]

@@ -93,12 +93,19 @@
   if (!is.null(file)) {
     text <- paste0(text, " [", .qes_cite_word("file", lang), file, "]")
   }
+  # a licence that asks more than CC0 (qes2022, CC BY-NC 4.0) is named with
+  # its URL, since its data and the metadata qesR ships are under it
+  if (!is.null(s$licence) && isTRUE(s$licence %in% names(.qes_metadata_licences))) {
+    text <- paste0(text, " [", .qes_cite_word("licence", lang), s$licence, ", ",
+                   .qes_metadata_licences[[s$licence]], "]")
+  }
   text
 }
 
 .qes_cite_word <- function(word, lang) {
   words <- list(
     file = c(en = "file: ", fr = "fichier\u00a0: "),
+    licence = c(en = "licence: ", fr = "licence\u00a0: "),
     package = c(en = "R package version ", fr = "package R, version "),
     spec = c(en = "harmonization spec %s (content hash %s)",
              fr = "sp\u00e9cification d'harmonisation %s (empreinte du contenu %s)")
@@ -170,6 +177,11 @@
 #' The three 1998 surveys (`qes1998`, `qes1998_crop`, `qes1998_createc`)
 #' share one deposit, so their citations add the data file used.
 #'
+#' A study released under a licence other than CC0 has its licence and the
+#' licence's URL at the end of its text citation: `qes2022` is licensed CC
+#' BY-NC 4.0, which also covers the description of it that qesR ships (see
+#' the file `COPYRIGHTS` of the installed package).
+#'
 #' For data from [qes_harmonize()], the qesR citation also gives the
 #' harmonization spec version and content hash the values depend on.
 #'
@@ -191,6 +203,14 @@
 #'   `"bibentry"`, a `bibentry` object with the same entries; its keys are
 #'   `qesR` and the study codes. `qes_cite(style = "bibentry")` with no study
 #'   is the same object as `citation("qesR")`.
+#'
+#' @section En français:
+#' `qes_cite()` donne la citation de qesR et, pour chaque étude nommée ou
+#' chargée, celle de son dépôt Dataverse. Une étude diffusée sous une autre
+#' licence que CC0 termine sa citation texte par sa licence et l'adresse de
+#' celle-ci : `qes2022` est sous licence CC BY-NC 4.0, qui couvre aussi la
+#' description de l'étude livrée avec qesR (voir le fichier `COPYRIGHTS` du
+#' package installé).
 #'
 #' @family reproducibility
 #' @seealso [qes_studies()] for the catalog, and `citation("qesR")`.
@@ -235,4 +255,51 @@ qes_cite <- function(x = NULL, style = c("text", "bibtex", "bibentry"), lang = "
     .qes_cite_dataset_text(s, .qes_split_list(s$authors), if (is.na(file)) NULL else file, lang)
   }, character(1), USE.NAMES = FALSE)
   c(.qes_cite_package_text(lang, spec = spec), texts)
+}
+
+# ---- the licence notice of shipped metadata ----------------------------------------------
+
+# The licences under which a study's metadata ships besides CC0, with the URL
+# of each (inst/COPYRIGHTS gives the attribution each requires).
+.qes_metadata_licences <- c("CC BY-NC 4.0" = "https://creativecommons.org/licenses/by-nc/4.0/")
+
+# The attribution and licence notice of the metadata qesR ships for `study`
+# (labels, question text, counts), in `lang`; NULL for a study whose metadata
+# is CC0 or does not ship. Printed by print.qes_codebook(), print.qes_search()
+# and the harmonization reference, and kept as the attribute "licence_notice"
+# of codebooks, qes_question() and qes_search() results
+# (.qes_with_licence_notice()); inst/COPYRIGHTS (section 2) gives it in full.
+.qes_licence_notice <- function(study, lang = .qes_lang()) {
+  if (!is.character(study) || length(study) != 1L || is.na(study)) {
+    return(NULL)
+  }
+  demo <- .qes_is_demo_code(study)
+  s <- tryCatch(.qes_catalog(demo = demo)$studies, error = function(e) NULL)
+  s <- if (is.null(s)) NULL else s[s$study == study, , drop = FALSE]
+  if (is.null(s) || nrow(s) != 1L || !isTRUE(s$metadata_shipped) || !s$licence %in% names(.qes_metadata_licences)) {
+    return(NULL)
+  }
+  family <- sub(",.*$", "", .qes_split_list(s$authors))
+  and <- if (identical(lang, "fr")) " et " else " and "
+  authors <- if (length(family) > 1L) {
+    paste0(paste(family[-length(family)], collapse = ", "), and, family[length(family)])
+  } else {
+    family
+  }
+  .qes_msg("metadata_licence_notice", list(
+    study, s$title_deposit, authors, s$citation_year, paste0("https://doi.org/", s$doi),
+    s$licence, .qes_metadata_licences[[s$licence]]
+  ), lang)
+}
+
+# `x` with the attribute "licence_notice": the notices of the studies of
+# `studies` whose metadata is not CC0 (a character vector named by study), so
+# that a codebook, a qes_question() or a qes_search() result keeps its
+# attribution when it is saved or exported; no attribute when there is none.
+.qes_with_licence_notice <- function(x, studies, lang = .qes_lang()) {
+  studies <- unique(as.character(studies[!is.na(studies)]))
+  notices <- lapply(studies, .qes_licence_notice, lang = lang)
+  keep <- !vapply(notices, is.null, logical(1))
+  attr(x, "licence_notice") <- if (any(keep)) stats::setNames(unlist(notices[keep]), studies[keep]) else NULL
+  x
 }

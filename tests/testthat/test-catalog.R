@@ -127,9 +127,11 @@ test_that("checksums, sizes and dimensions are well formed", {
 })
 
 test_that("metadata_shipped follows the licence", {
+  # CC0, and CC BY-NC 4.0 since OD3 was lifted (inst/COPYRIGHTS, section 2)
   s <- shipped_catalog()$studies
-  expect_identical(s$metadata_shipped, grepl("^CC0", s$licence))
-  expect_identical(s$study[!s$metadata_shipped], "qes2022")
+  expect_identical(s$metadata_shipped, grepl("^CC0", s$licence) | s$licence == "CC BY-NC 4.0")
+  expect_true(all(s$metadata_shipped))
+  expect_identical(s$licence[s$study == "qes2022"], "CC BY-NC 4.0")
 })
 
 test_that("the first 11 studies are the qesR 0.4.4 codes, in order", {

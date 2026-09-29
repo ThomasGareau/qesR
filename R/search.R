@@ -1,8 +1,8 @@
 # Bilingual search (design.md section 6.3, slice S3).
 #
 # qes_search() looks through variable names, variable labels, question text
-# (English and French) and value labels of every study whose metadata is at
-# hand: the shipped dictionary, plus any qes2022 shard already in the cache.
+# (English and French) and value labels of every study in the shipped
+# dictionary (all the studies of the catalog, qes2022 included).
 # Text is folded with .qes_fold() (accents, then case), which uses a table
 # of code points and so gives the same answer in any locale.
 
@@ -83,20 +83,22 @@
 #' `"souverain"` finds "Souveraineté", `"quebec"` finds "Québec". Several
 #' terms separated by `|` find any of them (`"souverain|sovereign"`).
 #'
-#' The studies released under CC0 are always searchable: their description
-#' ships with qesR. `qes2022` (CC BY-NC 4.0) becomes searchable once its
-#' codebook has been built from your own copy of the data, by
-#' [qes_codebook()] or [get_qes()]; until then the printed result names it
-#' as not searchable. Question text is known for the variables whose
-#' questionnaire was matched to the data (see the `coverage` attribute).
+#' Every study is searchable offline: its description ships with qesR
+#' (for `qes2022`, under the study's licence, CC BY-NC 4.0; see
+#' `qes_cite("qes2022")`). Question text is known for the variables whose
+#' questionnaire or codebook was matched to the data (see the `coverage`
+#' attribute).
 #'
 #' @section En français:
 #' `qes_search()` trouve les variables dont le nom, l'étiquette, le texte de
 #' la question ou les étiquettes de valeurs contiennent `pattern`, sans
-#' requête réseau, en ignorant la casse et les accents. Par défaut
-#' (`lang = "both"`), la recherche porte sur le français et l'anglais ;
-#' `lang = "fr"` la limite aux textes français. Plusieurs termes séparés par
-#' `|` trouvent l'un ou l'autre.
+#' requête réseau, en ignorant la casse et les accents, dans toutes les
+#' études (la description de `qes2022` est livrée sous la licence de
+#' l'étude, CC BY-NC 4.0 : un résultat qui en contient porte son
+#' attribution dans l'attribut `licence_notice`, affichée après les
+#' résultats). Par défaut (`lang = "both"`), la recherche porte
+#' sur le français et l'anglais ; `lang = "fr"` la limite aux textes
+#' français. Plusieurs termes séparés par `|` trouvent l'un ou l'autre.
 #'
 #' @param pattern A single string. Unless `regex = TRUE` it is matched as
 #'   plain text; `|` separates alternative terms.
@@ -119,10 +121,12 @@
 #'   variable feeds in [qes_harmonize()], `;`-separated, `NA` for none) and
 #'   `matched_in`
 #'   (the fields that matched, separated by `;`). Attributes:
-#'   `not_searchable` (the requested studies whose description is not at
-#'   hand) and `coverage` (per study: `n_variables`, `n_label`,
+#'   `not_searchable` (the requested studies whose description does not
+#'   ship with qesR: none of the catalog's studies), `coverage` (per study: `n_variables`, `n_label`,
 #'   `n_question` and `n_reviewed`, the variables whose wording was checked
-#'   by hand against the questionnaire).
+#'   by hand against the questionnaire) and, when `qes2022` rows are found,
+#'   `licence_notice` (the attribution and licence, CC BY-NC 4.0, of their
+#'   description, named by study; printed after the results).
 #'
 #' @family codebooks and search
 #' @seealso [qes_codebook()] and [qes_question()] for the variables found.
@@ -172,7 +176,6 @@ qes_search <- function(pattern, studies = NULL,
     }
   }
 
-  shards <- .qes_cached_shards()
   catalog <- .qes_catalog(demo = TRUE)$studies
   rows <- list()
   coverage <- list()
@@ -185,8 +188,6 @@ qes_search <- function(pattern, studies = NULL,
       if (study %in% shipped$variables$study) {
         dict <- .qes_dict_subset(shipped, study)
       }
-    } else if (!is.null(shards[[study]])) {
-      dict <- shards[[study]]
     }
     if (is.null(dict)) {
       not_searchable <- c(not_searchable, study)
@@ -270,6 +271,8 @@ qes_search <- function(pattern, studies = NULL,
   rownames(cov) <- NULL
   attr(out, "not_searchable") <- not_searchable
   attr(out, "coverage") <- cov
+  # the attribution of metadata that is not CC0 (qes2022), for the studies found
+  out <- .qes_with_licence_notice(out, out$study)
   class(out) <- c("qes_search", "data.frame")
   out
 }
@@ -279,6 +282,7 @@ print.qes_search <- function(x, n = 20L, ...) {
   df <- as.data.frame(unclass(x), stringsAsFactors = FALSE)
   attr(df, "not_searchable") <- NULL
   attr(df, "coverage") <- NULL
+  attr(df, "licence_notice") <- NULL
   n <- suppressWarnings(as.integer(n))
   if (length(n) != 1L || is.na(n) || n < 0L) {
     n <- 20L
@@ -294,6 +298,10 @@ print.qes_search <- function(x, n = 20L, ...) {
   missing <- attr(x, "not_searchable", exact = TRUE)
   if (length(missing) > 0L) {
     cat(.qes_msg("search_not_searchable", list(.qes_q(missing))), "\n", sep = "")
+  }
+  notice <- attr(x, "licence_notice", exact = TRUE)
+  if (length(notice) > 0L && nrow(df) > 0L) {
+    cat(strwrap(notice, width = max(40L, getOption("width", 80L) - 2L)), sep = "\n")
   }
   invisible(x)
 }

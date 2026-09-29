@@ -180,8 +180,8 @@ fake_curl_error <- function(curl_class, message = "fake transport failure") {
   )
 }
 
-# Metadata built in the session (shards, tables built from data, search
-# indexes) is package state; clear it before and after a test so results
+# Metadata built in the session (tables built from data, search indexes) is
+# package state; clear it before and after a test so results
 # never depend on test order. The shipped dictionary stays.
 local_clear_dict_memo <- function(.env = parent.frame()) {
   forget <- getFromNamespace(".qes_dict_forget", "qesR")

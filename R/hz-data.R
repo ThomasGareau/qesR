@@ -11,12 +11,9 @@
 #              among a wave's members (member_rule records the membership
 #              rule they were counted under);
 #   n_rows     rows of each study's pinned file.
-# Three builders give one, and every check runs the same way on each:
-#   .qes_hz_sources_shipped()  the shipped dictionary (CC0 studies) with the
-#                              spec's gates.csv: tests and qes_spec();
-#   .qes_hz_sources_read()     the same tables for a study whose metadata
-#                              cannot ship (qes2022, OD3), from the
-#                              build-ignored data-raw/nc/: CI only;
+# Two builders give one, and every check runs the same way on each:
+#   .qes_hz_sources_shipped()  the shipped dictionary with the spec's
+#                              gates.csv: tests and qes_spec();
 #   .qes_hz_sources_data()     data frames as get_qes() returns them:
 #                              qes_spec(data = ), data-raw/build_sources.R
 #                              and, from slice HZ3, the engine.
@@ -73,8 +70,8 @@
   out
 }
 
-# The shipped dictionary of the studies whose metadata ships, with the gates
-# table of `spec`.
+# The shipped dictionary of the studies whose metadata ships (every study of
+# the catalog), with the gates table of `spec`.
 .qes_hz_sources_shipped <- function(spec) {
   dict <- .qes_dict_shipped()
   cat_ <- .qes_catalog()
@@ -93,34 +90,6 @@
                         missing_type = val$missing_type, n = val$n, stringsAsFactors = FALSE),
     gates = if (is.null(gates)) .qes_hz_empty_sources()$gates else gates[gates$study %in% studies, , drop = FALSE],
     n_rows = n_rows[!is.na(n_rows)]
-  )
-}
-
-# The aggregates of a study whose metadata cannot ship, from `dir`
-# (data-raw/nc/ in the source tree): sources_<study>_variables.csv,
-# sources_<study>_values.csv and gates_<study>.csv, written by
-# data-raw/build_sources.R. NULL when the files are not there.
-.qes_hz_sources_read <- function(dir, study) {
-  paths <- file.path(dir, c(
-    sprintf("sources_%s_variables.csv", study), sprintf("sources_%s_values.csv", study),
-    sprintf("gates_%s.csv", study)
-  ))
-  if (!all(file.exists(paths))) {
-    return(NULL)
-  }
-  v <- .qes_read_csv(paths[1], "hz_variables")
-  val <- .qes_read_csv(paths[2], "hz_values")
-  gates <- .qes_read_csv(paths[3], "spec_gates")
-  files <- .qes_catalog()$files
-  files <- files[files$study == study & files$role == "data" & files$is_default %in% TRUE, , drop = FALSE]
-  list(
-    variables = v,
-    values = data.frame(study = val$study, variable = val$variable, value = val$value,
-                        label = NA_character_, label_hash = val$label_hash,
-                        label_number = val$label_number, missing_type = val$missing_type,
-                        n = val$n, stringsAsFactors = FALSE),
-    gates = gates,
-    n_rows = stats::setNames(files$n_rows[1], study)
   )
 }
 
@@ -314,8 +283,8 @@
                       stringsAsFactors = FALSE))
   }
   # the dictionary's counts are not a substitute: it lists every observed
-  # code only for numeric columns with at most 50 codes (R/metadata.R), so
-  # an unlisted code would pass as system missing
+  # code only for numeric columns with at most 50 whole-number codes
+  # (R/metadata.R), so an unlisted code would pass as system missing
   "gates.csv has no cells for this row; run data-raw/build_sources.R"
 }
 

@@ -59,7 +59,7 @@ test_that("get_qes() reads every pinned original: names, values and keys (live)"
   local_live_originals()
   local_qes_notices_shown()
   cat <- shipped_catalog()
-  manifest <- v044_get_qes_names(with_nc = TRUE)
+  manifest <- v044_get_qes_names()
   for (s in cat$studies$study) {
     dat <- get_qes(s, with_codebook = FALSE, quiet = TRUE)
     row <- cat$files[cat$files$study == s & cat$files$role == "data" & cat$files$is_default, , drop = FALSE]
@@ -74,14 +74,9 @@ test_that("get_qes() reads every pinned original: names, values and keys (live)"
       types <- vapply(dat, storage_type, character(1))
       n_na <- vapply(dat, function(x) sum(is.na(x)), integer(1))
       expect_identical(unname(types[same]), m$type[same], info = s)
-      # the counts of qes2022 come from the build-ignored data-raw/nc/ (OD3):
-      # compared only when the tests run on the source tree
-      counted <- !is.na(m$n_na)
-      if (any(counted)) {
-        expect_identical(unname(n_na[same & counted]), as.integer(m$n_na[same & counted]), info = s)
-      }
+      expect_identical(unname(n_na[same]), as.integer(m$n_na[same]), info = s)
       # the deviations are real (a stale list would hide nothing)
-      if (any(!same) && all(counted[!same])) {
+      if (any(!same)) {
         expect_true(all(types[!same] != m$type[!same] | n_na[!same] != m$n_na[!same]), info = s)
       }
     }
@@ -259,25 +254,37 @@ test_that("the shipped dictionary describes the pinned files as the reader reads
     expect_identical(v$label[from_file], fresh$variables$label[from_file], info = s)
     expect_identical(v$na_values, fresh$variables$na_values, info = s)
     x <- shipped$values[shipped$values$study == s & shipped$values$label_source != "supplement", ]
+    # the keys are whole-number codes ("%.0f", the same text on every
+    # platform): the build lists no value of a continuous column, such as
+    # the 15-digit fractions of the qes2007_panel weights that 0.7.0 listed
+    num <- fresh$values$variable %in% fresh$variables$variable[fresh$variables$type == "numeric"]
+    expect_true(all(grepl("^-?[0-9]+$", fresh$values$value[num])), info = s)
     key <- paste(fresh$values$variable, fresh$values$value)
     i <- match(paste(x$variable, x$value), key)
-    expect_false(anyNA(i), info = s)
-    expect_identical(x$label, fresh$values$label[i], info = s)
-    expect_identical(x$n, fresh$values$n[i], info = s)
+    # rows the builder adds for a study-wide missing code in columns with
+    # more than 50 codes (data-raw/questions/missing_codes.csv: -99 of
+    # qes2022), unlabelled, with the count of the code in the column
+    added <- is.na(i)
+    expect_true(all(s == "qes2022" & x$value[added] == "-99" & x$label_source[added] == "none"), info = s)
+    for (k in which(added)) {
+      expect_identical(x$n[k], sum(unclass(data[[x$variable[k]]]) %in% -99), info = paste(s, x$variable[k]))
+    }
+    expect_identical(x$label[!added], fresh$values$label[i[!added]], info = s)
+    expect_identical(x$n[!added], fresh$values$n[i[!added]], info = s)
   }
 })
 
-test_that("the qes2022 shard describes the pinned file, and flags cut labels (live, S3)", {
+test_that("the shipped qes2022 codebook describes the pinned file (live, S3)", {
   local_live_originals()
   local_qes_notices_shown()
   cb <- qes_codebook("qes2022", quiet = TRUE)
-  expect_identical(nrow(cb), 718L)
+  data <- get_qes("qes2022", with_codebook = FALSE, quiet = TRUE)
+  expect_identical(cb$variable, names(data))
   expect_identical(sum(cb$label_source == "file"), 716L)
-  expect_gt(sum(cb$question_truncated, na.rm = TRUE), 360L)
-  age <- cb[cb$variable == "cps_age_in_years", ]
-  expect_true(age$question_truncated)
-  expect_identical(age$doc_ref, "7449514")
-  expect_identical(cb$missing_codes[cb$variable == "cps_lang_2"], "-99=not_selected")
-  expect_match(cb$missing_codes[cb$variable == "cps_votechoice1"], "10=dk", fixed = TRUE)
-  expect_true("cps_qc_referendum" %in% qes_search("referendum", studies = "qes2022")$variable)
+  # every -99 of a numeric column is typed, as the codebook says (p. 7)
+  for (v in names(data)[vapply(data, function(x) is.numeric(unclass(x)), NA)]) {
+    if (any(unclass(data[[v]]) %in% -99)) {
+      expect_match(cb$missing_codes[cb$variable == v], "-99=", fixed = TRUE, info = v)
+    }
+  }
 })

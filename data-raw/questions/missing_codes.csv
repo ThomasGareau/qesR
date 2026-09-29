@@ -1,0 +1,2 @@
+"study","variable","value","missing_type","notes"
+"qes2022","*","-99","no_answer","the codebook (p. 7): unless otherwise stated, -99 indicates that the respondent did not respond to a question or a component of a question; a code rule of a variable in qes2022_values.csv (not_selected) or a label rule in missing_labels.csv wins over it"

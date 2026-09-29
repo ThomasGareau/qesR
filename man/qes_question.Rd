@@ -27,21 +27,24 @@ that give the text: one or more \verb{<file_id>:<item>} references, the
 Dataverse file id and the question number, separated by \verb{;}, e.g.
 \code{"352010:Q19;352009:Q19"} for the English and French questionnaires; a
 bare file id when the item is not known) and \code{universe} (who was asked,
-when the questionnaire says so).
+when the questionnaire says so). For \code{qes2022}, the attribute
+\code{licence_notice} gives the attribution and licence (CC BY-NC 4.0) of the
+wording.
 }
 \description{
 \code{qes_question()} returns the question asked for each of the variables you
-name, as the study's questionnaire gives it, with where it comes from.
-Variable names must match exactly; there is no partial or fuzzy matching.
+name, as the study's questionnaire (for \code{qes2022}, its codebook) gives it,
+with where it comes from. Variable names must match exactly; there is no
+partial or fuzzy matching.
 }
 \details{
-The wording comes from the metadata of \code{\link[=qes_codebook]{qes_codebook()}}: offline for the
-studies shipped with qesR; for \code{qes2022}, from its data file, which is
-downloaded (with a message, as \code{\link[=qes_codebook]{qes_codebook()}} gives) and cached on first
-use when it is not already cached. \code{qes2022}'s question text is its data file's variable label,
-which Stata cuts at 80 characters: such rows have \code{truncated = TRUE} and
-\code{doc_ref} names the codebook document that has the full wording (see
-\code{\link[=qes_docs]{qes_docs()}}). qesR never guesses the end of a cut question.
+The wording comes from the metadata of \code{\link[=qes_codebook]{qes_codebook()}}, which ships with
+qesR for every study: no download and no network. \code{doc_ref} names the
+document and question (see \code{\link[=qes_docs]{qes_docs()}}). A text the source cut has
+\code{truncated = TRUE}; qesR never guesses the end of a cut question. The
+wording of \code{qes2022} is quoted from its codebook under the study's
+licence, CC BY-NC 4.0 (see \code{qes_cite("qes2022")}); the result then has
+the attribute \code{licence_notice}, the attribution that licence requires.
 }
 \section{En français}{
 
@@ -49,12 +52,12 @@ which Stata cuts at 80 characters: such rows have \code{truncated = TRUE} and
 chaque variable nommée, tel que le donne le questionnaire de l'étude,
 avec sa source. Les noms de variables doivent correspondre exactement.
 \code{lang = "fr"} donne le libellé français, \code{lang = "en"} l'anglais ; par
-défaut, la langue de l'étude. Un libellé coupé à 80 caractères dans le
-fichier (\code{qes2022}) est signalé par \code{truncated = TRUE}. Le libellé vient
-des métadonnées de \code{\link[=qes_codebook]{qes_codebook()}} : hors ligne pour les études livrées
-avec qesR ; pour \code{qes2022}, de son fichier de données, téléchargé (avec un
-message, comme pour \code{\link[=qes_codebook]{qes_codebook()}}) et mis en cache à la première
-utilisation s'il n'est pas déjà en cache. \code{doc_ref} donne
+défaut, la langue de l'étude. Un libellé coupé par la source est signalé
+par \code{truncated = TRUE}. Le libellé vient des métadonnées de
+\code{\link[=qes_codebook]{qes_codebook()}}, livrées avec qesR pour chaque étude (pour \code{qes2022}, le
+livre de codes bilingue de l'étude, cité sous sa licence CC BY-NC 4.0 ;
+le résultat porte alors l'attribut \code{licence_notice}, l'attribution
+qu'exige cette licence) : aucun téléchargement n'est nécessaire. \code{doc_ref} donne
 une ou plusieurs références \verb{<file_id>:<question>} séparées par \verb{;} (par
 exemple \code{"352010:Q19;352009:Q19"}, questionnaires anglais et français).
 }

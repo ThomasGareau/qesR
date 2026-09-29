@@ -53,8 +53,7 @@
     enum = "chr", value = "chr", order = "int", code = "chr", scope = "chr",
     label_en = "chr", label_fr = "chr"
   ),
-  # the dictionary (design.md section 6.1): inst/extdata/dict/*.csv.gz for the
-  # shipped studies, and the same tables for a metadata shard in the cache
+  # the dictionary (design.md section 6.1): inst/extdata/dict/*.csv.gz
   dict_variables = c(
     study = "chr", variable = "chr", position = "int", source_name = "chr",
     type = "chr", measure = "chr", var_timing = "chr", label = "chr",
@@ -68,18 +67,12 @@
     label_source = "chr", label_lang = "chr", label_en = "chr",
     label_fr = "chr", missing_type = "chr", n = "int", label_flag = "chr"
   ),
-  # missing-code rules for studies whose metadata is built at runtime (OD3):
-  # no label text, only (study, variable, value) keys; variable "*" is any
-  dict_shard_rules = c(
-    study = "chr", variable = "chr", value = "chr", missing_type = "chr",
-    evidence = "chr"
-  ),
   # the interim legacy builders (inst/extdata/legacy/, R/legacy.R)
   legacy_removed = c(
     column = "chr", studies = "chr", source_variables = "chr"
   ),
   # the studies whose values in a legacy column differ from qesR 0.4.4
-  # (data-raw/compare_legacy.R; no counts, so nothing of qes2022 ships)
+  # (data-raw/compare_legacy.R; no counts)
   legacy_changes = c(
     profile = "chr", column = "chr", study = "chr", cause = "chr"
   ),
@@ -173,23 +166,14 @@
     count = "num", share = "num", source_table = "chr", source_url = "chr",
     note = "chr"
   ),
-  # the recorded validation report (aggregates of CC0 studies only; the
-  # baselines of the V-L2 gate), written by data-raw/build_validation.R
+  # the recorded validation report (aggregates of every study, its qes2022
+  # rows CC BY-NC 4.0; the baselines of the V-L2 gate), written by
+  # data-raw/build_validation.R
   validation_report = c(
     study = "chr", check = "chr", rule = "chr", reference = "chr",
     variable = "chr", universe = "chr", level = "chr", weight = "chr",
     n = "int", estimate = "num", benchmark = "num", value = "num",
     status = "chr", note = "chr"
-  ),
-  # the same aggregates for a study whose metadata cannot ship (OD3), kept in
-  # the build-ignored data-raw/nc/ for CI: variable types and missing-code
-  # declarations, and per-code counts with label hashes instead of labels
-  hz_variables = c(
-    study = "chr", variable = "chr", type = "chr", na_values = "chr"
-  ),
-  hz_values = c(
-    study = "chr", variable = "chr", value = "chr", label_hash = "chr",
-    label_number = "num", missing_type = "chr", n = "int"
   )
 )
 

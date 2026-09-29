@@ -349,8 +349,6 @@ rapport au questionnaire.
 Les tableaux de référence se trouvent dans `inst/extdata/validation/` du
 dépôt source, avec la source de chaque ligne ; le paquet installé
 (`system.file("extdata", "validation", package = "qesR")`) n'a que les
-marges du recensement. Les résultats consignés des études diffusées sous
-CC0 s'y trouvent dans
-`validation_report.csv` ; ceux de `qes2022`, dont la licence (CC BY-NC 4.0)
-ne permet pas à qesR de fournir des agrégats, sont calculés sur cette page
-à partir de votre copie du fichier, à la construction du site.
+marges du recensement. Les résultats consignés de chaque étude s'y trouvent
+dans `validation_report.csv` ; ceux de `qes2022` gardent la licence de
+l'étude, CC BY-NC 4.0 (le fichier `COPYRIGHTS` du package).

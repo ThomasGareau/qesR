@@ -1,6 +1,6 @@
 # The shipped dictionary (slice S3, design.md sections 6.1 and 3.4): lints on
-# inst/extdata/dict/ and the demo tree, and the licence rule of OD3 (nothing
-# of qes2022 ships but variable names and codes in shard_rules.csv).
+# inst/extdata/dict/ and the demo tree. Every study ships, qes2022 included
+# (its rows are CC BY-NC 4.0; decision OD3 was lifted on 2026-09-28).
 
 dict_dir <- function(demo = FALSE) {
   if (demo) {
@@ -22,7 +22,7 @@ test_that("the dictionary files are UTF-8, LF, no BOM, and small", {
   files <- files[!grepl("^\\._", basename(files))]
   expect_setequal(
     basename(files),
-    c("variables.csv.gz", "values.csv.gz", "shard_rules.csv", "variables.csv.gz", "values.csv.gz")
+    c("variables.csv.gz", "values.csv.gz", "variables.csv.gz", "values.csv.gz")
   )
   for (f in files) {
     con <- if (grepl("\\.gz$", f)) gzfile(f, "rb") else file(f, "rb")
@@ -37,7 +37,9 @@ test_that("the dictionary files are UTF-8, LF, no BOM, and small", {
     expect_false(any(cps == 0xFFFD), info = f)
     expect_false(any(cps >= 0x80 & cps <= 0x9F), info = f)
   }
-  # design.md section 11 (S3 exit gate): the dictionary is under 1 MB
+  # design.md section 11 (S3 exit gate): the dictionary is under 1 MB,
+  # gz-compressed, with qes2022 (its 718 variables add about 70 KB)
+  expect_true(all(grepl("\\.csv\\.gz$", files)))
   expect_lt(sum(file.size(files)), 1e6)
 })
 
@@ -76,20 +78,103 @@ test_that("the tables match their schemas, keys are unique and values are closed
   }
 })
 
-test_that("every CC0 study ships; qes2022 ships no rows and no label text (OD3)", {
+test_that("every study ships, qes2022 included (OD3 lifted)", {
   st <- shipped_catalog()$studies
   d <- dict_tables()
-  expect_setequal(unique(d$variables$study), st$study[st$metadata_shipped %in% TRUE])
-  expect_false("qes2022" %in% d$variables$study)
-  expect_false("qes2022" %in% d$values$study)
+  expect_true(all(st$metadata_shipped))
+  expect_setequal(unique(d$variables$study), st$study)
   expect_identical(unique(dict_tables(TRUE)$variables$study), "qes_demo")
-  # shard rules: variable names and codes only
-  rules <- getFromNamespace(".qes_shard_rules", "qesR")()
-  expect_identical(names(rules), c("study", "variable", "value", "missing_type", "evidence"))
-  expect_identical(unique(rules$study), "qes2022")
-  expect_true(all(grepl("^(\\*|[A-Za-z][A-Za-z0-9_]*)$", rules$variable)))
-  expect_true(all(grepl("^-?[0-9]+$", rules$value)))
-  expect_true("*" %in% rules$variable)
+})
+
+test_that("qes2022 ships its labels, its codebook wording in both languages and its missing codes", {
+  d <- dict_tables()
+  v <- d$variables[d$variables$study == "qes2022", ]
+  x <- d$values[d$values$study == "qes2022", ]
+  expect_identical(nrow(v), 718L)
+  expect_identical(sum(!is.na(v$label)), 716L)
+  # the question text comes from the bilingual codebook (file 7449514), never
+  # from the variable labels, which Stata cuts at 80 characters
+  q <- v[!is.na(v$question_en) | !is.na(v$question_fr), ]
+  expect_gt(nrow(q), 400L)
+  expect_gt(sum(!is.na(q$question_fr)), 400L)
+  expect_true(all(q$question_source == "codebook"))
+  expect_true(all(startsWith(q$doc_ref, "7449514:")))
+  expect_false(any(q$question_truncated))
+  turnout <- v[v$variable == "cps_turnout", ]
+  expect_identical(turnout$question_en, "The Quebec election is scheduled for October 3, 2022. In this election, are you\u2026")
+  expect_identical(turnout$question_fr, "L'\u00e9lection au Qu\u00e9bec est pr\u00e9vue pour le 3 octobre 2022. Dans le cadre de cette \u00e9lection, \u00eates-vous...")
+  # a grid item: the stem, then the item in brackets
+  expect_match(v$question_en[v$variable == "cps_leadertherm_1"], "\\[Dominique Anglade\\]$")
+  # value labels of the file (English), with the codebook's French
+  dk <- x[x$variable == "cps_votechoice1" & x$value == "10", ]
+  expect_identical(dk$label, "Don't know")
+  expect_identical(dk$label_fr, "Je ne sais pas")
+  expect_identical(dk$missing_type, "dk")
+  expect_gt(sum(!is.na(x$label_fr)), 1000L)
+  # -99 is item nonresponse (the codebook, p. 7), except in the 102
+  # select-all items, where it is an option not ticked
+  expect_identical(sum(x$missing_type %in% "not_selected"), 102L)
+  expect_true(all(x$missing_type[x$value == "-99"] %in% c("no_answer", "not_selected", "dk", "refused", "dk_refused")))
+  expect_identical(x$missing_type[x$variable == "cps_lang_2" & x$value == "-99"], "not_selected")
+  expect_identical(x$missing_type[x$variable == "cps_yob" & x$value == "-99"], "no_answer")
+})
+
+test_that("qes2022: a variable with French labels has one for every labelled answer", {
+  # the codebook's options wrap over lines ("... qui n'est pas adjacente à
+  # une" / "grande ville (3)"), lose their ")" ("Peu (3") or carry a
+  # footnote marker ("(1)1"); none of these may drop a French label
+  d <- dict_tables()
+  x <- d$values[d$values$study == "qes2022", ]
+  with_fr <- unique(x$variable[!is.na(x$label_fr)])
+  # labelled answers the codebook gives no French for (none today)
+  exceptions <- character(0)
+  gap <- x[x$variable %in% with_fr & !is.na(x$label) & is.na(x$missing_type) & is.na(x$label_fr), ]
+  gap <- gap[!paste(gap$variable, gap$value) %in% exceptions, ]
+  expect_identical(nrow(gap), 0L, info = paste(gap$variable, gap$value, collapse = ", "))
+  fr <- function(v, code) x$label_fr[x$variable == v & x$value == code]
+  expect_identical(fr("pes_confidence_1", "2"), "Assez")
+  expect_identical(fr("pes_confidence_1", "3"), "Peu")
+  expect_identical(fr("pes_rural", "3"), "Dans une ville de taille moyenne (15k-50k personnes) qui n'est pas adjacente à une grande ville")
+  expect_identical(fr("pes_q8", "1"), "Parti libéral du Québec")
+  expect_identical(fr("pes_maileasy", "5"), "Je ne suis pas certain(e)")
+})
+
+test_that("qes2022: typed-text boxes are worded like grid items, and a misspelt name is read", {
+  d <- dict_tables()
+  v <- d$variables[d$variables$study == "qes2022", ]
+  q <- function(var, col = "question_en") v[[col]][v$variable == var]
+  # the question, then the option that opens the box, as in the spec's crosswalk
+  expect_identical(q("cps_votechoice1_8_TEXT"), "Which party do you think you will vote for? [Another party (please specify)]")
+  expect_identical(q("cps_votechoice1_8_TEXT", "question_fr"), "Pour quel parti prévoyez-vous voter? [Autre parti (veuillez spécifier)]")
+  xw <- utils::read.csv(system.file("extdata", "harmonize", "crosswalk.csv", package = "qesR"),
+                        colClasses = "character", encoding = "UTF-8")
+  row <- xw[xw$study == "qes2022" & xw$source_var == "cps_votechoice1_8_TEXT", ]
+  expect_identical(row$wording_en, q("cps_votechoice1_8_TEXT"))
+  expect_identical(row$wording_fr, q("cps_votechoice1_8_TEXT", "question_fr"))
+  text_vars <- v$variable[grepl("_TEXT$", v$variable)]
+  expect_true(all(!is.na(v$question_en[v$variable %in% text_vars])))
+  # the codebook spells it "cps__Duration_in_seconds_"
+  expect_match(q("cps_Duration__in_seconds_"), "^How long the respondent spent in the Campaign Period Survey, in seconds")
+})
+
+test_that("the values table lists codes, never the values of a continuous column", {
+  # a code of a numeric variable is a whole number written as "%.0f" (the
+  # same text on every platform); the values of a weight, an id or any
+  # column holding a fraction are not listed (0.7.0 listed the weights of
+  # qes2007_panel as 15-digit fractions, whose text differs across
+  # platforms, which failed the live check on Linux)
+  for (demo in c(FALSE, TRUE)) {
+    d <- dict_tables(demo)
+    v <- d$variables
+    x <- d$values
+    type <- v$type[match(paste(x$study, x$variable), paste(v$study, v$variable))]
+    measure <- v$measure[match(paste(x$study, x$variable), paste(v$study, v$variable))]
+    num <- x[type == "numeric", ]
+    expect_true(all(grepl("^-?[0-9]+$", num$value)), info = paste(utils::head(num$value[!grepl("^-?[0-9]+$", num$value)]), collapse = " "))
+    expect_false(any(measure %in% c("weight", "id") & x$label_source == "none"))
+  }
+  x <- dict_tables()$values
+  expect_false(any(x$study == "qes2007_panel" & x$variable %in% c("pondam1", "pond", "prop_bv", "s_res_ML")))
 })
 
 test_that("each study has as many variables as its pinned file has columns", {

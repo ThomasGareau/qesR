@@ -13,8 +13,11 @@
 # Every root qesR creates holds a ".qesR-cache" marker, and qesR deletes files
 # only under a marked root. The layout is content-addressed, with no index:
 #   <root>/v1/<host>/<file_id>-<md5>.<ext>
-#   <root>/v1/shards/<study>-<md5>-s<schema>.<variables|values>.csv
-# so a re-pinned catalog (a new md5) can never be served stale bytes. Files
+# so a re-pinned catalog (a new md5) can never be served stale bytes. A
+# disk cache used by qesR 0.5.0 to 0.7.0 may also hold the qes2022 metadata
+# those versions built at runtime, in <root>/v1/shards/ (<study>-<md5>-s<n>.
+# <variables|values>.csv): qesR no longer reads or lists it, and
+# qes_cache_clear() deletes it with the files of its study. Files
 # are written to a ".part" file, md5-checked, then renamed (.qes_request()).
 # A cached file is checked for size on every use and for md5 once per session.
 
@@ -167,6 +170,7 @@
   entries <- entries[!.qes_cache_os_litter(basename(entries))]
   depth <- lengths(regmatches(entries, gregexpr("/", entries)))
   is_dir <- dir.exists(file.path(base, entries))
+  # "shards" is the metadata folder of qesR 0.5.0 to 0.7.0, not a host
   host_ok <- grepl("^[a-z0-9.-]+$", sub("/.*$", "", entries)) & sub("/.*$", "", entries) != "shards"
   ok <- host_ok & ifelse(
     is_dir,
@@ -209,16 +213,6 @@
 .qes_cache_relative <- function(path, root) {
   rel <- substring(path, nchar(root) + 2L)
   paste(basename(root), rel, sep = "/")
-}
-
-# Where a metadata shard of `study` (built from the data file with md5 `md5`,
-# shard schema `schema`) is kept. `kind` is "variables" or "values".
-.qes_cache_shard_path <- function(root, study, md5, schema, kind = c("variables", "values")) {
-  kind <- match.arg(kind)
-  file.path(
-    root, .qes_cache_layout, "shards",
-    sprintf("%s-%s-s%s.%s.csv", study, md5, schema, kind)
-  )
 }
 
 # ---- fetching a catalog file ------------------------------------------------------------
@@ -371,8 +365,8 @@
 # file (option qesR.memo, default TRUE). Never written to disk. A key may join
 # several parts with "+": "<md5>+<donor md5>" for data read with a label
 # donor. Clearing by md5 drops every entry that has that md5 as one of its
-# parts. (Metadata built in the session, such as a qes2022 shard, has its own
-# memo in R/metadata.R; qes_cache_clear() empties both.)
+# parts. (Metadata built in the session from data has its own memo in
+# R/metadata.R; qes_cache_clear() empties both.)
 .qes_memo_get <- function(md5) {
   if (!isTRUE(getOption("qesR.memo", TRUE))) {
     return(NULL)
@@ -427,35 +421,29 @@
   name <- basename(paths)
   parent <- basename(dirname(paths))
   file_re <- "^([0-9]+)-([0-9a-f]{32})\\.([a-z0-9]+)$"
-  shard_re <- "^(.+)-([0-9a-f]{32})-s([0-9]+)\\.(variables|values)\\.csv$"
-  is_shard <- parent == "shards" & grepl(shard_re, name)
-  is_file <- parent != "shards" & grepl(file_re, name)
-  keep <- is_shard | is_file
+  keep <- parent != "shards" & grepl(file_re, name)
   if (!any(keep)) {
     return(out)
   }
   paths <- paths[keep]
   name <- name[keep]
-  is_shard <- is_shard[keep]
 
-  file_id <- ifelse(is_shard, NA_character_, sub(file_re, "\\1", name))
-  md5 <- ifelse(is_shard, sub(shard_re, "\\2", name), sub(file_re, "\\2", name))
-  study <- ifelse(is_shard, sub(shard_re, "\\1", name), NA_character_)
+  file_id <- sub(file_re, "\\1", name)
+  md5 <- sub(file_re, "\\2", name)
 
   files <- .qes_catalog(demo = TRUE)$files
   hit <- match(paste(file_id, md5), paste(files$file_id, files$md5))
   hit_id <- match(file_id, files$file_id)
   hit[is.na(hit)] <- hit_id[is.na(hit)]
-  study[!is_shard] <- files$study[hit[!is_shard]]
 
   info <- file.info(paths)
   out <- data.frame(
-    study = study,
+    study = files$study[hit],
     file_id = file_id,
     md5 = md5,
     bytes = as.numeric(info$size),
     retrieved = info$mtime,
-    kind = ifelse(is_shard, "shard", "file"),
+    kind = rep("file", length(paths)),
     path = paths,
     stringsAsFactors = FALSE
   )
@@ -464,12 +452,23 @@
   out
 }
 
+# The metadata files that qesR 0.5.0 to 0.7.0 built for qes2022 and kept in
+# <root>/v1/shards/ (no longer read or listed), with their study and time,
+# for qes_cache_clear().
+.qes_cache_legacy_shards <- function(root) {
+  paths <- .qes_cache_walk(root)
+  re <- "^(.+)-[0-9a-f]{32}-s[0-9]+\\.(variables|values)\\.csv$"
+  paths <- paths[basename(dirname(paths)) == "shards" & grepl(re, basename(paths))]
+  data.frame(study = sub(re, "\\1", basename(paths)), retrieved = file.mtime(paths),
+             path = paths, stringsAsFactors = FALSE)
+}
+
 # ---- qes_cache_info() ----------------------------------------------------------------
 
 #' List the files in the download cache
 #'
-#' `qes_cache_info()` lists the data files, documents and metadata shards that
-#' qesR has kept in its download cache, with the study each belongs to. It
+#' `qes_cache_info()` lists the data files and documents that qesR has kept
+#' in its download cache, with the study each belongs to. It
 #' only reads the cache directory: it makes no network request and creates
 #' nothing.
 #'
@@ -496,10 +495,11 @@
 #' under the name the error message gives: qesR uses it once its md5 matches
 #' the catalog.
 #'
-#' @return A data frame with one row per cached file: `study`, `file_id`
-#'   (`NA` for shards), `md5` (of the file, or for a shard of the data file it
-#'   was built from), `bytes`, `retrieved` (modification time), `kind`
-#'   (`"file"` or `"shard"`) and `path`. Attributes `mode` (the cache mode)
+#' @return A data frame with one row per cached file: `study`, `file_id`,
+#'   `md5`, `bytes`, `retrieved` (modification time), `kind` (always
+#'   `"file"`: qesR 0.5.0 to 0.7.0 also listed the `qes2022` metadata they
+#'   built, `"shard"`, which now ships with the package) and `path`.
+#'   Attributes `mode` (the cache mode)
 #'   and `dir` (the cache directory, `NA` in mode `"none"`). The data frame
 #'   has class `c("qes_cache_info", "data.frame")` and prints compactly: the
 #'   mode, directory and total size once, then each file with its size and
@@ -646,6 +646,13 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
       )
     }
     listed <- .qes_cache_list(root)
+    # the metadata of qes2022 that qesR 0.5.0 to 0.7.0 kept in the cache
+    old <- .qes_cache_legacy_shards(root)
+    listed <- rbind(listed, data.frame(
+      study = old$study, file_id = rep(NA_character_, nrow(old)), md5 = rep(NA_character_, nrow(old)),
+      bytes = rep(NA_real_, nrow(old)), retrieved = old$retrieved, kind = rep("shard", nrow(old)),
+      path = old$path, stringsAsFactors = FALSE
+    ))
     sel <- rep(TRUE, nrow(listed))
     if (!is.null(codes)) {
       sel <- sel & listed$study %in% codes
@@ -678,9 +685,9 @@ qes_cache_clear <- function(studies = NULL, older_than = NULL) {
   } else {
     removed_md5 <- sub("^[0-9]+-([0-9a-f]{32})\\..*$", "\\1", basename(removed))
     .qes_memo_clear(studies = codes, md5 = removed_md5)
-    # the metadata held in memory for every study that lost a file (a data
-    # file or a shard), not only the studies named: what is still on disk is
-    # read again when it is needed
+    # the metadata held in memory for every study that lost a file, not only
+    # the studies named: what is still on disk is read again when it is
+    # needed
     forget <- unique(c(codes, removed_studies))
     if (length(forget) > 0L) {
       .qes_dict_forget(forget)

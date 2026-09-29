@@ -31,6 +31,13 @@ if (!nzchar(json_dir) || !dir.exists(json_dir)) {
   stop("Set QESR_DV_JSON_DIR to the directory of cached dataset JSON files.", call. = FALSE)
 }
 
+# Licences under which qesR ships a study's metadata (dictionary, wording,
+# labels and aggregates), besides CC0: each has its section, with the
+# attribution it requires, in inst/COPYRIGHTS. A study under another licence
+# gets metadata_shipped = FALSE, and its metadata is built from the data at
+# runtime.
+shippable_licences <- c("CC BY-NC 4.0")
+
 root <- "."
 cat_dir <- file.path(root, "inst", "extdata", "catalog")
 cur_dir <- file.path(root, "data-raw", "catalog")
@@ -106,7 +113,7 @@ studies <- do.call(rbind, lapply(seq_len(nrow(sc)), function(i) {
     source_lang = s$source_lang,
     licence = licence,
     licence_url = lv$license$uri %||% "",
-    metadata_shipped = if (grepl("^CC0", licence)) "TRUE" else "FALSE",
+    metadata_shipped = if (grepl("^CC0", licence) || licence %in% shippable_licences) "TRUE" else "FALSE",
     publisher = d$publisher,
     citation_year = substr(lv$citationDate %||% d$publicationDate, 1, 4),
     dataset_unf = lv$UNF %||% "",

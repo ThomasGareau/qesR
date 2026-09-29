@@ -140,10 +140,10 @@ ggplot(sov, aes(x = year, y = pct)) +
   l'élection, et les questions de 2018 et de 2022 ajoutent « aujourd'hui »
   (tableau 1). La figure montre un point par étude et ne les relie pas en
   une série.
-- Le texte de la question de `qes2022` est l'étiquette de sa variable,
-  en anglais seulement (colonne `Langue`), que son fichier de données a
-  coupée à 80 caractères (`truncated`) ; le libellé complet est dans son
-  questionnaire (`qes_docs("qes2022")`).
+- Le libellé de `qes2022` est cité, en français et en anglais et sans
+  coupure, d'après son livre de codes bilingue (`qes_docs("qes2022")`). Ce
+  libellé est distribué sous la licence de l'étude, CC BY-NC 4.0
+  (`qes_cite("qes2022")`).
 - Pour les autres études, lisez leur propre question avec `get_qes()` et
   `qes_question()` ; la comparer à la question sur l'indépendance demande de
   la prudence, car le libellé diffère.

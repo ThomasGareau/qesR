@@ -39,10 +39,12 @@ A data frame of class \code{qes_search}, one row per matching variable:
 variable feeds in \code{\link[=qes_harmonize]{qes_harmonize()}}, \verb{;}-separated, \code{NA} for none) and
 \code{matched_in}
 (the fields that matched, separated by \verb{;}). Attributes:
-\code{not_searchable} (the requested studies whose description is not at
-hand) and \code{coverage} (per study: \code{n_variables}, \code{n_label},
+\code{not_searchable} (the requested studies whose description does not
+ship with qesR: none of the catalog's studies), \code{coverage} (per study: \code{n_variables}, \code{n_label},
 \code{n_question} and \code{n_reviewed}, the variables whose wording was checked
-by hand against the questionnaire).
+by hand against the questionnaire) and, when \code{qes2022} rows are found,
+\code{licence_notice} (the attribution and licence, CC BY-NC 4.0, of their
+description, named by study; printed after the results).
 }
 \description{
 \code{qes_search()} finds the variables whose name, label, question text or
@@ -52,21 +54,23 @@ hand, with no network request. The search ignores case and accents:
 terms separated by \code{|} find any of them (\code{"souverain|sovereign"}).
 }
 \details{
-The studies released under CC0 are always searchable: their description
-ships with qesR. \code{qes2022} (CC BY-NC 4.0) becomes searchable once its
-codebook has been built from your own copy of the data, by
-\code{\link[=qes_codebook]{qes_codebook()}} or \code{\link[=get_qes]{get_qes()}}; until then the printed result names it
-as not searchable. Question text is known for the variables whose
-questionnaire was matched to the data (see the \code{coverage} attribute).
+Every study is searchable offline: its description ships with qesR
+(for \code{qes2022}, under the study's licence, CC BY-NC 4.0; see
+\code{qes_cite("qes2022")}). Question text is known for the variables whose
+questionnaire or codebook was matched to the data (see the \code{coverage}
+attribute).
 }
 \section{En français}{
 
 \code{qes_search()} trouve les variables dont le nom, l'étiquette, le texte de
 la question ou les étiquettes de valeurs contiennent \code{pattern}, sans
-requête réseau, en ignorant la casse et les accents. Par défaut
-(\code{lang = "both"}), la recherche porte sur le français et l'anglais ;
-\code{lang = "fr"} la limite aux textes français. Plusieurs termes séparés par
-\code{|} trouvent l'un ou l'autre.
+requête réseau, en ignorant la casse et les accents, dans toutes les
+études (la description de \code{qes2022} est livrée sous la licence de
+l'étude, CC BY-NC 4.0 : un résultat qui en contient porte son
+attribution dans l'attribut \code{licence_notice}, affichée après les
+résultats). Par défaut (\code{lang = "both"}), la recherche porte
+sur le français et l'anglais ; \code{lang = "fr"} la limite aux textes
+français. Plusieurs termes séparés par \code{|} trouvent l'un ou l'autre.
 }
 
 \examples{

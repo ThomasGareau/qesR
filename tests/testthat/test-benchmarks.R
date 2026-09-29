@@ -1,8 +1,9 @@
 # The validation benchmarks and the recorded validation report (design.md
 # sections 5.10 and 8.3, slice HZ7; R/validation.R), offline: the shipped
-# tables are consistent, the recorded report ships no qes2022 aggregate
-# (OD3), and the report and its gate work on the synthetic qes_demo. The
-# checks on the pinned files are in test-validation-live.R.
+# tables are consistent, the recorded report covers every study (qes2022
+# included since OD3 was lifted), and the report and its gate work on the
+# synthetic qes_demo. The checks on the pinned files are in
+# test-validation-live.R.
 #
 # The official results of Elections Quebec and the recorded report are in the
 # source tree but not in the package build (inst/COPYRIGHTS, section 3): the
@@ -81,7 +82,7 @@ test_that("the census margins are distributions with a documented age cut", {
   expect_identical(sum(cen$count[cen$census_year == 2006 & cen$variable == "gender"]), 5996910)
 })
 
-test_that("the recorded report ships no qes2022 aggregate and matches the benchmarks", {
+test_that("the recorded report covers every study and matches the benchmarks", {
   skip_if_no_official()
   testthat::skip_if_not(.qes_validation_has("validation_report.csv"), "the recorded report is not installed (build-ignored)")
   rec <- .qes_validation_recorded()
@@ -89,14 +90,14 @@ test_that("the recorded report ships no qes2022 aggregate and matches the benchm
   shipped <- .qes_catalog()$studies
   shipped <- shipped$study[shipped$metadata_shipped %in% TRUE]
   expect_true(all(rec$study %in% shipped))
-  expect_false("qes2022" %in% rec$study)
+  expect_true("qes2022" %in% rec$study)
   expect_true(all(rec$status %in% c(NA, "info", "gate", "pass", "fail", "skipped")))
   expect_true(all(rec$check %in% c("recall", "turnout", "census", "construct")))
   # one V-L2 index per study with a reviewed weight, and the baselines of
   # design.md section 8.3 confirmed on the official figures (R3)
   v <- rec[rec$check == "recall" & is.na(rec$level) & rec$status %in% "gate", ]
-  expect_setequal(v$study, c("qes2007", "qes2012", "qes2014", "qes2018", "qes2018_panel"))
-  expect_equal(v$value[match(c("qes2012", "qes2014", "qes2018"), v$study)], c(8.0, 5.6, 3.2), tolerance = 0.06)
+  expect_setequal(v$study, c("qes2007", "qes2012", "qes2014", "qes2018", "qes2018_panel", "qes2022"))
+  expect_equal(v$value[match(c("qes2012", "qes2014", "qes2018", "qes2022"), v$study)], c(8.0, 5.6, 3.2, 8.0), tolerance = 0.06)
   # 1998 covers francophones only: skipped
   expect_identical(unique(rec$status[rec$study == "qes1998" & is.na(rec$level)]), "skipped")
   # the benchmark column is the official share in the study's categories

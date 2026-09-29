@@ -42,8 +42,8 @@ the canonical study code. Defaults to FALSE.}
 
 \item{quiet}{If TRUE, suppress informational output.}
 
-\item{refresh}{Ignored: the description is shipped with qesR (or kept in
-the cache). Setting it prints a one-time note.}
+\item{refresh}{Ignored: the description is shipped with qesR. Setting it
+prints a one-time note.}
 
 \item{layout}{\code{"compact"} (default: one row per variable), \code{"wide"} (the
 same, with the value labels as a list column) or \code{"long"} (one row per
@@ -86,15 +86,16 @@ printed by the codebook also names the original \code{.sav} or \code{.dta} that
 \code{variable_names_file} (the data file whose
 variable names the codebook uses), \code{files} (the study's files),
 \code{codebook_files} (its documents, as \code{\link[=qes_docs]{qes_docs()}} lists them) and
-\code{qes_provenance}.
+\code{qes_provenance}. The codebook of \code{qes2022} also has the attribute
+\code{licence_notice}: the attribution and licence (CC BY-NC 4.0) of its
+description, named by the study; keep it with any copy you share.
 }
 \description{
 \code{qes_codebook()} describes every variable of a study: its label, the
 question asked (in English or French), its value labels and which codes
-mean "don't know", "refused" or another reason for a missing answer. For
-the studies released under CC0 (every study except \code{qes2022}), the
-description ships with qesR, so the codebook needs no download and no
-network.
+mean "don't know", "refused" or another reason for a missing answer. The
+description of every study ships with qesR, so the codebook needs no
+download and no network.
 }
 \section{Where the description comes from}{
 
@@ -104,19 +105,24 @@ A label that only repeats the variable's name is not a label: \code{label} is
 then \code{NA}. Question text comes from the questionnaires deposited with the
 study (\code{question_source = "questionnaire"}; \code{doc_ref} holds one or more
 \verb{<file_id>:<question>} references separated by \verb{;}, e.g.
-\code{"352010:Q19;352009:Q19"}); \code{question} is \code{NA} when the questionnaire does not
-give it, never a copy of the variable name or of \code{label}, and never a
-machine translation. \code{qes2018}'s data file has no value labels for most
-variables: they come from the study's French questionnaire with its
-programmed answer codes (\code{label_source = "supplement"}).
+\code{"352010:Q19;352009:Q19"}), and for \code{qes2022} from its bilingual codebook
+(\code{question_source = "codebook"}, \code{doc_ref} \code{"7449514:<question>"}; the
+item of a grid is its stem followed by the item in brackets); \code{question}
+is \code{NA} when the document does not give it, never a copy of the variable
+name or of \code{label}, and never a machine translation. \code{qes2018}'s data file
+has no value labels for most variables: they come from the study's French
+questionnaire with its programmed answer codes
+(\code{label_source = "supplement"}).
 
-\code{qes2022} is licensed CC BY-NC 4.0, so qesR ships none of its metadata. Its
-codebook is built the first time you ask for it, from your own copy of the
-data file (downloaded into the cache like \code{\link[=get_qes]{get_qes()}} does), and kept in
-the cache (see \code{\link[=qes_cache_info]{qes_cache_info()}}). Its question text is the file's
-variable label, which the Stata format cuts at 80 characters: such
-questions have \code{question_truncated = TRUE}, and the full wording is in
-the codebook document named in \code{doc_ref} (see \code{\link[=qes_docs]{qes_docs()}}).
+The CC0 studies' description is in the public domain. The description of
+\code{qes2022} (its labels, question text and answer counts) is derived from
+the 2022 Quebec Election Study and carries its licence, CC BY-NC 4.0:
+cite the study (\code{qes_cite("qes2022")}) and do not use it commercially
+(see the file \code{COPYRIGHTS} of the installed package). A printed codebook
+of \code{qes2022} ends its header with this licence and the attribution it
+requires, which its attribute \code{licence_notice} also holds, so that a
+saved codebook keeps it. Its variable labels are those of its Stata file, which cuts them
+at 80 characters; its question text, from the codebook, is not cut.
 }
 
 \section{En français}{
@@ -124,13 +130,19 @@ the codebook document named in \code{doc_ref} (see \code{\link[=qes_docs]{qes_do
 \code{qes_codebook()} décrit chaque variable d'une étude : son étiquette, la
 question posée (en anglais ou en français), ses étiquettes de valeurs et
 les codes qui signifient « ne sait pas », « refus » ou une autre raison de
-non-réponse. Pour les études sous licence CC0 (toutes sauf \code{qes2022}), la
-description est livrée avec qesR : aucun téléchargement n'est nécessaire.
-Le texte des questions vient des questionnaires déposés (\code{doc_ref} : une
-ou plusieurs références \verb{<file_id>:<question>} séparées par \verb{;}) ; il vaut \code{NA}
-lorsqu'il est inconnu, sans traduction automatique. \code{lang = "fr"} donne
-le texte français. Pour \code{qes2022} (CC BY-NC 4.0), le codebook est construit
-à partir de votre copie du fichier de données et conservé dans le cache.
+non-réponse. La description de chaque étude est livrée avec qesR : aucun
+téléchargement n'est nécessaire. Le texte des questions vient des
+questionnaires déposés et, pour \code{qes2022}, de son livre de codes bilingue
+(\code{doc_ref} : une ou plusieurs références \verb{<file_id>:<question>} séparées
+par \verb{;}) ; il vaut \code{NA} lorsqu'il est inconnu, sans traduction
+automatique. \code{lang = "fr"} donne le texte français. La description de
+\code{qes2022} (étiquettes, texte des questions, effectifs) est tirée de
+l'Étude électorale québécoise 2022 et reste sous sa licence, CC BY-NC
+4.0 : citez l'étude (\code{qes_cite("qes2022")}) et n'en faites pas d'usage
+commercial (voir le fichier \code{COPYRIGHTS} du package installé) ; le
+codebook imprimé de \code{qes2022} rappelle cette licence et l'attribution
+qu'elle exige, que garde aussi son attribut \code{licence_notice} (à
+conserver avec le codebook enregistré).
 L'attribut \code{selected_data_file} garde le nom Dataverse du fichier décrit
 (la copie \code{.tab} d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
 affiché nomme aussi le fichier original (\code{.sav} ou \code{.dta}) que

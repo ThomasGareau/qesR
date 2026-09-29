@@ -438,8 +438,14 @@ print.qes_crosswalk <- function(x, ...) {
   out <- character(0)
   if (isTRUE(header)) {
     out <- c(out, sprintf(t_("title_note"), spec$version, format(as.Date(spec$date)), paste0("`", spec$hash, "`")), "",
-             paste("##", t_("how_title")), "", t_("how"), "", t_("status_note"), "",
-             paste("###", t_("grades_title")), "")
+             paste("##", t_("how_title")), "", t_("how"), "", t_("status_note"), "")
+    # the wording and labels quoted from a study whose metadata is not CC0
+    # carry its licence and attribution (qes2022, CC BY-NC 4.0)
+    for (st in intersect(.qes_study_codes(), unique(xw$study))) {
+      notice <- .qes_licence_notice(st, lang)
+      if (!is.null(notice)) out <- c(out, notice, "")
+    }
+    out <- c(out, paste("###", t_("grades_title")), "")
     for (g in c("identical", "comparable", "approximate", "not_comparable")) {
       out <- c(out, sprintf("- **`%s`** (%s)%s%s", g, .qes_enum_label("grade", g, lang), cl, t_(paste0("grade_", g))))
     }
