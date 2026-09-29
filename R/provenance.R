@@ -9,7 +9,7 @@
 # spec-level records, as attributes "cell" and "spec" of the study-level
 # table (design.md section 5.9).
 
-.qes_provenance_levels <- c("study", "cell", "spec")
+.qes_provenance_levels <- c("study", "cell", "spec", "pooled")
 
 # What get_qes() would read for each code: the pinned data file, its
 # expected md5, label donor, renames and reader. Nothing is checked or
@@ -69,9 +69,10 @@
 #'   would read: nothing has been retrieved or checked yet, so
 #'   `md5_observed`, `md5_verified`, `retrieved_via`, `retrieved_at` and
 #'   `label_source` are `NA`.
-#' @param level `"study"` (default): one row per file. `"cell"` and
-#'   `"spec"` describe data harmonized by [qes_harmonize()]; for other
-#'   objects they are an error of class `qesR_error_no_provenance`.
+#' @param level `"study"` (default): one row per file. `"cell"`, `"spec"`
+#'   and `"pooled"` describe data harmonized by [qes_harmonize()] (`"pooled"`
+#'   only when it has pooled variables); for other objects they are an
+#'   error of class `qesR_error_no_provenance`.
 #'
 #' @return A data frame of class `qes_provenance`. For `level = "study"`,
 #'   one row per file, with
@@ -108,6 +109,19 @@
 #'   member of the wave, for example when its age rows are not signed off
 #'   and `include_draft = FALSE`) and `note`.
 #'
+#'   For `level = "pooled"` (harmonized data with pooled variables such as
+#'   `vote_choice`), one row per study, pooled variable and member: `study`,
+#'   `pooled`, `type` (the value of `<pooled>__type`), `member` (the
+#'   target), `precedence` (1 is tried first), `wave` and `item`
+#'   (`<study>:<wave>:<source variables>`) of the member's cell, `grade`
+#'   (its grade, capped for lossy transforms), `used_in_layout` (`FALSE` for
+#'   a member of another wave than the one the respondent layout takes the
+#'   study's values from), `included` (its cell was applied and its grade
+#'   is at least `min_grade`), `n_value` (rows whose value comes from it),
+#'   `n_answer_na` (rows it made `NA` with an answer such as don't know or
+#'   did not vote) and `n_fallthrough` (rows `NA` because no member asked
+#'   them, reported under this member).
+#'
 #'   For `level = "spec"`, one row (one per [qes_harmonize()] call for
 #'   results combined with [rbind()]): `spec_version`, `spec_hash`,
 #'   `spec_custom`, `qesR_version`, `qesR_sha` (the commit of a GitHub
@@ -132,7 +146,7 @@
 #' merged <- merge(demo, data.frame(extra_column = 1))
 #' try(qes_provenance(merged))
 #' @export
-qes_provenance <- function(x, level = c("study", "cell", "spec")) {
+qes_provenance <- function(x, level = c("study", "cell", "spec", "pooled")) {
   level <- .qes_check_one(level, "level", .qes_provenance_levels)
   if (is.character(x) && !inherits(x, "qes_provenance")) {
     codes <- .qes_resolve_codes(x, "x", demo = TRUE)
@@ -173,6 +187,7 @@ qes_provenance <- function(x, level = c("study", "cell", "spec")) {
   rownames(prov) <- NULL
   attr(prov, "cell") <- NULL
   attr(prov, "spec") <- NULL
+  attr(prov, "pooled") <- NULL
   structure(prov, class = c("qes_provenance", "data.frame"))
 }
 

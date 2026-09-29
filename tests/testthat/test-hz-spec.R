@@ -74,7 +74,7 @@ test_that("qes_spec(view = 'spec') returns the checked spec", {
   expect_identical(s$version, unname(read.dcf(file.path(spec_dir(), "SPEC"))[1, "Spec-Version"]))
   expect_false(s$custom)
   expect_setequal(names(s$tables), c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes",
-                                     "gates", "expected", "hashes", "legacy"))
+                                     "gates", "expected", "hashes", "legacy", "pooled", "pooled_members"))
   chk <- attr(s, "check")
   expect_s3_class(chk, "data.frame")
   expect_identical(names(chk), c("rule", "severity", "table", "row", "key", "detail"))
@@ -590,22 +590,35 @@ test_that("real-code regressions hold in the shipped spec", {
 test_that("qes2022 rows quote its codebook wording, file labels and counts (OD3 lifted)", {
   t <- shipped_spec()$tables
   xw <- t$crosswalk
+  # the 18 rows reviewed up to spec 4.2.0 and the 16 of 4.3.0 signed off on
+  # 2026-09-29; pid_prov_strength (added in 4.3.0) is held for the owner
+  rows <- xw$study == "qes2022" & !is.na(xw$reviewed_by)
+  expect_identical(sum(rows), 34L)
+  expect_identical(xw$status[xw$study == "qes2022" & is.na(xw$reviewed_by)], "review")
   rows <- xw$study == "qes2022"
-  expect_identical(sum(rows), 18L)
   expect_false(anyNA(xw$wording_en[rows]))
   expect_false(anyNA(xw$wording_fr[rows]))
   expect_false(anyNA(xw$wording_ref[rows]))
-  expect_identical(xw$wording_fr[rows & xw$source_var == "cps_votechoice1"],
+  expect_identical(xw$wording_fr[rows & xw$source_var == "cps_votechoice1" & xw$target == "vote_prov_intent"],
                    "Pour quel parti pr\u00e9voyez-vous voter?")
   # value maps quote the pinned file's labels, as for the CC0 studies
-  maps <- t$valuemaps$map_id %in% xw$map_id[rows]
-  expect_identical(sum(maps), 65L)
+  maps <- t$valuemaps$map_id %in% xw$map_id[rows & !is.na(xw$reviewed_by)]
+  expect_identical(sum(maps), 118L)
+  # every map of a qes2022 row (the other variables of a coalesce row too)
+  # quotes the labels of the pinned file
+  row_maps <- lapply(which(rows), function(i) .qes_hz_row_maps(xw, i))
+  row_vars <- lapply(which(rows), function(i) {
+    then <- .qes_hz_coalesce_then(xw, i)
+    c(xw$source_var[i], then$var)
+  })
+  map_var <- unlist(Map(function(m, v) stats::setNames(v[seq_along(m)], m), row_maps, row_vars))
+  maps <- t$valuemaps$map_id %in% names(map_var)
   expect_false(anyNA(t$valuemaps$source_label[maps]))
   expect_true(all(is.na(t$valuemaps$source_label_hash[maps])))
   vals <- .qes_dict_shipped()$values
   vals <- vals[vals$study == "qes2022", ]
   vm <- t$valuemaps[maps, ]
-  src <- xw$source_var[match(vm$map_id, xw$map_id)]
+  src <- unname(map_var[vm$map_id])
   expect_identical(vm$source_label, vals$label[match(paste(src, vm$source_code), paste(vals$variable, vals$value))])
   # its counts ship with the others: gates.csv and expected/marginals.csv
   expect_true("qes2022" %in% t$gates$study)
@@ -618,11 +631,21 @@ test_that("crosswalk wording of CC0 studies is the dictionary's question text", 
   for (i in seq_len(nrow(xw))) {
     d <- vars[vars$study == xw$study[i] & vars$variable == xw$source_var[i], , drop = FALSE]
     if (nrow(d) != 1L) next
+    # a row that reads several variables (a question and its push, a split
+    # ballot, the options of a select-all item) quotes them together: its
+    # wording starts with the first variable's question, or gives the stem
+    # of a select-all item once
+    several <- length(.qes_hz_row_vars(xw, i)) > 1L
     for (lang in c("en", "fr")) {
       q <- d[[paste0("question_", lang)]]
       w <- xw[[paste0("wording_", lang)]][i]
       if (!is.na(q) && !is.na(w)) {
-        expect_identical(w, q, info = paste(xw$study[i], xw$source_var[i], lang))
+        if (several) {
+          stem <- sub(" \\[[^]]*\\]$", "", q)
+          expect_true(startsWith(w, stem), info = paste(xw$study[i], xw$source_var[i], lang))
+        } else {
+          expect_identical(w, q, info = paste(xw$study[i], xw$source_var[i], lang))
+        }
       }
     }
   }

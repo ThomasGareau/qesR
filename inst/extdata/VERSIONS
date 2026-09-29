@@ -1,5 +1,5 @@
-catalog_version: 2.3.0
-dict_version: 1.1.0
+catalog_version: 2.4.0
+dict_version: 1.1.1
 schema_version: 1
 built_from: 192422:a6ecbace0da2314d4c7065b8bdea81f7,
  192423:9d09da75d0f0ad008b61f67fb3538320,
@@ -45,11 +45,11 @@ built_from: 192422:a6ecbace0da2314d4c7065b8bdea81f7,
  7449513:c51bafed57776ffa8d4c6f301f5c945b,
  7449514:42ad4bbe6eb0f8b4c7522ad376834334
 csv_md5: catalog/elections.csv:621553636c87b7faed39a4633d2c60e0,
- catalog/enums.csv:f552d049dcde1240f1c6e994465d102a,
+ catalog/enums.csv:eeef42e4c575bf7bed5a3ddc7de50afe,
  catalog/files.csv:6fd1626f6a086a655f005d428751dd78,
  catalog/name_map.csv:e1a20d81b6c60704b39f06fe4fc19776,
  catalog/studies.csv:c7f9a16a77948d110dfdc9b97bf449fc,
  catalog/text_fixes.csv:440b908a9d89c0f83de48ebd4fe76a2f,
  catalog/type_fixes.csv:8f2b69b0732a6baa396b675b59232463,
  dict/values.csv.gz:6c38fb5d39c2487e58828d3d0f959eaa,
- dict/variables.csv.gz:6e58768769d1a9b776f1af874c9505bd
+ dict/variables.csv.gz:8eac7ca95fe937af22593ff6fe7890d6

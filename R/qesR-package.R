@@ -20,6 +20,7 @@
 #' | Harmonization (experimental) | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
 #' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
 #' | Harmonization (experimental) | [qes_design()] | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
+#' | Harmonization (experimental) | [qes_party_lineage()] | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
 #' | Reproducibility | [qes_provenance()] | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 #' | Reproducibility | [qes_cite()] | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Lists or deletes the files kept in the download cache. |

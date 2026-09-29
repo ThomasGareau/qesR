@@ -49,7 +49,11 @@
 #                 item:<column>     the name of that target;
 #   type        character, numeric, integer or factor;
 #   flag        "approximate" for columns that mix instruments;
-#   cause       the finding or decision behind an NA column;
+#   cause       the finding or decision behind an NA column; a study's
+#               row of cause legacy_frozen keeps the column as in qesR
+#               0.7.1 although the study's question is harmonized since
+#               (the legacy freeze, spec 4.3.0): its targets are read as
+#               if the study had no row for them (NA, reason no_source);
 #   definition, note  the legacy_column_map attribute (English).
 #
 # The engine runs with include_draft = FALSE (since spec 4.0.0): only the
@@ -133,6 +137,10 @@
     if (length(unknown) > 0L) {
       add(i, key[i], sprintf("unknown target(s) %s", paste(unknown, collapse = ", ")))
       next
+    }
+    if (lg$cause[i] %in% "legacy_frozen" && (!has(lg$studies[i]) || !r$kind %in% .qes_legacy_target_renders ||
+                                              r$kind %in% .qes_legacy_combining)) {
+      add(i, key[i], "cause legacy_frozen needs a study's row with a single-target render")
     }
     if (r$kind %in% .qes_legacy_target_renders) {
       if (length(targets) == 0L) add(i, key[i], sprintf("render %s needs a target", r$kind))
@@ -325,7 +333,9 @@
   targets <- .qes_split_list(r$target)
   study <- as.character(h$study[1])
   combining <- p$kind %in% .qes_legacy_combining
-  t <- if (length(targets) > 0L && !combining) .qes_legacy_pick(targets, cell) else NA_character_
+  # the legacy freeze: a row of cause legacy_frozen reads no target
+  frozen <- identical(r$cause, "legacy_frozen")
+  t <- if (length(targets) > 0L && !combining && !frozen) .qes_legacy_pick(targets, cell) else NA_character_
   v <- if (!is.na(t)) .qes_legacy_value(h, t) else rep(NA, n)
   value <- switch(
     p$kind,
@@ -452,7 +462,8 @@
       # a recommended weight that is registered but needs review is not
       # applied (qes_harmonize() leaves it NA) until it is accepted
       pending <- if (no_weight) .qes_legacy_pending_weight(spec, study, arg) else character(0)
-      reason <- if (res$kind == "na_column") "na_column" else if (length(pending) > 0L) "not_reviewed" else
+      reason <- if (res$kind == "na_column") "na_column" else if (identical(r$cause, "legacy_frozen")) "no_source" else
+        if (length(pending) > 0L) "not_reviewed" else
         if (no_raw || no_weight) "no_source" else
         if (is.na(res$target) && length(held) > 0L) "not_reviewed" else if (is.na(res$target) && !is.na(r$target) &&
         !any(.qes_split_list(r$target) %in% cell$target[cell$included %in% TRUE])) "no_source" else "all_missing"
@@ -500,7 +511,13 @@
   # (weights, dates) read their variables from it
   d <- .qes_read(study, quiet = quiet)
   .qes_hz_preread$frames <- stats::setNames(list(d), study)
-  on.exit(.qes_hz_preread$frames <- NULL, add = TRUE)
+  # legacy mode: rows added after spec 4.2.0 and not reviewed yet, and the
+  # derived cells (spec 4.3.0), do not reach the legacy columns
+  .qes_hz_preread$legacy <- TRUE
+  on.exit({
+    .qes_hz_preread$frames <- NULL
+    .qes_hz_preread$legacy <- NULL
+  }, add = TRUE)
   muffle <- c("qesR_message_approximate_cells", "qesR_message_structural_zeros", "qesR_message_unreviewed_cells",
               "qesR_message_unreviewed_skipped", "qesR_message_weight_review", "qesR_message_weight_timing")
   # the columns left NA by rows not signed off are listed, with the reason

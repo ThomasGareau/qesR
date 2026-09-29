@@ -22,6 +22,12 @@ core_targets <- function() {
   tg$target[vapply(tg$sets, function(x) "core" %in% .qes_split_list(x), logical(1))]
 }
 
+# The pooled variables of the core set (spec 4.3.0), in the order of pooled.csv.
+core_pools <- function() {
+  pl <- hz_spec()$tables$pooled
+  pl$pooled[vapply(pl$sets, function(x) "core" %in% .qes_split_list(x), logical(1))]
+}
+
 # The classes of the messages `expr` signals (muffled), and its value.
 hz_messages <- function(expr) {
   classes <- character(0)
@@ -54,8 +60,11 @@ test_that("two panel studies with two waves each give one row per respondent", {
                                      "survey_mode", "interview_date", "days_to_election", "eligible_voter"))
   core <- core_targets()
   expect_identical(names(h)[16:(15 + length(core))], core)
+  # then the core pooled variables and their companions (spec 4.3.0)
+  pools <- core_pools()
+  companions <- as.vector(t(outer(pools, c("__type", "__grade", "__item"), paste0)))
   expect_identical(names(h)[(16 + length(core)):ncol(h)],
-                   c("weight_pre", "weight_post", "weight_pre_var", "weight_post_var"))
+                   c(pools, companions, "weight_pre", "weight_post", "weight_pre_var", "weight_post_var"))
   expect_s3_class(h$election_date, "Date")
   expect_identical(unique(h$election_date[h$study == "qes2007_panel"]), as.Date("2007-03-26"))
   # wave membership: the waves column and not_in_wave for non-members
@@ -224,14 +233,16 @@ test_that("rows not signed off by a reviewer are applied only with include_draft
   expect_false(all(is.na(h2$vote_prov_recall)))
   expect_true(all(is.na(h2$sov_indep)))
   expect_true(attr(h2, "qes_spec")$custom)
-  # the shipped spec: every row is signed off (spec 4.1.0) and applied by
-  # default
+  # the shipped spec: every row reviewed up to spec 4.2.0 is signed off
+  # (spec 4.1.0) and applied by default; the rows added in spec 4.3.0 are
+  # in review (not reviewed yet: reviewed_by is empty)
   h3 <- hz_run(syn, include_draft = FALSE, missing = "reasons")
   expect_false(all(is.na(h3$vote_prov_recall)))
   expect_false(all(is.na(h3$sov_indep)))
   expect_false(any(h3$gender__na %in% "not_reviewed"))
   xw <- hz_spec()$tables$crosswalk
-  expect_true(all(xw$status == "stable"))
+  expect_true(all(xw$status[!is.na(xw$reviewed_by)] == "stable"))
+  expect_true(all(xw$status[is.na(xw$reviewed_by)] == "review"))
 })
 
 test_that("cells left out for another reason are not counted as not signed off", {
@@ -356,7 +367,9 @@ test_that("targets accepts target, family and set names, in spec order", {
   h <- hz_run(syn, targets = "vote")
   expect_identical(setdiff(names(h)[-(1:15)], wcols),
                    c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall",
-                     "turnout_prov_likely"))
+                     "turnout_prov_likely", "vote_prov_prev", "vote_fed_recall", "vote_choice", "turnout",
+                     "vote_choice__type", "vote_choice__grade", "vote_choice__item",
+                     "turnout__type", "turnout__grade", "turnout__item"))
   # a family whose only target is a leading column adds nothing
   expect_error(hz_run(syn, targets = "interview_mode"), class = "qesR_error_input")
 })

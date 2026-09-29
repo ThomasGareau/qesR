@@ -126,6 +126,7 @@
 .qes_arg_keys <- list(
   numeric = c("min", "max", "affine", "from_label", "nonmonotone"),
   map = c("from_label", "nonmonotone"),
+  coalesce = c("then", "fallthrough", "nonmonotone"),
   date = "format",
   weight = character(0),
   string = "from_label",

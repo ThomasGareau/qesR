@@ -200,8 +200,9 @@ test_that("the catalog version NEWS quotes is the one in VERSIONS", {
   skip_if(!nzchar(news_path) || !nzchar(versions_path), "NEWS.md or VERSIONS is not installed")
   news <- readLines(news_path, encoding = "UTF-8", warn = FALSE)
   section <- news[seq_len(which(news == "# qesR 0.4.4") - 1L)]
+  # the newest release that changed the catalog quotes the current version
   quoted <- regmatches(section, regexpr("catalog version is now [0-9]+\\.[0-9]+\\.[0-9]+", section))
-  expect_length(quoted, 1L)
+  expect_gte(length(quoted), 1L)
   recorded <- unname(trimws(read.dcf(versions_path, fields = "catalog_version")[1, 1]))
-  expect_identical(sub("^.* ", "", quoted), recorded)
+  expect_identical(sub("^.* ", "", quoted[1]), recorded)
 })

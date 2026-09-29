@@ -33,6 +33,15 @@
 # variables it has; the others are not_asked.
 
 .qes_hz_grades <- c("identical", "comparable", "approximate")
+
+# The leading columns of harmonized data (both layouts): no target that is
+# not itself a leading column (V-S15) and no pooled variable (V-F2) may take
+# one of these names.
+.qes_hz_leading_columns <- c("study", "year", "election_date", "family", "study_design", "target_population",
+                             "waves", "wave", "wave_timing", "wave_design", "qes_id", "subsample", "stratum",
+                             "source_row", "survey_mode", "interview_date", "days_to_election", "eligible_voter",
+                             "weight_pre", "weight_post", "weight_pre_var", "weight_post_var", "weight",
+                             "weight_var", "weight_auto")
 .qes_hz_stand_ins <- c(qes_demo = "qes2014")
 
 # The study whose spec rows `study` uses.
@@ -98,10 +107,12 @@
   out
 }
 
-# Target, family and set names (disjoint, V-S15) -> target names, in the
-# order of targets.csv. A retired target is included only when named. The
-# targets of the id and design blocks are leading columns of harmonized data:
-# naming one is an error, unless `leading = TRUE` (the spec views).
+# Target, family, set and pooled variable names (disjoint, V-S15 and V-F2)
+# -> target names, in the order of targets.csv (the pooled variables named
+# are resolved apart, by .qes_pool_resolve()). A retired target is included
+# only when named. The targets of the id and design blocks are leading
+# columns of harmonized data: naming one is an error, unless `leading =
+# TRUE` (the spec views).
 .qes_hz_resolve_targets <- function(targets, spec, leading = FALSE) {
   tg <- spec$tables$targets
   if (!is.character(targets) || length(targets) == 0L || anyNA(targets) || !all(nzchar(targets))) {
@@ -111,10 +122,15 @@
   live <- !tg$status %in% "retired"
   hit <- rep(FALSE, nrow(tg))
   unknown <- character(0)
+  # pooled variables (R/hz-pool.R), and the sets that name them, are known
+  # names; .qes_pool_resolve() gives the pooled variables themselves
+  pl <- .qes_pool_tables(spec)$pooled
+  pool_names <- unique(c(pl$pooled, unlist(lapply(pl$sets[!pl$status %in% "retired"], .qes_split_list))))
+  pools <- .qes_pool_resolve(targets, spec)
   for (t in unique(targets)) {
     by_target <- tg$target == t
     by_group <- live & (tg$family %in% t | vapply(sets, function(s) t %in% s, logical(1)))
-    if (!any(by_target) && !any(by_group)) {
+    if (!any(by_target) && !any(by_group) && !t %in% pool_names) {
       unknown <- c(unknown, t)
     }
     hit <- hit | by_target | by_group
@@ -129,7 +145,7 @@
     )
   }
   if (length(unknown) > 0L) {
-    names_ <- unique(c(tg$target, tg$family[!is.na(tg$family)], unlist(sets)))
+    names_ <- unique(c(tg$target, tg$family[!is.na(tg$family)], unlist(sets), pool_names))
     suggestions <- unique(unlist(lapply(unknown, .qes_suggest_codes, codes = names_)))
     .qes_abort(
       if (length(suggestions) > 0L) "input_targets_unknown_suggest" else "input_targets_unknown",
@@ -144,7 +160,7 @@
     return(tg$target[hit])
   }
   lead_hit <- hit & tg$target %in% .qes_hz_leading_targets(spec)
-  if (!any(hit & !lead_hit)) {
+  if (!any(hit & !lead_hit) && length(pools) == 0L) {
     .qes_abort("input_targets_leading", class = "qesR_error_input", args = list(.qes_q(tg$target[lead_hit])),
                data = list(arg = "targets", value = targets))
   }
@@ -321,7 +337,7 @@
   code[is.na(code)] <- "NA"
   r <- .qes_hz_row_rule(spec, i)
   args <- .qes_parse_kv(xw$args[i]) %||% character(0)
-  if (base %in% c("map", "numeric")) {
+  if (base %in% c("map", "numeric", "coalesce")) {
     ln <- if (r$from_label) .qes_hz_col_label_numbers(x, code) else rep(NA_real_, n)
     gate <- rep(NA_character_, n)
     if (!is.na(r$gate_var)) {
@@ -331,6 +347,30 @@
     oc <- .qes_hz_cell_outcome(r, data.frame(gate_code = gate, source_code = code, stringsAsFactors = FALSE), ln)
     value <- oc$value
     reason <- oc$na_reason
+    if (identical(base, "coalesce")) {
+      # the next variables, each with its own map, for the rows whose
+      # outcome so far is a fallthrough reason; a variable that did not ask
+      # the respondent (inapplicable, system missing) leaves the outcome as
+      # it was (see .qes_hz_coalesce_then() in R/hz-data.R). src records
+      # "<variable>=<code>" of the variable that decided
+      ft <- .qes_hz_coalesce_fallthrough(xw, i)
+      src <- ifelse(is.na(src), NA_character_, paste0(xw$source_var[i], "=", src))
+      then <- .qes_hz_coalesce_then(xw, i)
+      for (j in seq_len(nrow(then))) {
+        open <- which(is.na(value) & reason %in% ft)
+        if (length(open) == 0L) break
+        rj <- .qes_hz_part_rule(spec, i, then$var[j], then$map_id[j])
+        sj <- .canon(d[[then$var[j]]])
+        cj <- sj
+        cj[is.na(cj)] <- "NA"
+        oj <- .qes_hz_outcome(rj, cj[open])
+        asked <- !is.na(oj$value) | !oj$na_reason %in% .qes_coalesce_default_fallthrough
+        k <- open[asked]
+        value[k] <- oj$value[asked]
+        reason[k] <- oj$na_reason[asked]
+        src[k] <- paste0(then$var[j], "=", sj[k])
+      }
+    }
   } else {
     value <- rep(NA_character_, n)
     reason <- rep(NA_character_, n)
@@ -402,12 +442,19 @@
 .qes_hz_pick <- function(t, xw, d, ctx, stand_in, grades = TRUE) {
   rank <- function(g) match(g, .qes_hz_grades)
   rows <- which(xw$target == t & xw$primary %in% TRUE & !is.na(xw$rule) & xw$rule != "none")
+  # the legacy renderers (R/legacy.R) read only rows a reviewer has seen: a
+  # row added after spec 4.2.0 and not yet reviewed (reviewed_by empty,
+  # status review or draft) does not exist for them, so the legacy columns
+  # stay as they were (V-S19)
+  if (isTRUE(ctx$legacy)) {
+    rows <- rows[!(is.na(xw$reviewed_by[rows]) & !xw$status[rows] %in% "stable")]
+  }
   if (length(rows) == 0L) {
     return(list(row = NA_integer_, reason = "not_asked", excluded = "no_row",
                 note = "no row in the spec for this study"))
   }
   i <- rows[1]
-  vars <- stats::na.omit(c(xw$source_var[i], xw$gate_var[i]))
+  vars <- stats::na.omit(c(.qes_hz_row_vars(xw, i), xw$gate_var[i]))
   if (!xw$status[i] %in% .qes_hz_statuses(ctx$include_draft)) {
     list(row = i, reason = "not_reviewed", excluded = "not_reviewed",
          note = sprintf("row with status %s, not signed off by a reviewer: not applied (include_draft = FALSE)", xw$status[i]))
@@ -472,7 +519,7 @@
   # mode is NA), rather than failing the data checks
   for (t in setdiff(inputs, ctx$targets)) {
     p <- pick_in[[t]]
-    if (!verified && is.na(p$reason) && !all(stats::na.omit(c(xw$source_var[p$row], xw$gate_var[p$row])) %in% names(d))) {
+    if (!verified && is.na(p$reason) && !all(stats::na.omit(c(.qes_hz_row_vars(xw, p$row), xw$gate_var[p$row])) %in% names(d))) {
       pick_in[[t]]$reason <- "not_asked"
     }
   }
@@ -556,14 +603,47 @@
   reasons <- list()
   srcs <- list()
   cells <- list()
+  tg <- spec$tables$targets
+  derived_wave <- list()
   for (t in ctx$targets) {
     p <- pick[[t]]
     res <- result_of(p)
+    rule <- tg$derive_rule[match(t, tg$target)]
+    dv <- NULL
+    if (p$excluded %in% "no_row" && !is.na(rule) && !isTRUE(ctx$legacy)) {
+      # the derivation stage (design.md section 5.6 step 6): a target the
+      # study has no row for, derived from other targets it has
+      dv <- .qes_hz_derive(rule, t, pick_in, results, xw, wv, n, spec, ctx)
+    }
+    if (!is.null(dv)) {
+      res <- dv$res
+      cells[[t]] <- .qes_hz_cell_row(spec, study, t, xw, dv$pick, res, wv, weights, members, eligible)
+      cells[[t]]$rule <- paste0("derive:", rule)
+      cells[[t]]$map_id <- NA_character_
+      cells[[t]]$grade <- dv$grade
+      cells[[t]]$instrument <- NA_character_
+      cells[[t]]$levels_not_offered <- NA_character_
+      cells[[t]]$note <- dv$note
+      if (!is.na(dv$pick$reason)) {
+        cells[[t]]$included <- FALSE
+        cells[[t]]$excluded <- dv$pick$excluded
+      }
+      pick[[t]] <- dv$pick
+      derived_wave[[t]] <- xw$wave[dv$pick$row]
+    } else {
+      cells[[t]] <- .qes_hz_cell_row(spec, study, t, xw, p, res, wv, weights, members, eligible)
+    }
     values[[t]] <- res$value
     reasons[[t]] <- res$reason
     srcs[[t]] <- res$src
-    cells[[t]] <- .qes_hz_cell_row(spec, study, t, xw, p, res, wv, weights, members, eligible)
   }
+  # the item of each target's cell (pooled variables record it per value):
+  # "<study>:<wave>:<source variables joined by +>"
+  cell_item <- vapply(ctx$targets, function(t) {
+    i <- pick[[t]]$row
+    if (is.na(i) || pick[[t]]$excluded %in% "not_in_data") return(NA_character_)
+    paste(study, xw$wave[i], paste(.qes_hz_row_vars(xw, i), collapse = "+"), sep = ":")
+  }, character(1))
 
   list(
     study = study, n = n, s = s, e_date = e_date, wv = wv, members = members,
@@ -572,6 +652,7 @@
     dates = dates, modes = modes, weights = weights, eligible = eligible,
     cell_wave = vapply(ctx$targets, function(t) if (is.na(pick[[t]]$row)) NA_character_ else xw$wave[pick[[t]]$row],
                        character(1)),
+    cell_item = cell_item,
     values = values, reasons = reasons, srcs = srcs,
     cells = do.call(rbind, unname(cells)),
     provenance = prov,
@@ -805,10 +886,14 @@
 .qes_hz_encode <- function(value, t, spec, values, lang) {
   tg <- spec$tables$targets
   j <- match(t, tg$target)
-  type <- tg$type[j]
-  label <- tg[[paste0("label_", lang)]][j]
+  .qes_hz_encode_def(value, tg$type[j], tg$levels_id[j], tg[[paste0("label_", lang)]][j], spec, values, lang)
+}
+
+# Encode values of a column of type `type` (a target type) and level set
+# `levels_id`, with variable label `label` (targets and pooled variables).
+.qes_hz_encode_def <- function(value, type, levels_id, label, spec, values, lang) {
   out <- if (type %in% c("categorical", "ordinal")) {
-    set <- .qes_spec_levels(spec$tables$levels, tg$levels_id[j])
+    set <- .qes_spec_levels(spec$tables$levels, levels_id)
     labs <- set[[paste0("label_", lang)]]
     labs[is.na(labs) | duplicated(labs)] <- set$name[is.na(labs) | duplicated(labs)]
     k <- match(value, set$name)
@@ -867,25 +952,77 @@
          src = unlist(lapply(x, `[[`, "src"), use.names = FALSE))
   })
   names(per_target) <- ctx$targets
-  for (t in ctx$targets) {
+  out_targets <- if (is.null(ctx$out_targets)) ctx$targets else ctx$out_targets
+  for (t in out_targets) {
     cols[[t]] <- .qes_hz_encode(per_target[[t]]$value, t, ctx$spec, ctx$values, ctx$lang)
+  }
+  # pooled variables (R/hz-pool.R): from their members' cells, study by
+  # study, on the same output rows
+  pools <- ctx$pools %||% list()
+  per_pool <- list()
+  pool_prov <- list()
+  for (p in names(pools)) {
+    res <- Map(function(part, r, off) {
+      member_rows <- function(t) {
+        k <- off + seq_along(r$row)
+        list(value = per_target[[t]]$value[k], reason = per_target[[t]]$reason[k], src = per_target[[t]]$src[k])
+      }
+      .qes_pool_rows(part, p, pools[[p]], r, member_rows, ctx)
+    }, parts, rows, cumsum(c(0L, lengths(lapply(rows, `[[`, "row"))))[seq_along(parts)])
+    per_pool[[p]] <- list(
+      value = unlist(lapply(res, `[[`, "value"), use.names = FALSE),
+      reason = unlist(lapply(res, `[[`, "reason"), use.names = FALSE),
+      type = unlist(lapply(res, `[[`, "type"), use.names = FALSE),
+      grade = unlist(lapply(res, `[[`, "grade"), use.names = FALSE),
+      item = unlist(lapply(res, `[[`, "item"), use.names = FALSE),
+      src = unlist(lapply(res, `[[`, "src"), use.names = FALSE)
+    )
+    for (k in seq_along(parts)) {
+      if (is.null(parts[[k]]$cells)) next
+      pr <- .qes_pool_provenance(parts[[k]]$study, p, res[[k]], parts[[k]], pools[[p]], ctx)
+      if (!is.null(pr)) pr$.order <- k * 1000L + match(p, names(pools))
+      pool_prov[[length(pool_prov) + 1L]] <- pr
+    }
+  }
+  for (p in names(pools)) {
+    cols[[p]] <- .qes_pool_encode(per_pool[[p]]$value, p, ctx$spec, ctx$values, ctx$lang)
+  }
+  for (p in names(pools)) {
+    m <- .qes_pool_members(ctx$spec, p)
+    cols[[paste0(p, "__type")]] <- factor(per_pool[[p]]$type, levels = m$type_name)
+    cols[[paste0(p, "__grade")]] <- factor(per_pool[[p]]$grade, levels = .qes_hz_grades, ordered = TRUE)
+    cols[[paste0(p, "__item")]] <- per_pool[[p]]$item
   }
   if (identical(ctx$missing, "reasons")) {
     levels <- .qes_hz_reason_levels()
-    for (t in ctx$targets) {
+    for (t in out_targets) {
       cols[[paste0(t, "__na")]] <- factor(per_target[[t]]$reason, levels = levels)
+    }
+    for (p in names(pools)) {
+      cols[[paste0(p, "__na")]] <- factor(per_pool[[p]]$reason, levels = levels)
     }
   }
   if (isTRUE(ctx$keep_source)) {
-    for (t in ctx$targets) {
+    for (t in out_targets) {
       cols[[paste0(t, "__src")]] <- per_target[[t]]$src
+    }
+    for (p in names(pools)) {
+      cols[[paste0(p, "__src")]] <- per_pool[[p]]$src
     }
   }
   wcols <- Map(.qes_hz_weight_cols, parts, rows, MoreArgs = list(layout = ctx$layout))
   for (nm in names(wcols[[1]])) {
     cols[[nm]] <- unlist(lapply(wcols, `[[`, nm), use.names = FALSE)
   }
-  structure(cols, class = c("qes_harmonized", "data.frame"), row.names = c(NA_integer_, -nrow(lead)))
+  # study by study, then pooled variable by pooled variable (as rbind() of
+  # per-study results gives them)
+  pool_prov <- if (length(pool_prov) > 0L) do.call(rbind, pool_prov) else NULL
+  if (!is.null(pool_prov)) {
+    pool_prov <- pool_prov[order(pool_prov$.order), setdiff(names(pool_prov), ".order"), drop = FALSE]
+    rownames(pool_prov) <- NULL
+  }
+  structure(cols, class = c("qes_harmonized", "data.frame"), row.names = c(NA_integer_, -nrow(lead)),
+            qes_pooled_provenance = pool_prov)
 }
 
 # An empty result (every study failed under on_fail = "skip").
@@ -905,7 +1042,8 @@
     d_strata = character(0), wave_e_dates = as.Date(character(0)),
     dates = list(), modes = list(), weights = list(), eligible = logical(0),
     cell_wave = stats::setNames(rep(NA_character_, length(targets)), targets),
-    values = empty_chr, reasons = empty_chr, srcs = empty_chr
+    cell_item = stats::setNames(rep(NA_character_, length(targets)), targets),
+    values = empty_chr, reasons = empty_chr, srcs = empty_chr, cells = NULL
   )
   .qes_hz_assemble(list(part), ctx)
 }
@@ -946,7 +1084,10 @@
 #' spec 4.1.0 every row is signed off, after an automated double review
 #' against the original files and documents (not a human review; the
 #' crosswalk's `reviewed_by` says so, and `review_note` what the review
-#' corrected). A row's sign-off is about its content: the recommended
+#' corrected). The rows added in spec 4.3.0 (the push of 2022, the new
+#' targets such as satisfaction with democracy or the leader ratings) are
+#' checked against the files but not reviewed yet: they are in review, and
+#' applied only with `include_draft = TRUE`. A row's sign-off is about its content: the recommended
 #' weights that still need review (those of `qes1998`, `qes2007_panel`,
 #' `qes2012_panel` and the CROP polls) do not hold the rows of their waves,
 #' but are themselves `NA` until they are reviewed (see *Weights*). A row
@@ -969,9 +1110,10 @@
 #' A target is one question stimulus: a different wording, scale, timing or
 #' format makes another target (vote intention and reported vote, the
 #' "independent country" and "sovereign country" referendum questions, the
-#' four-point and 0-10 interest scales are all separate targets, never
-#' pooled). Each study's question gets a grade against the target's anchor
-#' question:
+#' four-point and 0-10 interest scales are all separate targets). A pooled
+#' variable (see *Pooled variables*) combines such targets into one column,
+#' and records row by row which one each value comes from. Each study's
+#' question gets a grade against the target's anchor question:
 #' * `identical`: the same question, options and format;
 #' * `comparable`: the same stimulus, with differences (option order, whether
 #'   "don't know" is offered, minor parties listed) not expected to move the
@@ -991,6 +1133,64 @@
 #' lists them, and printing the result names them.
 #'
 #' @eval .rd_na_reasons()
+#'
+#' @section Pooled variables:
+#' A pooled variable is one column, for every study, that pools several
+#' targets (its members) with a precedence among them. `vote_choice` is the
+#' provincial vote choice: the reported vote (recall) where the study asked
+#' it, else the vote intention with those who named no party pushed (the
+#' undecided and, in some studies, those who would not vote or refused),
+#' else the vote intention at the first question, whatever the wording of
+#' each study.
+#' `sov_support` pools the referendum wordings on sovereignty (an
+#' independent country, a sovereign country, the 1995 question, and,
+#' collapsed to yes or no, being favourable to independence),
+#' `pol_interest` the interest scales on 0 to 1 (four-point items scored 1,
+#' 0.7, 0.3 and 0; 0-10 items divided by 10) and `turnout` the reported
+#' turnout (the likelihood of voting only when asked for). The first three
+#' are in the default set `"core"`; `qes_spec("pooled")` lists their members.
+#'
+#' A row's value comes from the first member, by precedence, that asked the
+#' respondent: a member that has a value, or a missing value that is an
+#' answer (don't know, refused, did not vote), sets the row; a member that
+#' did not ask the respondent, or whose answer cannot be used (not in the
+#' wave, not asked in the study, not reviewed, below `min_grade`, routed
+#' out, system missing, a code that straddles levels: `not_mappable`, such
+#' as CROP's code 7 of the pushed intention), passes to the next. So a
+#' respondent who did not vote is `NA` (reason `not_voted`) in
+#' `vote_choice`, never given their earlier intention. When every member
+#' passes, the row is `NA` with the reason, `__type`, `__grade` and
+#' `__item` of the first usable member that has a row in the study and
+#' wave, else of the first member that has a row: with
+#' `min_grade = "comparable"`, a study whose only members are approximate
+#' gets `NA` (reason `below_grade`) with that member's type and grade
+#' (`approximate`), which say why the row is empty. With each pooled
+#' column come `<pooled>__type` (the member's type name, such as `recall`
+#' or `intention_push`), `<pooled>__grade` (the member row's grade, capped
+#' at approximate for a transform that loses information, such as scoring a
+#' four-point scale; never raised) and `<pooled>__item` (the source:
+#' `<study>:<wave>:<variables>`), and `<pooled>__na` and `<pooled>__src`
+#' with `missing = "reasons"` and `keep_source = TRUE`. `types` keeps some
+#' members only, for example `types = list(vote_choice = "recall")`; the
+#' precedence stays the spec's. The members are harmonized too, but are
+#' columns of the result only when `targets` names them.
+#'
+#' In the respondent layout (one row per respondent), a study's values of a
+#' pooled variable come from one wave: that of the first member the study
+#' applies (the post-election recall of a pre/post study, say), so that one
+#' weight column fits them; the respondents of its other waves are `NA`
+#' (reason `not_in_wave`). The long layout keeps every wave, each row with
+#' the members of its own wave. [qes_design()] then weights each study with
+#' the column of that wave. A message (class `qesR_message_pooled`) and
+#' `qes_provenance(x, level = "pooled")` say which member each study used,
+#' and how many rows it gave.
+#'
+#' A target a study has no row for can be derived from other targets
+#' (targets.csv `derive_rule`): the age groups `age_group3` and
+#' `age_group6` from the age, else the year of birth (graded approximate:
+#' an age at a band edge can be one year off), so that every study has an
+#' age group. A direct row always wins, and cell provenance says
+#' `rule = "derive:age_band"`.
 #'
 #' @section Data:
 #' By default each study is read from its pinned original file, checked by
@@ -1097,7 +1297,9 @@
 #'   `qesR_warning_universe` (such `data` whose value labels differ from
 #'   the pinned file's, or whose answers do not fit the question's
 #'   universe; fields `study`, `problems`);
-#' * messages, silenced by `quiet = TRUE`: `qesR_message_unreviewed_skipped`
+#' * messages, silenced by `quiet = TRUE`: `qesR_message_pooled` (which
+#'   member of each pooled variable each study used; field `pooled`, the
+#'   pooled provenance), `qesR_message_unreviewed_skipped`
 #'   (cells left `NA` because their rows are not signed off),
 #'   `qesR_message_unreviewed_cells` (cells that use rows not signed off,
 #'   with `include_draft = TRUE`), `qesR_message_approximate_cells` (cells
@@ -1166,15 +1368,29 @@
 #' `qesR_warning_partial` et `qesR_warning_unverified_source` ; messages
 #' `qesR_message_*`, masqués par `quiet = TRUE` ; [qes_design()] envoie
 #' `qesR_message_design_dropped` quand il écarte des lignes sans la
-#' pondération choisie. Voir
+#' pondération choisie. Une variable regroupée (section *Pooled
+#' variables*) réunit plusieurs cibles en une seule colonne pour toutes les
+#' études : `vote_choice` est le vote déclaré là où l'étude l'a demandé,
+#' sinon l'intention de vote avec relance des personnes qui n'ont nommé
+#' aucun parti (les indécis et, dans certaines études, celles qui ne
+#' voteraient pas ou refusaient), sinon l'intention de vote ; `sov_support` réunit les libellés référendaires, `pol_interest`
+#' les échelles d'intérêt ramenées de 0 à 1 et `turnout` la participation
+#' déclarée. Le premier membre, par ordre de priorité, qui a interrogé la
+#' personne donne la valeur ; `<variable>__type` indique ce membre,
+#' `<variable>__grade` son niveau de comparabilité et `<variable>__item` sa
+#' question ; `types = list(vote_choice = "recall")` ne garde que certains
+#' membres. Les groupes d'âge sont dérivés de l'âge ou de l'année de
+#' naissance là où l'étude n'a pas de question par tranches. Voir
 #' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
 #' @param studies Study codes (see [qes_studies()]). `NULL` (default) means
 #'   the Quebec Election Studies the spec covers, or the studies named in
 #'   `data` when it is given; `"all"` means every study the spec covers.
-#' @param targets Target, family or set names (see [qes_spec()]); the
-#'   default `"core"` is the core set, and `"decon"` the targets of the
-#'   columns of [get_decon()].
+#' @param targets Target, family, set or pooled variable names (see
+#'   [qes_spec()]); the default `"core"` is the core set (with the pooled
+#'   variables `vote_choice`, `sov_support` and `pol_interest`), `"decon"`
+#'   the targets of the columns of [get_decon()], and `"pooled"` every
+#'   pooled variable.
 #' @param layout `"respondent"` (default): one row per respondent of each
 #'   study's file. `"long"`: one row per respondent and wave (see *Waves*).
 #' @param values How categorical targets are returned: `"factor"` (default;
@@ -1210,6 +1426,12 @@
 #'   and target populations): `"en"` (default) or `"fr"`. Codes and reasons
 #'   do not depend on it.
 #' @param quiet If `TRUE`, no progress or informational messages.
+#' @param types `NULL` (default: the default members of each pooled
+#'   variable) or a named list, pooled variable -> the type names of the
+#'   members to use (a member's target name is accepted too), for example
+#'   `list(vote_choice = "recall")` or `list(turnout = c("recall",
+#'   "intention"))`. The order given does not matter: the members are tried
+#'   in the spec's order of precedence. See *Pooled variables*.
 #'
 #' @return A data frame of class `qes_harmonized`, returned visibly, one row
 #'   per respondent of each study's file (no row is dropped), or per
@@ -1225,21 +1447,24 @@
 #'   with [merge()] on `study` and `source_row`), `survey_mode`,
 #'   `interview_date` (of the respondent's first wave in the respondent
 #'   layout), `days_to_election` and `eligible_voter`. Then one column per
-#'   target, carrying its label in `attr(, "label")`, then the `__na` and
-#'   `__src` companions, then the weight columns: `weight_pre`,
+#'   target, carrying its label in `attr(, "label")`, then one per pooled
+#'   variable, then the `__type`, `__grade` and `__item` companions of each
+#'   pooled variable, then the `__na` and `__src` companions (targets, then
+#'   pooled variables), then the weight columns: `weight_pre`,
 #'   `weight_post`, `weight_pre_var` and `weight_post_var` (respondent
 #'   layout) or `weight` and `weight_var` (long layout). Attributes:
 #'   `qes_spec` (spec `version`, `hash`, `custom`, `engine`),
 #'   `qes_provenance` (see [qes_provenance()], with levels `"study"`,
-#'   `"cell"` and `"spec"`), `qes_weight_guide` (`target`, `study`, `wave`,
+#'   `"cell"`, `"spec"` and, with pooled variables, `"pooled"`),
+#'   `qes_weight_guide` (`target` or pooled variable, `study`, `wave`,
 #'   `target_timing`, `weight_column`, `weight_var`, `weight_status`) and
 #'   `failed_studies` (`study`, `class`, `message`, `parent_message`).
 #'
 #'   Results for different studies built with the same spec can be combined
 #'   with [rbind()], which also combines their provenance. It is an error
 #'   (class `qesR_error_input`) if the spec content hashes differ, the parts
-#'   were built with different `lang`, `layout`, `values`, `missing` or
-#'   `weights`, their columns differ (different `targets` or `keep_source`),
+#'   were built with different `lang`, `layout`, `values`, `missing`,
+#'   `weights` or `types`, their columns differ (different `targets` or `keep_source`),
 #'   or a study appears twice; harmonizing all the studies in one call is
 #'   simpler.
 #'
@@ -1276,6 +1501,15 @@
 #' # one row per respondent and wave
 #' l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
 #'
+#' # one vote choice for every study: here the reported vote of the
+#' # demonstration study (a qes2014 stand-in)
+#' v <- qes_harmonize("qes_demo", targets = "vote_choice", missing = "reasons", quiet = TRUE)
+#' table(v$vote_choice, v$vote_choice__type, useNA = "ifany")
+#' qes_provenance(v, level = "pooled")[, c("study", "type", "member", "grade", "n_value")]
+#' # recall only, or intentions only
+#' v2 <- qes_harmonize("qes_demo", targets = "vote_choice",
+#'                     types = list(vote_choice = "intention"), quiet = TRUE)
+#'
 #' # what the review corrected in each row, and which rows are in review
 #' xw <- qes_spec("crosswalk")
 #' table(xw$status)
@@ -1287,7 +1521,7 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
                           min_grade = c("approximate", "comparable", "identical"),
                           weights = c("normalized", "raw"), unmapped = c("error", "warn", "na"),
                           on_fail = c("stop", "skip"), keep_source = FALSE, include_draft = FALSE,
-                          data = NULL, spec = NULL, lang = c("en", "fr"), quiet = FALSE) {
+                          data = NULL, spec = NULL, lang = c("en", "fr"), quiet = FALSE, types = NULL) {
   layout <- .qes_check_one(layout, "layout", c("respondent", "long"))
   values <- .qes_check_one(values, "values", c("factor", "labelled", "code"))
   missing <- .qes_check_one(missing, "missing", c("na", "reasons"))
@@ -1305,9 +1539,16 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   }
   study_codes <- .qes_hz_resolve_studies(studies, data, sp)
   target_names <- .qes_hz_resolve_targets(targets, sp)
-  ctx <- list(spec = sp, targets = target_names, layout = layout, values = values, missing = missing,
-              min_grade = min_grade, weights = weights, unmapped = unmapped, include_draft = include_draft,
-              keep_source = keep_source, lang = lang, quiet = quiet)
+  # pooled variables: their members are harmonized too, and shown only when
+  # named in `targets` (R/hz-pool.R)
+  pool_names <- .qes_pool_resolve(targets, sp)
+  pools <- .qes_pool_resolve_types(types, pool_names, sp)
+  tg_all <- sp$tables$targets$target
+  computed <- tg_all[tg_all %in% c(target_names, unlist(pools, use.names = FALSE))]
+  ctx <- list(spec = sp, targets = computed, out_targets = target_names, pools = pools, layout = layout,
+              values = values, missing = missing, min_grade = min_grade, weights = weights,
+              unmapped = unmapped, include_draft = include_draft, keep_source = keep_source,
+              lang = lang, quiet = quiet, legacy = isTRUE(.qes_hz_preread$legacy))
   if (!is.null(data)) {
     unverified <- names(data)
     .qes_warn(
@@ -1344,16 +1585,29 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   rownames(failed) <- NULL
 
   out <- if (length(parts) > 0L) .qes_hz_assemble(parts, ctx) else .qes_hz_empty(ctx)
+  pooled_prov <- attr(out, "qes_pooled_provenance", exact = TRUE)
+  attr(out, "qes_pooled_provenance") <- NULL
   cell <- if (length(parts) > 0L) do.call(rbind, lapply(unname(parts), `[[`, "cells")) else NULL
-  if (!is.null(cell)) rownames(cell) <- NULL
+  # cell provenance describes the target columns; the members that only a
+  # pooled variable reads are in the pooled provenance
+  if (!is.null(cell)) {
+    cell <- cell[cell$target %in% target_names, , drop = FALSE]
+    rownames(cell) <- NULL
+  }
   study_prov <- if (length(parts) > 0L) do.call(rbind, lapply(unname(parts), `[[`, "provenance")) else NULL
   if (!is.null(study_prov)) rownames(study_prov) <- NULL
   fingerprints <- unlist(lapply(parts, `[[`, "fingerprint"))
   fingerprints <- fingerprints[!is.na(fingerprints)]
+  types_text <- if (length(pools) == 0L) NULL else
+    paste(vapply(names(pools), function(p) {
+      m <- .qes_pool_members(sp, p)
+      paste0(p, ":", paste(m$type_name[m$member %in% pools[[p]]], collapse = "+"))
+    }, character(1)), collapse = ",")
   call_args <- list(studies = study_codes, targets = targets, layout = layout, values = values,
                     missing = missing, min_grade = min_grade, weights = weights,
                     unmapped = unmapped, on_fail = on_fail, keep_source = keep_source,
-                    include_draft = include_draft, spec = if (is.null(spec)) NULL else sp, lang = lang)
+                    include_draft = include_draft, spec = if (is.null(spec)) NULL else sp, lang = lang,
+                    types = types_text)
   meta <- .qes_description_sha()
   spec_prov <- data.frame(
     spec_version = sp$version, spec_hash = sp$hash, spec_custom = isTRUE(sp$custom),
@@ -1365,14 +1619,25 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   if (!is.null(study_prov)) {
     attr(study_prov, "cell") <- cell
     attr(study_prov, "spec") <- spec_prov
+    if (length(pools) > 0L) attr(study_prov, "pooled") <- pooled_prov %||% .qes_pool_provenance_empty()
   }
-  # the options that change how values are encoded: rbind() refuses to mix them
+  # the options that change how values are encoded: rbind() refuses to mix
+  # them (the pooled variables' types, when there are any, among them)
+  opts <- list(layout = layout, values = values, missing = missing, weights = weights, lang = lang)
+  if (!is.null(types_text)) opts$types <- types_text
   attr(out, "qes_spec") <- list(version = sp$version, hash = sp$hash, custom = isTRUE(sp$custom),
                                 engine = as.character(.qes_engine_version()),
-                                options = list(layout = layout, values = values, missing = missing,
-                                               weights = weights, lang = lang))
+                                options = opts)
   attr(out, "qes_provenance") <- study_prov
-  attr(out, "qes_weight_guide") <- .qes_hz_weight_guide(parts, ctx)
+  guide <- .qes_hz_weight_guide(parts, ctx)
+  if (length(pools) > 0L && length(parts) > 0L) {
+    # study by study, the targets then the pooled variables (as rbind() of
+    # per-study results gives them)
+    guide <- rbind(guide, .qes_pool_weight_guide(parts, ctx))
+    guide <- guide[order(match(guide$study, names(parts)), !guide$target %in% names(pools)), , drop = FALSE]
+    rownames(guide) <- NULL
+  }
+  attr(out, "qes_weight_guide") <- guide
   attr(out, "failed_studies") <- failed
 
   # notices
@@ -1419,6 +1684,12 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
       }
     }
   }
+  pool_lines <- .qes_pool_summary(pooled_prov)
+  if (length(pool_lines) > 0L) {
+    .qes_inform("pooled_types", class = "qesR_message_pooled",
+                args = list(paste(pool_lines, collapse = "; ")),
+                data = list(pooled = pooled_prov), quiet = quiet)
+  }
   .qes_hz_weight_notices(parts, attr(out, "qes_weight_guide"), quiet, ctx$layout)
   out
 }
@@ -1433,7 +1704,7 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   tg <- ctx$spec$tables$targets
   rows <- list()
   for (part in parts) {
-    for (t in ctx$targets) {
+    for (t in (if (is.null(ctx$out_targets)) ctx$targets else ctx$out_targets)) {
       cw <- part$cell_wave[[t]]
       included <- isTRUE(part$cells$included[match(t, part$cells$target)])
       # a row of wave "*" in pooled polls takes the first poll wave: the
@@ -1575,6 +1846,10 @@ print.qes_harmonized <- function(x, n = 6L, ...) {
     if (length(zeros) > 0L) {
       cat(.qes_msg("hz_print_zeros", list(paste(zeros, collapse = "; ")), lang), "\n", sep = "")
     }
+    pool_lines <- .qes_pool_summary(attr(prov, "pooled", exact = TRUE))
+    if (length(pool_lines) > 0L) {
+      cat(.qes_msg("hz_print_pooled", list(paste(pool_lines, collapse = "; ")), lang), "\n", sep = "")
+    }
     unsigned <- sum(cell$included & !cell$status %in% "stable")
     if (unsigned > 0L) {
       cat(.qes_msg("hz_print_unreviewed", list(unsigned), lang), "\n", sep = "")
@@ -1656,7 +1931,9 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
   # the build options (objects made before they were recorded have none)
   opts <- lapply(specs, `[[`, "options")
   if (!any(vapply(opts, is.null, logical(1)))) {
-    keys <- unique(unlist(lapply(opts, names), use.names = FALSE))
+    # the pooled variables' types are compared after the columns (a part
+    # without pooled variables has other columns, reported as such)
+    keys <- setdiff(unique(unlist(lapply(opts, names), use.names = FALSE)), "types")
     differ <- list()
     for (k in keys) {
       v <- vapply(opts, function(o) if (is.null(o[[k]])) NA_character_ else as.character(o[[k]])[1], character(1))
@@ -1685,6 +1962,12 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
                args = list(paste(who[!is.na(who)], collapse = "; ")),
                data = list(missing = lacking))
   }
+  types <- vapply(opts, function(o) if (is.null(o$types)) NA_character_ else as.character(o$types)[1], character(1))
+  if (length(unique(types)) > 1L) {
+    .qes_abort("hz_rbind_options", class = "qesR_error_input",
+               args = list(sprintf("types = %s", paste(sprintf("\"%s\"", unique(types)), collapse = " / "))),
+               data = list(options = list(types = types)))
+  }
   studies <- unlist(lapply(args, function(a) unique(as.character(a$study))), use.names = FALSE)
   dup <- unique(studies[duplicated(studies)])
   if (length(dup) > 0L) {
@@ -1703,6 +1986,7 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
       d <- as.data.frame(d, stringsAsFactors = FALSE)
       attr(d, "cell") <- NULL
       attr(d, "spec") <- NULL
+      attr(d, "pooled") <- NULL
       d
     })
     r <- do.call(rbind, unname(x))
@@ -1713,6 +1997,8 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
   if (!is.null(study_prov)) {
     attr(study_prov, "cell") <- bind(lapply(provs, attr, "cell", exact = TRUE))
     attr(study_prov, "spec") <- bind(lapply(provs, attr, "spec", exact = TRUE))
+    pooled <- bind(lapply(provs, attr, "pooled", exact = TRUE))
+    if (!is.null(pooled)) attr(study_prov, "pooled") <- pooled
   }
   failed <- bind(lapply(args, attr, "failed_studies", exact = TRUE))
   # rbind.data.frame drops the variable labels of factor columns
@@ -1741,7 +2027,9 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
 # and missing = "reasons": one row per (study, target) cell that was applied.
 .qes_hz_hashes <- function(x) {
   cell <- attr(attr(x, "qes_provenance", exact = TRUE), "cell", exact = TRUE)
-  cell <- cell[cell$included, , drop = FALSE]
+  # derived cells (rule derive:<name>) are not crosswalk rows: the column
+  # hashes of their sources cover them
+  cell <- cell[cell$included & cell$target %in% names(x) & !startsWith(ifelse(is.na(cell$rule), "", cell$rule), "derive:"), , drop = FALSE]
   rows <- lapply(seq_len(nrow(cell)), function(k) {
     s <- cell$study[k]
     t <- cell$target[k]
@@ -1751,6 +2039,23 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
                md5 = .qes_hz_column_md5(unclass(x[[t]])[in_s], as.character(x[[paste0(t, "__na")]])[in_s]),
                stringsAsFactors = FALSE)
   })
+  # the pooled columns (V-F9): one row per study and pooled variable, wave
+  # "*", source_var the member types applied, in order of precedence
+  pooled <- attr(attr(x, "qes_provenance", exact = TRUE), "pooled", exact = TRUE)
+  if (is.data.frame(pooled) && nrow(pooled) > 0L) {
+    for (s in unique(pooled$study)) {
+      for (p in unique(pooled$pooled[pooled$study == s])) {
+        if (!p %in% names(x) || !paste0(p, "__na") %in% names(x)) next
+        m <- pooled[pooled$study == s & pooled$pooled == p & pooled$included & pooled$used_in_layout, , drop = FALSE]
+        if (nrow(m) == 0L) next
+        in_s <- x$study == s
+        rows[[length(rows) + 1L]] <- data.frame(
+          study = s, wave = .qes_all_waves, target = p, source_var = paste(m$type[order(m$precedence)], collapse = "+"),
+          n = sum(in_s), md5 = .qes_hz_column_md5(unclass(x[[p]])[in_s], as.character(x[[paste0(p, "__na")]])[in_s]),
+          stringsAsFactors = FALSE)
+      }
+    }
+  }
   out <- if (length(rows) > 0L) do.call(rbind, rows) else
     .qes_apply_schema(as.data.frame(stats::setNames(rep(list(character(0)), 6L), names(.qes_schemas$spec_hashes)),
                                     stringsAsFactors = FALSE), "spec_hashes")

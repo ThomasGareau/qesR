@@ -143,6 +143,22 @@
     study = "chr", wave = "chr", target = "chr", source_var = "chr",
     n = "int", md5 = "chr"
   ),
+  # pooled variables (schema 3, spec 4.3.0; R/hz-pool.R): one output column
+  # that pools several targets (its members), with the member used in each
+  # row recorded in <pooled>__type. transform is identity, affine:<a*x+b>,
+  # recode:<level>=<level>,... or score:<level>=<number>,...
+  spec_pooled = c(
+    pooled = "chr", type = "chr", levels_id = "chr", valid_min = "num",
+    valid_max = "num", anchor_member = "chr", label_en = "chr", label_fr = "chr",
+    description_en = "chr", description_fr = "chr", sets = "chr",
+    status = "chr", replaced_by = "chr", added_in = "chr"
+  ),
+  spec_pooled_members = c(
+    pooled = "chr", member = "chr", type_name = "chr", precedence = "int",
+    default = "lgl", transform = "chr", grade_cap = "chr",
+    type_label_en = "chr", type_label_fr = "chr", note_en = "chr",
+    note_fr = "chr", added_in = "chr"
+  ),
   # the legacy renderer of get_qes_master() and get_decon() (R/legacy.R)
   spec_legacy = c(
     profile = "chr", position = "int", column = "chr", studies = "chr",

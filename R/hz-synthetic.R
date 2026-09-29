@@ -23,6 +23,8 @@
 
 .qes_synthetic <- function(studies, spec = NULL) {
   spec <- if (inherits(spec, "qes_spec")) spec else .qes_spec_get(spec, "none")
+  # every variable of a coalesce row gets the codes of its own map
+  spec <- .qes_hz_expand_coalesce(spec)
   out <- lapply(studies, .qes_synthetic_study, spec = spec)
   names(out) <- studies
   out
@@ -132,6 +134,17 @@
   # the codes of each source variable, its gate, its members and its labels
   rows <- which(!is.na(xw$source_var))
   info <- list()
+  # a select-all item read by fn:multiselect: each option's variable is
+  # ticked (1) or not (-99) in turn
+  for (i in rows[xw$rule[rows] %in% "fn:multiselect"]) {
+    a <- .qes_hz_multiselect_args(xw$args[i])
+    for (k in seq_along(a$var)) {
+      info[[a$var[k]]] <- list(codes = if (k %% 2L == 1L) c(a$selected, "-99") else c("-99", a$selected),
+                               na_token = FALSE, gate = NA_character_, closed = character(0),
+                               mask = members[[xw$wave[i]]], labels = NULL)
+    }
+  }
+  rows <- rows[!xw$rule[rows] %in% "fn:multiselect"]
   for (i in rows) {
     v <- xw$source_var[i]
     it <- info[[v]] %||% list(codes = character(0), na_token = FALSE, gate = NA_character_,

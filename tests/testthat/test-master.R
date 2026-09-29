@@ -270,7 +270,7 @@ test_that("the intended blanks of the master say why in cause and basis", {
   for (x in list(c("qes1998", "education", "invalid_044_source"), c("qes2018", "income", "invalid_044_source"),
                  c("qes2018", "religion", "invalid_044_source"),
                  c("qes2012_panel", "political_interest", "not_comparable_source"),
-                 c("qes2022", "language", "not_harmonized_yet"))) {
+                 c("qes2022", "language", "legacy_frozen"))) {
     hit <- cell(x[1], x[2])
     expect_identical(nrow(hit), 1L, info = paste(x[1:2], collapse = " "))
     expect_true(all(is.na(m[[x[2]]][m$qes_code == x[1]])), info = paste(x[1:2], collapse = " "))

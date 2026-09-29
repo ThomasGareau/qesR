@@ -24,9 +24,9 @@ Le moteur d'harmonisation est **expérimental**. Sa spécification indique,
 pour chaque étude et chaque variable harmonisée (« cible »), quelle
 question alimente la cible et comment chacun de ses codes correspond aux
 niveaux de la cible ; rien n'est apparié par le nom. Dans la spécification
-4.1.0, toutes les lignes sont approuvées, après une double révision
-automatisée sur les fichiers et documents originaux (et non une révision
-humaine), et `qes_harmonize()` les applique par défaut. Les pondérations
+4.3.0, toutes les lignes sauf trois sont approuvées, après une double
+révision automatisée sur les fichiers et documents originaux (et non une
+révision humaine), et `qes_harmonize()` les applique par défaut. Les pondérations
 recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages
 CROP restent à réviser et valent donc `NA` ; leurs réponses sont
 harmonisées comme les autres.
@@ -249,11 +249,11 @@ spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 ```
 
-## Quatre questions sur la souveraineté, jamais regroupées
+## Cinq cibles sur la souveraineté, une variable regroupée
 
 Une cible correspond à un seul stimulus de question. D'autres études ont
 posé des questions sur la souveraineté avec d'autres libellés : elles
-alimentent d'autres cibles, qui ne sont jamais fusionnées avec `sov_indep`.
+alimentent d'autres cibles, jamais fusionnées avec `sov_indep`.
 
 ```{r sovereignty}
 sov <- qes_spec("crosswalk", targets = "sovereignty", lang = params$lang)
@@ -273,3 +273,17 @@ autres sont encore à réviser : `qes_harmonize()` renvoie `NA` pour
 celles-ci et `qes_design()` laisse ces répondants de côté, avec un
 message. Placez les
 cibles côte à côte et lisez chacune à la lumière de sa propre question.
+
+Pour suivre l'appui dans toutes les études malgré tout, la variable
+regroupée `sov_support` prend la question référendaire de chaque étude,
+quel que soit son libellé, et indique de laquelle vient chaque valeur
+(`sov_support__type`), avec le niveau de comparabilité de cette question
+(`sov_support__grade`) ; l'échelle favorable ou opposé de `qes2018_panel`
+est regroupée en oui ou non, au niveau approximate. `vote_choice` fait de
+même pour le vote (le vote déclaré, sinon l'intention de vote) et
+`pol_interest` pour l'intérêt pour la politique :
+
+```{r pooled}
+pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```

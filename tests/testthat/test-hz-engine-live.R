@@ -10,7 +10,9 @@ test_that("V-L1: engine hashes and marginals on the originals equal expected/ (l
   local_live_originals()
   s <- hz_spec()
   # every target but the leading-column one (survey_mode), checked below
-  h <- qes_harmonize("all", targets = setdiff(s$tables$targets$target, .qes_hz_leading_targets(s)),
+  # (and the pooled variables, whose column hashes are V-F9)
+  h <- qes_harmonize("all", targets = c(setdiff(s$tables$targets$target, .qes_hz_leading_targets(s)),
+                                        .qes_pool_names(s)),
                      values = "code", missing = "reasons", include_draft = TRUE, quiet = TRUE)
   # every study the spec covers, every row kept
   cat_ <- .qes_catalog()$files
@@ -183,4 +185,27 @@ test_that("the remaining studies on the originals: counts, waves, strata and eli
   expect_equal(mean(by("qes2007", "weight_post")), 1)
   other <- h$study != "qes2007"
   expect_true(all(is.na(h$weight_pre[other]) & is.na(h$weight_post[other])))
+})
+
+test_that("pooled variables and the new targets on the originals (live)", {
+  local_live_originals()
+  h <- qes_harmonize("all", targets = c("vote_choice", "born_canada", "birthplace3"), values = "code",
+                     missing = "reasons", include_draft = TRUE, quiet = TRUE, layout = "long")
+  # vote_choice has a value in every study
+  expect_setequal(unique(h$study[!is.na(h$vote_choice)]), unique(h$study))
+  # 2022, campaign wave: the first question, the "if you decide to vote"
+  # question and the lean question of the undecided (cps_votelean)
+  x <- h[h$study == "qes2022" & h$wave == "cps", ]
+  expect_identical(as.vector(table(x$vote_choice)[c("PLQ", "PQ", "CAQ", "QS", "PCQ", "other")]),
+                   c(150L, 184L, 485L, 291L, 210L, 30L))
+  expect_true(all(x$vote_choice__type %in% "intention_push"))
+  expect_identical(sum(x$vote_choice__na %in% "inapplicable"), 27L)
+  # the CROP polls: the pushed intention, and the first question where the
+  # producer's code 7 straddles no party and other (not_mappable)
+  p <- qes_provenance(h, level = "pooled")
+  crop <- p[p$study == "qes_crop_2007_2010" & p$pooled == "vote_choice", ]
+  expect_identical(crop$n_value, c(0L, 20208L, 1033L))
+  # born_canada is yes exactly where the birthplace is Quebec or the rest of Canada
+  k <- !is.na(h$born_canada) & !is.na(h$birthplace3)
+  expect_identical(h$born_canada[k] == "yes", h$birthplace3[k] %in% c("quebec", "other_canada"))
 })

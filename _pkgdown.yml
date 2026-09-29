@@ -191,6 +191,7 @@ reference:
   - qes_spec
   - qes_harmonize
   - qes_design
+  - qes_party_lineage
 - title: Reproducibility
   desc: >
     Which file a result was read from, and how to cite qesR and each dataset.

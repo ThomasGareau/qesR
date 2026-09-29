@@ -24,16 +24,18 @@ legacy_synthetic <- function() {
   legacy_synthetic_env$data
 }
 
-# The shipped spec with every crosswalk row in review signed off, as if the
-# held rows were stable: the renders of every study can then be tested. The
-# legacy builders apply signed-off rows only (spec 4.0.0). Since spec 4.1.0
-# no shipped row is in review, so this is the shipped spec; it stays so that
+# The shipped spec with every reviewed crosswalk row held in review signed
+# off, as if the held rows were stable: the renders of every study can then
+# be tested. The legacy builders apply signed-off rows only (spec 4.0.0),
+# and never see a row nobody has reviewed yet (the rows added in spec 4.3.0,
+# reviewed_by empty; V-S18): those stay as they are. Since spec 4.1.0 no
+# reviewed row is in review, so this is the shipped spec; it stays so that
 # a row put back in review does not hide a render from the tests.
 legacy_signed_spec <- function() {
   if (is.null(legacy_synthetic_env$signed)) {
     s <- getFromNamespace(".qes_spec_get", "qesR")(NULL, "none")
     xw <- s$tables$crosswalk
-    held <- xw$status %in% "review"
+    held <- xw$status %in% "review" & !is.na(xw$reviewed_by)
     xw$status[held] <- "stable"
     xw$reviewed_by[held & is.na(xw$reviewed_by)] <- "Test Reviewer"
     xw$reviewed_on[held & is.na(xw$reviewed_on)] <- as.Date("2026-09-27")

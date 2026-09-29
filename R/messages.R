@@ -145,6 +145,26 @@
     en = "Unknown target, family or set name(s) in `targets`: %1$s. Did you mean %2$s?",
     fr = "Nom(s) de cible, de famille ou d'ensemble inconnu(s) dans `targets`\u00a0: %1$s. Vouliez-vous dire %2$s\u00a0?"
   ),
+  input_types = c(
+    en = "`types` must be NULL or a named list: pooled variable -> the type names of its members to use, for example list(vote_choice = \"recall\").",
+    fr = "`types` doit \u00eatre NULL ou une liste nomm\u00e9e\u00a0: variable regroup\u00e9e -> les noms de types de ses membres \u00e0 utiliser, par exemple list(vote_choice = \"recall\")."
+  ),
+  input_types_pool = c(
+    en = "`types` names %1$s, which are not pooled variables requested in `targets` (requested: %2$s).",
+    fr = "`types` nomme %1$s, qui ne sont pas des variables regroup\u00e9es demand\u00e9es dans `targets` (demand\u00e9es\u00a0: %2$s)."
+  ),
+  input_types_unknown = c(
+    en = "Unknown type(s) %1$s for the pooled variable %2$s; its types are %3$s (qes_spec(\"pooled\") describes them).",
+    fr = "Type(s) inconnu(s) %1$s pour la variable regroup\u00e9e %2$s\u00a0; ses types sont %3$s (qes_spec(\"pooled\") les d\u00e9crit)."
+  ),
+  input_lineage = c(
+    en = "`lineage` must be one or more of %1$s.",
+    fr = "`lineage` doit \u00eatre une ou plusieurs valeurs parmi %1$s."
+  ),
+  input_lineage_cols = c(
+    en = "`cols` must name party columns of `x`: %1$s.",
+    fr = "`cols` doit nommer des colonnes de partis de `x`\u00a0: %1$s."
+  ),
   input_targets_leading = c(
     en = "%1$s is a leading column of every result of qes_harmonize(), not a target to request.",
     fr = "%1$s est une colonne de t\u00eate de tout r\u00e9sultat de qes_harmonize(), et non une cible \u00e0 demander."
@@ -158,8 +178,8 @@
     fr = "`weight` doit \u00eatre une des colonnes de pond\u00e9ration de `x`\u00a0: %1$s."
   ),
   input_design_weight_choose = c(
-    en = "The targets of `x` come from waves that call for different weight columns (%1$s), so no one weight column fits them all. Choose one: weight = \"weight_pre\" (the pre-election waves) or weight = \"weight_post\" (the post-election waves).",
-    fr = "Les cibles de `x` viennent de vagues qui appellent des colonnes de pond\u00e9ration diff\u00e9rentes (%1$s), si bien qu'aucune ne convient \u00e0 toutes. Choisissez-en une\u00a0: weight = \"weight_pre\" (les vagues pr\u00e9\u00e9lectorales) ou weight = \"weight_post\" (les vagues post\u00e9lectorales)."
+    en = "The targets of `x` come from waves that call for different weight columns (%1$s) within one study (%2$s), so no one weight column fits them all. Choose one: weight = \"weight_pre\" (the pre-election waves) or weight = \"weight_post\" (the post-election waves).",
+    fr = "Les cibles de `x` viennent de vagues qui appellent des colonnes de pond\u00e9ration diff\u00e9rentes (%1$s) dans une m\u00eame \u00e9tude (%2$s), si bien qu'aucune ne convient \u00e0 toutes. Choisissez-en une\u00a0: weight = \"weight_pre\" (les vagues pr\u00e9\u00e9lectorales) ou weight = \"weight_post\" (les vagues post\u00e9lectorales)."
   ),
   input_design_weight_untimed = c(
     en = "No target of `x` depends on the moment of the interview, and `x` has values in both %1$s. Choose one: weight = \"weight_pre\" (the pre-election waves) or weight = \"weight_post\" (the post-election waves).",
@@ -445,6 +465,10 @@
   approximate_cells = c(
     en = "Cells graded approximate are included (min_grade = \"approximate\"): %1$s. Their question format is expected to move the shares; min_grade = \"comparable\" sets them to NA.",
     fr = "Des cellules de niveau approximatif sont incluses (min_grade = \"approximate\")\u00a0: %1$s. Le format de leur question devrait modifier les proportions\u00a0; min_grade = \"comparable\" les met \u00e0 NA."
+  ),
+  pooled_types = c(
+    en = "Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: %1$s. The __type column gives each row's member; qes_provenance(x, level = \"pooled\") counts them.",
+    fr = "Les variables regroup\u00e9es prennent les valeurs de chaque \u00e9tude du premier de leurs membres, par ordre de priorit\u00e9, qui a interrog\u00e9 la personne\u00a0: %1$s. La colonne __type donne le membre de chaque ligne\u00a0; qes_provenance(x, level = \"pooled\") les compte."
   ),
   structural_zeros = c(
     en = "Levels a study's question did not offer are structural zeros, not an absence of support: %1$s. qes_provenance(x, level = \"cell\") lists them.",
@@ -752,6 +776,10 @@
   hz_print_below = c(
     en = "Below min_grade, set to NA: %1$s.",
     fr = "Sous min_grade, mises \u00e0 NA\u00a0: %1$s."
+  ),
+  hz_print_pooled = c(
+    en = "Pooled variables (member types used, by study): %1$s.",
+    fr = "Variables regroup\u00e9es (types de membres utilis\u00e9s, par \u00e9tude)\u00a0: %1$s."
   ),
   hz_print_zeros = c(
     en = "Structural zeros (levels not offered): %1$s.",

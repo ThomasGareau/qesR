@@ -196,10 +196,10 @@ xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
-A row is applied once a reviewer has signed it off. In specification 4.1.0
-every row is signed off, after an automated double review against the
-original files and documents (not a human review); a row still in review
-would give `NA` with the reason `not_reviewed`, unless
+A row is applied once a reviewer has signed it off. In specification 4.3.0
+all rows but three are signed off, after an automated double review
+against the original files and documents (not a human review); a row
+still in review gives `NA` with the reason `not_reviewed`, unless
 `include_draft = TRUE`. The recommended weights of `qes1998`,
 `qes2007_panel`, `qes2012_panel` and the CROP polls still need review, so
 their weights are `NA`. On the demonstration study,

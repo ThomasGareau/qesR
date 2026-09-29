@@ -61,3 +61,56 @@ edu4,4,university,University,Universitaire,4,TRUE,university;universite;universi
 lang3,1,french,French,Français,1,TRUE,french;francais
 lang3,2,english,English,Anglais,2,TRUE,english;anglais
 lang3,3,other,Other,Autre,3,TRUE,other;autre;une autre langue;autre (preciser) :
+satis4,1,very,Very satisfied,Très satisfait(e),1,TRUE,very satisfied;tres satisfait(e);tres satisfait;...tres satisfait
+satis4,2,fairly,Fairly satisfied,Assez satisfait(e),2,TRUE,fairly satisfied;assez satisfait(e);assez satisfait;...assez satisfait;plutot satisfait(e)
+satis4,3,not_very,Not very satisfied,Pas très satisfait(e),3,TRUE,not very satisfied;pas tres satisfait(e);pas tres satisfait;...pas tres satisfait;peu satisfait(e)
+satis4,4,not_at_all,Not at all satisfied,Pas du tout satisfait(e),4,TRUE,not satisfied at all;not at all satisfied;pas du tout satisfait(e);pas du tout satisfait;...pas du tout satisfait
+econ3,1,better,Better,Améliorée,1,TRUE,gotten better;got better;s'est amelioree;s’est amelioree;amelioree
+econ3,2,same,About the same,À peu près la même,2,TRUE,stayed about the same;restee a peu pres le meme;a peu pres la meme
+econ3,3,worse,Worse,Détériorée,3,TRUE,gotten worse;got worse;s'est deterioree;s’est deterioree;deterioree
+attach4,1,very,Very attached,Très attaché(e),1,TRUE,very attached;tres attache(e)
+attach4,2,fairly,Fairly attached,Assez attaché(e),2,TRUE,fairly attached;plutot attache(e);assez attache(e)
+attach4,3,not_very,Not very attached,Pas très attaché(e),3,TRUE,not very attached;pas tres attache(e);peu attache(e)
+attach4,4,not_at_all,Not at all attached,Pas du tout attaché(e),4,TRUE,not attached at all;not at all attached;pas du tout attache(e)
+identity5,1,qc_only,Québécois only,Uniquement québécois(e),1,TRUE,quebecois not canadian;quebecois only;a quebecois only
+identity5,2,qc_first,"Québécois first, then Canadian","D'abord québécois(e), puis canadien(ne)",2,TRUE,"more quebecois than canadian;a quebecois first, but also a canadian"
+identity5,3,equal,Equally Québécois and Canadian,Également québécois(e) et canadien(ne),3,TRUE,equally quebecois and canadian;equally a canadian and a quebecois
+identity5,4,ca_first,"Canadian first, then Québécois","D'abord canadien(ne), puis québécois(e)",4,TRUE,"more canadian than quebecois;a canadian first, but also a quebecois"
+identity5,5,ca_only,Canadian only,Uniquement canadien(ne),5,TRUE,canadian not quebecois;a canadian only
+identity5,90,other,Other,Autre,6,TRUE,other;autre;autres (precisez);autre (precisez)
+strength3,1,very,Very strongly,Très fortement,1,TRUE,very strongly;tres fortement
+strength3,2,fairly,Fairly strongly,Assez fortement,2,TRUE,fairly strongly;assez fortement
+strength3,3,not_very,Not very strongly,Pas très fortement,3,TRUE,not very strongly;pas tres fortement
+region3,1,mtl_cma,Montreal CMA,RMR de Montréal,1,TRUE,mtl rmr;montreal cma;rmr de montreal
+region3,2,quebec_cma,Quebec CMA,RMR de Québec,2,TRUE,qc rmr;quebec cma;rmr de quebec;quebec rmr
+region3,3,rest,Rest of Quebec,Reste du Québec,3,TRUE,autres regions;rest of quebec;reste du quebec
+attend5,1,weekly,Every week,Chaque semaine,1,TRUE,every week;chaque semaine;chaque semaine (ou plus souvent));...chaque semaine (ou plus souvent))
+attend5,2,twice_month,Twice a month,Deux fois par mois,2,TRUE,twice a month;deux fois par mois;...deux fois par mois
+attend5,3,monthly,Once a month,Une fois par mois,3,TRUE,once a month;une fois par mois;...une fois par mois
+attend5,4,yearly,Once or twice a year,Une ou deux fois par année,4,TRUE,once or twice a year;une ou deux fois par annee;une ou deux fois par an;...une ou deux fois par an
+attend5,5,never,Hardly ever or never,Presque jamais ou jamais,5,TRUE,hardly ever (includes never);presque jamais (ou jamais);...presque jamais (ou jamais)
+birthplace3,1,quebec,Quebec,Québec,1,TRUE,in quebec;au quebec
+birthplace3,2,other_canada,Elsewhere in Canada,Ailleurs au Canada,2,TRUE,in another part of canada;ailleurs au canada
+birthplace3,3,abroad,Outside Canada,Hors du Canada,3,TRUE,somewhere else;hors du canada
+party_ca,1,LPC,Liberal,Libéral,1,TRUE,liberal;liberal party of canada;le parti liberal du canada (plc)
+party_ca,2,CPC,Conservative,Conservateur,2,TRUE,conservative;conservative party of canada;le parti conservateur (pc)
+party_ca,3,NDP,NDP,NPD,3,TRUE,ndp;new democratic party (ndp);le nouveau parti democratique (npd)
+party_ca,4,BQ,Bloc Québécois,Bloc Québécois,4,TRUE,bloc quebecois;le bloc quebecois (bq)
+party_ca,5,GPC,Green,Vert,5,TRUE,green;green party;green party of canada;le parti vert du canada (pv)
+party_ca,6,PPC,PPC,PPC,6,TRUE,ppc;people's party of canada
+party_ca,90,other,Another party,Un autre parti,90,TRUE,another party;another party (please specify);autre (specifiez)
+issue_qc,1,economy,The economy,L'économie,1,TRUE,the economy;l'economie;...l'economie
+issue_qc,2,health,Health care,La santé,2,TRUE,health care;la sante;...la sante
+issue_qc,3,environment,The environment,L'environnement,3,TRUE,the environment;l'environnement;...l'environnement
+issue_qc,4,education,Education,L'éducation,4,TRUE,education;l'education;...l'education
+issue_qc,5,families,Aid to families,L'aide aux familles,5,TRUE,aid to families;l'aide aux familles;...l'aide aux familles
+issue_qc,6,poverty,Poverty,La pauvreté,6,TRUE,poverty;la pauvrete;...la pauvrete
+issue_qc,7,integrity,Integrity and corruption,L'intégrité et la corruption,7,TRUE,corruption;l'integrite;integrity of politicians and corruption
+issue_qc,8,taxes_finances,Taxes and public finances,Les taxes et les finances publiques,8,TRUE,taxes and public finances;les taxes et les finances publiques
+issue_qc,9,sovereignty,Quebec sovereignty,La souveraineté du Québec,9,TRUE,quebec sovereignty;la souverainete du quebec
+issue_qc,10,secularism,State secularism (the charter),La laïcité de l'État (la charte),10,TRUE,la charte de la laicite
+issue_qc,11,immigration,Immigration,L'immigration,11,TRUE,immigration;l'immigration
+issue_qc,12,cost_of_living,Cost of living,Le coût de la vie,12,TRUE,cost of living
+issue_qc,13,housing,Housing,Le logement,13,TRUE,the housing crisis
+issue_qc,14,french_language,The French language,La langue française,14,TRUE,the french language
+issue_qc,90,other,Another issue,Un autre enjeu,90,TRUE,"autre;other;un autre enjeu, specifiez :"

@@ -17,7 +17,7 @@ test_that("view 'targets' gives one row per target and each study's best grade",
   # filters and language
   f <- qes_spec(targets = "vote", studies = c("qes2014", "qes_demo"), lang = "fr")
   expect_identical(f$target, c("vote_prov_recall", "vote_prov_intent", "vote_prov_intent_push", "turnout_prov_recall",
-                               "turnout_prov_likely"))
+                               "turnout_prov_likely", "vote_prov_prev", "vote_fed_recall"))
   expect_identical(names(f)[-(1:9)], "qes2014")
   expect_identical(f$label[1], "Vote provincial (rappel)")
   expect_identical(attr(v, "qes_spec")$version, s$version)
@@ -112,10 +112,10 @@ test_that("the generated reference covers every target, in English and French al
   noref$tables$crosswalk$wording_en[j] <- NA
   noref$tables$crosswalk$wording_fr[j] <- NA
   expect_true(grepl("document 7449514, p.68", .spec_reference_md("en", spec = noref), fixed = TRUE))
-  # structural zeros and review status are marked (no shipped row is in
-  # review since spec 4.1.0, so one is put back in review)
+  # structural zeros and review status are marked (the rows added in spec
+  # 4.3.0 are in review; so is one put back in review)
   expect_true(grepl("not offered: PVQ, PCQ, ON, ADQ", en, fixed = TRUE))
-  expect_false(grepl("(in review)", en, fixed = TRUE))
+  expect_identical(grepl("(in review)", en, fixed = TRUE), any(xw$status == "review"))
   held <- s
   j <- which(held$tables$crosswalk$rule != "none" & held$tables$crosswalk$study == "qes2012")[1]
   held$tables$crosswalk$status[j] <- "review"
@@ -151,17 +151,17 @@ test_that("qes_search() gives the targets a variable feeds, and searches them", 
   expect_identical(t$matched_in, "target")
   # French target labels: "Vote provincial (rappel)", "A vot\u00e9 ... (rappel)"
   fr <- qes_search("rappel", studies = "qes2012", fields = "target")
-  expect_identical(fr$variable, c("q21", "q25"))
+  expect_identical(fr$variable, c("q21", "q25", "q27"))
   # the target labels are searched in the language(s) lang asks for
   expect_identical(qes_search("rappel", studies = "qes2012", fields = "target", lang = "fr")$variable,
-                   c("q21", "q25"))
+                   c("q21", "q25", "q27"))
   expect_identical(nrow(qes_search("rappel", studies = "qes2012", fields = "target", lang = "en")), 0L)
   expect_identical(qes_search("independent country", studies = "qes2014", fields = "target", lang = "en")$variable,
                    "Q19")
   expect_identical(nrow(qes_search("independent country", studies = "qes2014", fields = "target", lang = "fr")), 0L)
   # target names are searched in either language
   expect_identical(qes_search("sov_indep", studies = "qes2014", fields = "target", lang = "fr")$variable, "Q19")
-  none <- qes_search("^Q1$", studies = "qes2014", fields = "variable", regex = TRUE)
+  none <- qes_search("^SEL1$", studies = "qes2014", fields = "variable", regex = TRUE)
   expect_true(all(is.na(none$targets)))
   demo <- qes_search("^Q3$", studies = "qes_demo", fields = "variable", regex = TRUE)
   expect_identical(demo$targets, "vote_prov_recall")
@@ -363,13 +363,22 @@ test_that("the home page grid links each target to its section of the reference"
   # the same study codes, which may wrap only after "qes" and at "_"
   expect_identical(gsub("<wbr>|</?code>", "", linked[1]), gsub("`", "", plain[1]))
   expect_false(grepl("<wbr>[^_q]*<wbr>[0-9]", linked[1]))
-  targets <- sub("^\\| `([a-z0-9_]+)` \\|.*$", "\\1", plain[-(1:2)])
-  expect_identical(linked[-(1:2)],
+  body <- plain[-(1:2)]
+  pooled <- grepl("^\\| `[a-z0-9_]+` \\(pooled\\) \\|", body)
+  targets <- sub("^\\| `([a-z0-9_]+)` \\|.*$", "\\1", body[!pooled])
+  expect_identical(linked[-(1:2)][!pooled],
                    sprintf("| [`%s`](articles/ref.html#target-%s) |%s", targets, targets,
-                           sub("^\\| `[a-z0-9_]+` \\|", "", plain[-(1:2)])))
+                           sub("^\\| `[a-z0-9_]+` \\|", "", body[!pooled])))
+  # the pooled variables come after the targets and link to their sections
+  pools <- sub("^\\| `([a-z0-9_]+)` \\(pooled\\) \\|.*$", "\\1", body[pooled])
+  expect_identical(pools, getFromNamespace(".qes_pool_names", "qesR")(hz_spec()))
+  expect_identical(linked[-(1:2)][pooled],
+                   sprintf("| [`%s`](articles/ref.html#pooled-%s) (pooled) |%s", pools, pools,
+                           sub("^\\| `[a-z0-9_]+` \\(pooled\\) \\|", "", body[pooled])))
   # the anchors are those of the reference sections
   ref <- .spec_reference_md("en", spec = hz_spec())
   for (t in targets) expect_match(ref, sprintf("{#target-%s}", t), fixed = TRUE)
+  for (p in pools) expect_match(ref, sprintf("{#pooled-%s}", p), fixed = TRUE)
 })
 
 test_that("the README grid gives the first letter of each grade qes_spec() gives", {
@@ -380,11 +389,24 @@ test_that("the README grid gives the first letter of each grade qes_spec() gives
   studies <- gsub("`", "", trimws(header[-1]))
   expect_setequal(studies, names(v)[-(1:9)])
   rows <- lapply(strsplit(sub("^\\| (.*) \\|$", "\\1", lines[-(1:2)]), " | ", fixed = TRUE), trimws)
-  expect_setequal(vapply(rows, function(r) gsub("`", "", r[1]), ""), v$target)
+  pooled <- vapply(rows, function(r) grepl(" (pooled)", r[1], fixed = TRUE), logical(1))
+  expect_setequal(vapply(rows[!pooled], function(r) gsub("`", "", r[1]), ""), v$target)
   letter <- c(identical = "I", comparable = "C", approximate = "A")
-  for (r in rows) {
+  for (r in rows[!pooled]) {
     t <- gsub("`", "", r[1])
     g <- unlist(v[v$target == t, studies], use.names = FALSE)
-    expect_identical(r[-1], ifelse(is.na(g), "—", letter[g]), label = t)
+    expect_identical(r[-1], ifelse(is.na(g), "\u2014", letter[g]), label = t)
+  }
+  # a pooled variable's cell is the grade of the member the study's values
+  # come from (the first default member it has, capped)
+  pv <- qes_spec("pooled")
+  for (r in rows[pooled]) {
+    p <- sub(" \\(pooled\\)$", "", gsub("`", "", r[1]))
+    m <- pv[pv$pooled == p & pv$default, , drop = FALSE]
+    g <- vapply(studies, function(st) {
+      x <- m[[st]]
+      if (all(is.na(x))) NA_character_ else x[!is.na(x)][1]
+    }, character(1))
+    expect_identical(r[-1], unname(ifelse(is.na(g), "\u2014", letter[g])), label = p)
   }
 })

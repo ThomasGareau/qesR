@@ -20,7 +20,9 @@
 #' `include_draft = TRUE` in [qes_harmonize()] applies those rows too. The
 #' rows were signed off after an automated double review against the
 #' original files and documents (not a human review); since spec 4.1.0
-#' every row is signed off.
+#' every reviewed row is signed off. The rows added in spec 4.3.0, not
+#' reviewed yet, are never read by `get_decon()` or `get_qes_master()`,
+#' even with their columns' targets: the legacy columns stay as they were.
 #'
 #' `get_decon()` returns the data and assigns nothing unless
 #' `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
@@ -69,8 +71,9 @@
 #' pourquoi la ligne est retenue), et `include_draft = TRUE` dans
 #' [qes_harmonize()] applique aussi ces lignes. Les lignes ont été
 #' approuvées après une double révision automatisée sur les fichiers et
-#' documents originaux (et non une révision humaine) ; toutes le sont depuis
-#' la spécification 4.1.0. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+#' documents originaux (et non une révision humaine) ; toutes les lignes
+#' révisées le sont depuis la spécification 4.1.0, et les lignes ajoutées
+#' dans la 4.3.0, pas encore révisées, ne sont jamais lues. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
 #' anglais des cibles, nombres, et texte pour `income` et `religion` (le
 #' montant du revenu de `qes2022` reste un nombre).
 #' `turnout` et `votechoice` sont la participation et le vote déclarés

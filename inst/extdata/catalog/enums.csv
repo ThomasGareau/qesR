@@ -83,6 +83,7 @@ rule,string,5,,,Open text,Texte libre
 rule,constant,6,,,Constant,Constante
 rule,fn,7,,,Registered function (fn:<name>),Fonction enregistrée (fn:<nom>)
 rule,none,8,,,Documentation only,Documentation seulement
+rule,coalesce,9,,,A question then its push (first answer),Une question puis sa relance (première réponse)
 dk_offered,explicit,1,,,Offered explicitly,Offert explicitement
 dk_offered,volunteered,2,,,Volunteered only,Spontané seulement
 dk_offered,none,3,,,Not offered,Non offert

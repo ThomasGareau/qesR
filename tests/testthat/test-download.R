@@ -510,7 +510,7 @@ test_that("version and level take the match.arg() default and abbreviations", {
   unlink(out$local_path)
   out <- qes_download("qes_demo", path = dir, version = "pin", quiet = TRUE)
   expect_true(out$pinned)
-  expect_identical(nrow(qes_provenance("qes_demo", level = c("study", "cell", "spec"))), 1L)
+  expect_identical(nrow(qes_provenance("qes_demo", level = c("study", "cell", "spec", "pooled"))), 1L)
   expect_identical(nrow(qes_provenance("qes_demo", level = "st")), 1L)
   expect_error(qes_provenance("qes_demo", level = "x"), class = "qesR_error_input")
 })

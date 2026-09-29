@@ -830,3 +830,35 @@ questionnaires but not in their files call for another instrument name
 
 **Held pending evidence:** none. No row is held in review (spec 4.1.0);
 the weights that need review wait for Q1 (D1 (b), D3).
+
+**D13. Rows of spec 4.3.0 held for the owner (review of 2026-09-29).** The
+automated double review of the 104 rows added in spec 4.3.0 (against the
+original files and documents, adjudicated where the two reviewers
+disagreed; not a human review) signed 101 off (`stable`), 45 of them
+corrected or completed, text in most cases. Three rows stay in `review` (their `review_note` says
+why) until the owner decides:
+
+(a) `qes2022` `cps_provpidstr` (`pid_prov_strength`): the English version
+asks how strongly the respondent feels, the French one (1,164 of the
+1,352 answers) how close, the wording graded `approximate` in 2007 and
+2008. The review lowered the grade from `comparable` to `approximate` and
+asks the owner to confirm it before sign-off (a grade that crosses the
+`comparable` threshold).
+
+(b) `qes2008` `q13` and `qes2018` `q9` (`vote_prov_prev`): respondents
+under 18 at the previous election were asked and answered (5 born in 1990
+in 2008, all "did not vote"; 268 born 1997-2000 in 2018, 58 of whom name
+a party or another party). The reviewers asked for a gate on the year of
+birth setting them to `ineligible`; a gate in the spec states the
+questionnaire's routing and the data check V-D7 rejects it (they were
+asked), and the spec has no rule that overrides an answer by eligibility.
+To decide: add such a rule (for example an `eligible` gate kind that V-D7
+does not read as routing, a MINOR schema change), or sign the rows off
+with the answers kept and the caveat in their notes (as written now).
+
+The legacy freeze (design.md section 0.5, V-S19): two signed-off rows
+would have changed a legacy column, `qes2012` `pid_fed` (`federal_pid`,
+`fed_pid`) and `qes2022` `lang_mother` (`language`). They are kept as in
+0.7.1 (`legacy.csv` study rows of cause `legacy_frozen`); letting them fill is
+an owner decision that changes `get_qes_master()`/`get_decon()` output and
+needs a NEWS line.

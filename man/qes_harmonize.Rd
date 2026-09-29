@@ -19,7 +19,8 @@ qes_harmonize(
   data = NULL,
   spec = NULL,
   lang = c("en", "fr"),
-  quiet = FALSE
+  quiet = FALSE,
+  types = NULL
 )
 }
 \arguments{
@@ -27,9 +28,11 @@ qes_harmonize(
 the Quebec Election Studies the spec covers, or the studies named in
 \code{data} when it is given; \code{"all"} means every study the spec covers.}
 
-\item{targets}{Target, family or set names (see \code{\link[=qes_spec]{qes_spec()}}); the
-default \code{"core"} is the core set, and \code{"decon"} the targets of the
-columns of \code{\link[=get_decon]{get_decon()}}.}
+\item{targets}{Target, family, set or pooled variable names (see
+\code{\link[=qes_spec]{qes_spec()}}); the default \code{"core"} is the core set (with the pooled
+variables \code{vote_choice}, \code{sov_support} and \code{pol_interest}), \code{"decon"}
+the targets of the columns of \code{\link[=get_decon]{get_decon()}}, and \code{"pooled"} every
+pooled variable.}
 
 \item{layout}{\code{"respondent"} (default): one row per respondent of each
 study's file. \code{"long"}: one row per respondent and wave (see \emph{Waves}).}
@@ -78,6 +81,12 @@ and target populations): \code{"en"} (default) or \code{"fr"}. Codes and reasons
 do not depend on it.}
 
 \item{quiet}{If \code{TRUE}, no progress or informational messages.}
+
+\item{types}{\code{NULL} (default: the default members of each pooled
+variable) or a named list, pooled variable -> the type names of the
+members to use (a member's target name is accepted too), for example
+\code{list(vote_choice = "recall")} or \code{list(turnout = c("recall", "intention"))}. The order given does not matter: the members are tried
+in the spec's order of precedence. See \emph{Pooled variables}.}
 }
 \value{
 A data frame of class \code{qes_harmonized}, returned visibly, one row
@@ -94,21 +103,24 @@ for \code{qes1998}; \code{NA} for a study drawn as one sample), \code{source_row
 with \code{\link[=merge]{merge()}} on \code{study} and \code{source_row}), \code{survey_mode},
 \code{interview_date} (of the respondent's first wave in the respondent
 layout), \code{days_to_election} and \code{eligible_voter}. Then one column per
-target, carrying its label in \code{attr(, "label")}, then the \verb{__na} and
-\verb{__src} companions, then the weight columns: \code{weight_pre},
+target, carrying its label in \code{attr(, "label")}, then one per pooled
+variable, then the \verb{__type}, \verb{__grade} and \verb{__item} companions of each
+pooled variable, then the \verb{__na} and \verb{__src} companions (targets, then
+pooled variables), then the weight columns: \code{weight_pre},
 \code{weight_post}, \code{weight_pre_var} and \code{weight_post_var} (respondent
 layout) or \code{weight} and \code{weight_var} (long layout). Attributes:
 \code{qes_spec} (spec \code{version}, \code{hash}, \code{custom}, \code{engine}),
 \code{qes_provenance} (see \code{\link[=qes_provenance]{qes_provenance()}}, with levels \code{"study"},
-\code{"cell"} and \code{"spec"}), \code{qes_weight_guide} (\code{target}, \code{study}, \code{wave},
+\code{"cell"}, \code{"spec"} and, with pooled variables, \code{"pooled"}),
+\code{qes_weight_guide} (\code{target} or pooled variable, \code{study}, \code{wave},
 \code{target_timing}, \code{weight_column}, \code{weight_var}, \code{weight_status}) and
 \code{failed_studies} (\code{study}, \code{class}, \code{message}, \code{parent_message}).
 
 Results for different studies built with the same spec can be combined
 with \code{\link[=rbind]{rbind()}}, which also combines their provenance. It is an error
 (class \code{qesR_error_input}) if the spec content hashes differ, the parts
-were built with different \code{lang}, \code{layout}, \code{values}, \code{missing} or
-\code{weights}, their columns differ (different \code{targets} or \code{keep_source}),
+were built with different \code{lang}, \code{layout}, \code{values}, \code{missing},
+\code{weights} or \code{types}, their columns differ (different \code{targets} or \code{keep_source}),
 or a study appears twice; harmonizing all the studies in one call is
 simpler.
 }
@@ -132,7 +144,10 @@ are applied only with \code{include_draft = TRUE}, and a message says so. In
 spec 4.1.0 every row is signed off, after an automated double review
 against the original files and documents (not a human review; the
 crosswalk's \code{reviewed_by} says so, and \code{review_note} what the review
-corrected). A row's sign-off is about its content: the recommended
+corrected). The rows added in spec 4.3.0 (the push of 2022, the new
+targets such as satisfaction with democracy or the leader ratings) are
+checked against the files but not reviewed yet: they are in review, and
+applied only with \code{include_draft = TRUE}. A row's sign-off is about its content: the recommended
 weights that still need review (those of \code{qes1998}, \code{qes2007_panel},
 \code{qes2012_panel} and the CROP polls) do not hold the rows of their waves,
 but are themselves \code{NA} until they are reviewed (see \emph{Weights}). A row
@@ -157,9 +172,10 @@ as \code{spec}.
 A target is one question stimulus: a different wording, scale, timing or
 format makes another target (vote intention and reported vote, the
 "independent country" and "sovereign country" referendum questions, the
-four-point and 0-10 interest scales are all separate targets, never
-pooled). Each study's question gets a grade against the target's anchor
-question:
+four-point and 0-10 interest scales are all separate targets). A pooled
+variable (see \emph{Pooled variables}) combines such targets into one column,
+and records row by row which one each value comes from. Each study's
+question gets a grade against the target's anchor question:
 \itemize{
 \item \code{identical}: the same question, options and format;
 \item \code{comparable}: the same stimulus, with differences (option order, whether
@@ -204,6 +220,66 @@ Every missing value has a reason, in this order (the levels of the \code{<target
 \item{\code{unmapped}}{Code not mapped.}
 }
 \code{not_asked} means the study has no question for the target; \code{not_reviewed} that it has one, whose crosswalk row is not yet signed off by a reviewer (applied with \code{include_draft = TRUE}). \code{missing = "reasons"} adds a factor column \code{<target>__na} with the reason of each missing value.
+}
+
+\section{Pooled variables}{
+
+A pooled variable is one column, for every study, that pools several
+targets (its members) with a precedence among them. \code{vote_choice} is the
+provincial vote choice: the reported vote (recall) where the study asked
+it, else the vote intention with those who named no party pushed (the
+undecided and, in some studies, those who would not vote or refused),
+else the vote intention at the first question, whatever the wording of
+each study.
+\code{sov_support} pools the referendum wordings on sovereignty (an
+independent country, a sovereign country, the 1995 question, and,
+collapsed to yes or no, being favourable to independence),
+\code{pol_interest} the interest scales on 0 to 1 (four-point items scored 1,
+0.7, 0.3 and 0; 0-10 items divided by 10) and \code{turnout} the reported
+turnout (the likelihood of voting only when asked for). The first three
+are in the default set \code{"core"}; \code{qes_spec("pooled")} lists their members.
+
+A row's value comes from the first member, by precedence, that asked the
+respondent: a member that has a value, or a missing value that is an
+answer (don't know, refused, did not vote), sets the row; a member that
+did not ask the respondent, or whose answer cannot be used (not in the
+wave, not asked in the study, not reviewed, below \code{min_grade}, routed
+out, system missing, a code that straddles levels: \code{not_mappable}, such
+as CROP's code 7 of the pushed intention), passes to the next. So a
+respondent who did not vote is \code{NA} (reason \code{not_voted}) in
+\code{vote_choice}, never given their earlier intention. When every member
+passes, the row is \code{NA} with the reason, \verb{__type}, \verb{__grade} and
+\verb{__item} of the first usable member that has a row in the study and
+wave, else of the first member that has a row: with
+\code{min_grade = "comparable"}, a study whose only members are approximate
+gets \code{NA} (reason \code{below_grade}) with that member's type and grade
+(\code{approximate}), which say why the row is empty. With each pooled
+column come \verb{<pooled>__type} (the member's type name, such as \code{recall}
+or \code{intention_push}), \verb{<pooled>__grade} (the member row's grade, capped
+at approximate for a transform that loses information, such as scoring a
+four-point scale; never raised) and \verb{<pooled>__item} (the source:
+\verb{<study>:<wave>:<variables>}), and \verb{<pooled>__na} and \verb{<pooled>__src}
+with \code{missing = "reasons"} and \code{keep_source = TRUE}. \code{types} keeps some
+members only, for example \code{types = list(vote_choice = "recall")}; the
+precedence stays the spec's. The members are harmonized too, but are
+columns of the result only when \code{targets} names them.
+
+In the respondent layout (one row per respondent), a study's values of a
+pooled variable come from one wave: that of the first member the study
+applies (the post-election recall of a pre/post study, say), so that one
+weight column fits them; the respondents of its other waves are \code{NA}
+(reason \code{not_in_wave}). The long layout keeps every wave, each row with
+the members of its own wave. \code{\link[=qes_design]{qes_design()}} then weights each study with
+the column of that wave. A message (class \code{qesR_message_pooled}) and
+\code{qes_provenance(x, level = "pooled")} say which member each study used,
+and how many rows it gave.
+
+A target a study has no row for can be derived from other targets
+(targets.csv \code{derive_rule}): the age groups \code{age_group3} and
+\code{age_group6} from the age, else the year of birth (graded approximate:
+an age at a band edge can be one year off), so that every study has an
+age group. A direct row always wins, and cell provenance says
+\code{rule = "derive:age_band"}.
 }
 
 \section{Data}{
@@ -321,7 +397,9 @@ pinned files; field \code{study}), and \code{qesR_warning_label_mismatch} and
 \code{qesR_warning_universe} (such \code{data} whose value labels differ from
 the pinned file's, or whose answers do not fit the question's
 universe; fields \code{study}, \code{problems});
-\item messages, silenced by \code{quiet = TRUE}: \code{qesR_message_unreviewed_skipped}
+\item messages, silenced by \code{quiet = TRUE}: \code{qesR_message_pooled} (which
+member of each pooled variable each study used; field \code{pooled}, the
+pooled provenance), \code{qesR_message_unreviewed_skipped}
 (cells left \code{NA} because their rows are not signed off),
 \code{qesR_message_unreviewed_cells} (cells that use rows not signed off,
 with \code{include_draft = TRUE}), \code{qesR_message_approximate_cells} (cells
@@ -393,7 +471,19 @@ pas les lignes de façon unique) ; avertissements \code{qesR_warning_unmapped},
 \code{qesR_warning_partial} et \code{qesR_warning_unverified_source} ; messages
 \verb{qesR_message_*}, masqués par \code{quiet = TRUE} ; \code{\link[=qes_design]{qes_design()}} envoie
 \code{qesR_message_design_dropped} quand il écarte des lignes sans la
-pondération choisie. Voir
+pondération choisie. Une variable regroupée (section \emph{Pooled
+variables}) réunit plusieurs cibles en une seule colonne pour toutes les
+études : \code{vote_choice} est le vote déclaré là où l'étude l'a demandé,
+sinon l'intention de vote avec relance des personnes qui n'ont nommé
+aucun parti (les indécis et, dans certaines études, celles qui ne
+voteraient pas ou refusaient), sinon l'intention de vote ; \code{sov_support} réunit les libellés référendaires, \code{pol_interest}
+les échelles d'intérêt ramenées de 0 à 1 et \code{turnout} la participation
+déclarée. Le premier membre, par ordre de priorité, qui a interrogé la
+personne donne la valeur ; \verb{<variable>__type} indique ce membre,
+\verb{<variable>__grade} son niveau de comparabilité et \verb{<variable>__item} sa
+question ; \code{types = list(vote_choice = "recall")} ne garde que certains
+membres. Les groupes d'âge sont dérivés de l'âge ou de l'année de
+naissance là où l'étude n'a pas de question par tranches. Voir
 \code{vignette("fr-reference-harmonisation", package = "qesR")}.
 }
 
@@ -424,6 +514,15 @@ attr(h, "qes_weight_guide")
 # one row per respondent and wave
 l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
 
+# one vote choice for every study: here the reported vote of the
+# demonstration study (a qes2014 stand-in)
+v <- qes_harmonize("qes_demo", targets = "vote_choice", missing = "reasons", quiet = TRUE)
+table(v$vote_choice, v$vote_choice__type, useNA = "ifany")
+qes_provenance(v, level = "pooled")[, c("study", "type", "member", "grade", "n_value")]
+# recall only, or intentions only
+v2 <- qes_harmonize("qes_demo", targets = "vote_choice",
+                    types = list(vote_choice = "intention"), quiet = TRUE)
+
 # what the review corrected in each row, and which rows are in review
 xw <- qes_spec("crosswalk")
 table(xw$status)
@@ -439,6 +538,7 @@ value came from.
 
 Other harmonization: 
 \code{\link{qes_design}()},
+\code{\link{qes_party_lineage}()},
 \code{\link{qes_spec}()}
 }
 \concept{harmonization}

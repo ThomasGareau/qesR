@@ -122,6 +122,45 @@
   out
 }
 
+# ---- view "pooled" ------------------------------------------------------------------------
+
+# One row per member of each pooled variable (R/hz-pool.R), with the grade
+# of the member's row in each study, capped by its grade_cap.
+.qes_spec_pooled_view <- function(spec, pools, studies, lang) {
+  pt <- .qes_pool_tables(spec)
+  pl <- pt$pooled
+  pm <- pt$members
+  if (!is.null(pools)) pl <- pl[pl$pooled %in% pools, , drop = FALSE]
+  pm <- pm[pm$pooled %in% pl$pooled, , drop = FALSE]
+  pm <- pm[order(match(pm$pooled, pl$pooled), pm$precedence), , drop = FALSE]
+  xw <- spec$tables$crosswalk
+  xw <- xw[!is.na(xw$rule) & xw$rule != "none" & xw$primary %in% TRUE, , drop = FALSE]
+  cols <- intersect(c(.qes_study_codes(), unique(xw$study)), unique(xw$study))
+  if (!is.null(studies)) cols <- intersect(cols, studies)
+  j <- match(pm$pooled, pl$pooled)
+  levels_text <- vapply(seq_len(nrow(pm)), function(k) {
+    id <- pl$levels_id[j[k]]
+    if (is.na(id)) return(sprintf("%s-%s", .qes_code_chr(pl$valid_min[j[k]]), .qes_code_chr(pl$valid_max[j[k]])))
+    set <- .qes_spec_levels(spec$tables$levels, id)
+    paste(set$code, set[[paste0("label_", lang)]], sep = "=", collapse = "; ")
+  }, character(1))
+  out <- data.frame(
+    pooled = pm$pooled, label = .qes_pick_lang(pl, "label", lang)[j],
+    definition = .qes_pick_lang(pl, "description", lang)[j], type = pl$type[j], levels = levels_text,
+    type_name = pm$type_name, type_label = .qes_pick_lang(pm, "type_label", lang), member = pm$member,
+    precedence = pm$precedence, default = pm$default, transform = pm$transform, grade_cap = pm$grade_cap,
+    note = .qes_pick_lang(pm, "note", lang), status = pl$status[j], added_in = pm$added_in,
+    stringsAsFactors = FALSE
+  )
+  for (s in cols) {
+    g <- xw$grade[match(paste(s, pm$member), paste(xw$study, xw$target))]
+    out[[s]] <- .qes_pool_cap(g, pm$grade_cap)
+  }
+  rownames(out) <- NULL
+  attr(out, "qes_spec") <- list(version = spec$version, hash = spec$hash, custom = isTRUE(spec$custom))
+  out
+}
+
 # ---- view "crosswalk" ------------------------------------------------------------------
 
 .qes_spec_crosswalk_view <- function(spec, targets, studies, level, format, lang) {
@@ -180,9 +219,15 @@
         na_reason = reason, note = note, stringsAsFactors = FALSE
       ))
     }
-    if (xw$rule[i] %in% "map") {
+    if (xw$rule[i] %in% c("map", "coalesce")) {
       m <- vm[vm$map_id %in% xw$map_id[i], , drop = FALSE]
       add(xw$source_var[i], m$source_code, m$source_label, rep("map", nrow(m)), m$target_code, m$na_reason, m$note)
+      # the other variables of a coalesce row, each with its own map
+      then <- .qes_hz_coalesce_then(xw, i) %||% data.frame(var = character(0), map_id = character(0))
+      for (k in seq_len(nrow(then))) {
+        m <- vm[vm$map_id %in% then$map_id[k], , drop = FALSE]
+        add(rep(then$var[k], nrow(m)), m$source_code, m$source_label, rep("map", nrow(m)), m$target_code, m$na_reason, m$note)
+      }
     }
     if (xw$rule[i] %in% "numeric") {
       r <- .qes_hz_row_rule(spec, idx[i])
@@ -272,8 +317,8 @@ print.qes_crosswalk <- function(x, ...) {
   ),
   how_title = c(en = "How to read this reference", fr = "Comment lire cette r\u00e9f\u00e9rence"),
   how = c(
-    en = "Each target is one question stimulus: a different wording, scale, timing or format makes another target, and targets are never pooled. For each study, the coverage table gives the source variable and its wave, the comparability grade of the study's question against the target's anchor question and the reason for it, the instrument (the item format), the levels the question offered, the question wording (or, when the wording cannot be shipped, the document and page that give it), the filter question and what each of its codes means, the study's recommended weight (marked when it needs review: qes_harmonize() does not apply it, and its weight columns are NA) and whether \"don't know\" was offered.",
-    fr = "Chaque cible correspond \u00e0 un seul stimulus de question\u00a0: une formulation, une \u00e9chelle, un moment ou un format diff\u00e9rent donne une autre cible, et les cibles ne sont jamais regroup\u00e9es. Pour chaque \u00e9tude, le tableau de couverture donne la variable source et sa vague, le niveau de comparabilit\u00e9 de la question de l'\u00e9tude par rapport \u00e0 la question d'ancrage de la cible et sa raison, l'instrument (le format de la question), les niveaux offerts, le libell\u00e9 de la question (ou, quand il ne peut pas \u00eatre fourni, le document et la page qui le donnent), la question filtre et le sens de chacun de ses codes, la pond\u00e9ration recommand\u00e9e de l'\u00e9tude (signal\u00e9e quand elle est \u00e0 r\u00e9viser\u00a0: qes_harmonize() ne l'applique pas, et ses colonnes de pond\u00e9ration valent NA) et si \u00ab\u00a0je ne sais pas\u00a0\u00bb \u00e9tait offert."
+    en = "Each target is one question stimulus: a different wording, scale, timing or format makes another target; a pooled variable (last chapter) combines targets into one column and records which one each value comes from. For each study, the coverage table gives the source variable and its wave, the comparability grade of the study's question against the target's anchor question and the reason for it, the instrument (the item format), the levels the question offered, the question wording (or, when the wording cannot be shipped, the document and page that give it), the filter question and what each of its codes means, the study's recommended weight (marked when it needs review: qes_harmonize() does not apply it, and its weight columns are NA) and whether \"don't know\" was offered.",
+    fr = "Chaque cible correspond \u00e0 un seul stimulus de question\u00a0: une formulation, une \u00e9chelle, un moment ou un format diff\u00e9rent donne une autre cible\u00a0; une variable regroup\u00e9e (dernier chapitre) r\u00e9unit des cibles en une seule colonne et indique de laquelle vient chaque valeur. Pour chaque \u00e9tude, le tableau de couverture donne la variable source et sa vague, le niveau de comparabilit\u00e9 de la question de l'\u00e9tude par rapport \u00e0 la question d'ancrage de la cible et sa raison, l'instrument (le format de la question), les niveaux offerts, le libell\u00e9 de la question (ou, quand il ne peut pas \u00eatre fourni, le document et la page qui le donnent), la question filtre et le sens de chacun de ses codes, la pond\u00e9ration recommand\u00e9e de l'\u00e9tude (signal\u00e9e quand elle est \u00e0 r\u00e9viser\u00a0: qes_harmonize() ne l'applique pas, et ses colonnes de pond\u00e9ration valent NA) et si \u00ab\u00a0je ne sais pas\u00a0\u00bb \u00e9tait offert."
   ),
   grades_title = c(en = "Comparability grades", fr = "Niveaux de comparabilit\u00e9"),
   grade_identical = c(
@@ -329,8 +374,8 @@ print.qes_crosswalk <- function(x, ...) {
   draft = c(en = "draft", fr = "provisoire"),
   review = c(en = "in review", fr = "en r\u00e9vision"),
   status_note = c(
-    en = "A row with no mark is signed off by a reviewer (status stable; in spec 4.0.0, by an automated double review against the original files and documents, not a human review), and `qes_harmonize()` applies it by default. A row marked \"in review\" was checked against the original files and documents but is not signed off (the `review_note` column of `qes_spec(\"crosswalk\")` says why it is held); a row marked \"draft\" is not yet checked. `qes_harmonize()` applies these only with `include_draft = TRUE`.",
-    fr = "Une ligne sans mention est approuv\u00e9e par un r\u00e9viseur (statut stable\u00a0; dans la sp\u00e9cification 4.0.0, par une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non par une r\u00e9vision humaine), et `qes_harmonize()` l'applique par d\u00e9faut. Une ligne marqu\u00e9e \u00ab\u00a0en r\u00e9vision\u00a0\u00bb a \u00e9t\u00e9 v\u00e9rifi\u00e9e sur les fichiers et documents originaux mais n'est pas approuv\u00e9e (la colonne `review_note` de `qes_spec(\"crosswalk\")` dit pourquoi elle est retenue)\u00a0; une ligne marqu\u00e9e \u00ab\u00a0provisoire\u00a0\u00bb n'est pas encore v\u00e9rifi\u00e9e. `qes_harmonize()` n'applique celles-ci qu'avec `include_draft = TRUE`."
+    en = "A row with no mark is signed off by a reviewer (status stable; in specs 4.0.0 and 4.3.0, by an automated double review against the original files and documents, not a human review), and `qes_harmonize()` applies it by default. A row marked \"in review\" was checked against the original files and documents but is not signed off (the `review_note` column of `qes_spec(\"crosswalk\")` says why it is held); a row marked \"draft\" is not yet checked. `qes_harmonize()` applies these only with `include_draft = TRUE`.",
+    fr = "Une ligne sans mention est approuv\u00e9e par un r\u00e9viseur (statut stable\u00a0; dans les sp\u00e9cifications 4.0.0 et 4.3.0, par une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non par une r\u00e9vision humaine), et `qes_harmonize()` l'applique par d\u00e9faut. Une ligne marqu\u00e9e \u00ab\u00a0en r\u00e9vision\u00a0\u00bb a \u00e9t\u00e9 v\u00e9rifi\u00e9e sur les fichiers et documents originaux mais n'est pas approuv\u00e9e (la colonne `review_note` de `qes_spec(\"crosswalk\")` dit pourquoi elle est retenue)\u00a0; une ligne marqu\u00e9e \u00ab\u00a0provisoire\u00a0\u00bb n'est pas encore v\u00e9rifi\u00e9e. `qes_harmonize()` n'applique celles-ci qu'avec `include_draft = TRUE`."
   ),
   document = c(en = "document %s, %s", fr = "document %s, %s"),
   none = c(en = "No study has a question for this target yet.", fr = "Aucune \u00e9tude n'a encore de question pour cette cible."),
@@ -371,12 +416,12 @@ print.qes_crosswalk <- function(x, ...) {
     fr = "%d des %d cellules utilisent des lignes de correspondance v\u00e9rifi\u00e9es sur les fichiers et documents originaux, mais pas encore approuv\u00e9es par un r\u00e9viseur\u00a0; `qes_harmonize()` ne les applique qu'avec `include_draft = TRUE`."
   ),
   cov_stable_all = c(
-    en = "All %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (spec 4.0.0: an automated double review against the original files and documents, not a human review).",
-    fr = "Les %d cellules utilisent toutes des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cification 4.0.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
+    en = "All %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (specs 4.0.0 and 4.3.0: an automated double review against the original files and documents, not a human review).",
+    fr = "Les %d cellules utilisent toutes des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cifications 4.0.0 et 4.3.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
   ),
   cov_stable_note = c(
-    en = "%d of the %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (spec 4.0.0: an automated double review against the original files and documents, not a human review).",
-    fr = "%d des %d cellules utilisent des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cification 4.0.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
+    en = "%d of the %d cells use crosswalk rows signed off by a reviewer (status stable), which `qes_harmonize()` applies by default; the crosswalk's `reviewed_by` says who or what reviewed each row (specs 4.0.0 and 4.3.0: an automated double review against the original files and documents, not a human review).",
+    fr = "%d des %d cellules utilisent des lignes de correspondance approuv\u00e9es par un r\u00e9viseur (statut stable), que `qes_harmonize()` applique par d\u00e9faut\u00a0; la colonne `reviewed_by` de la table de correspondance dit qui ou quoi a r\u00e9vis\u00e9 chaque ligne (sp\u00e9cifications 4.0.0 et 4.3.0\u00a0: une double r\u00e9vision automatis\u00e9e sur les fichiers et documents originaux, et non une r\u00e9vision humaine)."
   ),
   cov_waves = c(en = "Waves and recommended weights", fr = "Vagues et pond\u00e9rations recommand\u00e9es"),
   cov_n_targets = c(en = "Targets", fr = "Cibles"),
@@ -390,6 +435,35 @@ print.qes_crosswalk <- function(x, ...) {
   cov_studies_note = c(
     en = "`n` is the number of respondents of each wave. A weight that needs review is not applied: `qes_harmonize()` returns `NA` for it until its documentation is checked. `qes_design()` uses the weight of the wave each target came from.",
     fr = "`n` est le nombre de r\u00e9pondants de chaque vague. Une pond\u00e9ration \u00e0 r\u00e9viser n'est pas appliqu\u00e9e\u00a0: `qes_harmonize()` renvoie `NA` pour cette pond\u00e9ration tant que sa documentation n'est pas v\u00e9rifi\u00e9e. `qes_design()` utilise la pond\u00e9ration de la vague d'o\u00f9 vient chaque cible."
+  ),
+  # the pooled variables (R/hz-pool.R)
+  pooled_title = c(en = "Pooled variables", fr = "Variables regroup\u00e9es"),
+  pooled_intro = c(
+    en = "A pooled variable is one column for every study that pools several targets, its members: `vote_choice` pools the reported vote and the vote intentions, `sov_support` the referendum wordings, `pol_interest` the interest scales. The members stay targets, each one stimulus; the pooled column records, row by row, which member its value comes from (`<pooled>__type`), that member's grade (`<pooled>__grade`, never raised; a lossy transform caps it at approximate) and its item (`<pooled>__item`, `study:wave:source variables`). `qes_harmonize(targets = \"vote_choice\")` returns the pooled column and its companions; `types = list(vote_choice = \"recall\")` keeps some members only.",
+    fr = "Une variable regroup\u00e9e est une seule colonne pour toutes les \u00e9tudes qui regroupe plusieurs cibles, ses membres\u00a0: `vote_choice` regroupe le vote d\u00e9clar\u00e9 et les intentions de vote, `sov_support` les libell\u00e9s r\u00e9f\u00e9rendaires, `pol_interest` les \u00e9chelles d'int\u00e9r\u00eat. Les membres restent des cibles, chacune un seul stimulus\u00a0; la colonne regroup\u00e9e indique, ligne par ligne, de quel membre vient sa valeur (`<variable>__type`), le niveau de comparabilit\u00e9 de ce membre (`<variable>__grade`, jamais relev\u00e9\u00a0; une transformation avec perte le plafonne \u00e0 approximate) et sa question (`<variable>__item`, `\u00e9tude:vague:variables sources`). `qes_harmonize(targets = \"vote_choice\")` renvoie la colonne regroup\u00e9e et ses compagnes\u00a0; `types = list(vote_choice = \"recall\")` ne garde que certains membres."
+  ),
+  pooled_rule = c(
+    en = "How a row gets its value: the members of the requested types are tried in order of precedence. The first member whose cell has a value, or a missing value that is an answer (don't know, refused, did not vote, ...), sets the row. A member that did not ask the respondent (not in the wave, not asked, not reviewed, below the grade, routed out, system missing, a code that straddles levels) passes to the next. When every member passes, the row is `NA` with the reason of the first usable member that has a row in the study and wave, else of the first member that has a row. In the respondent layout (one row per respondent), a study's values come from one wave: that of the first member it applies, so that one weight column fits them; the long layout (`layout = \"long\"`, one row per respondent and wave) keeps every wave.",
+    fr = "Comment une ligne re\u00e7oit sa valeur\u00a0: les membres des types demand\u00e9s sont essay\u00e9s par ordre de priorit\u00e9. Le premier membre dont la cellule a une valeur, ou une valeur manquante qui est une r\u00e9ponse (ne sait pas, refus, n'a pas vot\u00e9, ...), d\u00e9termine la ligne. Un membre qui n'a pas interrog\u00e9 la personne (absente de la vague, question non pos\u00e9e, ligne non approuv\u00e9e, sous le niveau demand\u00e9, \u00e9cart\u00e9e par un filtre, valeur manquante syst\u00e8me, code \u00e0 cheval sur plusieurs niveaux) passe au suivant. Quand tous les membres passent, la ligne est `NA` avec le motif du premier membre utilisable qui a une ligne dans l'\u00e9tude et la vague, sinon du premier membre qui a une ligne. En disposition par r\u00e9pondant (une ligne par personne), les valeurs d'une \u00e9tude viennent d'une seule vague\u00a0: celle du premier membre qu'elle applique, pour qu'une seule colonne de pond\u00e9ration leur convienne\u00a0; la disposition longue (`layout = \"long\"`, une ligne par personne et par vague) garde toutes les vagues."
+  ),
+  members = c(en = "Members", fr = "Membres"),
+  type_name = c(en = "Type", fr = "Type"),
+  member = c(en = "Member (target)", fr = "Membre (cible)"),
+  precedence = c(en = "Precedence", fr = "Priorit\u00e9"),
+  default = c(en = "Default", fr = "Par d\u00e9faut"),
+  transform = c(en = "Transform", fr = "Transformation"),
+  cap = c(en = "Grade cap", fr = "Plafond"),
+  yes = c(en = "yes", fr = "oui"),
+  no = c(en = "no", fr = "non"),
+  pooled_used = c(en = "Respondent layout uses", fr = "Disposition par r\u00e9pondant"),
+  pooled_coverage_note = c(
+    en = "Each cell gives the member's grade in the study (capped by its grade cap) and the wave that asked it; a dash means the study has no question for the member. The last column is the member the respondent layout takes the study's values from, among the default members (the long layout uses every wave).",
+    fr = "Chaque cellule donne le niveau du membre dans l'\u00e9tude (plafonn\u00e9) et la vague qui a pos\u00e9 la question\u00a0; un tiret signifie que l'\u00e9tude n'a pas de question pour le membre. La derni\u00e8re colonne donne le membre dont la disposition par r\u00e9pondant tire les valeurs de l'\u00e9tude, parmi les membres par d\u00e9faut (la disposition longue utilise toutes les vagues)."
+  ),
+  cov_pooled_title = c(en = "Pooled variables by study", fr = "Variables regroup\u00e9es par \u00e9tude"),
+  cov_pooled_note = c(
+    en = "Each cell gives the member type a pooled variable takes a study's values from in the respondent layout, and its grade; a dash means no member of its default types has a question in the study.",
+    fr = "Chaque cellule donne le type de membre dont une variable regroup\u00e9e tire les valeurs d'une \u00e9tude en disposition par r\u00e9pondant, et son niveau\u00a0; un tiret signifie qu'aucun membre de ses types par d\u00e9faut n'a de question dans l'\u00e9tude."
   ),
   cov_not_in_spec = c(
     en = "Studies of the catalog that are not in the spec yet: %s. `get_qes()` reads them; `qes_harmonize()` does not cover them yet.",
@@ -505,7 +579,7 @@ print.qes_crosswalk <- function(x, ...) {
       anchor <- paste(used$study, used$wave, used$source_var, sep = ":") %in% tg$anchor_row[j]
       cells <- lapply(seq_len(nrow(used)), function(k) {
         u <- used[k, , drop = FALSE]
-        src <- paste0("`", u$source_var, "` (", .qes_wave_label(u$wave, lang, u$study, spec), ")")
+        src <- paste0(paste0("`", .qes_hz_row_vars(u, 1L), "`", collapse = " + "), " (", .qes_wave_label(u$wave, lang, u$study, spec), ")")
         grade <- paste0("`", u$grade, "`", if (anchor[k]) paste0(" (", t_("anchor"), ")") else "",
                         if (u$status %in% c("draft", "review")) paste0(" (", t_(u$status), ")") else "")
         offered <- gsub(";", ", ", u$levels_offered %|NA|% "", fixed = TRUE)
@@ -543,7 +617,103 @@ print.qes_crosswalk <- function(x, ...) {
       out <- c(out, "")
     }
   }
+  if (isTRUE(header) && is.null(targets)) {
+    out <- c(out, .qes_pooled_reference_md(spec, lang, studies))
+  }
   paste0(paste(out, collapse = "\n"), "\n")
+}
+
+# The chapter of the reference on pooled variables (R/hz-pool.R), in
+# `lang`: the rule, then one section per pooled variable with its
+# definition, levels, members and coverage by study, and its history.
+.qes_pooled_reference_md <- function(spec, lang, studies = NULL, pools = NULL) {
+  t_ <- function(key) .qes_rt(key, lang)
+  cl <- t_("colon")
+  pt <- .qes_pool_tables(spec)
+  pl <- pt$pooled
+  if (!is.null(pools)) pl <- pl[pl$pooled %in% pools, , drop = FALSE]
+  if (nrow(pl) == 0L) return(character(0))
+  ch <- spec$tables$changes
+  xw <- spec$tables$crosswalk
+  xw <- xw[!is.na(xw$rule) & xw$rule != "none" & xw$primary %in% TRUE, , drop = FALSE]
+  study_cols <- intersect(.qes_study_codes(), unique(xw$study))
+  if (!is.null(studies)) study_cols <- intersect(study_cols, studies)
+  out <- c(paste("##", t_("pooled_title")), "", t_("pooled_intro"), "", t_("pooled_rule"), "")
+  for (j in seq_len(nrow(pl))) {
+    p <- pl$pooled[j]
+    m <- .qes_pool_members(spec, p)
+    out <- c(out, sprintf("### `%s`%s%s {#pooled-%s}", p, cl, .qes_pick_lang(pl[j, , drop = FALSE], "label", lang), p), "",
+             .qes_pick_lang(pl[j, , drop = FALSE], "description", lang), "",
+             sprintf("%s %s \u00b7 %s %s \u00b7 %s %s", t_("type"), .qes_enum_label("target_type", pl$type[j], lang),
+                     t_("status"), .qes_enum_label("target_status", pl$status[j], lang), t_("added_in"), pl$added_in[j]), "")
+    if (!is.na(pl$levels_id[j])) {
+      set <- .qes_spec_levels(spec$tables$levels, pl$levels_id[j])
+      out <- c(out, paste0("**", t_("levels"), "**"), "",
+               .qes_md_table(c(t_("code"), t_("name"), t_("label")),
+                             lapply(seq_len(nrow(set)), function(k) c(set$code[k], paste0("`", set$name[k], "`"),
+                                                                      set[[paste0("label_", lang)]][k]))), "")
+    } else {
+      out <- c(out, sprintf("**%s**%s%s-%s", t_("range"), cl, .qes_code_chr(pl$valid_min[j]), .qes_code_chr(pl$valid_max[j])), "")
+    }
+    out <- c(out, paste0("**", t_("members"), "**"), "",
+             .qes_md_table(c(t_("precedence"), t_("type_name"), t_("member"), t_("default"), t_("transform"), t_("cap")),
+                           lapply(seq_len(nrow(m)), function(k) {
+                             lab <- .qes_pick_lang(m[k, , drop = FALSE], "type_label", lang)
+                             note <- .qes_pick_lang(m[k, , drop = FALSE], "note", lang)
+                             c(m$precedence[k], sprintf("`%s`: %s%s", m$type_name[k], lab, if (is.na(note)) "" else paste0(". ", note)),
+                               sprintf("[`%s`](#target-%s)", m$member[k], m$member[k]),
+                               t_(if (isTRUE(m$default[k])) "yes" else "no"), paste0("`", m$transform[k], "`"),
+                               if (is.na(m$grade_cap[k])) "" else paste0("`", m$grade_cap[k], "`"))
+                           })), "")
+    rows <- lapply(study_cols, function(st) {
+      cells <- vapply(seq_len(nrow(m)), function(k) {
+        i <- which(xw$study == st & xw$target == m$member[k])
+        if (length(i) == 0L) return("\u2014")
+        i <- i[1]
+        g <- .qes_pool_cap(xw$grade[i], m$grade_cap[k])
+        paste0(.qes_enum_label("grade", g, lang), " (", .qes_wave_label(xw$wave[i], lang, st, spec), ")",
+               if (xw$status[i] %in% c("draft", "review")) paste0(", ", t_(xw$status[i])) else "")
+      }, character(1))
+      has_row <- vapply(m$member, function(t) any(xw$study == st & xw$target == t), logical(1))
+      used <- which(has_row & m$default %in% TRUE)
+      c(paste0("`", st, "`"), cells, if (length(used) == 0L) "\u2014" else paste0("`", m$type_name[used[1]], "`"))
+    })
+    out <- c(out, paste0("**", t_("coverage"), "**"), "",
+             .qes_md_table(c(t_("study"), paste0("`", m$type_name, "`"), t_("pooled_used")), rows), "",
+             t_("pooled_coverage_note"), "")
+    hist <- ch[!is.na(ch$targets) & vapply(ch$targets, function(x) p %in% .qes_split_list(x), logical(1)), , drop = FALSE]
+    if (nrow(hist) > 0L) {
+      out <- c(out, paste0("**", t_("history"), "**"), "")
+      for (k in seq_len(nrow(hist))) {
+        out <- c(out, sprintf("- %s (%s)%s%s", hist$spec_version[k], format(hist$date[k]), cl,
+                              .qes_pick_lang(hist[k, , drop = FALSE], "change", lang)))
+      }
+      out <- c(out, "")
+    }
+  }
+  out
+}
+
+# The member type (and its grade) a pooled variable takes each study's
+# values from in the respondent layout: the first default member with a
+# primary mapped row. A named list, pool -> named character vector over
+# studies (NA: none).
+.qes_pooled_used <- function(spec, studies) {
+  xw <- spec$tables$crosswalk
+  xw <- xw[!is.na(xw$rule) & xw$rule != "none" & xw$primary %in% TRUE, , drop = FALSE]
+  out <- list()
+  for (p in .qes_pool_names(spec)) {
+    m <- .qes_pool_members(spec, p)
+    m <- m[m$default %in% TRUE, , drop = FALSE]
+    out[[p]] <- vapply(studies, function(st) {
+      for (k in seq_len(nrow(m))) {
+        i <- which(xw$study == st & xw$target == m$member[k])
+        if (length(i) > 0L) return(paste(m$type_name[k], .qes_pool_cap(xw$grade[i[1]], m$grade_cap[k]), sep = "|"))
+      }
+      NA_character_
+    }, character(1))
+  }
+  out
 }
 
 # The coverage grid of the spec as markdown text, in `lang` (the website's
@@ -630,11 +800,27 @@ print.qes_crosswalk <- function(x, ...) {
     if (n == nrow(applied)) c(sprintf(t_(all_key), n), "") else c(sprintf(t_(some_key), n, nrow(applied)), "")
   }
   others <- setdiff(.qes_study_codes(), studies)
+  # the pooled variables: the member type each study's values come from
+  pooled_grid <- NULL
+  used <- .qes_pooled_used(spec, studies)
+  if (length(used) > 0L) {
+    pl <- .qes_pool_tables(spec)$pooled
+    prow <- lapply(names(used), function(p) {
+      u <- used[[p]]
+      cells <- ifelse(is.na(u), dash, sprintf("`%s` (%s)", sub("\\|.*$", "", u),
+                                             .qes_enum_label("grade", sub("^.*\\|", "", u), lang)))
+      c(sprintf("[`%s`](%s#pooled-%s)<br>%s", p, reference, p,
+                .qes_pick_lang(pl[match(p, pl$pooled), , drop = FALSE], "label", lang)), cells)
+    })
+    pooled_grid <- c(paste("##", t_("cov_pooled_title")), "", .qes_md_table(c(t_("cov_target"), studies), prow), "",
+                     t_("cov_pooled_note"), "")
+  }
   out <- c(
     sprintf(t_("cov_note"), spec$version, format(as.Date(spec$date)), paste0("`", spec$hash, "`"), reference), "",
     paste("##", t_("cov_grid_title")), "",
     .qes_md_table(c(t_("cov_target"), studies), grid), "",
     t_("cov_wave_note"), "", t_("cov_zero_note"), "",
+    pooled_grid,
     status_line(sum(applied$status == "stable"), "cov_stable_all", "cov_stable_note"),
     status_line(sum(applied$status == "review"), "cov_status_all", "cov_status_note"),
     status_line(sum(applied$status == "draft"), "cov_draft_all", "cov_draft_note"),
@@ -677,6 +863,16 @@ print.qes_crosswalk <- function(x, ...) {
       if (length(g) == 0L || is.na(letter[g[1]])) "\u2014" else letter[[g[1]]]
     }, character(1), USE.NAMES = FALSE))
   })
+  # the pooled variables, after the targets: the grade of the member each
+  # study's values come from (R/hz-pool.R)
+  used <- .qes_pooled_used(spec, studies)
+  for (p in names(used)) {
+    name <- paste0("`", p, "`")
+    if (!is.null(reference)) name <- sprintf("[%s](%s#pooled-%s)", name, reference, p)
+    g <- sub("^.*\\|", "", used[[p]])
+    rows[[length(rows) + 1L]] <- c(paste(name, "(pooled)"),
+                                   ifelse(is.na(used[[p]]), "\u2014", unname(letter[g])))
+  }
   header <- paste0("`", studies, "`")
   if (!is.null(reference)) {
     # on the website the study codes may wrap, only after "qes" and at "_"
@@ -700,9 +896,23 @@ print.qes_crosswalk <- function(x, ...) {
             if (length(sets) == 0L) "no set" else paste("sets", paste(sprintf("\\code{%s}", sets), collapse = ", ")),
             tg$type[j], if (length(studies) == 0L) "none yet" else paste(studies, collapse = ", "))
   }, character(1))
+  pt <- .qes_pool_tables(spec)
+  pooled <- vapply(seq_len(nrow(pt$pooled)), function(j) {
+    m <- .qes_pool_members(spec, pt$pooled$pooled[j])
+    sprintf("\\item{\\code{%s}}{%s (pooled, %s; sets %s). Members, in order of precedence: %s.}",
+            pt$pooled$pooled[j], pt$pooled$label_en[j], pt$pooled$type[j],
+            paste(sprintf("\\code{%s}", .qes_split_list(pt$pooled$sets[j])), collapse = ", "),
+            paste(sprintf("\\code{%s} (%s%s)", m$member, m$type_name, ifelse(m$default %in% TRUE, "", ", not by default")),
+                  collapse = ", "))
+  }, character(1))
   c(sprintf("@section Targets in the shipped spec (version %s):", spec$version),
     "Generated from the spec by roxygen; `qes_spec()` gives the same list with each study's grade.",
-    "\\describe{", items, "}")
+    "\\describe{", items, "}",
+    if (length(pooled) > 0L) c(
+      "",
+      "Pooled variables (one column that pools several targets; `qes_spec(\"pooled\")` gives each study's grade):",
+      "\\describe{", pooled, "}"
+    ))
 }
 
 # The "Missing values" section of ?qes_harmonize, generated from the NA

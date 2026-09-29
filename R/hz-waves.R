@@ -304,3 +304,103 @@
   }
   out
 }
+
+# ---- the derivation stage (spec 4.3.0) ------------------------------------------------
+#
+# A target the study has no crosswalk row for can be derived from other
+# targets it has (targets.csv derive_rule and derive_from). One rule so far:
+#   age_band  the age group of the target's level set (bands a<low>_<high>)
+#             from the age where the study asked it (the band is then exact,
+#             and the cell takes the age row's grade), else from the year of
+#             birth, at the fieldwork start of the wave that asked it: with
+#             the month of birth, the age is exact to the month; without it,
+#             the age reached in the fieldwork year (year minus year of
+#             birth, as the legacy age column computes it), one year too
+#             high for a respondent whose birthday comes later that year,
+#             and the cell is graded approximate.
+#             A respondent under the lowest band (the 2018 study sampled
+#             people aged 16 and over) is NA with reason ineligible.
+# A direct crosswalk row always wins over a derivation, the derived cell
+# never has a better grade than its source, and the legacy renderers never
+# see derived cells (V-S19).
+.qes_hz_derivations <- c("age_band")
+
+# The derived cell of target `t` by rule `rule`: list(res, pick, grade,
+# note), or NULL when the study has none of the rule's sources.
+.qes_hz_derive <- function(rule, t, picks, results, xw, wv, n, spec, ctx) {
+  if (!identical(rule, "age_band")) return(NULL)
+  ok <- function(x) !is.null(picks[[x]]) && is.na(picks[[x]]$reason)
+  if (!ok("age") && !ok("birth_year")) return(NULL)
+  set <- .qes_spec_levels(spec$tables$levels, spec$tables$targets$levels_id[match(t, spec$tables$targets$target)])
+  bounds <- lapply(set$name, .qes_hz_band_bounds)
+  low <- vapply(bounds, function(b) b[["low"]], numeric(1))
+  high <- vapply(bounds, function(b) b[["high"]], numeric(1))
+  res_of <- function(x) results[[as.character(picks[[x]]$row)]]
+  age <- rep(NA_real_, n)
+  reason <- rep(NA_character_, n)
+  src <- rep(NA_character_, n)
+  grades <- character(0)
+  notes <- character(0)
+  main <- NULL
+  if (ok("age")) {
+    r <- res_of("age")
+    age <- suppressWarnings(as.numeric(r$value))
+    reason <- r$reason
+    src <- r$src
+    if (any(!is.na(age))) {
+      grades <- c(grades, xw$grade[picks[["age"]]$row])
+      notes <- c(notes, sprintf("the age (%s)", xw$source_var[picks[["age"]]$row]))
+    }
+    main <- picks[["age"]]
+  }
+  if (ok("birth_year")) {
+    p <- picks[["birth_year"]]
+    r <- res_of("birth_year")
+    by <- suppressWarnings(as.numeric(r$value))
+    w <- .qes_wave_rows(wv, xw$wave[p$row])
+    ref <- wv$fieldwork_start[w[1]]
+    ry <- as.numeric(format(ref, "%Y"))
+    rm <- as.numeric(format(ref, "%m"))
+    bm <- if (ok("birth_month")) suppressWarnings(as.numeric(res_of("birth_month")$value)) else rep(NA_real_, n)
+    # with the month of birth, the age at the fieldwork start; without it,
+    # the age reached in the fieldwork year (the year minus the year of
+    # birth, as the legacy age column and the producers' age groups): one
+    # year too high for a respondent whose birthday comes later that year
+    from_year <- ifelse(is.na(bm), ry - by, ry - by - (rm < bm))
+    fill <- is.na(age) & !is.na(from_year)
+    if (any(fill)) {
+      grades <- c(grades, if (all(!is.na(bm[fill]))) xw$grade[p$row] else .qes_pool_cap(xw$grade[p$row], "approximate"))
+      notes <- c(notes, sprintf("the year of birth (%s%s) at the fieldwork start %s", xw$source_var[p$row],
+                                if (ok("birth_month")) paste0(" and month, ", xw$source_var[picks[["birth_month"]]$row]) else "",
+                                format(ref)))
+    }
+    age[fill] <- from_year[fill]
+    reason[fill] <- NA_character_
+    src[fill] <- r$src[fill]
+    if (is.null(main)) {
+      main <- p
+      reason <- ifelse(is.na(age), r$reason, reason)
+      src <- ifelse(is.na(src), r$src, src)
+    }
+  }
+  k <- vapply(age, function(a) {
+    if (is.na(a)) return(NA_integer_)
+    j <- which(a >= low & a <= high)
+    if (length(j) == 0L) NA_integer_ else j[1]
+  }, integer(1))
+  value <- set$name[k]
+  reason[!is.na(age) & is.na(k)] <- "ineligible"
+  reason[!is.na(value)] <- NA_character_
+  reason[is.na(value) & is.na(reason)] <- "sysmis"
+  grade <- if (length(grades) == 0L) xw$grade[main$row] else .qes_hz_grades[max(match(grades, .qes_hz_grades))]
+  note <- paste("derived from", paste(notes, collapse = ", else "))
+  pick <- list(row = main$row, reason = NA_character_, excluded = NA_character_, note = note)
+  rank <- match(grade, .qes_hz_grades)
+  if (is.na(rank) || rank > match(ctx$min_grade, .qes_hz_grades)) {
+    pick$reason <- "below_grade"
+    pick$excluded <- "below_grade"
+    value[] <- NA_character_
+    reason[!reason %in% "not_in_wave"] <- "below_grade"
+  }
+  list(res = list(value = value, reason = reason, src = src), pick = pick, grade = grade, note = note)
+}

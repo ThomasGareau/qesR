@@ -5,7 +5,7 @@
 \title{The harmonization spec (experimental)}
 \usage{
 qes_spec(
-  view = c("targets", "crosswalk", "spec"),
+  view = c("targets", "crosswalk", "spec", "pooled"),
   targets = NULL,
   studies = NULL,
   level = c("row", "code"),
@@ -17,7 +17,7 @@ qes_spec(
 )
 }
 \arguments{
-\item{view}{\code{"targets"}, \code{"crosswalk"} or \code{"spec"}.}
+\item{view}{\code{"targets"}, \code{"crosswalk"}, \code{"spec"} or \code{"pooled"}.}
 
 \item{targets}{Target, family or set names (views \code{"targets"} and
 \code{"crosswalk"}; the set \code{"decon"} holds the targets of the columns of
@@ -66,11 +66,17 @@ marks a row that applies to every poll of pooled polls (the CROP
 polls of 2007-2010, one wave per poll), or, in a panel, a question
 that does not change over the study (gender, education), asked in
 whichever wave the respondent took part (the 2007 panel).
+\item \code{"pooled"}: a data frame with columns \code{pooled}, \code{label},
+\code{definition}, \code{type} (of the pooled variable), \code{levels} (\code{code=label},
+or the range of a numeric one), \code{type_name}, \code{type_label}, \code{member},
+\code{precedence}, \code{default}, \code{transform}, \code{grade_cap}, \code{note}, \code{status},
+\code{added_in}, then one column per study.
 \item \code{"spec"}: an object of class \code{qes_spec}: a list with the spec
 \code{version}, its content \code{hash}, \code{custom} (\code{TRUE} when it is not the
 shipped spec) and \code{tables} (targets, levels, crosswalk, valuemaps,
 waves, weights, changes, gates, expected, hashes, legacy: the renderer of
-\code{\link[=get_qes_master]{get_qes_master()}} and \code{\link[=get_decon]{get_decon()}}); \code{attr(, "check")}
+\code{\link[=get_qes_master]{get_qes_master()}} and \code{\link[=get_decon]{get_decon()}}, pooled and pooled_members: the
+pooled variables); \code{attr(, "check")}
 holds the problems table (\code{rule}, \code{severity}, \code{table}, \code{row}, \code{key},
 \code{detail}).
 }
@@ -95,6 +101,13 @@ the document that gives it), recommended weight and review status. With
 maps to; \code{format = "retroharmonize"} gives that table under the column
 names of the retroharmonize package's crosswalk tables. Printing the
 view of a single target shows its section of the generated reference.
+\item \code{view = "pooled"}: one row per member of each pooled variable (such as
+\code{vote_choice}, which pools the reported vote and the vote intentions):
+its type name (the value of \verb{<pooled>__type}), precedence (the member
+tried first is 1), whether it is used by default, the transform of its
+values and its grade cap, and one column per study giving the member's
+grade there (capped; \code{NA}: no question). \code{targets} selects pooled
+variables (or the set \code{"pooled"}).
 \item \code{view = "spec"}: the spec itself, as an object of class \code{qes_spec}
 (tables, version and content hash), checked by the validator and the
 data checks; this is what \verb{spec =} of \code{\link[=qes_harmonize]{qes_harmonize()}} accepts.
@@ -121,18 +134,21 @@ sondage des sondages CROP regroupés) ; la vue \code{"spec"} renvoie la
 spécification vérifiée, dont la table \code{tables$legacy}, qui rend les
 colonnes de \code{\link[=get_qes_master]{get_qes_master()}} et de \code{\link[=get_decon]{get_decon()}} à partir des cibles.
 L'ensemble de cibles \code{"decon"} réunit les cibles des colonnes de
-\code{get_decon()}. \code{lang = "fr"} donne les étiquettes, définitions et raisons en français.
+\code{get_decon()}. La vue \code{"pooled"} décrit les variables regroupées (comme
+\code{vote_choice}, qui réunit le vote déclaré et les intentions de vote) :
+leurs membres, leur ordre de priorité et le niveau de chaque membre dans
+chaque étude. \code{lang = "fr"} donne les étiquettes, définitions et raisons en français.
 \code{vignette("fr-reference-harmonisation", package = "qesR")} en est la
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 4.2.0)}{
+\section{Targets in the shipped spec (version 4.3.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{
 \item{\code{vote_prov_recall}}{Provincial vote (recall) (family \code{vote_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007_panel, qes2007, qes2008, qes2012_panel, qes1998.}
 \item{\code{vote_prov_intent}}{Provincial vote intention (family \code{vote_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2022, qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010.}
-\item{\code{vote_prov_intent_push}}{Provincial vote intention, undecided pushed (family \code{vote_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010, qes1998.}
+\item{\code{vote_prov_intent_push}}{Provincial vote intention, undecided pushed (family \code{vote_prov}; sets \code{core}, \code{vote}; categorical). Studies: qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010, qes1998, qes2022.}
 \item{\code{turnout_prov_recall}}{Voted in the provincial election (recall) (family \code{turnout_prov}; sets \code{core}, \code{vote}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007, qes2008, qes2012_panel, qes1998, qes2007_panel.}
 \item{\code{sov_indep}}{Referendum vote: independent country (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2018, qes2022.}
 \item{\code{sov_sovereign_country}}{Referendum vote: sovereign country (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2012_panel.}
@@ -149,17 +165,45 @@ Generated from the spec by roxygen; \code{qes_spec()} gives the same list with e
 \item{\code{sov_partnership_1995}}{Referendum vote: the 1995 sovereignty-partnership question (family \code{sovereignty}; sets \code{core}; categorical). Studies: qes2007, qes2008, qes1998, qes2007_panel.}
 \item{\code{turnout_prov_likely}}{Likelihood of voting in the provincial election (family \code{turnout_prov}; sets \code{vote}, \code{decon}; ordinal). Studies: qes2022.}
 \item{\code{vote_prov_intent_other}}{Provincial vote intention: another party (text) (family \code{vote_prov}; sets \code{decon}; string). Studies: qes2022.}
-\item{\code{pid_fed}}{Federal party identification (family \code{party_id}; sets \code{core}, \code{decon}; categorical). Studies: qes2022.}
+\item{\code{pid_fed}}{Federal party identification (family \code{party_id}; sets \code{core}, \code{decon}; categorical). Studies: qes2022, qes2012.}
 \item{\code{interest_0_10}}{Interest in politics (0-10) (family \code{interest}; sets \code{core}, \code{decon}; numeric). Studies: qes2007, qes2022.}
 \item{\code{interest_election_0_10}}{Interest in the provincial election (0-10) (family \code{interest}; no set; numeric). Studies: qes2007, qes2008.}
 \item{\code{interest_campaign_4pt}}{Interest in the election campaign (4 points) (family \code{interest}; no set; ordinal). Studies: qes2007_panel.}
 \item{\code{age_group6}}{Age group (6 bands) (family \code{age_bands}; sets \code{core}; ordinal). Studies: qes_crop_2007_2010, qes1998, qes2007_panel, qes2012_panel, qes2008.}
 \item{\code{gender}}{Gender (family \code{sex_gender}; sets \code{core}, \code{decon}; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010, qes1998.}
 \item{\code{education4}}{Education (4 groups) (family \code{education}; sets \code{core}, \code{decon}; ordinal). Studies: qes2014, qes2012, qes2018, qes2022, qes2007, qes2008, qes2018_panel, qes2007_panel, qes_crop_2007_2010.}
-\item{\code{lang_mother}}{Mother tongue (family \code{language}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2018, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010.}
+\item{\code{lang_mother}}{Mother tongue (family \code{language}; sets \code{core}; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2018, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010, qes2022.}
 \item{\code{born_canada}}{Born in Canada (family \code{birthplace}; sets \code{core}, \code{decon}; categorical). Studies: qes2022, qes2012, qes2014, qes2018.}
 \item{\code{income_native}}{Household income (each study's own brackets) (family \code{income}; sets \code{decon}; string). Studies: qes2012, qes2014, qes2007, qes2008, qes2007_panel, qes2018_panel, qes_crop_2007_2010, qes2022.}
 \item{\code{religion}}{Religion (each study's own categories) (family \code{faith}; sets \code{decon}; string). Studies: qes2012, qes2014, qes2022.}
+\item{\code{sov_partnership_1995_push}}{Referendum vote: the 1995 question, undecided pushed (family \code{sovereignty}; no set; categorical). Studies: qes2007, qes2008, qes2007_panel, qes1998.}
+\item{\code{satis_demo_qc}}{Satisfaction with democracy in Quebec (family \code{democracy_satisfaction}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.}
+\item{\code{gov_satisfaction}}{Satisfaction with the Quebec government (family \code{government_satisfaction}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007_panel.}
+\item{\code{econ_retro_qc}}{Quebec's economy over the past year (family \code{economy_retrospective}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.}
+\item{\code{attach_qc}}{Attachment to Quebec (family \code{attachment}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022.}
+\item{\code{attach_ca}}{Attachment to Canada (family \code{attachment}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022.}
+\item{\code{identity_qc_ca}}{Québécois or Canadian identity (family \code{national_identity}; sets \code{attitudes}; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2022.}
+\item{\code{pid_prov_strength}}{Strength of provincial party identification (family \code{party_id}; sets \code{attitudes}; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.}
+\item{\code{vote_prov_prev}}{Provincial vote at the previous election (recall) (family \code{vote_prov_past}; sets \code{vote}; categorical). Studies: qes2014, qes2008, qes2018, qes2022.}
+\item{\code{therm_leader_plq}}{Rating of the PLQ leader (0-100) (family \code{leader_ratings}; sets \code{attitudes}; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.}
+\item{\code{therm_leader_pq}}{Rating of the PQ leader (0-100) (family \code{leader_ratings}; sets \code{attitudes}; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.}
+\item{\code{therm_leader_caq}}{Rating of the CAQ leader (0-100) (family \code{leader_ratings}; sets \code{attitudes}; numeric). Studies: qes2012, qes2014, qes2018, qes2022.}
+\item{\code{therm_leader_qs}}{Rating of the QS leader (0-100) (family \code{leader_ratings}; sets \code{attitudes}; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.}
+\item{\code{therm_leader_adq}}{Rating of the ADQ leader (0-100) (family \code{leader_ratings}; sets \code{attitudes}; numeric). Studies: qes2007, qes2008.}
+\item{\code{region_cma3}}{Region (Montreal and Quebec CMAs) (family \code{region}; sets \code{socio}; categorical). Studies: qes2012, qes2008, qes2014, qes2018, qes2012_panel, qes_crop_2007_2010, qes2018_panel, qes2007.}
+\item{\code{lang_home}}{Language spoken most often at home (family \code{language}; sets \code{socio}; categorical). Studies: qes2012, qes2014, qes2018, qes2007, qes2008, qes2007_panel, qes_crop_2007_2010, qes2022.}
+\item{\code{relig_attend}}{Attendance at religious services (family \code{faith}; sets \code{socio}; ordinal). Studies: qes2012, qes2007, qes2008, qes2014, qes2018.}
+\item{\code{birthplace3}}{Birthplace (Quebec, rest of Canada, abroad) (family \code{birthplace}; sets \code{socio}; categorical). Studies: qes2012, qes2014, qes2018.}
+\item{\code{vote_fed_recall}}{Federal vote at the last federal election (recall) (family \code{vote_fed}; sets \code{vote}; categorical). Studies: qes2012, qes2007, qes2008, qes2022.}
+\item{\code{mip_issue}}{Most important issue of the election (family \code{issues}; sets \code{attitudes}; categorical). Studies: qes2012, qes2008, qes2014, qes2018, qes2022.}
+}
+
+Pooled variables (one column that pools several targets; \code{qes_spec("pooled")} gives each study's grade):
+\describe{
+\item{\code{vote_choice}}{Provincial vote choice (pooled) (pooled, categorical; sets \code{pooled}, \code{core}, \code{vote}). Members, in order of precedence: \code{vote_prov_recall} (recall), \code{vote_prov_intent_push} (intention_push), \code{vote_prov_intent} (intention).}
+\item{\code{sov_support}}{Support for sovereignty (pooled) (pooled, categorical; sets \code{pooled}, \code{core}). Members, in order of precedence: \code{sov_indep} (independence), \code{sov_sovereign_country} (sovereign_country), \code{sov_partnership_1995_push} (partnership_1995_push), \code{sov_partnership_1995} (partnership_1995), \code{sov_favour} (favour).}
+\item{\code{pol_interest}}{Interest in politics (pooled, 0-1) (pooled, numeric; sets \code{pooled}, \code{core}). Members, in order of precedence: \code{interest_4pt} (general_4pt), \code{interest_0_10} (general_0_10), \code{interest_campaign_4pt} (campaign_4pt), \code{interest_election_0_10} (election_0_10).}
+\item{\code{turnout}}{Turnout in the provincial election (pooled) (pooled, categorical; sets \code{pooled}, \code{vote}). Members, in order of precedence: \code{turnout_prov_recall} (recall), \code{turnout_prov_likely} (intention, not by default).}
 }
 }
 
@@ -176,6 +220,10 @@ xw # prints the target's section of the reference
 qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",
          level = "code", lang = "fr")
 
+# the pooled variables: which member each study uses, and its grade
+pv <- qes_spec("pooled", targets = "vote_choice")
+pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
+
 # the checked spec itself
 s <- qes_spec("spec")
 s
@@ -187,6 +235,7 @@ generated from the spec.
 
 Other harmonization: 
 \code{\link{qes_design}()},
-\code{\link{qes_harmonize}()}
+\code{\link{qes_harmonize}()},
+\code{\link{qes_party_lineage}()}
 }
 \concept{harmonization}

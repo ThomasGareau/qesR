@@ -250,10 +250,18 @@ means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
 round(means, 2)
 ```
 
-Toutes les lignes de la spécification sont approuvées ; une ligne en
-révision ne serait appliquée qu'avec `include_draft = TRUE`, et la colonne
-`review_note` de `qes_spec("crosswalk")` dit ce que la révision a corrigé
-dans chaque ligne. `qes_spec()` montre quelle étude a quelle cible
+La variable regroupée `vote_choice` (qesR 0.8.0) est la plus proche de la
+colonne `vote_choice` du fichier fusionné d'une étude à l'autre : avec
+`types = list(vote_choice = "recall")`, c'est le vote déclaré, comme dans
+le fichier fusionné (dont les étiquettes de partis sont celles de 0.4.4) ;
+par défaut, elle prend aussi l'intention de vote des études qui n'ont pas
+demandé le vote déclaré, et `vote_choice__type` indique laquelle.
+
+Toutes les lignes sont approuvées, sauf trois de celles ajoutées dans la
+spécification 4.3.0 ; une ligne en révision ne s'applique qu'avec
+`include_draft = TRUE`, et la colonne `review_note` de
+`qes_spec("crosswalk")` dit ce que la révision a corrigé dans chaque
+ligne, ou pourquoi elle est retenue. `qes_spec()` montre quelle étude a quelle cible
 et à quel point sa question est comparable, et
 `vignette("fr-reference-harmonisation", package = "qesR")` donne les
 questions, les formulations et les niveaux de comparabilité de chaque

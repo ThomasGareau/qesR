@@ -21,7 +21,11 @@
 #      expected/marginals.csv (every study);
 #   2. writes inst/extdata/harmonize/expected/hashes.csv: for each (study,
 #      target) cell, the md5 of the column (each row's level name or number,
-#      or "NA:<reason>", in file order; .qes_hz_column_md5()).
+#      or "NA:<reason>", in file order; .qes_hz_column_md5()); and, for each
+#      study and pooled variable (V-F9), the md5 of the pooled column with
+#      its default types, keyed by wave "*" and the member types applied
+#      (source_var, "recall+intention_push"). Derived cells (derive:<rule>)
+#      are covered by the hashes of their sources.
 # With --check it writes nothing and fails when the file differs.
 #
 # expected/ is part of the spec: after a change, bump SPEC by the rule of
@@ -47,8 +51,10 @@ failed <- FALSE
 # every target except the leading columns (survey_mode), whose rows are
 # checked on the leading column below
 leading <- .qes_hz_leading_targets(spec)
-h <- qes_harmonize("all", targets = setdiff(spec$tables$targets$target, leading), values = "code",
-                   missing = "reasons", include_draft = TRUE, spec = spec, quiet = TRUE)
+# with the pooled variables (V-F9: their columns, with their default types,
+# in the respondent layout)
+h <- qes_harmonize("all", targets = c(setdiff(spec$tables$targets$target, leading), .qes_pool_names(spec)),
+                   values = "code", missing = "reasons", include_draft = TRUE, spec = spec, quiet = TRUE)
 
 # ---- 1. V-L1 on marginals -------------------------------------------------------------
 cell <- qes_provenance(h, level = "cell")

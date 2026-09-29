@@ -29,6 +29,7 @@
 #' | Harmonisation (expérimental) | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
 #' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
 #' | Harmonisation (expérimental) | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
+#' | Harmonisation (expérimental) | [qes_party_lineage()] | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 #' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 #' | Reproductibilité | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |

@@ -4,7 +4,7 @@
 \alias{qes_provenance}
 \title{Where a study's data came from}
 \usage{
-qes_provenance(x, level = c("study", "cell", "spec"))
+qes_provenance(x, level = c("study", "cell", "spec", "pooled"))
 }
 \arguments{
 \item{x}{A data frame returned by \code{\link[=get_qes]{get_qes()}} (or \code{\link[=get_preview]{get_preview()}}), the
@@ -14,9 +14,10 @@ would read: nothing has been retrieved or checked yet, so
 \code{md5_observed}, \code{md5_verified}, \code{retrieved_via}, \code{retrieved_at} and
 \code{label_source} are \code{NA}.}
 
-\item{level}{\code{"study"} (default): one row per file. \code{"cell"} and
-\code{"spec"} describe data harmonized by \code{\link[=qes_harmonize]{qes_harmonize()}}; for other
-objects they are an error of class \code{qesR_error_no_provenance}.}
+\item{level}{\code{"study"} (default): one row per file. \code{"cell"}, \code{"spec"}
+and \code{"pooled"} describe data harmonized by \code{\link[=qes_harmonize]{qes_harmonize()}} (\code{"pooled"}
+only when it has pooled variables); for other objects they are an
+error of class \code{qesR_error_no_provenance}.}
 }
 \value{
 A data frame of class \code{qes_provenance}. For \code{level = "study"},
@@ -53,6 +54,19 @@ wave's members who could not vote in it, \code{eligible_voter} \code{FALSE}; \co
 for other targets, and \code{NA} when eligibility is not available for any
 member of the wave, for example when its age rows are not signed off
 and \code{include_draft = FALSE}) and \code{note}.
+
+For \code{level = "pooled"} (harmonized data with pooled variables such as
+\code{vote_choice}), one row per study, pooled variable and member: \code{study},
+\code{pooled}, \code{type} (the value of \verb{<pooled>__type}), \code{member} (the
+target), \code{precedence} (1 is tried first), \code{wave} and \code{item}
+(\verb{<study>:<wave>:<source variables>}) of the member's cell, \code{grade}
+(its grade, capped for lossy transforms), \code{used_in_layout} (\code{FALSE} for
+a member of another wave than the one the respondent layout takes the
+study's values from), \code{included} (its cell was applied and its grade
+is at least \code{min_grade}), \code{n_value} (rows whose value comes from it),
+\code{n_answer_na} (rows it made \code{NA} with an answer such as don't know or
+did not vote) and \code{n_fallthrough} (rows \code{NA} because no member asked
+them, reported under this member).
 
 For \code{level = "spec"}, one row (one per \code{\link[=qes_harmonize]{qes_harmonize()}} call for
 results combined with \code{\link[=rbind]{rbind()}}): \code{spec_version}, \code{spec_hash},

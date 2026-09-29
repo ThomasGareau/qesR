@@ -22,9 +22,9 @@ Dataverse deposits through its cache.
 The harmonization engine is **experimental**. Its specification says, for
 each study and harmonized variable ("target"), which question feeds the
 target and how each of its codes maps to the target's levels; nothing is
-matched by name. In specification 4.1.0 every row is signed off, after an
-automated double review against the original files and documents (not a
-human review), and `qes_harmonize()` applies them by default. The
+matched by name. In specification 4.3.0 every row but three is signed off,
+after an automated double review against the original files and documents
+(not a human review), and `qes_harmonize()` applies them by default. The
 recommended weights of `qes1998`, `qes2007_panel`, `qes2012_panel` and the
 CROP polls still need review, so their weights are `NA`; their answers are
 harmonized like the others'.
@@ -230,11 +230,11 @@ spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 ```
 
-## Four sovereignty questions, never pooled
+## Five sovereignty targets, one pooled variable
 
 A target is one question stimulus. Other studies asked about sovereignty
-with other wordings, so they feed other targets, which are never merged
-with `sov_indep`:
+with other wordings, so they feed other targets, never merged into
+`sov_indep`:
 
 ```{r sovereignty}
 sov <- qes_spec("crosswalk", targets = "sovereignty", lang = params$lang)
@@ -253,3 +253,16 @@ has none to recommend and the others' weights still need review, so
 `qes_harmonize()` returns `NA` for them and `qes_design()` leaves these
 respondents out, with a message. Put the targets side by side and read each one
 against its own question.
+
+To follow support across every study anyway, the pooled variable
+`sov_support` takes each study's referendum question, whatever its
+wording, and says which one each value comes from (`sov_support__type`),
+with the grade of that question (`sov_support__grade`); the favourable or
+opposed scale of `qes2018_panel` is collapsed to yes or no and graded
+approximate. `vote_choice` does the same for the vote (the reported vote,
+else the vote intention), and `pol_interest` for interest in politics:
+
+```{r pooled}
+pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```

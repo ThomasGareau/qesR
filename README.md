@@ -123,9 +123,20 @@ human review). The recommended weights of `qes1998`, `qes2007_panel`,
 `qes2012_panel` and the CROP polls still need review: their answers are
 harmonized, but their weights are `NA` until they are accepted (the
 registry, `qes_spec("spec")$tables$weights`, says what is known of each).
+The rows added in specification 4.3.0 went through the same automated
+review: all but three are signed off (the three are applied with
+`include_draft = TRUE`).
+
+A pooled variable puts the questions of one topic in one column for every
+study, with the question each value comes from: `vote_choice` is the
+provincial vote choice (the reported vote, else the vote intention),
+`sov_support` support for sovereignty across the referendum wordings, and
+`pol_interest` interest in politics on 0 to 1.
 
 ```r
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"))
+v <- qes_harmonize("all", targets = "vote_choice", layout = "long")
+table(v$study, v$vote_choice__type)  # recall or intention, study by study
 qes_spec()                         # which study has which target, and its grade
 ```
 
@@ -139,12 +150,15 @@ comparable, A approximate; a dash: no question in the specification):
 | `survey_mode` | — | — | I | — | — | — | — | — | I | — | — |
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | A | — | — | A | C | — | — | I | — |
-| `vote_prov_intent_push` | — | — | A | — | — | A | C | — | — | I | A |
+| `vote_prov_intent_push` | A | — | A | — | — | A | C | — | — | I | A |
 | `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
+| `vote_prov_prev` | C | C | — | I | — | — | — | C | — | — | — |
+| `vote_fed_recall` | C | — | — | — | I | — | — | C | A | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |
-| `pid_fed` | I | — | — | — | — | — | — | — | — | — | — |
+| `pid_fed` | I | — | — | — | C | — | — | — | — | — | — |
+| `pid_prov_strength` | A | C | — | I | I | — | — | A | A | — | — |
 | `sov_indep` | C | C | — | I | I | — | — | — | — | — | — |
 | `sov_sovereign_country` | — | — | — | — | — | I | — | — | — | — | — |
 | `sov_favour` | — | — | I | — | — | — | — | — | — | — | — |
@@ -154,6 +168,19 @@ comparable, A approximate; a dash: no question in the specification):
 | `interest_0_10` | A | — | — | — | — | — | — | — | I | — | — |
 | `interest_election_0_10` | — | — | — | — | — | — | — | C | I | — | — |
 | `interest_campaign_4pt` | — | — | — | — | — | — | — | — | — | I | — |
+| `sov_partnership_1995_push` | — | — | — | — | — | — | — | C | I | C | C |
+| `satis_demo_qc` | C | C | — | I | I | — | — | C | C | — | — |
+| `gov_satisfaction` | C | C | — | C | I | — | — | — | — | A | — |
+| `econ_retro_qc` | C | I | — | I | I | — | — | C | C | — | — |
+| `attach_qc` | C | C | — | C | I | — | — | — | — | — | — |
+| `attach_ca` | C | C | — | C | I | — | — | — | — | — | — |
+| `identity_qc_ca` | C | — | — | C | I | — | — | C | C | — | — |
+| `therm_leader_plq` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_pq` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_caq` | A | A | — | C | I | — | — | — | — | — | — |
+| `therm_leader_qs` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_adq` | — | — | — | — | — | — | — | C | I | — | — |
+| `mip_issue` | C | C | — | C | I | — | — | C | — | — | — |
 | `birth_year` | I | C | — | C | C | — | — | C | C | — | — |
 | `birth_month` | — | I | — | — | — | — | — | — | — | — | — |
 | `age` | I | A | — | — | — | — | — | — | — | — | — |
@@ -162,10 +189,18 @@ comparable, A approximate; a dash: no question in the specification):
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
 | `gender` | C | C | C | C | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
-| `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
+| `lang_mother` | A | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
 | `income_native` | A | — | A | C | I | — | A | A | A | A | — |
 | `religion` | A | — | — | C | I | — | — | — | — | — | — |
+| `region_cma3` | — | I | A | I | I | C | C | C | C | — | — |
+| `lang_home` | A | C | — | C | I | — | C | C | C | C | — |
+| `relig_attend` | — | A | — | A | I | — | — | C | C | — | — |
+| `birthplace3` | — | C | — | C | I | — | — | — | — | — | — |
+| `vote_choice` (pooled) | C | C | C | C | I | A | C | C | C | A | C |
+| `sov_support` (pooled) | C | C | A | I | I | I | — | C | I | C | C |
+| `pol_interest` (pooled) | A | A | — | A | A | — | — | A | I | A | — |
+| `turnout` (pooled) | A | A | A | C | I | C | — | C | C | C | C |
 
 <!-- coverage: end -->
 
@@ -301,10 +336,22 @@ double révision automatisée sur les fichiers et documents originaux (et non
 une révision humaine). Les pondérations recommandées de `qes1998`,
 `qes2007_panel`, `qes2012_panel` et des sondages CROP restent à réviser :
 leurs réponses sont harmonisées, mais leurs pondérations valent `NA`
-jusqu'à ce que la documentation des producteurs les établisse.
+jusqu'à ce que la documentation des producteurs les établisse. Les
+lignes ajoutées dans la spécification 4.3.0 ont passé la même révision
+automatisée : toutes sauf trois sont approuvées (les trois s'appliquent
+avec `include_draft = TRUE`).
+
+Une variable regroupée réunit les questions d'un même sujet en une seule
+colonne pour toutes les études, en indiquant la question d'où vient chaque
+valeur : `vote_choice` est le choix de vote provincial (le vote déclaré,
+sinon l'intention de vote), `sov_support` l'appui à la souveraineté à
+travers les libellés référendaires, et `pol_interest` l'intérêt pour la
+politique de 0 à 1.
 
 ```r
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), lang = "fr")
+v <- qes_harmonize("all", targets = "vote_choice", layout = "long", lang = "fr")
+table(v$study, v$vote_choice__type)  # rappel ou intention, étude par étude
 qes_spec(lang = "fr")              # quelle étude a quelle cible, et son niveau
 ```
 
@@ -319,12 +366,15 @@ question dans la spécification) :
 | `survey_mode` | — | — | I | — | — | — | — | — | I | — | — |
 | `vote_prov_recall` | C | C | C | C | I | A | — | C | C | A | C |
 | `vote_prov_intent` | A | — | A | — | — | A | C | — | — | I | — |
-| `vote_prov_intent_push` | — | — | A | — | — | A | C | — | — | I | A |
+| `vote_prov_intent_push` | A | — | A | — | — | A | C | — | — | I | A |
 | `turnout_prov_recall` | A | A | A | C | I | C | — | C | C | C | C |
 | `turnout_prov_likely` | I | — | — | — | — | — | — | — | — | — | — |
 | `vote_prov_intent_other` | I | — | — | — | — | — | — | — | — | — | — |
+| `vote_prov_prev` | C | C | — | I | — | — | — | C | — | — | — |
+| `vote_fed_recall` | C | — | — | — | I | — | — | C | A | — | — |
 | `pid_prov` | C | C | — | I | I | — | — | C | C | — | — |
-| `pid_fed` | I | — | — | — | — | — | — | — | — | — | — |
+| `pid_fed` | I | — | — | — | C | — | — | — | — | — | — |
+| `pid_prov_strength` | A | C | — | I | I | — | — | A | A | — | — |
 | `sov_indep` | C | C | — | I | I | — | — | — | — | — | — |
 | `sov_sovereign_country` | — | — | — | — | — | I | — | — | — | — | — |
 | `sov_favour` | — | — | I | — | — | — | — | — | — | — | — |
@@ -334,6 +384,19 @@ question dans la spécification) :
 | `interest_0_10` | A | — | — | — | — | — | — | — | I | — | — |
 | `interest_election_0_10` | — | — | — | — | — | — | — | C | I | — | — |
 | `interest_campaign_4pt` | — | — | — | — | — | — | — | — | — | I | — |
+| `sov_partnership_1995_push` | — | — | — | — | — | — | — | C | I | C | C |
+| `satis_demo_qc` | C | C | — | I | I | — | — | C | C | — | — |
+| `gov_satisfaction` | C | C | — | C | I | — | — | — | — | A | — |
+| `econ_retro_qc` | C | I | — | I | I | — | — | C | C | — | — |
+| `attach_qc` | C | C | — | C | I | — | — | — | — | — | — |
+| `attach_ca` | C | C | — | C | I | — | — | — | — | — | — |
+| `identity_qc_ca` | C | — | — | C | I | — | — | C | C | — | — |
+| `therm_leader_plq` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_pq` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_caq` | A | A | — | C | I | — | — | — | — | — | — |
+| `therm_leader_qs` | A | A | — | C | I | — | — | C | C | — | — |
+| `therm_leader_adq` | — | — | — | — | — | — | — | C | I | — | — |
+| `mip_issue` | C | C | — | C | I | — | — | C | — | — | — |
 | `birth_year` | I | C | — | C | C | — | — | C | C | — | — |
 | `birth_month` | — | I | — | — | — | — | — | — | — | — | — |
 | `age` | I | A | — | — | — | — | — | — | — | — | — |
@@ -342,10 +405,18 @@ question dans la spécification) :
 | `age_group6` | — | — | — | — | — | C | I | C | — | C | C |
 | `gender` | C | C | C | C | I | C | C | C | C | C | C |
 | `education4` | C | C | A | I | C | — | A | C | C | A | — |
-| `lang_mother` | — | C | C | C | I | C | C | C | C | C | — |
+| `lang_mother` | A | C | C | C | I | C | C | C | C | C | — |
 | `born_canada` | I | C | — | C | C | — | — | — | — | — | — |
 | `income_native` | A | — | A | C | I | — | A | A | A | A | — |
 | `religion` | A | — | — | C | I | — | — | — | — | — | — |
+| `region_cma3` | — | I | A | I | I | C | C | C | C | — | — |
+| `lang_home` | A | C | — | C | I | — | C | C | C | C | — |
+| `relig_attend` | — | A | — | A | I | — | — | C | C | — | — |
+| `birthplace3` | — | C | — | C | I | — | — | — | — | — | — |
+| `vote_choice` (pooled) | C | C | C | C | I | A | C | C | C | A | C |
+| `sov_support` (pooled) | C | C | A | I | I | I | — | C | I | C | C |
+| `pol_interest` (pooled) | A | A | — | A | A | — | — | A | I | A | — |
+| `turnout` (pooled) | A | A | A | C | I | C | — | C | C | C | C |
 
 <!-- coverage: end -->
 

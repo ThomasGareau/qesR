@@ -99,7 +99,8 @@
   xw <- spec$tables$crosswalk[spec$tables$crosswalk$study == study, , drop = FALSE]
   wv <- spec$tables$waves[spec$tables$waves$study == study, , drop = FALSE]
   mode_var <- sub("^var:", "", wv$mode[!is.na(wv$mode) & startsWith(wv$mode, "var:")])
-  vars <- c(xw$source_var, xw$gate_var, wv$member_var, wv$date_var, wv$subsample_var,
+  then <- unlist(lapply(which(xw$rule %in% c("coalesce", "fn:multiselect")), function(i) .qes_hz_row_vars(xw, i)))
+  vars <- c(xw$source_var, then, xw$gate_var, wv$member_var, wv$date_var, wv$subsample_var,
             wv$strata_var, mode_var)
   unique(vars[!is.na(vars) & nzchar(vars)])
 }
@@ -193,7 +194,7 @@
 # they answer the universe check V-D7).
 .qes_hz_counted <- function(xw, i) {
   .qes_hz_projected(xw, i) ||
-    (xw$rule[i] %in% c("weight", "date", "string") && !is.na(xw$gate_var[i]) && nzchar(xw$gate_var[i]))
+    (xw$rule[i] %in% c("weight", "date", "string", "coalesce") && !is.na(xw$gate_var[i]) && nzchar(xw$gate_var[i]))
 }
 
 # The cells of every projectable or gated crosswalk row of `study`
@@ -324,6 +325,163 @@
 
 `%|NA|%` <- function(x, y) if (length(x) == 0L || is.na(x)) y else x
 
+# ---- rule coalesce (schema 3) ------------------------------------------------------
+#
+# A coalesce row reads one question across several variables: a first
+# question and the push asked of those who did not answer it (the pushed
+# vote intention of 2022, the pushed 1995 referendum question of 2007 and
+# 2008), or the two halves of a split ballot. source_var, map_id, na_codes
+# and the gate are those of the first variable; args names the others, in
+# order, with their own value maps ("then=<var>:<map_id>,<var>:<map_id>"),
+# and the NA reasons that pass to the next variable ("fallthrough=dk,
+# inapplicable,sysmis"; default inapplicable and sysmis). While a row's
+# outcome is a value, or a reason not in fallthrough, it is final; else the
+# next variable is read, and its outcome replaces the row's unless that
+# variable did not ask the respondent (inapplicable or system missing). So
+# a row keeps the reason of the last variable that asked it.
+
+.qes_coalesce_default_fallthrough <- c("inapplicable", "sysmis")
+
+# The variables and maps of coalesce row `i` after the first: data frame
+# var, map_id (zero rows for another rule or an empty `then`); NULL when
+# `then` is not in the grammar.
+.qes_hz_coalesce_then <- function(xw, i) {
+  empty <- data.frame(var = character(0), map_id = character(0), stringsAsFactors = FALSE)
+  if (!identical(xw$rule[i], "coalesce")) return(empty)
+  args <- .qes_parse_kv(xw$args[i]) %||% character(0)
+  then <- unname(args["then"])
+  if (length(then) == 0L || is.na(then) || !nzchar(then)) return(empty)
+  parts <- strsplit(then, ",", fixed = TRUE)[[1]]
+  if (!all(grepl("^[^:,]+:[^:,]+$", parts))) return(NULL)
+  data.frame(var = sub(":.*$", "", parts), map_id = sub("^[^:]*:", "", parts), stringsAsFactors = FALSE)
+}
+
+# The NA reasons that pass to the next variable in coalesce row `i`.
+.qes_hz_coalesce_fallthrough <- function(xw, i) {
+  args <- .qes_parse_kv(xw$args[i]) %||% character(0)
+  ft <- unname(args["fallthrough"])
+  if (length(ft) == 0L || is.na(ft) || !nzchar(ft)) return(.qes_coalesce_default_fallthrough)
+  strsplit(ft, ",", fixed = TRUE)[[1]]
+}
+
+# Every source variable of crosswalk row `i`, in order (one, except for a
+# coalesce row and a fn:multiselect row).
+.qes_hz_row_vars <- function(xw, i) {
+  then <- .qes_hz_coalesce_then(xw, i)
+  sel <- if (identical(xw$rule[i], "fn:multiselect")) .qes_hz_multiselect_args(xw$args[i])$var else NULL
+  unique(c(xw$source_var[i], if (!is.null(then)) then$var, sel))
+}
+
+# ---- registered function fn:multiselect ------------------------------------------------
+#
+# A select-all-that-apply question stored as one 0/1 variable per option
+# (the 2022 mother tongue: cps_lang_1 English, cps_lang_2 French,
+# cps_lang_3 another language). args: "select=<var>:<level>,<var>:<level>,..."
+# (the first variable is the row's source_var) and "selected=<code>" (the
+# code of a ticked option, default 1). A respondent whose ticked options all
+# give one level gets that level; options of two or more levels are
+# not_mappable (never assigned to one of them, as a reported second mother
+# tongue elsewhere); no option ticked is no_answer; every variable system
+# missing is sysmis.
+
+# The parsed args of a fn:multiselect row: list(var, level, selected).
+.qes_hz_multiselect_args <- function(args) {
+  kv <- .qes_parse_kv(args) %||% character(0)
+  sel <- unname(kv["select"])
+  if (length(sel) == 0L || is.na(sel)) return(list(var = character(0), level = character(0), selected = "1"))
+  parts <- strsplit(sel, ",", fixed = TRUE)[[1]]
+  selected <- unname(kv["selected"])
+  list(var = sub(":.*$", "", parts), level = sub("^[^:]*:", "", parts),
+       selected = if (length(selected) == 0L || is.na(selected)) "1" else selected)
+}
+
+.qes_hz_fn_multiselect <- function(src, ctx) {
+  a <- .qes_hz_multiselect_args(ctx$row$args)
+  d <- ctx$data
+  n <- nrow(d)
+  ticked <- vapply(a$var, function(v) {
+    x <- .canon(d[[v]])
+    ifelse(is.na(x), NA, x == a$selected)
+  }, logical(n))
+  ticked <- matrix(ticked, nrow = n)
+  all_na <- rowSums(!is.na(ticked)) == 0L
+  n_levels <- apply(ticked, 1L, function(r) length(unique(a$level[r %in% TRUE])))
+  first <- apply(ticked, 1L, function(r) {
+    k <- which(r %in% TRUE)
+    if (length(k) == 0L) NA_character_ else a$level[k[1]]
+  })
+  value <- ifelse(n_levels == 1L, first, NA_character_)
+  reason <- ifelse(n_levels == 1L, NA_character_,
+                   ifelse(all_na, "sysmis", ifelse(n_levels == 0L, "no_answer", "not_mappable")))
+  list(value = value, na_reason = reason)
+}
+
+# Every value map of crosswalk row `i` (map_id, then the maps of a
+# coalesce row's other variables).
+.qes_hz_row_maps <- function(xw, i) {
+  then <- .qes_hz_coalesce_then(xw, i)
+  out <- c(xw$map_id[i], if (!is.null(then)) then$map_id)
+  out[!is.na(out) & nzchar(out)]
+}
+
+# The spec with each coalesce row replaced by one map row per variable (the
+# first keeps the row's na_codes and gate; the others have none and are not
+# primary): the form the data checks V-D1 to V-D4 and V-D7 read, and the
+# code-level crosswalk view.
+.qes_hz_expand_coalesce <- function(spec) {
+  xw <- spec$tables$crosswalk
+  k <- which(xw$rule %in% "coalesce")
+  if (length(k) == 0L) return(spec)
+  rows <- list()
+  for (i in seq_len(nrow(xw))) {
+    r <- xw[i, , drop = FALSE]
+    if (!i %in% k) {
+      rows[[length(rows) + 1L]] <- r
+      next
+    }
+    first <- r
+    first$rule <- "map"
+    first$args <- NA_character_
+    rows[[length(rows) + 1L]] <- first
+    then <- .qes_hz_coalesce_then(xw, i)
+    for (j in seq_len(nrow(then %||% data.frame()))) {
+      o <- r
+      o$rule <- "map"
+      o$args <- NA_character_
+      o$source_var <- then$var[j]
+      o$map_id <- then$map_id[j]
+      o$na_codes <- NA_character_
+      o$gate_var <- NA_character_
+      o$gate_codes <- NA_character_
+      o$gate_to <- NA_character_
+      o$primary <- FALSE
+      rows[[length(rows) + 1L]] <- o
+    }
+  }
+  out <- do.call(rbind, rows)
+  rownames(out) <- NULL
+  spec$tables$crosswalk <- out
+  spec
+}
+
+# The rule of variable `var` with value map `map_id` in coalesce row `i`:
+# the row's rule (.qes_hz_row_rule()) with that map, no na_codes and no
+# gate (the first variable keeps the row's own).
+.qes_hz_part_rule <- function(spec, i, var, map_id) {
+  r <- .qes_hz_row_rule(spec, i)
+  vm <- spec$tables$valuemaps
+  vm <- vm[vm$map_id %in% map_id, , drop = FALSE]
+  r$rule <- "map"
+  r$source_var <- var
+  r$na_codes <- character(0)
+  r$map_code <- vm$source_code
+  r$map_level <- if (is.null(r$set)) rep(NA_character_, nrow(vm)) else r$set$name[match(vm$target_code, r$set$code)]
+  r$map_reason <- vm$na_reason
+  r$gate_var <- NA_character_
+  r$gate_to <- character(0)
+  r
+}
+
 # The outcome of source codes `code` (text, "NA" for system missing) under
 # rule `r`, before the gate: data frame value (level name or number text) and
 # na_reason. `label_number` gives the numeric label of each code (from_label).
@@ -336,7 +494,7 @@
   reason[in_nac] <- unname(nac[code[in_nac]])
   reason[is_na & !in_nac] <- "sysmis"
   rest <- !is_na & !in_nac
-  if (identical(r$rule, "map")) {
+  if (r$rule %in% c("map", "coalesce")) {
     k <- match(code, r$map_code)
     hit <- rest & !is.na(k)
     value[hit] <- r$map_level[k[hit]]
@@ -510,6 +668,8 @@
 # a problems table.
 .qes_data_check <- function(spec, sources, studies = NULL, data = NULL, offline_severity = "error",
                             unmapped_codes = TRUE, member_counts = TRUE) {
+  # a coalesce row is checked variable by variable, as one map row each
+  spec <- .qes_hz_expand_coalesce(spec)
   xw <- spec$tables$crosswalk
   vm <- spec$tables$valuemaps
   wv <- spec$tables$waves
@@ -546,6 +706,12 @@
       v <- xw[[col]][i]
       if (has(v) && !exists_in(v, xw$study[i])) {
         add("V-D1", "crosswalk", i, xkey(i), sprintf("%s '%s' is not a variable of %s%s", col, v, xw$study[i], hint(v, xw$study[i])))
+      }
+    }
+    # the other variables a registered function reads (fn:multiselect)
+    for (v in setdiff(.qes_hz_row_vars(xw, i), xw$source_var[i])) {
+      if (!exists_in(v, xw$study[i])) {
+        add("V-D1", "crosswalk", i, xkey(i), sprintf("variable '%s' of args is not a variable of %s%s", v, xw$study[i], hint(v, xw$study[i])))
       }
     }
   }

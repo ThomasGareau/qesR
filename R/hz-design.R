@@ -23,8 +23,13 @@
 #' that do not depend on the moment of the interview, such as the year of
 #' birth, do not count; a question that can be asked in any wave, such as
 #' sovereignty, counts through the wave that asked it): if all these waves
-#' call for the same column, it uses that column; if they call for both
-#' (the default `targets = "core"` does), it stops and asks you to choose.
+#' call for the same column, it uses that column. If they call for both, but
+#' each study's call for one only (a pooled variable such as `vote_choice`
+#' takes the post-election recall of most studies and the pre-election
+#' intention of the CROP polls), each study gets its own, in a new column
+#' `weight_auto` that the design uses. If one study's targets call for both
+#' (the default `targets = "core"` does, for the studies with two waves), it
+#' stops and asks you to choose.
 #' With no such target, it uses the one weight column that has values, and
 #' asks you to choose when both have values.
 #' In the long layout the weight is the `weight` column.
@@ -72,7 +77,10 @@
 #' chaque cible (`attr(x, "qes_weight_guide")`) : `weight_pre` pour des
 #' cibles de vagues préélectorales, `weight_post` pour des cibles de vagues
 #' postélectorales ; les cibles fixes, comme l'année de naissance, ne
-#' comptent pas ; si `x` mêle les deux, la fonction demande de choisir.
+#' comptent pas ; si les études appellent des colonnes différentes mais
+#' chacune une seule (une variable regroupée comme `vote_choice`), chaque
+#' étude reçoit la sienne dans une nouvelle colonne `weight_auto` ; si une
+#' même étude mêle les deux, la fonction demande de choisir.
 #' Chaque vague a au plus une pondération recommandée.
 #' Les lignes sans valeur de pondération sont laissées hors du plan, avec un
 #' message. `pool = "equal"` donne le même total à chaque étude (et vague en
@@ -94,8 +102,10 @@
 #' @return A `survey.design2` (engine `"survey"`) or `tbl_svy` (engine
 #'   `"srvyr"`) object whose data are the rows of `x` with a value of the
 #'   weight, as a plain data frame, with the added column `qes_stratum`
-#'   (the study, or `<study>:<stratum>` where the `stratum` column is set).
-#'   The weight is the column named by `weight`.
+#'   (the study, or `<study>:<stratum>` where the `stratum` column is set),
+#'   and `weight_auto` when each study takes its own weight column (see
+#'   *Choosing a weight*). The weight is the column named by `weight`, or
+#'   `weight_auto`.
 #'
 #' @family harmonization
 #' @seealso [qes_harmonize()] for the weight columns and
@@ -117,8 +127,15 @@ qes_design <- function(x, weight = NULL, engine = c("survey", "srvyr"), pool = c
   if (!inherits(x, "qes_harmonized") || !is.data.frame(x) || length(cols) == 0L) {
     .qes_abort("input_design_x", class = "qesR_error_input", data = list(arg = "x", value = NULL))
   }
+  auto <- NULL
   if (is.null(weight)) {
-    weight <- if (long) "weight" else .qes_design_pick_weight(x, cols)
+    if (long) {
+      weight <- "weight"
+    } else {
+      pick <- .qes_design_pick_weight(x, cols)
+      weight <- pick$column
+      auto <- pick$by_study
+    }
   } else if (!is.character(weight) || length(weight) != 1L || is.na(weight) || !weight %in% cols) {
     .qes_abort("input_design_weight", class = "qesR_error_input", args = list(.qes_q(cols)),
                data = list(arg = "weight", value = weight))
@@ -133,6 +150,12 @@ qes_design <- function(x, weight = NULL, engine = c("survey", "srvyr"), pool = c
   df <- x
   class(df) <- "data.frame"
   for (a in c("qes_spec", "qes_provenance", "qes_weight_guide", "failed_studies")) attr(df, a) <- NULL
+  if (identical(weight, "weight_auto")) {
+    # each study's weight column (pooled variables whose studies call for
+    # different waves), row by row
+    col <- unname(auto[as.character(df$study)])
+    df$weight_auto <- ifelse(col %in% "weight_pre", df$weight_pre, ifelse(col %in% "weight_post", df$weight_post, NA_real_))
+  }
   w <- df[[weight]]
   keep <- !is.na(w) & w > 0
   if (!any(keep)) {
@@ -183,21 +206,31 @@ qes_design <- function(x, weight = NULL, engine = c("survey", "srvyr"), pool = c
 .qes_design_pick_weight <- function(x, cols) {
   guide <- attr(x, "qes_weight_guide", exact = TRUE)
   chosen <- character(0)
+  g <- NULL
   if (is.data.frame(guide) && nrow(guide) > 0L) {
     g <- guide[guide$target %in% names(x) & !is.na(guide$weight_column) &
-                 !guide$target_timing %in% "static", , drop = FALSE]
+                 !guide$target_timing %in% "static" & guide$study %in% x$study, , drop = FALSE]
     chosen <- unique(g$weight_column)
   }
   if (length(chosen) == 1L) {
-    return(chosen)
+    return(list(column = chosen, by_study = NULL))
   }
   if (length(chosen) > 1L) {
-    .qes_abort("input_design_weight_choose", class = "qesR_error_input", args = list(.qes_q(chosen)),
-               data = list(arg = "weight", value = NULL))
+    # studies may call for different columns (a pooled variable takes the
+    # post-election recall of one study and the pre-election intention of
+    # another): each study gets its own, in the column weight_auto, as long
+    # as no study mixes them
+    by_study <- tapply(g$weight_column, g$study, function(v) paste(sort(unique(v)), collapse = "+"))
+    if (all(!grepl("+", by_study, fixed = TRUE))) {
+      return(list(column = "weight_auto", by_study = by_study))
+    }
+    mixed <- names(by_study)[grepl("+", by_study, fixed = TRUE)]
+    .qes_abort("input_design_weight_choose", class = "qesR_error_input", args = list(.qes_q(chosen), .qes_q(mixed)),
+               data = list(arg = "weight", value = NULL, study = mixed))
   }
   has_values <- cols[vapply(cols, function(k) any(!is.na(x[[k]])), logical(1))]
   if (length(has_values) == 1L) {
-    return(has_values)
+    return(list(column = has_values, by_study = NULL))
   }
   .qes_abort("input_design_weight_untimed", class = "qesR_error_input", args = list(.qes_q(cols)),
              data = list(arg = "weight", value = NULL))

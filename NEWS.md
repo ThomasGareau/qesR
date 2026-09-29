@@ -1,3 +1,64 @@
+# qesR 0.8.0
+
+qesR 0.8.0 answers a request of the package's owner (2026-09-29): "all vote
+choice questions should be in the same variable (even if the wording is a
+little different)". The harmonization engine gains **pooled variables**: one
+column for every study that pools several targets, with the question each
+value comes from recorded row by row. `vote_choice` is the provincial vote
+choice of all 11 harmonized studies; `sov_support`, `pol_interest` and
+`turnout` do the same for support for sovereignty, interest in politics and
+turnout. The specification (4.3.0) also adds 20 targets, from satisfaction
+with democracy to leader ratings, and every study now has an age group.
+An automated double review against the original files and documents (not
+a human review) signed off 101 of the 104 new crosswalk rows, so
+`qes_harmonize()` applies them by default; three stay in review for the
+owner. `get_qes_master()` and `get_decon()` return the values of 0.7.1, and
+no marginal or column hash recorded in 0.7.1 changed; the columns of 0.7.1
+gain values only where a new row fills a study that had none, as noted
+below.
+
+## Pooled variables
+
+- `qes_harmonize(targets = "vote_choice")` returns one provincial vote choice for every study: the reported vote (recall) where the study asked it, else the vote intention with those who named no party (the undecided and, in some studies, those who would not vote or refused) pushed toward the party they lean to, else the vote intention at the first question. `vote_choice__type` says which (`recall`, `intention_push`, `intention`), `vote_choice__grade` gives the grade of that study's question (never raised), and `vote_choice__item` its source (`qes2012:post:q25`). Wordings differ between studies; the types and grades say how.
+- `sov_support` pools the referendum questions on sovereignty (an independent country, a sovereign country, the 1995 question with the undecided pushed and without, and, collapsed to yes or no and graded approximate, being favourable or opposed to independence): 10 studies. `pol_interest` puts interest in politics on 0 to 1 (four-point items scored 1, 0.7, 0.3 and 0, the legacy `political_interest` scores divided by 10; 0-10 items divided by 10; scored items graded approximate at most): 7 studies. `turnout` is the reported turnout; `types = list(turnout = c("recall", "intention"))` adds, where a study asked no reported turnout, the likelihood of voting collapsed to yes or no.
+- How a row gets its value: the members are tried in order of precedence, and the first that asked the respondent sets the row, with a value or with a missing value that is an answer (don't know, refused, did not vote). A member that did not ask the respondent (another wave, not asked in the study, a row not signed off, below `min_grade`) passes to the next. So a respondent who did not vote is `NA` with reason `not_voted`, never given their earlier intention. A row that every member passes is `NA` with the reason of the first usable member that has a row in the study and wave (for example `sysmis`), else of the first member that has one (`not_reviewed`, `below_grade`).
+- The new argument `types` of `qes_harmonize()` keeps some members only (`types = list(vote_choice = "recall")`); the precedence stays the spec's. It is the last argument, so calls by position are unchanged.
+- In the respondent layout a study's pooled values come from one wave (the post-election recall of a pre/post study), so that one weight fits them; the long layout keeps every wave. `qes_design()` now weights each study with the column of its own wave when the studies of `x` call for different columns (a new column `weight_auto`), and asks to choose only when one study mixes them.
+- `vote_choice`, `sov_support` and `pol_interest` are in the default set `"core"`, so `qes_harmonize()` returns them by default; the set `"pooled"` names all four. Results change: the default result of `qes_harmonize()` has these 3 columns and their 9 companions more. The members are harmonized too, but are columns only when `targets` names them.
+- `qes_spec("pooled")` lists the members of each pooled variable, their precedence, transform and grade cap, and each member's grade in each study; `qes_provenance(x, level = "pooled")` counts, per study, the rows each member gave. A message (class `qesR_message_pooled`, silenced by `quiet`) and `print()` say which member each study used. The generated reference (`vignette("harmonization-reference")` and its French version) has a chapter on them, and the coverage grids a row each.
+- `qes_party_lineage()` (new export) adds, for each party column, a column that joins the ADQ and the CAQ (into which it merged on 2012-01-21) as "ADQ/CAQ", and optionally Option nationale and Quebec solidaire, for time series of the Quebec parties; rows fielded before 2012 are graded approximate there. The harmonized columns keep the parties apart (OD11).
+
+## New targets and rows (specification 4.3.0)
+
+- 20 targets: satisfaction with democracy in Quebec (`satis_demo_qc`, 6 studies) and with the Quebec government (`gov_satisfaction`, 5), Quebec's economy over the past year (`econ_retro_qc`, 6), attachment to Quebec and to Canada (`attach_qc`, `attach_ca`, 4 each), Québécois or Canadian identity (`identity_qc_ca`, 5), strength of provincial party identification (`pid_prov_strength`, 6), the provincial vote at the previous election (`vote_prov_prev`, 4) and the last federal vote (`vote_fed_recall`, 4), the most important issue (`mip_issue`, 5), the ratings of the PLQ, PQ, CAQ, QS and ADQ leaders on 0-100 (`therm_leader_*`), the region (Montreal CMA, Quebec CMA, rest; `region_cma3`, 8), the language spoken most often at home (`lang_home`, 8), attendance at religious services (`relig_attend`, 5), the birthplace (Quebec, rest of Canada, abroad; `birthplace3`, 3) and the 1995 referendum question with the undecided pushed (`sov_partnership_1995_push`, 4). The new sets `"attitudes"` and `"socio"` name them; `"vote"` gains `vote_prov_prev` and `vote_fed_recall`.
+- 104 crosswalk rows, checked against the pinned files (the data checks V-D1 to V-D8 and every code and filter count) and then by an automated double review against the original files and documents (codes and data, wording and comparability; adjudicated where the two reviewers disagreed; not a human review). 101 are signed off (`stable`, `reviewed_by` says by what), 45 of them corrected or completed, mostly in their text: English wordings and questionnaire citations (`qes2008`, `qes2014`), grade reasons that name the option wordings that differ from the anchor, don't-know offers (`dk_offered`), and counts in the evidence. Among them, three rows on existing targets: the pushed vote intention of `qes2022` (the first question, the "if you decide to vote" question of those unlikely to vote, and the lean question of the undecided), the federal party identification of `qes2012`, and the mother tongue and home language of `qes2022`, two select-all questions. Results change: these fill cells that were `NA` (reason `not_asked`) in 0.7.1.
+- The leader ratings of `qes2022` read -99 as don't know (`dk`, the "Don't know leader" option of the codebook), not `no_answer`: the reason changes, no value.
+- Three rows stay in review for the owner (`dev/open-questions.md` D13): the strength of provincial party identification of `qes2022`, graded approximate because its French version asks closeness, and the previous provincial vote of `qes2008` and `qes2018`, whose respondents under 18 at that election were asked (the spec has no rule that sets an answer to ineligible by age).
+- A new crosswalk rule, `coalesce`, reads a question across several variables (a question and its push, the two halves of a split ballot), each with its own value map; a new registered function, `fn:multiselect`, reads a select-all question stored as one variable per option (one level ticked gives it; options of two levels are `not_mappable`).
+- The age groups `age_group3` and `age_group6` are derived from the age, else the year of birth, where a study has no banded question (`qes2007`, `qes2012`, `qes2014`, `qes2018`, `qes2022`): every study now has an age group. A band computed from the year of birth only is graded approximate (an age at a band edge can be one year off); cell provenance says `rule = "derive:age_band"`. Results change: `age_group3` and `age_group6` of these studies were `NA` (reason `not_asked`) and now have values by default (their sources are signed off).
+- Not changed: the codes and display order of the party levels, and every existing row, map, gate and grade. The definitions of the targets that said "never pooled" now name the pooled variable that uses them.
+- The catalog version is now 2.4.0: the vocabulary of crosswalk rules gains `coalesce`.
+- The dictionary version is now 1.1.1 (text only): the question text of the 2018 panel's `rv1ab` gains the stem's sentence on advance voting, as `rv1a` has it.
+
+## The legacy functions are frozen
+
+- `get_qes_master()` and `get_decon()` never read a crosswalk row that nobody has reviewed yet, nor a derived cell: their columns are those of 0.7.1. A validator note (V-S19) lists the rows that a legacy column would read once signed off. Two such rows are signed off in 0.8.0, the `qes2012` federal party identification and the `qes2022` mother tongue: the legacy columns `federal_pid` (and `fed_pid` of `get_decon()`) of `qes2012` and `language` of `qes2022` keep the `NA` of 0.7.1, with the new cause `legacy_frozen` in `attr(, "legacy_na_columns")` (the reason stays `no_source`; the legacy renderer reads these targets as if the study had no row); their answers are in `qes_harmonize()`. A test builds both functions with the specification frozen before the rows of 4.3.0 and checks that the values are identical.
+
+## Validation
+
+- The recorded validation report (`inst/extdata/validation/validation_report.csv`, source repository only) gains the census margin of the `qes2022` mother tongue, which the new `lang_mother` row makes possible (weighted index 0.13), and its `qes2018` age margin now uses the derived age groups, exact to the month of birth (weighted index 8.32 to 7.91). No other recorded value moved.
+
+## Specification format
+
+- Schema 3: the optional tables `pooled.csv` and `pooled_members.csv`, and the rule `coalesce`; qesR still reads a schema 2 directory (with no pooled variables). `Engine-Min` is 0.8.0.
+- The validator adds V-F1 to V-F7 on the pooled tables (keys and a strict precedence, names disjoint from targets, families, sets, study codes and the leading columns of harmonized data, members that are live targets, a default member, level sets or ranges that fit, a grade cap of approximate on every lossy transform, English and French), and V-S15 now also forbids a target named like a leading column. `expected/hashes.csv` gains the column hash of each pooled variable in each study (V-F9, wave `*`, the member types applied as `source_var`).
+
+## Documentation
+
+- `?qes_harmonize` has a section on pooled variables and an example of `vote_choice`; `?qes_design` explains the per-study weight; `?qes_spec` lists the pooled variables. The articles on harmonization (`harmonization`, `fr-harmonisation`) show `sov_support` after the sovereignty targets.
+- The migration guides (`migrating-0.7`, `fr-migrer-0.7`) say how `vote_choice` relates to the master's column of the same name (`types = list(vote_choice = "recall")` is the reported vote, as in the master).
+- `dev/design.md` records the design of pooled variables and the owner decisions it needs (OD-P1 to OD-P9).
+
 # qesR 0.7.1
 
 qesR 0.7.1 ships the metadata of the 2022 Quebec Election Study

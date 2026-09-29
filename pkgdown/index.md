@@ -48,8 +48,10 @@ specification that ships with qesR:
 
 - **One question stimulus per target.** A reported vote and a vote
   intention are different targets, and so are the sovereignty questions
-  with different wordings; nothing is pooled across wordings behind your
-  back.
+  with different wordings. A pooled variable (`vote_choice`,
+  `sov_support`, `pol_interest`, `turnout`) puts them in one column for
+  every study, and says row by row which question each value comes from:
+  nothing is pooled behind your back.
 - **A grade for every study's question**: identical, comparable or
   approximate, with the reason, in English and French.
   `min_grade = "comparable"` drops the approximate ones. A party a study
@@ -80,12 +82,15 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`survey_mode`](articles/harmonization-reference.html#target-survey_mode) | — | — | I | — | — | — | — | — | I | — | — |
 | [`vote_prov_recall`](articles/harmonization-reference.html#target-vote_prov_recall) | C | C | C | C | I | A | — | C | C | A | C |
 | [`vote_prov_intent`](articles/harmonization-reference.html#target-vote_prov_intent) | A | — | A | — | — | A | C | — | — | I | — |
-| [`vote_prov_intent_push`](articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | A | — | — | A | C | — | — | I | A |
+| [`vote_prov_intent_push`](articles/harmonization-reference.html#target-vote_prov_intent_push) | A | — | A | — | — | A | C | — | — | I | A |
 | [`turnout_prov_recall`](articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | C | C |
 | [`turnout_prov_likely`](articles/harmonization-reference.html#target-turnout_prov_likely) | I | — | — | — | — | — | — | — | — | — | — |
 | [`vote_prov_intent_other`](articles/harmonization-reference.html#target-vote_prov_intent_other) | I | — | — | — | — | — | — | — | — | — | — |
+| [`vote_prov_prev`](articles/harmonization-reference.html#target-vote_prov_prev) | C | C | — | I | — | — | — | C | — | — | — |
+| [`vote_fed_recall`](articles/harmonization-reference.html#target-vote_fed_recall) | C | — | — | — | I | — | — | C | A | — | — |
 | [`pid_prov`](articles/harmonization-reference.html#target-pid_prov) | C | C | — | I | I | — | — | C | C | — | — |
-| [`pid_fed`](articles/harmonization-reference.html#target-pid_fed) | I | — | — | — | — | — | — | — | — | — | — |
+| [`pid_fed`](articles/harmonization-reference.html#target-pid_fed) | I | — | — | — | C | — | — | — | — | — | — |
+| [`pid_prov_strength`](articles/harmonization-reference.html#target-pid_prov_strength) | A | C | — | I | I | — | — | A | A | — | — |
 | [`sov_indep`](articles/harmonization-reference.html#target-sov_indep) | C | C | — | I | I | — | — | — | — | — | — |
 | [`sov_sovereign_country`](articles/harmonization-reference.html#target-sov_sovereign_country) | — | — | — | — | — | I | — | — | — | — | — |
 | [`sov_favour`](articles/harmonization-reference.html#target-sov_favour) | — | — | I | — | — | — | — | — | — | — | — |
@@ -95,6 +100,19 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`interest_0_10`](articles/harmonization-reference.html#target-interest_0_10) | A | — | — | — | — | — | — | — | I | — | — |
 | [`interest_election_0_10`](articles/harmonization-reference.html#target-interest_election_0_10) | — | — | — | — | — | — | — | C | I | — | — |
 | [`interest_campaign_4pt`](articles/harmonization-reference.html#target-interest_campaign_4pt) | — | — | — | — | — | — | — | — | — | I | — |
+| [`sov_partnership_1995_push`](articles/harmonization-reference.html#target-sov_partnership_1995_push) | — | — | — | — | — | — | — | C | I | C | C |
+| [`satis_demo_qc`](articles/harmonization-reference.html#target-satis_demo_qc) | C | C | — | I | I | — | — | C | C | — | — |
+| [`gov_satisfaction`](articles/harmonization-reference.html#target-gov_satisfaction) | C | C | — | C | I | — | — | — | — | A | — |
+| [`econ_retro_qc`](articles/harmonization-reference.html#target-econ_retro_qc) | C | I | — | I | I | — | — | C | C | — | — |
+| [`attach_qc`](articles/harmonization-reference.html#target-attach_qc) | C | C | — | C | I | — | — | — | — | — | — |
+| [`attach_ca`](articles/harmonization-reference.html#target-attach_ca) | C | C | — | C | I | — | — | — | — | — | — |
+| [`identity_qc_ca`](articles/harmonization-reference.html#target-identity_qc_ca) | C | — | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_plq`](articles/harmonization-reference.html#target-therm_leader_plq) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_pq`](articles/harmonization-reference.html#target-therm_leader_pq) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_caq`](articles/harmonization-reference.html#target-therm_leader_caq) | A | A | — | C | I | — | — | — | — | — | — |
+| [`therm_leader_qs`](articles/harmonization-reference.html#target-therm_leader_qs) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_adq`](articles/harmonization-reference.html#target-therm_leader_adq) | — | — | — | — | — | — | — | C | I | — | — |
+| [`mip_issue`](articles/harmonization-reference.html#target-mip_issue) | C | C | — | C | I | — | — | C | — | — | — |
 | [`birth_year`](articles/harmonization-reference.html#target-birth_year) | I | C | — | C | C | — | — | C | C | — | — |
 | [`birth_month`](articles/harmonization-reference.html#target-birth_month) | — | I | — | — | — | — | — | — | — | — | — |
 | [`age`](articles/harmonization-reference.html#target-age) | I | A | — | — | — | — | — | — | — | — | — |
@@ -103,10 +121,18 @@ grades in the [harmonization reference](articles/harmonization-reference.html):
 | [`age_group6`](articles/harmonization-reference.html#target-age_group6) | — | — | — | — | — | C | I | C | — | C | C |
 | [`gender`](articles/harmonization-reference.html#target-gender) | C | C | C | C | I | C | C | C | C | C | C |
 | [`education4`](articles/harmonization-reference.html#target-education4) | C | C | A | I | C | — | A | C | C | A | — |
-| [`lang_mother`](articles/harmonization-reference.html#target-lang_mother) | — | C | C | C | I | C | C | C | C | C | — |
+| [`lang_mother`](articles/harmonization-reference.html#target-lang_mother) | A | C | C | C | I | C | C | C | C | C | — |
 | [`born_canada`](articles/harmonization-reference.html#target-born_canada) | I | C | — | C | C | — | — | — | — | — | — |
 | [`income_native`](articles/harmonization-reference.html#target-income_native) | A | — | A | C | I | — | A | A | A | A | — |
 | [`religion`](articles/harmonization-reference.html#target-religion) | A | — | — | C | I | — | — | — | — | — | — |
+| [`region_cma3`](articles/harmonization-reference.html#target-region_cma3) | — | I | A | I | I | C | C | C | C | — | — |
+| [`lang_home`](articles/harmonization-reference.html#target-lang_home) | A | C | — | C | I | — | C | C | C | C | — |
+| [`relig_attend`](articles/harmonization-reference.html#target-relig_attend) | — | A | — | A | I | — | — | C | C | — | — |
+| [`birthplace3`](articles/harmonization-reference.html#target-birthplace3) | — | C | — | C | I | — | — | — | — | — | — |
+| [`vote_choice`](articles/harmonization-reference.html#pooled-vote_choice) (pooled) | C | C | C | C | I | A | C | C | C | A | C |
+| [`sov_support`](articles/harmonization-reference.html#pooled-sov_support) (pooled) | C | C | A | I | I | I | — | C | I | C | C |
+| [`pol_interest`](articles/harmonization-reference.html#pooled-pol_interest) (pooled) | A | A | — | A | A | — | — | A | I | A | — |
+| [`turnout`](articles/harmonization-reference.html#pooled-turnout) (pooled) | A | A | A | C | I | C | — | C | C | C | C |
 
 <!-- coverage: end -->
 :::

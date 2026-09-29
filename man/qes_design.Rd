@@ -31,8 +31,10 @@ layout; the polls of pooled polls count as one) has the same total.}
 A \code{survey.design2} (engine \code{"survey"}) or \code{tbl_svy} (engine
 \code{"srvyr"}) object whose data are the rows of \code{x} with a value of the
 weight, as a plain data frame, with the added column \code{qes_stratum}
-(the study, or \verb{<study>:<stratum>} where the \code{stratum} column is set).
-The weight is the column named by \code{weight}.
+(the study, or \verb{<study>:<stratum>} where the \code{stratum} column is set),
+and \code{weight_auto} when each study takes its own weight column (see
+\emph{Choosing a weight}). The weight is the column named by \code{weight}, or
+\code{weight_auto}.
 }
 \description{
 \code{qes_design()} turns the result of \code{\link[=qes_harmonize]{qes_harmonize()}} into a survey design
@@ -55,8 +57,13 @@ With \code{weight = NULL}, \code{qes_design()} looks at the wave each target of
 that do not depend on the moment of the interview, such as the year of
 birth, do not count; a question that can be asked in any wave, such as
 sovereignty, counts through the wave that asked it): if all these waves
-call for the same column, it uses that column; if they call for both
-(the default \code{targets = "core"} does), it stops and asks you to choose.
+call for the same column, it uses that column. If they call for both, but
+each study's call for one only (a pooled variable such as \code{vote_choice}
+takes the post-election recall of most studies and the pre-election
+intention of the CROP polls), each study gets its own, in a new column
+\code{weight_auto} that the design uses. If one study's targets call for both
+(the default \code{targets = "core"} does, for the studies with two waves), it
+stops and asks you to choose.
 With no such target, it uses the one weight column that has values, and
 asks you to choose when both have values.
 In the long layout the weight is the \code{weight} column.
@@ -110,7 +117,10 @@ nom de la vague du sondage, comme dans \code{waves}). Avec
 chaque cible (\code{attr(x, "qes_weight_guide")}) : \code{weight_pre} pour des
 cibles de vagues préélectorales, \code{weight_post} pour des cibles de vagues
 postélectorales ; les cibles fixes, comme l'année de naissance, ne
-comptent pas ; si \code{x} mêle les deux, la fonction demande de choisir.
+comptent pas ; si les études appellent des colonnes différentes mais
+chacune une seule (une variable regroupée comme \code{vote_choice}), chaque
+étude reçoit la sienne dans une nouvelle colonne \code{weight_auto} ; si une
+même étude mêle les deux, la fonction demande de choisir.
 Chaque vague a au plus une pondération recommandée.
 Les lignes sans valeur de pondération sont laissées hors du plan, avec un
 message. \code{pool = "equal"} donne le même total à chaque étude (et vague en
@@ -133,6 +143,7 @@ if (requireNamespace("survey", quietly = TRUE)) {
 
 Other harmonization: 
 \code{\link{qes_harmonize}()},
+\code{\link{qes_party_lineage}()},
 \code{\link{qes_spec}()}
 }
 \concept{harmonization}

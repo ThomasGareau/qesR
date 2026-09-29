@@ -1,6 +1,7 @@
 # The spec validator, rules V-S1 to V-S17, V-S18 (the legacy renderer
-# table, R/legacy.R; slice HZ6) and the hash half of V-P2 (design.md section
-# 5.10, slice HZ1).
+# table, R/legacy.R), V-S19 (a note on the rows the legacy freeze holds),
+# V-F1 to V-F7 (the pooled variables, R/hz-pool.R; spec 4.3.0) and the
+# hash half of V-P2 (design.md section 5.10, slice HZ1).
 #
 # One implementation, run in four places: at runtime by qes_spec() (once per
 # session), in the offline tests, in CI (data-raw/spec_check.R, with
@@ -18,8 +19,11 @@
 
 # Registered functions for rule "fn:<name>" (design.md section 5.6): each is
 # function(src, ctx) returning list(value, na_reason), with a test file
-# tests/testthat/test-hz-fn-<name>.R. None is registered before the engine.
-.qes_hz_fns <- list()
+# tests/testthat/test-hz-fn-<name>.R. multiselect (spec 4.3.0, R/hz-data.R):
+# a select-all-that-apply question stored as one variable per option.
+.qes_hz_fns <- list(
+  multiselect = function(src, ctx) .qes_hz_fn_multiselect(src, ctx)
+)
 
 # Name grammar of targets, families, sets and level names (V-S15).
 .qes_name_pattern <- "^[a-z][a-z0-9]*(_[a-z0-9]+)*$"
@@ -27,8 +31,8 @@
 
 # Rules each target type accepts (with "fn:" and "none" for every type).
 .qes_type_rules <- list(
-  categorical = c("map", "constant"),
-  ordinal = c("map", "constant"),
+  categorical = c("map", "coalesce", "constant"),
+  ordinal = c("map", "coalesce", "constant"),
   numeric = c("numeric", "constant"),
   date = "date",
   string = "string",
@@ -154,6 +158,14 @@
         add("V-S1", "crosswalk", i, k, "args format is not a date format of enums.csv")
       }
     }
+    if (identical(base, "coalesce")) {
+      then <- .qes_hz_coalesce_then(xw, i)
+      if (is.null(then) || nrow(then) == 0L) {
+        add("V-S1", "crosswalk", i, k, "rule coalesce needs args then=<variable>:<map_id>,... (at least one)")
+      } else if (anyDuplicated(c(xw$source_var[i], then$var)) > 0L) {
+        add("V-S1", "crosswalk", i, k, "rule coalesce names a variable twice")
+      }
+    }
     nac <- .qes_parse_kv(xw$na_codes[i])
     if (is.null(nac)) {
       add("V-S1", "crosswalk", i, k, "na_codes must be code=reason;code=reason with unique codes")
@@ -172,8 +184,8 @@
       if (is.null(to) || !setequal(names(to), codes)) {
         add("V-S1", "crosswalk", i, k, "gate_to must give one outcome for each gate code (code=outcome)")
       }
-      if (!base %in% c("map", "numeric", "weight", "date", "string")) {
-        add("V-S1", "crosswalk", i, k, "a gate applies only to rules map, numeric, weight, date and string")
+      if (!base %in% c("map", "coalesce", "numeric", "weight", "date", "string")) {
+        add("V-S1", "crosswalk", i, k, "a gate applies only to rules map, coalesce, numeric, weight, date and string")
       }
     }
     lo <- split(xw$levels_offered[i])
@@ -331,6 +343,12 @@
     if (length(bad) > 0L) {
       add("V-S3", "crosswalk", i, xkeys[i], sprintf("na_codes reason(s) %s not in the spec NA vocabulary", paste(bad, collapse = ", ")))
     }
+    if (identical(rule_base[i], "coalesce")) {
+      bad <- setdiff(.qes_hz_coalesce_fallthrough(xw, i), c(na_reasons, "sysmis"))
+      if (length(bad) > 0L) {
+        add("V-S3", "crosswalk", i, xkeys[i], sprintf("args fallthrough reason(s) %s not in the spec NA vocabulary", paste(bad, collapse = ", ")))
+      }
+    }
     to <- .qes_parse_kv(xw$gate_to[i]) %||% character(0)
     lv_names <- target_set(xw$target[i])$name %||% character(0)
     bad <- setdiff(unname(to), c(na_reasons, lv_names))
@@ -378,13 +396,18 @@
   add("V-S4", "crosswalk", bad, xkeys[bad], "wave * is allowed only in a study whose waves are all poll waves, or for a target of timing static or any")
   bad <- which(!xw$target %in% tg$target)
   add("V-S4", "crosswalk", bad, xkeys[bad], "target is not in targets.csv")
-  bad <- which(xw$rule %in% "map" & !has(xw$map_id))
-  add("V-S4", "crosswalk", bad, xkeys[bad], "rule map needs a map_id")
-  bad <- which(!xw$rule %in% "map" & has(xw$map_id))
-  add("V-S4", "crosswalk", bad, xkeys[bad], "only rule map takes a map_id")
-  bad <- which(has(xw$map_id) & !xw$map_id %in% vm$map_id)
-  add("V-S4", "crosswalk", bad, xkeys[bad], "map_id is not in valuemaps.csv")
-  unused <- setdiff(unique(vm$map_id), xw$map_id)
+  bad <- which(xw$rule %in% c("map", "coalesce") & !has(xw$map_id))
+  add("V-S4", "crosswalk", bad, xkeys[bad], "rules map and coalesce need a map_id")
+  bad <- which(!xw$rule %in% c("map", "coalesce") & has(xw$map_id))
+  add("V-S4", "crosswalk", bad, xkeys[bad], "only rules map and coalesce take a map_id")
+  # every map a row reads: its map_id, and the maps of a coalesce row's
+  # other variables (args then)
+  row_maps <- lapply(seq_len(nrow(xw)), function(i) .qes_hz_row_maps(xw, i))
+  map_rows <- data.frame(map_id = unlist(row_maps), row = rep(seq_len(nrow(xw)), lengths(row_maps)),
+                         stringsAsFactors = FALSE)
+  bad <- unique(map_rows$row[!map_rows$map_id %in% vm$map_id])
+  add("V-S4", "crosswalk", bad, xkeys[bad], "map_id (or a map of args then) is not in valuemaps.csv")
+  unused <- setdiff(unique(vm$map_id), map_rows$map_id)
   add("V-S4", "valuemaps", NA, unused, "map_id is not used by any crosswalk row")
   bad <- which(has(xw$election_ref) & !xw$election_ref %in% elections$election_id)
   add("V-S4", "crosswalk", bad, xkeys[bad], "election_ref is not in catalog/elections.csv")
@@ -407,12 +430,13 @@
       add("V-S4", "crosswalk", i, xkeys[i], sprintf("wording_ref file(s) %s belong to another study", paste(other, collapse = ", ")))
     }
   }
-  for (id in unique(xw$map_id[has(xw$map_id)])) {
-    ids <- unique(tg$levels_id[match(xw$target[xw$map_id %in% id], tg$target)])
+  map_target <- xw$target[map_rows$row]
+  for (id in unique(map_rows$map_id)) {
+    ids <- unique(tg$levels_id[match(map_target[map_rows$map_id %in% id], tg$target)])
     if (length(ids) > 1L) {
       add("V-S4", "valuemaps", NA, id, sprintf("map used by targets with different level sets (%s)", paste(ids, collapse = ", ")))
     }
-    set <- target_set(xw$target[match(id, xw$map_id)])
+    set <- target_set(map_target[match(id, map_rows$map_id)])
     rows <- which(vm$map_id == id & !is.na(vm$target_code))
     if (!is.null(set)) {
       bad <- rows[!vm$target_code[rows] %in% set$code]
@@ -440,6 +464,10 @@
   }
   bad <- which(has(tg$replaced_by) & !tg$replaced_by %in% tg$target)
   add("V-S4", "targets", bad, tg$target[bad], "replaced_by is not a target")
+  bad <- which(has(tg$derive_rule) & !tg$derive_rule %in% .qes_hz_derivations)
+  add("V-S4", "targets", bad, tg$target[bad], "derive_rule is not a registered derivation")
+  bad <- which(has(tg$derive_rule) != has(tg$derive_from))
+  add("V-S4", "targets", bad, tg$target[bad], "derive_rule and derive_from go together")
   for (j in which(has(tg$derive_from))) {
     miss <- setdiff(split(tg$derive_from[j]), tg$target)
     if (length(miss) > 0L) {
@@ -502,7 +530,9 @@
     add("V-S4", "expected", bad, ekeys[bad], "(study, wave, target, source_var) is not a crosswalk row")
   }
   if (!is.null(hs) && nrow(hs) > 0L) {
-    bad <- which(!paste(hs$study, hs$wave, hs$target, hs$source_var) %in%
+    # a pooled variable's hash (V-F9) is keyed by wave "*" and its member types
+    pooled_hash <- hs$target %in% .qes_pool_names(spec, live = FALSE) & hs$wave %in% .qes_all_waves
+    bad <- which(!pooled_hash & !paste(hs$study, hs$wave, hs$target, hs$source_var) %in%
                    paste(xw$study, xw$wave, xw$target, xw$source_var)[xw$primary %in% TRUE])
     add("V-S4", "hashes", bad, hkeys[bad], "(study, wave, target, source_var) is not a primary crosswalk row")
   }
@@ -563,8 +593,8 @@
   alias_of <- list()
   alias_hash_of <- list()
   for (id in unique(vm$map_id)) {
-    set_id <- tg$levels_id[match(xw$target[match(id, xw$map_id)], tg$target)]
-    set <- target_set(xw$target[match(id, xw$map_id)])
+    set_id <- tg$levels_id[match(map_target[match(id, map_rows$map_id)], tg$target)]
+    set <- target_set(map_target[match(id, map_rows$map_id)])
     if (is.null(set)) next
     if (is.null(alias_of[[set_id]])) {
       alias_of[[set_id]] <- stats::setNames(lapply(set$aliases, function(a) .qes_norm_label(split(a))), set$code)
@@ -782,6 +812,11 @@
     both <- intersect(spaces[[a]], spaces[[b]])
     add("V-S15", "targets", NA, both, sprintf("name is both a %s and a %s", names(spaces)[a], names(spaces)[b]))
   }
+  # a target that is not a leading column (id and design blocks) must not
+  # take the name of one
+  plain <- tg$target[!tg$block %in% c("id", "design")]
+  bad <- intersect(plain, .qes_hz_leading_columns)
+  add("V-S15", "targets", NA, bad, "target name is the name of a leading column of harmonized data")
 
   # ---- V-S16: offered levels ---------------------------------------------------------------------
   for (i in seq_len(nrow(xw))) {
@@ -795,12 +830,12 @@
     if (length(extra) > 0L) {
       add("V-S16", "crosswalk", i, xkeys[i], sprintf("levels_offered has level(s) %s not in the target's set", paste(extra, collapse = ", ")))
     }
-    if (!identical(xw$rule[i], "map")) next
+    if (!xw$rule[i] %in% c("map", "coalesce")) next
     if (length(lo) == 0L) {
       if (!xw$status[i] %in% "draft") add("V-S16", "crosswalk", i, xkeys[i], "a map row in review or stable needs levels_offered")
       next
     }
-    codes <- vm$target_code[vm$map_id %in% xw$map_id[i] & !is.na(vm$target_code)]
+    codes <- vm$target_code[vm$map_id %in% row_maps[[i]] & !is.na(vm$target_code)]
     names_ <- set$name[match(codes, set$code)]
     extra <- setdiff(names_, c(lo, "other"))
     if (length(extra) > 0L) {
@@ -842,7 +877,25 @@
   lg <- spec$tables$legacy
   if (!is.null(lg) && nrow(lg) > 0L) {
     out <- c(out, list(.qes_legacy_check(lg, tg, sets, study_codes, target_set)))
+    # V-S19, the legacy freeze (spec 4.3.0): the legacy renderers never read a row
+    # nobody has reviewed yet (reviewed_by empty, not stable). A note lists
+    # the rows that a legacy column would read once signed off, so that the
+    # sign-off is a decision about that column too
+    fresh <- which(is.na(xw$reviewed_by) & !xw$status %in% "stable" & has(xw$rule) & xw$rule != "none" &
+                     xw$primary %in% TRUE)
+    for (i in fresh) {
+      rows <- .qes_legacy_rows(lg, xw$study[i])
+      hit <- rows$column[vapply(rows$target, function(x) xw$target[i] %in% .qes_split_list(x), logical(1))]
+      if (length(hit) > 0L) {
+        add("V-S19", "crosswalk", i, xkeys[i], sprintf(
+          "not reviewed: the legacy renderers ignore it; signing it off changes the legacy column(s) %s of %s",
+          paste(unique(hit), collapse = ", "), xw$study[i]), severity = "note")
+      }
+    }
   }
+
+  # ---- V-F1 to V-F7: pooled variables (pooled.csv, pooled_members.csv) ------------------------
+  out <- c(out, list(.qes_pool_check(spec, tg, lv, sets, target_set, enum, study_names)))
 
   # ---- V-P2 (hash half): SPEC records the content hash and the version has a CHANGES row ----
   sev <- if (isTRUE(spec$custom)) "warning" else "error"
@@ -852,6 +905,201 @@
   if (!spec$version %in% ch$spec_version) {
     add("V-P2", "changes", NA, spec$version, "no CHANGES row for the SPEC version", severity = sev)
   }
+
+  res <- if (length(out) > 0L) do.call(rbind, out) else .qes_spec_problems()
+  rownames(res) <- NULL
+  res
+}
+
+# V-F1 to V-F7: the pooled variables of the spec (R/hz-pool.R) against the
+# targets and level sets. Returns a problems table.
+.qes_pool_check <- function(spec, tg, lv, sets, target_set, enum, study_names) {
+  pt <- .qes_pool_tables(spec)
+  pl <- pt$pooled
+  pm <- pt$members
+  out <- list()
+  add <- function(rule, table, row, key, detail, severity = "error") {
+    n <- max(length(row), length(key))
+    if (length(row) == 0L || length(key) == 0L) return(invisible())
+    out[[length(out) + 1L]] <<- .qes_spec_problems(
+      rep_len(rule, n), rep_len(severity, n), rep_len(table, n),
+      rep_len(as.integer(row), n), rep_len(key, n), rep_len(detail, n)
+    )
+    invisible()
+  }
+  has <- function(x) !is.na(x) & nzchar(x)
+  if (nrow(pl) == 0L && nrow(pm) == 0L) return(.qes_spec_problems())
+  mkey <- paste(pm$pooled, pm$member, sep = "/")
+
+  # ---- V-F1: form and keys ------------------------------------------------------
+  for (col in c("pooled", "type", "label_en", "label_fr", "description_en", "description_fr", "status", "added_in")) {
+    bad <- which(!has(pl[[col]]))
+    add("V-F1", "pooled", bad, ifelse(is.na(pl$pooled[bad]), "", pl$pooled[bad]), sprintf("column '%s' is empty", col))
+  }
+  for (col in c("pooled", "member", "type_name", "transform", "added_in")) {
+    bad <- which(!has(pm[[col]]))
+    add("V-F1", "pooled_members", bad, mkey[bad], sprintf("column '%s' is empty", col))
+  }
+  bad <- which(is.na(pm$precedence) | is.na(pm$default))
+  add("V-F1", "pooled_members", bad, mkey[bad], "precedence and default are required")
+  bad <- which(duplicated(pl$pooled))
+  add("V-F1", "pooled", bad, pl$pooled[bad], "duplicate pooled variable")
+  bad <- which(duplicated(mkey))
+  add("V-F1", "pooled_members", bad, mkey[bad], "duplicate (pooled, member)")
+  bad <- which(duplicated(paste(pm$pooled, pm$type_name)))
+  add("V-F1", "pooled_members", bad, mkey[bad], "duplicate (pooled, type_name)")
+  bad <- which(duplicated(paste(pm$pooled, pm$precedence)))
+  add("V-F1", "pooled_members", bad, mkey[bad], "precedence repeats within the pooled variable (a strict order is required)")
+  bad <- which(has(pl$type) & !pl$type %in% c("categorical", "ordinal", "numeric"))
+  add("V-F1", "pooled", bad, pl$pooled[bad], "type must be categorical, ordinal or numeric")
+  bad <- which(has(pl$status) & !pl$status %in% enum("target_status"))
+  add("V-F1", "pooled", bad, pl$pooled[bad], "status is not a value of enum target_status")
+  bad <- which(has(pl$added_in) & !grepl("^[0-9]+\\.[0-9]+\\.[0-9]+$", pl$added_in))
+  add("V-F1", "pooled", bad, pl$pooled[bad], "added_in must be a spec version")
+  bad <- which(has(pm$added_in) & !grepl("^[0-9]+\\.[0-9]+\\.[0-9]+$", pm$added_in))
+  add("V-F1", "pooled_members", bad, mkey[bad], "added_in must be a spec version")
+  bad <- which(!pm$pooled %in% pl$pooled)
+  add("V-F1", "pooled_members", bad, mkey[bad], "pooled is not in pooled.csv")
+  none <- pl$pooled[!pl$pooled %in% pm$pooled]
+  add("V-F1", "pooled", match(none, pl$pooled), none, "a pooled variable needs members")
+
+  # ---- V-F2: names -----------------------------------------------------------------
+  bad <- which(has(pl$pooled) & !grepl(.qes_name_pattern, pl$pooled))
+  add("V-F2", "pooled", bad, pl$pooled[bad], sprintf("pooled name does not match %s", .qes_name_pattern))
+  bad <- which(has(pm$type_name) & !grepl(.qes_name_pattern, pm$type_name))
+  add("V-F2", "pooled_members", bad, mkey[bad], sprintf("type_name does not match %s", .qes_name_pattern))
+  set_names <- unique(c(unlist(lapply(tg$sets, .qes_split_list)), unlist(lapply(pl$sets, .qes_split_list))))
+  bad <- set_names[!grepl(.qes_name_pattern, set_names)]
+  add("V-F2", "pooled", NA, bad, sprintf("set name does not match %s", .qes_name_pattern))
+  spaces <- list(target = tg$target, family = unique(tg$family[has(tg$family)]),
+                 set = set_names, study = study_names, `leading column` = .qes_hz_leading_columns)
+  for (sp in names(spaces)) {
+    both <- intersect(pl$pooled, spaces[[sp]])
+    add("V-F2", "pooled", match(both, pl$pooled), both, sprintf("pooled name is also a %s name", sp))
+  }
+
+  # ---- V-F3, V-F4: members ------------------------------------------------------------
+  bad <- which(!pm$member %in% tg$target)
+  add("V-F3", "pooled_members", bad, mkey[bad], "member is not a target of targets.csv")
+  pool_live <- !pl$status[match(pm$pooled, pl$pooled)] %in% "retired"
+  bad <- which(pool_live & tg$status[match(pm$member, tg$target)] %in% "retired")
+  add("V-F3", "pooled_members", bad, mkey[bad], "member is a retired target (set the pooled variable's replaced_by, or retire it)")
+  lead <- tg$target[tg$block %in% c("id", "design")]
+  bad <- which(pm$member %in% lead)
+  add("V-F3", "pooled_members", bad, mkey[bad], "member is a leading-column target (id or design block)")
+  for (j in seq_len(nrow(pl))) {
+    m <- pm[pm$pooled == pl$pooled[j], , drop = FALSE]
+    if (has(pl$anchor_member[j]) && !pl$anchor_member[j] %in% m$member) {
+      add("V-F3", "pooled", j, pl$pooled[j], "anchor_member is not a member")
+    }
+    if (!has(pl$anchor_member[j])) add("V-F3", "pooled", j, pl$pooled[j], "anchor_member is empty")
+    if (nrow(m) > 0L && !any(m$default %in% TRUE)) {
+      add("V-F4", "pooled", j, pl$pooled[j], "no member is used by default (default = TRUE)")
+    }
+    if (has(pl$replaced_by[j]) && !pl$replaced_by[j] %in% pl$pooled) {
+      add("V-F3", "pooled", j, pl$pooled[j], "replaced_by is not a pooled variable")
+    }
+  }
+  # type and member are one to one (unique type_name and member per pool,
+  # V-F1): a member in two pools is allowed, a member twice in one is not
+
+  # ---- V-F5, V-F6: levels, transforms and grade caps ------------------------------------------
+  for (k in seq_len(nrow(pm))) {
+    j <- match(pm$pooled[k], pl$pooled)
+    t <- match(pm$member[k], tg$target)
+    if (is.na(j) || is.na(t)) next
+    tr <- .qes_pool_transform(pm$transform[k])
+    if (is.null(tr)) {
+      add("V-F5", "pooled_members", k, mkey[k], "transform must be identity, affine:<a*x+b>, recode:<level>=<level>,... or score:<level>=<number>,...")
+      next
+    }
+    ptype <- pl$type[j]
+    mtype <- tg$type[t]
+    mset <- target_set(pm$member[k])
+    if (ptype %in% c("categorical", "ordinal")) {
+      pset <- if (has(pl$levels_id[j])) sets[[pl$levels_id[j]]] else NULL
+      if (is.null(pset)) {
+        add("V-F5", "pooled", j, pl$pooled[j], "a categorical or ordinal pooled variable needs a levels_id of levels.csv")
+        next
+      }
+      if (!mtype %in% c("categorical", "ordinal") || is.null(mset)) {
+        add("V-F5", "pooled_members", k, mkey[k], sprintf("a %s member cannot join a %s pooled variable", mtype, ptype))
+        next
+      }
+      if (identical(tr$kind, "identity")) {
+        extra <- setdiff(mset$name, pset$name)
+        if (length(extra) > 0L) {
+          add("V-F5", "pooled_members", k, mkey[k], sprintf("identity: member level(s) %s are not levels of the pooled variable", paste(extra, collapse = ", ")))
+        }
+      } else if (identical(tr$kind, "recode")) {
+        miss <- setdiff(mset$name, names(tr$map))
+        extra <- setdiff(names(tr$map), mset$name)
+        out_bad <- setdiff(unname(tr$map), pset$name)
+        if (length(miss) > 0L) add("V-F5", "pooled_members", k, mkey[k], sprintf("recode is not total: member level(s) %s have no image", paste(miss, collapse = ", ")))
+        if (length(extra) > 0L) add("V-F5", "pooled_members", k, mkey[k], sprintf("recode names level(s) %s the member does not have", paste(extra, collapse = ", ")))
+        if (length(out_bad) > 0L) add("V-F5", "pooled_members", k, mkey[k], sprintf("recode gives level(s) %s that the pooled variable does not have", paste(out_bad, collapse = ", ")))
+      } else {
+        add("V-F5", "pooled_members", k, mkey[k], sprintf("transform %s does not fit a %s pooled variable", tr$kind, ptype))
+      }
+    } else if (identical(ptype, "numeric")) {
+      lo <- pl$valid_min[j]
+      hi <- pl$valid_max[j]
+      if (is.na(lo) || is.na(hi)) {
+        add("V-F5", "pooled", j, pl$pooled[j], "a numeric pooled variable needs valid_min and valid_max")
+        next
+      }
+      if (identical(mtype, "numeric")) {
+        if (!tr$kind %in% c("identity", "affine")) {
+          add("V-F5", "pooled_members", k, mkey[k], "a numeric member takes transform identity or affine")
+          next
+        }
+        a <- if (identical(tr$kind, "affine")) tr$affine else c(a = 1, b = 0)
+        mlo <- tg$valid_min[t]
+        mhi <- tg$valid_max[t]
+        if (is.na(mlo) || is.na(mhi)) {
+          add("V-F5", "pooled_members", k, mkey[k], "a numeric member needs valid_min and valid_max in targets.csv")
+          next
+        }
+        ends <- a[["a"]] * c(mlo, mhi) + a[["b"]]
+        if (min(ends) < lo - 1e-9 || max(ends) > hi + 1e-9) {
+          add("V-F5", "pooled_members", k, mkey[k], sprintf("the member's range maps to %s-%s, outside the pooled range %s-%s",
+                                                            .qes_code_chr(min(ends)), .qes_code_chr(max(ends)), .qes_code_chr(lo), .qes_code_chr(hi)))
+        }
+      } else if (mtype %in% c("categorical", "ordinal") && !is.null(mset)) {
+        if (!identical(tr$kind, "score")) {
+          add("V-F5", "pooled_members", k, mkey[k], "an ordinal member of a numeric pooled variable takes transform score")
+          next
+        }
+        miss <- setdiff(mset$name[mset$substantive %in% TRUE], names(tr$map))
+        extra <- setdiff(names(tr$map), mset$name)
+        num <- as.numeric(tr$map)
+        if (length(miss) > 0L) add("V-F5", "pooled_members", k, mkey[k], sprintf("score is not total: member level(s) %s have no score", paste(miss, collapse = ", ")))
+        if (length(extra) > 0L) add("V-F5", "pooled_members", k, mkey[k], sprintf("score names level(s) %s the member does not have", paste(extra, collapse = ", ")))
+        if (any(num < lo | num > hi)) add("V-F5", "pooled_members", k, mkey[k], "a score lies outside the pooled range")
+      } else {
+        add("V-F5", "pooled_members", k, mkey[k], sprintf("a %s member cannot join a numeric pooled variable", mtype))
+      }
+    }
+    cap <- pm$grade_cap[k]
+    if (has(cap) && !cap %in% .qes_hz_grades) {
+      add("V-F6", "pooled_members", k, mkey[k], "grade_cap must be identical, comparable or approximate (or empty)")
+    }
+    if (.qes_pool_lossy(tr) && !identical(cap, "approximate")) {
+      add("V-F6", "pooled_members", k, mkey[k], "a transform that merges levels or scores an ordinal scale needs grade_cap = approximate")
+    }
+  }
+
+  # ---- V-F7: English and French --------------------------------------------------------------
+  pair <- function(table, x, en, fr, keys, need = TRUE) {
+    a <- has(x[[en]])
+    b <- has(x[[fr]])
+    bad <- if (need) which(!a | !b) else which(a != b)
+    add("V-F7", table, bad, keys[bad], sprintf("%s and %s must both be %s", en, fr, if (need) "present" else "present or both empty"))
+  }
+  pair("pooled", pl, "label_en", "label_fr", pl$pooled)
+  pair("pooled", pl, "description_en", "description_fr", pl$pooled)
+  pair("pooled_members", pm, "type_label_en", "type_label_fr", mkey)
+  pair("pooled_members", pm, "note_en", "note_fr", mkey, need = FALSE)
 
   res <- if (length(out) > 0L) do.call(rbind, out) else .qes_spec_problems()
   rownames(res) <- NULL

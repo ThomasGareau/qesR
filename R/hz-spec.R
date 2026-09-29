@@ -29,9 +29,13 @@
 #   legacy.csv     the renderer of the legacy columns of get_qes_master() and
 #                  get_decon() from the targets (R/legacy.R; slice HZ6),
 #                  checked by V-S18.
-# gates.csv, expected/ and legacy.csv describe the shipped studies and
-# functions; a spec directory without them loads with empty tables. The
-# content hash covers every CSV of the directory.
+#   pooled.csv, pooled_members.csv
+#                  pooled variables (schema 3): one output column that pools
+#                  several targets, with a precedence among them
+#                  (R/hz-pool.R), checked by V-F1 to V-F7.
+# gates.csv, expected/, legacy.csv and the pooled tables are optional: a spec
+# directory without them loads with empty tables. The content hash covers
+# every CSV of the directory.
 #
 # .qes_spec_load() reads a directory through the one CSV loader and types it;
 # .qes_spec_check() (R/hz-validate.R) runs the validator V-S1 to V-S17 on the
@@ -40,9 +44,13 @@
 # validated spec is kept for the session, keyed by the directory and the md5
 # of its files.
 
-# Schema version this engine reads, and the files of a spec directory.
-# Schema 2 (spec 4.0.0) adds the crosswalk column review_note.
-.qes_spec_schema_version <- "2"
+# Schema version this engine writes, the versions it reads, and the files of
+# a spec directory. Schema 2 (spec 4.0.0) adds the crosswalk column
+# review_note; schema 3 (spec 4.3.0) adds the pooled variables (pooled.csv,
+# pooled_members.csv) and the crosswalk rule coalesce. A schema 2 directory
+# reads with empty pooled tables.
+.qes_spec_schema_version <- "3"
+.qes_spec_schema_readable <- c("2", "3")
 .qes_spec_files <- c(
   targets = "targets.csv", levels = "levels.csv", crosswalk = "crosswalk.csv",
   valuemaps = "valuemaps.csv", waves = "waves.csv", weights = "weights.csv",
@@ -50,12 +58,14 @@
 )
 # Optional files (a spec directory may lack them) and their schemas.
 .qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv",
-                              hashes = "expected/hashes.csv", legacy = "legacy.csv")
+                              hashes = "expected/hashes.csv", legacy = "legacy.csv",
+                              pooled = "pooled.csv", pooled_members = "pooled_members.csv")
 .qes_spec_table_schema <- c(
   targets = "spec_targets", levels = "spec_levels", crosswalk = "spec_crosswalk",
   valuemaps = "spec_valuemaps", waves = "spec_waves", weights = "spec_weights",
   changes = "spec_changes", gates = "spec_gates", expected = "spec_expected",
-  hashes = "spec_hashes", legacy = "spec_legacy"
+  hashes = "spec_hashes", legacy = "spec_legacy", pooled = "spec_pooled",
+  pooled_members = "spec_pooled_members"
 )
 .qes_spec_fields <- c("Spec-Version", "Spec-Date", "Schema-Version", "Engine-Min", "Hash", "Licence")
 
@@ -171,7 +181,7 @@
     ), where)
   }
   meta <- vapply(.qes_spec_fields, function(f) enc2utf8(trimws(as.character(meta[[f]][1]))), character(1))
-  if (!identical(meta[["Schema-Version"]], .qes_spec_schema_version)) {
+  if (!meta[["Schema-Version"]] %in% .qes_spec_schema_readable) {
     .qes_abort(
       "spec_schema",
       class = "qesR_error_spec",
@@ -411,6 +421,13 @@
 #'   maps to; `format = "retroharmonize"` gives that table under the column
 #'   names of the retroharmonize package's crosswalk tables. Printing the
 #'   view of a single target shows its section of the generated reference.
+#' * `view = "pooled"`: one row per member of each pooled variable (such as
+#'   `vote_choice`, which pools the reported vote and the vote intentions):
+#'   its type name (the value of `<pooled>__type`), precedence (the member
+#'   tried first is 1), whether it is used by default, the transform of its
+#'   values and its grade cap, and one column per study giving the member's
+#'   grade there (capped; `NA`: no question). `targets` selects pooled
+#'   variables (or the set `"pooled"`).
 #' * `view = "spec"`: the spec itself, as an object of class `qes_spec`
 #'   (tables, version and content hash), checked by the validator and the
 #'   data checks; this is what `spec =` of [qes_harmonize()] accepts.
@@ -433,11 +450,14 @@
 #' spécification vérifiée, dont la table `tables$legacy`, qui rend les
 #' colonnes de [get_qes_master()] et de [get_decon()] à partir des cibles.
 #' L'ensemble de cibles `"decon"` réunit les cibles des colonnes de
-#' `get_decon()`. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+#' `get_decon()`. La vue `"pooled"` décrit les variables regroupées (comme
+#' `vote_choice`, qui réunit le vote déclaré et les intentions de vote) :
+#' leurs membres, leur ordre de priorité et le niveau de chaque membre dans
+#' chaque étude. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
 #' `vignette("fr-reference-harmonisation", package = "qesR")` en est la
 #' référence complète.
 #'
-#' @param view `"targets"`, `"crosswalk"` or `"spec"`.
+#' @param view `"targets"`, `"crosswalk"`, `"spec"` or `"pooled"`.
 #' @param targets Target, family or set names (views `"targets"` and
 #'   `"crosswalk"`; the set `"decon"` holds the targets of the columns of
 #'   [get_decon()]); `NULL` (default) is every target.
@@ -475,11 +495,17 @@
 #'     polls of 2007-2010, one wave per poll), or, in a panel, a question
 #'     that does not change over the study (gender, education), asked in
 #'     whichever wave the respondent took part (the 2007 panel).
+#'   * `"pooled"`: a data frame with columns `pooled`, `label`,
+#'     `definition`, `type` (of the pooled variable), `levels` (`code=label`,
+#'     or the range of a numeric one), `type_name`, `type_label`, `member`,
+#'     `precedence`, `default`, `transform`, `grade_cap`, `note`, `status`,
+#'     `added_in`, then one column per study.
 #'   * `"spec"`: an object of class `qes_spec`: a list with the spec
 #'     `version`, its content `hash`, `custom` (`TRUE` when it is not the
 #'     shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,
 #'     waves, weights, changes, gates, expected, hashes, legacy: the renderer of
-#'     [get_qes_master()] and [get_decon()]); `attr(, "check")`
+#'     [get_qes_master()] and [get_decon()], pooled and pooled_members: the
+#'     pooled variables); `attr(, "check")`
 #'     holds the problems table (`rule`, `severity`, `table`, `row`, `key`,
 #'     `detail`).
 #'
@@ -501,17 +527,21 @@
 #' qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",
 #'          level = "code", lang = "fr")
 #'
+#' # the pooled variables: which member each study uses, and its grade
+#' pv <- qes_spec("pooled", targets = "vote_choice")
+#' pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
+#'
 #' # the checked spec itself
 #' s <- qes_spec("spec")
 #' s
 #' @export
-qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, studies = NULL,
+qes_spec <- function(view = c("targets", "crosswalk", "spec", "pooled"), targets = NULL, studies = NULL,
                      level = c("row", "code"), format = c("qesR", "retroharmonize"),
                      spec = NULL, validate = c("error", "report", "none"), data = NULL,
                      lang = c("en", "fr")) {
   level_given <- !missing(level)
   format_given <- !missing(format)
-  view <- .qes_check_one(view, "view", c("targets", "crosswalk", "spec"))
+  view <- .qes_check_one(view, "view", c("targets", "crosswalk", "spec", "pooled"))
   validate <- .qes_check_one(validate, "validate", c("error", "report", "none"))
   lang <- .qes_check_one(lang, "lang", c("en", "fr"))
   level <- .qes_check_one(level, "level", c("row", "code"))
@@ -526,12 +556,23 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec"), targets = NULL, s
   }
   if (view != "crosswalk" && level_given) wrong_view("level", "crosswalk")
   if (view != "crosswalk" && format_given) wrong_view("format", "crosswalk")
-  if (view == "spec" && !is.null(targets)) wrong_view("targets", c("targets", "crosswalk"))
-  if (view == "spec" && !is.null(studies)) wrong_view("studies", c("targets", "crosswalk"))
+  if (view == "spec" && !is.null(targets)) wrong_view("targets", c("targets", "crosswalk", "pooled"))
+  if (view == "spec" && !is.null(studies)) wrong_view("studies", c("targets", "crosswalk", "pooled"))
   if (view != "spec" && !is.null(data)) wrong_view("data", "spec")
   if (identical(format, "retroharmonize") && level_given && identical(level, "row")) {
     .qes_abort("input_spec_retroharmonize", class = "qesR_error_input",
                data = list(arg = "level", value = level))
+  }
+  if (view == "pooled") {
+    obj <- .qes_spec_get(spec, validate)
+    psel <- if (is.null(targets)) NULL else .qes_pool_resolve(targets, obj)
+    if (!is.null(targets) && length(psel) == 0L) {
+      .qes_abort("input_targets_unknown", class = "qesR_error_input", args = list(.qes_q(targets)),
+                 data = list(arg = "targets", value = targets))
+    }
+    out <- .qes_spec_pooled_view(obj, psel, .qes_view_studies(studies), lang)
+    attr(out, "check") <- attr(obj, "check", exact = TRUE)
+    return(out)
   }
   if (view != "spec") {
     obj <- .qes_spec_get(spec, validate)
