@@ -1,185 +1,551 @@
-![qesR logo](logo.png)
+# qesR
 
-Access Quebec Election Study datasets in R.
+qesR loads the Quebec Election Studies and related Quebec election
+surveys into R by study code, each from its original data file, pinned
+and checked by md5. It also harmonizes the 11 studies of 1998 to 2022
+into one data frame, question by question, with a comparability grade
+for every study’s question and a reason for every missing value.
+Codebooks, question wording and search work offline, in English and
+French.
 
 ## Installation
 
-Install the development version from GitHub:
-
 ``` r
 
-if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools")
-devtools::install_github("ThomasGareau/qesR")
+# install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+
+# once accepted on CRAN:
+# install.packages("qesR")
 ```
 
-## Using the package
-
-The package provides access to QES surveys through:
-
-- `get_qes(srvy)`: download a survey by code
-- [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md):
-  list survey codes and metadata
-- `get_preview(srvy, obs)`: preview a survey
-- `get_question(data, variable)`: retrieve question text
-- `get_codebook(srvy)`: get survey codebook
-- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md):
-  build a harmonized merged dataset
-
-## Examples
+## One data frame across 11 studies (experimental)
 
 ``` r
 
 library(qesR)
 
-# list survey call codes
-get_qescodes()
-
-# load one survey
-qes2022 <- get_qes("qes2022")
-
-# preview observations
-get_preview("qes2022", 10)
-
-# retrieve question text
-get_question(qes2022, "cps_age_in_years", full = TRUE)
-
-# build merged cross-study dataset
-master <- get_qes_master(strict = FALSE)
-head(master)
+qes_spec()                        # which study has which variable, and its grade
+h <- qes_harmonize(studies = c("qes2012", "qes2014", "qes2018", "qes2022"),
+                   targets = c("vote_prov_recall", "turnout_prov_recall"),
+                   min_grade = "comparable", missing = "reasons")
+# both targets were asked after the election: the post-election weight
+d <- qes_design(h, weight = "weight_post")   # for the survey package
 ```
 
-## Details
+`qes2007`, `qes2012`, `qes2014`, `qes2018`, `qes2022` and the 2018 panel
+`qes2018_panel` have reviewed weights so far. The other studies (the
+Durand panels `qes2007_panel` and `qes2012_panel`, `qes2008`, whose two
+weights are calibrated on the vote or on turnout, the CROP polls and the
+1998 polls) have `NA` weights, and
+[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+leaves out every row without the chosen weight; `studies = NULL` means
+the six Quebec Election Studies. Estimate within one study before
+comparing studies.
 
-- downloaded survey files are read and returned in labelled form
-- codebook metadata is attached and available through
-  [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
-- merged dataset creation includes harmonization, de-duplication, and
-  filtering of empty rows
-- source-variable provenance is available via
-  `attr(master, "source_map")`
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+reads each study from its pinned file and maps each study’s question to
+a harmonized variable (“target”) following a specification that ships
+with qesR:
 
-## Merged dataset
+- **One question stimulus per target.** A reported vote and a vote
+  intention are different targets, and so are the sovereignty questions
+  with different wordings; nothing is pooled across wordings behind your
+  back.
+- **A grade for every study’s question**: identical, comparable or
+  approximate, with the reason, in English and French.
+  `min_grade = "comparable"` drops the approximate ones. A party a study
+  did not list is a structural zero, not 0% support.
+- **A reason for every missing value** (`dk`, `refused`, `not_voted`,
+  `not_in_wave`, …), and each respondent’s waves, eligibility and
+  weights;
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  hands the result to `survey` or `srvyr`.
+- **Checked against what is known.** The harmonized studies are compared
+  with the official results of Élections Québec and the census margins
+  of Statistics Canada: see [Validation against official
+  results](https://thomasgareau.github.io/qesR/articles/validation.md).
 
-`qesR` includes a merged harmonized dataset workflow:
+Every row of the specification is signed off, after an automated double
+review against the original files and documents (not a human review),
+and is applied by default; the weights that still need review
+(`qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP polls) are
+`NA` until they are reviewed, but they do not hold back the answers. The
+grade of each study’s question for each target (I identical, C
+comparable, A approximate; a dash: no question in the specification);
+each target links to its questions, wordings and grades in the
+[harmonization
+reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md):
+
+|  | `qes2022` | `qes2018` | `qes2018_panel` | `qes2014` | `qes2012` | `qes2012_panel` | `qes_crop_2007_2010` | `qes2008` | `qes2007` | `qes2007_panel` | `qes1998` |
+|----|----|----|----|----|----|----|----|----|----|----|----|
+| [`survey_mode`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-survey_mode) | — | — | I | — | — | — | — | — | I | — | — |
+| [`vote_prov_recall`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_recall) | C | C | C | C | I | A | — | C | C | A | C |
+| [`vote_prov_intent`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent) | A | — | A | — | — | A | C | — | — | I | — |
+| [`vote_prov_intent_push`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | A | — | — | A | C | — | — | I | A |
+| [`turnout_prov_recall`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | C | C |
+| [`turnout_prov_likely`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-turnout_prov_likely) | I | — | — | — | — | — | — | — | — | — | — |
+| [`vote_prov_intent_other`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent_other) | I | — | — | — | — | — | — | — | — | — | — |
+| [`pid_prov`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_prov) | C | C | — | I | I | — | — | C | C | — | — |
+| [`pid_fed`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_fed) | I | — | — | — | — | — | — | — | — | — | — |
+| [`sov_indep`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_indep) | C | C | — | I | I | — | — | — | — | — | — |
+| [`sov_sovereign_country`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_sovereign_country) | — | — | — | — | — | I | — | — | — | — | — |
+| [`sov_favour`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_favour) | — | — | I | — | — | — | — | — | — | — | — |
+| [`lr_self`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-lr_self) | A | C | A | I | I | — | — | — | — | — | — |
+| [`interest_4pt`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_4pt) | — | C | — | C | I | — | — | — | — | — | — |
+| [`sov_partnership_1995`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_partnership_1995) | — | — | — | — | — | — | — | C | I | C | C |
+| [`interest_0_10`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_0_10) | A | — | — | — | — | — | — | — | I | — | — |
+| [`interest_election_0_10`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_election_0_10) | — | — | — | — | — | — | — | C | I | — | — |
+| [`interest_campaign_4pt`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_campaign_4pt) | — | — | — | — | — | — | — | — | — | I | — |
+| [`birth_year`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-birth_year) | I | C | — | C | C | — | — | C | C | — | — |
+| [`birth_month`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-birth_month) | — | I | — | — | — | — | — | — | — | — | — |
+| [`age`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-age) | I | A | — | — | — | — | — | — | — | — | — |
+| [`age_group3`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-age_group3) | — | — | I | — | — | C | C | C | — | C | C |
+| [`citizen`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-citizen) | I | — | — | — | — | — | — | — | — | — | — |
+| [`age_group6`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-age_group6) | — | — | — | — | — | C | I | C | — | C | C |
+| [`gender`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-gender) | C | C | C | C | I | C | C | C | C | C | C |
+| [`education4`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-education4) | C | C | A | I | C | — | A | C | C | A | — |
+| [`lang_mother`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-lang_mother) | — | C | C | C | I | C | C | C | C | C | — |
+| [`born_canada`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-born_canada) | I | C | — | C | C | — | — | — | — | — | — |
+| [`income_native`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-income_native) | A | — | A | C | I | — | A | A | A | A | — |
+| [`religion`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-religion) | A | — | — | C | I | — | — | — | — | — | — |
+
+[Coverage by
+study](https://thomasgareau.github.io/qesR/articles/coverage.md) adds
+each study’s waves and recommended weights, and [Harmonizing across
+studies](https://thomasgareau.github.io/qesR/articles/harmonization.md)
+goes from
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+to a weighted estimate on the full data files.
+
+## From a study code to a weighted estimate
 
 ``` r
 
-get_qes_master(save_path = "qes_master.csv", strict = FALSE)
-get_qes_master(save_path = "qes_master.rds", strict = FALSE)
+qes_studies()                               # the studies, offline
+qes2014 <- get_qes("qes2014")               # returned, not assigned for you
+qes_search("indépendant|independent")       # find the question
+qes_question("qes2014", "Q19", lang = "en") # read its wording
+qes2014 <- qes_missing(qes2014)             # "don't know", "refused" to NA
+
+# share YES among those who answered YES or NO, with the study's weight:
+# a point estimate; qes2014 is an opt-in online panel, with no margin of error
+answered <- qes2014$Q19 %in% c(1, 2)
+weighted.mean(qes2014$Q19[answered] == 1, w = qes2014$POND[answered])
 ```
 
-Harmonized fields include demographics (age, gender, education, income),
-vote choice, party identification, sovereignty attitudes, leader
-thermometers, and more. Use `colnames(master)` to see the full list.
+[Getting
+started](https://thomasgareau.github.io/qesR/articles/get-started.md)
+walks through each step: which population the estimate describes, why
+this weight, and who is in the denominator. It runs offline on
+`qes_demo`, a small synthetic study that ships with qesR.
 
-Source-variable provenance is available via `attr(master, "source_map")`
-and old-to-new variable name mappings via
-`attr(master, "variable_name_map")`.
+## What else qesR gives you
 
-See: [Merged
-Dataset](https://thomasgareau.github.io/qesR/articles/merged-dataset.md)
+- **The original files, checked.**
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  reads the pinned SPSS or Stata file of a study and returns it with its
+  codes and labels.
+  [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md)
+  saves the files themselves, and
+  [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)
+  records which file a result came from.
+- **Codebooks and search, offline and bilingual.**
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
+  [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
+  and
+  [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  work without a network connection for every study.
+  [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md)
+  knows which codes mean “don’t know” or “refused”.
+- **Citations.**
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  cites qesR and each dataset with its DOI, version and UNF.
+- **Nothing written behind your back.** Data are returned, not assigned
+  into your workspace; downloads go to a temporary cache unless you
+  choose `options(qesR.cache = "disk")`.
 
-## Survey code table
+## Coming from qesR 0.4.4
 
-| year      | code                 | name                                  |
-|-----------|----------------------|---------------------------------------|
-| 2022      | `qes2022`            | Quebec Election Study 2022            |
-| 2018      | `qes2018`            | Quebec Election Study 2018            |
-| 2018      | `qes2018_panel`      | Quebec Election Study 2018 Panel      |
-| 2014      | `qes2014`            | Quebec Election Study 2014            |
-| 2012      | `qes2012`            | Quebec Election Study 2012            |
-| 2012      | `qes2012_panel`      | Quebec Election Study 2012 Panel      |
-| 2007-2010 | `qes_crop_2007_2010` | CROP Quebec Opinion Polls (2007-2010) |
-| 2008      | `qes2008`            | Quebec Election Study 2008            |
-| 2007      | `qes2007`            | Quebec Election Study 2007            |
-| 2007      | `qes2007_panel`      | Quebec Election Study 2007 Panel      |
-| 1998      | `qes1998`            | Quebec Elections 1998                 |
+Every function of qesR 0.4.4 keeps its name and its arguments, and
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+returns the same codes, but it now returns the data instead of creating
+the object: write `qes2018 <- get_qes("qes2018")`. The legacy merged
+file,
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
+keeps its 30 columns but is now rendered from the harmonization engine,
+so estimates computed from it change. [Moving from qesR 0.4.4 to
+0.7.0](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
+says what changed, column by column, and how to reproduce a 0.4.4
+result.
 
-## Citations
-
-Full citations for all studies are listed in:
+## Where to go next
 
 - [Study
-  Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md)
+  catalog](https://thomasgareau.github.io/qesR/articles/studies.md):
+  every study code, with its design, population, size, licence, DOI,
+  pinned file and documents, generated from the catalog that ships with
+  the package.
+- [Study
+  citations](https://thomasgareau.github.io/qesR/articles/citations.md):
+  how to cite qesR and each dataset you use.
+- Harmonization (experimental): [harmonizing across
+  studies](https://thomasgareau.github.io/qesR/articles/harmonization.md),
+  [coverage by
+  study](https://thomasgareau.github.io/qesR/articles/coverage.md),
+  [validation against official
+  results](https://thomasgareau.github.io/qesR/articles/validation.md)
+  and the [harmonization
+  reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
+- Examples built from the full data files: [respondents by
+  study](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md),
+  [support for
+  independence](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)
+  and [reported
+  vote](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md).
+- [Reference](https://thomasgareau.github.io/qesR/reference/index.md):
+  every function, grouped by task. The functions of qesR 0.4.4 are under
+  *Legacy and deprecated*; they keep working.
 
-## Use case examples
+Not every study is a Quebec Election Study: the Durand panels, the CROP
+polls and the 1998 polls are listed under their own titles and authors.
+Check each study’s design and population in the catalog before comparing
+them.
 
-Use case examples available in separate tabs:
+## En français
 
-- [Evolution of sovereignty
-  attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)
-- [Vote-choice patterns over
-  time](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md)
+qesR charge dans R les Études électorales québécoises et d’autres
+enquêtes électorales québécoises à partir d’un code d’étude, chacune
+fixée à un fichier de données original vérifié par md5. Il harmonise
+aussi les 11 études de 1998 à 2022 en un seul tableau, question par
+question, avec un niveau de comparabilité pour la question de chaque
+étude et un motif pour chaque valeur manquante (expérimental ; la grille
+plus haut donne le niveau de chaque étude pour chaque cible). Les
+codebooks, les libellés des questions et la recherche fonctionnent sans
+réseau, en français et en anglais. Les messages et les erreurs
+s’affichent en français avec `options(qesR.lang = "fr")` ; les données
+retournées ne dépendent jamais de la langue.
+
+Chaque fonction de qesR 0.4.4 garde son nom et ses arguments, et
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+retourne les mêmes codes, mais il retourne maintenant les données au
+lieu de créer l’objet : écrivez `qes2018 <- get_qes("qes2018")`. Le
+fichier fusionné hérité,
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
+garde ses 30 colonnes mais est maintenant produit par le moteur
+d’harmonisation : les estimations qui en viennent changent. [Passer de
+qesR 0.4.4 à
+0.7.0](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md)
+dit ce qui a changé, colonne par colonne, et comment reproduire un
+résultat de 0.4.4.
+
+Pour installer qesR :
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("ThomasGareau/qesR")
+# une fois le paquet accepté sur le CRAN :
+# install.packages("qesR")
+```
+
+Les données ne font pas partie du package : qesR les télécharge de
+Borealis et du Harvard Dataverse. La plupart des études sont sous CC0
+1.0, celle de 2022 sous CC BY-NC 4.0 (attribution, pas d’usage
+commercial) ; `qes_studies()$licence` donne la licence de chaque étude.
+
+**Licence.** La licence MIT de qesR couvre le code du package seulement.
+Les métadonnées de l’étude de 2022 que qesR livre (étiquettes, texte des
+questions, effectifs, et les libellés, étiquettes et effectifs de
+l’harmonisation qui en sont tirés) sont tirées de Mahéo, Bélanger,
+Stephenson et Harell (2023), *2022 Quebec Election Study*, Harvard
+Dataverse, V1.1, <https://doi.org/10.7910/DVN/PAQBDR>, et restent sous
+licence [CC BY-NC
+4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.fr)
+(attribution, pas d’usage commercial), ce qui n’implique aucune
+approbation de qesR par les auteurs ; les métadonnées des autres études
+sont sous CC0 1.0, et les effectifs du recensement viennent de
+Statistique Canada (Licence ouverte de Statistique Canada). Le fichier
+`COPYRIGHTS` du package donne chaque fichier, sa source et sa licence.
+
+- [Démarrage](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)
+  : du code d’étude à une estimation pondérée
+- [Catalogue des
+  études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md)
+- [Citations des
+  études](https://thomasgareau.github.io/qesR/articles/fr-citations.md)
+- [Passer de qesR 0.4.4 à
+  0.7.0](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md)
+- Harmonisation (expérimental) : [harmoniser entre
+  études](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md),
+  [couverture par
+  étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md),
+  [validation par les résultats
+  officiels](https://thomasgareau.github.io/qesR/articles/fr-validation.md),
+  [référence de
+  l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
+- [Le fichier fusionné
+  hérité](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)
+- Exemples : [répondants par
+  étude](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md),
+  [appui à
+  l’indépendance](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md),
+  [vote
+  déclaré](https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.md)
+- [Aperçu des fonctions en
+  français](https://thomasgareau.github.io/qesR/reference/qesR-fr.md)
+  (`?qesR-fr`)
+
+## Data licences
+
+The data are not part of the package: qesR downloads them from Borealis
+and the Harvard Dataverse. Most studies are released under CC0 1.0. The
+2022 study is CC BY-NC 4.0 (attribution, no commercial use).
+`qes_studies()$licence` gives the licence of each study.
+
+## Licence
+
+The MIT licence of qesR covers the package code only. The metadata of
+the 2022 study that qesR ships (labels, question text, answer counts,
+and the harmonization wording, labels and counts derived from them) are
+derived from Mahéo, Bélanger, Stephenson and Harell (2023), *2022 Quebec
+Election Study*, Harvard Dataverse, V1.1,
+<https://doi.org/10.7910/DVN/PAQBDR>, and keep its licence, [CC BY-NC
+4.0](https://creativecommons.org/licenses/by-nc/4.0/): attribution, no
+commercial use; this does not imply that the authors endorse qesR. The
+metadata of the other studies are CC0 1.0, and the census counts come
+from Statistics Canada (Statistics Canada Open Licence). The file
+`COPYRIGHTS` of the package lists each file, its source and its licence.
 
 # Package index
 
-## Package
+## Package overview
 
-- [`qesR-package`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+What qesR does, its options and its conditions, in English and in French
+(`?qesR-fr`), with a table of every function.
+
+- [`qesR`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+  [`qesR-package`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
   : qesR: Access Quebec Election Study Datasets
+- [`qesR-fr`](https://thomasgareau.github.io/qesR/reference/qesR-fr.md)
+  : qesR en français
 
-## Download Studies
+## Data
 
-- [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
-  : List Quebec Election Study Survey Codes
+Load a study from its pinned original file, or build the legacy merged
+file of qesR 0.4.4. Data are returned, never written into your workspace
+unless you ask.
+
 - [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
   : Download and Load a Quebec Election Study
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  : Build the Legacy Stacked Master QES Dataset
+
+## Studies and documents
+
+The offline catalog of the studies qesR can load, their codebooks,
+questionnaires and reports, and the original files themselves. No
+network request unless you ask for one.
+
+- [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
+  : List the studies qesR can load
+- [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md)
+  : List the documents of each study
+- [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md)
+  : Download the original files of a study
+
+## Codebooks and search
+
+What each variable measures, the exact question asked, in English and
+French, and which codes mean “don’t know” or “refused”. Offline for
+every study (the metadata of the 2022 study keeps its licence, CC BY-NC
+4.0).
+
+- [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  : The codebook of a study
+- [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
+  : The exact wording of survey questions
+- [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  : Search variables across studies, in English and French
+- [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md)
+  : Set "don't know", "refused" and other missing codes to NA
+
+## Harmonization (experimental)
+
+One data frame across the 11 studies, from a specification checked
+against the original files (rows signed off by a reviewer are applied by
+default, the rows still in review only with `include_draft = TRUE`):
+[`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+shows which studies have which harmonized variable and how comparable
+each study’s question is;
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+applies it, with a reason for every missing value and each respondent’s
+waves and weights;
+[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+turns the result into a survey design. Articles, in English and French:
+[Harmonizing across
+studies](https://thomasgareau.github.io/qesR/articles/harmonization.md),
+from
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+to a weighted estimate; [Coverage by
+study](https://thomasgareau.github.io/qesR/articles/coverage.md), the
+grade of every target in every study; [Validation against official
+results](https://thomasgareau.github.io/qesR/articles/validation.md),
+the harmonized studies against the official results and the census; and
+the [Harmonization
+reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
+
+- [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+  : The harmonization spec (experimental)
+- [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  : Harmonize variables across studies (experimental)
+- [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  : Harmonized data as a survey design (experimental)
+
+## Reproducibility
+
+Which file a result was read from, and how to cite qesR and each
+dataset.
+
+- [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)
+  : Where a study's data came from
+- [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  : Cite qesR and the studies it loads
+
+## Cache
+
+Where downloaded files are kept, and how to list or delete them.
+
+- [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)
+  : List the files in the download cache
+- [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  : Delete files from the download cache
+
+## Legacy and deprecated
+
+Functions from qesR 0.4.4. They keep working, with the same arguments,
+and will not be removed; each prints a one-time notice naming its
+replacement. [Moving from qesR 0.4.4 to
+0.7.0](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
+says what changed in their results.
+
+| 0.4.4 | Replacement |
+|----|----|
+| [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md), [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) |
+| [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md) | `qes_codebook(codebook, layout = )` |
+| [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md) | `qes_codebook(layout = "long")` |
+| [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md) | [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md) |
+| [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md), [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) |
+| [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` |
+| [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md) | `head(get_qes())` |
+| [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")` |
+
+- [`qesR-deprecated`](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
+  : Soft-deprecated qesR functions
+- [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
+  : List Quebec Election Study Survey Codes
 - [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
   : Preview a Quebec Election Study
-
-## Codebook Tools
-
 - [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
-  : Get a Quebec Election Study Codebook
-- [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_qes_codebook.md)
-  : Alias for get_codebook
-- [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
-  : Alias for get_codebook
+  [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+  : Get a Quebec Election Study codebook (legacy)
 - [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
-  : Reformat a qesR Codebook
+  : Reformat a qesR codebook (legacy)
 - [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md)
-  : Get Value Labels from a Codebook
+  : Get value labels from a codebook (legacy)
 - [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md)
-  : Get Survey Question Text
+  : Get survey question text (legacy)
 - [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
-  : Get Codebook Files
-- [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_qes_codebook_files.md)
-  : Alias for get_codebook_files
+  [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
+  : Get codebook files (legacy)
 - [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
-  : Download Codebook Files
-
-## Harmonized Data
-
+  : Download codebook files (legacy)
 - [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
   : Create a Prepared Non-Exhaustive qesR Dataset
-- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-  : Build a Harmonized Stacked Master QES Dataset
 
 # Articles
 
-### Tutorials
+### Guides
 
 - [Getting Started with
   qesR](https://thomasgareau.github.io/qesR/articles/get-started.md):
-- [Merged Dataset
-  Workflow](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
 - [Study
-  Citations](https://thomasgareau.github.io/qesR/articles/study-citations.md):
-- [Use case example: Evolution of Sovereignty
-  Attitudes](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md):
-- [Use case example: Descriptive
-  Statistics](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md):
-- [Use case example: Vote Choice Over
-  Time](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md):
+  catalog](https://thomasgareau.github.io/qesR/articles/studies.md):
+- [Study
+  Citations](https://thomasgareau.github.io/qesR/articles/citations.md):
+- [Moving from qesR 0.4.4 to
+  0.7.0](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md):
+- [The legacy merged
+  file](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
+
+### Harmonization (experimental)
+
+Built from the specification that ships with qesR. The first article and
+the validation read the full data files through qesR’s cache when the
+site is built; the coverage grid and the reference are generated from
+the specification alone.
+
+- [Harmonizing across
+  studies](https://thomasgareau.github.io/qesR/articles/harmonization.md):
+- [Coverage by
+  study](https://thomasgareau.github.io/qesR/articles/coverage.md):
+- [Harmonization
+  Reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md):
+- [Validation against official results and the
+  census](https://thomasgareau.github.io/qesR/articles/validation.md):
+
+### Examples
+
+Built when the site is built, from the full data files downloaded
+through qesR’s cache. Each estimate is computed within one study, with
+that study’s own weight.
+
+- [Example: respondents by
+  study](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md):
+- [Example: support for
+  independence](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md):
+- [Example: reported
+  vote](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md):
+
+### Guides en français
+
 - [Démarrage avec
   qesR](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md):
-- [Données fusionnées
-  harmonisées](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
+- [Catalogue des
+  études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md):
 - [Citations des
-  études](https://thomasgareau.github.io/qesR/articles/fr-citations-etudes.md):
-- [Exemple de cas d'usage : évolution des attitudes liées à la
-  souveraineté](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md):
-- [Exemple de cas d'usage : statistiques
-  descriptives](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md):
-- [Exemple de cas d'usage : évolution du choix de
-  vote](https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.md):
+  études](https://thomasgareau.github.io/qesR/articles/fr-citations.md):
+- [Passer de qesR 0.4.4 à
+  0.7.0](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md):
+- [Le fichier fusionné
+  hérité](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
+
+### Harmonisation en français (expérimental)
+
+Construits à partir de la spécification fournie avec qesR. Le premier
+article et la validation lisent les fichiers de données complets par le
+cache de qesR à la construction du site ; la grille de couverture et la
+référence sont générées à partir de la spécification seule.
+
+- [Harmoniser entre
+  études](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md):
+- [Couverture par
+  étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md):
+- [Référence de
+  l'harmonisation](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md):
+- [Validation par les résultats officiels et le
+  recensement](https://thomasgareau.github.io/qesR/articles/fr-validation.md):
+
+### Exemples en français
+
+Construits à la construction du site, à partir des fichiers de données
+complets téléchargés par le cache de qesR. Chaque estimation est
+calculée dans une seule étude, avec la pondération de cette étude.
+
+- [Exemple : répondants par
+  étude](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md):
+- [Exemple : appui à
+  l'indépendance](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md):
+- [Exemple : vote
+  déclaré](https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.md):

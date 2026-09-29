@@ -1,5 +1,2071 @@
 # Changelog
 
+## qesR 0.7.1
+
+qesR 0.7.1 ships the metadata of the 2022 Quebec Election Study
+(`qes2022`), as it does for the other studies: its codebook, question
+text, value labels and missing codes work offline, with no download.
+Until now qesR shipped none of it, because the study is licensed CC
+BY-NC 4.0 (design decision OD3), and built it at runtime from the user’s
+own copy of the data file. The package’s owner lifted OD3 on 2026-09-28.
+These files keep the study’s licence: the `qes2022` content of the files
+listed in `inst/COPYRIGHTS` (section 2) is CC BY-NC 4.0, with the
+attribution given there, and is not covered by the MIT licence of qesR,
+which covers the package code only.
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+returns the same data as in 0.7.0, and the harmonized results are
+unchanged (specification 4.2.0: no row, map, gate, grade, marginal or
+column hash changed). The dictionary no longer lists the values of
+continuous columns such as weights, whose text differed across platforms
+and failed the live check of 0.7.0 on Linux.
+
+### `qes2022` metadata ships with the package
+
+- `qes_codebook("qes2022")`,
+  [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md),
+  [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md),
+  [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md),
+  the codebook attached by
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  and the soft-deprecated codebook functions
+  ([`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md),
+  [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md),
+  [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md),
+  [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md))
+  work offline for `qes2022`: no data file is read or downloaded to
+  describe it, and nothing is written to the cache. The shipped
+  dictionary (version 1.1.0) holds its 718 variables with the labels of
+  the data file, the value labels, the unweighted count of each code and
+  the missing type of each missing-value code, and the question text of
+  464 variables (448 of them also in French), quoted from the study’s
+  bilingual codebook (`question_source = "codebook"`,
+  `doc_ref = "7449514:<question>"`). The question of an item of a grid
+  is the grid’s stem followed by the item in brackets (for
+  `cps_leadertherm_1`, the leader thermometer’s stem followed by the
+  leader’s name), and that of a typed-text box the question followed by
+  the option that opens it (for `cps_votechoice1_8_TEXT`, “Which party
+  do you think you will vote for? \[Another party (please specify)\]”,
+  as in the harmonization specification). The 16 variables worded in
+  English only are the codebook’s technical variables (start and end
+  dates, durations, response id, language, riding). 1,294 value labels
+  have their French wording from the codebook (`label_fr`): every
+  labelled answer of a variable whose codebook entry gives the French
+  options, so `qes_search(lang = "fr")` finds `qes2022` items by their
+  French question text and French answer labels.
+- Results change: the question text of `qes2022` is the codebook’s,
+  never cut. Until 0.7.0 it was the variable label of the data file for
+  every labelled variable, which the Stata format cuts at 80 characters
+  (`question_truncated = TRUE` for 461 of its 716 labelled variables,
+  `question_source = "file"`, `doc_ref = "7449514"`). The variables the
+  codebook does not word (254: the display-order variables `*_DO_*` and
+  `*_ADO_*`, the click timers `timer_govresp_*`, the derived `pid_fr`
+  and `fr_pid_pr`, and the four weights) have `question = NA`, as the
+  variables of the other studies whose questionnaire does not word them;
+  their label is unchanged. The labels, value labels, missing types and
+  counts are those 0.5.0 to 0.7.0 built from the data file (identical,
+  checked on the pinned file).
+- [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  searches `qes2022` like every other study: no study is “not searchable
+  yet” any more, and the message for a study whose description does not
+  ship (only a test catalog has one) is reworded.
+- The runtime “shard” is gone: qesR no longer builds `qes2022` metadata
+  from the data file or keeps it in the download cache.
+  [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)
+  lists downloaded files only (its `kind` column is always `"file"`).
+  The `shards` folder that 0.5.0 to 0.7.0 wrote into a disk cache is
+  ignored, and
+  [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  deletes it (all of it, or with `studies = "qes2022"` or `older_than`).
+  The shipped `inst/extdata/dict/shard_rules.csv` is removed: its rules
+  are applied to the shipped tables.
+- A printed codebook of `qes2022` (`print(qes_codebook("qes2022"))`) and
+  the harmonization reference
+  ([`vignette("harmonization-reference", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md)
+  and its French version) end their header with the licence notice of
+  its metadata: the study, its authors, year and DOI, CC BY-NC 4.0 and
+  the licence’s URL, that qesR adapted it (where `COPYRIGHTS` lists the
+  changes and the files), and that it is not covered by qesR’s MIT
+  licence. Printed
+  [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  results that include `qes2022` end with it. The same notice is the
+  attribute `licence_notice` of a `qes2022` codebook and of
+  [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
+  and
+  [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  results that include `qes2022`, so that a saved or exported copy keeps
+  it, and `qes_cite("qes2022")` ends its text citation with the licence
+  and its URL.
+- The catalog version is now 2.3.0: `metadata_shipped` is `TRUE` for
+  `qes2022` (and for every study of the catalog). A study’s metadata
+  ships when it is released under CC0 or under CC BY-NC 4.0.
+
+### The dictionary lists codes, not the values of continuous columns
+
+- The values table of the shipped dictionary (version 1.1.0) lists every
+  labelled code of a variable, and every observed code of a numeric
+  variable with at most 50 distinct codes only when they are all whole
+  numbers and the variable is not a weight or an id. Until 0.7.0 it also
+  listed the observed values of continuous columns with at most 50
+  distinct values, keyed by their text with 15 significant digits
+  (`"1.43011282409"`): the weights of `qes2007_panel` (`pond`,
+  `pondam1`, `pond_tot_am1`, …), `qes1998` and `qes1998_createc`
+  (`poids`) and `qes1998_crop` (`ponderc`), and the proportions and
+  residual of `qes2007_panel` (`prop_*`, `s_res_ML`), 564 rows in all.
+  That text depends on the platform and the R version, so the live check
+  that the shipped dictionary describes the pinned files failed on Linux
+  with R 4.6.1 (the `live` workflow on tag v0.7.0). Every listed code is
+  now a whole number written without decimals, the same text everywhere;
+  a test checks it, offline and on the pinned files.
+- Results change: `qes_codebook(layout = "long")` gives these 23
+  continuous variables one row with `value = NA`, like any variable
+  without value labels, instead of one row per distinct value. Their
+  labels and the data are unchanged.
+
+### Harmonization specification 4.2.0
+
+- The 18 crosswalk rows of `qes2022` give their question wording in
+  English and French (`wording_en`, `wording_fr`), quoted from its
+  codebook, and its 65 value-map rows the value labels of the data file
+  (`source_label`) instead of the md5 hashes of those labels.
+  `qes_spec("crosswalk")` and the harmonization reference show them.
+- `gates.csv` and `expected/marginals.csv` gain the counts of `qes2022`
+  (252 gate cells, 225 marginal cells), which the offline checks V-D and
+  V-P1 now run on with the other studies, in the tests and in CI. They
+  are the counts the build-ignored folder `data-raw/nc/` of the source
+  repository held until now, recomputed on the pinned file (identical).
+- The release check V-S11 no longer forbids wording and labels for a
+  study whose metadata does not ship. MINOR: keys are only added to
+  `expected/`.
+
+### Validation
+
+- The recorded validation report
+  (`inst/extdata/validation/validation_report.csv`, in the source
+  repository only, with the official results it is computed from) now
+  holds the rows of `qes2022`, and the weekly live test gates them like
+  those of the other studies: its weighted V-L2 index is 7.96, the
+  baseline of 8.0 of design.md section 8.3. The weekly job uploads
+  `inst/COPYRIGHTS` with the report, as the licence notice of its
+  `qes2022` rows.
+- The test fixture of the columns of qesR 0.4.4
+  (`tests/testthat/fixtures/v044-get-qes-names.csv`) gives the `NA`
+  count of each `qes2022` column, as it does for the other studies. The
+  “What changed” table of 0.7.0 below now lists `qes2022` too.
+
+### Licence and CRAN
+
+- The MIT licence covers the package code only. `inst/COPYRIGHTS` says
+  so first, then lists the third-party content by source and licence:
+  the CC0 study metadata; in section 2 the files that hold `qes2022`
+  metadata, licensed CC BY-NC 4.0 and not MIT, with the attribution the
+  licence requires (authors, title, DOI, licence and its URL, the
+  changes qesR made); and the Statistics Canada census counts, with the
+  notice of the Statistics Canada Open Licence. A test checks that the
+  list matches the shipped files. `DESCRIPTION` keeps
+  `License: MIT + file LICENSE` (and `LICENSE` its two lines); its
+  `Copyright` field and the end of its `Description` say that the MIT
+  licence covers the code only and point to `inst/COPYRIGHTS`, and
+  `License_restricts_use: yes` and `License_is_FOSS: no` record that the
+  package as distributed holds CC BY-NC 4.0 content (which R’s licence
+  database classes as restricting use and not FOSS). `LICENSE.md`, the
+  licence page of GitHub and of the website, opens with the same
+  statement before the MIT text. The README, the website’s home page,
+  `?qesR-package` and `?qesR-fr` have a short Licence section, in
+  English and French.
+- `cran-comments.md` tells the CRAN team that these files carry CC BY-NC
+  4.0 and asks whether that is acceptable; if it is not, qesR can fetch
+  them at runtime instead.
+
+### Documentation
+
+- Installation: the README (in English and French), the website’s home
+  page and the getting-started vignettes (`get-started`, `fr-demarrage`)
+  now give the GitHub installation first,
+  `remotes::install_github("ThomasGareau/qesR")`, and note
+  `install.packages("qesR")` for once qesR is accepted on CRAN.
+- The website articles on support for sovereignty
+  (`analysis-sovereignty`, `fr-analyse-souverainete`) say that the
+  wording of `qes2022` in their Table 1 is quoted, in English and French
+  and not truncated, from its bilingual codebook, under the study’s
+  licence (until 0.7.0 it was its variable label, in English only, cut
+  at 80 characters).
+
+### Development
+
+- The weekly `live` workflow keeps the originals in an absolute
+  directory outside the checkout (`${{ runner.temp }}/qesr-cache`):
+  `actions/cache` rejects the relative path `../qesr-cache` of 0.7.0
+  (“Relative pathing ‘.’ and ‘..’ is not allowed”), so its cache was
+  never saved.
+- The folder `data-raw/nc/` is removed: the aggregates of `qes2022` are
+  in the shipped files. `data-raw/build_sources.R`,
+  `project_marginals.R`, `spec_check.R`, `build_hashes.R` and
+  `build_validation.R` treat `qes2022` like every study
+  (`QESR_REQUIRE_NC` is gone), and `data-raw/compare_legacy.R` counts it
+  in NEWS.
+- `data-raw/extract_questions.R` drafts the wording of `qes2022`
+  (`data-raw/questions/qes2022.csv`) and the French labels of its codes
+  and its select-all items (`qes2022_values.csv`) from a
+  `pdftotext -layout` copy of the codebook (the item of a grid or the
+  answer option that wraps onto the next line is read whole, an option
+  whose “)” the PDF lost or that carries a footnote marker is read, a
+  compound word cut after its hyphen at a line end, “ci-dessous”, is
+  joined, and `cps_Duration__in_seconds_`, which the codebook spells
+  `cps__Duration_in_seconds_`, is found); the drafts are marked
+  `reviewed = FALSE` until checked by hand.
+  `data-raw/questions/missing_codes.csv` holds the study-wide rule that
+  `-99` is item nonresponse (the codebook, p. 7), and
+  `missing_labels.csv` the labels that type `qes2022`’s “don’t know” and
+  “refused” codes.
+
+## qesR 0.7.0
+
+qesR 0.7.0 switches the legacy functions to the harmonization engine:
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+and
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+are now rendered from
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+for all 11 studies of qesR 0.4.4, with the same arguments, the same
+columns in the same order and (for the master) the same types. The
+harmonization specification is version 4.1.0: 13 new targets, the
+remaining studies (`qes2007`, `qes2008`, the CROP polls and the 1998
+panel), the renderer of the legacy columns, the weights documented for
+the studies that lacked them, and the sign-off of its rows after an
+automated double review against the original files and documents (not a
+human review). All 132 crosswalk rows are signed off and applied by
+default. The sign-off of a row is about its content: the recommended
+weights of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP
+polls still need review: they are registered but `NA` until they are
+accepted, and they no longer hold back the answers of these studies. The
+harmonized studies are checked against the official results of Élections
+Québec and the census margins of Statistics Canada.
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+is soft-deprecated.
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+returns the same data as in 0.5.0.
+
+### Legacy switch: `get_qes_master()` and `get_decon()` from the engine
+
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  keeps its arguments, its 30 documented columns in the order and with
+  the types of qesR 0.4.4, and the columns appended in 0.5.0; each
+  column is now rendered from the targets of the spec, study by study,
+  as the new table `legacy.csv` of the spec says
+  (`qes_spec("spec")$tables$legacy`: the target(s) and render of each
+  column). The frozen 0.4.4 sources and the blank rules of the interim
+  builders of 0.5.0 are gone. A code the spec does not map is `NA`,
+  never passed through, and every row of every file is kept (40,987
+  rows). A message says so once per session (class
+  `qesR_message_values_changed`). The engine applies only the crosswalk
+  rows signed off by a reviewer, as
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  does by default (see the sections on specifications 4.0.0 and 4.1.0):
+  a column whose question is in a row still in review is `NA`, with the
+  reason `not_reviewed` in `attr(, "legacy_na_columns")` and a message
+  (class `qesR_message_values_changed`) naming it;
+  `attr(, "source_map")` gives each column’s question, target, value
+  map, grade and review status in each study.
+- `vote_choice` and `turnout` are the reported vote and turnout in every
+  study that asked them: `qes2022` from its post-election wave,
+  `qes1998` from its post-election recontact, the 2018 panel’s `turnout`
+  from its turnout question (`rts_q1`) rather than the vote question.
+  Nonvoters, spoiled ballots, “don’t know” and refusals are `NA` in
+  `vote_choice`: the 0.4.4 categories “Did not vote / None” and “Don’t
+  know / Refused” are gone (`turnout` says who voted). The pooled CROP
+  polls asked only vote intentions and stay `NA`; `vote_intent` has
+  them.
+- Columns filled where the spec has the question: `ideology` for
+  `qes2014` (with its answers 0 and 10) and `qes2018`;
+  `political_interest` for `qes2018` (the four-point item as 10, 7, 3
+  and 0); `born_canada` for `qes2018`; `provincial_pid` for `qes2007`,
+  `qes2008`, `qes2012`, `qes2014` and `qes2018`; `language` for
+  `qes2014` (the mother tongue, not the language of the interview);
+  `income` for `qes2012`; `year_of_birth` for `qes2022`; `age` and
+  `age_group` for the `qes2018` respondents who gave their age but not
+  their year of birth, and `age_group` for the `qes2008` respondents
+  without a year of birth.
+- Values corrected: `age_group` has six bands in the 2007 and 2012
+  panels, whose questions have them (0.4.4 used a three-band recode);
+  `education` is University for *maîtrise* (`qes2007`, `qes2008`) and
+  College/CEGEP/Technical for the 2018 panel’s trade certificates,
+  labels 0.4.4 left as they were, and for `qes2012` puts code 8 (the
+  French questionnaire’s *cours technique*) in College and leaves code
+  10 (*Certificate and diploma*, in neither questionnaire) `NA`;
+  `language` is `NA` for the respondents of `qes2007` who report two
+  first languages (they are assigned to neither); `province_territory`
+  is “Quebec” for the 2018 panel (0.4.4 put its region there); `income`
+  amounts of `qes2022` are written in full (`100000`, not `1e+05`).
+- `respondent_id` joins each study’s identifier variables: in
+  `qes2007_panel` the project code and the questionnaire number
+  (`nompn-quest`, such as `1-3232`, unique; `quest` alone repeats across
+  its two subsamples), in `qes2018_panel` the interview mode and id
+  (`method-id`, such as `1-20012`; 0.5.0 made up `qes2018_panel_<row>`).
+  The one `qes2007_panel` row that belongs to no wave (neither interview
+  completed, by its disposition codes) is now `NA` in every answer
+  column.
+- Appended columns (never removed): `family`, `study_design`, `waves`,
+  `subsample`, `source_row` (the row in the study’s file, to join raw
+  variables from
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)),
+  `weight_pre` and `weight_post` (the spec’s recommended weights, as
+  deposited; `NA` where they are not reviewed yet), `vote_intent` (vote
+  intention at the first question), `turnout_intent` (likelihood of
+  voting, `qes2022`) and `sov_partnership_1995` (the 1995 referendum
+  question, 1 or 0). The `region_cma3`, `region_admin` and `income_rank`
+  columns of the design are not appended yet: their targets are not in
+  the spec.
+- New attributes and changed ones: `legacy_column_map` gains `render`
+  and gives in `studies_changed` the studies whose values differ from
+  qesR 0.4.4; `legacy_na_columns` gives, for each column that is all
+  `NA` in a study, why (`no_source`, `not_reviewed`, `na_column` or
+  `all_missing`, with the rule behind it in `cause`
+  (`reported_vote_only`, `independence_question_only`,
+  `no_valid_source`, `not_harmonized_yet`, `invalid_044_source`,
+  `not_comparable_source`, `not_signed_off` or `weight_needs_review`)
+  and why in words in `basis`; 0.5.0’s reason `blanked` is gone, since
+  no value is blanked after it is read); `source_map` gains `target`,
+  `map_id`, `grade`, `status`, `render` and `spec_version`; `qes_spec`
+  records the spec version and content hash; `qes_provenance` has the
+  cell and spec levels of
+  [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md).
+- [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  is soft-deprecated: it keeps working and will not be removed, and a
+  message names its replacement,
+  `qes_harmonize(srvy, targets = "decon")`, once per session (class
+  `qesR_message_deprecated`). Its 19 columns are rendered from the same
+  targets: categorical columns are factors with the targets’ English
+  levels (the same levels in every study: `"Man"` rather than
+  `"A man"`), `education` has the four groups of the master,
+  `province_territory` is `"Quebec"`, `yob` is a number, `income` and
+  `religion` are each study’s own categories as text (the `qes2022`
+  amount stays a number), `age` is in years (the age band, a factor, for
+  the panels and `qes1998`, which asked bands), and codes the spec does
+  not map (the `-99` of `qes2022`) are `NA`. `turnout` and `votechoice`
+  are the reported turnout and vote for every study that asked them
+  (`qes2018` from `q5` and `q6`); for `qes2022` they are still the
+  campaign-period likelihood of voting and vote intention, which
+  `attr(, "timing")` says (`"pre"`). `get_decon("qes1998")` returns its
+  rows, with its answers from the specification.
+
+#### What changed, by column and study
+
+Values (non-missing cells) of the
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+columns that changed in 0.7.0, by study, in qesR 0.4.4, 0.5.0 and 0.7.0
+(the counts of `qes2022`, published since 0.7.1, are CC BY-NC 4.0 like
+its other metadata). The 0.4.4 counts are over the rows 0.4.4 kept (it
+dropped 380 `qes2007_panel` rows and 1 `qes_crop_2007_2010` row).
+Columns and studies not listed are unchanged since 0.5.0.
+
+| Column | Study | 0.4.4 | 0.5.0 | 0.7.0 | Why |
+|----|----|----|----|----|----|
+| `year_of_birth` | `qes2022` | 0 | 0 | 1,519 | cps_yob read as the year its value label gives (codes 1-91 are labelled with years) |
+| `income` | `qes2022` | 1,521 | 1,482 | 1,444 | An amount of 0 is a blank that the survey sent to the bracket follow-up cps_income2: a missing value (spec 4.0.0); amounts written in full (100000, not 1e+05) |
+| `turnout` | `qes2022` | 1,322 | 0 | 1,215 | Reported turnout from the post-election wave (pes_turnout) |
+| `vote_choice` | `qes2022` | 1,432 | 0 | 1,101 | The reported vote of the post-election wave (pes_votechoice) |
+| `federal_pid` | `qes2022` | 1,521 | 1,521 | 1,520 | -99 (item not answered) is a missing value (0.4.4 category Don’t know / Refused) |
+| `vote_choice_timing` | `qes2022` |  | 0 | 1,521 | vote_choice now holds the reported vote in this study |
+| `age` | `qes2018` | 3,031 | 3,031 | 3,072 | The age item (agenum) of the respondents who gave no year of birth |
+| `age_group` | `qes2018` | 2,802 | 2,802 | 2,839 | Age bands of the respondents who gave their age (agenum) but no year of birth |
+| `born_canada` | `qes2018` | 3,072 | 0 | 3,047 | q69 with Canadian-born people outside Quebec as Yes (0.5.0 blanked the 0.4.4 coding) |
+| `political_interest` | `qes2018` | 3,012 | 0 | 3,012 | q27 on 0-10 with the corrected conversion (10, 7, 3, 0) |
+| `ideology` | `qes2018` | 0 | 0 | 2,490 | q36_1 (0.4.4 found no source) |
+| `vote_choice` | `qes2018` | 2,207 | 2,207 | 2,016 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `provincial_pid` | `qes2018` | 0 | 0 | 2,655 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `respondent_id` | `qes2018_panel` | 1,250 | 1,250 | 1,250 | The file’s identifier (interview mode and id, qes_id) instead of a made-up \_ |
+| `province_territory` | `qes2018_panel` | 1,250 | 1,250 | 1,250 | Quebec for every respondent; 0.4.4 put the region (Couronne, ROQ) in the province column |
+| `education` | `qes2018_panel` | 1,250 | 1,247 | 1,247 | The trade certificate (d3 code 4), left as a label by 0.4.4, is College/CEGEP/Technical |
+| `turnout` | `qes2018_panel` | 828 | 828 | 842 | The turnout question (rts_q1) instead of the vote question: 14 who went to vote but did not know for whom are 1 and 13 who went to vote and spoiled their ballot are 1, not 0 |
+| `vote_choice` | `qes2018_panel` | 842 | 842 | 704 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `language` | `qes2014` | 1,517 | 0 | 1,402 | The mother tongue (QLANG); 0.5.0 blanked the interview language (LANG) |
+| `ideology` | `qes2014` | 1,053 | 0 | 1,195 | Q32 with its 0 and 10 answers (0.5.0 blanked the truncated 0.4.4 column) |
+| `vote_choice` | `qes2014` | 1,352 | 1,352 | 1,283 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `provincial_pid` | `qes2014` | 0 | 0 | 1,383 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `education` | `qes2012` | 1,500 | 1,500 | 1,400 | scol code 10 (Certificate and diploma) is in neither questionnaire: not mappable; scol code 8 (the French questionnaire’s cours technique) is College, not University |
+| `income` | `qes2012` | 0 | 0 | 1,357 | The income brackets of reven (0.4.4 found no source) |
+| `vote_choice` | `qes2012` | 1,369 | 1,369 | 1,274 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `provincial_pid` | `qes2012` | 0 | 0 | 1,361 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `age_group` | `qes2012_panel` | 844 | 844 | 844 | Six age bands, which the question has, instead of the producer’s three-band recode |
+| `vote_choice` | `qes2012_panel` | 844 | 844 | 633 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `age_group` | `qes2008` | 1,125 | 1,125 | 1,151 | The study’s own age bands (q0age) where the year of birth is missing |
+| `education` | `qes2008` | 1,141 | 1,141 | 1,141 | maîtrise (q77 code 10), left as a label by 0.4.4, is University |
+| `vote_choice` | `qes2008` | 986 | 986 | 898 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `provincial_pid` | `qes2008` | 0 | 0 | 1,083 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `language` | `qes2007` | 2,172 | 2,172 | 2,119 | Two first languages including French or English (codes 4, 5 and 7) are not mapped to one of them |
+| `education` | `qes2007` | 2,160 | 2,158 | 2,158 | maîtrise (q77 code 10), left as a label by 0.4.4, is University |
+| `vote_choice` | `qes2007` | 1,990 | 1,990 | 1,727 | Nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `provincial_pid` | `qes2007` | 0 | 0 | 2,069 | Provincial party identification of the spec (0.4.4 found a source only in qes2022) |
+| `respondent_id` | `qes2007_panel` | 2,062 | 2,442 | 2,442 | The project and questionnaire number (nompn-quest, qes_id), unique, instead of quest, which repeats across the two subsamples |
+| `language` | `qes2007_panel` | 2,057 | 2,435 | 2,434 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `age_group` | `qes2007_panel` | 2,062 | 2,441 | 2,440 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave; six age bands, which the question has, instead of the producer’s three-band recode |
+| `gender` | `qes2007_panel` | 2,062 | 2,441 | 2,440 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `education` | `qes2007_panel` | 2,053 | 2,430 | 2,429 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `income` | `qes2007_panel` | 2,062 | 2,033 | 2,032 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `turnout` | `qes2007_panel` | 1,735 | 2,055 | 2,054 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave |
+| `vote_choice` | `qes2007_panel` | 2,062 | 2,055 | 1,494 | The one row in no wave (neither interview completed, by its disposition codes) is not_in_wave; nonvoters, spoiled ballots, don’t know and refusals are missing values of the reported vote (0.4.4 categories Did not vote / None and Don’t know / Refused) |
+| `vote_choice` | `qes1998` | 1,483 | 0 | 1,126 | The reported vote of the post-election recontact (q3post) |
+| `vote_choice_timing` | `qes1998` |  | 0 | 1,483 | vote_choice now holds the reported vote in this study |
+
+`dev/legacy-diff.md` in the source repository, generated by
+`data-raw/compare_legacy.R`, gives every difference from qesR 0.4.4 and
+0.5.0, cell counts by column and study for both functions, and its
+cause; the gate of this release is that each one is explained. Results
+of the released 0.4.4 are reproducible by installing it
+(`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`); 0.5.0
+and 0.6.0 were development versions and were never released, so a result
+computed with one of them is reproducible by installing the commit it
+was built from (`packageDescription("qesR")$RemoteSha` records it for an
+installation from GitHub).
+
+### Harmonization specification 4.1.0: content sign-off apart from the weights
+
+- The 38 crosswalk rows of `qes1998`, `qes2007_panel`, `qes2012_panel`
+  and the CROP polls that the automated double review of spec 4.0.0
+  signed off on their content are `stable`, and
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  apply them by default. They had been held in review only because the
+  recommended weights of their waves need review. Their `review_note`
+  still says the review was automated, not human, and that the weight is
+  tracked apart. No value map, gate, level set or column hash changed
+  (MINOR: rows are only added to the default output).
+- The release check V-S13 no longer fails a stable row on a study-wave
+  whose recommended weight needs review: the sign-off of a row is about
+  its content, and the weight is reviewed on its own. V-S13 still
+  requires that a recommended weight is never calibrated on vote or
+  turnout, and that each study-wave has exactly one (none where every
+  weight is calibrated).
+- The weights that still need review are still not applied: `weight_pre`
+  and `weight_post` of
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  are `NA` for these waves, with the message
+  `qesR_message_weight_review`, and
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  leaves their rows out (or stops when no row has the weight). In
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
+  `weight_pre` and `weight_post` of these studies are `NA` with the
+  reason `not_reviewed` and the new cause `weight_needs_review` in
+  `attr(, "legacy_na_columns")`, whose `basis` names the weight (they
+  were `no_source`). `survey_weight` keeps each study’s own weight, as
+  in 0.4.4, and is not reviewed: it is the `needs_review` weight `XPOND`
+  for the CROP polls and `pond` (registered `needs_review`) for
+  `qes2012_panel`, the vote-calibrated `pond` for `qes2008`, `pond`,
+  which is not in the weights registry, for `qes2007_panel`, and
+  `ponderc`, the deposit’s advice (registered `needs_review`; the spec’s
+  candidate is `ponder3`), for `qes1998`.
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  never uses it; the note of each study’s `survey_weight` row in
+  `qes_spec("spec")$tables$legacy` says which weight it is.
+- `qes2014` `QSEXE` (`gender`) is `stable` at `comparable`, the grade it
+  had before the review; the English stem the review filled is kept. The
+  review’s `identical` (the anchor’s stems in both languages) waits for
+  a human second reviewer.
+- Every legacy column that was `NA` because its row was held has its
+  values again (the table above); `gender` of `qes2014` and of
+  `qes_demo` too.
+- The message `qesR_message_weight_review` and the `basis` of
+  `weight_needs_review` say what is pending (the weight is registered
+  but not accepted yet), not that its method is undocumented: `XPOND`’s
+  method is in CROP’s reports. `qesR_message_weight_timing` (use
+  `weight_pre` for pre-election targets and `weight_post` for
+  post-election ones) is no longer shown for a study whose weights all
+  need review, since both columns are `NA` there.
+- Text only (`legacy.csv`): the note of each study’s `survey_weight` row
+  names the weight and its registry status, and the intended blanks of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  have their own cause and `basis` in `attr(, "legacy_na_columns")`:
+  `invalid_044_source` for `qes1998` `education` and `qes2018` `income`
+  and `religion` (the source 0.4.4 read was verified wrong, and the spec
+  has no row for them since), `not_comparable_source` for
+  `qes2012_panel` `political_interest` (its only source, `interetrec`,
+  is a score derived from debate viewing, graded `not_comparable`), and
+  `not_harmonized_yet` for `qes2022` `language`.
+
+### Harmonization specification 4.0.0: review sign-off
+
+- An automated double review checked the 132 crosswalk rows against the
+  original files and documents: one pass on the codes and the data, one
+  on the wording and comparability, adjudicated where the two disagreed.
+  It is not a human review, and the crosswalk says so:
+  `qes_spec("crosswalk")` shows `reviewed_by`, `reviewed_on` and the new
+  column `review_note` (what the review corrected, and why a row is
+  held). 93 rows are signed off (status `stable`) and
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  applies them by default. 39 stay in review, applied only with
+  `include_draft = TRUE`: the 38 rows of `qes1998`, `qes2007_panel`,
+  `qes2012_panel` and the CROP polls, whose recommended weights still
+  need review (a stable row on such a study failed the release check
+  V-S13 of spec 4.0.0), and the `qes2014` gender row, whose grade the
+  review raised to `identical`, which needs a second reviewer. Spec
+  4.1.0 (above) signs off all 39. The validator (V-S11) requires a
+  `review_note` on a reviewed row left in review.
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  apply the signed-off rows only. In spec 4.0.0 (not in 4.1.0), every
+  column that `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP
+  polls take from the specification was `NA` (reason `not_reviewed`,
+  cause `not_signed_off`), as was `gender` of `qes2014`; their
+  identifiers, dates and weights, read from the files, are kept. A
+  render no longer falls back on a later target when the first one’s row
+  is held.
+- MAJOR (changed column hashes): in `qes2022`, an income amount of 0 is
+  a blank that the survey sent to the bracket follow-up `cps_income2`,
+  and is now `NA` (reason `no_answer`; also in the `income` of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md));
+  the typed text of another party (`vote_prov_intent_other`) is gated on
+  `cps_turnout` like its parent row, so the respondents routed past the
+  question are `inapplicable` (`ineligible` for code 6) rather than
+  `sysmis`.
+- Grades: the 2018 panel’s vote intention `rv1a` and its pushed version
+  `rv1ab` go from `comparable` to `approximate` (the question also asks
+  those who already voted in advance for that vote, as Ipsos’s report on
+  the same poll prints it, and the push was not put to those who would
+  not vote); `qes2014` `QSEXE` went from `comparable` to `identical`
+  (held for a second reviewer; back to `comparable` in spec 4.1.0). With
+  the default `min_grade = "approximate"` no cell is dropped.
+- Metadata: `qes2014` `QSCOL` offered no don’t-know option
+  (`dk_offered = none`); `qes2022` `cps_ideoself_1` is a plain 0-10 item
+  (no slider is documented: instrument `lr_0_10`); the CROP intentions
+  `intvoteprova` and `intvoteprov` have their French wording and
+  `dk_offered = volunteered` from CROP’s own reports for La Presse. The
+  dictionary (version 1.0.3) has the same wording, and the 2018 panel’s
+  `rv1a` the stem’s second sentence on advance voting.
+- Text only: the wording, grade reasons, evidence and notes of 36 rows
+  are corrected, each named in its `review_note`: among them the English
+  stems of items of `qes2007`, `qes2008`, `qes2014` and `qes2018`, the
+  counts of wave members in `qes2007_panel` (its system-missing
+  respondent is in both waves, and the one row in no wave has values)
+  and where its time-invariant items were asked (the CROP campaign
+  interviews, recorded for every row).
+- Schema version 2: the crosswalk’s new column `review_note`. In
+  `gates.csv`, typed text counts as one token and an empty text as
+  system missing.
+
+### Harmonization specification 3.0.0
+
+- MAJOR (a corrected weight role and changed recommended weights).
+  `qes2008`’s `pond` reproduces the official 2008 vote among voters (to
+  within 0.1 point) and is registered as calibrated on the vote
+  (`vote_calibrated`), so `qes2008` has no recommended weight: both of
+  its weights are calibrated on vote or turnout, and its harmonized
+  weights (`weight_post`, and `weight_post` of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md))
+  stay `NA`. The validator’s rule V-S13 now allows a study-wave with no
+  recommended weight in that case only.
+- Reviewed weights, so
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  and
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  (`weight_pre`, `weight_post`) now return them, where they were `NA`:
+  `qes2007` `pond` (sex, age, mother tongue and region, to the census,
+  applied separately to the web and telephone samples, as the study’s
+  authors describe it in *Le comportement électoral des Québécois*,
+  2009, and as the file confirms), and the 2018 panel’s `weight` and
+  `weight_rts` (sex, age, region, mother tongue and university
+  education, as Ipsos’s report and Durand and Blais (2020) describe
+  them, each wave weighted separately; the weighted margins reproduce
+  the published targets). The 2007 panel’s post-election wave has a
+  recommended weight, `pond_tot_am1`, which still needs review.
+- The weights that still need review say what the files and the
+  documents found show: for `qes1998`, `ponder3 = ponderc x poids / c`
+  (one constant per firm) and `poids` is the design factor of the
+  stratified recontact; `ponder3` reproduces the authors’ published
+  tables, but the deposit advises `ponderc`, which does not undo the
+  over-selection, so the choice waits for the producer; CROP’s `XPOND`
+  (weighted to the 2006 Census by sex, age, region and home language,
+  from CROP’s reports); the cells of the 2012 panel’s weights; the
+  margins of `qes2012` `pond` (probably the 2006 Census, not the 2011
+  one).
+- Waves (`qes_spec("spec")$tables$waves`): the fieldwork dates of each
+  of the 24 CROP polls (CROP’s reports for La Presse and the archive of
+  quebecpolitique.com, instead of the month’s bounds), the election
+  their previous-vote question `QP4` refers to (2007-03-26 until
+  November 2008, 2008-12-08 from January 2009), and what is known of the
+  wording of their first referendum question `intvoterefa` (a sovereign
+  country, documented for 19 of the 24 polls; it stays unmapped, since a
+  crosswalk row applies to every poll and five polls are not
+  documented); the 2018 panel’s fieldwork dates (2018-09-26 to 09-28 and
+  2018-10-12 to 10-19); the `qes1998` definition of francophone, now
+  confirmed by linking the pooled rows to the firms’ files (CREATEC:
+  mother tongue French; CROP: French spoken most often in the
+  household); what the questionnaires say about the `qes2008` mode
+  (still telephone, as the deposit says, until the authors confirm it).
+- Text only: `qes2018` mother tongue codes 2 (English) and 96 (other)
+  are not swapped (checked against home language, birthplace and open
+  answers); the English share over the census comes from the sample and
+  a weight that calibrates French against the rest only. The
+  `sov_sovereign_country` description says the push question put to the
+  undecided is not part of the target. The notes of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  for the CROP sovereignty, turnout and vote columns, and for `qes1998`
+  `language` and `survey_weight`, say the same. No value map, gate,
+  grade, expected marginal or column hash changed.
+- Validation: the census margins of 2006 and 2011 are now at 18 and over
+  for gender and the six age bands (the 2011 Census Profile,
+  98-316-XWE2011001, and the 2006 table 97-551-XCB2006009), as for 2016
+  and 2021, instead of 20 and over and five bands from 25; the report
+  adds weighted rows for `qes2007` and the 2018 panel.
+
+### Harmonization specification 2.0.1
+
+- Text only. The `cause` column of `attr(, "legacy_na_columns")` of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  names the rule behind an all-`NA` column in words:
+  `reported_vote_only` (the CROP polls asked only a vote intention),
+  `independence_question_only` (the study did not ask the referendum
+  question on an independent country), `no_valid_source` (`party_best`,
+  `party_lean`, `partylean`) and `not_harmonized_yet`
+  (`vote_choice_text`), instead of the internal decision ids of the
+  design (`OD4`, `OD5`, …), which were not documented anywhere a user
+  could look them up. The definitions and notes of
+  `attr(, "legacy_column_map")` and the text of the spec say each
+  decision in words as well.
+- The reason `sovereignty_support` and `sovereignty` are `NA` is
+  corrected for two studies: `qes2007_panel` asked the 1995 question
+  (sovereignty with an offer of partnership, in `sov_partnership_1995`),
+  as `qes2007`, `qes2008` and `qes1998` did; for the CROP polls, the
+  first referendum question (`intvoterefa`) has only a truncated label
+  and no questionnaire is deposited, so its wording is unknown and it is
+  not mapped. The values are unchanged (`NA` in both).
+
+### Harmonization specification 2.0.0
+
+- MAJOR (a corrected gate): the `religion` rows of `qes2012` (`q103`)
+  and `qes2014` (`Q63`) are gated on their filter question (`q102`,
+  `Q62`). The respondents who said they belong to no religion are `NA`
+  with reason `inapplicable` (842 in `qes2012`, 845 in `qes2014`) and
+  those who preferred not to answer the filter question `refused` (32
+  and 44, with the 4 and 9 who refused the religion question itself),
+  where every one of them was `sysmis`. The values and the other NA
+  reasons are unchanged, and
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  are unchanged (their `religion` is `NA` for these respondents, as
+  before). A gate now applies to rules `weight`, `date` and `string` as
+  it does to `map` and `numeric` (it was ignored there), and a gate on a
+  rule that cannot apply it (`constant`, `fn:`) is a validation error
+  (V-S1); `gates.csv` counts the cells of these gated rows for the
+  universe check V-D7.
+- The reported turnout of `qes2007_panel` reads the post-election
+  turnout question itself (`voteoui`: yes on election day, yes in
+  advance, no), in place of the producer’s recode `avote`, which gives
+  the same values; the row is graded `comparable` (the same yes/no
+  question with a probe as `qes2012_panel`), not `approximate`, so
+  `min_grade = "comparable"` keeps it.
+- Text only: the `education4` rows of `qes2018` and `qes2018_panel` and
+  the target’s description (EN/FR) say that a vocational or trade
+  credential (the DEP) is secondary in `qes2018` and college in
+  `qes2018_panel` and, probably, in the studies with no DEP option; the
+  note of the `qes1998` `language` column of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  says the constant French is a mother tongue only for the CREATEC rows
+  (the home language for the 426 CROP rows; the pooled definition is not
+  confirmed yet); the `qes2022` evidence notes give codes and codebook
+  pages only.
+
+### Harmonization specification 1.0.0
+
+- 13 new targets, with 58 crosswalk rows checked against the original
+  files and documents (all in review): `gender`, `education4` (primary
+  or less, secondary, college, university), `lang_mother` (a respondent
+  who reports two first languages is `NA` with reason `not_mappable`:
+  assigned to neither), `born_canada`, `income_native` and `religion`
+  (each study’s own categories, as text: they are not comparable across
+  studies), `pid_fed`, `interest_0_10`, `interest_election_0_10` and
+  `interest_campaign_4pt` (interest in politics on 0-10, in the
+  election, and in the campaign on four points: never pooled with
+  `interest_4pt` or with each other), `age_group6`,
+  `turnout_prov_likely` and `vote_prov_intent_other` (`qes2022`); and
+  the 2007 panel’s reported turnout. The new set `decon` names the
+  targets of
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md):
+  `qes_harmonize(targets = "decon")`.
+- A crosswalk row of rule `string` may take `from_label = TRUE`: the
+  value is the text of the code’s value label in the file (a code
+  without a label is unmapped, never passed through as a number).
+- A crosswalk row may name the wave `*` for a target of timing `static`
+  or `any`: it applies to the members of any wave of the study, for a
+  question asked in whichever wave the respondent took part. The 2007
+  panel’s time-invariant items (gender, education, mother tongue,
+  income, age group) use it, so its 391 respondents reached only after
+  the election now have them; this moves its existing `age_group3` row
+  from the pre-election wave to `*`, which makes the specification a
+  major version (1.0.0): the `age_group3` column of `qes2007_panel` and
+  its `eligible_voter` change for those respondents. No other existing
+  row, code, grade, marginal or column hash changed.
+- The table `legacy.csv` (the renderer of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md))
+  is part of the specification and of its content hash, checked by the
+  new validator rule V-S18. `Engine-Min` is 0.7.0.
+- The check that a row graded `identical` matches its target’s anchor
+  (V-S17) now finds the anchor when two targets read the same question
+  (the three and six age bands of one question); it skipped those
+  targets before.
+
+### New: validation against official results and the census
+
+- Benchmarks are in `inst/extdata/validation/` of the source repository,
+  each row with its source: province-wide votes and shares of valid
+  votes by party and ballots cast for the general elections of 1998 to
+  2022, from Élections Québec’s archived results files
+  (`official_results.csv`, `official_turnout.csv`; the parties are in
+  the spec’s party levels, every other party and the independents one
+  row “other”); and the Quebec margins of gender, age, mother tongue and
+  education of the censuses of 2006, 2011, 2016 and 2021, from
+  Statistics Canada tables 98-10-0020-01, 98-10-0218-01 and
+  98-10-0384-01, the 2011 Census Profile and the 2006 table
+  97-551-XCB2006009 (`census_margins.csv`). Gender and age are compared
+  at 18 and over (from specification 3.0.0 for 2006 and 2011, with the
+  2011 Census Profile and the 2006 table 97-551-XCB2006009); mother
+  tongue at 20 and over and education at 25 and over, the nearest
+  published cuts, and respondents are cut the same way when their age is
+  known. `data-raw/build_benchmarks.R` rebuilds them from the downloaded
+  source files. Only the census margins ship with the package
+  (`system.file("extdata", "validation", package = "qesR")`; Statistics
+  Canada Open Licence): Élections Québec’s open-data licence covers only
+  its 2014, 2018 and 2022 files and can be withdrawn, and its terms of
+  use need its written permission for the other years, so the official
+  results and the validation report computed from them are excluded from
+  the package build and used only on the source tree (`inst/COPYRIGHTS`,
+  section 3). Without them the internal checks skip the recall and
+  turnout comparisons.
+- The validation report
+  (`inst/extdata/validation/validation_report.csv`, written by
+  `data-raw/build_validation.R`) records, for every study the spec
+  covers whose metadata ships: the dissimilarity index between the
+  reported vote and the official results (check V-L2), the reported
+  minus the official turnout, the dissimilarity index of each census
+  margin, and the construct-validity directions of check V-L4, weighted
+  with the recommended weight where it is reviewed (`qes2012`,
+  `qes2014`, `qes2018`, and from specification 3.0.0 `qes2007` and
+  `qes2018_panel`) and unweighted otherwise. The weighted V-L2 indices
+  are 8.0 points (`qes2012`), 5.6 (`qes2014`) and 3.2 (`qes2018`), the
+  provisional values of the design now confirmed on the official
+  figures; `qes1998` (francophones only) is not checked. Turnout is
+  over-reported in every study, by 14 to 30 points. The rows of
+  `qes2022` (CC BY-NC) do not ship; they are kept with the build-ignored
+  aggregates in `data-raw/nc/`.
+- Live checks (never on CRAN; `QESR_TEST_DATA_DIR` or `QESR_LIVE=true`):
+  `tests/testthat/test-validation-live.R` fails when a weighted recall
+  or census index rises more than 2.0 points above its recorded value,
+  when turnout over-reporting leaves 0 to 35 points, when a V-L4
+  direction fails (voters more interested than nonvoters; QS voters left
+  of CAQ voters; independence support of PQ voters more than 40 points
+  above PLQ voters; at least 55% of partisans voting for their party),
+  or when a deposit has a new version or a changed data file on
+  Dataverse (V-L5). A weekly workflow (`.github/workflows/live.yml`)
+  runs every live test on the pinned originals, restored from the
+  Actions cache, and uploads an aggregates-only report; its `qes2022`
+  rows (CC BY-NC 4.0) go with their licence and attribution notice,
+  `data-raw/nc/README.md`, which also covers the build-ignored `qes2022`
+  aggregates of the repository (`inst/COPYRIGHTS`, section 2). A
+  recorded value moves only through `data-raw/build_validation.R`, which
+  refuses to record a gated row more than 2.0 points above the value it
+  replaces unless run with `--accept-regressions`.
+- New website article “Validation against official results and the
+  census” (French: “Validation par les résultats officiels et le
+  recensement”), built from the downloaded files: the tables and figures
+  of the report for every study, `qes2022` included, and what the
+  differences mean (turnout over-reporting, recall and differential
+  nonresponse, unlisted parties, population and question differences).
+
+### New: the remaining studies (experimental; specification 0.3.0, now part of 1.0.0)
+
+- `qes2007` and `qes2008` (Quebec Election Studies, so they are in the
+  default `studies = NULL`): reported vote and turnout, party
+  identification, year of birth, the 1995 sovereignty-partnership
+  question and, for 2008, age group. In both, code 3 of the vote
+  question is the ADQ, never the CAQ, and “none” among those who said
+  they voted is a spoiled or blank ballot (reason `spoiled`). `qes2007`
+  mixed telephone and web interviews; its `survey_mode` is each
+  respondent’s (1,003 by telephone, 1,172 on the web).
+- `qes2012_panel` gains vote intention (first question and pushed;
+  graded `approximate`, since its first question already asks which
+  party the respondent “would be tempted to vote for”), reported vote
+  (unprompted, `approximate`) and turnout; its post-election interviews
+  are dated (`interview_date` in the long layout, from
+  `ResLastCallDate_last`).
+- The pooled CROP polls of 2007-2010 (`qes_crop_2007_2010`) have one
+  wave per monthly poll, 24 in all (`poll_2007_06` to `poll_2010_01`,
+  about 1,000 respondents each), each a stratum of its own (the new
+  leading column `stratum` gives the poll’s wave name) and each
+  referring to the next general election, which `election_date` gives
+  row by row (the election of 2008-12-08 up to the poll of November
+  2008, that of 2012-09-04 after); `year` is the year each poll began.
+  `qes_design(pool = "equal")` counts the 24 polls as one study in the
+  long layout, as in the respondent layout. The spec maps their
+  questions once for every poll: a crosswalk or weight row may name the
+  wave `*` in a study whose waves are all poll waves, and each poll
+  keeps its own weight normalization. Vote intention (first question and
+  pushed) and age group are mapped; the pushed intention’s code for
+  “none” also holds 74 answers “another party” and is `not_mappable`.
+  The referendum item and the previous-vote item are not mapped: their
+  wording and reference election are not documented.
+- The 1998 panel (`qes1998`) pools the CREATEC (1,057) and CROP (426)
+  polls of francophones, with a pre- and a post-election wave of the
+  same 1,483 respondents. The firm is a stratum: the new leading column
+  `stratum` gives it as the file’s `firme_post` code (`"1"` = CREATEC,
+  `"2"` = CROP; `NA` for a study drawn as one sample), and
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  now makes each study’s strata strata of the design. Reported vote and
+  turnout, the pushed vote intention (the firms’ first questions are
+  separate variables, not mapped), the 1995 question (asked by CROP
+  only; `inapplicable` for CREATEC) and age group are mapped;
+  `intvote2`, whose value labels are shifted in the source, is
+  documented as `not_comparable` and never mapped. The firms’ own files
+  (`qes1998_crop`, `qes1998_createc`) hold the same respondents and are
+  not harmonized separately.
+- New target `sov_partnership_1995`: the 1995 referendum question,
+  sovereignty with an offer of partnership to the rest of Canada
+  (`qes2007`, `qes2008`, `qes2007_panel`, `qes1998`), never pooled with
+  the other sovereignty targets.
+- The deposits of these studies do not document which weight to apply:
+  all their weights are registered with status `needs_review` and are
+  `NA` until reviewed. For `qes1998` this matters: both firms’ codebooks
+  (files 332049 and 332050) say that the undecided, those who would
+  spoil their ballot and those who refused to reveal their vote were
+  over-selected, so unweighted 1998 estimates over-represent the
+  undecided, would-spoil and refusers. The coverage page and the weight
+  message give the 24 polls as one range.
+- The dictionary (version 1.0.2) has the question text of the new items
+  of `qes2012_panel`, `qes1998` and the CROP polls (the CROP codebook
+  gives only variable labels cut after a few words, marked as
+  truncated).
+
+### Documentation and website
+
+- The vignette on moving from qesR 0.4.4 is now
+  [`vignette("migrating-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
+  (French:
+  [`vignette("fr-migrer-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md);
+  formerly `migrating-0.5` and `fr-migrer-0.5`) and covers 0.4.4 to
+  0.7.0, for scripts and papers written with 0.4.4: what changes by use
+  (raw codes, label text, the master,
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)),
+  how to record and pin the version a result used, the columns of the
+  engine-rendered
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  one by one, and how to move master code to
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
+- The website’s home page leads with harmonization: an example, what the
+  engine guarantees, the full grid of the grade of each study’s question
+  for each target across the 11 studies (generated from the
+  specification by `data-raw/readme_coverage.R`, each target linked to
+  its reference section; `data-raw/spec_check.R` checks it is current,
+  as for the README), and links to the validation and migration
+  articles, in English and French.
+- The reference index has its final groups, one per help-page family:
+  *Package overview*, *Data*
+  ([`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)),
+  *Studies and documents*, *Codebooks and search*, *Harmonization
+  (experimental)*, *Reproducibility*, *Cache*, and *Legacy and
+  deprecated*, headed by the table of replacements.
+  [`?qesR`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+  and `?qesR-fr` list the functions in the same groups.
+  [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
+  and
+  [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
+  join the `legacy` family, and
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  and
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  form the `data` family. `data-raw/check_site.R` fails when a family is
+  split across sections or a section mixes families.
+- The example articles use the master of 0.7.0: the reported vote now
+  includes `qes2022`, `qes1998` (shown as the 1998 polls) and the
+  Conservative Party (PCQ); which parties ran comes from the official
+  results of the source repository and which answers each question
+  offered from the specification, instead of lists typed into the
+  article, so the 1998 row no longer shows every party as not running.
+
+### Changes to messages and printing
+
+- [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  with the default `include_draft = FALSE`, when no cell of the result
+  is applied because every crosswalk row it needs is not yet signed off
+  (a call on `qes1998` alone, for example), now warns (class
+  `qesR_warning_all_unreviewed`) instead of only sending a message: the
+  warning gives the number of values left `NA`, names the targets and
+  says to pass `include_draft = TRUE`. When some cells are applied, the
+  message (`qesR_message_unreviewed_skipped`) and the printed summary
+  count the values left `NA` as well as the cells. Which rows apply by
+  default is unchanged.
+- [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
+  returns a data frame of class `qes_studies` that prints compactly
+  (study, year, family, design, licence and the title in the session
+  language, plus `status` after `check_updates = TRUE`);
+  [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)
+  returns one of class `qes_cache_info` that prints the mode, the
+  directory and the total size once, then the paths relative to the
+  cache directory. Columns and values are unchanged,
+  [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) gives
+  the plain data frame, and a subset of the columns is a plain data
+  frame.
+- [`print()`](https://rdrr.io/r/base/print.html) of a codebook names, on
+  its `Data file:` line, the original file that
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  reads and
+  [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)
+  reports (`Quebec Election Study 2014.sav`), then the Dataverse name of
+  the ingested copy that the attribute `selected_data_file` keeps, as in
+  qesR 0.4.4.
+- The once-per-session note on changed values names the columns and
+  attributes of the function that shows it: for
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md),
+  `turnout` and `votechoice` and the attributes `source_map` and
+  `timing`
+  ([`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  has no `legacy_column_map`).
+- The notice for
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  names its replacement with the study,
+  `qes_harmonize(srvy, targets = "decon")`, as `?qesR-deprecated` and
+  the migration vignettes now do (without `srvy`,
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  harmonizes every study).
+- `qes_harmonize(data = )` given a data frame without the study’s
+  identifier column (such as `responseid` for `qes2018`) says that the
+  column was dropped from `data$<study>` and is needed to build
+  `qes_id`, instead of saying that the study lacks the variable (still
+  class `qesR_error_unknown_variable`).
+
+### Bug fixes
+
+- [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md)
+  on `qes2022` now sets `-99` (“no answer”) to `NA` in every numeric
+  column, as documented, not only in columns whose `-99` is labelled or
+  that have at most 50 distinct values: the unlabelled thermometers,
+  `cps_income`, `cps_yob` and the like kept `-99` as a number (so
+  `mean(qes_missing(x)$cps_income)` disagreed with
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)).
+  `qes_codebook("qes2022")` lists the code in `missing_codes`, and a
+  select-all item keeps its `-99` (“not selected”) by default. The
+  metadata shard has a new schema version, so a shard already in the
+  cache is rebuilt.
+- Numbers written to CSV (`get_qes_master(save_path = "x.csv")` and its
+  `_provenance.csv`, the metadata shards) always use `.` as the decimal
+  mark: under `options(OutDec = ",")` a weight was written as `0,67...`
+  and split into two fields.
+- [`rbind()`](https://rdrr.io/r/base/cbind.html) of
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  results refuses (an error of class `qesR_error_input`) parts built
+  with different `lang`, `layout`, `values`, `missing` or `weights`,
+  which it stacked silently (a French and an English result gave every
+  category twice), and parts with different columns (different
+  `targets`), naming what each part lacks, instead of a bare base-R
+  error.
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  check their logical arguments (`assign_global`, `with_codebook`,
+  `quiet`, `strict`): a value that is not `TRUE` or `FALSE`, such as
+  `assign_global = "TRUE"`, is an error of class `qesR_error_input`
+  instead of being taken as `FALSE`.
+- `qes_search(regex = TRUE)` checks the pattern with the engine that
+  matches it (Perl-compatible): lookaheads and named groups are
+  accepted, and a pattern PCRE cannot compile is an error of class
+  `qesR_error_input`, not a bare regex error.
+- A bad `style` in
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  or `layout` in
+  [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
+  is an error of class `qesR_error_input`.
+- `qes_cache_clear(older_than = )` also forgets the metadata held in
+  memory for the files it removes, so
+  [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  and
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  no longer use a deleted `qes2022` shard.
+- A `qes_spec` object edited in memory that fails validation is named as
+  such in the error (`spec_invalid_edited`), instead of the directory of
+  the shipped spec it was loaded from.
+- `qes_question("qes2022", ...)` announces the download of an uncached
+  data file, as
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  does.
+- `get_question("name", q)` looks the named data frame up in the calling
+  environment and its enclosing environments (read only), as qesR 0.4.4
+  found it in the workspace: a call from a function or an
+  [`sapply()`](https://rdrr.io/r/base/lapply.html)/[`lapply()`](https://rdrr.io/r/base/lapply.html)
+  lambda defined at top level finds an object created at top level (for
+  example by `get_qes(assign_global = TRUE)`), which since 0.5.0 was an
+  error of class `qesR_error_input`. Only data frames and other lists
+  are matched, so a function or a string of the same name is skipped.
+- `get_codebook_files("qes_demo")`,
+  `get_codebook_files(codebook = qes_codebook("qes_demo"))` and
+  `download_codebook("qes_demo")` return an empty table (the synthetic
+  study has no documents;
+  [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
+  says so) instead of an unknown-study error, and `qes_docs("qes_demo")`
+  returns zero rows.
+- In `attr(get_qes_master(), "source_map")`, a raw variable the file
+  lacks (`SDAT` in `qes_demo`) has no `source_variable`, matching its
+  `no_source` row in `legacy_na_columns`. \# qesR 0.6.0
+
+qesR 0.6.0 adds an experimental engine that harmonizes variables across
+studies from a reviewed specification only, with each study’s waves,
+weights and comparability grades, and hands the result to the `survey`
+and `srvyr` packages. The functions of 0.5.0 are unchanged:
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+returns the same data, and
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+and
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+the same values.
+
+### New: harmonization (experimental)
+
+- New
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  marked experimental, builds one data frame from several studies, one
+  row per respondent (no row is ever dropped) and one column per
+  harmonized variable (“target”), from a reviewed specification only:
+  for each study and target, one question, its codes mapped one by one
+  to the target’s levels. Nothing is matched by name, and a code the
+  specification does not map is an error (class `qesR_error_unmapped`;
+  `unmapped = "warn"` or `"na"` sets it to `NA` with reason `unmapped`),
+  so no raw code or sentinel such as `-99` can pass through. It covers
+  `qes2012`, `qes2014`, `qes2018`, `qes2022`, `qes2007_panel`,
+  `qes2018_panel` and `qes2012_panel` for 14 core targets: reported vote
+  and turnout, vote intention (first question, and with the undecided
+  pushed), three referendum and sovereignty items that are never pooled
+  (“independent country”, “sovereign country”, a four-point favour
+  scale), left-right self-placement, provincial party identification,
+  four-point interest in politics, year of birth, age, age group and
+  citizenship (and the month of birth, outside the core set). Intention
+  and recall are separate targets, each from its own wave; a respondent
+  outside the wave that asked a question (for example the 301 `qes2022`
+  respondents not in the post-election wave) is `NA` with reason
+  `not_in_wave`.
+- Every missing value has a reason (`dk`, `refused`, `dk_refused`,
+  `no_answer`, `not_selected`, `inapplicable`, `not_voted`, `spoiled`,
+  `ineligible`, `not_registered`, `not_in_wave`, `not_mappable`,
+  `sysmis`, `not_asked`, `not_reviewed`, `below_grade`, `unmapped`;
+  [`?qes_harmonize`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  lists them, generated from the catalog vocabulary);
+  `missing = "reasons"` adds a factor column `<target>__na`. Each
+  study’s question has a comparability grade against the target’s anchor
+  question (`identical`, `comparable`, `approximate`), and `min_grade`
+  sets the cells below a grade to `NA` (reason `below_grade`);
+  approximate cells included are listed in a message. Levels a study’s
+  question did not offer (the Conservative party before 2022, say) are
+  flagged as structural zeros, in a message, when printing, and in
+  `qes_provenance(x, level = "cell")`.
+- Categorical targets are factors with the same levels in every study
+  (`values = "factor"`),
+  [`haven::labelled()`](https://haven.tidyverse.org/reference/labelled.html)
+  integer codes (`"labelled"`) or ASCII level names (`"code"`);
+  `lang = "fr"` gives French labels and the same codes.
+  `keep_source = TRUE` adds each value’s source code. `data =`
+  harmonizes frames you already read (their origin is then recorded as
+  unverified, with a warning); `on_fail = "skip"` leaves out a study
+  that cannot be read or checked.
+- A crosswalk row is applied only once a reviewer has signed it off
+  (status `stable`). The rows of this first specification were checked
+  against the original files and documents but are still in review, so
+  the default call gives `NA` with reason `not_reviewed` (a question the
+  study asked, whose row is not signed off; `not_asked` is kept for a
+  study with no question for the target), and a message;
+  `include_draft = TRUE` applies them, with another message.
+  `qes_provenance(x, level = "cell")$excluded` says why each cell left
+  out was left out (`no_row`, `not_reviewed`, `not_in_data`,
+  `below_grade`).
+- New
+  [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+  shows the specification: `view = "targets"` (default), one row per
+  target with each study’s grade; `view = "crosswalk"`, one row per
+  study and target (source variable, grade and its reason, instrument,
+  levels offered and not offered, filter question, wording or the
+  document that gives it, recommended weight, review status), or one row
+  per code (`level = "code"`, also under the column names of the
+  retroharmonize package’s crosswalk tables with
+  `format = "retroharmonize"`); printing the crosswalk of one target
+  shows its reference section; `view = "spec"`, the specification
+  itself, checked.
+- `qes_provenance(x, level = "cell")` gives, for harmonized data, the
+  crosswalk row, grade, instrument, recommended weight, levels not
+  offered and the count of values and of each missing reason of every
+  study and target; `level = "spec"` the specification version and
+  content hash, the qesR version and the call’s arguments. Harmonized
+  data also record the specification in `attr(, "qes_spec")`: the same
+  specification version and hash, the same pinned files and the same
+  qesR version give the same values and the same study and cell
+  provenance (only the `created` time of the spec-level record differs).
+  [`rbind()`](https://rdrr.io/r/base/cbind.html) of results for
+  different studies built with the same specification combines their
+  provenance too.
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  of harmonized data adds the specification version and content hash to
+  the qesR citation.
+- New vignettes
+  [`vignette("harmonization-reference")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md)
+  and
+  [`vignette("fr-reference-harmonisation")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md),
+  generated from the specification when they are built (nothing in them
+  is written by hand): each target’s definition and levels, then, study
+  by study, the source question, grade and reason, instrument, levels
+  offered, wording, filter, weight and whether “don’t know” was offered.
+  [`?qes_spec`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+  lists the targets, also generated from the specification.
+- [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+  and
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  now fill their `targets` column with the harmonized targets each
+  variable feeds, and `qes_search(fields = "target")` searches the names
+  and labels of those targets, in the language(s) `lang` asks for.
+- The specification is version 0.2.0 (`qes_spec("spec")`). Its checks
+  run offline on the shipped metadata (`gates.csv`, the joint counts of
+  filter and source codes, and `expected/marginals.csv`, the projected
+  marginals of every row), and `expected/hashes.csv` holds the md5 of
+  each harmonized column on the pinned files, which the live tests
+  compare with the engine’s output. Version 0.2.0 adds the targets
+  `age`, `birth_month`, `age_group3` and `citizen` and the
+  interview-mode target `survey_mode`, with their rows for the seven
+  studies; no earlier row, code or grade changed.
+
+### New: waves, weights and survey designs (experimental)
+
+- Waves: every study of the specification has one or more waves (a
+  post-election survey, the two waves of a panel, the campaign-period
+  and post-election surveys of `qes2022`), each with the rule that says
+  who took part: a disposition or date variable, never an answer
+  (`qes2007_panel`: `resultat = "C"`, 2,050 respondents, and
+  `resultat_pst = "CO"`, 2,054, of whom 1,663 took part in both;
+  `qes2018_panel` has a pre-election wave of all 1,250 respondents and a
+  post-election wave of 842). `qes_harmonize(layout = "long")` gives one
+  row per respondent and wave, with `wave`, `wave_timing` and
+  `wave_design`: a value sits on the row of the wave that asked the
+  question and the respondent’s other rows are `NA` with reason
+  `not_in_wave`, except the year and month of birth, which are repeated.
+  The respondent layout (the default) keeps one row per respondent, with
+  `waves` listing their waves. `qes_studies()$waves` lists the waves of
+  each study.
+- Weights: each wave has at most one recommended weight in the
+  specification’s registry, never one calibrated on the vote or turnout
+  (for `qes2022`, the untrimmed `cps_weight_general` and
+  `pes_weight_general`).
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  returns them as `weight_pre` and `weight_post` (the respondent’s pre-
+  and post-election waves; `NA` outside them), with their source
+  variables in `weight_pre_var` and `weight_post_var`, or as `weight`
+  and `weight_var` in the long layout. `weights = "normalized"`
+  (default) divides each wave’s weight by its mean over the wave’s
+  members, so it has mean 1 in each study and wave; `weights = "raw"`
+  keeps the deposited values. The weights of `qes2007_panel`,
+  `qes2012_panel` and `qes2018_panel` are not documented yet (their
+  registry rows need review; the 2007 panel’s post-election wave has
+  none) and are `NA`, with a message (class
+  `qesR_message_weight_review`), until they are.
+  `attr(, "qes_weight_guide")` gives, for each target and study, the
+  wave that asked the question and the weight that fits it, and, in the
+  respondent layout, a message (class `qesR_message_weight_timing`) says
+  when the targets of a study (static ones aside) need different
+  weights, such as vote intention (`weight_pre`) and reported vote
+  (`weight_post`) in `qes2022`. Results with different layouts cannot be
+  combined with [`rbind()`](https://rdrr.io/r/base/cbind.html) (an error
+  of class `qesR_error_input`).
+- New leading columns: `survey_mode` (`"web"`, `"phone"` or `"mixed"`:
+  the wave’s mode, or the respondent’s own in the first wave of the 2018
+  panel, where 400 were interviewed by telephone and 850 on the web),
+  `interview_date` (where the file has one: `qes2022` and
+  `qes2007_panel`), `days_to_election` (negative after the election) and
+  `eligible_voter`: whether the respondent could vote in the study’s
+  election, 18 or older on election day and, where asked, a Canadian
+  citizen. It is read from the year and month of birth, age and age
+  group, and is `NA` when the answers do not settle it (born 18 years
+  before the election year with no month of birth, say) or when a code
+  of these design inputs has no mapping and they were not requested as
+  targets. In `qes2018`, which sampled people aged 16 and over, 255
+  respondents could not vote (among them the 229 born in 2001 or 2002)
+  and 18 are `NA`; its weights target the population aged 16 and over,
+  and keeping eligible voters only does not recalibrate them. In
+  `qes2007_panel` the 391 respondents reached only after the election
+  are `NA`: the age question of the specification belongs to the first
+  wave.
+- New
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  turns harmonized data into a survey design: a `survey.design2` object
+  of the `survey` package, or a `tbl_svy` of `srvyr`
+  (`engine = "srvyr"`), both suggested and not imported. Each study is a
+  stratum; in the long layout the respondent is the sampling unit. With
+  `weight = NULL` it uses the weight column of the waves the targets
+  came from (static targets such as the year of birth do not count), and
+  asks you to choose when they call for both `weight_pre` and
+  `weight_post`. Rows without a weight are left out of the design, with
+  a message. `pool = "equal"` gives each study (each study and wave in
+  the long layout) the same total; it is the only place where qesR
+  changes the relative size of studies. A missing `survey` or `srvyr` is
+  an error of class `qesR_error_dependency`.
+- `qes_provenance(x, level = "cell")` also gives the registry status and
+  raw mean of each cell’s weight (`weight_status`, `weight_mean_raw`)
+  and, for targets about an election, the number of the wave’s members
+  who could not vote in it (`n_outside_universe`; `NA` when eligibility
+  is not available for the wave, for example when its age rows are not
+  signed off).
+- DESCRIPTION: `survey` and `srvyr` are suggested.
+
+### Website
+
+- The website has a *Harmonization (experimental)* menu, in English and
+  French: *Harmonizing across studies* (*Harmoniser entre études*) goes
+  from
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  to weighted estimates by study with
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md),
+  and shows the comparability grades, the reason for every missing
+  value, the weight of each wave, structural zeros and the provenance of
+  each cell, on the full data files; *Coverage by study* (*Couverture
+  par étude*) is a grid of every target and study, with the grade of
+  each study’s question and each study’s waves and recommended weights,
+  generated from the specification when the site is built; the
+  *Harmonization reference* is listed with them. Each target of the
+  reference now has a fixed anchor, `#target-<name>`, which the grid
+  links to.
+- The README, in English and French, presents
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+  and
+  [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md),
+  with a compact grid of the grade of each study’s question for each
+  target, generated from the specification.
+
+## qesR 0.5.0
+
+qesR 0.5.0 reads each study from its original data file, pinned and
+checked by md5, and ships an offline catalog, codebooks, question text
+and search in English and French. Every function of 0.4.4 keeps its name
+and its arguments, and
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+returns the same codes as before. Three changes alter what 0.4.4 code
+produces: functions no longer write into your workspace by default; text
+that the old reader damaged is repaired; and
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+and
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+keep every respondent and set values verified to be wrong to `NA`.
+`vignette("migrating-0.5", package = "qesR")` walks through the changes.
+
+### Breaking default: workspace assignment
+
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  no longer write into your workspace by default (`assign_global` now
+  defaults to `FALSE`; it was `TRUE` in 0.4.4). They always return the
+  data, visibly: write `qes2018 <- get_qes("qes2018")`. The first call
+  in a session that leaves `assign_global` unset prints a one-time note
+  (class `qesR_message_assign_default`); passing `assign_global`
+  explicitly avoids it.
+- With `assign_global = TRUE`, every function now assigns into the
+  environment it was called from: the global environment at top level,
+  the function’s own frame when called inside a function.
+  [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+  and
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  previously assigned into a frame of their own, so the object never
+  reached you.
+- `get_qes(assign_global = TRUE)` still assigns both `<code>` and, with
+  `with_codebook = TRUE`, `<code>_codebook`.
+- Study codes are trimmed and case-insensitive: `get_qes(" QES2018 ")`
+  reads `qes2018`, assigns `qes2018` and stores `"qes2018"` in
+  `attr(, "qes_survey_code")` (0.4.4 stored the code as typed).
+  `get_qes_master(surveys = "all")` means the 11 studies of 0.4.4. Codes
+  are never matched fuzzily: `"2018"` is an error that suggests
+  `qes2018`.
+- `get_codebook(assign_global = TRUE)` and its aliases now assign
+  exactly the object they return, in the requested `layout` (0.4.4
+  assigned the compact codebook whatever the layout).
+- `get_qes_master(save_path =, assign_global = TRUE)` now sets
+  `saved_to` before assigning, so the assigned and returned objects are
+  identical.
+
+### Results change: what this means for code written for 0.4.4
+
+Scripts written for 0.4.4, such as the analyses of a paper that
+installed v0.4.4, keep running, but some of their results change. What
+changes depends on what they use:
+
+- **Raw codes from
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md):
+  unchanged.** Codes, column names and
+  [`is.na()`](https://rdrr.io/r/base/NA.html) counts are those of 0.4.4
+  for all 11 studies (checked against 0.4.4 output). Code that works on
+  codes, such as [`as.numeric()`](https://rdrr.io/r/base/numeric.html)
+  with windows of valid codes, gives the same numbers.
+- **Label text, factors and types from
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md):
+  some change.**
+  [`haven::as_factor()`](https://forcats.tidyverse.org/reference/as_factor.html)
+  and anything else built from label text sees the repaired accents, the
+  `qes2012` labels in their original case and up to 256 characters
+  (0.4.4 lowercased them and cut them at 80), the `qes1998` panel file’s
+  own labels and the corrected CROP letters; `qes2022` dates are
+  date-times, and codes are doubles instead of integers (see *Changed
+  outputs: reading data*).
+- **[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md):
+  values change.** The master has 40,987 rows instead of 40,606, drops
+  the 70 stacked columns and sets the cells listed under *Changed
+  outputs: legacy master and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)*
+  to `NA`. Any estimate that uses `vote_choice`, `turnout`,
+  `sovereignty_support`, `political_interest`, `ideology`, `language`,
+  `income`, `religion`, `born_canada`, `education`, `party_best` or
+  `party_lean` can change. Under French messages (for example with
+  `LANG=fr_CA.UTF-8`), 0.4.4 also lost 1,208 of the 2,442
+  `qes2007_panel` rows and 616 of the 1,250 `qes2018_panel` rows while
+  reading them (a master of 39,132 rows); 0.5.0 reads every row whatever
+  the language.
+- **Codebooks** come from the shipped dictionary, not from Dataverse’s
+  DDI: labels and question text differ where 0.4.4 used the variable
+  name, a lowercased label or a question guessed from a PDF.
+
+`dev/legacy-diff.md` in the source repository (generated by
+`data-raw/compare_legacy.R` against a clean 0.4.4 build) gives, column
+by column and study by study, how many cells changed and why; every
+difference is an intended deletion, a blanked value or one of the reader
+changes listed here. To reproduce a 0.4.4 result exactly, install that
+version, for example in a separate library or an renv project:
+`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")` (the same
+code as the v0.4.4 baseline of `dev/legacy-diff.md`), and record
+`packageDescription("qesR")$RemoteSha` with the results.
+
+### Changed outputs: legacy master and `get_decon()`
+
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+keeps its arguments, its 30 documented columns in the same order and
+types, and its attributes;
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+keeps its 19 columns. Their values change by deletion, apart from the
+reader changes listed under *Changed outputs: reading data* (for example
+`qes2018` `turnout`): each column reads the variable 0.4.4 read,
+converted as 0.4.4 converted it, and values verified to be wrong are set
+to `NA`. A message says so once per session (classes
+`qesR_message_values_changed` and `qesR_message_legacy_columns`).
+Results from 0.4.4 can be reproduced only by installing it
+(`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+`dev/legacy-diff.md` in the source repository gives the counts, column
+by column and study by study, against a clean 0.4.4 build.
+
+- **Frozen sources.** The source variable of every column of every study
+  is the one qesR 0.4.4 chose, frozen from a clean 0.4.4 build
+  (`inst/extdata/legacy/sources.csv`); nothing is matched by name at run
+  time, so a label or name read differently can never change which
+  variable a column reads. `attr(, "source_map")` gives them, with the
+  md5 of each file read;
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  now has one too.
+- **No row is dropped.** There is no de-duplication and no removal of
+  empty rows: every study contributes exactly the rows of its file,
+  which is checked. 0.4.4 dropped 380 `qes2007_panel` respondents (its
+  `quest` number repeats across the two subsamples) and 1
+  `qes_crop_2007_2010` respondent as duplicates; the master now has
+  40,987 rows (40,606 in 0.4.4). `duplicates_removed` and
+  `empty_rows_removed` are always 0. `respondent_id` still repeats in
+  `qes2007_panel`.
+- **Columns removed.** The 70 columns 0.4.4 appended after the 30
+  documented ones, by stacking raw variables that share a name across
+  studies and renaming them from the 2007 questionnaire, are gone: they
+  held different questions in different studies (`vote_federal_2006` was
+  satisfaction with democracy in `qes2012`, `feeling_david_0_100` an
+  abortion item in `qes2018`, `provincial_pid_item` the home language).
+  `attr(, "removed_columns")` lists them; `crossstudy_variables_added`
+  is empty and `variable_name_map` has no rows. Read those items from
+  each study with
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md).
+  `save_path` no longer writes `<stem>_variable_name_map.csv`, and
+  `attr(, "variable_name_map_path")` is `NULL`; the provenance sidecar
+  `<stem>_provenance.csv` replaces it.
+- **Values set to `NA` in
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)**,
+  each listed with its number of cells and reason in the new attribute
+  `legacy_na_columns`:
+  - `party_best` and `party_lean` in every study (each study’s source
+    was another question or construct);
+  - `vote_choice` and `turnout` where the source is a vote intention or
+    likelihood: `qes2022` (`cps_votechoice1`, `cps_turnout`),
+    `qes_crop_2007_2010` and `qes1998` (`vote_choice` only; `qes1998`
+    `turnout` is the reported vote); `vote_choice` of the 387
+    `qes2007_panel` respondents not reached after the election (code 10,
+    which 0.4.4 counted as “did not vote”); `vote_choice_text` of
+    `qes2022` (the text of the intention item) and `qes2018` (the text
+    of the most important issue);
+  - `sovereignty_support` and `sovereignty` wherever the question is not
+    the referendum on Quebec becoming an independent country: `qes2007`,
+    `qes2008` and `qes1998` (the 1995 partnership question),
+    `qes2012_panel` (a sovereign country), `qes2007_panel` and
+    `qes_crop_2007_2010` (follow-up push questions), `qes2018_panel` (a
+    favourable/opposed scale). They keep `qes2012`, `qes2014`, `qes2018`
+    and `qes2022`;
+  - `language` of `qes2014` and `qes2022`, which held the interview or
+    interface language, not the mother tongue;
+  - `political_interest` of `qes2018` (raw 1-4 codes in reverse order on
+    the 0-10 column; filled in 0.7.0) and `qes2012_panel` (a 0-3 index
+    derived from debate viewing); `ideology` of `qes2014`, whose 0 and
+    10 answers were lost;
+  - `born_canada` of `qes2018` (people born elsewhere in Canada coded
+    No, raw codes left in); `income` and `religion` of `qes2018` (raw
+    codes) and the `-99` codes of `qes2022`; `education` of `qes1998`
+    (10-15 years of schooling coded as college);
+  - “don’t know” and refusal labels left as values: `born_canada` in
+    `qes2012` and `qes2014`, `language` and `education` in
+    `qes2018_panel`, `education` in `qes2007`, `income` in `qes2014`,
+    `qes2018_panel`, `qes_crop_2007_2010`, `qes2008`, `qes2007` and
+    `qes2007_panel`, `religion` in `qes2014` and `qes2012`.
+    `vote_choice` keeps its 0.4.4 category “Don’t know / Refused”, a
+    category 0.4.4 coded on purpose, until the harmonized `vote_choice`
+    of 0.7.0.
+- **Columns appended.** `vote_choice_timing` (`"post"`: the vote
+  reported after the election) and `sovereignty_item` (`"sov_indep"`:
+  the independent-country referendum question) say what `vote_choice`
+  and `sovereignty_support` hold in each study, with one value per
+  study; they are `NA` in the studies where those columns are blanked.
+  Appended columns are never removed.
+- **New attributes** of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md):
+  `legacy_na_columns`, `legacy_column_map` (what each column means, the
+  harmonized target that will fill it, the studies whose values changed,
+  and a flag for the columns that mix instruments: `political_interest`,
+  `age_group`, `education`), `removed_columns`, `qes_provenance` (the
+  file read for each study, so
+  [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)
+  and
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  accept the master) and `qes_spec`. `save_path` writes UTF-8 (CSV) and,
+  next to the file, `<stem>_provenance.csv`.
+- Each study’s rows are converted on their own, the way the full
+  11-study build of 0.4.4 converted them (0.4.4 converted the stacked
+  columns, so a study’s values could depend on the studies built with
+  it): `get_qes_master(surveys = "qes2018")` gives exactly the `qes2018`
+  rows of the full master.
+- `get_qes_master(surveys = "qes_demo")` and `get_decon("qes_demo")`
+  build the synthetic demonstration study, offline; the help pages’
+  examples use it.
+- **[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)**:
+  `turnout` and `votechoice` are `NA` in every study but `qes2022`,
+  because 0.4.4 read other questions for them (`q1` and `q2`: for
+  `qes2018`, satisfaction with democracy and the most important issue);
+  `party_best` and `partylean` are `NA` everywhere; the `-99` item
+  nonresponse codes of `qes2022` are `NA` in every column (the mean of
+  `ideology` is about 4.96, not 2.64). `qes2022` `turnout` and
+  `votechoice` stay the campaign-period likelihood and intention of
+  0.4.4, and the new attribute `timing` says so (`"pre"`).
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  now refuses the studies added since 0.4.4 (`qes1998_crop`,
+  `qes1998_createc`) with an error of class `qesR_error_input`.
+
+### Changed outputs: reading data
+
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  now reads the original upload of each study’s pinned data file (SPSS
+  `.sav` or Stata `.dta`), not the tab-delimited copy Dataverse makes of
+  it. The file is checked against the md5 in the catalog
+  (`qesR_error_checksum`) and its rows and columns against the catalog
+  (`qesR_error_rowcount`) before use, and is kept in the download cache.
+  Within a session the parsed data, and the Dataverse metadata used for
+  the codebook, are also kept in memory, so a second call (or
+  [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md))
+  makes no request (`options(qesR.memo = FALSE)` turns this off;
+  [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  empties it). qesR no longer reads text, CSV or zip files, and never
+  guesses which file to read.
+- Column names, codes and [`is.na()`](https://rdrr.io/r/base/NA.html)
+  counts are those of 0.4.4 for all 11 studies (checked against 0.4.4
+  output), except in the columns listed here:
+  - text damaged by Dataverse’s conversion is repaired: 1,805 cells with
+    a U+FFFD replacement character in `qes2018` (for example `district`,
+    `NM_MUNCP`), 2,517 in `qes2022`, 94 in `qes2018_panel`, 96 in
+    `qes2007_panel` and 2 in `qes1998`;
+  - `qes2022`: the six `cps_`/`pes_` `StartDate`, `EndDate` and
+    `RecordedDate` columns are date-times (POSIXct) instead of text, so
+    post-election dates of non-respondents are `NA` instead of `""`;
+    `cps_votechoice3_5_TEXT` and `pes_maildifficult_11_TEXT` are text,
+    as in the file, so their blank answers are `""` instead of `NA`
+    (0.4.4 returned integer and logical columns);
+  - Stata `float` columns (weights such as `pond` in `qes2012` and
+    `qes2018`, `cps_time` in `qes2022`) keep their stored precision
+    instead of 7 printed digits (relative differences below 1e-7);
+  - open-text answers no longer carry stray quote characters
+    (`qes2007_panel`, `qes2018_panel`), and blank answers are `""`
+    instead of `" "`;
+  - codes are stored as doubles instead of integers.
+- `qes2007` now reads the SPSS file of its deposit instead of the Stata
+  twin: both hold the same data, and the SPSS file has the complete
+  labels. Both files store most answer codes as zero-padded text
+  (`"01"`); qesR reads them as numbers, blanks as `NA`, in both files,
+  so `get_qes("qes2007", file = "STATA")` also gives the numbers, names
+  and `NA` counts of 0.4.4. (Dataverse’s tab-delimited copy keeps these
+  codes as quoted text; 0.4.4 had numbers because its text reader
+  converted them.) The same holds for the three interviewer-number
+  columns of `qes2012_panel`. These conversions are listed in the
+  catalog (`type_fixes.csv`). The catalog version became 2.2.0: the
+  `qes2007` pin changed, and `enums.csv` gained the vocabulary of the
+  harmonization spec (`block`, `target_type`, `election_ref_rule`,
+  `date_format`, `spec_change` and the `dk_offered` value `unknown`) and
+  the missing-value reason `not_reviewed`, set by
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
+- Labels come from the data file itself, never from Dataverse’s DDI
+  metadata or from a variable name:
+  - `qes2012`: labels in their original case and up to 256 characters,
+    from the SPSS twin of the same data (0.4.4 returned the Stata file’s
+    labels, lowercased and cut at 80 characters); names and values are
+    still those of the Stata file;
+  - `qes1998`: the panel file’s own labels (0.4.4 attached labels from
+    another file of the deposit);
+  - CROP files (`qes_crop_2007_2010`, `qes1998_crop`,
+    `qes1998_createc`): letters typed in the DOS character set are
+    corrected, for example “RESTE DU QUÉBEC” and “travaille à temps
+    plein” (listed in `text_fixes.csv`);
+  - a variable without a label in its file has none (0.4.4 often used
+    the variable name);
+  - `qes2018`: its data file has value labels for 21 variables only. The
+    hand-typed labels 0.4.4 attached to eight others (`qscol`, `q5`,
+    `q6`, …) return, checked against the questionnaire, with the offline
+    dictionary.
+- Codes that an SPSS file declares as user-missing are still returned as
+  values, as in 0.4.4; the declaration is now kept in the column
+  attributes `qes_na_values` and `qes_na_range`.
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  data carries a new attribute, `qes_provenance`: the DOI, dataset
+  version, file id and name, md5 (expected, observed), UNF, rows and
+  columns, where the file came from and when, the licence, the source of
+  the labels and the reader.
+- New `qes_provenance(x)` returns that record (class `qes_provenance`);
+  printing it gives one paragraph per file for a replication log, in the
+  message language. It also accepts the result of
+  [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md),
+  and study codes, for which it shows what
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  would read before anything is downloaded. An object that lost the
+  record (for example through
+  [`merge()`](https://rdrr.io/r/base/merge.html)) is an error of class
+  `qesR_error_no_provenance`.
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  accepts the same objects.
+- [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
+  is exactly [`head()`](https://rdrr.io/r/utils/head.html) of
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md):
+  it keeps the `qes_survey_code`, `qes_provenance` and `qes_codebook`
+  attributes and is served from memory when the study was read before in
+  the session.
+- `get_qes(file =)` chooses among the study’s data files only (0.4.4
+  took the first match among all files, documentation included), and a
+  pattern that matches several is an error (class
+  `qesR_error_ambiguous_file`); a pattern that is not a valid regular
+  expression is an error of class `qesR_error_input`.
+  `get_qes("qes2012", file = "SPSS")` still reads the SPSS twin.
+  `get_qes("qes1998", file = "CROP")` reads the study `qes1998_crop`,
+  with a message, and its banner, assigned names and codebook are those
+  of `qes1998_crop` (so is `qes_codebook("qes1998", file = "CROP")`).
+- A label or text value still holding a replacement or control character
+  after reading raises a warning of class `qesR_warning_encoding`.
+- The codebook attached by
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  is built offline (see *New: codebooks, questions and search*):
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  makes one request per study, for its data file.
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  read through the new reader. Where the original files leave a column
+  unlabelled that 0.4.4 labelled by hand (`qes2018` education and, in
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md),
+  gender; `qes1998` age group 65+ and education code 9), they keep the
+  0.4.4 labels, so these columns are unchanged. Changes that come from
+  the reader, compared with 0.4.4 on the same rows (see *Changed
+  outputs: legacy master and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)*
+  for the rest):
+  - [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md):
+    `qes2012` `religion` labels in their original case;
+    `qes_crop_2007_2010` `income` reads “20 000 \$ à 39 999 \$” instead
+    of “20 000 \$ … 39 999 \$”, and `province_territory` reads “Quebec”
+    for the 7,203 respondents whose region was typed in the DOS
+    character set; `qes2018` `turnout` is 0 instead of `NA` for the 336
+    respondents who said they did not vote (`q5` codes 1 and 3), as its
+    coding intends; `survey_weight` keeps its stored precision; the
+    `interview_*` columns of `qes2022` lose their trailing `.000`.
+  - [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md):
+    `qes2012` `province_territory` labels in their original case;
+    `qes1998` `age` holds the panel file’s labels (“18-24” … “55-64”,
+    with “65+”) instead of another file’s (“DE 18 A 24 ANS” …);
+    `qes2022` `votechoice_text` loses 4 replacement characters, and its
+    numeric columns (`age`, `political_interest`, `ideology`, `income`)
+    are doubles instead of integers. `qes2022` `age` stays a number (a
+    column whose labels only repeat its codes is not turned into a
+    factor).
+
+### Soft-deprecated names (kept indefinitely)
+
+| 0.4.4 function | Use instead | Notice from | What changed in 0.5.0 |
+|----|----|----|----|
+| [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) | 0.5.0 | offline; columns appended; `refresh` ignored |
+| [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) | 0.5.0 | as [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) |
+| [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md) | `qes_codebook(codebook, layout = )` | 0.5.0 | a plain data frame is an error; long layout keeps unlabelled variables |
+| [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md) | `qes_codebook(layout = "long")` | 0.5.0 | an unknown variable is an error; `""` labels kept |
+| [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md) | [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md) | 0.5.0 | exact match; `full = FALSE` no longer changes the result (no-op, with a note) |
+| [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) | 0.5.0 | lists every document, offline; `file` and `refresh` ignored |
+| [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) | 0.5.0 | as [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) |
+| [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` | 0.5.0 | `file` now selects documents (it selected a data file); md5-checked; `refresh` ignored |
+| [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md) | `head(get_qes(srvy), obs)` | 0.5.0 | exactly [`head()`](https://rdrr.io/r/utils/head.html) of [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md); `obs` must be a whole number of at least 1 |
+| [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) | 0.5.0 | accented French names; doi.org links; 1998 firm codes appended |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | none yet (a replacement is planned for 0.7.0) | none | kept as it is; values changed (see above) |
+
+- Eleven 0.4.4 helpers become legacy wrappers. They keep their arguments
+  and output, keep working and will not be removed. Each prints a
+  one-time notice (class `qesR_message_deprecated`) naming its
+  replacement, but only once that replacement exists. `quiet = TRUE`
+  does not hide the notice; `options(qesR.quiet_deprecated = TRUE)`
+  does. The table is in `?qesR-deprecated`.
+- Notices:
+  [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+  and
+  [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+  (use
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
+  same arguments) and
+  [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
+  (use `head(get_qes(srvy), obs)`).
+- Notices:
+  [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
+  (use
+  [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)),
+  and
+  [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
+  and
+  [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
+  (use
+  [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md)).
+  These two now return every document of the study from the offline
+  catalog, with the 0.4.4 columns, and no longer download metadata;
+  their `file` and `refresh` arguments are ignored, with a one-time note
+  (class `qesR_message_arg_ignored`).
+- Notice:
+  [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
+  (use `qes_download(what = "docs")`). It now downloads the documents
+  listed in the offline catalog, the same files
+  [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
+  lists, checks each against its md5 before giving it its final name,
+  and makes no metadata request. Its `file` argument now selects
+  documents by name (in 0.4.4 it selected a data file), `refresh` is
+  ignored with a one-time note, and `dest_dir` is created only when
+  there is a file to download. A file already in `dest_dir` is still
+  kept unless `overwrite = TRUE`.
+- Notices:
+  [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
+  (use `qes_codebook(codebook, layout = )`),
+  [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md)
+  (use `qes_codebook(layout = "long")`) and
+  [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md)
+  (use
+  [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)).
+  Their behaviour changes:
+  - [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
+    on a plain data frame (for example a codebook read back from a CSV
+    file, which has lost its class) is now an error of class
+    `qesR_error_input` that names the fix, `qes_codebook("<code>")`;
+    0.4.4 accepted any data frame. Its long layout keeps the variables
+    that have no value labels (one row with `value` `NA`), where 0.4.4
+    dropped them.
+  - `get_value_labels(codebook, variable)` with a variable that is not
+    in the codebook is an error of class `qesR_error_unknown_variable`
+    that suggests near matches; 0.4.4 returned an empty list. A value
+    label that is `""` in its file is kept.
+  - `get_question(do, q)` matches `q` exactly (ignoring case only when
+    that names a single column): `get_question(d, "q1")` no longer
+    answers for `q10`, and `"q36"` no longer for `q36_1`; an unknown
+    name is an error of class `qesR_error_unknown_variable` that
+    suggests near matches. It returns the questionnaire wording of
+    [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
+    when the study is known, else the variable label; a label that only
+    repeats the variable’s name is no label, and the result is then `NA`
+    with a warning (0.4.4 returned the name, for example `"responseid"`
+    in `qes2018`). `full` no longer changes the result (the text is
+    always the most complete one qesR has; `full = FALSE` prints a
+    one-time note), and a question its source file cut at 80 characters
+    (`qes2022`) is returned as is with a warning of class
+    `qesR_warning_truncated`, instead of being completed from a
+    downloaded PDF.
+  - [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+    and
+    [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+    return what
+    [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+    returns: the 0.4.4 columns first and in the same order, then new
+    columns (see *New: codebooks, questions and search*); `refresh` is
+    ignored with a one-time note.
+- [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  stays stable until 0.7.0.
+
+### New: study catalog, documents and citations
+
+- New
+  [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
+  lists every study from a catalog shipped with the package, with no
+  network request: code, family, deposit title and authors, English and
+  French display names, year, design, target population, server, DOI,
+  the pinned dataset version and data file, source language, licence and
+  the dataset UNF. `qes_studies(check_updates = TRUE)` asks Dataverse,
+  one metadata request per deposit, whether a newer version exists or
+  the pinned data file changed; a study that cannot be checked is
+  reported as `"unreachable"` instead of failing.
+- New
+  [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md)
+  lists the codebooks, questionnaires and technical or methodological
+  reports of each study, with their role, language, size, md5 and
+  download URL, offline.
+- New
+  [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
+  returns the citation of qesR and of each dataset (authors, year,
+  verbatim deposit title, DOI, repository, pinned version and UNF) as
+  text, BibTeX or `bibentry`. `citation("qesR")` now works (static
+  `inst/CITATION`). The citation vignettes are generated from the
+  catalog; the hand-copied tables, which carried a stray `[fileUNF]`
+  token and non-DOI links, are gone from the README and vignettes.
+- The 1998 deposit is split into its three surveys: `qes1998` still
+  reads the combined CROP-CREATEC panel file (1,483 rows, as in 0.4.4),
+  and the new codes `qes1998_crop` (450 rows) and `qes1998_createc`
+  (1,057 rows) read the two firms’ files. All three cover francophones
+  only, each with the definition its codebook gives.
+- The Durand panels, the CROP polls and the 1998 polls are no longer
+  presented as “Quebec Election Study” panels:
+  `get_qescodes(detailed = TRUE)` and the
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  banner use their own titles (for example “Panel Survey on the 2018
+  Quebec Election”), and the same names now appear in the `qes_name_en`
+  column of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  for those studies. French names carry their accents. `documentation`
+  is the doi.org link.
+- [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  keeps building the 11 studies of 0.4.4 by default, and
+  `surveys = "all"` keeps meaning those 11. The new 1998 codes are not
+  in the master yet: naming them is an error (class `qesR_error_input`),
+  because the `qes1998` panel file already holds their respondents. Read
+  them with
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md).
+- The website is reworked. Its English and French guides sit in two
+  parallel menus, every guide and example has a partner in the other
+  language that runs the same code, and the home page has a French
+  section. *Getting started* now goes from a study code to a weighted
+  estimate, stating the population, the weight and the denominator. The
+  Study catalog page (EN and FR) is generated from the shipped catalog
+  when the site is built, one section per study with its deposit, pinned
+  data file and md5, documents and licence, in place of the hand-written
+  survey code table, which still carried the old study names. The
+  examples are built from the full data files through qesR’s cache,
+  compute each estimate within one study with its weight, and mark
+  structural zeros (a party that did not run, or that a study’s question
+  did not list) instead of showing them as 0. The reference is grouped
+  by task (Discover, Get data, Metadata and search, Reproducibility,
+  Cache), with a *Harmonization (experimental)* section for
+  [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+  and
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  and the 0.4.4 functions under *Legacy and deprecated*;
+  [`?qesR`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+  and `?qesR-fr` open with the same grouped table of functions. The site
+  has a dark mode, the logo in the navigation bar and favicons drawn
+  from the current logo; nothing on it reads the old 40,606-row master
+  file.
+- The catalog is versioned (`inst/extdata/VERSIONS`), and a synthetic
+  demonstration study, `qes_demo`, ships in its own tree for offline
+  examples and tests. `get_qes("qes_demo")` reads it with no download.
+
+### New: codebooks, questions and search
+
+- Codebooks are built offline. qesR now ships the description of every
+  variable of every study released under CC0, that is all but `qes2022`
+  (`inst/extdata/dict/`, 165 KB): the variable label of the pinned data
+  file, the question text in English and French from the deposited
+  questionnaires (with a reference to each document that gives it: one
+  or more `<file_id>:<question>` separated by `;`,
+  e.g. `352010:Q19;352009:Q19` for the English and French
+  questionnaires), the value labels, the unweighted count of each code,
+  and the missing type of each “don’t know”, “refused” or declared
+  missing code. A code an SPSS file declares missing but whose label is
+  an answer (“Un autre parti”, “ne voterait pas/annulerait” in a
+  voting-intention item) gets no missing type; “did not vote”, “spoiled”
+  and “not reached in this wave” codes get their own type instead of
+  `user_na`.
+  [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  and `get_qes(with_codebook = TRUE)` no longer download Dataverse’s DDI
+  metadata or any PDF or Word document, and no longer run external
+  programs (`pdftotext`, `gs`, `python3`, `textutil`) to read them. The
+  `xml2` package is no longer needed.
+- `qes2022` is licensed CC BY-NC 4.0, so qesR ships none of its labels,
+  question text or answer counts. Its codebook is built the first time
+  you ask for it, from your own md5-verified copy of the data file, and
+  kept in the download cache as two CSV files (listed by
+  [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)
+  with `kind = "shard"`, deleted by
+  [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)).
+  Its question text is the file’s variable label, which Stata cut at 80
+  characters: those questions are flagged `question_truncated = TRUE`,
+  with the codebook document to read in `doc_ref`.
+- [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+  gains `variables` (exact names; an unknown name is an error that
+  suggests near matches) and `lang` (`"en"` or `"fr"` for the question
+  text; `NULL`, the default, gives the study’s own language). Its other
+  arguments are unchanged. `srvy` also accepts a codebook (laid out
+  again) or data returned by
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  (a codebook of its columns). `refresh` is ignored, with a one-time
+  note. With `file =`, the codebook describes the pinned file and uses
+  its variable names, which the new attribute `variable_names_file`
+  names (`qes2012`’s SPSS twin spells them in upper case);
+  `qes_codebook(<data>)` and the codebook
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  attaches use the names of the data.
+- Codebook columns: the four 0.4.4 columns come first, in the same order
+  (`variable`, `label`, `question`, `n_value_labels`), followed by
+  `study`, `position`, `type`, `question_lang`, `question_truncated`,
+  `value_labels` (`"1=Oui | 2=Non | 8=Je ne sais pas"`), `missing_codes`
+  (`"8=dk | 9=refused"`), `targets` (empty for now), `label_source`,
+  `question_source` and `doc_ref`. The long layout adds `study`,
+  `missing_type` and `is_declared_na` after its 0.4.4 columns.
+- Fixed codebook problems of 0.4.4:
+  - the attributes `survey_code`, `doi`, `doi_url`,
+    `selected_data_file`, `files` and `codebook_files` are kept in every
+    layout (0.4.4 dropped them, so `get_codebook_files(codebook = )` and
+    [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
+    found nothing and
+    [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+    reported “0 support files”); a new `qes_provenance` attribute
+    records the pinned file;
+  - `codebook_files` lists every document of the study (0.4.4 missed the
+    Word questionnaires of `qes2007`, `qes2012`, `qes2014` and
+    `qes2018`);
+  - a missing label or question is `NA`, never the variable name (in
+    0.4.4, 246 of the 254 `qes2018` labels were the variable name), and
+    `question` is never a copy of `label`; labels no longer carry raw
+    line breaks;
+  - `qes2018`’s value labels, absent from its data file for most
+    variables, come from the study’s French questionnaire with its
+    programmed answer codes (`label_source = "supplement"`), checked
+    against the codes observed in the data;
+  - [`print()`](https://rdrr.io/r/base/print.html) counts variables, not
+    rows, and accepts `n`.
+- New `qes_question(x, variables, lang = NULL)` returns the exact
+  wording of the questions, with its language, source, document
+  reference and universe (who was asked), and flags a question that its
+  source cut (`truncated`).
+- New `qes_search(pattern)` searches variable names, labels, question
+  text (English and French) and value labels of every study, offline,
+  ignoring case and accents (`qes_search("souverain|sovereign")`).
+  `qes2022` is searchable once its codebook has been built. The result
+  reports, per study, how many variables have question text and how many
+  were checked by hand.
+- New `qes_missing(x)` sets the codes the codebook types as missing
+  (“don’t know”, “refused”, declared SPSS missing values, `qes2022`’s
+  `-99` item nonresponse) to `NA` in
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  data, or with `action = "tagged"` to tagged `NA` values that keep the
+  reason
+  ([`haven::na_tag()`](https://haven.tidyverse.org/reference/tagged_na.html)).
+  Spoiled ballots, options not ticked in a multiple-choice question,
+  “did not vote” and “not registered” are left alone unless asked for
+  (`types =`). A code that the file declares missing but that the
+  codebook records as an answer is never changed. It records what it did
+  in the attribute `qes_missing_log`. It works from the codebook
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  attached or from the labels on the columns, and never downloads
+  anything.
+
+### New: downloads, cache and provenance
+
+- Downloads now use the `curl` package (new in Imports) instead of
+  [`download.file()`](https://rdrr.io/r/utils/download.file.html).
+  `curl` gives the HTTP status, the response headers (needed to honour
+  `Retry-After` and to recognise a server that refuses automated
+  requests) and the body from one request, has per-transfer stall
+  timeouts, needs no external program and has no R dependencies.
+- A request that fails for a passing reason (a timeout, a dropped
+  connection, HTTP 408, 429, 500, 502, 503 or 504) is tried again, up to
+  4 attempts (`options(qesR.max_tries =)`), after a growing pause or the
+  delay the server asks for in `Retry-After` (at most two minutes; a
+  longer delay is an error of class `qesR_error_http`). Other errors
+  fail at once. Connections time out after 30 s, and a download slower
+  than 1 KB/s for 60 s (`options(qesR.stall_timeout =)`) is abandoned.
+- Network errors have subclasses: `qesR_error_http` (fields `status`,
+  `retry_after`, `server_message`), `qesR_error_http_refused` (a Harvard
+  Dataverse bot challenge or a 403: never retried or worked around; the
+  message explains how to download the file by hand), `qesR_error_tls`
+  and `qesR_error_offline`. A file is written under a temporary `.part`
+  name and renamed only once complete, so an interrupted download never
+  leaves a truncated file behind.
+- New
+  [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)
+  and
+  [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  list and delete the files in qesR’s download cache. The cache keeps
+  each catalog file under its file id and md5 and checks the md5 before
+  keeping it (`qesR_error_checksum` otherwise). By default it lives in
+  the session’s temporary directory and disappears when R exits;
+  `options(qesR.cache = "disk")` keeps files between sessions in
+  `tools::R_user_dir("qesR", "cache")`, and `options(qesR.cache_dir =)`
+  in a directory of your choice (qesR works only in a `qesR` subfolder
+  that it creates and marks, and
+  [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  refuses any folder without that mark).
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  reads its data files through this cache (see *Changed outputs: reading
+  data*).
+- `qes_studies(check_updates = TRUE)` remembers each answer for the
+  session
+  ([`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
+  forgets it) and tries each deposit at most twice.
+- New `qes_download(studies, path)` saves the original files of one or
+  more studies in a directory you name: the data file as deposited
+  (`what = "data"`, the default) and the codebooks, questionnaires and
+  reports (`what = "docs"`, filtered by `role` and `lang`). `path` must
+  already exist, nothing is written outside it, and nothing at all when
+  no file matches. Before anything is written, a file already there with
+  the expected md5 is kept, and one that differs is an error (class
+  `qesR_error_input`) unless `overwrite = TRUE`. Each file comes through
+  the download cache, is copied under a temporary `.part` name, checked
+  against its catalog md5 and only then renamed. It returns, invisibly,
+  one row per file (`study`, `file_id`, `file_name`, `role`, `lang`,
+  `md5`, `local_path`, `from_cache`, `downloaded`, `pinned`) with a
+  `qes_provenance` attribute.
+- `qes_download(version = "latest")` is the only way qesR fetches files
+  it does not pin: it asks Dataverse for the latest published version of
+  each deposit, follows a replaced file to its replacement, checks each
+  file against the md5 Dataverse gives, warns (class
+  `qesR_warning_unpinned`) and records `pinned = FALSE`.
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  keeps reading the pinned files.
+
+### Security
+
+- Removed the insecure download fallback. qesR 0.4.4 retried a failed
+  download with TLS certificate verification turned off (for `qes2022`
+  always, and for any study whose first error mentioned SSL), first
+  through
+  [`download.file()`](https://rdrr.io/r/utils/download.file.html) and
+  then by running the `curl --insecure` command. A failed download is
+  now an error of class `qesR_error_network` that keeps the original
+  error; qesR never disables certificate checks and never runs external
+  download programs.
+- Requests now identify themselves only as `qesR/<version> R/<version>`
+  and are spaced at least one second apart per server.
+- qesR no longer reads `.rds` files from Dataverse:
+  [`readRDS()`](https://rdrr.io/r/base/readRDS.html) is never applied to
+  downloaded content.
+- qesR no longer runs external programs (0.4.4 ran `curl`, `pdftotext`,
+  `gs`, `python3` and `textutil`) and never calls
+  [`load()`](https://rdrr.io/r/base/load.html),
+  [`eval()`](https://rdrr.io/r/base/eval.html) or
+  [`parse()`](https://rdrr.io/r/base/parse.html); a test scans the
+  installed namespace for these calls and for any TLS option.
+
+### Messages and errors
+
+- Every error, warning and message that qesR itself raises now has a
+  class, so scripts can handle them with
+  [`tryCatch()`](https://rdrr.io/r/base/conditions.html) without
+  matching text. Errors inherit from `qesR_error` (`qesR_error_input`,
+  `qesR_error_unknown_study`, `qesR_error_unknown_variable`,
+  `qesR_error_ambiguous_file`, `qesR_error_network`,
+  `qesR_error_source`), warnings from `qesR_warning` and messages from
+  `qesR_message`. Conditions carry data fields such as `study`,
+  `suggestions`, `url` and the root cause in `parent`. See
+  [`?qesR`](https://thomasgareau.github.io/qesR/reference/qesR-package.md).
+- Messages, warnings and errors are available in English and French.
+  qesR follows `options(qesR.lang =)`, then the `QESR_LANG` and
+  `LANGUAGE` environment variables, then the messages locale. The
+  language never changes what functions return: qesR’s own part of the
+  reasons recorded in `attr(get_qes_master(), "failed_surveys")` is
+  always in English (a root cause reported by R itself, such as a
+  download error, keeps R’s text).
+- Unknown study codes suggest near matches.
+
+### Documentation, licence and package
+
+- Help pages are now generated with roxygen2 from comments in `R/`, with
+  the same topics, arguments and defaults as 0.4.4; their examples now
+  run offline, and new topics document the new functions (see below).
+  The package help page is also available as
+  [`?qesR`](https://thomasgareau.github.io/qesR/reference/qesR-package.md)
+  and now lists the authors and project links.
+- The test suite is back (testthat 3rd edition). It restores the tests
+  removed before 0.4.4, except one that required the insecure TLS retry,
+  and adds contract tests for the 14 exported functions: their
+  arguments, visible return values, no writes outside
+  [`tempdir()`](https://rdrr.io/r/base/tempfile.html) or into your
+  workspace by default, opt-in assignment, and the column names that
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  and the codebook helpers return. Tests run offline against a simulated
+  Dataverse; the live check against Dataverse runs only when
+  `QESR_LIVE=true`.
+- `R CMD check --as-cran` now runs on GitHub Actions for every push and
+  pull request on macOS, Windows and Ubuntu (R devel, release, oldrel-1
+  and 4.1).
+- Copyright and licence: the MIT licence now names the author, Thomas
+  Gareau-Paquette, as copyright holder in `LICENSE` and `LICENSE.md` (it
+  named “Quebec Election Study/Étude électorale québécoise rightful
+  owners”), and the “Quebec Election Study” copyright-holder entry is
+  removed from `Authors@R`: it is not a legal person, and no data of the
+  studies ship with the package. The new file `COPYRIGHTS` lists the
+  metadata of each study that ships (CC0 labels and question text) with
+  its DOI.
+- `inst/extdata/qes_master.csv` is removed. It held a 300-row sample per
+  study of an old master build, including rows derived from the 2022
+  study (CC BY-NC 4.0), and the analysis vignettes read it when
+  installed, so they showed different numbers from the website. No
+  respondent data ship any more; the demonstration study `qes_demo` is
+  synthetic.
+- Vignettes: the vignettes that ship with the package run their code
+  offline, on the catalog, the shipped metadata and `qes_demo`: *Getting
+  started* (`get-started`, `fr-demarrage`), *Study citations* (renamed
+  `citations`, `fr-citations`) and the new *Moving from qesR 0.4.4 to
+  0.5.0* (`migrating-0.5`, `fr-migrer-0.5`). Each French vignette runs
+  the same code as its English partner.
+- The analysis examples (descriptive statistics, sovereignty, vote
+  choice) and the merged-dataset guide are now website-only articles.
+  They read
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  when the site is built, instead of a CSV file found in the working
+  directory or in the package, compute each estimate within one study
+  with that study’s weight, show their code, and correct three
+  statements: the vote shares are among respondents who reported voting
+  for a party, the CROP polls do have a year for each respondent, and
+  only the independent-country question is used for sovereignty.
+- Examples run offline, on `qes_demo` and the shipped metadata. The only
+  example that uses the network is `qes_studies(check_updates = TRUE)`,
+  run only when a connection is available.
+- New help page `?qesR-fr`: an overview of the package in French, with a
+  table of its functions.
+- DESCRIPTION: the Description cites each study’s dataset DOI;
+  `LazyData` is dropped; `dplyr`, `ggplot2` and `pkgdown` are no longer
+  suggested (the website lists `ggplot2` and `pkgdown` in
+  `Config/Needs/website`; `dplyr` is not used); a `Copyright` field
+  points to `COPYRIGHTS`; `xml2` is no longer imported, and `curl` is
+  (see *New: downloads, cache and provenance*).
+- `scripts/build_qes_master.R` moved to
+  `data-raw/legacy_build_master.R`; it now needs an explicit
+  `--out-dir`. The repository no longer tracks the locally built
+  `qes_master.*` files.
+
 ## qesR 0.4.4
 
 - Added

@@ -1,4 +1,4 @@
 # License
 
     YEAR: 2026
-    COPYRIGHT HOLDER: Quebec Election Study/Étude électorale québécoise rightful owners
+    COPYRIGHT HOLDER: Thomas Gareau-Paquette

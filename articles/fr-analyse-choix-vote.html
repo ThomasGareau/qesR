@@ -5,76 +5,28 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Exemple de cas d'usage : évolution du choix de vote • qesR</title>
+<title>Exemple : vote déclaré • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/Space_Grotesk-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Exemple de cas d'usage : évolution du choix de vote">
+<meta property="og:title" content="Exemple : vote déclaré">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    <script>
-(function () {
-  function normalizePath(path) {
-    if (!path || path === "/") return "index.html";
-    var clean = path;
-    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
-      clean = clean.slice(0, -1);
-    }
-    var segments = clean.split("/").filter(Boolean);
-    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
-    if (segments.length === 0) return "index.html";
-    return segments.join("/");
-  }
-  document.addEventListener("DOMContentLoaded", function () {
-    var path = window.location.pathname || "/";
-    var rel = normalizePath(path);
-    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
-    var isFrench = /^articles\/fr-/.test(rel);
-    var map = {
-      "index.html": "articles/fr-demarrage.html",
-      "articles/get-started.html": "articles/fr-demarrage.html",
-      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
-      "articles/study-citations.html": "articles/fr-citations-etudes.html",
-      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
-      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
-      "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
-      "articles/fr-demarrage.html": "articles/get-started.html",
-      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
-      "articles/fr-citations-etudes.html": "articles/study-citations.html",
-      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
-      "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
-    };
-    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
-    var label = isFrench ? "EN" : "FR";
-    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
-    if (!navbar) return;
-    var holder = document.createElement("div");
-    holder.className = "qesr-lang-switch-wrap";
-    var btn = document.createElement("a");
-    btn.className = "qesr-lang-switch";
-    btn.href = root + target;
-    btn.textContent = label;
-    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
-    holder.appendChild(btn);
-    navbar.appendChild(holder);
-  });
-})();
-</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,14 +36,68 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
+    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
+    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
+    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+  </ul>
+</li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
+<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
+    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case example: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case example: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/ThomasGareau/qesR" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
@@ -105,235 +111,357 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Exemple de cas d'usage : évolution du choix de vote</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Exemple : vote déclaré</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/fr-analyse-choix-vote.Rmd" class="external-link"><code>vignettes/fr-analyse-choix-vote.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-analyse-choix-vote.Rmd" class="external-link"><code>vignettes/articles/fr-analyse-choix-vote.Rmd</code></a></small>
       <div class="d-none name"><code>fr-analyse-choix-vote.Rmd</code></div>
     </div>
 
     
     
-<details><summary>
-Afficher le code utilisé dans cette page
-</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<p><em><a href="analysis-vote-choice.html">English version</a></em></p>
+<p>Cette page présente le vote provincial déclaré dans les études du
+fichier fusionné hérité, <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code>. Elle est
+construite en même temps que le site : les fichiers de données sont
+téléchargés de leurs dépôts Dataverse par le cache de qesR.</p>
+<p>Pour des estimations avec le moteur d’harmonisation (expérimental),
+avec un niveau de comparabilité pour la question de chaque étude et la
+pondération de la vague qui l’a posée, voir <a href="fr-harmonisation.html">Harmoniser entre études</a>.</p>
+<p>Depuis qesR 0.7.0, <code>vote_choice</code> est produit par le moteur
+d’harmonisation : il contient le vote déclaré après l’élection dans
+toutes les études qui l’ont demandé (<code>vote_choice_timing</code>
+vaut <code>"post"</code>), y compris <code>qes2022</code> et
+<code>qes1998</code>, et vaut <code>NA</code> pour les répondants qui
+n’ont pas voté, ne savent pas ou refusent de répondre. Les sondages CROP
+n’ont demandé que l’intention de vote : ils ne sont pas présentés.
+Chaque estimation est calculée à l’intérieur d’une étude, avec la
+pondération propre à cette étude (<code>survey_weight</code>) ; c’est
+une estimation ponctuelle qui ne tient pas compte du plan de sondage.
+Les Études électorales québécoises, les panels Durand et les sondages de
+1998 sont présentés séparément, car leurs devis diffèrent. Les sondages
+de 1998 n’ont interrogé que des francophones, et les firmes ont
+surreprésenté les indécis et ceux qui refusaient de répondre ; leur
+pondération (<code>survey_weight</code>, telle que 0.4.4 la lisait)
+n’est pas revue, de sorte que leurs parts ne sont comparables ni aux
+autres études ni aux résultats officiels.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">en</span>, <span class="va">fr</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">lang</span>, <span class="st">"fr"</span><span class="op">)</span><span class="op">)</span> <span class="va">fr</span> <span class="kw">else</span> <span class="va">en</span></span>
 <span></span>
-<span><span class="va">pkg_master</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"qes_master.csv"</span>, package <span class="op">=</span> <span class="st">"qesR"</span><span class="op">)</span></span>
-<span><span class="va">master_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes_master.csv"</span>, <span class="st">"../qes_master.csv"</span>, <span class="va">pkg_master</span><span class="op">)</span></span>
-<span><span class="va">master_paths</span> <span class="op">&lt;-</span> <span class="va">master_paths</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">master_paths</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">master_paths</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="va">master_paths</span><span class="op">)</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">qes_year</span><span class="op">)</span>, <span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    vote_choice_brut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/trimws.html" class="external-link">trimws</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    choix_vote_parti <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>      <span class="va">vote_choice_brut</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"ADQ"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"CAQ/ADQ"</span>,</span>
-<span>      <span class="va">vote_choice_brut</span> <span class="op">==</span> <span class="st">"PLQ"</span> <span class="op">~</span> <span class="st">"PLQ"</span>,</span>
-<span>      <span class="va">vote_choice_brut</span> <span class="op">==</span> <span class="st">"PQ"</span> <span class="op">~</span> <span class="st">"PQ"</span>,</span>
-<span>      <span class="va">vote_choice_brut</span> <span class="op">==</span> <span class="st">"QS"</span> <span class="op">~</span> <span class="st">"QS"</span>,</span>
-<span>      <span class="va">vote_choice_brut</span> <span class="op">==</span> <span class="st">"PCQ"</span> <span class="op">~</span> <span class="st">"PCQ"</span>,</span>
-<span>      <span class="cn">TRUE</span> <span class="op">~</span> <span class="cn">NA_character_</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="va">partis_majeurs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ/ADQ"</span>, <span class="st">"PLQ"</span>, <span class="st">"PQ"</span>, <span class="st">"QS"</span>, <span class="st">"PCQ"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_base</span> <span class="op">&lt;-</span> <span class="va">master</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">choix_vote_parti</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">choix_vote_parti</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_den</span> <span class="op">&lt;-</span> <span class="va">vote_base</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_avec_choix_vote <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_parti</span> <span class="op">&lt;-</span> <span class="va">vote_base</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">annee</span>, <span class="va">choix_vote_parti</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_parti <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">grille</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span></span>
-<span>  annee <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">vote_den</span><span class="op">$</span><span class="va">annee</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  choix_vote_parti <span class="op">=</span> <span class="va">partis_majeurs</span>,</span>
-<span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">grille</span>, <span class="va">vote_parti</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"annee"</span>, <span class="st">"choix_vote_parti"</span><span class="op">)</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">vote_parti</span><span class="op">$</span><span class="va">n_parti</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_parti</span><span class="op">$</span><span class="va">n_parti</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="va">vote_parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">vote_parti</span>, <span class="va">vote_den</span>, by <span class="op">=</span> <span class="st">"annee"</span>, all.x <span class="op">=</span> <span class="cn">TRUE</span>, sort <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_parti</span> <span class="op">&lt;-</span> <span class="va">vote_parti</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
-<span>    part <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_avec_choix_vote</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="va">n_parti</span> <span class="op">/</span> <span class="va">n_avec_choix_vote</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    se <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">n_avec_choix_vote</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="va">part</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">part</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span> <span class="op">/</span> <span class="va">n_avec_choix_vote</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    ci_bas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">part</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span>,</span>
-<span>    ci_haut <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">part</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">se</span><span class="op">)</span>, <span class="cn">NA_real_</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span><span class="va">table_vote</span> <span class="op">&lt;-</span> <span class="va">vote_parti</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span></span>
-<span>    n_avec_choix_vote <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">n_avec_choix_vote</span><span class="op">)</span>,</span>
-<span>    caq_adq <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">part</span><span class="op">[</span><span class="va">choix_vote_parti</span> <span class="op">==</span> <span class="st">"CAQ/ADQ"</span><span class="op">]</span>,</span>
-<span>    plq <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">part</span><span class="op">[</span><span class="va">choix_vote_parti</span> <span class="op">==</span> <span class="st">"PLQ"</span><span class="op">]</span>,</span>
-<span>    pq <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">part</span><span class="op">[</span><span class="va">choix_vote_parti</span> <span class="op">==</span> <span class="st">"PQ"</span><span class="op">]</span>,</span>
-<span>    qs <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">part</span><span class="op">[</span><span class="va">choix_vote_parti</span> <span class="op">==</span> <span class="st">"QS"</span><span class="op">]</span>,</span>
-<span>    pcq <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">part</span><span class="op">[</span><span class="va">choix_vote_parti</span> <span class="op">==</span> <span class="st">"PCQ"</span><span class="op">]</span>,</span>
-<span>    .groups <span class="op">=</span> <span class="st">"drop"</span></span>
-<span>  <span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">annee</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">table_vote</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span></span>
-<span>      `Année d'étude` <span class="op">=</span> <span class="va">annee</span>,</span>
-<span>      `N avec item choix de vote` <span class="op">=</span> <span class="va">n_avec_choix_vote</span>,</span>
-<span>      `CAQ/ADQ (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">caq_adq</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>      `PLQ (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">plq</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>      `PQ (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pq</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>      `QS (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">qs</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>      `PCQ (%)` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pcq</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">vote_parti</span><span class="op">$</span><span class="va">choix_vote_parti</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">vote_parti</span><span class="op">$</span><span class="va">choix_vote_parti</span>, levels <span class="op">=</span> <span class="va">partis_majeurs</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">vote_parti</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">annee</span>, y <span class="op">=</span> <span class="va">part</span>, color <span class="op">=</span> <span class="va">choix_vote_parti</span>, group <span class="op">=</span> <span class="va">choix_vote_parti</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">ci_bas</span>, ymax <span class="op">=</span> <span class="va">ci_haut</span>, fill <span class="op">=</span> <span class="va">choix_vote_parti</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.15</span>, linewidth <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, se <span class="op">=</span> <span class="cn">FALSE</span>, span <span class="op">=</span> <span class="fl">0.9</span>, linewidth <span class="op">=</span> <span class="fl">0.8</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>labels <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, <span class="fl">0</span><span class="op">)</span>, <span class="st">"%"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">vote_parti</span><span class="op">$</span><span class="va">annee</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid.minor <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>, axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">9</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</details><div class="section level2">
-<h2 id="tableau-1-parts-de-choix-de-vote-par-année">Tableau 1 : parts de choix de vote par année<a class="anchor" aria-label="anchor" href="#tableau-1-parts-de-choix-de-vote-par-ann%C3%A9e"></a>
+<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="va">studies</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_code</span>, <span class="va">studies</span><span class="op">$</span><span class="va">study</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">master</span><span class="op">$</span><span class="va">year</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">qes_year</span><span class="op">)</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="tableau-1-vote-déclaré-par-étude">Tableau 1 : vote déclaré par étude<a class="anchor" aria-label="anchor" href="#tableau-1-vote-d%C3%A9clar%C3%A9-par-%C3%A9tude"></a>
 </h2>
-<table style="width:100%;" class="table">
-<caption>Parts de choix de vote des principaux partis par
-année</caption>
+<p>Les parts sont calculées parmi les répondants qui ont déclaré avoir
+voté pour un parti, « Other party » (autre parti) compris. Les
+répondants qui n’ont pas voté, ne savent pas ou refusent de répondre
+valent <code>NA</code> et sont exclus du dénominateur.</p>
+<p>Deux sortes de cellules sont des zéros structurels, et non des
+estimations ; elles ne sont pas affichées comme 0 :</p>
+<ul>
+<li>
+<strong>—</strong> le parti ne se présentait pas à cette élection,
+selon les résultats officiels d’Élections Québec conservés dans le dépôt
+source de qesR
+(<code>inst/extdata/validation/official_results.csv</code> ; absents du
+paquet construit). L’ADQ s’est fusionnée à la CAQ en 2012, et Option
+nationale ne s’est présentée qu’en 2012 et en
+<ol start="2014" style="list-style-type: decimal"><li>
+</li></ol>
+</li>
+<li>
+<strong>n.p.</strong> le parti se présentait, mais la question de
+l’étude ne le proposait pas comme réponse : ses électeurs ne pouvaient
+répondre que « Un autre parti ». Les réponses proposées par chaque
+question viennent de la spécification d’harmonisation
+(<code>qes_spec("crosswalk", targets = "vote_prov_recall")</code>) : les
+études de 2012, de 2014 et de 2018 omettent le Parti conservateur (PCQ),
+et celles de 2018 et de 2022 le Parti vert (PVQ).</li>
+</ul>
+<p>Un 0,0 est un parti proposé qu’aucun répondant de l’étude n’a
+déclaré.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parties</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PLQ"</span>, <span class="st">"PQ"</span>, <span class="st">"ADQ"</span>, <span class="st">"CAQ"</span>, <span class="st">"QS"</span>, <span class="st">"PVQ"</span>, <span class="st">"ON"</span>, <span class="st">"PCQ"</span>, <span class="st">"Other party"</span><span class="op">)</span></span>
+<span><span class="co"># Parties with candidates at each general election: the official results of</span></span>
+<span><span class="co"># Elections Quebec, in the qesR source repository (not in the package build;</span></span>
+<span><span class="co"># the package installed from the source tree has them). A party that did</span></span>
+<span><span class="co"># not run cannot be reported.</span></span>
+<span><span class="va">official_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"validation"</span>, <span class="st">"official_results.csv"</span>,</span>
+<span>                             package <span class="op">=</span> <span class="st">"qesR"</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html" class="external-link">nzchar</a></span><span class="op">(</span><span class="va">official_path</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">official_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">".."</span>, <span class="st">".."</span>, <span class="st">"inst"</span>, <span class="st">"extdata"</span>, <span class="st">"validation"</span>, <span class="st">"official_results.csv"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">official</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">official_path</span><span class="op">)</span></span>
+<span><span class="va">ran</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">official</span><span class="op">$</span><span class="va">party</span>, <span class="va">official</span><span class="op">$</span><span class="va">election_id</span><span class="op">)</span></span>
+<span><span class="co"># The answers each study's question offered, from the harmonization spec</span></span>
+<span><span class="co"># (the levels of the reported-vote target); "other" is "Other party"</span></span>
+<span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"vote_prov_recall"</span><span class="op">)</span></span>
+<span><span class="va">offered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">xw</span><span class="op">$</span><span class="va">levels_offered</span>, <span class="st">";"</span><span class="op">)</span>, <span class="va">xw</span><span class="op">$</span><span class="va">study</span><span class="op">)</span>,</span>
+<span>                  <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^other$"</span>, <span class="st">"Other party"</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">voters</span> <span class="op">&lt;-</span> <span class="va">master</span><span class="op">[</span><span class="va">master</span><span class="op">$</span><span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">parties</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">master</span><span class="op">$</span><span class="va">survey_weight</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">vote</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/split.html" class="external-link">split</a></span><span class="op">(</span><span class="va">voters</span>, <span class="va">voters</span><span class="op">$</span><span class="va">qes_code</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">survey_weight</span>, <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">vote_choice</span>, levels <span class="op">=</span> <span class="va">parties</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span></span>
+<span>  <span class="va">w</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span>  <span class="va">election</span> <span class="op">&lt;-</span> <span class="va">studies</span><span class="op">$</span><span class="va">election_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">qes_code</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">studies</span><span class="op">$</span><span class="va">study</span><span class="op">)</span><span class="op">]</span></span>
+<span>  <span class="va">status</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="op">!</span><span class="va">parties</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ran</span><span class="op">[[</span><span class="va">election</span><span class="op">]</span><span class="op">]</span>, <span class="st">"Other party"</span><span class="op">)</span>, <span class="st">"not_run"</span>,</span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">parties</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">offered</span><span class="op">[[</span><span class="va">d</span><span class="op">$</span><span class="va">qes_code</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span>, <span class="st">"offered"</span>, <span class="st">"not_listed"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>study <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">qes_code</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, year <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">year</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, family <span class="op">=</span> <span class="va">d</span><span class="op">$</span><span class="va">family</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>             n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>, party <span class="op">=</span> <span class="va">parties</span>, pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>             status <span class="op">=</span> <span class="va">status</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">vote</span><span class="op">$</span><span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">vote</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"not_run"</span>, <span class="st">"\u2014"</span>,</span>
+<span>                    <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">vote</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"not_listed"</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"n.l."</span>, <span class="st">"n.p."</span><span class="op">)</span>,</span>
+<span>                           <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="va">vote</span><span class="op">$</span><span class="va">pct</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                   decimal.mark <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"."</span>, <span class="st">","</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">vote_wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">vote</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"family"</span>, <span class="st">"n"</span>, <span class="st">"party"</span>, <span class="st">"cell"</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>                     idvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"family"</span>, <span class="st">"n"</span><span class="op">)</span>,</span>
+<span>                     timevar <span class="op">=</span> <span class="st">"party"</span>, direction <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vote_wide</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^cell\\."</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vote_wide</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">vote_wide</span> <span class="op">&lt;-</span> <span class="va">vote_wide</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">vote_wide</span><span class="op">$</span><span class="va">family</span>, <span class="va">vote_wide</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
+<span>  <span class="va">vote_wide</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>, align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l"</span>, <span class="st">"r"</span>, <span class="st">"l"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"r"</span>, <span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parties</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">tr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="st">"Year"</span>, <span class="st">"Family"</span>, <span class="st">"N voters"</span><span class="op">)</span>,</span>
+<span>                   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Étude"</span>, <span class="st">"Année"</span>, <span class="st">"Famille"</span>, <span class="st">"N votants"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                <span class="fu">tr</span><span class="op">(</span><span class="va">parties</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">parties</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">parties</span><span class="op">)</span><span class="op">]</span>, <span class="st">"Autre parti"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<table class="table">
 <colgroup>
-<col width="17%">
-<col width="31%">
 <col width="14%">
-<col width="9%">
-<col width="8%">
-<col width="8%">
-<col width="9%">
+<col width="6%">
+<col width="13%">
+<col width="10%">
+<col width="5%">
+<col width="5%">
+<col width="5%">
+<col width="5%">
+<col width="5%">
+<col width="5%">
+<col width="4%">
+<col width="5%">
+<col width="12%">
 </colgroup>
 <thead><tr class="header">
-<th align="right">Année d’étude</th>
-<th align="right">N avec item choix de vote</th>
-<th align="right">CAQ/ADQ (%)</th>
-<th align="right">PLQ (%)</th>
-<th align="right">PQ (%)</th>
-<th align="right">QS (%)</th>
-<th align="right">PCQ (%)</th>
+<th align="left">Étude</th>
+<th align="right">Année</th>
+<th align="left">Famille</th>
+<th align="right">N votants</th>
+<th align="right">PLQ</th>
+<th align="right">PQ</th>
+<th align="right">ADQ</th>
+<th align="right">CAQ</th>
+<th align="right">QS</th>
+<th align="right">PVQ</th>
+<th align="right">ON</th>
+<th align="right">PCQ</th>
+<th align="right">Autre parti</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">1998</td>
-<td align="right">1048</td>
-<td align="right">26.4</td>
-<td align="right">31.0</td>
-<td align="right">42.6</td>
-<td align="right">0.0</td>
-<td align="right">0.0</td>
-</tr>
-<tr class="even">
+<td align="left">qes2007_panel</td>
 <td align="right">2007</td>
-<td align="right">6852</td>
-<td align="right">33.6</td>
-<td align="right">27.7</td>
-<td align="right">33.9</td>
-<td align="right">4.9</td>
-<td align="right">0.0</td>
-</tr>
-<tr class="odd">
-<td align="right">2008</td>
-<td align="right">8902</td>
-<td align="right">19.3</td>
-<td align="right">38.6</td>
-<td align="right">36.4</td>
-<td align="right">5.6</td>
-<td align="right">0.0</td>
+<td align="left">durand_panel</td>
+<td align="right">1494</td>
+<td align="right">29,8</td>
+<td align="right">29,6</td>
+<td align="right">32,1</td>
+<td align="right">—</td>
+<td align="right">3,7</td>
+<td align="right">4,7</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">0,2</td>
 </tr>
 <tr class="even">
-<td align="right">2009</td>
-<td align="right">6121</td>
-<td align="right">10.4</td>
-<td align="right">40.6</td>
-<td align="right">41.2</td>
-<td align="right">7.7</td>
-<td align="right">0.0</td>
-</tr>
-<tr class="odd">
-<td align="right">2010</td>
-<td align="right">730</td>
-<td align="right">7.8</td>
-<td align="right">41.6</td>
-<td align="right">41.2</td>
-<td align="right">9.3</td>
-<td align="right">0.0</td>
-</tr>
-<tr class="even">
+<td align="left">qes2012_panel</td>
 <td align="right">2012</td>
-<td align="right">1813</td>
-<td align="right">26.2</td>
-<td align="right">24.5</td>
-<td align="right">41.5</td>
-<td align="right">7.8</td>
-<td align="right">0.0</td>
+<td align="left">durand_panel</td>
+<td align="right">633</td>
+<td align="right">26,2</td>
+<td align="right">37,0</td>
+<td align="right">—</td>
+<td align="right">24,3</td>
+<td align="right">6,2</td>
+<td align="right">3,0</td>
+<td align="right">3,0</td>
+<td align="right">n.p.</td>
+<td align="right">0,2</td>
 </tr>
 <tr class="odd">
-<td align="right">2014</td>
-<td align="right">1241</td>
-<td align="right">22.3</td>
-<td align="right">39.4</td>
-<td align="right">27.7</td>
-<td align="right">10.6</td>
-<td align="right">0.0</td>
+<td align="left">qes2018_panel</td>
+<td align="right">2018</td>
+<td align="left">durand_panel</td>
+<td align="right">704</td>
+<td align="right">28,0</td>
+<td align="right">15,1</td>
+<td align="right">—</td>
+<td align="right">39,7</td>
+<td align="right">12,4</td>
+<td align="right">n.p.</td>
+<td align="right">—</td>
+<td align="right">n.p.</td>
+<td align="right">4,7</td>
 </tr>
 <tr class="even">
-<td align="right">2018</td>
-<td align="right">2582</td>
-<td align="right">37.3</td>
-<td align="right">26.7</td>
-<td align="right">19.4</td>
-<td align="right">16.6</td>
-<td align="right">0.0</td>
+<td align="left">qes1998</td>
+<td align="right">1998</td>
+<td align="left">polls_1998</td>
+<td align="right">1126</td>
+<td align="right">29,9</td>
+<td align="right">49,7</td>
+<td align="right">18,6</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">1,8</td>
 </tr>
 <tr class="odd">
+<td align="left">qes2007</td>
+<td align="right">2007</td>
+<td align="left">qes</td>
+<td align="right">1727</td>
+<td align="right">25,8</td>
+<td align="right">30,9</td>
+<td align="right">31,6</td>
+<td align="right">—</td>
+<td align="right">4,8</td>
+<td align="right">6,4</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">0,6</td>
+</tr>
+<tr class="even">
+<td align="left">qes2008</td>
+<td align="right">2008</td>
+<td align="left">qes</td>
+<td align="right">898</td>
+<td align="right">42,1</td>
+<td align="right">35,3</td>
+<td align="right">16,4</td>
+<td align="right">—</td>
+<td align="right">3,8</td>
+<td align="right">2,2</td>
+<td align="right">—</td>
+<td align="right">—</td>
+<td align="right">0,3</td>
+</tr>
+<tr class="odd">
+<td align="left">qes2012</td>
+<td align="right">2012</td>
+<td align="left">qes</td>
+<td align="right">1274</td>
+<td align="right">24,9</td>
+<td align="right">38,8</td>
+<td align="right">—</td>
+<td align="right">25,4</td>
+<td align="right">6,5</td>
+<td align="right">1,0</td>
+<td align="right">2,3</td>
+<td align="right">n.p.</td>
+<td align="right">1,1</td>
+</tr>
+<tr class="even">
+<td align="left">qes2014</td>
+<td align="right">2014</td>
+<td align="left">qes</td>
+<td align="right">1283</td>
+<td align="right">35,9</td>
+<td align="right">29,8</td>
+<td align="right">—</td>
+<td align="right">23,1</td>
+<td align="right">8,2</td>
+<td align="right">1,0</td>
+<td align="right">0,7</td>
+<td align="right">n.p.</td>
+<td align="right">1,3</td>
+</tr>
+<tr class="odd">
+<td align="left">qes2018</td>
+<td align="right">2018</td>
+<td align="left">qes</td>
+<td align="right">2016</td>
+<td align="right">23,3</td>
+<td align="right">19,6</td>
+<td align="right">—</td>
+<td align="right">35,8</td>
+<td align="right">16,3</td>
+<td align="right">n.p.</td>
+<td align="right">—</td>
+<td align="right">n.p.</td>
+<td align="right">5,1</td>
+</tr>
+<tr class="even">
+<td align="left">qes2022</td>
 <td align="right">2022</td>
-<td align="right">1196</td>
-<td align="right">37.6</td>
-<td align="right">10.9</td>
-<td align="right">13.7</td>
-<td align="right">22.0</td>
-<td align="right">15.8</td>
+<td align="left">qes</td>
+<td align="right">1101</td>
+<td align="right">18,3</td>
+<td align="right">15,4</td>
+<td align="right">—</td>
+<td align="right">33,0</td>
+<td align="right">16,4</td>
+<td align="right">n.p.</td>
+<td align="right">—</td>
+<td align="right">13,3</td>
+<td align="right">3,6</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section level2">
-<h2 id="figure-1-tendance-du-choix-de-vote">Figure 1 : tendance du choix de vote<a class="anchor" aria-label="anchor" href="#figure-1-tendance-du-choix-de-vote"></a>
+<h2 id="figure-1-les-principaux-partis">Figure 1 : les principaux partis<a class="anchor" aria-label="anchor" href="#figure-1-les-principaux-partis"></a>
 </h2>
-<p><img src="fr-analyse-choix-vote_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="Graphique des parts de choix de vote pour la CAQ/ADQ, le PLQ, le PQ, QS et le PCQ selon l'année." width="700"></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">main</span> <span class="op">&lt;-</span> <span class="va">vote</span><span class="op">[</span><span class="va">vote</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"offered"</span> <span class="op">&amp;</span> <span class="va">vote</span><span class="op">$</span><span class="va">party</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PLQ"</span>, <span class="st">"PQ"</span>, <span class="st">"ADQ"</span>, <span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>qes <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Quebec Election Studies"</span>, <span class="st">"Études électorales québécoises"</span><span class="op">)</span>,</span>
+<span>              durand_panel <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Durand panels"</span>, <span class="st">"Panels Durand"</span><span class="op">)</span>,</span>
+<span>              polls_1998 <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"1998 polls"</span>, <span class="st">"Sondages de 1998"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">main</span><span class="op">$</span><span class="va">family</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">families</span><span class="op">[</span><span class="va">main</span><span class="op">$</span><span class="va">family</span><span class="op">]</span>, levels <span class="op">=</span> <span class="va">families</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">main</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">pct</span>, colour <span class="op">=</span> <span class="va">party</span>, shape <span class="op">=</span> <span class="va">party</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># a line only where a party has more than one year in the family (the</span></span>
+<span>  <span class="co"># 1998 polls have one)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">d</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/ave.html" class="external-link">ave</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">year</span><span class="op">)</span>, <span class="va">d</span><span class="op">$</span><span class="va">family</span>, <span class="va">d</span><span class="op">$</span><span class="va">party</span>,</span>
+<span>          FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">year</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">1</span>, <span class="op">]</span></span>
+<span>  <span class="op">}</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">2.4</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">family</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>PLQ <span class="op">=</span> <span class="st">"#d71920"</span>, PQ <span class="op">=</span> <span class="st">"#004c9d"</span>, ADQ <span class="op">=</span> <span class="st">"#6d9eeb"</span>,</span>
+<span>                                 CAQ <span class="op">=</span> <span class="st">"#00a3c7"</span>, QS <span class="op">=</span> <span class="st">"#ff6f00"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">main</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Year of the study"</span>, <span class="st">"Année de l'étude"</span><span class="op">)</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Share of reported votes, weighted (%)"</span>, <span class="st">"Part des votes déclarés, pondérée (%)"</span><span class="op">)</span>,</span>
+<span>    colour <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Party"</span>, <span class="st">"Parti"</span><span class="op">)</span>,</span>
+<span>    shape <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Party"</span>, <span class="st">"Parti"</span><span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
+<p><img src="fr-analyse-choix-vote_files/figure-html/vote-plot-1.png" class="r-plt" alt="Part pondérée du vote déclaré pour le PLQ, le PQ, l'ADQ, la CAQ et QS dans chaque étude, par année, les Études électorales québécoises, les panels Durand et les sondages de 1998 dans des panneaux distincts." width="672"></p>
 </div>
 <div class="section level2">
-<h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a>
+<h2 id="remarques">Remarques<a class="anchor" aria-label="anchor" href="#remarques"></a>
 </h2>
 <ul>
-<li>Les parts utilisent les répondants avec une valeur non manquante de
-<code>vote_choice</code>.</li>
-<li>Les années 2009 et 2010 proviennent de
-<code>qes_crop_2007_2010</code> après ventilation par année de
-collecte.</li>
-<li>Les intervalles de confiance sont des IC95 binomiaux (approximation
-normale).</li>
-<li>La figure est limitée à la CAQ/ADQ, au PLQ, au PQ, à QS et au
-PCQ.</li>
+<li>Une ligne ne relie que des études de la même famille ; l’ADQ et la
+CAQ sont des partis distincts, et leurs lignes ne sont pas reliées.</li>
+<li>qesR 0.4.4 codait « Did not vote / None » et « Don’t know / Refused
+» comme des catégories de <code>vote_choice</code>, et prenait
+l’intention de vote de campagne pour <code>qes2022</code> et
+<code>qes1998</code> ; depuis 0.7.0, ces répondants valent
+<code>NA</code> et les deux études donnent le vote déclaré
+(<code><a href="../articles/fr-migrer-0.7.html">vignette("fr-migrer-0.7", package = "qesR")</a></code>).</li>
+<li>Les votes déclarés diffèrent des résultats officiels : comparez-les
+aux résultats publiés par Élections Québec, et non entre eux d’un devis
+à l’autre.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -11,73 +11,27 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
-<link href="deps/Space_Grotesk-0.4.10/font.css" rel="stylesheet">
-<link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
 <meta property="og:title" content="qesR">
-<meta name="description" content="Access and harmonize Quebec Election Study datasets in R.">
-<meta property="og:description" content="Access and harmonize Quebec Election Study datasets in R.">
+<meta name="description" content="Load the Quebec Election Studies and related Quebec election surveys in R, pinned to their original files, and harmonize 11 of them into one data frame with a comparability grade for every question, offline codebooks, bilingual search and citations.
+">
+<meta property="og:description" content="Load the Quebec Election Studies and related Quebec election surveys in R, pinned to their original files, and harmonize 11 of them into one data frame with a comparability grade for every question, offline codebooks, bilingual search and citations.
+">
 <meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    <script>
-(function () {
-  function normalizePath(path) {
-    if (!path || path === "/") return "index.html";
-    var clean = path;
-    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
-      clean = clean.slice(0, -1);
-    }
-    var segments = clean.split("/").filter(Boolean);
-    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
-    if (segments.length === 0) return "index.html";
-    return segments.join("/");
-  }
-  document.addEventListener("DOMContentLoaded", function () {
-    var path = window.location.pathname || "/";
-    var rel = normalizePath(path);
-    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
-    var isFrench = /^articles\/fr-/.test(rel);
-    var map = {
-      "index.html": "articles/fr-demarrage.html",
-      "articles/get-started.html": "articles/fr-demarrage.html",
-      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
-      "articles/study-citations.html": "articles/fr-citations-etudes.html",
-      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
-      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
-      "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
-      "articles/fr-demarrage.html": "articles/get-started.html",
-      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
-      "articles/fr-citations-etudes.html": "articles/study-citations.html",
-      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
-      "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
-    };
-    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
-    var label = isFrench ? "EN" : "FR";
-    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
-    if (!navbar) return;
-    var holder = document.createElement("div");
-    holder.className = "qesr-lang-switch-wrap";
-    var btn = document.createElement("a");
-    btn.className = "qesr-lang-switch";
-    btn.href = root + target;
-    btn.textContent = label;
-    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
-    holder.appendChild(btn);
-    navbar.appendChild(holder);
-  });
-})();
-</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,14 +41,68 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/get-started.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="articles/studies.html">Studies</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><a class="dropdown-item" href="articles/get-started.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="articles/citations.html">Study citations</a></li>
+    <li><a class="dropdown-item" href="articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
+    <li><a class="dropdown-item" href="articles/merged-dataset.html">Legacy merged file</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
+    <li><a class="dropdown-item" href="articles/harmonization.html">Harmonizing across studies</a></li>
+    <li><a class="dropdown-item" href="articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="articles/harmonization-reference.html">Harmonization reference</a></li>
+    <li><a class="dropdown-item" href="articles/validation.html">Validation against official results</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
+    <li><a class="dropdown-item" href="articles/analysis-descriptive.html">Respondents by study</a></li>
+    <li><a class="dropdown-item" href="articles/analysis-sovereignty.html">Support for independence</a></li>
+    <li><a class="dropdown-item" href="articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="reference/qesR-package.html">Function overview</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
+<li><a class="dropdown-item" href="articles/fr-demarrage.html">Démarrage</a></li>
+    <li><a class="dropdown-item" href="articles/fr-etudes.html">Catalogue des études</a></li>
+    <li><a class="dropdown-item" href="articles/fr-citations.html">Citations des études</a></li>
+    <li><a class="dropdown-item" href="articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
+    <li><a class="dropdown-item" href="articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
+    <li><a class="dropdown-item" href="articles/fr-harmonisation.html">Harmoniser entre études</a></li>
+    <li><a class="dropdown-item" href="articles/fr-couverture.html">Couverture par étude</a></li>
+    <li><a class="dropdown-item" href="articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
+    <li><a class="dropdown-item" href="articles/fr-validation.html">Validation par les résultats officiels</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
+    <li><a class="dropdown-item" href="articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
+    <li><a class="dropdown-item" href="articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
+    <li><a class="dropdown-item" href="articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/merged-dataset.html">Merged Dataset</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/study-citations.html">Study Citations</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/analysis-sovereignty.html">Use case example: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="articles/analysis-vote-choice.html">Use case example: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/ThomasGareau/qesR" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
@@ -103,177 +111,601 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p>
-<img src="logo.png" alt="qesR logo" width="220"></p>
-<p>Access Quebec Election Study datasets in R.</p>
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="qesr-">qesR <a class="anchor" aria-label="anchor" href="#qesr-"></a>
+</h1>
+</div>
+<p>qesR loads the Quebec Election Studies and related Quebec election surveys into R by study code, each from its original data file, pinned and checked by md5. It also harmonizes the 11 studies of 1998 to 2022 into one data frame, question by question, with a comparability grade for every study’s question and a reason for every missing value. Codebooks, question wording and search work offline, in English and French.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install the development version from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># once accepted on CRAN:</span></span>
+<span><span class="co"># install.packages("qesR")</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
-</h2>
-<p>The package provides access to QES surveys through:</p>
-<ul>
-<li>
-<code>get_qes(srvy)</code>: download a survey by code</li>
-<li>
-<code><a href="reference/get_qescodes.html">get_qescodes()</a></code>: list survey codes and metadata</li>
-<li>
-<code>get_preview(srvy, obs)</code>: preview a survey</li>
-<li>
-<code>get_question(data, variable)</code>: retrieve question text</li>
-<li>
-<code>get_codebook(srvy)</code>: get survey codebook</li>
-<li>
-<code><a href="reference/get_qes_master.html">get_qes_master()</a></code>: build a harmonized merged dataset</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="one-data-frame-across-11-studies-experimental">One data frame across 11 studies (experimental)<a class="anchor" aria-label="anchor" href="#one-data-frame-across-11-studies-experimental"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># list survey call codes</span></span>
-<span><span class="fu"><a href="reference/get_qescodes.html">get_qescodes</a></span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># load one survey</span></span>
-<span><span class="va">qes2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2022"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># preview observations</span></span>
-<span><span class="fu"><a href="reference/get_preview.html">get_preview</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># retrieve question text</span></span>
-<span><span class="fu"><a href="reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># build merged cross-study dataset</span></span>
-<span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
-</h2>
+<span><span class="fu"><a href="reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="op">)</span>                        <span class="co"># which study has which variable, and its grade</span></span>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>studies <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span>,</span>
+<span>                   targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_prov_recall"</span>, <span class="st">"turnout_prov_recall"</span><span class="op">)</span>,</span>
+<span>                   min_grade <span class="op">=</span> <span class="st">"comparable"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span><span class="op">)</span></span>
+<span><span class="co"># both targets were asked after the election: the post-election weight</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span>   <span class="co"># for the survey package</span></span></code></pre></div>
+<p><code>qes2007</code>, <code>qes2012</code>, <code>qes2014</code>, <code>qes2018</code>, <code>qes2022</code> and the 2018 panel <code>qes2018_panel</code> have reviewed weights so far. The other studies (the Durand panels <code>qes2007_panel</code> and <code>qes2012_panel</code>, <code>qes2008</code>, whose two weights are calibrated on the vote or on turnout, the CROP polls and the 1998 polls) have <code>NA</code> weights, and <code><a href="reference/qes_design.html">qes_design()</a></code> leaves out every row without the chosen weight; <code>studies = NULL</code> means the six Quebec Election Studies. Estimate within one study before comparing studies.</p>
+<p><code><a href="reference/qes_harmonize.html">qes_harmonize()</a></code> reads each study from its pinned file and maps each study’s question to a harmonized variable (“target”) following a specification that ships with qesR:</p>
 <ul>
-<li>downloaded survey files are read and returned in labelled form</li>
-<li>codebook metadata is attached and available through <code><a href="reference/get_codebook.html">get_codebook()</a></code>
-</li>
-<li>merged dataset creation includes harmonization, de-duplication, and filtering of empty rows</li>
-<li>source-variable provenance is available via <code>attr(master, "source_map")</code>
-</li>
+<li>
+<strong>One question stimulus per target.</strong> A reported vote and a vote intention are different targets, and so are the sovereignty questions with different wordings; nothing is pooled across wordings behind your back.</li>
+<li>
+<strong>A grade for every study’s question</strong>: identical, comparable or approximate, with the reason, in English and French. <code>min_grade = "comparable"</code> drops the approximate ones. A party a study did not list is a structural zero, not 0% support.</li>
+<li>
+<strong>A reason for every missing value</strong> (<code>dk</code>, <code>refused</code>, <code>not_voted</code>, <code>not_in_wave</code>, …), and each respondent’s waves, eligibility and weights; <code><a href="reference/qes_design.html">qes_design()</a></code> hands the result to <code>survey</code> or <code>srvyr</code>.</li>
+<li>
+<strong>Checked against what is known.</strong> The harmonized studies are compared with the official results of Élections Québec and the census margins of Statistics Canada: see <a href="articles/validation.html">Validation against official results</a>.</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="merged-dataset">Merged dataset<a class="anchor" aria-label="anchor" href="#merged-dataset"></a>
-</h2>
-<p><code>qesR</code> includes a merged harmonized dataset workflow:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.csv"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.rds"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>Harmonized fields include demographics (age, gender, education, income), vote choice, party identification, sovereignty attitudes, leader thermometers, and more. Use <code>colnames(master)</code> to see the full list.</p>
-<p>Source-variable provenance is available via <code>attr(master, "source_map")</code> and old-to-new variable name mappings via <code>attr(master, "variable_name_map")</code>.</p>
-<p>See: <a href="articles/merged-dataset.html">Merged Dataset</a></p>
-</div>
-<div class="section level2">
-<h2 id="survey-code-table">Survey code table<a class="anchor" aria-label="anchor" href="#survey-code-table"></a>
-</h2>
+<p>Every row of the specification is signed off, after an automated double review against the original files and documents (not a human review), and is applied by default; the weights that still need review (<code>qes1998</code>, <code>qes2007_panel</code>, <code>qes2012_panel</code> and the CROP polls) are <code>NA</code> until they are reviewed, but they do not hold back the answers. The grade of each study’s question for each target (I identical, C comparable, A approximate; a dash: no question in the specification); each target links to its questions, wordings and grades in the <a href="articles/harmonization-reference.html">harmonization reference</a>:</p>
+<div class="qesr-grid">
+<!-- coverage: start (generated by data-raw/readme_coverage.R) -->
 <table class="table">
 <colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
 </colgroup>
 <thead><tr>
-<th>year</th>
-<th>code</th>
-<th>name</th>
+<th></th>
+<th><code>qes<wbr>2022</wbr></code></th>
+<th><code>qes<wbr>2018</wbr></code></th>
+<th><code>qes<wbr>2018_<wbr>panel</wbr></wbr></code></th>
+<th><code>qes<wbr>2014</wbr></code></th>
+<th><code>qes<wbr>2012</wbr></code></th>
+<th><code>qes<wbr>2012_<wbr>panel</wbr></wbr></code></th>
+<th><code>qes_<wbr>crop_<wbr>2007_<wbr>2010</wbr></wbr></wbr></code></th>
+<th><code>qes<wbr>2008</wbr></code></th>
+<th><code>qes<wbr>2007</wbr></code></th>
+<th><code>qes<wbr>2007_<wbr>panel</wbr></wbr></code></th>
+<th><code>qes<wbr>1998</wbr></code></th>
 </tr></thead>
 <tbody>
 <tr>
-<td>2022</td>
-<td><code>qes2022</code></td>
-<td>Quebec Election Study 2022</td>
+<td><a href="articles/harmonization-reference.html#target-survey_mode"><code>survey_mode</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2018</td>
-<td><code>qes2018</code></td>
-<td>Quebec Election Study 2018</td>
+<td><a href="articles/harmonization-reference.html#target-vote_prov_recall"><code>vote_prov_recall</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>A</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>A</td>
+<td>C</td>
 </tr>
 <tr>
-<td>2018</td>
-<td><code>qes2018_panel</code></td>
-<td>Quebec Election Study 2018 Panel</td>
+<td><a href="articles/harmonization-reference.html#target-vote_prov_intent"><code>vote_prov_intent</code></a></td>
+<td>A</td>
+<td>—</td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2014</td>
-<td><code>qes2014</code></td>
-<td>Quebec Election Study 2014</td>
+<td><a href="articles/harmonization-reference.html#target-vote_prov_intent_push"><code>vote_prov_intent_push</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>A</td>
 </tr>
 <tr>
-<td>2012</td>
-<td><code>qes2012</code></td>
-<td>Quebec Election Study 2012</td>
+<td><a href="articles/harmonization-reference.html#target-turnout_prov_recall"><code>turnout_prov_recall</code></a></td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
 </tr>
 <tr>
-<td>2012</td>
-<td><code>qes2012_panel</code></td>
-<td>Quebec Election Study 2012 Panel</td>
+<td><a href="articles/harmonization-reference.html#target-turnout_prov_likely"><code>turnout_prov_likely</code></a></td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2007-2010</td>
-<td><code>qes_crop_2007_2010</code></td>
-<td>CROP Quebec Opinion Polls (2007-2010)</td>
+<td><a href="articles/harmonization-reference.html#target-vote_prov_intent_other"><code>vote_prov_intent_other</code></a></td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2008</td>
-<td><code>qes2008</code></td>
-<td>Quebec Election Study 2008</td>
+<td><a href="articles/harmonization-reference.html#target-pid_prov"><code>pid_prov</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2007</td>
-<td><code>qes2007</code></td>
-<td>Quebec Election Study 2007</td>
+<td><a href="articles/harmonization-reference.html#target-pid_fed"><code>pid_fed</code></a></td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>2007</td>
-<td><code>qes2007_panel</code></td>
-<td>Quebec Election Study 2007 Panel</td>
+<td><a href="articles/harmonization-reference.html#target-sov_indep"><code>sov_indep</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr>
-<td>1998</td>
-<td><code>qes1998</code></td>
-<td>Quebec Elections 1998</td>
+<td><a href="articles/harmonization-reference.html#target-sov_sovereign_country"><code>sov_sovereign_country</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-sov_favour"><code>sov_favour</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-lr_self"><code>lr_self</code></a></td>
+<td>A</td>
+<td>C</td>
+<td>A</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-interest_4pt"><code>interest_4pt</code></a></td>
+<td>—</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-sov_partnership_1995"><code>sov_partnership_1995</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-interest_0_10"><code>interest_0_10</code></a></td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-interest_election_0_10"><code>interest_election_0_10</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-interest_campaign_4pt"><code>interest_campaign_4pt</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-birth_year"><code>birth_year</code></a></td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-birth_month"><code>birth_month</code></a></td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-age"><code>age</code></a></td>
+<td>I</td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-age_group3"><code>age_group3</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-citizen"><code>citizen</code></a></td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-age_group6"><code>age_group6</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-gender"><code>gender</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-education4"><code>education4</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>A</td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>A</td>
+<td>C</td>
+<td>C</td>
+<td>A</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-lang_mother"><code>lang_mother</code></a></td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-born_canada"><code>born_canada</code></a></td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-income_native"><code>income_native</code></a></td>
+<td>A</td>
+<td>—</td>
+<td>A</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-religion"><code>religion</code></a></td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
+<!-- coverage: end -->
+</div>
+<p><a href="articles/coverage.html">Coverage by study</a> adds each study’s waves and recommended weights, and <a href="articles/harmonization.html">Harmonizing across studies</a> goes from <code><a href="reference/qes_harmonize.html">qes_harmonize()</a></code> to a weighted estimate on the full data files.</p>
 </div>
 <div class="section level2">
-<h2 id="citations">Citations<a class="anchor" aria-label="anchor" href="#citations"></a>
+<h2 id="from-a-study-code-to-a-weighted-estimate">From a study code to a weighted estimate<a class="anchor" aria-label="anchor" href="#from-a-study-code-to-a-weighted-estimate"></a>
 </h2>
-<p>Full citations for all studies are listed in:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span>                               <span class="co"># the studies, offline</span></span>
+<span><span class="va">qes2014</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span>               <span class="co"># returned, not assigned for you</span></span>
+<span><span class="fu"><a href="reference/qes_search.html">qes_search</a></span><span class="op">(</span><span class="st">"indépendant|independent"</span><span class="op">)</span>       <span class="co"># find the question</span></span>
+<span><span class="fu"><a href="reference/qes_question.html">qes_question</a></span><span class="op">(</span><span class="st">"qes2014"</span>, <span class="st">"Q19"</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span> <span class="co"># read its wording</span></span>
+<span><span class="va">qes2014</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_missing.html">qes_missing</a></span><span class="op">(</span><span class="va">qes2014</span><span class="op">)</span>             <span class="co"># "don't know", "refused" to NA</span></span>
+<span></span>
+<span><span class="co"># share YES among those who answered YES or NO, with the study's weight:</span></span>
+<span><span class="co"># a point estimate; qes2014 is an opt-in online panel, with no margin of error</span></span>
+<span><span class="va">answered</span> <span class="op">&lt;-</span> <span class="va">qes2014</span><span class="op">$</span><span class="va">Q19</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="va">qes2014</span><span class="op">$</span><span class="va">Q19</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span> <span class="op">==</span> <span class="fl">1</span>, w <span class="op">=</span> <span class="va">qes2014</span><span class="op">$</span><span class="va">POND</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><a href="articles/get-started.html">Getting started</a> walks through each step: which population the estimate describes, why this weight, and who is in the denominator. It runs offline on <code>qes_demo</code>, a small synthetic study that ships with qesR.</p>
+</div>
+<div class="section level2">
+<h2 id="what-else-qesr-gives-you">What else qesR gives you<a class="anchor" aria-label="anchor" href="#what-else-qesr-gives-you"></a>
+</h2>
 <ul>
-<li><a href="articles/study-citations.html">Study Citations</a></li>
+<li>
+<strong>The original files, checked.</strong> <code><a href="reference/get_qes.html">get_qes()</a></code> reads the pinned SPSS or Stata file of a study and returns it with its codes and labels. <code><a href="reference/qes_download.html">qes_download()</a></code> saves the files themselves, and <code><a href="reference/qes_provenance.html">qes_provenance()</a></code> records which file a result came from.</li>
+<li>
+<strong>Codebooks and search, offline and bilingual.</strong> <code><a href="reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="reference/qes_question.html">qes_question()</a></code> and <code><a href="reference/qes_search.html">qes_search()</a></code> work without a network connection for every study. <code><a href="reference/qes_missing.html">qes_missing()</a></code> knows which codes mean “don’t know” or “refused”.</li>
+<li>
+<strong>Citations.</strong> <code><a href="reference/qes_cite.html">qes_cite()</a></code> cites qesR and each dataset with its DOI, version and UNF.</li>
+<li>
+<strong>Nothing written behind your back.</strong> Data are returned, not assigned into your workspace; downloads go to a temporary cache unless you choose <code>options(qesR.cache = "disk")</code>.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="use-case-examples">Use case examples<a class="anchor" aria-label="anchor" href="#use-case-examples"></a>
+<h2 id="coming-from-qesr-044">Coming from qesR 0.4.4<a class="anchor" aria-label="anchor" href="#coming-from-qesr-044"></a>
 </h2>
-<p>Use case examples available in separate tabs:</p>
+<p>Every function of qesR 0.4.4 keeps its name and its arguments, and <code><a href="reference/get_qes.html">get_qes()</a></code> returns the same codes, but it now returns the data instead of creating the object: write <code>qes2018 &lt;- get_qes("qes2018")</code>. The legacy merged file, <code><a href="reference/get_qes_master.html">get_qes_master()</a></code>, keeps its 30 columns but is now rendered from the harmonization engine, so estimates computed from it change. <a href="articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a> says what changed, column by column, and how to reproduce a 0.4.4 result.</p>
+</div>
+<div class="section level2">
+<h2 id="where-to-go-next">Where to go next<a class="anchor" aria-label="anchor" href="#where-to-go-next"></a>
+</h2>
 <ul>
-<li><a href="articles/analysis-sovereignty.html">Evolution of sovereignty attitudes</a></li>
-<li><a href="articles/analysis-vote-choice.html">Vote-choice patterns over time</a></li>
+<li>
+<a href="articles/studies.html">Study catalog</a>: every study code, with its design, population, size, licence, DOI, pinned file and documents, generated from the catalog that ships with the package.</li>
+<li>
+<a href="articles/citations.html">Study citations</a>: how to cite qesR and each dataset you use.</li>
+<li>Harmonization (experimental): <a href="articles/harmonization.html">harmonizing across studies</a>, <a href="articles/coverage.html">coverage by study</a>, <a href="articles/validation.html">validation against official results</a> and the <a href="articles/harmonization-reference.html">harmonization reference</a>.</li>
+<li>Examples built from the full data files: <a href="articles/analysis-descriptive.html">respondents by study</a>, <a href="articles/analysis-sovereignty.html">support for independence</a> and <a href="articles/analysis-vote-choice.html">reported vote</a>.</li>
+<li>
+<a href="reference/index.html">Reference</a>: every function, grouped by task. The functions of qesR 0.4.4 are under <em>Legacy and deprecated</em>; they keep working.</li>
+</ul>
+<p>Not every study is a Quebec Election Study: the Durand panels, the CROP polls and the 1998 polls are listed under their own titles and authors. Check each study’s design and population in the catalog before comparing them.</p>
+</div>
+<div class="section level2">
+<h2 id="en-français">En français<a class="anchor" aria-label="anchor" href="#en-fran%C3%A7ais"></a>
+</h2>
+<p>qesR charge dans R les Études électorales québécoises et d’autres enquêtes électorales québécoises à partir d’un code d’étude, chacune fixée à un fichier de données original vérifié par md5. Il harmonise aussi les 11 études de 1998 à 2022 en un seul tableau, question par question, avec un niveau de comparabilité pour la question de chaque étude et un motif pour chaque valeur manquante (expérimental ; la grille plus haut donne le niveau de chaque étude pour chaque cible). Les codebooks, les libellés des questions et la recherche fonctionnent sans réseau, en français et en anglais. Les messages et les erreurs s’affichent en français avec <code>options(qesR.lang = "fr")</code> ; les données retournées ne dépendent jamais de la langue.</p>
+<p>Chaque fonction de qesR 0.4.4 garde son nom et ses arguments, et <code><a href="reference/get_qes.html">get_qes()</a></code> retourne les mêmes codes, mais il retourne maintenant les données au lieu de créer l’objet : écrivez <code>qes2018 &lt;- get_qes("qes2018")</code>. Le fichier fusionné hérité, <code><a href="reference/get_qes_master.html">get_qes_master()</a></code>, garde ses 30 colonnes mais est maintenant produit par le moteur d’harmonisation : les estimations qui en viennent changent. <a href="articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a> dit ce qui a changé, colonne par colonne, et comment reproduire un résultat de 0.4.4.</p>
+<p>Pour installer qesR :</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span>
+<span><span class="co"># une fois le paquet accepté sur le CRAN :</span></span>
+<span><span class="co"># install.packages("qesR")</span></span></code></pre></div>
+<p>Les données ne font pas partie du package : qesR les télécharge de Borealis et du Harvard Dataverse. La plupart des études sont sous CC0 1.0, celle de 2022 sous CC BY-NC 4.0 (attribution, pas d’usage commercial) ; <code>qes_studies()$licence</code> donne la licence de chaque étude.</p>
+<p><strong>Licence.</strong> La licence MIT de qesR couvre le code du package seulement. Les métadonnées de l’étude de 2022 que qesR livre (étiquettes, texte des questions, effectifs, et les libellés, étiquettes et effectifs de l’harmonisation qui en sont tirés) sont tirées de Mahéo, Bélanger, Stephenson et Harell (2023), <em>2022 Quebec Election Study</em>, Harvard Dataverse, V1.1, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>, et restent sous licence <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.fr" class="external-link">CC BY-NC 4.0</a> (attribution, pas d’usage commercial), ce qui n’implique aucune approbation de qesR par les auteurs ; les métadonnées des autres études sont sous CC0 1.0, et les effectifs du recensement viennent de Statistique Canada (Licence ouverte de Statistique Canada). Le fichier <code>COPYRIGHTS</code> du package donne chaque fichier, sa source et sa licence.</p>
+<ul>
+<li>
+<a href="articles/fr-demarrage.html">Démarrage</a> : du code d’étude à une estimation pondérée</li>
+<li><a href="articles/fr-etudes.html">Catalogue des études</a></li>
+<li><a href="articles/fr-citations.html">Citations des études</a></li>
+<li><a href="articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
+<li>Harmonisation (expérimental) : <a href="articles/fr-harmonisation.html">harmoniser entre études</a>, <a href="articles/fr-couverture.html">couverture par étude</a>, <a href="articles/fr-validation.html">validation par les résultats officiels</a>, <a href="articles/fr-reference-harmonisation.html">référence de l’harmonisation</a>
+</li>
+<li><a href="articles/fr-donnees-fusionnees.html">Le fichier fusionné hérité</a></li>
+<li>Exemples : <a href="articles/fr-analyse-descriptive.html">répondants par étude</a>, <a href="articles/fr-analyse-souverainete.html">appui à l’indépendance</a>, <a href="articles/fr-analyse-choix-vote.html">vote déclaré</a>
+</li>
+<li>
+<a href="reference/qesR-fr.html">Aperçu des fonctions en français</a> (<code>?qesR-fr</code>)</li>
 </ul>
 </div>
-
+<div class="section level2">
+<h2 id="data-licences">Data licences<a class="anchor" aria-label="anchor" href="#data-licences"></a>
+</h2>
+<p>The data are not part of the package: qesR downloads them from Borealis and the Harvard Dataverse. Most studies are released under CC0 1.0. The 2022 study is CC BY-NC 4.0 (attribution, no commercial use). <code>qes_studies()$licence</code> gives the licence of each study.</p>
+</div>
+<div class="section level2">
+<h2 id="licence">Licence<a class="anchor" aria-label="anchor" href="#licence"></a>
+</h2>
+<p>The MIT licence of qesR covers the package code only. The metadata of the 2022 study that qesR ships (labels, question text, answer counts, and the harmonization wording, labels and counts derived from them) are derived from Mahéo, Bélanger, Stephenson and Harell (2023), <em>2022 Quebec Election Study</em>, Harvard Dataverse, V1.1, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>, and keep its licence, <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="external-link">CC BY-NC 4.0</a>: attribution, no commercial use; this does not imply that the authors endorse qesR. The metadata of the other studies are CC0 1.0, and the census counts come from Statistics Canada (Statistics Canada Open Licence). The file <code>COPYRIGHTS</code> of the package lists each file, its source and its licence.</p>
+</div>
+</div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
 <li><a href="https://github.com/ThomasGareau/qesR/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/ThomasGareau/qesR/issues" class="external-link">Report a bug</a></li>
+<li><a href="reference/qesR-fr.html">Aperçu en français (?qesR-fr)</a></li>
+<li><a href="https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/" class="external-link">Quebec Election Studies (CECD)</a></li>
 </ul>
 </div>
 
@@ -284,7 +716,6 @@
 <li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
-
 
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
@@ -297,7 +728,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>
-<a href="https://thomasgp.com" class="external-link">Thomas Gareau-Paquette</a> <br><small class="roles"> Author, maintainer </small>   </li>
+<a href="https://thomasgp.com" class="external-link">Thomas Gareau-Paquette</a> <br><small class="roles"> Author, maintainer, copyright holder </small>   </li>
 </ul>
 </div>
 

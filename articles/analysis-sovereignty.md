@@ -1,99 +1,182 @@
-# Use case example: Evolution of Sovereignty Attitudes
+# Example: support for independence
 
-This page uses the merged file to estimate sovereignty support over
-time.
+*[Version
+française](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md)*
 
-Show code used in this page
+This page estimates support for Quebec independence in the studies of
+the legacy merged file,
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md).
+It is built when the website is built: the data files are downloaded
+from their Dataverse deposits through qesR’s cache.
+
+For estimates with the harmonization engine (experimental), with a
+comparability grade for each study’s question and the weight of the wave
+that asked it, see [Harmonizing across
+studies](https://thomasgareau.github.io/qesR/articles/harmonization.md).
+
+A sovereignty question is only comparable across studies when it asks
+the same thing. Since qesR 0.5.0, `sovereignty_support` holds one
+question only: how the respondent would vote in a referendum on Quebec
+becoming an independent country. Studies that asked something else (the
+1995 question on sovereignty with a partnership offer, a “sovereign
+country”, follow-up questions put to undecided respondents, or a
+favourable/opposed scale) have `NA` in that column. Each estimate is
+computed within one study, with that study’s own weight
+(`survey_weight`); it is a point estimate that ignores the survey’s
+design.
 
 ``` r
 
-library(dplyr)
+library(qesR)
 library(ggplot2)
-library(knitr)
-
-pkg_master <- system.file("extdata", "qes_master.csv", package = "qesR")
-master_paths <- c("qes_master.csv", "../qes_master.csv", pkg_master)
-master_paths <- master_paths[nzchar(master_paths)]
-master <- read.csv(master_paths[file.exists(master_paths)][1], stringsAsFactors = FALSE)
-
-master <- master %>%
-  mutate(
-    qes_year_chr = trimws(as.character(qes_year)),
-    qes_year_num = as.integer(substr(qes_year_chr, 1, 4))
-  )
-
-is_range <- grepl("^[0-9]{4}-[0-9]{4}$", master$qes_year_chr)
-start_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\1", master$qes_year_chr)))
-end_year <- suppressWarnings(as.numeric(sub("^([0-9]{4})-([0-9]{4})$", "\\2", master$qes_year_chr)))
-
-master$study_period <- ifelse(
-  is_range,
-  master$qes_year_chr,
-  ifelse(!is.na(master$qes_year_num), as.character(master$qes_year_num), master$qes_year_chr)
-)
-master$period_order <- ifelse(
-  is_range & is.finite(start_year) & is.finite(end_year),
-  (start_year + end_year) / 2,
-  master$qes_year_num
-)
-
-master$sovereignty_support <- suppressWarnings(as.numeric(master$sovereignty_support))
-master$sovereignty_support[!(master$sovereignty_support %in% c(0, 1))] <- NA_real_
-
-all_periods <- master %>%
-  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
-  distinct(study_period, period_order)
-
-sov <- master %>%
-  filter(!is.na(study_period), nzchar(study_period), !is.na(period_order)) %>%
-  group_by(study_period, period_order) %>%
-  summarise(
-    respondents = n(),
-    n_with_measure = sum(!is.na(sovereignty_support)),
-    support_share = ifelse(n_with_measure > 0, mean(sovereignty_support, na.rm = TRUE), NA_real_),
-    se = ifelse(n_with_measure > 0, sqrt(pmax(support_share * (1 - support_share), 0) / n_with_measure), NA_real_),
-    ci_low = ifelse(!is.na(se), pmax(0, support_share - 1.96 * se), NA_real_),
-    ci_high = ifelse(!is.na(se), pmin(1, support_share + 1.96 * se), NA_real_),
-    .groups = "drop"
-  )
-
-sov <- merge(all_periods, sov, by = c("study_period", "period_order"), all.x = TRUE, sort = TRUE)
-sov <- sov %>% arrange(period_order, study_period)
-sov$period_index <- seq_len(nrow(sov))
-
-knitr::kable(sov)
 ```
 
-The estimates below use the dedicated sovereignty question harmonized
-across study periods.
+``` r
 
-## Table 1: sovereignty support by study period
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
 
-| Study period | N respondents | N with sovereignty item | Sovereignty support (%) | 95% CI (%) |
-|:---|---:|---:|---:|:---|
-| 1998 | 1483 | 381 | 43.3 | 38.3 to 48.3 |
-| 2007 | 9244 | 8207 | 40.1 | 39.0 to 41.1 |
-| 2008 | 11162 | 10379 | 40.1 | 39.2 to 41.0 |
-| 2009 | 8008 | 7455 | 39.3 | 38.2 to 40.4 |
-| 2010 | 1000 | 923 | 39.9 | 36.7 to 43.0 |
-| 2012 | 2349 | 2066 | 40.1 | 38.0 to 42.2 |
-| 2014 | 1517 | 1353 | 34.1 | 31.6 to 36.7 |
-| 2018 | 4322 | 3338 | 33.6 | 32.0 to 35.2 |
-| 2022 | 1521 | 1284 | 36.4 | 33.7 to 39.0 |
+master <- get_qes_master(quiet = TRUE)
+studies <- qes_studies()
+master$family <- studies$family[match(master$qes_code, studies$study)]
+master$year <- as.integer(master$qes_year)
 
-Sovereignty support by study period {.table}
+# Weighted share of each value of x, within one study
+wshare <- function(x, w) {
+  ok <- !is.na(x) & !is.na(w)
+  if (!any(ok)) return(NULL)
+  tapply(w[ok], x[ok], sum) / sum(w[ok])
+}
+```
 
-## Figure 1: sovereignty trend
+## Table 1: which studies ask the independence question
 
-![Line chart of sovereignty support trend over study
-periods.](analysis-sovereignty_files/figure-html/unnamed-chunk-5-1.png)
+`attr(master, "legacy_na_columns")` says why a column is `NA` in a
+study; `attr(master, "source_map")` names the variable each study’s
+column reads.
+
+``` r
+
+sources <- attr(master, "source_map")
+sources <- sources[sources$harmonized_variable == "sovereignty_support",
+                   c("qes_code", "source_variable")]
+blanked <- attr(master, "legacy_na_columns")
+blanked <- blanked[blanked$column == "sovereignty_support", c("study", "cause")]
+items <- merge(sources, blanked, by.x = "qes_code", by.y = "study", all.x = TRUE)
+items$year <- studies$year[match(items$qes_code, studies$study)]
+items$in_column <- ifelse(is.na(items$cause), tr("yes", "oui"), tr("no", "non"))
+items <- items[order(items$year, items$qes_code), c("qes_code", "year", "source_variable", "in_column")]
+knitr::kable(
+  items, row.names = FALSE,
+  col.names = tr(c("Study", "Year", "Source variable", "Independence question"),
+                 c("Étude", "Année", "Variable source", "Question sur l'indépendance"))
+)
+```
+
+| Study              | Year | Source variable   | Independence question |
+|:-------------------|-----:|:------------------|:----------------------|
+| qes1998            | 1998 | NA                | no                    |
+| qes_crop_2007_2010 | 2007 | NA                | no                    |
+| qes2007            | 2007 | NA                | no                    |
+| qes2007_panel      | 2007 | NA                | no                    |
+| qes2008            | 2008 | NA                | no                    |
+| qes2012            | 2012 | q52               | yes                   |
+| qes2012_panel      | 2012 | NA                | no                    |
+| qes2014            | 2014 | Q19               | yes                   |
+| qes2018            | 2018 | q26               | yes                   |
+| qes2018_panel      | 2018 | NA                | no                    |
+| qes2022            | 2022 | cps_qc_referendum | yes                   |
+
+The wording in the four studies that ask it:
+
+``` r
+
+asked <- items$qes_code[items$in_column == tr("yes", "oui")]
+wording <- do.call(rbind, lapply(asked, function(s) {
+  v <- items$source_variable[items$qes_code == s]
+  q <- qes_question(s, v, lang = params$lang)
+  # a study documented in one language only: show that language
+  if (is.na(q$question)) q <- qes_question(s, v, lang = tr("fr", "en"))
+  q[, c("study", "variable", "question", "question_lang", "truncated")]
+}))
+knitr::kable(
+  wording, row.names = FALSE,
+  col.names = tr(c("Study", "Variable", "Question", "Language", "Truncated"),
+                 c("Étude", "Variable", "Question", "Langue", "Tronquée"))
+)
+```
+
+| Study | Variable | Question | Language | Truncated |
+|:---|:---|:---|:---|:---|
+| qes2012 | q52 | If there were a referendum on independence that asked whether Quebec should be an independent country, would you vote YES or NO? | en | FALSE |
+| qes2014 | Q19 | If there were a referendum on independence that asked whether Quebec should be an independent country, would you vote YES or NO? | en | FALSE |
+| qes2018 | q26 | If there were today a referendum on independence that asked whether Quebec should be an independent country, would you vote YES or NO? | en | FALSE |
+| qes2022 | cps_qc_referendum | If there were today a referendum on independence that asked whether Quebec should be an independent country, would you vote YES or NO? | en | FALSE |
+
+## Table 2: support for independence
+
+The share who would vote YES among respondents who answered YES or NO.
+“Don’t know” and refusals are left out.
+
+``` r
+
+sov <- do.call(rbind, lapply(split(master, master$qes_code), function(d) {
+  s <- wshare(d$sovereignty_support, d$survey_weight)
+  if (is.null(s) || !"1" %in% names(s)) return(NULL)
+  data.frame(study = d$qes_code[1], year = d$year[1],
+             n = sum(!is.na(d$sovereignty_support)), pct = round(100 * s[["1"]], 1))
+}))
+sov <- sov[order(sov$year), ]
+knitr::kable(
+  sov, row.names = FALSE, format.args = list(decimal.mark = tr(".", ",")),
+  col.names = tr(c("Study", "Year", "N answering", "YES (%)"),
+                 c("Étude", "Année", "N répondants", "OUI (%)"))
+)
+```
+
+| Study   | Year | N answering | YES (%) |
+|:--------|-----:|------------:|--------:|
+| qes2012 | 2012 |        1323 |    40.4 |
+| qes2014 | 2014 |        1353 |    34.8 |
+| qes2018 | 2018 |        2558 |    34.6 |
+| qes2022 | 2022 |        1284 |    34.3 |
+
+``` r
+
+# points only: the question's wording and timing change between studies
+# (see the notes), so the studies do not form one series
+ggplot(sov, aes(x = year, y = pct)) +
+  geom_point(size = 2.5, colour = "#12355b") +
+  scale_x_continuous(breaks = sov$year) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(
+    x = tr("Year of the study", "Année de l'étude"),
+    y = tr("Would vote YES, weighted (%)", "Voterait OUI, pondéré (%)")
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+![Weighted share who would vote YES in a referendum on independence, in
+the Quebec Election Studies that asked the
+question.](analysis-sovereignty_files/figure-html/support-plot-1.png)
 
 ## Notes
 
-- The sovereignty trend uses the dedicated sovereignty item from each
-  study.
-- The `qes_crop_2007_2010` study is split into 2007, 2008, 2009, and
-  2010 using its collection-wave date variable.
-- Confidence intervals are binomial 95% intervals using normal
-  approximation.
-- `n_with_measure` in the table shows where coverage is thinner.
+- The four studies are Quebec Election Studies, but they differ in mode
+  and population: `qes2018` covers people aged 16 and over, and
+  `qes2022` is an online panel of citizens aged 18 and over
+  ([`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)).
+- The question was not asked at the same moment nor in the same words:
+  `qes2022` asked it during the campaign (its `cps_` wave), the others
+  after the election, and the 2018 and 2022 questions add “today” (Table
+  1). The figure shows one point per study and does not join them into a
+  series.
+- `qes2022`’s wording is quoted, in English and French and not
+  truncated, from its bilingual codebook (`qes_docs("qes2022")`). That
+  wording ships under the study’s licence, CC BY-NC 4.0
+  (`qes_cite("qes2022")`).
+- For the other studies, read their own question with
+  [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+  and
+  [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md);
+  comparing it with the independence question needs care, because the
+  wording differs.

@@ -11,70 +11,22 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_3-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/Space_Grotesk-0.4.10/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Getting Started with qesR">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    <script>
-(function () {
-  function normalizePath(path) {
-    if (!path || path === "/") return "index.html";
-    var clean = path;
-    while (clean.length > 1 && clean.charAt(clean.length - 1) === "/") {
-      clean = clean.slice(0, -1);
-    }
-    var segments = clean.split("/").filter(Boolean);
-    if (segments.length > 0 && segments[0] === "qesR") segments = segments.slice(1);
-    if (segments.length === 0) return "index.html";
-    return segments.join("/");
-  }
-  document.addEventListener("DOMContentLoaded", function () {
-    var path = window.location.pathname || "/";
-    var rel = normalizePath(path);
-    var root = path.indexOf("/qesR/") === 0 ? "/qesR/" : "/";
-    var isFrench = /^articles\/fr-/.test(rel);
-    var map = {
-      "index.html": "articles/fr-demarrage.html",
-      "articles/get-started.html": "articles/fr-demarrage.html",
-      "articles/merged-dataset.html": "articles/fr-donnees-fusionnees.html",
-      "articles/study-citations.html": "articles/fr-citations-etudes.html",
-      "articles/analysis-sovereignty.html": "articles/fr-analyse-souverainete.html",
-      "articles/analysis-descriptive.html": "articles/fr-analyse-descriptive.html",
-      "articles/analysis-vote-choice.html": "articles/fr-analyse-choix-vote.html",
-      "articles/fr-demarrage.html": "articles/get-started.html",
-      "articles/fr-donnees-fusionnees.html": "articles/merged-dataset.html",
-      "articles/fr-citations-etudes.html": "articles/study-citations.html",
-      "articles/fr-analyse-souverainete.html": "articles/analysis-sovereignty.html",
-      "articles/fr-analyse-descriptive.html": "articles/analysis-descriptive.html",
-      "articles/fr-analyse-choix-vote.html": "articles/analysis-vote-choice.html"
-    };
-    var target = map[rel] || (isFrench ? "articles/get-started.html" : "articles/fr-demarrage.html");
-    var label = isFrench ? "EN" : "FR";
-    var navbar = document.querySelector(".navbar .container") || document.querySelector(".navbar .container-fluid");
-    if (!navbar) return;
-    var holder = document.createElement("div");
-    holder.className = "qesr-lang-switch-wrap";
-    var btn = document.createElement("a");
-    btn.className = "qesr-lang-switch";
-    btn.href = root + target;
-    btn.textContent = label;
-    btn.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
-    holder.appendChild(btn);
-    navbar.appendChild(holder);
-  });
-})();
-</script><nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
+
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,14 +36,68 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
+<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
+    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
+    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
+    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
+    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
+    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
+<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
+    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/merged-dataset.html">Merged Dataset</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/study-citations.html">Study Citations</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-sovereignty.html">Use case example: Sovereignty</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/analysis-vote-choice.html">Use case example: Vote Choice</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/ThomasGareau/qesR" aria-label="GitHub repository"><span class="fa fa-github"></span></a></li>
       </ul>
 </div>
@@ -114,97 +120,366 @@
 
     
     
-<p><code>qesR</code> helps you access Quebec Election Study data by
-survey code, plus metadata, codebooks, and a merged harmonized
-dataset.</p>
+<p><em><a href="fr-demarrage.html">Version française</a></em></p>
+<p>qesR loads the Quebec Election Studies and related Quebec election
+surveys into R by study code. Each code points to one Dataverse deposit,
+pinned to a dataset version and to one original data file that is
+checked against its md5 checksum before use. The catalog of studies,
+their documents, their citations and the description of every variable
+of every study ship with the package.</p>
+<p>This page goes from a study code to a weighted estimate. Every chunk
+on it runs without a network connection: it uses the catalog, the
+shipped metadata and <code>qes_demo</code>, a small synthetic study that
+ships with qesR. The chunks that would download a real study are shown
+but not run.</p>
 <div class="section level2">
 <h2 id="install">Install<a class="anchor" aria-label="anchor" href="#install"></a>
 </h2>
+<p>Install qesR from GitHub; once it is accepted on CRAN,
+<code>install.packages("qesR")</code> will do.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
-</h2>
-<p>Core calls:</p>
-<ul>
-<li>
-<code>get_qes(srvy)</code> download a survey by code</li>
-<li>
-<code><a href="../reference/get_qescodes.html">get_qescodes()</a></code> list available codes</li>
-<li>
-<code>get_preview(srvy, obs)</code> preview observations</li>
-<li>
-<code>get_question(data, variable)</code> retrieve survey question
-text</li>
-<li>
-<code>get_codebook(srvy)</code> retrieve codebook</li>
-<li>
-<code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> build merged harmonized data</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="list-available-studies">List available studies<a class="anchor" aria-label="anchor" href="#list-available-studies"></a>
-</h2>
+<span><span class="co"># once accepted on CRAN:</span></span>
+<span><span class="co"># install.packages("qesR")</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_qescodes.html">get_qescodes</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/get_qescodes.html">get_qescodes</a></span><span class="op">(</span>detailed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="download-one-study">Download one study<a class="anchor" aria-label="anchor" href="#download-one-study"></a>
+<h2 id="which-studies-are-there">Which studies are there?<a class="anchor" aria-label="anchor" href="#which-studies-are-there"></a>
 </h2>
+<p><code><a href="../reference/qes_studies.html">qes_studies()</a></code> lists every study, with its year, family,
+design, target population, licence, DOI and the dataset version it is
+pinned to.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">qes2022</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2022"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">qes2022</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="retrieve-the-codebook-in-different-layouts">Retrieve the codebook in different layouts<a class="anchor" aria-label="anchor" href="#retrieve-the-codebook-in-different-layouts"></a>
-</h2>
+<code class="sourceCode R"><span><span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">studies</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"family"</span>, <span class="st">"study_design"</span>, <span class="st">"licence"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;                 study year       family study_design      licence</span></span>
+<span><span class="co">#&gt; 1             qes2022 2022          qes     pre_post CC BY-NC 4.0</span></span>
+<span><span class="co">#&gt; 2             qes2018 2018          qes         post      CC0 1.0</span></span>
+<span><span class="co">#&gt; 3       qes2018_panel 2018 durand_panel        panel      CC0 1.0</span></span>
+<span><span class="co">#&gt; 4             qes2014 2014          qes         post      CC0 1.0</span></span>
+<span><span class="co">#&gt; 5             qes2012 2012          qes         post      CC0 1.0</span></span>
+<span><span class="co">#&gt; 6       qes2012_panel 2012 durand_panel        panel      CC0 1.0</span></span>
+<span><span class="co">#&gt; 7  qes_crop_2007_2010 2007   crop_polls pooled_polls      CC0 1.0</span></span>
+<span><span class="co">#&gt; 8             qes2008 2008          qes         post      CC0 1.0</span></span>
+<span><span class="co">#&gt; 9             qes2007 2007          qes         post      CC0 1.0</span></span>
+<span><span class="co">#&gt; 10      qes2007_panel 2007 durand_panel        panel      CC0 1.0</span></span>
+<span><span class="co">#&gt; 11            qes1998 1998   polls_1998        panel      CC0 1.0</span></span>
+<span><span class="co">#&gt; 12       qes1998_crop 1998   polls_1998        panel      CC0 1.0</span></span>
+<span><span class="co">#&gt; 13    qes1998_createc 1998   polls_1998        panel      CC0 1.0</span></span></code></pre></div>
+<p>Not every study is a Quebec Election Study (family <code>qes</code>):
+the Durand panels, the CROP polls and the 1998 polls have their own
+designs and populations. <code><a href="../reference/qes_docs.html">qes_docs()</a></code> lists the codebooks,
+questionnaires and reports of each study.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cb_compact</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_codebook.html">get_codebook</a></span><span class="op">(</span><span class="st">"qes2022"</span>, layout <span class="op">=</span> <span class="st">"compact"</span><span class="op">)</span></span>
-<span><span class="va">cb_wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_codebook.html">get_codebook</a></span><span class="op">(</span><span class="st">"qes2022"</span>, layout <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
-<span><span class="va">cb_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_codebook.html">get_codebook</a></span><span class="op">(</span><span class="st">"qes2022"</span>, layout <span class="op">=</span> <span class="st">"long"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_docs.html">qes_docs</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"role"</span>, <span class="st">"lang"</span>, <span class="st">"file_name"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;               role lang</span></span>
+<span><span class="co">#&gt; 1    questionnaire   en</span></span>
+<span><span class="co">#&gt; 2    questionnaire   fr</span></span>
+<span><span class="co">#&gt; 3 technical_report   fr</span></span>
+<span><span class="co">#&gt;                                                                 file_name</span></span>
+<span><span class="co">#&gt; 1                                       Quebec Election Study 2014 EN.doc</span></span>
+<span><span class="co">#&gt; 2                                       Quebec Election Study 2014 FR.doc</span></span>
+<span><span class="co">#&gt; 3 Quebec Election Study 2014 - Technical Report - Post-Election Study.doc</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="get-a-preview-and-question-text">Get a preview and question text<a class="anchor" aria-label="anchor" href="#get-a-preview-and-question-text"></a>
+<h2 id="load-a-study">Load a study<a class="anchor" aria-label="anchor" href="#load-a-study"></a>
 </h2>
+<p><code><a href="../reference/get_qes.html">get_qes()</a></code> returns the data. It writes nothing into your
+workspace, so assign the result yourself. The demonstration study is
+read from the package; a real study is downloaded once per session (or
+kept between sessions with
+<code>options(qesR.cache = "disk")</code>).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_preview.html">get_preview</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/get_question.html">get_question</a></span><span class="op">(</span><span class="va">qes2022</span>, <span class="st">"cps_age_in_years"</span>, full <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="build-a-harmonized-master-dataset">Build a harmonized master dataset<a class="anchor" aria-label="anchor" href="#build-a-harmonized-master-dataset"></a>
-</h2>
+<code class="sourceCode R"><span><span class="va">demo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes_demo"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; get_qes() returns its result and no longer assigns it into your workspace by default. Write `qes_demo &lt;- get_qes(...)`, or pass `assign_global = TRUE`. This note is shown once per session.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">demo</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 60 11</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"QSEXE"</span>, <span class="st">"Q2"</span>, <span class="st">"Q3"</span>, <span class="st">"Q19"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   QSEXE Q2 Q3 Q19</span></span>
+<span><span class="co">#&gt; 1     2  1  3   2</span></span>
+<span><span class="co">#&gt; 2     2  1  4   2</span></span>
+<span><span class="co">#&gt; 3     1  1  1   1</span></span>
+<span><span class="co">#&gt; 4     1  1  2   1</span></span>
+<span><span class="co">#&gt; 5     1  1  4   2</span></span>
+<span><span class="co">#&gt; 6     2  1  3   1</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span></span>
-<span>  surveys <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2022"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2007"</span>, <span class="st">"qes1998"</span><span class="op">)</span>,</span>
-<span>  strict <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a>
-</h2>
-<ul>
-<li>Surveys are loaded in labelled form with available variable/value
-labels.</li>
-<li>Codebook metadata can be inspected in compact, wide, or long
-layout.</li>
-<li>Merged data includes harmonized variables, de-duplication, and
-source-map tracing.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="save-the-master-dataset">Save the master dataset<a class="anchor" aria-label="anchor" href="#save-the-master-dataset"></a>
-</h2>
+<code class="sourceCode R"><span><span class="va">qes2014</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span></span></code></pre></div>
+<p>Columns keep the codes and labels of the file (<code>haven</code>
+labelled columns). Codes such as “don’t know” and “refused” are values
+until you ask <code><a href="../reference/qes_missing.html">qes_missing()</a></code> to set them to <code>NA</code>;
+it records what it changed.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.csv"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="st">"qes_master.rds"</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">demo_clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_missing.html">qes_missing</a></span><span class="op">(</span><span class="va">demo</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">demo_clean</span>, <span class="st">"qes_missing_log"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   variable value missing_type n_set</span></span>
+<span><span class="co">#&gt; 1     QAGE  9999      refused     0</span></span>
+<span><span class="co">#&gt; 2       Q2     9      refused     3</span></span>
+<span><span class="co">#&gt; 3       Q3    99      refused     2</span></span>
+<span><span class="co">#&gt; 4      Q19     8           dk     3</span></span>
+<span><span class="co">#&gt; 5      Q19     9      refused     2</span></span>
+<span><span class="co">#&gt; 6      Q28     8           dk     1</span></span>
+<span><span class="co">#&gt; 7      Q28     9      refused     0</span></span>
+<span><span class="co">#&gt; 8      Q32    98           dk     5</span></span>
+<span><span class="co">#&gt; 9      Q32    99      refused     0</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="codebooks-questions-and-search-offline">Codebooks, questions and search, offline<a class="anchor" aria-label="anchor" href="#codebooks-questions-and-search-offline"></a>
+</h2>
+<p>The codebook of every study ships with qesR: variable labels,
+question text in English and French from the deposited questionnaires
+(for the 2022 study, its bilingual codebook), value labels and missing
+codes.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_codebook.html">qes_codebook</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cb</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"variable"</span>, <span class="st">"label"</span>, <span class="st">"n_value_labels"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;qes_codebook&gt;</span></span>
+<span><span class="co">#&gt; Variables: 6 </span></span>
+<span><span class="co">#&gt; Codebook/support files: 0 </span></span>
+<span><span class="co">#&gt;   variable                                    label n_value_labels</span></span>
+<span><span class="co">#&gt; 1    QUEST                                     &lt;NA&gt;              0</span></span>
+<span><span class="co">#&gt; 2     SDAT                          Date d'entrevue              0</span></span>
+<span><span class="co">#&gt; 3     LANG Préfèreriez-vous répondre à ce questi...              2</span></span>
+<span><span class="co">#&gt; 4    GREET Ce sondage en ligne est mené au nom d...              1</span></span>
+<span><span class="co">#&gt; 5     QAGE En quelle année êtes-vous né(e)? / En...              1</span></span>
+<span><span class="co">#&gt; 6    SMAGE                                      Age              0</span></span>
+<span><span class="fu"><a href="../reference/qes_codebook.html">qes_codebook</a></span><span class="op">(</span><span class="st">"qes2014"</span>, layout <span class="op">=</span> <span class="st">"long"</span>, variables <span class="op">=</span> <span class="st">"Q19"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;qes_codebook&gt; survey: qes2014</span></span>
+<span><span class="co">#&gt; DOI: 10.5683/SP3/64F7WR </span></span>
+<span><span class="co">#&gt; Data file: Quebec Election Study 2014.sav (Dataverse: Quebec Election Study 2014 (SPSS).tab) </span></span>
+<span><span class="co">#&gt; Variables: 1 </span></span>
+<span><span class="co">#&gt; Rows: 4 </span></span>
+<span><span class="co">#&gt; Codebook/support files: 3 </span></span>
+<span><span class="co">#&gt;   variable value                value_label</span></span>
+<span><span class="co">#&gt; 1      Q19     1                        Oui</span></span>
+<span><span class="co">#&gt; 2      Q19     2                        Non</span></span>
+<span><span class="co">#&gt; 3      Q19     8             Je ne sais pas</span></span>
+<span><span class="co">#&gt; 4      Q19     9 Je préfère ne pas répondre</span></span>
+<span><span class="co">#&gt;                                      label</span></span>
+<span><span class="co">#&gt; 1 Si un référendum sur l'indépendance a...</span></span>
+<span><span class="co">#&gt; 2 Si un référendum sur l'indépendance a...</span></span>
+<span><span class="co">#&gt; 3 Si un référendum sur l'indépendance a...</span></span>
+<span><span class="co">#&gt; 4 Si un référendum sur l'indépendance a...</span></span>
+<span><span class="co">#&gt;                                   question   study missing_type is_declared_na</span></span>
+<span><span class="co">#&gt; 1 Si un référendum sur l’indépendance a... qes2014         &lt;NA&gt;          FALSE</span></span>
+<span><span class="co">#&gt; 2 Si un référendum sur l’indépendance a... qes2014         &lt;NA&gt;          FALSE</span></span>
+<span><span class="co">#&gt; 3 Si un référendum sur l’indépendance a... qes2014           dk          FALSE</span></span>
+<span><span class="co">#&gt; 4 Si un référendum sur l’indépendance a... qes2014      refused          FALSE</span></span></code></pre></div>
+<p><code><a href="../reference/qes_question.html">qes_question()</a></code> gives the exact wording, in either
+language:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_question.html">qes_question</a></span><span class="op">(</span><span class="st">"qes2014"</span>, <span class="st">"Q19"</span>, lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span><span class="op">$</span><span class="va">question</span></span>
+<span><span class="co">#&gt; [1] "If there were a referendum on independence that asked whether Quebec should be an independent country, would you vote YES or NO?"</span></span>
+<span><span class="fu"><a href="../reference/qes_question.html">qes_question</a></span><span class="op">(</span><span class="st">"qes2014"</span>, <span class="st">"Q19"</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span><span class="op">$</span><span class="va">question</span></span>
+<span><span class="co">#&gt; [1] "Si un référendum sur l’indépendance avait lieu vous demandant si vous voulez que le Québec devienne un pays indépendant, voteriez-vous OUI ou voteriez-vous NON?"</span></span></code></pre></div>
+<p><code><a href="../reference/qes_search.html">qes_search()</a></code> searches every study at once, ignoring case
+and accents:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">hits</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_search.html">qes_search</a></span><span class="op">(</span><span class="st">"souverain|sovereign"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">hits</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"variable"</span>, <span class="st">"label"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     study            variable                                    label</span></span>
+<span><span class="co">#&gt; 1 qes2022 cps_impissue_matrix What is the most important issue to y...</span></span>
+<span><span class="co">#&gt; 2 qes2022             pes_q23 Did you vote in the 1995 referendum o...</span></span>
+<span><span class="co">#&gt; 3 qes2018                  q2                                     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4 qes2018         q2_96_other                                     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5 qes2018                 q23                                     &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...</span></span></code></pre></div>
+<p>The 2022 study is licensed CC BY-NC 4.0. Its codebook ships with qesR
+too, under that licence (attribution, no commercial use), not under
+qesR’s MIT licence, which covers the package code only. It is derived
+from Mahéo, Bélanger, Stephenson and Harell (2023), <em>2022 Quebec
+Election Study</em>, Harvard Dataverse, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>; a printed codebook
+of <code>qes2022</code> repeats this notice, which codebooks,
+<code><a href="../reference/qes_question.html">qes_question()</a></code> and <code><a href="../reference/qes_search.html">qes_search()</a></code> results that
+include <code>qes2022</code> also keep in their attribute
+<code>licence_notice</code>, and
+<code>system.file("COPYRIGHTS", package = "qesR")</code> lists the
+files.</p>
+</div>
+<div class="section level2">
+<h2 id="a-weighted-estimate">A weighted estimate<a class="anchor" aria-label="anchor" href="#a-weighted-estimate"></a>
+</h2>
+<p>What share of Quebec adults would have voted YES in a referendum on
+independence, just after the 2014 election? Question Q19 of
+<code>qes2014</code> asks it (its wording is above). A correct estimate
+states four things, and the steps above give each of them.</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>The population.</strong> The catalog gives each study’s
+design and target population: <code>qes2014</code> is a post-election
+survey that targets the Quebec adult population, nothing wider. Its
+respondents come from an opt-in online panel, not from a probability
+sample.</li>
+<li>
+<strong>The weight.</strong> <code>POND</code> is the weight of
+<code>qes2014</code>. Its technical report
+(<code>qes_docs("qes2014")</code>) says it adjusts the sample to the
+latest census by sex, age, region and language. The estimate describes
+the adult population only to the extent that this adjustment corrects
+the panel.</li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">studies</span><span class="op">[</span><span class="va">studies</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2014"</span>,</span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"study_design"</span>, <span class="st">"target_population_en"</span>, <span class="st">"target_population_fr"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;     study study_design    target_population_en        target_population_fr</span></span>
+<span><span class="co">#&gt; 4 qes2014         post Quebec adult population Population adulte du Québec</span></span>
+<span><span class="fu"><a href="../reference/qes_codebook.html">qes_codebook</a></span><span class="op">(</span><span class="st">"qes2014"</span>, variables <span class="op">=</span> <span class="st">"POND"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"variable"</span>, <span class="st">"label"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt; &lt;qes_codebook&gt;</span></span>
+<span><span class="co">#&gt; Variables: 1 </span></span>
+<span><span class="co">#&gt; Codebook/support files: 0 </span></span>
+<span><span class="co">#&gt;   variable       label</span></span>
+<span><span class="co">#&gt; 1     POND Pondération</span></span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>
+<strong>The question and its codes.</strong> Q19 codes YES as 1, NO
+as 2, “don’t know” as 8 and “refused” as 9 (the long codebook
+above).</li>
+<li>
+<strong>The denominator.</strong> <code><a href="../reference/qes_missing.html">qes_missing()</a></code> set
+codes 8 and 9 to <code>NA</code>. The share below is among respondents
+who answered YES or NO, and says so.</li>
+</ol>
+<p>On the demonstration study, which copies these names and codes:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">answered</span> <span class="op">&lt;-</span> <span class="va">demo_clean</span><span class="op">$</span><span class="va">Q19</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">yes</span> <span class="op">&lt;-</span> <span class="va">demo_clean</span><span class="op">$</span><span class="va">Q19</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span> <span class="op">==</span> <span class="fl">1</span></span>
+<span><span class="va">weight</span> <span class="op">&lt;-</span> <span class="va">demo_clean</span><span class="op">$</span><span class="va">POND</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  respondents <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">answered</span><span class="op">)</span>,</span>
+<span>  unweighted <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">yes</span><span class="op">)</span>,</span>
+<span>  weighted <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">*</span> <span class="va">yes</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weight</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; respondents  unweighted    weighted </span></span>
+<span><span class="co">#&gt;  55.0000000   0.4000000   0.4158442</span></span></code></pre></div>
+<p>The demonstration data are synthetic, so these numbers describe no
+population; they show the computation. On the real file the same lines
+give 34.8% YES among the 1,353 respondents who answered YES or NO (34.1%
+unweighted), weighted to the Quebec adult population of 2014.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">qes2014</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_missing.html">qes_missing</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">answered</span> <span class="op">&lt;-</span> <span class="va">qes2014</span><span class="op">$</span><span class="va">Q19</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">yes</span> <span class="op">&lt;-</span> <span class="va">qes2014</span><span class="op">$</span><span class="va">Q19</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span> <span class="op">==</span> <span class="fl">1</span></span>
+<span><span class="va">weight</span> <span class="op">&lt;-</span> <span class="va">qes2014</span><span class="op">$</span><span class="va">POND</span><span class="op">[</span><span class="va">answered</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">*</span> <span class="va">yes</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">weight</span><span class="op">)</span></span></code></pre></div>
+<p>This is a point estimate. <code>qes2014</code> is a non-probability
+online panel: its technical report (<code>qes_docs("qes2014")</code>)
+gives no margin of error, and a design-based standard error, from the
+<code>survey</code> package for instance, would not have its usual
+meaning. Compute each estimate within one study: studies differ in
+design, population and wording, and their weights are on their own
+scales.</p>
+</div>
+<div class="section level2">
+<h2 id="harmonized-data-across-studies-experimental">Harmonized data across studies (experimental)<a class="anchor" aria-label="anchor" href="#harmonized-data-across-studies-experimental"></a>
+</h2>
+<p><code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> builds one data frame from several
+studies, one column per harmonized variable (“target”), from a reviewed
+specification only. <code><a href="../reference/qes_spec.html">qes_spec()</a></code> shows which question of each
+study feeds a target and how comparable it is to the target’s anchor
+question:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sov_indep"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<span><span class="va">xw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"source_var"</span>, <span class="st">"grade"</span>, <span class="st">"weight_var"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;     study wave        source_var      grade         weight_var</span></span>
+<span><span class="co">#&gt; 1 qes2012 post               q52  identical               pond</span></span>
+<span><span class="co">#&gt; 2 qes2014 post               Q19  identical               POND</span></span>
+<span><span class="co">#&gt; 3 qes2018 post               q26 comparable               pond</span></span>
+<span><span class="co">#&gt; 4 qes2022  cps cps_qc_referendum comparable cps_weight_general</span></span></code></pre></div>
+<p>A row is applied once a reviewer has signed it off. In specification
+4.1.0 every row is signed off, after an automated double review against
+the original files and documents (not a human review); a row still in
+review would give <code>NA</code> with the reason
+<code>not_reviewed</code>, unless <code>include_draft = TRUE</code>. The
+recommended weights of <code>qes1998</code>, <code>qes2007_panel</code>,
+<code>qes2012_panel</code> and the CROP polls still need review, so
+their weights are <code>NA</code>. On the demonstration study, which
+stands in for <code>qes2014</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_indep"</span>, <span class="st">"vote_prov_recall"</span><span class="op">)</span>,</span>
+<span>                   missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<span><span class="va">h</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"eligible_voter"</span>, <span class="st">"sov_indep"</span>, <span class="st">"sov_indep__na"</span>, <span class="st">"weight_post"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;      study eligible_voter sov_indep sov_indep__na weight_post</span></span>
+<span><span class="co">#&gt; 1 qes_demo           TRUE        No          &lt;NA&gt;   1.2593217</span></span>
+<span><span class="co">#&gt; 2 qes_demo           TRUE        No          &lt;NA&gt;   0.6685168</span></span>
+<span><span class="co">#&gt; 3 qes_demo           TRUE       Yes          &lt;NA&gt;   1.3786438</span></span>
+<span><span class="co">#&gt; 4 qes_demo           TRUE       Yes          &lt;NA&gt;   0.9836078</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">h</span>, <span class="st">"qes_weight_guide"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"target"</span>, <span class="st">"study"</span>, <span class="st">"weight_column"</span>, <span class="st">"weight_var"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="co">#&gt;             target    study weight_column weight_var</span></span>
+<span><span class="co">#&gt; 1 vote_prov_recall qes_demo   weight_post       POND</span></span>
+<span><span class="co">#&gt; 2        sov_indep qes_demo   weight_post       POND</span></span></code></pre></div>
+<p>Every missing value has a reason (<code>sov_indep__na</code>).
+<code>eligible_voter</code> says whether the respondent could vote in
+the election, and each wave’s recommended weight has mean 1: these
+questions were asked after the election, so <code>weight_post</code> is
+their weight, as the weight guide says. <code><a href="../reference/qes_design.html">qes_design()</a></code> hands
+the data to the <code>survey</code> package:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"survey"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span>  <span class="fu">survey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/surveysummary.html" class="external-link">svymean</a></span><span class="op">(</span><span class="op">~</span><span class="va">sov_indep</span>, <span class="va">d</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt;                                          mean     SE</span></span>
+<span><span class="co">#&gt; sov_indepYes                          0.41584 0.0718</span></span>
+<span><span class="co">#&gt; sov_indepNo                           0.58416 0.0718</span></span>
+<span><span class="co">#&gt; sov_indepWould not vote / would spoil 0.00000 0.0000</span></span></code></pre></div>
+<p>The standard error treats the weighted sample as a probability
+sample; for an opt-in panel such as qes2014, read it as a rough guide
+only (see <code><a href="../reference/qes_design.html">?qes_design</a></code>).</p>
+<p>A pre-election question (vote intention) takes
+<code>weight_pre</code> instead, and a study’s two waves can have
+different weights: <code><a href="../reference/qes_design.html">qes_design()</a></code> asks you to choose when the
+targets need different ones. The reference of every target, generated
+from the specification, is
+<code><a href="../articles/harmonization-reference.html">vignette("harmonization-reference", package = "qesR")</a></code>.</p>
+</div>
+<div class="section level2">
+<h2 id="provenance-and-citations">Provenance and citations<a class="anchor" aria-label="anchor" href="#provenance-and-citations"></a>
+</h2>
+<p>Data returned by <code><a href="../reference/get_qes.html">get_qes()</a></code> records which file it was
+read from. <code><a href="../reference/qes_provenance.html">qes_provenance()</a></code> returns that record, and
+<code><a href="../reference/qes_cite.html">qes_cite()</a></code> cites qesR and the datasets you used (see
+<code><a href="../articles/citations.html">vignette("citations", package = "qesR")</a></code>).</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">demo</span><span class="op">)</span></span>
+<span><span class="co">#&gt; qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5</span></span>
+<span><span class="co">#&gt; e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on</span></span>
+<span><span class="co">#&gt; 2026-09-29 16:22:45 UTC (local_demo). Read with haven::read_sav(user_na =</span></span>
+<span><span class="co">#&gt; TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.3.0.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; as.data.frame() gives every column.</span></span>
+<span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                </span></span>
+<span><span class="co">#&gt; [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="</span></span></code></pre></div>
+<p><code><a href="../reference/qes_download.html">qes_download()</a></code> saves the original files themselves (data
+file and documents), md5-checked, in a folder you choose:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"qes_originals"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/qes_download.html">qes_download</a></span><span class="op">(</span><span class="st">"qes2014"</span>, path <span class="op">=</span> <span class="va">dir</span>, what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"docs"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="messages-and-errors">Messages and errors<a class="anchor" aria-label="anchor" href="#messages-and-errors"></a>
+</h2>
+<p>Messages, warnings and errors can be shown in French with
+<code>options(qesR.lang = "fr")</code>; the data returned is the same in
+both languages. Errors have classes, so a script can react to them
+without reading their text:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"QES 2014"</span><span class="op">)</span>,</span>
+<span>  qesR_error_unknown_study <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="va">e</span><span class="op">$</span><span class="va">suggestions</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "qes2014"</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="coming-from-qesr-0-4-4">Coming from qesR 0.4.4<a class="anchor" aria-label="anchor" href="#coming-from-qesr-0-4-4"></a>
+</h2>
+<p><code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> and the other functions of qesR 0.4.4
+keep working; since qesR 0.7.0 the master is rendered from the
+harmonization engine. What changed, and how to keep results
+reproducible, is in
+<code><a href="../articles/migrating-0.7.html">vignette("migrating-0.7", package = "qesR")</a></code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

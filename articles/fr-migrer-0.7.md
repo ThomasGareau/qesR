@@ -1,0 +1,371 @@
+# Passer de qesR 0.4.4 à 0.7.0
+
+*[English
+version](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)*
+
+Ce guide s’adresse au code écrit pour qesR 0.4.4, par exemple les
+scripts de réplication d’un article publié. Chaque fonction de 0.4.4
+garde son nom et ses arguments, mais un changement peut arrêter ce code
+:
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+ne crée plus l’objet pour vous (première ligne ci-dessous). Ce qui
+change par ailleurs, c’est ce qu’une partie de ce code produit, et cela
+dépend de ce qu’il utilise :
+
+| Votre code utilise | Avec 0.7.0 | Que faire |
+|----|----|----|
+| `get_qes("qes2018")` seul, puis l’objet `qes2018` | erreur « objet ‘qes2018’ introuvable » | écrire `qes2018 <- get_qes("qes2018")` ([plus bas](#assignez-vous-m%C3%AAme-le-r%C3%A9sultat)) |
+| les codes bruts de [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md) ([`as.numeric()`](https://rdrr.io/r/base/numeric.html), plages de codes valides) | mêmes nombres | rien |
+| le texte des étiquettes de [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md) ([`haven::as_factor()`](https://forcats.tidyverse.org/reference/as_factor.html), colonnes texte) | une partie du texte change | [vérifier les étiquettes utilisées](#get_qes-les-m%C3%AAmes-codes-lus-dans-les-fichiers-originaux) |
+| [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md) | les valeurs changent | [lire le tableau des colonnes](#get_qes_master-ce-qui-a-chang%C3%A9), ou garder 0.4.4 pour reproduire |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | les valeurs changent ; note unique | comme pour le fichier fusionné |
+| les autres fonctions de 0.4.4 | mêmes résultats que leurs remplaçantes ; note unique | rien, ou [les renommer](#anciens-noms-nouveaux-noms) |
+
+Tous les blocs de code de cette page s’exécutent sans réseau, sur
+l’étude synthétique `qes_demo`. La liste complète des changements est
+dans le fichier NEWS du package (`news(package = "qesR")`), versions
+0.5.0 et 0.7.0.
+
+``` r
+
+library(qesR)
+```
+
+## Avant de mettre à jour : notez la version
+
+Un résultat publié devrait indiquer quelle version de qesR l’a produit.
+Avant d’installer 0.7.0, notez la version que vous avez, et gardez-la
+avec les résultats :
+
+``` r
+
+packageVersion("qesR")
+packageDescription("qesR")$RemoteSha   # the commit, when installed from GitHub
+```
+
+Pour reproduire exactement un résultat de 0.4.4, installez 0.4.4, de
+préférence dans une bibliothèque à part ou un projet renv, afin que le
+nouveau travail puisse utiliser 0.7.0 :
+
+``` r
+
+remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
+```
+
+0.5.0 et 0.6.0 étaient des versions de développement, jamais publiées.
+Un résultat calculé avec l’une d’elles se reproduit en installant le
+commit dont il provient, que `packageDescription("qesR")$RemoteSha`
+enregistre pour une installation depuis GitHub
+(`remotes::install_github("ThomasGareau/qesR", ref = "<sha>")`).
+
+## Assignez vous-même le résultat
+
+Avec 0.4.4, `get_qes("qes2018")` créait un objet `qes2018` dans votre
+espace de travail. Depuis 0.5.0, la fonction retourne les données et
+n’écrit rien : assignez-les.
+
+``` r
+
+qes_demo <- get_qes("qes_demo", quiet = TRUE)
+#> get_qes() renvoie son résultat et ne l'assigne plus par défaut dans votre espace de travail. Écrivez `qes_demo <- get_qes(...)`, ou passez `assign_global = TRUE`. Cette note s'affiche une fois par session.
+dim(qes_demo)
+#> [1] 60 11
+```
+
+Un script qui appelle `get_qes("qes2018")` seul sur sa ligne, puis
+utilise `qes2018`, s’arrête avec l’erreur « objet ‘qes2018’ introuvable
+». Cherchez aussi ces appels à l’intérieur de
+[`tryCatch()`](https://rdrr.io/r/base/conditions.html) ou de
+[`try()`](https://rdrr.io/r/base/try.html) : l’erreur y est interceptée,
+et la partie du script qui utilisait l’objet est sautée sans erreur
+visible.
+
+`assign_global = TRUE` assigne toujours, dans l’environnement d’où la
+fonction est appelée : l’environnement global au niveau supérieur, le
+cadre de la fonction à l’intérieur d’une fonction. Le codebook est aussi
+assigné, sous le nom `<code>_codebook`.
+
+``` r
+
+f <- function() {
+  get_qes("qes_demo", assign_global = TRUE, quiet = TRUE)
+  c(data = exists("qes_demo", inherits = FALSE),
+    codebook = exists("qes_demo_codebook", inherits = FALSE))
+}
+f()
+#>     data codebook 
+#>     TRUE     TRUE
+```
+
+## `get_qes()` : les mêmes codes, lus dans les fichiers originaux
+
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
+lit le fichier original SPSS ou Stata de chaque étude, vérifié par la
+somme md5 du catalogue. Les noms de colonnes, les codes et le nombre de
+`NA` sont ceux de 0.4.4 pour les 11 études : le code qui travaille sur
+les codes ([`as.numeric()`](https://rdrr.io/r/base/numeric.html), plages
+de codes valides, `%in%`) donne les mêmes nombres et le même N. Le texte
+change là où l’ancienne conversion l’endommageait ou prenait les
+étiquettes ailleurs :
+
+- les accents sont réparés (1 805 cellules dans `qes2018`, 2 517 dans
+  `qes2022`) ;
+- les étiquettes de `qes2012` gardent leur casse et leur longueur
+  d’origine (0.4.4 les mettait en minuscules et les coupait à 80
+  caractères) ;
+- les dates d’entrevue de `qes2022` sont des date-heures, pas du texte ;
+- les codes sont stockés en nombres réels (double) plutôt qu’en entiers.
+
+[`haven::as_factor()`](https://forcats.tidyverse.org/reference/as_factor.html)
+et tout ce qui se construit à partir du texte des étiquettes peuvent
+donc donner un autre texte. Les données indiquent de quel fichier elles
+viennent :
+
+``` r
+
+qes_provenance(qes_demo)
+#> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
+#> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
+#> Obtenu le 2026-09-29 16:22:26 UTC (local_demo). Lu avec
+#> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
+#> qesR 2.3.0.
+#> 
+#> as.data.frame() donne toutes les colonnes.
+```
+
+## `get_qes_master()` : ce qui a changé
+
+Le fichier fusionné garde ses 30 colonnes documentées, dans le même
+ordre et avec les mêmes types ; de nouvelles colonnes s’ajoutent après
+elles et ne sont jamais retirées. Ses valeurs ont changé deux fois.
+
+**Avec 0.5.0**, surtout par suppression :
+
+- tous les répondants de chaque fichier sont gardés : 40 987 lignes.
+  0.4.4 retirait 380 répondants de `qes2007_panel` et 1 répondant CROP
+  comme doublons et, dans une session aux messages en français, perdait
+  à la lecture 1 208 lignes de `qes2007_panel` et 616 de `qes2018_panel`
+  ;
+- les 70 colonnes que 0.4.4 ajoutait en empilant des variables de même
+  nom d’une étude à l’autre sont retirées : elles contenaient des
+  questions différentes selon l’étude (`attr(, "removed_columns")` les
+  énumère) ;
+- `turnout` de `qes2018` vaut 0 plutôt que `NA` pour les 336 répondants
+  qui ont dit ne pas avoir voté (codes 1 et 3 de `q5`) : son N valide
+  passe de 2 303 à 2 639 et sa moyenne de 0,96 à 0,84 ;
+- `qes_name_en` prend le titre propre à chaque étude pour les panels
+  Durand, les sondages CROP et les sondages de 1998 (par exemple « Panel
+  Survey on the 2018 Quebec Election ») : sélectionnez les études par
+  `qes_code`, pas par leur nom ;
+- le texte de certaines étiquettes est corrigé : `religion` de `qes2012`
+  garde sa casse d’origine, `income` et `province_territory` des
+  sondages CROP lisent correctement leurs lettres accentuées (« 20 000
+  \$ à 39 999 \$ », « Quebec »), et les colonnes `interview_*` de
+  `qes2022` perdent leur `.000` final.
+
+**Avec 0.7.0**, le fichier fusionné est produit par le moteur
+d’harmonisation
+([`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md))
+pour les 11 études : chaque colonne est construite à partir des
+variables harmonisées (« cibles ») dont elle a besoin, et un code que la
+spécification n’apparie pas vaut `NA`.
+
+Seules les lignes de la spécification approuvées par un réviseur sont
+appliquées ; dans la spécification 4.1.0, toutes le sont, après une
+double révision automatisée sur les fichiers et documents originaux (et
+non une révision humaine). Une colonne dont la ligne serait encore en
+révision vaudrait `NA`, avec le motif `not_reviewed` dans
+`attr(master, "legacy_na_columns")`, et un message la nommerait. Les
+pondérations recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel`
+et des sondages CROP restent à réviser : leurs réponses sont remplies,
+mais `weight_pre` et `weight_post` y valent `NA` (motif `not_reviewed`,
+cause `weight_needs_review`), et `survey_weight` garde la pondération
+propre à chaque étude, comme dans 0.4.4. Les colonnes qui changent les
+estimations :
+
+| Colonne | Depuis 0.7.0 | Modifiée dans |
+|----|----|----|
+| `vote_choice` | Le vote déclaré après l’élection, dans toutes les études qui l’ont demandé (0.4.4 prenait l’intention de campagne pour `qes2022` et `qes1998`). Les abstentionnistes, les bulletins annulés, « ne sait pas » et les refus valent `NA` : les catégories « Did not vote / None » et « Don’t know / Refused » disparaissent, et `turnout` dit qui a voté. Les sondages CROP n’ont demandé que l’intention : `NA`, l’intention étant dans la colonne ajoutée `vote_intent`. | toutes les études |
+| `turnout` | La participation déclarée, 1 ou 0 (`qes2022` à partir de sa vague postélectorale ; le panel de 2018 à partir de sa question sur la participation). | `qes2022`, `qes2018`, `qes2018_panel`, `qes2007_panel` |
+| `sovereignty_support`, `sovereignty` | Seulement le référendum sur un Québec pays indépendant. Les autres formulations valent `NA` ; la question de 1995 sur la souveraineté-partenariat est dans la colonne ajoutée `sov_partnership_1995`. | les études sans cette question |
+| `ideology` | 0-10 avec ses extrémités : 0.4.4 perdait les réponses 0 et 10 de `qes2014` (142 répondants) et ne trouvait aucune source dans `qes2018`. | `qes2014`, `qes2018` |
+| `political_interest` | Les questions à quatre points en 10, 7, 3 et 0 ; 0.4.4 laissait les codes 1 à 4 de 2018 non convertis et inversés. Mêle une question à 4 points et une question 0-10 selon l’étude. | `qes2018`, `qes2012_panel` |
+| `language` | La langue maternelle ; 0.4.4 prenait la langue de l’entrevue dans `qes2014` et celle de l’interface dans `qes2022`. Deux premières langues valent `NA`. | `qes2014`, `qes2022`, `qes2007`, `qes2007_panel`, `qes2018_panel` |
+| `income`, `religion` | Les catégories propres à chaque étude ; `-99` et les codes bruts valent `NA` ; le revenu de `qes2012` est rempli. | `income` : 9 études ; `religion` : `qes2012`, `qes2014`, `qes2018`, `qes2022` |
+| `age_group`, `education`, `born_canada` | Catégories corrigées : six tranches d’âge dans les panels de 2007 et 2012, la maîtrise en University, les personnes nées ailleurs au Canada comme nées au Canada, et d’autres cas énumérés dans NEWS. | quelques études chacune |
+| `provincial_pid` | Remplie là où l’étude l’a demandée (0.4.4 ne trouvait une source que dans `qes2022`). | `qes2007`, `qes2008`, `qes2012`, `qes2014`, `qes2018` |
+| `party_best`, `party_lean` | `NA` partout : la source de chaque étude était une autre question. | `party_best` : `qes2022`, `qes2018`, `qes2014`, `qes2012`, `qes2007` ; `party_lean` : toutes les études sauf `qes1998` |
+| `survey_weight` | Inchangée : la pondération propre à chaque étude, à sa propre échelle. Ne l’utilisez pas pour regrouper des estimations pondérées de plusieurs études. | aucune |
+
+Trois conséquences pour les analyses regroupées : une estimation qui
+regroupait `vote_choice` de plusieurs études mêlait, avec 0.4.4,
+intentions et votes déclarés, et une estimation qui regroupait
+`ideology` de 2012, 2014 et 2022 perdait les réponses extrêmes de 2014.
+Ce sont les estimations de ce genre qui bougent le plus. Troisièmement,
+un filtre sur les valeurs non manquantes garde maintenant des études que
+0.4.4 laissait vides : des colonnes qui valaient `NA` pour toute une
+étude sont remplies, `ideology` pour `qes2018`, `provincial_pid` pour
+`qes2007`, `qes2008`, `qes2012`, `qes2014` et `qes2018`, `income` pour
+`qes2012` et `year_of_birth` pour `qes2022`. Un échantillon de cas
+complets comme `subset(master, !is.na(vote_choice) & !is.na(ideology))`
+contient maintenant `qes2018` ; si le script lit aussi `qes2018`
+séparément, ces répondants sont comptés deux fois. Sélectionnez les
+études explicitement, avec `qes_code %in% c(...)`, et comparez
+`table(sample$qes_code)` pour l’échantillon d’analyse avec les effectifs
+publiés.
+
+Les attributs du fichier fusionné disent ce que contient chaque colonne,
+quelles études ont des valeurs modifiées et pourquoi une colonne est
+vide dans une étude :
+
+``` r
+
+master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
+#> Les valeurs ont changé dans qesR 0.7.0 : get_qes_master() est maintenant produit par le moteur d'harmonisation (qes_harmonize()), de sorte que vote_choice et turnout sont le vote et la participation déclarés dans toutes les études qui les ont demandés (les sondages CROP n'ont demandé que l'intention : vote_intent), et que les codes que la spécification n'apparie pas valent NA (language, la langue maternelle, vaut NA pour les personnes qui ont donné deux premières langues) ; attr(, "legacy_column_map") décrit chaque colonne et NEWS énumère les changements. Les résultats d'une version antérieure se reproduisent en l'installant (pour 0.4.4 : remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")). Cette note s'affiche une fois par session.
+#> get_qes_master() n'ajoute plus les 70 colonnes que qesR 0.4.4 construisait en empilant des variables de même nom d'une étude à l'autre ; attr(, "removed_columns") les énumère. Lisez ces questions dans chaque étude avec get_qes(). Cette note s'affiche une fois par session.
+#> get_qes_master() renvoie son résultat et ne l'assigne plus par défaut dans votre espace de travail. Écrivez `qes_master <- get_qes_master(...)`, ou passez `assign_global = TRUE`. Cette note s'affiche une fois par session.
+map <- attr(master, "legacy_column_map")
+map[map$column %in% c("vote_choice", "ideology", "sovereignty_support"),
+    c("column", "target", "flag")]
+#>                 column           target flag
+#> 20            ideology          lr_self <NA>
+#> 22         vote_choice vote_prov_recall <NA>
+#> 26 sovereignty_support        sov_indep <NA>
+attr(master, "legacy_na_columns")[1:5, c("column", "study", "reason")]
+#>               column    study    reason
+#> 1    interview_start qes_demo no_source
+#> 2      interview_end qes_demo na_column
+#> 3 interview_recorded qes_demo na_column
+#> 4           language qes_demo no_source
+#> 5        citizenship qes_demo no_source
+unique(master[, c("qes_code", "vote_choice_timing", "sovereignty_item")])
+#>   qes_code vote_choice_timing sovereignty_item
+#> 1 qes_demo               post        sov_indep
+```
+
+`map$studies_changed` nomme, pour chaque colonne, les études dont les
+valeurs diffèrent de 0.4.4, et `attr(master, "source_map")` la question
+lue par chaque colonne dans chaque étude. Les NEWS de 0.7.0 comptent les
+cellules modifiées, colonne par colonne et étude par étude.
+
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+est obsolète (dépréciation douce) depuis 0.7.0 et produit à partir des
+mêmes cibles : ses colonnes catégorielles sont des facteurs aux niveaux
+anglais, et pour `qes2022` ses colonnes `turnout` et `votechoice`
+restent la probabilité d’aller voter et l’intention de vote pendant la
+campagne (`attr(, "timing")` vaut `"pre"`).
+
+## Du fichier fusionné à `qes_harmonize()`
+
+Pour un nouveau travail,
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+donne ce que le fichier fusionné ne peut pas donner : une colonne par
+stimulus de question (un vote déclaré et une intention sont des cibles
+différentes, tout comme les formulations sur la souveraineté), un niveau
+de comparabilité pour la question de chaque étude, un motif pour chaque
+valeur manquante et la pondération de chaque vague. La colonne `target`
+du tableau plus haut nomme la cible de chaque colonne du fichier
+fusionné. `ideology` et `vote_choice` deviennent :
+
+``` r
+
+h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
+                   missing = "reasons", quiet = TRUE, lang = params$lang)
+table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
+#> 
+#>      dk refused 
+#>       5       0
+attr(h, "qes_weight_guide")[, c("target", "study", "weight_column")]
+#>             target    study weight_column
+#> 1 vote_prov_recall qes_demo   weight_post
+#> 2          lr_self qes_demo   weight_post
+```
+
+Calculez chaque estimation dans une seule étude, avec la pondération de
+la vague qui a posé la question. La position gauche-droite moyenne des
+électeurs de chaque parti dans l’étude de démonstration :
+
+``` r
+
+ok <- !is.na(h$lr_self) & !is.na(h$vote_prov_recall)
+d <- h[ok, ]
+means <- sapply(split(d, d$vote_prov_recall, drop = TRUE), function(p) {
+  weighted.mean(p$lr_self, p$weight_post)
+})
+round(means, 2)
+#>         PLQ          PQ         CAQ          QS         PVQ Autre parti 
+#>        5.39        6.70        5.56        2.53        6.00        9.00
+```
+
+Toutes les lignes de la spécification sont approuvées ; une ligne en
+révision ne serait appliquée qu’avec `include_draft = TRUE`, et la
+colonne `review_note` de `qes_spec("crosswalk")` dit ce que la révision
+a corrigé dans chaque ligne.
+[`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+montre quelle étude a quelle cible et à quel point sa question est
+comparable, et
+[`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
+donne les questions, les formulations et les niveaux de comparabilité de
+chaque cible.
+
+## Anciens noms, nouveaux noms
+
+Les onze fonctions de 0.4.4 ci-dessous continuent de fonctionner et ne
+seront pas retirées. Chacune affiche une fois par session une note qui
+nomme la fonction qui la remplace
+(`options(qesR.quiet_deprecated = TRUE)` masque ces notes).
+
+| 0.4.4 | Remplaçante | Remarque |
+|----|----|----|
+| [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md), [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) | mêmes arguments ; sans réseau ; `refresh` est ignoré |
+| `format_codebook(cb, layout)` | `qes_codebook(cb, layout = )` | un simple data.frame (par exemple un codebook relu depuis un CSV) est une erreur |
+| `get_value_labels(cb, variable)` | `qes_codebook(layout = "long")` | une variable inconnue est une erreur, pas une liste vide |
+| `get_question(data, q)` | `qes_question(study, variables)` | noms exacts seulement ; `full = FALSE` ne change plus le résultat |
+| [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md), [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) | énumère tous les documents, sans réseau |
+| [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` | `file` choisit maintenant des documents par leur nom ; fichiers vérifiés par md5 |
+| `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` |  |
+| [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) | les fichiers des firmes de 1998 s’ajoutent après les 11 anciens codes |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")` | obsolète (dépréciation douce) depuis 0.7.0 ; valeurs modifiées (plus haut) |
+
+[`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+et
+[`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
+gardent leur nom. Une fonction héritée retourne ce que retourne sa
+remplaçante. Dans une nouvelle session, le premier appel de
+[`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+affiche aussi cette note (elle n’apparaît pas ci-dessous, car elle ne
+s’affiche qu’une fois par session) :
+
+> [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
+> est obsolète (dépréciation douce) ; utilisez
+> [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md).
+> Elle continue de fonctionner et ne sera pas retirée.
+
+``` r
+
+cb <- get_codebook("qes_demo")
+identical(cb, qes_codebook("qes_demo"))
+#> [1] TRUE
+```
+
+## Garder les nouveaux résultats reproductibles
+
+Consignez ce à partir de quoi chaque résultat a été calculé, et citez-le
+:
+
+``` r
+
+qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
+#>   spec_version                        spec_hash qesR_version
+#> 1        4.2.0 02b3b7edc509deff0db16859bef7bfb6        0.7.1
+qes_cite("qes2014")
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                
+#> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
+```
+
+`qes_provenance(x)` donne le fichier de chaque étude (DOI, version du
+jeu de données, md5), et `level = "spec"` la version et l’empreinte de
+la spécification d’harmonisation qui a produit des données harmonisées.
+Un résultat se reproduit exactement avec la même version de qesR, qui
+fixe l’un et l’autre.
