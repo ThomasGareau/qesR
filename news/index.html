@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,9 +32,13 @@
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -53,9 +57,13 @@
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -81,6 +89,81 @@
       <small>Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.0" id="qesr-080">qesR 0.8.0<a class="anchor" aria-label="anchor" href="#qesr-080"></a></h2>
+<p>qesR 0.8.0 answers a request of the package’s owner (2026-09-29): “all vote choice questions should be in the same variable (even if the wording is a little different)”. The harmonization engine gains <strong>pooled variables</strong>: one column for every study that pools several targets, with the question each value comes from recorded row by row. <code>vote_choice</code> is the provincial vote choice of all 11 harmonized studies; <code>sov_support</code>, <code>pol_interest</code> and <code>turnout</code> do the same for support for sovereignty, interest in politics and turnout. The specification (4.3.0) also adds 20 targets, from satisfaction with democracy to leader ratings, and every study now has an age group. An automated double review against the original files and documents (not a human review) signed off 101 of the 104 new crosswalk rows, so <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applies them by default; three stay in review for the owner. <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> and <code><a href="../reference/get_decon.html">get_decon()</a></code> return the values of 0.7.1, and no marginal or column hash recorded in 0.7.1 changed; the columns of 0.7.1 gain values only where a new row fills a study that had none, as noted below.</p>
+<div class="section level3">
+<h3 id="pooled-variables-0-8-0">Pooled variables<a class="anchor" aria-label="anchor" href="#pooled-variables-0-8-0"></a></h3>
+<ul><li>
+<code>qes_harmonize(targets = "vote_choice")</code> returns one provincial vote choice for every study: the reported vote (recall) where the study asked it, else the vote intention with those who named no party (the undecided and, in some studies, those who would not vote or refused) pushed toward the party they lean to, else the vote intention at the first question. <code>vote_choice__type</code> says which (<code>recall</code>, <code>intention_push</code>, <code>intention</code>), <code>vote_choice__grade</code> gives the grade of that study’s question (never raised), and <code>vote_choice__item</code> its source (<code>qes2012:post:q25</code>). Wordings differ between studies; the types and grades say how.</li>
+<li>
+<code>sov_support</code> pools the referendum questions on sovereignty (an independent country, a sovereign country, the 1995 question with the undecided pushed and without, and, collapsed to yes or no and graded approximate, being favourable or opposed to independence): 10 studies. <code>pol_interest</code> puts interest in politics on 0 to 1 (four-point items scored 1, 0.7, 0.3 and 0, the legacy <code>political_interest</code> scores divided by 10; 0-10 items divided by 10; scored items graded approximate at most): 7 studies. <code>turnout</code> is the reported turnout; <code>types = list(turnout = c("recall", "intention"))</code> adds, where a study asked no reported turnout, the likelihood of voting collapsed to yes or no.</li>
+<li>How a row gets its value: the members are tried in order of precedence, and the first that asked the respondent sets the row, with a value or with a missing value that is an answer (don’t know, refused, did not vote). A member that did not ask the respondent (another wave, not asked in the study, a row not signed off, below <code>min_grade</code>) passes to the next. So a respondent who did not vote is <code>NA</code> with reason <code>not_voted</code>, never given their earlier intention. A row that every member passes is <code>NA</code> with the reason of the first usable member that has a row in the study and wave (for example <code>sysmis</code>), else of the first member that has one (<code>not_reviewed</code>, <code>below_grade</code>).</li>
+<li>The new argument <code>types</code> of <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> keeps some members only (<code>types = list(vote_choice = "recall")</code>); the precedence stays the spec’s. It is the last argument, so calls by position are unchanged.</li>
+<li>In the respondent layout a study’s pooled values come from one wave (the post-election recall of a pre/post study), so that one weight fits them; the long layout keeps every wave. <code><a href="../reference/qes_design.html">qes_design()</a></code> now weights each study with the column of its own wave when the studies of <code>x</code> call for different columns (a new column <code>weight_auto</code>), and asks to choose only when one study mixes them.</li>
+<li>
+<code>vote_choice</code>, <code>sov_support</code> and <code>pol_interest</code> are in the default set <code>"core"</code>, so <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> returns them by default; the set <code>"pooled"</code> names all four. Results change: the default result of <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> has these 3 columns and their 9 companions more. The members are harmonized too, but are columns only when <code>targets</code> names them.</li>
+<li>
+<code>qes_spec("pooled")</code> lists the members of each pooled variable, their precedence, transform and grade cap, and each member’s grade in each study; <code>qes_provenance(x, level = "pooled")</code> counts, per study, the rows each member gave. A message (class <code>qesR_message_pooled</code>, silenced by <code>quiet</code>) and <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> say which member each study used. The generated reference (<code><a href="../articles/harmonization-reference.html">vignette("harmonization-reference")</a></code> and its French version) has a chapter on them, and the coverage grids a row each.</li>
+<li>
+<code><a href="../reference/qes_party_lineage.html">qes_party_lineage()</a></code> (new export) adds, for each party column, a column that joins the ADQ and the CAQ (into which it merged on 2012-01-21) as “ADQ/CAQ”, and optionally Option nationale and Quebec solidaire, for time series of the Quebec parties; rows fielded before 2012 are graded approximate there. The harmonized columns keep the parties apart (OD11).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="example-pages-of-the-website-0-8-0">Example pages of the website<a class="anchor" aria-label="anchor" href="#example-pages-of-the-website-0-8-0"></a></h3>
+<p>The owner also asked for better example pages: the graphs were “ugly and not interesting”. The three example pages and their French versions (<code>analysis-descriptive</code>, <code>analysis-sovereignty</code>, <code>analysis-vote-choice</code>) are replaced by six analyses and a page of recipes, in English and French, each built on the pooled variables with <code><a href="../reference/qes_design.html">qes_design()</a></code>, the reviewed weights and 95% confidence intervals, every estimate made within one study and wave. The old addresses redirect to the new pages. The pages are website-only (<code>vignettes/articles</code> is not in the package build); nothing changes in the package.</p>
+<ul><li>
+<em>From two parties to four</em> (<code>realignment</code>, <code>fr-realignement</code>): the effective number of parties and each party’s vote among francophones and non-francophones, and the age gap party by party, 1998 to 2022.</li>
+<li>
+<em>A generation gap that reversed</em> (<code>sovereignty-generations</code>, <code>fr-souverainete-generations</code>): support for sovereignty by study and wording (<code>sov_support__type</code>), and by birth cohort; the youngest francophones go from the most to the least sovereigntist.</li>
+<li>
+<em>Two dimensions of competition</em> (<code>dimensions</code>, <code>fr-dimensions</code>): each party’s voters on sovereignty and on the left-right scale from 2012 to 2022, and where the Yes and No voters cast their vote.</li>
+<li>
+<em>Who votes?</em> (<code>turnout</code>, <code>fr-participation</code>): reported against official turnout, the age gap election by election, and turnout by interest in politics (<code>pol_interest</code>).</li>
+<li>
+<em>Changing minds during the campaign</em> (<code>transitions</code>, <code>fr-transitions</code>): the panels’ transitions from intention to reported vote, loyalty by party, and where the undecided went.</li>
+<li>
+<em>How far off are surveys?</em> (<code>survey-vs-official</code>, <code>fr-enquetes-resultats</code>): reported vote against the official results party by party, what weighting changes (index of dissimilarity), and the CROP polls of 2007 to 2010.</li>
+<li>
+<em>Recipes</em> (<code>recipes</code>, <code>fr-recettes</code>): short, copyable code for the pooled variables, <code>types</code>, sources and grades, weighted estimates by study, <code>pool = "equal"</code> and <code><a href="../reference/qes_party_lineage.html">qes_party_lineage()</a></code>.</li>
+<li>The charts share one system (<code>vignettes/articles/_theme.R</code>, <code>_data.R</code>, <code>_setup.R</code>; not exported): a party palette checked with a colour-vision validator in the light and the dark theme (the output is recorded in <code>_theme.R</code>), each chart drawn for both themes, direct labels, hollow markers for studies whose weight is under review, a title and a note (source, weights, intervals) in HTML, alt text with the chart’s numbers, and a table view with every value behind the chart. The two charts of the validation pages use it too, and the home page shows two of the new figures.</li>
+<li>
+<code>Config/Needs/website</code> gains ragg, survey and systemfonts (website builds only).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-targets-and-rows-specification-0-8-0">New targets and rows (specification 4.3.0)<a class="anchor" aria-label="anchor" href="#new-targets-and-rows-specification-0-8-0"></a></h3>
+<ul><li>20 targets: satisfaction with democracy in Quebec (<code>satis_demo_qc</code>, 6 studies) and with the Quebec government (<code>gov_satisfaction</code>, 5), Quebec’s economy over the past year (<code>econ_retro_qc</code>, 6), attachment to Quebec and to Canada (<code>attach_qc</code>, <code>attach_ca</code>, 4 each), Québécois or Canadian identity (<code>identity_qc_ca</code>, 5), strength of provincial party identification (<code>pid_prov_strength</code>, 6), the provincial vote at the previous election (<code>vote_prov_prev</code>, 4) and the last federal vote (<code>vote_fed_recall</code>, 4), the most important issue (<code>mip_issue</code>, 5), the ratings of the PLQ, PQ, CAQ, QS and ADQ leaders on 0-100 (<code>therm_leader_*</code>), the region (Montreal CMA, Quebec CMA, rest; <code>region_cma3</code>, 8), the language spoken most often at home (<code>lang_home</code>, 8), attendance at religious services (<code>relig_attend</code>, 5), the birthplace (Quebec, rest of Canada, abroad; <code>birthplace3</code>, 3) and the 1995 referendum question with the undecided pushed (<code>sov_partnership_1995_push</code>, 4). The new sets <code>"attitudes"</code> and <code>"socio"</code> name them; <code>"vote"</code> gains <code>vote_prov_prev</code> and <code>vote_fed_recall</code>.</li>
+<li>104 crosswalk rows, checked against the pinned files (the data checks V-D1 to V-D8 and every code and filter count) and then by an automated double review against the original files and documents (codes and data, wording and comparability; adjudicated where the two reviewers disagreed; not a human review). 101 are signed off (<code>stable</code>, <code>reviewed_by</code> says by what), 45 of them corrected or completed, mostly in their text: English wordings and questionnaire citations (<code>qes2008</code>, <code>qes2014</code>), grade reasons that name the option wordings that differ from the anchor, don’t-know offers (<code>dk_offered</code>), and counts in the evidence. Among them, three rows on existing targets: the pushed vote intention of <code>qes2022</code> (the first question, the “if you decide to vote” question of those unlikely to vote, and the lean question of the undecided), the federal party identification of <code>qes2012</code>, and the mother tongue and home language of <code>qes2022</code>, two select-all questions. Results change: these fill cells that were <code>NA</code> (reason <code>not_asked</code>) in 0.7.1.</li>
+<li>The leader ratings of <code>qes2022</code> read -99 as don’t know (<code>dk</code>, the “Don’t know leader” option of the codebook), not <code>no_answer</code>: the reason changes, no value.</li>
+<li>Three rows stay in review for the owner (<code>dev/open-questions.md</code> D13): the strength of provincial party identification of <code>qes2022</code>, graded approximate because its French version asks closeness, and the previous provincial vote of <code>qes2008</code> and <code>qes2018</code>, whose respondents under 18 at that election were asked (the spec has no rule that sets an answer to ineligible by age).</li>
+<li>A new crosswalk rule, <code>coalesce</code>, reads a question across several variables (a question and its push, the two halves of a split ballot), each with its own value map; a new registered function, <code>fn:multiselect</code>, reads a select-all question stored as one variable per option (one level ticked gives it; options of two levels are <code>not_mappable</code>).</li>
+<li>The age groups <code>age_group3</code> and <code>age_group6</code> are derived from the age, else the year of birth, where a study has no banded question (<code>qes2007</code>, <code>qes2012</code>, <code>qes2014</code>, <code>qes2018</code>, <code>qes2022</code>): every study now has an age group. A band computed from the year of birth only is graded approximate (an age at a band edge can be one year off); cell provenance says <code>rule = "derive:age_band"</code>. Results change: <code>age_group3</code> and <code>age_group6</code> of these studies were <code>NA</code> (reason <code>not_asked</code>) and now have values by default (their sources are signed off).</li>
+<li>Not changed: the codes and display order of the party levels, and every existing row, map, gate and grade. The definitions of the targets that said “never pooled” now name the pooled variable that uses them.</li>
+<li>The catalog version is now 2.4.0: the vocabulary of crosswalk rules gains <code>coalesce</code>.</li>
+<li>The dictionary version is now 1.1.1 (text only): the question text of the 2018 panel’s <code>rv1ab</code> gains the stem’s sentence on advance voting, as <code>rv1a</code> has it.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="the-legacy-functions-are-frozen-0-8-0">The legacy functions are frozen<a class="anchor" aria-label="anchor" href="#the-legacy-functions-are-frozen-0-8-0"></a></h3>
+<ul><li>
+<code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> and <code><a href="../reference/get_decon.html">get_decon()</a></code> never read a crosswalk row that nobody has reviewed yet, nor a derived cell: their columns are those of 0.7.1. A validator note (V-S19) lists the rows that a legacy column would read once signed off. Two such rows are signed off in 0.8.0, the <code>qes2012</code> federal party identification and the <code>qes2022</code> mother tongue: the legacy columns <code>federal_pid</code> (and <code>fed_pid</code> of <code><a href="../reference/get_decon.html">get_decon()</a></code>) of <code>qes2012</code> and <code>language</code> of <code>qes2022</code> keep the <code>NA</code> of 0.7.1, with the new cause <code>legacy_frozen</code> in <code>attr(, "legacy_na_columns")</code> (the reason stays <code>no_source</code>; the legacy renderer reads these targets as if the study had no row); their answers are in <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>. A test builds both functions with the specification frozen before the rows of 4.3.0 and checks that the values are identical.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="validation-0-8-0">Validation<a class="anchor" aria-label="anchor" href="#validation-0-8-0"></a></h3>
+<ul><li>The recorded validation report (<code>inst/extdata/validation/validation_report.csv</code>, source repository only) gains the census margin of the <code>qes2022</code> mother tongue, which the new <code>lang_mother</code> row makes possible (weighted index 0.13), and its <code>qes2018</code> age margin now uses the derived age groups, exact to the month of birth (weighted index 8.32 to 7.91). No other recorded value moved.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="specification-format-0-8-0">Specification format<a class="anchor" aria-label="anchor" href="#specification-format-0-8-0"></a></h3>
+<ul><li>Schema 3: the optional tables <code>pooled.csv</code> and <code>pooled_members.csv</code>, and the rule <code>coalesce</code>; qesR still reads a schema 2 directory (with no pooled variables). <code>Engine-Min</code> is 0.8.0.</li>
+<li>The validator adds V-F1 to V-F7 on the pooled tables (keys and a strict precedence, names disjoint from targets, families, sets, study codes and the leading columns of harmonized data, members that are live targets, a default member, level sets or ranges that fit, a grade cap of approximate on every lossy transform, English and French), and V-S15 now also forbids a target named like a leading column. <code>expected/hashes.csv</code> gains the column hash of each pooled variable in each study (V-F9, wave <code>*</code>, the member types applied as <code>source_var</code>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-8-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-8-0"></a></h3>
+<ul><li>
+<code><a href="../reference/qes_harmonize.html">?qes_harmonize</a></code> has a section on pooled variables and an example of <code>vote_choice</code>; <code><a href="../reference/qes_design.html">?qes_design</a></code> explains the per-study weight; <code><a href="../reference/qes_spec.html">?qes_spec</a></code> lists the pooled variables. The articles on harmonization (<code>harmonization</code>, <code>fr-harmonisation</code>) show <code>sov_support</code> after the sovereignty targets.</li>
+<li>The migration guides (<code>migrating-0.7</code>, <code>fr-migrer-0.7</code>) say how <code>vote_choice</code> relates to the master’s column of the same name (<code>types = list(vote_choice = "recall")</code> is the reported vote, as in the master).</li>
+<li>
+<code>dev/design.md</code> records the design of pooled variables and the owner decisions it needs (OD-P1 to OD-P9).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.1" id="qesr-071">qesR 0.7.1<a class="anchor" aria-label="anchor" href="#qesr-071"></a></h2>
 <p>qesR 0.7.1 ships the metadata of the 2022 Quebec Election Study (<code>qes2022</code>), as it does for the other studies: its codebook, question text, value labels and missing codes work offline, with no download. Until now qesR shipped none of it, because the study is licensed CC BY-NC 4.0 (design decision OD3), and built it at runtime from the user’s own copy of the data file. The package’s owner lifted OD3 on 2026-09-28. These files keep the study’s licence: the <code>qes2022</code> content of the files listed in <code>inst/COPYRIGHTS</code> (section 2) is CC BY-NC 4.0, with the attribution given there, and is not covered by the MIT licence of qesR, which covers the package code only. <code><a href="../reference/get_qes.html">get_qes()</a></code> returns the same data as in 0.7.0, and the harmonized results are unchanged (specification 4.2.0: no row, map, gate, grade, marginal or column hash changed). The dictionary no longer lists the values of continuous columns such as weights, whose text differed across platforms and failed the live check of 0.7.0 on Linux.</p>

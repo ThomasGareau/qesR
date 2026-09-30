@@ -117,31 +117,90 @@ des francophones, une population que les résultats officiels ne
 décrivent pas : l’étude est montrée à titre indicatif, sans être
 vérifiée.
 
-``` r
+![Carte de chaleur de l'écart en points entre la part de chaque parti
+dans le vote déclaré et sa part officielle des votes valides, une rangée
+par parti et une colonne par étude de 2007 à 2022 ; les cases bleues
+sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou
+plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à
+2014, et la CAQ en 2022. Valeurs dans la vue en
+tableau.](fr-validation_files/figure-html/recall-light.png)![Carte de
+chaleur de l'écart en points entre la part de chaque parti dans le vote
+déclaré et sa part officielle des votes valides, une rangée par parti et
+une colonne par étude de 2007 à 2022 ; les cases bleues sont
+surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus
+sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014,
+et la CAQ en 2022. Valeurs dans la vue en
+tableau.](fr-validation_files/figure-html/recall-dark.png)
 
-# the weighted distribution where the study has a reviewed weight
-shown <- best(idx[idx$study != "qes1998", ])
-lv <- report[report$check == "recall" & !is.na(report$level) &
-               paste(report$study, report$weight) %in% paste(shown$study, shown$weight), ]
-lv$party <- ifelse(lv$level == "other", tr("Other", "Autre"), lv$level)
-lv$label <- paste0(lv$study, " (", lv$weighting, ")")
-lv$label <- factor(lv$label, unique(lv$label[order(lv$year, lv$study)]))
-ggplot(lv, aes(x = value, y = party)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_segment(aes(x = 0, xend = value, yend = party), colour = "grey70") +
-  geom_point(size = 2.2, colour = "#0468b9") +
-  facet_wrap(~label, ncol = 3, scales = "free_y") +
-  labs(
-    x = tr("Reported minus official share (points)", "Part déclarée moins part officielle (points)"),
-    y = NULL
-  ) +
-  theme_minimal(base_size = 11)
-```
+Pondéré avec la pondération révisée de l'étude lorsqu'elle en a une ;
+l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés.
+Une case vide : le parti ne s'est pas présenté, ou l'étude le compte
+dans Autres. Les sondages de 1998, qui n'ont interrogé que des
+francophones, sont laissés de côté.
 
-![Pour chaque étude, l'écart en points entre la part du vote déclaré de
-chaque parti et sa part officielle des votes valides ; pondéré lorsque
-l'étude a une pondération
-révisée.](fr-validation_files/figure-html/recall-plot-1.png)
+Vue en tableau
+
+| Étude      | Pondération | Parti  | Déclaré moins officiel (points) |
+|:-----------|:------------|:-------|:--------------------------------|
+| EEQ 2007   | pondéré     | PLQ    | -7,3                            |
+| EEQ 2007   | pondéré     | PQ     | +2,5                            |
+| EEQ 2007   | pondéré     | ADQ    | +0,8                            |
+| EEQ 2007   | pondéré     | QS     | +1,1                            |
+| EEQ 2007   | pondéré     | PV/PVQ | +2,6                            |
+| EEQ 2007   | pondéré     | Autres | +0,3                            |
+| Panel 2007 | non pondéré | PLQ    | -4,4                            |
+| Panel 2007 | non pondéré | PQ     | +2,4                            |
+| Panel 2007 | non pondéré | ADQ    | +1,3                            |
+| Panel 2007 | non pondéré | QS     | +0,2                            |
+| Panel 2007 | non pondéré | PV/PVQ | +0,6                            |
+| Panel 2007 | non pondéré | Autres | +0,0                            |
+| EEQ 2008   | non pondéré | PLQ    | -2,9                            |
+| EEQ 2008   | non pondéré | PQ     | +2,2                            |
+| EEQ 2008   | non pondéré | ADQ    | -0,3                            |
+| EEQ 2008   | non pondéré | QS     | +0,4                            |
+| EEQ 2008   | non pondéré | PV/PVQ | +0,3                            |
+| EEQ 2008   | non pondéré | Autres | +0,2                            |
+| EEQ 2012   | pondéré     | PLQ    | -6,3                            |
+| EEQ 2012   | pondéré     | PQ     | +6,9                            |
+| EEQ 2012   | pondéré     | QS     | +0,5                            |
+| EEQ 2012   | pondéré     | CAQ    | -1,7                            |
+| EEQ 2012   | pondéré     | PV/PVQ | +0,0                            |
+| EEQ 2012   | pondéré     | ON     | +0,4                            |
+| EEQ 2012   | pondéré     | Autres | +0,2                            |
+| Panel 2012 | non pondéré | PLQ    | -4,8                            |
+| Panel 2012 | non pondéré | PQ     | +6,4                            |
+| Panel 2012 | non pondéré | QS     | +1,1                            |
+| Panel 2012 | non pondéré | CAQ    | -3,2                            |
+| Panel 2012 | non pondéré | PV/PVQ | +0,6                            |
+| Panel 2012 | non pondéré | ON     | +0,6                            |
+| Panel 2012 | non pondéré | Autres | -0,7                            |
+| EEQ 2014   | pondéré     | PLQ    | -5,6                            |
+| EEQ 2014   | pondéré     | PQ     | +4,4                            |
+| EEQ 2014   | pondéré     | QS     | +0,6                            |
+| EEQ 2014   | pondéré     | CAQ    | +0,1                            |
+| EEQ 2014   | pondéré     | PV/PVQ | +0,4                            |
+| EEQ 2014   | pondéré     | ON     | +0,0                            |
+| EEQ 2014   | pondéré     | Autres | +0,1                            |
+| EEQ 2018   | pondéré     | PLQ    | -1,6                            |
+| EEQ 2018   | pondéré     | PQ     | +2,5                            |
+| EEQ 2018   | pondéré     | QS     | +0,1                            |
+| EEQ 2018   | pondéré     | CAQ    | -1,6                            |
+| EEQ 2018   | pondéré     | Autres | +0,5                            |
+| Panel 2018 | pondéré     | PLQ    | +2,1                            |
+| Panel 2018 | pondéré     | PQ     | -2,2                            |
+| Panel 2018 | pondéré     | QS     | -3,3                            |
+| Panel 2018 | pondéré     | CAQ    | +1,7                            |
+| Panel 2018 | pondéré     | Autres | +1,8                            |
+| EEQ 2022   | pondéré     | PLQ    | +2,8                            |
+| EEQ 2022   | pondéré     | PQ     | +1,0                            |
+| EEQ 2022   | pondéré     | QS     | +1,8                            |
+| EEQ 2022   | pondéré     | CAQ    | -8,0                            |
+| EEQ 2022   | pondéré     | PCQ    | +0,6                            |
+| EEQ 2022   | pondéré     | Autres | +1,8                            |
+
+Les enquêtes sous-estiment le PLQ à chaque élection de 2007 à 2014, de 3
+à 7 points, et la CAQ de 8 points en 2022Part du vote déclaré moins part
+officielle, en points, selon le parti (rangées) et l'étude (colonnes)
 
 ## 2. Participation déclarée
 
@@ -243,39 +302,109 @@ knitr::kable(
 | qes2012_panel | Census 2011 | non pondéré | 8,8 | 11,9 | 9,4 |  |
 | qes2014 | Census 2011 | non pondéré | 6,5 | 4,7 | 8,1 | 21,3 |
 | qes2014 | Census 2011 | pondéré | 0,0 | 0,1 | 4,8 | 9,1 |
-| qes2018 | Census 2016 | non pondéré | 0,2 | 14,1 | 8,6 | 18,7 |
-| qes2018 | Census 2016 | pondéré | 0,1 | 8,3 | 9,3 | 17,6 |
+| qes2018 | Census 2016 | non pondéré | 0,2 | 14,0 | 8,6 | 18,7 |
+| qes2018 | Census 2016 | pondéré | 0,1 | 7,9 | 9,3 | 17,6 |
 | qes2018_panel | Census 2016 | non pondéré | 0,1 |  | 8,5 |  |
 | qes2018_panel | Census 2016 | pondéré | 0,3 |  | 8,7 |  |
-| qes2022 | Census 2021 | non pondéré | 1,2 | 2,5 |  | 19,4 |
-| qes2022 | Census 2021 | pondéré | 0,0 | 1,2 |  | 3,5 |
+| qes2022 | Census 2021 | non pondéré | 1,2 | 2,5 | 11,9 | 19,4 |
+| qes2022 | Census 2021 | pondéré | 0,0 | 1,2 | 0,1 | 3,5 |
 
 Chaque cellule est un indice de dissimilarité en points (0 est une
 concordance parfaite) ; une cellule vide est une marge que l’étude n’a
 pas mesurée, ou que les tableaux du recensement recueillis ne publient
 pas pour cette année (la langue maternelle en 2006).
 
-``` r
+![Carte de chaleur de l'écart en points entre la part pondérée de chaque
+catégorie de scolarité, de langue maternelle, d'âge et de genre et sa
+part au recensement, une colonne par étude dont la pondération est
+révisée ; les cases bleues sont surreprésentées, les rouges
+sous-représentées, et les cases grises marquées cal. sont des marges sur
+lesquelles la pondération est calée. Les diplômés universitaires sont
+surreprésentés dans chaque étude. Valeurs dans la vue en
+tableau.](fr-validation_files/figure-html/census-light.png)![Carte de
+chaleur de l'écart en points entre la part pondérée de chaque catégorie
+de scolarité, de langue maternelle, d'âge et de genre et sa part au
+recensement, une colonne par étude dont la pondération est révisée ; les
+cases bleues sont surreprésentées, les rouges sous-représentées, et les
+cases grises marquées cal. sont des marges sur lesquelles la pondération
+est calée. Les diplômés universitaires sont surreprésentés dans chaque
+étude. Valeurs dans la vue en
+tableau.](fr-validation_files/figure-html/census-dark.png)
 
-cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
-cl$variable <- factor(vars[cl$variable], unname(vars))
-cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
-ggplot(cl, aes(x = value, y = level, colour = study, shape = study)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_point(size = 2.2) +
-  facet_wrap(~variable, ncol = 2, scales = "free_y") +
-  labs(
-    x = tr("Weighted survey share minus census share (points)",
-           "Part pondérée de l'enquête moins part au recensement (points)"),
-    y = NULL, colour = tr("Study", "Étude"), shape = tr("Study", "Étude")
-  ) +
-  theme_minimal(base_size = 11)
-```
+Études dont la pondération est révisée, pondérées ; le recensement qui
+précède chaque étude (Statistique Canada). Le genre et la scolarité ont
+deux catégories : une seule rangée est montrée (femmes ; université),
+l'autre en est le miroir. Une marge est marquée cal. quand chaque
+catégorie est à moins d'un demi-point du recensement, comme l'est par
+construction une marge sur laquelle la pondération est calée ; un bon
+accord n'y dit rien de la représentativité.
 
-![Pour les études dont la pondération est révisée, l'écart en points
-entre la part pondérée de chaque catégorie de genre, d'âge, de langue
-maternelle et de scolarité et sa part au
-recensement.](fr-validation_files/figure-html/census-plot-1.png)
+Vue en tableau
+
+| Marge | Catégorie | Étude | Enquête moins recensement (points) | À moins d'un demi-point (cal.) |
+|:---|:---|:---|:---|:---|
+| Scolarité | Université | EEQ 2007 | +20,5 |  |
+| Scolarité | Université | EEQ 2012 | +17,6 |  |
+| Scolarité | Université | EEQ 2014 | +9,1 |  |
+| Scolarité | Université | EEQ 2018 | +17,6 |  |
+| Scolarité | Université | EEQ 2022 | +3,5 |  |
+| Langue maternelle | Anglais | EEQ 2012 | +0,9 |  |
+| Langue maternelle | Anglais | EEQ 2014 | -0,9 |  |
+| Langue maternelle | Anglais | EEQ 2018 | +9,3 |  |
+| Langue maternelle | Anglais | Panel 2018 | +8,4 |  |
+| Langue maternelle | Anglais | EEQ 2022 | +0,1 | oui |
+| Langue maternelle | Français | EEQ 2012 | -0,4 |  |
+| Langue maternelle | Français | EEQ 2014 | +4,8 |  |
+| Langue maternelle | Français | EEQ 2018 | -2,0 |  |
+| Langue maternelle | Français | Panel 2018 | +0,4 |  |
+| Langue maternelle | Français | EEQ 2022 | -0,1 | oui |
+| Langue maternelle | Autre | EEQ 2012 | -0,4 |  |
+| Langue maternelle | Autre | EEQ 2014 | -3,9 |  |
+| Langue maternelle | Autre | EEQ 2018 | -7,3 |  |
+| Langue maternelle | Autre | Panel 2018 | -8,7 |  |
+| Langue maternelle | Autre | EEQ 2022 | -0,1 | oui |
+| Âge | 18-24 | EEQ 2007 | +1,5 |  |
+| Âge | 18-24 | EEQ 2012 | +0,0 | oui |
+| Âge | 18-24 | EEQ 2014 | +0,0 | oui |
+| Âge | 18-24 | EEQ 2018 | +0,4 |  |
+| Âge | 18-24 | EEQ 2022 | -0,1 |  |
+| Âge | 25-34 | EEQ 2007 | +1,4 |  |
+| Âge | 25-34 | EEQ 2012 | +0,0 | oui |
+| Âge | 25-34 | EEQ 2014 | +0,0 | oui |
+| Âge | 25-34 | EEQ 2018 | +2,3 |  |
+| Âge | 25-34 | EEQ 2022 | +0,1 |  |
+| Âge | 35-44 | EEQ 2007 | +3,7 |  |
+| Âge | 35-44 | EEQ 2012 | +0,0 | oui |
+| Âge | 35-44 | EEQ 2014 | +0,0 | oui |
+| Âge | 35-44 | EEQ 2018 | -4,0 |  |
+| Âge | 35-44 | EEQ 2022 | +1,1 |  |
+| Âge | 45-54 | EEQ 2007 | -0,8 |  |
+| Âge | 45-54 | EEQ 2012 | +0,0 | oui |
+| Âge | 45-54 | EEQ 2014 | +0,0 | oui |
+| Âge | 45-54 | EEQ 2018 | -3,9 |  |
+| Âge | 45-54 | EEQ 2022 | -0,2 |  |
+| Âge | 55-64 | EEQ 2007 | -2,5 |  |
+| Âge | 55-64 | EEQ 2012 | +0,0 | oui |
+| Âge | 55-64 | EEQ 2014 | +0,0 | oui |
+| Âge | 55-64 | EEQ 2018 | +4,6 |  |
+| Âge | 55-64 | EEQ 2022 | -0,9 |  |
+| Âge | 65 et plus | EEQ 2007 | -3,3 |  |
+| Âge | 65 et plus | EEQ 2012 | +0,0 | oui |
+| Âge | 65 et plus | EEQ 2014 | +0,0 | oui |
+| Âge | 65 et plus | EEQ 2018 | +0,7 |  |
+| Âge | 65 et plus | EEQ 2022 | +0,0 |  |
+| Genre | Femmes | EEQ 2007 | +0,1 | oui |
+| Genre | Femmes | EEQ 2012 | +0,0 | oui |
+| Genre | Femmes | EEQ 2014 | +0,0 | oui |
+| Genre | Femmes | EEQ 2018 | +0,1 | oui |
+| Genre | Femmes | Panel 2018 | -0,3 | oui |
+| Genre | Femmes | EEQ 2022 | +0,0 | oui |
+
+Après pondération, les diplômés universitaires restent surreprésentés de
+4 à 21 points ; en 2018, les anglophones de 9Part pondérée de l'enquête
+moins part au recensement, en points, selon la catégorie et l'étude ;
+les marges atteintes à moins d'un demi-point, comme le sont les marges
+de calage, sont marquées cal.
 
 ## 4. Relations entre les réponses
 

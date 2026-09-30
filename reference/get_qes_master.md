@@ -105,9 +105,13 @@ in their order and type, then the appended columns `vote_choice_timing`,
   `"invalid_044_source"` (the source qesR 0.4.4 read was verified wrong
   in 0.5.0, and the spec has no row for the column in the study since),
   `"not_comparable_source"` (the study's only source is graded
-  `not_comparable`) or `"not_harmonized_yet"`; `basis` says in words why
-  the column is `NA` in the study. 0.5.0's `"blanked"` reason is gone:
-  no value is blanked after it is read;
+  `not_comparable`), `"not_harmonized_yet"` or `"legacy_frozen"` (reason
+  `"no_source"`: the study's question is harmonized since spec 4.3.0, in
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  but the legacy column keeps the `NA` of qesR 0.7.1: `federal_pid` of
+  `qes2012` and `language` of `qes2022`); `basis` says in words why the
+  column is `NA` in the study. 0.5.0's `"blanked"` reason is gone: no
+  value is blanked after it is read;
 
 - `legacy_column_map`: what each column means (`column`, `target`,
   `definition`, `studies_changed`, `flag`, `note`, `render`);
@@ -165,19 +169,20 @@ The engine applies only the crosswalk rows signed off by a reviewer
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 does by default. The rows were signed off after an automated double
 review against the original files and documents (not a human review);
-since spec 4.1.0 every row is signed off. A row still in review would
-not be applied, and the columns it would fill would be `NA`:
-`attr(, "legacy_na_columns")` lists such columns with the reason
-`not_reviewed` and says why each row is held, and a message names them.
-The recommended weights that still need review (those of `qes1998`,
-`qes2007_panel`, `qes2012_panel` and the CROP polls, registered but not
-accepted yet: `qes_spec("spec")$tables$weights` says what is known of
-each) are not applied: `weight_pre` and `weight_post` are `NA` there,
-with the reason `not_reviewed` and the cause `weight_needs_review`.
-`survey_weight` keeps each study's own weight, as in qesR 0.4.4, and is
-not reviewed: in some studies it is a weight that needs review
-(`qes2012_panel`, the CROP polls) or one calibrated on the vote
-(`qes2008`), and
+since spec 4.1.0 every reviewed row is signed off, and the rows added in
+spec 4.3.0, not reviewed yet, are never read (the legacy columns stay as
+they were). A row still in review would not be applied, and the columns
+it would fill would be `NA`: `attr(, "legacy_na_columns")` lists such
+columns with the reason `not_reviewed` and says why each row is held,
+and a message names them. The recommended weights that still need review
+(those of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP
+polls, registered but not accepted yet:
+`qes_spec("spec")$tables$weights` says what is known of each) are not
+applied: `weight_pre` and `weight_post` are `NA` there, with the reason
+`not_reviewed` and the cause `weight_needs_review`. `survey_weight`
+keeps each study's own weight, as in qesR 0.4.4, and is not reviewed: in
+some studies it is a weight that needs review (`qes2012_panel`, the CROP
+polls) or one calibrated on the vote (`qes2008`), and
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 never uses it; the note of each study's row of
 `qes_spec("spec")$tables$legacy` says which weight it is.
@@ -273,9 +278,10 @@ un réviseur (statut `stable`) sont appliquées, comme le fait
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 par défaut ; elles ont été approuvées après une double révision
 automatisée sur les fichiers et documents originaux (et non une révision
-humaine), et toutes le sont depuis la spécification 4.1.0. Les colonnes
-d'une ligne encore en révision vaudraient `NA` ;
-`attr(, "legacy_na_columns")` les énumérerait avec le motif
+humaine), et toutes les lignes révisées le sont depuis la spécification
+4.1.0 ; les lignes ajoutées dans la 4.3.0, pas encore révisées, ne sont
+jamais lues. Les colonnes d'une ligne encore en révision vaudraient `NA`
+; `attr(, "legacy_na_columns")` les énumérerait avec le motif
 `not_reviewed` en disant pourquoi la ligne est retenue, et un message
 les nommerait. Les pondérations recommandées encore à réviser (celles de
 `qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages CROP,

@@ -22,6 +22,7 @@ Grouped as in the reference index of the website.
 | Harmonization (experimental) | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
 | Harmonization (experimental) | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
 | Harmonization (experimental) | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
+| Harmonization (experimental) | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
 | Reproducibility | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 | Reproducibility | [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md) | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 | Cache | [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md), [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md) | Lists or deletes the files kept in the download cache. |
@@ -598,8 +599,8 @@ demo <- get_qes("qes_demo", quiet = TRUE)
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-29 16:20:10 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.3.0.
+#> 2026-09-30 00:14:38 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> as.data.frame() gives every column.
 ```

@@ -10,8 +10,8 @@ that ships with qesR, so it always describes the rules the installed
 version applies.
 
 This reference is generated from the harmonization spec shipped with
-qesR: version 4.2.0 of 2026-09-28, content hash
-`02b3b7edc509deff0db16859bef7bfb6`. It is **experimental**: targets,
+qesR: version 4.3.0 of 2026-09-29, content hash
+`506f691e420e8d5d5de3657eef556d3d`. It is **experimental**: targets,
 grades and mappings are reviewed study by study and may change. Nothing
 on this page is written by hand;
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
@@ -20,19 +20,21 @@ returns the same information as data frames.
 ## How to read this reference
 
 Each target is one question stimulus: a different wording, scale, timing
-or format makes another target, and targets are never pooled. For each
-study, the coverage table gives the source variable and its wave, the
-comparability grade of the study’s question against the target’s anchor
-question and the reason for it, the instrument (the item format), the
-levels the question offered, the question wording (or, when the wording
-cannot be shipped, the document and page that give it), the filter
-question and what each of its codes means, the study’s recommended
-weight (marked when it needs review: qes_harmonize() does not apply it,
-and its weight columns are NA) and whether “don’t know” was offered.
+or format makes another target; a pooled variable (last chapter)
+combines targets into one column and records which one each value comes
+from. For each study, the coverage table gives the source variable and
+its wave, the comparability grade of the study’s question against the
+target’s anchor question and the reason for it, the instrument (the item
+format), the levels the question offered, the question wording (or, when
+the wording cannot be shipped, the document and page that give it), the
+filter question and what each of its codes means, the study’s
+recommended weight (marked when it needs review: qes_harmonize() does
+not apply it, and its weight columns are NA) and whether “don’t know”
+was offered.
 
-A row with no mark is signed off by a reviewer (status stable; in spec
-4.0.0, by an automated double review against the original files and
-documents, not a human review), and
+A row with no mark is signed off by a reviewer (status stable; in specs
+4.0.0 and 4.3.0, by an automated double review against the original
+files and documents, not a human review), and
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applies it by default. A row marked “in review” was checked against the
 original files and documents but is not signed off (the `review_note`
@@ -457,13 +459,79 @@ Experimental · added in spec 0.1.0
   (every study’s does). No row, map, gate, grade, level set, recorded
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `vote_prov_intent_push`: Provincial vote intention, undecided pushed
 
-Vote intention in which respondents undecided at the first question were
-asked which party they lean toward (a push question), combined into one
-variable. A different stimulus from vote_prov_intent: never pooled with
-it.
+Vote intention in which respondents who named no party at the first
+question (the undecided and, in some studies, also those who would not
+vote, would vote for none or refused) were asked which party they lean
+toward (a push question), combined into one variable. A different
+stimulus from vote_prov_intent, and a separate target; the pooled
+variable vote_choice uses it before vote_prov_intent, and
+vote_choice\_\_type records which one a value comes from.
 
 Family `vote_prov` · type Categorical · timing Pre-election · status
 Experimental · added in spec 0.1.0
@@ -487,7 +555,8 @@ Experimental · added in spec 0.1.0
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
-| qes2018_panel | `rv1ab` (pre) | `approximate` | Producer’s combination of rv1a with the push question rv1b, in mixed telephone and web mode; the anchor is a telephone push. The push filter is narrower than the anchor’s: respondents who said they would not vote or support no party (63) were not pushed, whereas the anchor pushed them, and 31 of the 233 undecided, all interviewed by telephone, were not asked rv1b and stay undecided. | intent_lean_push | PLQ, PQ, CAQ, QS, other, no_party; not offered: PVQ, PCQ, ON, ADQ | En pensant à ce que vous ressentez maintenant, si une élection PROVINCIALE était tenue demain, le candidat de quel parti appuieriez-vous probablement? (relance, rv1b : Et pour quel parti diriez-vous que vous auriez tendance à voter?) |  | `weight` | Not documented |
+| qes2022 | `cps_votechoice1` + `cps_votechoice2` + `cps_votelean` (cps) | `approximate` | Web list with don’t know and refusal shown: the first question (cps_votechoice1) asked of respondents certain or likely to vote, a conditional one (‘if you decide to vote’, cps_votechoice2) asked of those unlikely to vote, and the lean question (cps_votelean) asked of those who did not know at either; no would-not-vote option; the anchor is a telephone item asked of everyone. | intent_lean_push | PLQ, PQ, CAQ, QS, PCQ, other; not offered: PVQ, ON, ADQ, no_party | Which party do you think you will vote for? \[If unlikely to vote:\] If you decide to vote, which party do you think you would vote for? \[If don’t know:\] Is there a party you are leaning towards? | cps_turnout: 3 = inapplicable, 4 = inapplicable, 5 = inapplicable, 6 = ineligible | `cps_weight_general` | Offered explicitly |
+| qes2018_panel | `rv1ab` (pre) | `approximate` | Producer’s combination of rv1a with the push question rv1b, in mixed telephone and web mode; the anchor is a telephone push. The push filter is narrower than the anchor’s: respondents who said they would not vote or support no party (63) were not pushed, whereas the anchor pushed them, and 31 of the 233 undecided, all interviewed by telephone, were not asked rv1b and stay undecided. rv1a, whose answer rv1ab keeps for codes 1-6 (1,017 respondents), tells those who already voted in advance polls to give that vote, so part of the answers report a vote already cast. | intent_lean_push | PLQ, PQ, CAQ, QS, other, no_party; not offered: PVQ, PCQ, ON, ADQ | En pensant à ce que vous ressentez maintenant, si une élection PROVINCIALE était tenue demain, le candidat de quel parti appuieriez-vous probablement? Si vous avez déjà voté par anticipation, veuillez indiquer pour quel parti. (relance, rv1b : Et pour quel parti diriez-vous que vous auriez tendance à voter?) |  | `weight` | Not documented |
 | qes2012_panel | `intvoteprov` (pre) | `approximate` | The producer’s combination of the first question (which already asks for a party the respondent ‘would be tempted to vote for’) and the push; the pre-election questionnaire is not deposited (wording from the variable label and the codebook, file 654292); telephone, like the anchor. | intent_lean_push | PLQ, PQ, CAQ, QS, PVQ, ON, other, no_party; not offered: PCQ, ADQ | Q2+Q3 - Si des élections provinciales devaient avoir lieu aujourd’hui, pour lequel des partis suivants voteriez-vous ou seriez-vous tenté de voter? (relance : Peut-être que votre choix n’est pas définitif, mais y a-t-il tout de même un parti que vous seriez tenté d’appuyer?) |  | `pondam1` (needs review, not applied) | Not documented |
 | qes_crop_2007_2010 | `intvoteprov` (each poll) | `comparable` | The producer’s combination of the first question and the push, as in the anchor, by the same firm and mode; CROP telephone polls; the deposited codebook (file 341537) gives only truncated labels, but CROP’s own La Presse reports (May 2008, January 2009; see dev/open-questions.md 1.1) print the same stem and push as the anchor, with parties and leaders read in rotation and don’t know recorded only if volunteered; not identical because these are monthly omnibus polls, most fielded outside a campaign (the reference election is 2008 or 2012 depending on the poll), on a regionally stratified sample (500 Montréal, 200 Québec, 300 elsewhere). | intent_lean_push | ADQ, PLQ, PQ, QS, PVQ, other, no_party; not offered: CAQ, PCQ, ON | S’il y avait des élections provinciales aujourd’hui au Québec, pour lequel des partis suivants voteriez-vous? Voteriez-vous pour… (relance : Peut-être n’êtes-vous pas complètement décidé(e), mais actuellement pour lequel de ces partis seriez-vous tenté(e) de voter? Est-ce…) |  | `XPOND` (needs review, not applied) | Volunteered only |
 | qes2007_panel | `intvote` (pre) | `identical` (anchor) | Anchor row of the target. | intent_lean_push | ADQ, PLQ, PQ, QS, PVQ, other, no_party; not offered: CAQ, PCQ, ON | S’il y avait des élections provinciales aujourd’hui au Québec, pour lequel des partis suivants voteriez-vous? (relance, Q5 : pour lequel de ces partis seriez-vous tenté(e) de voter?) |  | `pondam1` (needs review, not applied) | Volunteered only |
@@ -579,6 +648,69 @@ Experimental · added in spec 0.1.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `turnout_prov_recall`: Voted in the provincial election (recall)
 
@@ -716,7 +848,9 @@ Experimental · added in spec 0.1.0
 How likely the respondent says they are to vote in the coming Quebec
 general election, asked before it. Having already voted (in advance
 polls) is an answer. A different stimulus from turnout_prov_recall
-(reported turnout): never pooled with it.
+(reported turnout), and a separate target; the pooled variable turnout
+uses it only when asked to (types = list(turnout = c(“recall”,
+“intention”))).
 
 Family `turnout_prov` · type Ordinal · timing Pre-election · status
 Experimental · added in spec 1.0.0
@@ -790,6 +924,69 @@ Experimental · added in spec 1.0.0
   (every study’s does). No row, map, gate, grade, level set, recorded
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `vote_prov_intent_other`: Provincial vote intention: another party (text)
 
@@ -892,6 +1089,230 @@ Experimental · added in spec 1.0.0
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
 
+#### `vote_prov_prev`: Provincial vote at the previous election (recall)
+
+Party the respondent reports having voted for in the Quebec general
+election before the study’s election (election_ref gives which one).
+Recalled years later: known to lean toward the winner of that election.
+Nonvoters, spoiled ballots and respondents not eligible then are missing
+values with a reason, never a party.
+
+Family `vote_prov_past` · type Categorical · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name    | Label       |
+|------|---------|-------------|
+| 1    | `PLQ`   | PLQ         |
+| 2    | `PQ`    | PQ          |
+| 3    | `CAQ`   | CAQ         |
+| 4    | `QS`    | QS          |
+| 5    | `PVQ`   | PVQ         |
+| 6    | `PCQ`   | PCQ         |
+| 7    | `ON`    | ON          |
+| 8    | `ADQ`   | ADQ         |
+| 90   | `other` | Other party |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_qc_vote_2018` (cps) | `comparable` | The 2018 vote, asked during the 2022 campaign after a separate turnout question (cps_qc_turnout_2018: no is not_voted, not eligible is ineligible); web, four parties listed; no don’t-know, refusal or spoiled-ballot option, so such answers were typed under ‘another party’ and stay in other. | vote_recall_prev_list | PLQ, PQ, CAQ, QS, other; not offered: PVQ, PCQ, ON, ADQ | Which party did you vote for in the Quebec election in 2018? | cps_qc_turnout_2018: 2 = not_voted, 3 = ineligible | `cps_weight_general` | Not offered |
+| qes2018 | `q9` (post) | `comparable` (in review) | The 2014 vote (‘4 years ago’), asked after the 2018 election; the list names four parties (the others are ‘another party’); not asked of the 270 respondents who were not asked the 2018 vote either (under 18 in 2018 or age unknown). | vote_recall_prev_list | PLQ, PQ, CAQ, QS, other; not offered: PVQ, PCQ, ON, ADQ | Which party did you vote for 4 years ago in the previous provincial election, held on April 7, 2014? |  | `pond` | Offered explicitly |
+| qes2014 | `Q6` (post) | `identical` (anchor) | Anchor row of the target: the 2012 vote, asked after the 2014 election. | vote_recall_prev_list | PLQ, PQ, CAQ, QS, PVQ, ON, other; not offered: PCQ, ADQ | Which party did you vote for in the last provincial election, held on September 4, 2012? |  | `POND` | Not offered |
+| qes2008 | `q13` (post) | `comparable` (in review) | The March 2007 vote, asked twenty months later, after the 2008 election, by telephone; the list names the parties of 2007; ‘aucun’ (none, 8 rows) could be a spoiled ballot or no vote, so it is not mapped; code 95 is ‘I did not vote / I spoiled my ballot’ in the English questionnaire (197296) and ‘n’a pas voté’ in the file, so its not_voted rows may include spoiled ballots; the 5 respondents born in 1990 (under 18 in March 2007) were asked and all answered 95, so they are not_voted, not ineligible, and those born in 1989 cannot be told apart without a birth date. | vote_recall_prev_list | PLQ, PQ, QS, PVQ, ADQ, other; not offered: CAQ, PCQ, ON | Which party did you vote for at the provincial election of March 26, 2007? |  |  | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `vote_fed_recall`: Federal vote at the last federal election (recall)
+
+Party the respondent reports having voted for in the last Canadian
+federal election before the study (each row’s wording names it: January
+2006, October 2008, May 2011, 2021). Nonvoters, spoiled ballots and
+respondents not eligible then are missing values with a reason, never a
+party.
+
+Family `vote_fed` · type Categorical · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name    | Label          |
+|------|---------|----------------|
+| 1    | `LPC`   | Liberal        |
+| 2    | `CPC`   | Conservative   |
+| 3    | `NDP`   | NDP            |
+| 4    | `BQ`    | Bloc Québécois |
+| 5    | `GPC`   | Green          |
+| 6    | `PPC`   | PPC            |
+| 90   | `other` | Another party  |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_pastpartyvote` (cps) | `comparable` | The 2021 federal vote, asked during the 2022 provincial campaign after a separate turnout question (cps_pastvote); web, the PPC listed. | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, PPC, other | Which party did you vote for in the 2021 Canadian federal election? | cps_pastvote: 2 = not_voted, 3 = ineligible | `cps_weight_general` | Not offered |
+| qes2012 | `q27` (post) | `identical` (anchor) | Anchor row of the target: the May 2011 federal vote, after a separate turnout question (q22). | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, other; not offered: PPC | And in the last Canadian federal election in May 2011? Did you vote for the: | q22: 2 = not_voted, 8 = dk, 9 = refused | `pond` | Offered explicitly |
+| qes2008 | `q74` (post) | `comparable` | The October 2008 federal vote, asked two months later, with not voting and a spoiled ballot as answers of the same question; telephone by the deposit metadata (mode to be confirmed). | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, other; not offered: PPC | At the last FEDERAL election in OCTOBER 2008, for which party did you vote? |  |  | Not documented |
+| qes2007 | `q74` (post) | `approximate` | The January 2006 federal vote, asked about 15 months later with not voting and a spoiled ballot as answers of the same question; the deposited telephone script says not to read the list (unprompted), but the study mixes telephone (1,003) and web (1,172) interviews and only the telephone script is deposited, so how the web version showed the options is unknown. | vote_fed_recall_unprompted | LPC, CPC, NDP, BQ, GPC, other; not offered: PPC | At the last FEDERAL election in January 2006, for which party did you vote? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
 ### Party identification
 
 #### `pid_prov`: Provincial party identification
@@ -987,6 +1408,7 @@ Experimental · added in spec 1.0.0
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
 | qes2022 | `cps_fedpid` (cps) | `identical` (anchor) | Anchor row of the target. | pid_list | LPC, CPC, NDP, BQ, GPC, PPC, other, none | In federal politics, do you usually think of yourself as a: |  | `cps_weight_general` | Not offered |
+| qes2012 | `q94` (post) | `comparable` | Same question as the anchor; the list has no People’s Party (founded in 2018) and no other-party option; web. | pid_list | LPC, CPC, NDP, BQ, GPC, none; not offered: PPC, other | And in federal politics, do you usually think of yourself as a: |  | `pond` | Offered explicitly |
 
 **History**
 
@@ -1041,6 +1463,177 @@ Experimental · added in spec 1.0.0
   (every study’s does). No row, map, gate, grade, level set, recorded
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `pid_prov_strength`: Strength of provincial party identification
+
+How strongly the respondent identifies with the provincial party named
+at the party identification question (very, fairly, not very strongly),
+asked of those who named a party. Those who named none, did not know or
+refused were not asked: the value is missing, reason inapplicable.
+
+Family `party_id` · type Ordinal · timing Any time · status Experimental
+· added in spec 4.3.0
+
+**Levels**
+
+| Code | Name       | Label             |
+|------|------------|-------------------|
+| 1    | `very`     | Very strongly     |
+| 2    | `fairly`   | Fairly strongly   |
+| 3    | `not_very` | Not very strongly |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_provpidstr` (cps) | `approximate` (in review) | The English version asks how strongly the respondent feels (very, fairly, not very strongly), but the French version, taken by 1,291 of 1,521 respondents (cps_UserLanguage FR-CA) who give 1,164 of the 1,352 answers, asks how close they feel (très proche, proche, pas très proche), the closeness wording graded approximate in 2007 and 2008; asked of those who named a party at cps_provpid (none of these, code 6, is routed out), web, with no don’t-know option, during the campaign. | pid_strength_3 | very, fairly, not_very | How strongly \${cps_provpid/ChoiceGroup/SelectedChoicesTextEntry} do you feel? | cps_provpid: 6 = inapplicable | `cps_weight_general` | Not offered |
+| qes2018 | `q57` (post) | `comparable` | Same stem and options as the anchor, asked of those who named a party at q56, whose list offers four parties only. | pid_strength_3 | very, fairly, not_very | How strongly \[insert answer from Q56\] do you feel? | q56: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Offered explicitly |
+| qes2014 | `Q56` (post) | `identical` | Same stem, options and filter as the anchor (asked of those who named a party at Q55), web. | pid_strength_3 | very, fairly, not_very | How strongly \[insert answer from Q55\] do you feel? | Q55: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `POND` | Offered explicitly |
+| qes2012 | `q93` (post) | `identical` (anchor) | Anchor row of the target. | pid_strength_3 | very, fairly, not_very | How strongly \[insert answer from Q92\] do you feel? | q92: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Offered explicitly |
+| qes2008 | `q71` (post) | `approximate` | Asks how close the respondent feels to the party (très proche, assez proche, pas très proche), not how strongly they identify with it; asked of those who named one of the listed parties at q70 (another party, none, don’t know and refused are routed out); by telephone. | pid_closeness_3 | very, fairly, not_very | How close do you feel to ? Is it… | q70: 96 = inapplicable, 97 = inapplicable, 98 = inapplicable, 99 = inapplicable |  | Not documented |
+| qes2007 | `q71` (post) | `approximate` | Asks how close the respondent feels to the party (très proche, assez proche, pas très proche), not how strongly they identify with it; asked of those who named one of the listed parties at q70 (another party, none, don’t know and refused are routed out); by telephone. | pid_closeness_3 | very, fairly, not_very | How close do you feel to ? Is it… | q70: 96 = inapplicable, 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 ### Attitudes
 
@@ -1119,8 +1712,10 @@ Experimental · added in spec 0.1.0
 
 How the respondent would vote in a referendum on whether Quebec should
 become a sovereign country. A different stimulus from sov_indep
-(sovereign, not independent): never pooled with it. The push question
-asked of the undecided is not part of this target.
+(sovereign, not independent), and a separate target; the pooled variable
+sov_support combines them and records the wording in
+sov_support\_\_type. The push question asked of the undecided is not
+part of this target.
 
 Family `sovereignty` · type Categorical · timing Any time · status
 Experimental · added in spec 0.1.0
@@ -1220,6 +1815,69 @@ Experimental · added in spec 0.1.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `sov_favour`: Favour Quebec independence (4 points)
 
@@ -1354,7 +2012,9 @@ Experimental · added in spec 0.1.0
 #### `interest_4pt`: Interest in politics (4 points)
 
 How interested the respondent is in politics, on a four-point verbal
-scale. Never rescaled to or pooled with 0-10 interest items.
+scale. A separate target from the 0-10 interest items, never rescaled;
+the pooled variable pol_interest scores it on 0-1, graded approximate at
+most.
 
 Family `interest` · type Ordinal · timing Any time · status Experimental
 · added in spec 0.1.0
@@ -1461,14 +2121,79 @@ Family `interest` · type Ordinal · timing Any time · status Experimental
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `sov_partnership_1995`: Referendum vote: the 1995 sovereignty-partnership question
 
 How the respondent would vote if a referendum were held today on the
 question of the 1995 referendum, sovereignty with an offer of
 partnership to the rest of Canada. A different stimulus from sov_indep
-and sov_sovereign_country: never pooled with them. The push question
-asked of the undecided is not part of this target.
+and sov_sovereign_country, and a separate target; the pooled variable
+sov_support combines them and records the wording in
+sov_support\_\_type. The push question asked of the undecided is not
+part of this target (sov_partnership_1995_push includes it).
 
 Family `sovereignty` · type Categorical · timing Any time · status
 Experimental · added in spec 0.3.0
@@ -1555,12 +2280,76 @@ Experimental · added in spec 0.3.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `interest_0_10`: Interest in politics (0-10)
 
 How interested the respondent is in politics in general, from 0 (no
-interest) to 10 (a great deal). Never pooled with or rescaled to the
-four-point item (interest_4pt).
+interest) to 10 (a great deal). A separate target from the four-point
+item (interest_4pt), never rescaled; the pooled variable pol_interest
+divides it by 10.
 
 Family `interest` · type Numeric · timing Any time · status Experimental
 · added in spec 1.0.0
@@ -1627,6 +2416,69 @@ Family `interest` · type Numeric · timing Any time · status Experimental
   (every study’s does). No row, map, gate, grade, level set, recorded
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `interest_election_0_10`: Interest in the provincial election (0-10)
 
@@ -1643,7 +2495,7 @@ Experimental · added in spec 1.0.0
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
-| qes2008 | `q14` (post) | `comparable` | Same question and scale; the mode needs confirming, the anchor mixes telephone and web. | interest_0_10 |  | Sur une échelle de 0 à 10 où 0 veut dire aucun intérêt et 10 veut dire beaucoup d’intérêt, quel a été votre intérêt pour l’élection PROVINCIALE qui vient d’avoir lieu ? |  |  | Offered explicitly |
+| qes2008 | `q14` (post) | `comparable` | Same question and scale; the mode needs confirming, the anchor mixes telephone and web. | interest_0_10 |  | Using a scale from zero to ten, where zero (0) means no interest at all and ten (10) means a great deal of interest, how interested were you in this PROVINCIAL election? |  |  | Offered explicitly |
 | qes2007 | `q14` (post) | `identical` (anchor) | Anchor row of the target. | interest_0_10 |  | Sur une échelle de 0 à 10 où 0 veut dire aucun intérêt et 10 veut dire beaucoup d’intérêt, quel a été votre intérêt pour l’élection PROVINCIALE qui vient d’avoir lieu ? |  | `pond` | Volunteered only |
 
 **History**
@@ -1807,6 +2659,1380 @@ Experimental · added in spec 1.0.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+
+#### `sov_partnership_1995_push`: Referendum vote: the 1995 question, undecided pushed
+
+How the respondent would vote on the question of the 1995 referendum
+(sovereignty with an offer of partnership to the rest of Canada), with
+the respondents who did not know at the first question asked which way
+they would be inclined to vote (a push question), combined into one
+variable: the first answer where there is one, else the pushed answer. A
+separate target from sov_partnership_1995, which has the first question
+only; the pooled variable sov_support uses this one first.
+
+Family `sovereignty` · type Categorical · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name             | Label                        |
+|------|------------------|------------------------------|
+| 1    | `yes`            | Yes                          |
+| 2    | `no`             | No                           |
+| 95   | `would_not_vote` | Would not vote / would spoil |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2008 | `q19` + `q20` (post) | `comparable` | Same first question and push as the anchor (q19, then q20 for those who did not know); the mode differs (telephone by the deposit metadata; the anchor study mixes telephone and web). | sov_partnership_1995_push | yes, no, would_not_vote | If a referendum were held today on the same question as that asked in 1995, that is sovereignty with an offer of partnership with the rest of Canada, would you vote YES or would you vote NO? \[If don’t know:\] Even if you haven’t yet made up your mind, if a referendum were held today on this issue, would you be inclined to vote YES or to vote NO? |  |  | Not documented |
+| qes2007 | `q19` + `q20` (post) | `identical` (anchor) | Anchor row of the target: the 1995 question read in full (q19), and, for the respondents who did not know, the push q20. | sov_partnership_1995_push | yes, no, would_not_vote | If a referendum were held today on the same question as that asked in 1995, that is sovereignty with an offer of partnership with the rest of Canada, would you vote YES or would you vote NO? \[If don’t know:\] Even if you haven’t yet made up your mind, if a referendum were held today on this issue, would you be inclined to vote YES or to vote NO? |  | `pond` | Not documented |
+| qes2007_panel | `intref1` + `intref2` (pre) | `comparable` | Same question and push as the anchor, by telephone; the stem says ‘accompagnée d’une offre de partenariat’ where the anchor says ‘assortie d’une offre’; would not vote, don’t know and refused are not read. The push intref2 was asked of those who would not vote, did not know or refused (only those who did not know are pushed here, as in the anchor). | sov_partnership_1995_push | yes, no, would_not_vote | Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté accompagnée d’une offre de partenariat au reste du Canada, voteriez-vous Oui ou voteriez-vous Non? \[Si ne sait pas :\] Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter Oui ou de voter Non? |  | `pondam1` (needs review, not applied) | Volunteered only |
+| qes1998 | `q16a_crop` + `q16b_crop` (pre) | `comparable` | Same question and push as the anchor, by telephone; asked by CROP only (426 of the 1,483), not by CREATEC. The push q16b_crop was asked of those who would not vote, did not know or refused (only those who did not know are pushed here, as in the anchor). | sov_partnership_1995_push | yes, no, would_not_vote | 16a. Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté assortie d’une offre de partenariat au reste du Canada, voteriez-vous OUI ou voteriez-vous NON \[Si ne sait pas :\] 16b. Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter pour le OUI ou pour le NON? | firme_post: 1 = inapplicable | `ponder3` (needs review, not applied) | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `satis_demo_qc`: Satisfaction with democracy in Quebec
+
+How satisfied the respondent is, on the whole, with the way democracy
+works in Quebec, on a four-point verbal scale (very, fairly, not very,
+not at all satisfied).
+
+Family `democracy_satisfaction` · type Ordinal · timing Any time ·
+status Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name         | Label                |
+|------|--------------|----------------------|
+| 1    | `very`       | Very satisfied       |
+| 2    | `fairly`     | Fairly satisfied     |
+| 3    | `not_very`   | Not very satisfied   |
+| 4    | `not_at_all` | Not at all satisfied |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_satis_prov` (cps) | `comparable` | Same construct and options; the stem asks ‘how satisfied are you’ (FR ‘quel est votre niveau de satisfaction’); web, with no don’t-know option (a skipped item is no_answer); asked during the campaign. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, how satisfied are you with the way democracy works in Quebec? |  | `cps_weight_general` | Not offered |
+| qes2018 | `q1` (post) | `comparable` | The stem asks ‘how satisfied are you’ (anchor: ‘are you satisfied’); the second option reads ‘Somewhat satisfied’ in English (anchor: ‘Fairly satisfied’) and the third ‘Peu satisfait(e)’ in French (anchor: ‘Pas très satisfait(e)’); web, don’t know and refusal shown. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, how satisfied are you with the way democracy works in Quebec? Are you: |  | `pond` | Offered explicitly |
+| qes2014 | `Q35` (post) | `identical` | Same stem and options as the anchor in English and French, web, with don’t know and refusal shown. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, are you satisfied with the way democracy works in Quebec? Are you: |  | `POND` | Offered explicitly |
+| qes2012 | `q74` (post) | `identical` (anchor) | Anchor row of the target. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, are you satisfied with the way democracy works in Quebec? Are you: |  | `pond` | Offered explicitly |
+| qes2008 | `q27` (post) | `comparable` | Same stem and options as the anchor in English and French; telephone by the deposit metadata (the deposited scripts read like a web one, see waves.csv); don’t know and refusal are codes 8 and 9. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, are you SATISFIED with the way democracy works in Quebec? Are you … |  |  | Not documented |
+| qes2007 | `q27` (post) | `comparable` | Same stem and options as the anchor; the study mixes telephone and web interviews (only the telephone script is deposited), don’t know not read. | satis_4pt | very, fairly, not_very, not_at_all | On the whole, are you SATISFIED with the way democracy works in Quebec? Are you … |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `gov_satisfaction`: Satisfaction with the Quebec government
+
+How satisfied the respondent is with the performance of the Quebec
+government in office, on a four-point scale. The government changes by
+design: each row’s wording names it (the Liberal government in 2012, the
+PQ government in 2014, Philippe Couillard’s in 2018, the government
+under François Legault in 2022).
+
+Family `government_satisfaction` · type Ordinal · timing Any time ·
+status Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name         | Label                |
+|------|--------------|----------------------|
+| 1    | `very`       | Very satisfied       |
+| 2    | `fairly`     | Fairly satisfied     |
+| 3    | `not_very`   | Not very satisfied   |
+| 4    | `not_at_all` | Not at all satisfied |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_province_gov_sat` (cps) | `comparable` | The outgoing CAQ government, named by its leader (under François Legault); web, with no don’t-know option; asked during the campaign. | gov_satis_4pt | very, fairly, not_very, not_at_all | How satisfied are you with the performance of the Quebec government under François Legault? |  | `cps_weight_general` | Not offered |
+| qes2018 | `q10` (post) | `comparable` | The outgoing Liberal government, named by its leader (Philippe Couillard’s); the stem asks for the overall level of satisfaction and the third option reads ‘Peu satisfait(e)’. | gov_satis_4pt | very, fairly, not_very, not_at_all | Overall, what is your level of satisfaction with the performance of Philippe Couillard’s liberal government? |  | `pond` | Offered explicitly |
+| qes2014 | `Q10` (post) | `comparable` | Same stem and options as the anchor about the government in office, the outgoing PQ government of Pauline Marois (named by its party). | gov_satis_4pt | very, fairly, not_very, not_at_all | How satisfied are you with the performance of the PQ government in general? |  | `POND` | Offered explicitly |
+| qes2012 | `q35` (post) | `identical` (anchor) | Anchor row of the target: the outgoing Liberal government of Jean Charest. | gov_satis_4pt | very, fairly, not_very, not_at_all | How satisfied are you with the performance of the provincial Liberal government in general? |  | `pond` | Offered explicitly |
+| qes2007_panel | `satisf` (pre) | `approximate` | A bipolar scale (very or rather satisfied, rather or very dissatisfied) read by telephone during the campaign, about the present Quebec government (Jean Charest’s Liberal government); rather dissatisfied and very dissatisfied are taken as not very and not at all satisfied. | gov_satis_bipolar | very, fairly, not_very, not_at_all | Diriez-vous que vous êtes très satisfait(e), plutôt satisfait(e), plutôt insatisfait(e) ou très insatisfait(e) du présent gouvernement du Québec? |  | `pondam1` (needs review, not applied) | Volunteered only |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `econ_retro_qc`: Quebec’s economy over the past year
+
+Whether the respondent thinks Quebec’s economy has gotten better, stayed
+about the same or gotten worse over the past year (a retrospective,
+sociotropic evaluation).
+
+Family `economy_retrospective` · type Ordinal · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name     | Label          |
+|------|----------|----------------|
+| 1    | `better` | Better         |
+| 2    | `same`   | About the same |
+| 3    | `worse`  | Worse          |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_provecon` (cps) | `comparable` | Same question and options, web, with no don’t-know option; asked during the campaign, which the 2022 inflation shaped. | econ_retro_3 | better, same, worse | Over the past year, has Quebec’s economy… |  | `cps_weight_general` | Not offered |
+| qes2018 | `q53` (post) | `identical` | Same stem and options as the anchor in English and French, web, with don’t know and refusal shown (codes 98 and 99). | econ_retro_3 | better, same, worse | Over the past year, has Quebec’s economy: gotten better, gotten worse, or stayed about the same? |  | `pond` | Offered explicitly |
+| qes2014 | `Q52` (post) | `identical` | Same stem and options as the anchor in English and French, web, with don’t know and refusal shown. | econ_retro_3 | better, same, worse | Over the past year, has Quebec’s economy: gotten better, gotten worse, or stayed about the same? |  | `POND` | Offered explicitly |
+| qes2012 | `q91` (post) | `identical` (anchor) | Anchor row of the target. | econ_retro_3 | better, same, worse | Over the past year, has Quebec’s economy: gotten better, gotten worse, or stayed about the same? |  | `pond` | Offered explicitly |
+| qes2008 | `q47` (post) | `comparable` | Same question and options, by telephone, fielded in December 2008 at the start of the financial crisis. | econ_retro_3 | better, same, worse | Over the PAST YEAR, has QUÉBEC’s economy: gotten better, gotten worse, or stayed about the same? |  |  | Not documented |
+| qes2007 | `q47` (post) | `comparable` | Same question and options; the study mixes telephone and web interviews (only the telephone script is deposited). | econ_retro_3 | better, same, worse | Over the PAST YEAR, has QUEBEC’s economy: gotten better, gotten worse, or stayed about the same? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `attach_qc`: Attachment to Quebec
+
+How attached the respondent feels to Quebec, on a four-point scale
+(very, fairly, not very, not at all).
+
+Family `attachment` · type Ordinal · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name         | Label               |
+|------|--------------|---------------------|
+| 1    | `very`       | Very attached       |
+| 2    | `fairly`     | Fairly attached     |
+| 3    | `not_very`   | Not very attached   |
+| 4    | `not_at_all` | Not at all attached |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_qc_attach` (cps) | `comparable` | Same stem as the anchor; the French options read ‘Assez attaché(e)’ and ‘Peu attaché(e)’; web; don’t know is an option but there is no refusal option; asked during the campaign (pre-election), whereas the anchor is post-election. | attach_4pt | very, fairly, not_very, not_at_all | How attached do you feel to Quebec? |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q18` (post) | `comparable` | Same stem as the anchor; the English second option reads ‘Somewhat attached’ (anchor ‘Fairly attached’) and the French options read ‘Assez attaché(e)’ and ‘Peu attaché(e)’ (anchor ‘Plutôt attaché(e)’, ‘Pas très attaché(e)’). | attach_4pt | very, fairly, not_very, not_at_all | How attached do you feel to Quebec? |  | `pond` | Offered explicitly |
+| qes2014 | `Q12` (post) | `comparable` | Same stem as the anchor; the French options read ‘Plutôt attaché(e)’ and ‘Pas très attaché(e)’. | attach_4pt | very, fairly, not_very, not_at_all | How attached do you feel to Quebec? |  | `POND` | Offered explicitly |
+| qes2012 | `q1` (post) | `identical` (anchor) | Anchor row of the target. | attach_4pt | very, fairly, not_very, not_at_all | How attached do you feel to Quebec? |  | `pond` | Offered explicitly |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `attach_ca`: Attachment to Canada
+
+How attached the respondent feels to Canada, on a four-point scale
+(very, fairly, not very, not at all).
+
+Family `attachment` · type Ordinal · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name         | Label               |
+|------|--------------|---------------------|
+| 1    | `very`       | Very attached       |
+| 2    | `fairly`     | Fairly attached     |
+| 3    | `not_very`   | Not very attached   |
+| 4    | `not_at_all` | Not at all attached |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_can_attach` (cps) | `comparable` | Same stem and options as the anchor in English (without the leading ‘And’); the French options read ‘Assez attaché(e)’ and ‘Peu attaché(e)’ (anchor: ‘Plutôt attaché(e)’, ‘Pas très attaché(e)’); web; don’t know is an option (code 5); asked during the campaign, the anchor after the election. | attach_4pt | very, fairly, not_very, not_at_all | How attached do you feel to Canada? |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q19` (post) | `comparable` | Same stem as the anchor; option 2 reads ‘Somewhat attached’ in English (anchor ‘Fairly attached’), and the French options read ‘Assez attaché(e)’ and ‘Peu attaché(e)’ (anchor ‘Plutôt attaché(e)’, ‘Pas très attaché(e)’). The file has no value labels; codes come from the questionnaire with programmed answer values (367181). | attach_4pt | very, fairly, not_very, not_at_all | And how attached do you feel to Canada? |  | `pond` | Offered explicitly |
+| qes2014 | `Q13` (post) | `comparable` | Same stem as the anchor; the French options read ‘Plutôt attaché(e)’ and ‘Pas très attaché(e)’. | attach_4pt | very, fairly, not_very, not_at_all | And how attached do you feel to Canada? |  | `POND` | Offered explicitly |
+| qes2012 | `q2` (post) | `identical` (anchor) | Anchor row of the target. | attach_4pt | very, fairly, not_very, not_at_all | And how attached do you feel to Canada? |  | `pond` | Offered explicitly |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `identity_qc_ca`: Québécois or Canadian identity
+
+How the respondent defines themselves, from Québécois only to Canadian
+only (the five-point Moreno question); another self-definition is an
+answer (level other).
+
+Family `national_identity` · type Categorical · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name       | Label                          |
+|------|------------|--------------------------------|
+| 1    | `qc_only`  | Québécois only                 |
+| 2    | `qc_first` | Québécois first, then Canadian |
+| 3    | `equal`    | Equally Québécois and Canadian |
+| 4    | `ca_first` | Canadian first, then Québécois |
+| 5    | `ca_only`  | Canadian only                  |
+| 90   | `other`    | Other                          |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `pes_identity_qc_ca` (cps) | `comparable` | The French stem of the anchor, web, with ‘Cannot say’ (Je ne sais pas) as an option always shown last; the five options were shown from Canadian only to Québécois only for 741 respondents and in the reverse order for the other 780 (display-order variables pes_identity_qc_ca_DO_1 to *DO_6), one variable, so the order effect averages as in 2014, 2007 and 2008. Despite its pes* prefix, the item is in the campaign-period survey: every respondent answered it, those of the post-election wave and the 301 who did not take it alike (codebook p. 52, in the campaign section). | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; not offered: other | People have different ways of defining themselves. Do you consider yourself to be \_\_\_\_\_\_\_\_\_\_ |  | `cps_weight_general` | Offered explicitly |
+| qes2014 | `Q14A` + `Q14B` (post) | `comparable` | The anchor’s question in English and French, asked on a split ballot: half the sample (Q14A, SEL1 = 1) saw the options from Québécois only to Canadian only, the other half (Q14B) in reverse order; the two halves are combined, which averages the order effect. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; not offered: other | Which, if any, of the following best describes the way you think of yourself? (options in one order for half the sample, Q14A, in the reverse order for the other half, Q14B) |  | `POND` | Offered explicitly |
+| qes2012 | `q3` (post) | `identical` (anchor) | Anchor row of the target. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; not offered: other | Which if any of the following best describes the way you think of yourself? |  | `pond` | Offered explicitly |
+| qes2008 | `q18a` + `q18b` (post) | `comparable` | The French stem of the anchor, with the five options read in one order for half the sample (q18a) and in the reverse order for the other half (q18b), combined; another self-definition (96, ‘Other, specify’) is printed as an option in both questionnaires, with no reading instruction; by telephone (per the deposit metadata). | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only, other | People have different ways of defining themselves. Do you consider yourself to be… |  |  | Not documented |
+| qes2007 | `q18a` + `q18b` (post) | `comparable` | The French stem of the anchor, with the five options read in one order for half the sample (q18a) and in the reverse order for the other half (q18b), combined; another self-definition (96) is volunteered; telephone and web. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only, other | People have different ways of defining themselves. Do you consider yourself to be… |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `therm_leader_plq`: Rating of the PLQ leader (0-100)
+
+How much the respondent likes the leader of the PLQ, from 0 (really
+dislike) to 100 (really like); the leader changes by design, and each
+row names the person rated. Not knowing the leader is don’t know (dk).
+
+Family `leader_ratings` · type Numeric · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Valid range**: 0-100
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_1` (cps) | `approximate` | A 0-100 slider for each provincial leader, web, asked during the campaign; -99 is the explicit ‘Don’t know leader’ option (codebook 7449514, p. 26) and, per the codebook note under cps_intelligent, may also include a slider left blank (the file has no system missing), so it is read as don’t know. | therm_0_100 |  | Using the same scale, how do you feel about the provincial party leaders below? \[Dominique Anglade\] |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q33_a` (post) | `approximate` | A 0-10 scale multiplied by 10 (affine 10\*x): the same construct on a coarser scale; not knowing the person (97) is don’t know; web. | therm_0_10 |  | On a scale of 0 to 10, where 0 means you REALLY DISLIKE him or her and 10 means you REALLY LIKE him or her, how do you feel about… Philippe Couillard? |  | `pond` | Offered explicitly |
+| qes2014 | `Q29A` (post) | `comparable` | Same stem and 0-100 scale as the anchor, web; not knowing the person (997) is don’t know. | therm_0_100 |  | On a scale where zero means you REALLY DISLIKE him and one hundred means you REALLY LIKE him, how do you feel about … |  | `POND` | Offered explicitly |
+| qes2012 | `q68` (post) | `identical` (anchor) | Anchor row of the target. | therm_0_100 |  | On a scale where zero means you REALLY DISLIKE him and one hundred means you REALLY LIKE him, how do you feel about JEAN CHAREST? |  | `pond` | Offered explicitly |
+| qes2008 | `q39` (post) | `comparable` | Same 0-100 scale; telephone by the deposit metadata (to be confirmed); not knowing any leader (995) or this one (997) is don’t know. The French wording matches the anchor; the deposited English questionnaire asks only ‘How do you feel about JEAN CHAREST?’ and does not define 0 and 100 (the anchor’s English does). | therm_0_100 |  | How do you feel about JEAN CHAREST? |  |  | Not documented |
+| qes2007 | `q39` (post) | `comparable` | Same 0-100 scale; the study mixes telephone and web interviews; not knowing the leader or any leader (995, 997) is don’t know. | therm_0_100 |  | Now the party leaders. On the same scale, where zero means you REALLY DISLIKE the leader and one hundred means you REALLY LIKE the leader. How do you feel about JEAN CHAREST? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `therm_leader_pq`: Rating of the PQ leader (0-100)
+
+How much the respondent likes the leader of the PQ, from 0 (really
+dislike) to 100 (really like); the leader changes by design, and each
+row names the person rated. Not knowing the leader is don’t know (dk).
+
+Family `leader_ratings` · type Numeric · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Valid range**: 0-100
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_2` (cps) | `approximate` | A 0-100 slider for each provincial leader, web, asked during the campaign; -99 is the explicit ‘Don’t know leader’ option (codebook 7449514, p. 26) and, per the codebook note under cps_intelligent, may also include a slider left blank (the file has no system missing), so it is read as don’t know. | therm_0_100 |  | Using the same scale, how do you feel about the provincial party leaders below? \[Paul St-Pierre Plamondon\] |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q33_b` (post) | `approximate` | A 0-10 scale multiplied by 10 (affine 10\*x): the same construct on a coarser scale; not knowing the person (97) is don’t know; web. | therm_0_10 |  | On a scale of 0 to 10, where 0 means you REALLY DISLIKE him or her and 10 means you REALLY LIKE him or her, how do you feel about… Jean-François Lisée? |  | `pond` | Offered explicitly |
+| qes2014 | `Q29B` (post) | `comparable` | Same stem and 0-100 scale as the anchor, web; not knowing the person (997) is don’t know. | therm_0_100 |  | On a scale where zero means you REALLY DISLIKE him and one hundred means you REALLY LIKE him, how do you feel about … PAULINE MAROIS? |  | `POND` | Offered explicitly |
+| qes2012 | `q68b` (post) | `identical` (anchor) | Anchor row of the target. | therm_0_100 |  | On the same scale, how do you feel about PAULINE MAROIS? |  | `pond` | Offered explicitly |
+| qes2008 | `q40` (post) | `comparable` | Same 0-100 scale; telephone by the deposit metadata (to be confirmed); not knowing any leader (995) or this one (997) is don’t know. The French wording matches the anchor; the deposited English questionnaire asks only ‘How do you feel about PAULINE MAROIS?’ and does not define 0 and 100 (the anchor’s English does). | therm_0_100 |  | How do you feel about PAULINE MAROIS? |  |  | Not documented |
+| qes2007 | `q40` (post) | `comparable` | Same 0-100 scale; the study mixes telephone and web interviews; not knowing the leader or any leader (995, 997) is don’t know. | therm_0_100 |  | Now the party leaders. On the same scale, where zero means you REALLY DISLIKE the leader and one hundred means you REALLY LIKE the leader. How do you feel about ANDRÉ BOISCLAIR? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `therm_leader_caq`: Rating of the CAQ leader (0-100)
+
+How much the respondent likes the leader of the CAQ, from 0 (really
+dislike) to 100 (really like); the leader changes by design, and each
+row names the person rated. Not knowing the leader is don’t know (dk).
+
+Family `leader_ratings` · type Numeric · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Valid range**: 0-100
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_3` (cps) | `approximate` | A 0-100 slider for each provincial leader, web, asked during the campaign; -99 is the explicit ‘Don’t know leader’ option (codebook 7449514, p. 26) and, per the codebook note under cps_intelligent, may also include a slider left blank (the file has no system missing), so it is read as don’t know. | therm_0_100 |  | Using the same scale, how do you feel about the provincial party leaders below? \[François Legault\] |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q33_c` (post) | `approximate` | A 0-10 scale multiplied by 10 (affine 10\*x): the same construct on a coarser scale; not knowing the person (97) is don’t know; web. | therm_0_10 |  | On a scale of 0 to 10, where 0 means you REALLY DISLIKE him or her and 10 means you REALLY LIKE him or her, how do you feel about… François Legault? |  | `pond` | Offered explicitly |
+| qes2014 | `Q29C` (post) | `comparable` | Same stem and 0-100 scale as the anchor, web; not knowing the person (997) is don’t know. | therm_0_100 |  | On a scale where zero means you REALLY DISLIKE him and one hundred means you REALLY LIKE him, how do you feel about … FRANÇOIS LEGAULT? |  | `POND` | Offered explicitly |
+| qes2012 | `q68c` (post) | `identical` (anchor) | Anchor row of the target. | therm_0_100 |  | On the same scale, how do you feel about FRANÇOIS LEGAULT? |  | `pond` | Offered explicitly |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `therm_leader_qs`: Rating of the QS leader (0-100)
+
+How much the respondent likes the leader of the QS, from 0 (really
+dislike) to 100 (really like); the leader changes by design, and each
+row names the person rated (QS has two spokespersons: the one the study
+rated, or its candidate for premier when the study rated both). Not
+knowing the leader is don’t know (dk).
+
+Family `leader_ratings` · type Numeric · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Valid range**: 0-100
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_7` (cps) | `approximate` | A 0-100 slider for each provincial leader, web, asked during the campaign; -99 is the explicit ‘Don’t know leader’ option (codebook 7449514, p. 26) and, per the codebook note under cps_intelligent, may also include a slider left blank (the file has no system missing), so it is read as don’t know. | therm_0_100 |  | Using the same scale, how do you feel about the provincial party leaders below? \[Gabriel Nadeau-Dubois\] |  | `cps_weight_general` | Offered explicitly |
+| qes2018 | `q33_d` (post) | `approximate` | A 0-10 scale multiplied by 10 (affine 10\*x): the same construct on a coarser scale; not knowing the person (97) is don’t know; web. | therm_0_10 |  | On a scale of 0 to 10, where 0 means you REALLY DISLIKE him or her and 10 means you REALLY LIKE him or her, how do you feel about… Manon Massé? |  | `pond` | Offered explicitly |
+| qes2014 | `Q29D` (post) | `comparable` | Same stem and 0-100 scale as the anchor, web; not knowing the person (997) is don’t know. | therm_0_100 |  | On a scale where zero means you REALLY DISLIKE him and one hundred means you REALLY LIKE him, how do you feel about … FRANÇOISE DAVID? |  | `POND` | Offered explicitly |
+| qes2012 | `q68d` (post) | `identical` (anchor) | Anchor row of the target. | therm_0_100 |  | On the same scale, how do you feel about AMIR KHADIR? |  | `pond` | Offered explicitly |
+| qes2008 | `q42` (post) | `comparable` | Same 0-100 scale; telephone by the deposit metadata (to be confirmed); not knowing any leader (995) or this one (997) is don’t know. The French wording matches the anchor; the deposited English questionnaire asks only ‘How do you feel about FRANÇOISE DAVID?’ and does not define 0 and 100 (the anchor’s English does). | therm_0_100 |  | How do you feel about FRANÇOISE DAVID? |  |  | Not documented |
+| qes2007 | `q42` (post) | `comparable` | Same 0-100 scale; the study mixes telephone and web interviews; not knowing the leader or any leader (995, 997) is don’t know. | therm_0_100 |  | Now the party leaders. On the same scale, where zero means you REALLY DISLIKE the leader and one hundred means you REALLY LIKE the leader. How do you feel about FRANÇOISE DAVID? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `therm_leader_adq`: Rating of the ADQ leader (0-100)
+
+How much the respondent likes the leader of the ADQ, from 0 (really
+dislike) to 100 (really like); the leader changes by design, and each
+row names the person rated. Not knowing the leader is don’t know (dk).
+
+Family `leader_ratings` · type Numeric · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Valid range**: 0-100
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2008 | `q41` (post) | `comparable` | Same 0-100 scale; telephone by the deposit metadata (to be confirmed); not knowing any leader (995) or this one (997) is don’t know. The French wording matches the anchor; the deposited English questionnaire asks only ‘How do you feel about MARIO DUMONT?’ and does not define 0 and 100 (the anchor’s English does). | therm_0_100 |  | How do you feel about MARIO DUMONT? |  |  | Not documented |
+| qes2007 | `q41` (post) | `identical` (anchor) | Anchor row of the target. | therm_0_100 |  | Now the party leaders. On the same scale, where zero means you REALLY DISLIKE the leader and one hundred means you REALLY LIKE the leader. How do you feel about MARIO DUMONT? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+### Issues
+
+#### `mip_issue`: Most important issue of the election
+
+Which issue, from the study’s closed list, was the most important to the
+respondent personally in the Quebec general election of the study. The
+lists change from election to election: an issue a study did not list is
+a structural zero there (levels_not_offered), not an absence of concern.
+
+Family `issues` · type Categorical · timing Any time · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name              | Label                          |
+|------|-------------------|--------------------------------|
+| 1    | `economy`         | The economy                    |
+| 2    | `health`          | Health care                    |
+| 3    | `environment`     | The environment                |
+| 4    | `education`       | Education                      |
+| 5    | `families`        | Aid to families                |
+| 6    | `poverty`         | Poverty                        |
+| 7    | `integrity`       | Integrity and corruption       |
+| 8    | `taxes_finances`  | Taxes and public finances      |
+| 9    | `sovereignty`     | Quebec sovereignty             |
+| 10   | `secularism`      | State secularism (the charter) |
+| 11   | `immigration`     | Immigration                    |
+| 12   | `cost_of_living`  | Cost of living                 |
+| 13   | `housing`         | Housing                        |
+| 14   | `french_language` | The French language            |
+| 90   | `other`           | Another issue                  |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_impissue_matrix` (cps) | `comparable` | The same question (‘for you personally, the most important’) about the study’s election, with the study’s own closed list: issues it did not list are structural zeros. Fourteen issues, asked during the campaign, web, no don’t-know option; Quebec City’s third road link and gun violence are other issues. | mip_closed_list | economy, health, environment, education, poverty, integrity, taxes_finances, sovereignty, immigration, cost_of_living, housing, french_language, other; not offered: families, secularism | What is the most important issue to you personally in this provincial election? |  | `cps_weight_general` | Not offered |
+| qes2018 | `q2` (post) | `comparable` | The same question (‘for you personally, the most important’) about the study’s election, with the study’s own closed list: issues it did not list are structural zeros. Ten issues and another issue; integrity reads ‘of politicians and corruption’. | mip_closed_list | economy, health, environment, education, families, poverty, integrity, taxes_finances, sovereignty, immigration, other; not offered: secularism, cost_of_living, housing, french_language | Of the following issues, which was, for you personally, the most important in the provincial election held on October 1st? |  | `pond` | Offered explicitly |
+| qes2014 | `Q1` (post) | `comparable` | The same question (‘for you personally, the most important’) about the study’s election, with the study’s own closed list: issues it did not list are structural zeros. Ten issues, among them the charter of secularism (the PQ’s Charte des valeurs). | mip_closed_list | economy, health, environment, education, families, poverty, integrity, taxes_finances, sovereignty, secularism; not offered: immigration, cost_of_living, housing, french_language, other | Of the following issues, which was, for you personally, the most important in the provincial election held on April 7? |  | `POND` | Offered explicitly |
+| qes2012 | `q34bb` (post) | `identical` (anchor) | Anchor row of the target: eight issues, no other-issue option. | mip_closed_list | economy, health, environment, education, families, poverty, integrity, sovereignty; not offered: taxes_finances, secularism, immigration, cost_of_living, housing, french_language, other | Of the following issues, which was, for you personally, the most important in the provincial election of September 4? |  | `pond` | Offered explicitly |
+| qes2008 | `q1` (post) | `comparable` | The same question (‘for you personally, the most important’) about the study’s election, with the study’s own closed list: issues it did not list are structural zeros. Six issues and another issue, by telephone. | mip_closed_list | economy, health, environment, education, families, poverty, other; not offered: integrity, taxes_finances, sovereignty, secularism, immigration, cost_of_living, housing, french_language | What was the most important issue to you personally in the provincial election on December 8? |  |  | Not offered |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 ### Sociodemographics
 
@@ -2011,8 +4237,10 @@ Experimental · added in spec 0.2.0
 #### `age_group3`: Age group (3 bands)
 
 The respondent’s age group at the interview in three bands: 18-34,
-35-54, 55 and over. Built only from a question with these bands or with
-bands that collapse into them exactly, never from a guess.
+35-54, 55 and over. Built from a question with these bands or with bands
+that collapse into them exactly; where the study has no such question,
+derived from the age (exact) or the year of birth (graded approximate:
+an age at a band edge can be one year off).
 
 Family `age_bands` · type Ordinal · timing Any time · status
 Experimental · added in spec 0.2.0
@@ -2125,6 +4353,69 @@ Experimental · added in spec 0.2.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `citizen`: Canadian citizen
 
@@ -2193,8 +4484,10 @@ Experimental · added in spec 0.2.0
 #### `age_group6`: Age group (6 bands)
 
 The respondent’s age group at the interview in six bands: 18-24, 25-34,
-35-44, 45-54, 55-64, 65 and over. Built only from a question with these
-bands or with bands that collapse into them exactly, never from a guess.
+35-44, 45-54, 55-64, 65 and over. Built from a question with these bands
+or with bands that collapse into them exactly; where the study has no
+such question, derived from the age (exact) or the year of birth (graded
+approximate: an age at a band edge can be one year off).
 
 Family `age_bands` · type Ordinal · timing Any time · status
 Experimental · added in spec 1.0.0
@@ -2320,6 +4613,69 @@ Experimental · added in spec 1.0.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `gender`: Gender
 
@@ -2508,7 +4864,7 @@ Experimental · added in spec 1.0.0
 | qes2014 | `QSCOL` (post) | `identical` (anchor) | Anchor row of the target. | edu_levels | primary, secondary, college, university | What is the highest level of education that you have completed? |  | `POND` | Not offered |
 | qes2012 | `scol` (post) | `comparable` | Same French question as the anchor, on the web; the English options follow a British scheme (further or higher education), and one code of the file is in neither questionnaire. | edu_levels | primary, secondary, college, university | What is the highest level of education that you have completed? |  | `pond` | Offered explicitly |
 | qes_crop_2007_2010 | `scol` (each poll) | `approximate` | Years of schooling in four ranges named after the levels (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP; 16 or more, university), by telephone, not the highest level completed. | edu_years | primary, secondary, college, university | Combien d’années d’études avez-vous complétées? |  | `XPOND` (needs review, not applied) | Not documented |
-| qes2008 | `q77` (post) | `comparable` | Level of education with and without diploma, options that collapse exactly into the four groups; the mode needs confirming, the anchor is web. | edu_levels | primary, secondary, college, university | Quel est votre niveau d’éducation ? |  |  | Offered explicitly |
+| qes2008 | `q77` (post) | `comparable` | Level of education with and without diploma, options that collapse exactly into the four groups; the mode needs confirming, the anchor is web. | edu_levels | primary, secondary, college, university | What is the highest level of education that you have completed? |  |  | Offered explicitly |
 | qes2007 | `q77` (post) | `comparable` | Level of education with and without diploma, options that collapse exactly into the four groups; mixed telephone and web interviews, the anchor is web. | edu_levels | primary, secondary, college, university | Quel est votre niveau d’éducation ? |  | `pond` | Volunteered only |
 | qes2007_panel | `scol` (any wave) | `approximate` | Years of schooling in four ranges named after the levels (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP; 16 or more, university), by telephone, not the highest level completed. | edu_years | primary, secondary, college, university | Combien d’années d’études avez-vous complétées? |  |  | Volunteered only |
 
@@ -2674,13 +5030,14 @@ Experimental · added in spec 1.0.0
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_lang_1` + `cps_lang_2` + `cps_lang_3` (cps) | `approximate` | A select-all question (the languages first learned and still understood): a respondent who ticked one option gets it; two or more (146) are not_mappable, as a second mother tongue elsewhere; web, asked during the campaign. | lang_first_multiselect | french, english, other | Which language(s) did you learn as a child and still understand today? (Select all that apply) |  | `cps_weight_general` | Not offered |
 | qes2018 | `qlangue` (post) | `comparable` | Same stem on the web, asking for the main language first learned (langue principale); the file has no value labels. | lang_first | french, english, other | Quelle est la langue principale que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours? |  | `pond` | Offered explicitly |
 | qes2018_panel | `s1` (pre) | `comparable` | Shorter stem (first language learned and still understood, without ‘at home in childhood’), by telephone and web; one language only. | lang_first | french, english, other | Quelle est la première langue que vous avez apprise et que vous comprenez toujours? |  | `weight` | Not documented |
 | qes2014 | `QLANG` (post) | `comparable` | Same stem on the web, with three options for two first languages, which are missing values here (not_mappable). | lang_first_multi | french, english, other | Quelle est la langue que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours? |  | `POND` | Offered explicitly |
 | qes2012 | `langu` (post) | `identical` (anchor) | Anchor row of the target. | lang_first | french, english, other | What is the language you first learned at home in your childhood and that you still understand? |  | `pond` | Offered explicitly |
 | qes2012_panel | `lmat` (pre) | `comparable` | Mother tongue defined as the first language learned and still understood, by telephone; one language only. | lang_first | french, english, other | Quelle est votre langue maternelle, c’est-à-dire celle que vous avez appris à parler en premier et que vous comprenez toujours? |  | `pondam1` (needs review, not applied) | Not documented |
 | qes_crop_2007_2010 | `lmat` (each poll) | `comparable` | Mother tongue asked without a definition, by telephone; one language only. | lang_mother | french, english, other | Quelle est votre langue maternelle? |  | `XPOND` (needs review, not applied) | Not documented |
-| qes2008 | `langu` (post) | `comparable` | Same stem and options; the mode needs confirming, the anchor is web. | lang_first | french, english, other | Quelle est la langue que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours ? |  |  | Offered explicitly |
+| qes2008 | `langu` (post) | `comparable` | Same stem and options; the mode needs confirming, the anchor is web. | lang_first | french, english, other | What is the language you first learned at home in your childhood and that you still understand? |  |  | Offered explicitly |
 | qes2007 | `langu` (post) | `comparable` | Same stem, with options for two first languages, which are missing values here (not_mappable); mixed telephone and web interviews, the anchor is web. | lang_first_multi | french, english, other | Quelle est la langue que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours ? |  | `pond` | Volunteered only |
 | qes2007_panel | `lmat` (any wave) | `comparable` | Mother tongue defined as the first language learned and still spoken, by telephone; one language only. | lang_first | french, english, other | Quelle est votre langue maternelle, c’est-à-dire la première langue que vous avez apprise et que vous pouvez encore parler? |  |  | Volunteered only |
 
@@ -2819,6 +5176,69 @@ Experimental · added in spec 1.0.0
   not_comparable_source; qes2022 language: not_harmonized_yet). No value
   map, gate, level set, expected marginal or column hash changed: MINOR,
   rows are only added to the default output.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
 
 #### `born_canada`: Born in Canada
 
@@ -3199,3 +5619,933 @@ Family `faith` · type Text · timing Time-invariant · status Experimental
   (every study’s does). No row, map, gate, grade, level set, recorded
   marginal or column hash changed: MINOR, keys are only added to
   expected/.
+
+#### `region_cma3`: Region (Montreal and Quebec CMAs)
+
+Where the respondent lives: the Montreal census metropolitan area (CMA),
+the Quebec CMA or the rest of Quebec, from the region the study recorded
+for its sampling, quotas or weighting (not a question of its own).
+
+Family `region` · type Categorical · timing Time-invariant · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name         | Label          |
+|------|--------------|----------------|
+| 1    | `mtl_cma`    | Montreal CMA   |
+| 2    | `quebec_cma` | Quebec CMA     |
+| 3    | `rest`       | Rest of Quebec |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `regio` (post) | `identical` | The study’s sampling region: the same three areas as the anchor. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425914, regio |  | `pond` | Not offered |
+| qes2018_panel | `region` (pre) | `approximate` | The producer’s recoded region (Montreal island, its ‘Couronne’, the ‘Région de Québec’, rest of Quebec): the ring and the Quebec region are not documented as the census metropolitan areas. | region_recoded | mtl_cma, quebec_cma, rest | document 333052, region |  | `weight` | Not offered |
+| qes2014 | `REGIO` (post) | `identical` | The study’s sampling region: the same three areas as the anchor. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425916, REGIO |  | `POND` | Not offered |
+| qes2012 | `regio` (post) | `identical` (anchor) | Anchor row of the target: the producer’s derived region variable REGIO (Montreal CMA, Quebec CMA, other regions; variable label empty), matching the RÉGION among POND’s weighting variables (technical report, file 196368: SEXE, ÂGE, RÉGION, LANGUE). Not a question: Q110 (17 administrative regions) is in the file as q0qc, but REGIO splits regions that straddle the CMAs, so it is not a recode of q0qc alone. Q111 (postal code) is not in the file. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425917, REGIO; document 196368, RÉGION |  | `pond` | Not offered |
+| qes2012_panel | `reg` (pre) | `comparable` | The panel’s sampling region in four areas (Montreal island, rest of the Montreal CMA, Quebec CMA, rest of Quebec), the first two joined exactly. | region_cma_sample | mtl_cma, quebec_cma, rest | document 361043, reg |  | `pondam1` (needs review, not applied) | Not offered |
+| qes_crop_2007_2010 | `REG` (each poll) | `comparable` | CROP’s sampling region in four areas (Montreal island, rest of the Montreal CMA, Quebec CMA, rest of Quebec), the first two joined exactly. | region_cma_sample | mtl_cma, quebec_cma, rest | document 329990, REG |  | `XPOND` (needs review, not applied) | Not offered |
+| qes2008 | `regio` (post) | `comparable` | Derived in the questionnaire (CALCM/CALCQ/CALCA -\> REGIO) from the screening questions on administrative region (Q0QC) and city (Q0QCA-Q0QCE), and used for quotas: the same three areas as the anchor, with the CMA parts defined by the questionnaire’s city lists. Graded comparable, not identical: the deposit records the mode as telephone (see waves.csv; unconfirmed), unlike the web anchor. | region_cma_sample | mtl_cma, quebec_cma, rest | In which Quebec area do you live? \[+ In which city do you live?\] |  |  | Not offered |
+| qes2007 | `nomx` (post) | `comparable` | The 21 sampling subgroups (administrative regions, those around the two metropolitan areas split into their CMA part and the rest), joined into the three areas: Montreal CMA = Montreal, Laval and the CMA parts of Lanaudière, Laurentides and Montérégie; Quebec CMA = Quebec CMA and the CMA part of Chaudière-Appalaches. | region_admin_cma | mtl_cma, quebec_cma, rest | document 425921, nomx |  | `pond` | Not offered |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `lang_home`: Language spoken most often at home
+
+The language the respondent speaks most often at home: French, English
+or another language.
+
+Family `language` · type Categorical · timing Time-invariant · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name      | Label   |
+|------|-----------|---------|
+| 1    | `french`  | French  |
+| 2    | `english` | English |
+| 3    | `other`   | Other   |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `pes_langhome_1` + `pes_langhome_2` + `pes_langhome_3` + `pes_langhome_4` + `pes_langhome_5` + `pes_langhome_6` + `pes_langhome_7` + `pes_langhome_8` + `pes_langhome_9` + `pes_langhome_10` + `pes_langhome_11` + `pes_langhome_12` + `pes_langhome_13` + `pes_langhome_14` + `pes_langhome_15` + `pes_langhome_16` + `pes_langhome_17` (pes) | `approximate` | A select-all question (the languages usually spoken at home, 17 options), not the one spoken most often: a respondent who ticked options of one level gets it; English and French, or either with another language (171 in all), are not_mappable; web, asked after the election. | lang_home_multiselect | french, english, other | Which language(s) do you usually speak at home? |  | `pes_weight_general` | Not offered |
+| qes2018 | `q70` (post) | `comparable` | Same question and list as the anchor, web, with don’t know and refusal shown. | lang_home_list | french, english, other | Which language do you speak most often at home? |  | `pond` | Offered explicitly |
+| qes2014 | `Q66` (post) | `comparable` | Same question and list as the anchor, web, with don’t know and refusal shown. | lang_home_list | french, english, other | Which language do you speak most often at home? |  | `POND` | Offered explicitly |
+| qes2012 | `q107` (post) | `identical` (anchor) | Anchor row of the target. | lang_home_list | french, english, other | Which language do you speak most often at home? |  | `pond` | Not documented |
+| qes_crop_2007_2010 | `lusag` (each poll) | `comparable` | The language spoken most often in the household (‘dans votre foyer’), three options, by telephone, in each poll. | lang_home_3 | french, english, other | Quelle langue parle-t-on le plus souvent dans votre foyer? |  | `XPOND` (needs review, not applied) | Not documented |
+| qes2008 | `q80` (post) | `comparable` | Same question as the anchor; the list is nearly the same (no Inuktitut, so Cree is code 13, and no don’t-know code); telephone by the deposit metadata, the anchor is web. | lang_home_list | french, english, other | What language do you speak most often at home? |  |  | Not offered |
+| qes2007 | `q80` (post) | `comparable` | Same question and list as the anchor; the study mixes telephone and web interviews. | lang_home_list | french, english, other | What language do you speak most often at home? |  | `pond` | Not documented |
+| qes2007_panel | `lusage` (any wave) | `comparable` | The language spoken most often in the household (‘dans votre foyer’), not the respondent’s own, three options, by telephone; one language only. | lang_home_3 | french, english, other | Quelle langue parle-t-on le plus souvent dans votre foyer? |  |  | Volunteered only |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `relig_attend`: Attendance at religious services
+
+How often the respondent attends services at their place of worship, not
+counting weddings and funerals, from every week to hardly ever or never.
+Where the study asked only those who belong to a religion, those who do
+not are hardly ever or never (graded approximate).
+
+Family `faith` · type Ordinal · timing Any time · status Experimental ·
+added in spec 4.3.0
+
+**Levels**
+
+| Code | Name          | Label                |
+|------|---------------|----------------------|
+| 1    | `weekly`      | Every week           |
+| 2    | `twice_month` | Twice a month        |
+| 3    | `monthly`     | Once a month         |
+| 4    | `yearly`      | Once or twice a year |
+| 5    | `never`       | Hardly ever or never |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `q68` (post) | `approximate` | Asked only of those who belong to a religion (the filter question): those who do not are set to hardly ever or never, and those who refused the filter are inapplicable. The anchor asks everyone, so the shares are not directly comparable. | attend_5_filtered | weekly, twice_month, monthly, yearly, never | Not counting weddings and funerals, how often do you attend services at your place of worship? | q66: 2 = never, 9 = inapplicable | `pond` | Offered explicitly |
+| qes2014 | `Q64` (post) | `approximate` | Asked only of those who belong to a religion (the filter question): those who do not are set to hardly ever or never, and those who refused the filter are inapplicable. The anchor asks everyone, so the shares are not directly comparable. | attend_5_filtered | weekly, twice_month, monthly, yearly, never | Not counting weddings and funerals, how often do you attend services at your place of worship? | Q62: 2 = never, 9 = inapplicable | `POND` | Offered explicitly |
+| qes2012 | `q104` (post) | `identical` (anchor) | Anchor row of the target: asked of every respondent. | attend_5 | weekly, twice_month, monthly, yearly, never | Not counting weddings and funerals, how often do you attend services at your place of worship? |  | `pond` | Offered explicitly |
+| qes2008 | `q81` (post) | `comparable` | Same question and options, asked of every respondent, by telephone. | attend_5 | weekly, twice_month, monthly, yearly, never | Not counting weddings and funerals, how often do you attend services at your place of worship: is it…? |  |  | Not documented |
+| qes2007 | `q81` (post) | `comparable` | Same question and options, asked of every respondent; the study mixes telephone and web interviews. | attend_5 | weekly, twice_month, monthly, yearly, never | Not counting weddings and funerals, how often do you attend services at your place of worship: every week, twice a month, once a month, once or twice a year, or hardly ever? |  | `pond` | Not documented |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+#### `birthplace3`: Birthplace (Quebec, rest of Canada, abroad)
+
+Where the respondent was born: in Quebec, elsewhere in Canada or outside
+Canada. Where both are harmonized, born_canada is yes exactly where this
+is quebec or other_canada.
+
+Family `birthplace` · type Categorical · timing Time-invariant · status
+Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name           | Label               |
+|------|----------------|---------------------|
+| 1    | `quebec`       | Quebec              |
+| 2    | `other_canada` | Elsewhere in Canada |
+| 3    | `abroad`       | Outside Canada      |
+
+**Coverage**
+
+| Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `q69` (post) | `comparable` | Same question and options, web, with don’t know shown. | birthplace_3 | quebec, other_canada, abroad | Where were you born? |  | `pond` | Offered explicitly |
+| qes2014 | `Q65` (post) | `comparable` | Same question and options, web, with don’t know shown. | birthplace_3 | quebec, other_canada, abroad | Where were you born? |  | `POND` | Offered explicitly |
+| qes2012 | `q105` (post) | `identical` (anchor) | Anchor row of the target. | birthplace_3 | quebec, other_canada, abroad | Where were you born? |  | `pond` | Offered explicitly |
+
+**History**
+
+- 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked
+  against the original files, in review, for qes2012, qes2014, qes2018,
+  qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level
+  sets, waves and weights.
+- 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of
+  gate code and source code among wave members for the 28 projectable
+  rows of the studies whose metadata ships, and expected/marginals.csv,
+  the projected unweighted marginals of the 28 projectable rows of the
+  studies whose metadata ships. No row, code or grade changed.
+- 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5
+  of each harmonized column (study, target) that qes_harmonize() gives
+  on the pinned files, for the 35 mapped rows, checked on the original
+  files by the live tests (V-L1). No row, code or grade changed.
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+## Pooled variables
+
+A pooled variable is one column for every study that pools several
+targets, its members: `vote_choice` pools the reported vote and the vote
+intentions, `sov_support` the referendum wordings, `pol_interest` the
+interest scales. The members stay targets, each one stimulus; the pooled
+column records, row by row, which member its value comes from
+(`<pooled>__type`), that member’s grade (`<pooled>__grade`, never
+raised; a lossy transform caps it at approximate) and its item
+(`<pooled>__item`, `study:wave:source variables`).
+`qes_harmonize(targets = "vote_choice")` returns the pooled column and
+its companions; `types = list(vote_choice = "recall")` keeps some
+members only.
+
+How a row gets its value: the members of the requested types are tried
+in order of precedence. The first member whose cell has a value, or a
+missing value that is an answer (don’t know, refused, did not vote, …),
+sets the row. A member that did not ask the respondent (not in the wave,
+not asked, not reviewed, below the grade, routed out, system missing, a
+code that straddles levels) passes to the next. When every member
+passes, the row is `NA` with the reason of the first usable member that
+has a row in the study and wave, else of the first member that has a
+row. In the respondent layout (one row per respondent), a study’s values
+come from one wave: that of the first member it applies, so that one
+weight column fits them; the long layout (`layout = "long"`, one row per
+respondent and wave) keeps every wave.
+
+### `vote_choice`: Provincial vote choice (pooled)
+
+The party of the respondent’s vote in the Quebec general election of the
+study, one variable for every study: the reported vote (recall), asked
+after the election, where the study asked it; else the vote intention
+with those who named no party (the undecided and, in some studies, those
+who would not vote, would vote for none or refused) pushed toward the
+party they lean to, so no_party is lower under intention_push than under
+intention; else the vote intention at the first question. The wordings
+differ from study to study and vote_choice\_\_type says which question
+each value comes from. Would not vote, none or would spoil (level
+no_party) is an answer only in intentions; in a reported vote, nonvoters
+and spoiled ballots are missing values with a reason.
+
+type Categorical · status Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name       | Label                               |
+|------|------------|-------------------------------------|
+| 1    | `PLQ`      | PLQ                                 |
+| 2    | `PQ`       | PQ                                  |
+| 3    | `CAQ`      | CAQ                                 |
+| 4    | `QS`       | QS                                  |
+| 5    | `PVQ`      | PVQ                                 |
+| 6    | `PCQ`      | PCQ                                 |
+| 7    | `ON`       | ON                                  |
+| 8    | `ADQ`      | ADQ                                 |
+| 90   | `other`    | Other party                         |
+| 95   | `no_party` | Would not vote / none / would spoil |
+
+**Members**
+
+| Precedence | Type | Member (target) | Default | Transform | Grade cap |
+|----|----|----|----|----|----|
+| 1 | `recall`: Reported vote (after the election). The act the study is about, and the one official results measure: used first. | [`vote_prov_recall`](#target-vote_prov_recall) | yes | `identity` |  |
+| 2 | `intention_push`: Vote intention, undecided pushed. The first question plus a push put to those who named no party at it: a party named at the first question is never changed. Who was pushed differs by study: the undecided everywhere, and also those who would not vote, would vote for none or would spoil (qes1998, qes2007_panel, qes2012_panel, the CROP polls) or who refused (qes1998, qes2012_panel). The push can turn such an answer into a (softer) party or into another answer without a party: in qes2012_panel, of 172 don’t know 77 name a party, 1 would not vote and 1 refuses, of 30 refusals 6 name a party, 2 would not vote and 4 don’t know, and of 14 would not vote 3 name a party and 2 don’t know; in qes2007_panel, of 81 would not vote, none or spoil, 25 name a party and 14 don’t know or refuse; in qes1998, 5 would-not-vote answers and 20 refusals name a party, and 4 and 6 become don’t know. So no_party is lower under intention_push than under intention. In qes2022 it also adds the conditional intention of respondents unlikely to vote, who were not asked the first question (cps_votechoice2, ‘If you decide to vote, which party do you think you would vote for?’, then cps_votelean if they did not know: 62 respondents, 43 of whom name a party). | [`vote_prov_intent_push`](#target-vote_prov_intent_push) | yes | `identity` |  |
+| 3 | `intention`: Vote intention (first question) | [`vote_prov_intent`](#target-vote_prov_intent) | yes | `identity` |  |
+
+**Coverage**
+
+| Study | `recall` | `intention_push` | `intention` | Respondent layout uses |
+|----|----|----|----|----|
+| `qes2022` | Comparable (pes) | Approximate (cps) | Approximate (cps) | `recall` |
+| `qes2018` | Comparable (post) | — | — | `recall` |
+| `qes2018_panel` | Comparable (post) | Approximate (pre) | Approximate (pre) | `recall` |
+| `qes2014` | Comparable (post) | — | — | `recall` |
+| `qes2012` | Identical (post) | — | — | `recall` |
+| `qes2012_panel` | Approximate (post) | Approximate (pre) | Approximate (pre) | `recall` |
+| `qes_crop_2007_2010` | — | Comparable (each poll) | Comparable (each poll) | `intention_push` |
+| `qes2008` | Comparable (post) | — | — | `recall` |
+| `qes2007` | Comparable (post) | — | — | `recall` |
+| `qes2007_panel` | Approximate (post) | Identical (pre) | Identical (pre) | `recall` |
+| `qes1998` | Comparable (post) | Approximate (pre) | — | `recall` |
+
+Each cell gives the member’s grade in the study (capped by its grade
+cap) and the wave that asked it; a dash means the study has no question
+for the member. The last column is the member the respondent layout
+takes the study’s values from, among the default members (the long
+layout uses every wave).
+
+**History**
+
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+### `sov_support`: Support for sovereignty (pooled)
+
+How the respondent would vote (yes, no, would not vote) on Quebec
+sovereignty, one variable for every study that asked about it, across
+the referendum wordings: an independent country; a sovereign country;
+the 1995 question (sovereignty with an offer of partnership), with the
+undecided pushed where the study pushed them; and, collapsed to yes or
+no, being favourable or opposed to Quebec independence. Support depends
+on the wording: sov_support\_\_type says which wording each value comes
+from.
+
+type Categorical · status Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name             | Label                        |
+|------|------------------|------------------------------|
+| 1    | `yes`            | Yes                          |
+| 2    | `no`             | No                           |
+| 95   | `would_not_vote` | Would not vote / would spoil |
+
+**Members**
+
+| Precedence | Type | Member (target) | Default | Transform | Grade cap |
+|----|----|----|----|----|----|
+| 1 | `independence`: Referendum on an independent country | [`sov_indep`](#target-sov_indep) | yes | `identity` |  |
+| 2 | `sovereign_country`: Referendum on a sovereign country | [`sov_sovereign_country`](#target-sov_sovereign_country) | yes | `identity` |  |
+| 3 | `partnership_1995_push`: 1995 question, undecided pushed | [`sov_partnership_1995_push`](#target-sov_partnership_1995_push) | yes | `identity` |  |
+| 4 | `partnership_1995`: 1995 question (sovereignty-partnership) | [`sov_partnership_1995`](#target-sov_partnership_1995) | yes | `identity` |  |
+| 5 | `favour`: Favourable or opposed to independence (collapsed to yes or no). Four points collapsed to two: graded approximate at most. | [`sov_favour`](#target-sov_favour) | yes | `recode:very_favourable=yes,somewhat_favourable=yes,somewhat_opposed=no,very_opposed=no` | `approximate` |
+
+**Coverage**
+
+| Study | `independence` | `sovereign_country` | `partnership_1995_push` | `partnership_1995` | `favour` | Respondent layout uses |
+|----|----|----|----|----|----|----|
+| `qes2022` | Comparable (cps) | — | — | — | — | `independence` |
+| `qes2018` | Comparable (post) | — | — | — | — | `independence` |
+| `qes2018_panel` | — | — | — | — | Approximate (post) | `favour` |
+| `qes2014` | Identical (post) | — | — | — | — | `independence` |
+| `qes2012` | Identical (post) | — | — | — | — | `independence` |
+| `qes2012_panel` | — | Identical (pre) | — | — | — | `sovereign_country` |
+| `qes_crop_2007_2010` | — | — | — | — | — | — |
+| `qes2008` | — | — | Comparable (post) | Comparable (post) | — | `partnership_1995_push` |
+| `qes2007` | — | — | Identical (post) | Identical (post) | — | `partnership_1995_push` |
+| `qes2007_panel` | — | — | Comparable (pre) | Comparable (pre) | — | `partnership_1995_push` |
+| `qes1998` | — | — | Comparable (pre) | Comparable (pre) | — | `partnership_1995_push` |
+
+Each cell gives the member’s grade in the study (capped by its grade
+cap) and the wave that asked it; a dash means the study has no question
+for the member. The last column is the member the respondent layout
+takes the study’s values from, among the default members (the long
+layout uses every wave).
+
+**History**
+
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+### `pol_interest`: Interest in politics (pooled, 0-1)
+
+How interested the respondent is in politics, on a scale from 0 (not at
+all) to 1 (very), one variable for every study that asked: the
+four-point items scored 1, 0.7, 0.3 and 0 (very, quite, hardly and not
+at all interested: the scores of the legacy political_interest column,
+divided by 10), the 0-10 items divided by 10. Interest in politics in
+general comes before interest in the campaign or the election.
+pol_interest\_\_type says which item each value comes from; a scored
+four-point item is graded approximate at most, since its scores are an
+assumption.
+
+type Numeric · status Experimental · added in spec 4.3.0
+
+**Valid range**: 0-1
+
+**Members**
+
+| Precedence | Type | Member (target) | Default | Transform | Grade cap |
+|----|----|----|----|----|----|
+| 1 | `general_4pt`: Interest in politics, four points (scored). Scored 1, 0.7, 0.3 and 0, as the legacy political_interest column (10, 7, 3, 0) divided by 10. | [`interest_4pt`](#target-interest_4pt) | yes | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
+| 2 | `general_0_10`: Interest in politics, 0-10 | [`interest_0_10`](#target-interest_0_10) | yes | `affine:0.1*x` |  |
+| 3 | `campaign_4pt`: Interest in the campaign, four points (scored) | [`interest_campaign_4pt`](#target-interest_campaign_4pt) | yes | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
+| 4 | `election_0_10`: Interest in the election, 0-10. Interest in one election, not in politics: graded approximate at most. | [`interest_election_0_10`](#target-interest_election_0_10) | yes | `affine:0.1*x` | `approximate` |
+
+**Coverage**
+
+| Study | `general_4pt` | `general_0_10` | `campaign_4pt` | `election_0_10` | Respondent layout uses |
+|----|----|----|----|----|----|
+| `qes2022` | — | Approximate (cps) | — | — | `general_0_10` |
+| `qes2018` | Approximate (post) | — | — | — | `general_4pt` |
+| `qes2018_panel` | — | — | — | — | — |
+| `qes2014` | Approximate (post) | — | — | — | `general_4pt` |
+| `qes2012` | Approximate (post) | — | — | — | `general_4pt` |
+| `qes2012_panel` | — | — | — | — | — |
+| `qes_crop_2007_2010` | — | — | — | — | — |
+| `qes2008` | — | — | — | Approximate (post) | `election_0_10` |
+| `qes2007` | — | Identical (post) | — | Approximate (post) | `general_0_10` |
+| `qes2007_panel` | — | — | Approximate (pre) | — | `campaign_4pt` |
+| `qes1998` | — | — | — | — | — |
+
+Each cell gives the member’s grade in the study (capped by its grade
+cap) and the wave that asked it; a dash means the study has no question
+for the member. The last column is the member the respondent layout
+takes the study’s values from, among the default members (the long
+layout uses every wave).
+
+**History**
+
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.
+
+### `turnout`: Turnout in the provincial election (pooled)
+
+Whether the respondent voted in the Quebec general election of the study
+(yes, no): the reported turnout, asked after the election. With types =
+list(turnout = c(“recall”, “intention”)), a study that asked no reported
+turnout gives instead the likelihood of voting asked before the
+election, collapsed to yes (certain or likely to vote, already voted) or
+no (unlikely, certain not to vote), graded approximate at most: an
+intention is not a turnout, so it is not used by default.
+
+type Categorical · status Experimental · added in spec 4.3.0
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Members**
+
+| Precedence | Type | Member (target) | Default | Transform | Grade cap |
+|----|----|----|----|----|----|
+| 1 | `recall`: Reported turnout (after the election) | [`turnout_prov_recall`](#target-turnout_prov_recall) | yes | `identity` |  |
+| 2 | `intention`: Likelihood of voting (before the election, collapsed). Not used by default: an intention is not a turnout (design.md section 5.7). | [`turnout_prov_likely`](#target-turnout_prov_likely) | no | `recode:certain=yes,likely=yes,already_voted=yes,unlikely=no,certain_not=no` | `approximate` |
+
+**Coverage**
+
+| Study | `recall` | `intention` | Respondent layout uses |
+|----|----|----|----|
+| `qes2022` | Approximate (pes) | Approximate (cps) | `recall` |
+| `qes2018` | Approximate (post) | — | `recall` |
+| `qes2018_panel` | Approximate (post) | — | `recall` |
+| `qes2014` | Comparable (post) | — | `recall` |
+| `qes2012` | Identical (post) | — | `recall` |
+| `qes2012_panel` | Comparable (post) | — | `recall` |
+| `qes_crop_2007_2010` | — | — | — |
+| `qes2008` | Comparable (post) | — | `recall` |
+| `qes2007` | Comparable (post) | — | `recall` |
+| `qes2007_panel` | Comparable (post) | — | `recall` |
+| `qes1998` | Comparable (post) | — | `recall` |
+
+Each cell gives the member’s grade in the study (capped by its grade
+cap) and the wave that asked it; a dash means the study has no question
+for the member. The last column is the member the respondent layout
+takes the study’s values from, among the default members (the long
+layout uses every wave).
+
+**History**
+
+- 4.3.0 (2026-09-29): Pooled variables and 20 new targets (schema 3).
+  Two new tables, pooled.csv and pooled_members.csv, declare four pooled
+  variables: one output column that pools several targets with a
+  precedence, recording row by row which member each value comes from
+  (\_\_type), its grade (\_\_grade, capped at approximate for a lossy
+  transform, never raised) and its item (\_\_item). vote_choice pools
+  the reported vote, the pushed vote intention and the vote intention
+  (every study); sov_support the referendum wordings (independent
+  country, sovereign country, the 1995 question pushed and not, and
+  favour collapsed to yes or no); pol_interest the interest scales on
+  0-1 (four-point items scored 1, 0.7, 0.3, 0; 0-10 items divided by
+  10); turnout the reported turnout (the likelihood of voting only on
+  request). The members stay targets; the validator checks the pooled
+  tables (V-F1 to V-F7) and expected/hashes.csv gains the pooled columns
+  (V-F9, wave \*). New crosswalk rule coalesce (a question, then its
+  push or the other half of a split ballot, each with its own map) and a
+  registered function fn:multiselect (a select-all item). A derivation
+  stage: age_group3 and age_group6 are derived from the age or the year
+  of birth where a study has no banded question (targets.csv derive_rule
+  age_band), so every study has an age group. 20 targets: satis_demo_qc,
+  gov_satisfaction, econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3
+  and sov_partnership_1995_push, with 10 level sets (satis4, econ3,
+  attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 crosswalk rows, checked against the pinned
+  files by the data checks and the generator’s code and gate counts,
+  then by an automated double review against the original files and
+  documents (codes/data and wording/comparability, adjudicated where the
+  reviewers disagreed; not a human review) of 2026-09-29: 101 are stable
+  (45 of them corrected or completed, mostly text: English wordings and
+  citations of qes2008 and qes2014, grade reasons, dk_offered, evidence
+  counts; the qes2022 leader ratings read -99 as dk, the codebook’s
+  Don’t know leader, not no_answer) and 3 stay in review for the owner
+  (qes2022 pid_prov_strength, graded approximate because its French
+  version asks closeness; vote_prov_prev of qes2008 and qes2018, whose
+  respondents under 18 at that election were asked), among them the
+  pushed vote intention of qes2022, the pushed 1995 question of qes2007,
+  qes2008, qes2007_panel and qes1998, and three gap fills: pid_fed of
+  qes2012, lang_mother and lang_home of qes2022. The legacy renderers
+  never read a row nobody has reviewed, nor a derived cell (V-S19 notes
+  the rows a legacy column would read once signed off); the two
+  signed-off rows that a legacy column would read are frozen by
+  legacy.csv rows of the new cause legacy_frozen (federal_pid and
+  fed_pid of qes2012, language of qes2022: the renderer reads their
+  targets as if the study had no row, so they are NA as in 0.7.1, reason
+  no_source; only the cause and basis in legacy_na_columns change), so
+  the values of get_qes_master() and get_decon() are unchanged. Engine:
+  a pooled row that every member passes takes the reason of the first
+  usable member with a row in the wave, else of the first member with a
+  row. Text of the review of the pooled variables: the push of
+  vote_prov_intent_push re-asks those who named no party (in some
+  studies also would not vote and refused), in its definition, in
+  pooled_members.csv and in pooled.csv; the qes2018_panel rv1ab stem
+  gains its advance-voting sentence. Text only: the definitions of
+  vote_prov_intent_push, sov_sovereign_country, sov_partnership_1995,
+  turnout_prov_likely, interest_4pt and interest_0_10 name the pooled
+  variable that uses them instead of saying they are never pooled; those
+  of age_group3 and age_group6 describe the derivation. gates.csv,
+  expected/marginals.csv and expected/hashes.csv gain the keys of the
+  new rows (no marginal or column hash recorded in 4.2.0 changed; rows
+  are only added to the default output): MINOR.

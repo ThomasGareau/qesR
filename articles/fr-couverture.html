@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,9 +53,13 @@
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul>
@@ -76,9 +80,13 @@
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul>
@@ -127,8 +135,8 @@ question est comparable. La grille et le tableau des études ci-dessous
 sont générés à partir de la spécification fournie avec qesR, à la
 construction du site ; rien n’y est écrit à la main.</p>
 <p>Cette grille est générée à partir de la spécification d’harmonisation
-fournie avec qesR : version 4.2.0 du 2026-09-28, empreinte du contenu
-<code>02b3b7edc509deff0db16859bef7bfb6</code>. Elle est
+fournie avec qesR : version 4.3.0 du 2026-09-29, empreinte du contenu
+<code>506f691e420e8d5d5de3657eef556d3d</code>. Elle est
 <strong>expérimentale</strong>. Chaque cellule donne le niveau de
 comparabilité de la question de l’étude pour la cible, par rapport à la
 question d’ancrage de la cible ; un tiret signifie que l’étude n’a pas
@@ -250,7 +258,7 @@ de vote provinciale</td>
 <td>
 <a href="fr-reference-harmonisation.html#target-vote_prov_intent_push"><code>vote_prov_intent_push</code></a><br>Intention
 de vote provinciale, indécis relancés</td>
-<td>—</td>
+<td>Approximatif (cps) *</td>
 <td>—</td>
 <td>Approximatif (pre) *</td>
 <td>—</td>
@@ -311,6 +319,38 @@ de vote provinciale : autre parti (texte)</td>
 <td>—</td>
 </tr>
 <tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-vote_prov_prev"><code>vote_prov_prev</code></a><br>Vote
+provincial à l’élection précédente (rappel)</td>
+<td>Comparable (cps) *</td>
+<td>Comparable *</td>
+<td>—</td>
+<td>Identique *</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable *</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-vote_fed_recall"><code>vote_fed_recall</code></a><br>Vote
+fédéral à la dernière élection fédérale (rappel)</td>
+<td>Comparable (cps)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Identique *</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable *</td>
+<td>Approximatif *</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
 <td><strong>Identification partisane</strong></td>
 <td></td>
 <td></td>
@@ -348,7 +388,7 @@ partisane fédérale</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
-<td>—</td>
+<td>Comparable *</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -357,6 +397,22 @@ partisane fédérale</td>
 <td>—</td>
 </tr>
 <tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-pid_prov_strength"><code>pid_prov_strength</code></a><br>Force
+de l’identification partisane provinciale</td>
+<td>Approximatif (cps)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Identique</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Approximatif</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
 <td><strong>Attitudes</strong></td>
 <td></td>
 <td></td>
@@ -370,7 +426,7 @@ partisane fédérale</td>
 <td></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-sov_indep"><code>sov_indep</code></a><br>Vote
 référendaire : pays indépendant</td>
@@ -386,7 +442,7 @@ référendaire : pays indépendant</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-sov_sovereign_country"><code>sov_sovereign_country</code></a><br>Vote
 référendaire : pays souverain</td>
@@ -402,7 +458,7 @@ référendaire : pays souverain</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-sov_favour"><code>sov_favour</code></a><br>Appui
 à l’indépendance du Québec (4 points)</td>
@@ -418,7 +474,7 @@ référendaire : pays souverain</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-lr_self"><code>lr_self</code></a><br>Autopositionnement
 gauche-droite (0-10)</td>
@@ -434,7 +490,7 @@ gauche-droite (0-10)</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-interest_4pt"><code>interest_4pt</code></a><br>Intérêt
 pour la politique (4 points)</td>
@@ -450,7 +506,7 @@ pour la politique (4 points)</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-sov_partnership_1995"><code>sov_partnership_1995</code></a><br>Vote
 référendaire : la question de souveraineté-partenariat de 1995</td>
@@ -466,7 +522,7 @@ référendaire : la question de souveraineté-partenariat de 1995</td>
 <td>Comparable (pre)</td>
 <td>Comparable (pre)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-interest_0_10"><code>interest_0_10</code></a><br>Intérêt
 pour la politique (0-10)</td>
@@ -482,7 +538,7 @@ pour la politique (0-10)</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-interest_election_0_10"><code>interest_election_0_10</code></a><br>Intérêt
 pour l’élection provinciale (0-10)</td>
@@ -498,7 +554,7 @@ pour l’élection provinciale (0-10)</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-interest_campaign_4pt"><code>interest_campaign_4pt</code></a><br>Intérêt
 pour la campagne électorale (4 points)</td>
@@ -514,7 +570,229 @@ pour la campagne électorale (4 points)</td>
 <td>Identique (pre)</td>
 <td>—</td>
 </tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-sov_partnership_1995_push"><code>sov_partnership_1995_push</code></a><br>Vote
+référendaire : la question de 1995, indécis relancés</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>Comparable (pre)</td>
+<td>Comparable (pre)</td>
+</tr>
 <tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-satis_demo_qc"><code>satis_demo_qc</code></a><br>Satisfaction
+à l’égard de la démocratie au Québec</td>
+<td>Comparable (cps)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Identique</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-gov_satisfaction"><code>gov_satisfaction</code></a><br>Satisfaction
+à l’égard du gouvernement du Québec</td>
+<td>Comparable (cps)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Approximatif (pre)</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-econ_retro_qc"><code>econ_retro_qc</code></a><br>L’économie
+du Québec depuis un an</td>
+<td>Comparable (cps)</td>
+<td>Identique</td>
+<td>—</td>
+<td>Identique</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-attach_qc"><code>attach_qc</code></a><br>Attachement
+au Québec</td>
+<td>Comparable (cps)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-attach_ca"><code>attach_ca</code></a><br>Attachement
+au Canada</td>
+<td>Comparable (cps)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-identity_qc_ca"><code>identity_qc_ca</code></a><br>Identité
+québécoise ou canadienne</td>
+<td>Comparable (cps) *</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable *</td>
+<td>Identique *</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-therm_leader_plq"><code>therm_leader_plq</code></a><br>Évaluation
+du chef du PLQ (0-100)</td>
+<td>Approximatif (cps)</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-therm_leader_pq"><code>therm_leader_pq</code></a><br>Évaluation
+du chef du PQ (0-100)</td>
+<td>Approximatif (cps)</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-therm_leader_caq"><code>therm_leader_caq</code></a><br>Évaluation
+du chef du CAQ (0-100)</td>
+<td>Approximatif (cps)</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-therm_leader_qs"><code>therm_leader_qs</code></a><br>Évaluation
+du chef du QS (0-100)</td>
+<td>Approximatif (cps)</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-therm_leader_adq"><code>therm_leader_adq</code></a><br>Évaluation
+du chef du ADQ (0-100)</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td><strong>Enjeux</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-mip_issue"><code>mip_issue</code></a><br>Enjeu
+le plus important de l’élection</td>
+<td>Comparable (cps) *</td>
+<td>Comparable *</td>
+<td>—</td>
+<td>Comparable *</td>
+<td>Identique *</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable *</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
 <td><strong>Sociodémographie</strong></td>
 <td></td>
 <td></td>
@@ -528,7 +806,7 @@ pour la campagne électorale (4 points)</td>
 <td></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-birth_year"><code>birth_year</code></a><br>Année
 de naissance</td>
@@ -544,7 +822,7 @@ de naissance</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-birth_month"><code>birth_month</code></a><br>Mois
 de naissance</td>
@@ -560,7 +838,7 @@ de naissance</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-age"><code>age</code></a><br>Âge
 en années</td>
@@ -576,7 +854,7 @@ en années</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-age_group3"><code>age_group3</code></a><br>Groupe
 d’âge (3 tranches)</td>
@@ -592,7 +870,7 @@ d’âge (3 tranches)</td>
 <td>Comparable (toute vague)</td>
 <td>Comparable (pre)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-citizen"><code>citizen</code></a><br>Citoyenneté
 canadienne</td>
@@ -608,7 +886,7 @@ canadienne</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-age_group6"><code>age_group6</code></a><br>Groupe
 d’âge (6 tranches)</td>
@@ -624,7 +902,7 @@ d’âge (6 tranches)</td>
 <td>Comparable (toute vague)</td>
 <td>Comparable (pre)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-gender"><code>gender</code></a><br>Genre</td>
 <td>Comparable (cps)</td>
@@ -639,7 +917,7 @@ d’âge (6 tranches)</td>
 <td>Comparable (toute vague) *</td>
 <td>Comparable (pre) *</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-education4"><code>education4</code></a><br>Scolarité
 (4 groupes)</td>
@@ -655,11 +933,11 @@ d’âge (6 tranches)</td>
 <td>Approximatif (toute vague)</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-lang_mother"><code>lang_mother</code></a><br>Langue
 maternelle</td>
-<td>—</td>
+<td>Approximatif (cps)</td>
 <td>Comparable</td>
 <td>Comparable (pre)</td>
 <td>Comparable</td>
@@ -671,7 +949,7 @@ maternelle</td>
 <td>Comparable (toute vague)</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-born_canada"><code>born_canada</code></a><br>Né(e)
 au Canada</td>
@@ -687,7 +965,7 @@ au Canada</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#target-income_native"><code>income_native</code></a><br>Revenu
 du ménage (tranches propres à chaque étude)</td>
@@ -703,12 +981,76 @@ du ménage (tranches propres à chaque étude)</td>
 <td>Approximatif (toute vague)</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#target-religion"><code>religion</code></a><br>Religion
 (catégories propres à chaque étude)</td>
 <td>Approximatif (cps)</td>
 <td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-region_cma3"><code>region_cma3</code></a><br>Région
+(RMR de Montréal et de Québec)</td>
+<td>—</td>
+<td>Identique</td>
+<td>Approximatif (pre)</td>
+<td>Identique</td>
+<td>Identique</td>
+<td>Comparable (pre)</td>
+<td>Comparable (chaque sondage)</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-lang_home"><code>lang_home</code></a><br>Langue
+parlée le plus souvent à la maison</td>
+<td>Approximatif (pes)</td>
+<td>Comparable</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Identique</td>
+<td>—</td>
+<td>Comparable (chaque sondage)</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>Comparable (toute vague)</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#target-relig_attend"><code>relig_attend</code></a><br>Assistance
+aux services religieux</td>
+<td>—</td>
+<td>Approximatif</td>
+<td>—</td>
+<td>Approximatif</td>
+<td>Identique</td>
+<td>—</td>
+<td>—</td>
+<td>Comparable</td>
+<td>Comparable</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#target-birthplace3"><code>birthplace3</code></a><br>Lieu
+de naissance (Québec, reste du Canada, étranger)</td>
+<td>—</td>
+<td>Comparable</td>
 <td>—</td>
 <td>Comparable</td>
 <td>Identique</td>
@@ -726,13 +1068,159 @@ est entre parenthèses.</p>
 <p>* La question de l’étude n’offrait pas tous les niveaux de la cible :
 les niveaux non offerts sont des zéros structurels, listés dans la
 référence.</p>
-<p>Les 129 cellules utilisent toutes des lignes de correspondance
+</div>
+<div class="section level2">
+<h2 id="variables-regroupées-par-étude">Variables regroupées par étude<a class="anchor" aria-label="anchor" href="#variables-regroup%C3%A9es-par-%C3%A9tude"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+</colgroup>
+<thead><tr class="header">
+<th>Cible</th>
+<th>qes2022</th>
+<th>qes2018</th>
+<th>qes2018_panel</th>
+<th>qes2014</th>
+<th>qes2012</th>
+<th>qes2012_panel</th>
+<th>qes_crop_2007_2010</th>
+<th>qes2008</th>
+<th>qes2007</th>
+<th>qes2007_panel</th>
+<th>qes1998</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#pooled-vote_choice"><code>vote_choice</code></a><br>Choix
+de vote provincial (regroupé)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Identique)</td>
+<td>
+<code>recall</code> (Approximatif)</td>
+<td>
+<code>intention_push</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Approximatif)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#pooled-sov_support"><code>sov_support</code></a><br>Appui
+à la souveraineté (regroupé)</td>
+<td>
+<code>independence</code> (Comparable)</td>
+<td>
+<code>independence</code> (Comparable)</td>
+<td>
+<code>favour</code> (Approximatif)</td>
+<td>
+<code>independence</code> (Identique)</td>
+<td>
+<code>independence</code> (Identique)</td>
+<td>
+<code>sovereign_country</code> (Identique)</td>
+<td>—</td>
+<td>
+<code>partnership_1995_push</code> (Comparable)</td>
+<td>
+<code>partnership_1995_push</code> (Identique)</td>
+<td>
+<code>partnership_1995_push</code> (Comparable)</td>
+<td>
+<code>partnership_1995_push</code> (Comparable)</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#pooled-pol_interest"><code>pol_interest</code></a><br>Intérêt
+pour la politique (regroupé, 0-1)</td>
+<td>
+<code>general_0_10</code> (Approximatif)</td>
+<td>
+<code>general_4pt</code> (Approximatif)</td>
+<td>—</td>
+<td>
+<code>general_4pt</code> (Approximatif)</td>
+<td>
+<code>general_4pt</code> (Approximatif)</td>
+<td>—</td>
+<td>—</td>
+<td>
+<code>election_0_10</code> (Approximatif)</td>
+<td>
+<code>general_0_10</code> (Identique)</td>
+<td>
+<code>campaign_4pt</code> (Approximatif)</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#pooled-turnout"><code>turnout</code></a><br>Participation
+à l’élection provinciale (regroupée)</td>
+<td>
+<code>recall</code> (Approximatif)</td>
+<td>
+<code>recall</code> (Approximatif)</td>
+<td>
+<code>recall</code> (Approximatif)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Identique)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>—</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+<td>
+<code>recall</code> (Comparable)</td>
+</tr>
+</tbody>
+</table>
+<p>Chaque cellule donne le type de membre dont une variable regroupée
+tire les valeurs d’une étude en disposition par répondant, et son
+niveau ; un tiret signifie qu’aucun membre de ses types par défaut n’a
+de question dans l’étude.</p>
+<p>230 des 233 cellules utilisent des lignes de correspondance
 approuvées par un réviseur (statut stable), que
 <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applique par défaut ; la colonne
 <code>reviewed_by</code> de la table de correspondance dit qui ou quoi a
-révisé chaque ligne (spécification 4.0.0 : une double révision
+révisé chaque ligne (spécifications 4.0.0 et 4.3.0 : une double révision
 automatisée sur les fichiers et documents originaux, et non une révision
 humaine).</p>
+<p>3 des 233 cellules utilisent des lignes de correspondance vérifiées
+sur les fichiers et documents originaux, mais pas encore approuvées par
+un réviseur ; <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> ne les applique qu’avec
+<code>include_draft = TRUE</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="études">Études<a class="anchor" aria-label="anchor" href="#%C3%A9tudes"></a>
@@ -760,100 +1248,100 @@ humaine).</p>
 <td>cps (n = 1 521) : <code>cps_weight_general</code> ; pes (n =
 1 220) : <code>pes_weight_general</code>
 </td>
-<td>18</td>
+<td>35</td>
 <td>7</td>
-<td>5</td>
-<td>6</td>
+<td>14</td>
+<td>14</td>
 </tr>
 <tr class="even">
 <td><code>qes2018</code></td>
 <td>post (n = 3 072) : <code>pond</code>
 </td>
-<td>13</td>
-<td>1</td>
-<td>10</td>
-<td>2</td>
+<td>29</td>
+<td>3</td>
+<td>19</td>
+<td>7</td>
 </tr>
 <tr class="odd">
 <td><code>qes2018_panel</code></td>
 <td>pre (n = 1 250) : <code>weight</code> ; post (n = 842) :
 <code>weight_rts</code>
 </td>
-<td>12</td>
+<td>13</td>
 <td>3</td>
 <td>3</td>
-<td>6</td>
+<td>7</td>
 </tr>
 <tr class="even">
 <td><code>qes2014</code></td>
 <td>post (n = 1 517) : <code>POND</code>
 </td>
-<td>13</td>
-<td>4</td>
+<td>30</td>
 <td>9</td>
-<td>0</td>
+<td>20</td>
+<td>1</td>
 </tr>
 <tr class="odd">
 <td><code>qes2012</code></td>
 <td>post (n = 1 505) : <code>pond</code>
 </td>
-<td>13</td>
-<td>10</td>
-<td>3</td>
+<td>31</td>
+<td>27</td>
+<td>4</td>
 <td>0</td>
 </tr>
 <tr class="even">
 <td><code>qes2012_panel</code></td>
 <td>pre (n = 844) : <code>pondam1</code> (à réviser, non appliquée) ;
 post (n = 844) : <code>pond_post</code> (à réviser, non appliquée)</td>
-<td>9</td>
+<td>10</td>
 <td>1</td>
-<td>5</td>
+<td>6</td>
 <td>3</td>
 </tr>
 <tr class="odd">
 <td><code>qes_crop_2007_2010</code></td>
 <td>24 vagues de sondage, de poll_2007_06 à poll_2010_01 (n = 1 000 à
 1 004 chacune) : <code>XPOND</code> (à réviser, non appliquée)</td>
-<td>8</td>
+<td>10</td>
 <td>1</td>
-<td>5</td>
+<td>7</td>
 <td>2</td>
 </tr>
 <tr class="even">
 <td><code>qes2008</code></td>
 <td>post (n = 1 151) : aucune pondération recommandée</td>
-<td>12</td>
+<td>27</td>
 <td>0</td>
-<td>11</td>
-<td>1</td>
+<td>25</td>
+<td>2</td>
 </tr>
 <tr class="odd">
 <td><code>qes2007</code></td>
 <td>post (n = 2 175) : <code>pond</code>
 </td>
-<td>12</td>
-<td>4</td>
-<td>7</td>
-<td>1</td>
+<td>25</td>
+<td>6</td>
+<td>16</td>
+<td>3</td>
 </tr>
 <tr class="even">
 <td><code>qes2007_panel</code></td>
 <td>pre (n = 2 050) : <code>pondam1</code> (à réviser, non appliquée) ;
 post (n = 2 054) : <code>pond_tot_am1</code> (à réviser, non
 appliquée)</td>
-<td>12</td>
+<td>15</td>
 <td>3</td>
-<td>6</td>
-<td>3</td>
+<td>8</td>
+<td>4</td>
 </tr>
 <tr class="odd">
 <td><code>qes1998</code></td>
 <td>pre (n = 1 483) : <code>ponder3</code> (à réviser, non appliquée) ;
 post (n = 1 483) : <code>ponder3</code> (à réviser, non appliquée)</td>
-<td>7</td>
+<td>8</td>
 <td>0</td>
-<td>6</td>
+<td>7</td>
 <td>1</td>
 </tr>
 </tbody>

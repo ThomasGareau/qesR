@@ -82,6 +82,8 @@ reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.
   : Harmonize variables across studies (experimental)
 - [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
   : Harmonized data as a survey design (experimental)
+- [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md)
+  : Join the parties of one lineage (ADQ and CAQ) in harmonized data
 
 ## Reproducibility
 

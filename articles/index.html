@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,9 +32,13 @@
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -53,9 +57,13 @@
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -110,14 +118,22 @@
       </dd></dl></div>
     <div class="section ">
       <h3>Examples</h3>
-      <div class="section-desc"><p>Built when the site is built, from the full data files downloaded through qesR’s cache. Each estimate is computed within one study, with that study’s own weight.</p></div>
+      <div class="section-desc"><p>Built on the pooled harmonized variables (<code>vote_choice</code>, <code>sov_support</code>, <code>pol_interest</code>, <code>turnout</code>) when the site is built, from the full data files downloaded through qesR’s cache, with weighted estimates and 95% confidence intervals; each estimate is within one study and wave, with that study’s reviewed weight.</p></div>
 
-      <dl><dt><a href="analysis-descriptive.html">Example: respondents by study</a></dt>
-        <dd>
-        </dd><dt><a href="analysis-sovereignty.html">Example: support for independence</a></dt>
-        <dd>
-        </dd><dt><a href="analysis-vote-choice.html">Example: reported vote</a></dt>
-        <dd>
+      <dl><dt><a href="realignment.html">From two parties to four: Quebec's party system, 1998-2022</a></dt>
+        <dd><p>Who moved when the PQ-PLQ duopoly became a four-party system: francophones and the others, young and old voters.</p>
+        </dd><dt><a href="sovereignty-generations.html">A generation gap that reversed: support for sovereignty, 1998-2022</a></dt>
+        <dd><p>The young carried the Yes side in the 2000s; today’s youngest voters are the least sovereigntist of all.</p>
+        </dd><dt><a href="dimensions.html">Two dimensions of competition: sovereignty and left-right</a></dt>
+        <dd><p>Where each party’s voters stand on sovereignty and on the left-right scale, and where sovereigntists and federalists cast their vote.</p>
+        </dd><dt><a href="turnout.html">Who votes? The age gap in turnout, and what surveys overstate</a></dt>
+        <dd><p>Reported turnout against the official turnout of each election, the turnout gap between young and old, and the role of political interest.</p>
+        </dd><dt><a href="transitions.html">Changing minds during the campaign: panel transitions</a></dt>
+        <dd><p>The same respondents interviewed before and after the election: how many voted as they intended, and where the undecided went.</p>
+        </dd><dt><a href="survey-vs-official.html">How far off are surveys? Reported vote and intentions against the official results</a></dt>
+        <dd><p>The reported vote of every study against the official results, what weighting changes, and two and a half years of CROP polls around the 2008 election.</p>
+        </dd><dt><a href="recipes.html">Recipes: pooled variables in five minutes</a></dt>
+        <dd><p>Short, copyable code for the pooled harmonized variables: one variable for all studies, its types and sources, weighted estimates by study.</p>
       </dd></dl></div>
     <div class="section ">
       <h3>Guides en français</h3>
@@ -149,14 +165,22 @@
       </dd></dl></div>
     <div class="section ">
       <h3>Exemples en français</h3>
-      <div class="section-desc"><p>Construits à la construction du site, à partir des fichiers de données complets téléchargés par le cache de qesR. Chaque estimation est calculée dans une seule étude, avec la pondération de cette étude.</p></div>
+      <div class="section-desc"><p>Construits sur les variables harmonisées regroupées (<code>vote_choice</code>, <code>sov_support</code>, <code>pol_interest</code>, <code>turnout</code>) à la construction du site, à partir des fichiers de données complets téléchargés par le cache de qesR, avec des estimations pondérées et des intervalles de confiance à 95 % ; chaque estimation est faite dans une seule étude et une seule vague, avec la pondération révisée de cette étude.</p></div>
 
-      <dl><dt><a href="fr-analyse-descriptive.html">Exemple : répondants par étude</a></dt>
-        <dd>
-        </dd><dt><a href="fr-analyse-souverainete.html">Exemple : appui à l'indépendance</a></dt>
-        <dd>
-        </dd><dt><a href="fr-analyse-choix-vote.html">Exemple : vote déclaré</a></dt>
-        <dd>
+      <dl><dt><a href="fr-realignement.html">De deux partis à quatre : le réalignement du système partisan québécois, 1998-2022</a></dt>
+        <dd><p>Qui a bougé quand le duopole PQ-PLQ est devenu un système à quatre partis : les francophones et les autres, les jeunes et les aînés.</p>
+        </dd><dt><a href="fr-souverainete-generations.html">Un écart générationnel inversé : l'appui à la souveraineté, 1998-2022</a></dt>
+        <dd><p>Les jeunes portaient le Oui dans les années 2000 ; les plus jeunes électeurs d’aujourd’hui sont les moins souverainistes de tous.</p>
+        </dd><dt><a href="fr-dimensions.html">Deux dimensions de la concurrence : souveraineté et gauche-droite</a></dt>
+        <dd><p>Où se situent les électeurs de chaque parti sur la souveraineté et sur l’axe gauche-droite, et pour qui votent souverainistes et fédéralistes.</p>
+        </dd><dt><a href="fr-participation.html">Qui vote ? L'écart d'âge et ce que les enquêtes surestiment</a></dt>
+        <dd><p>La participation déclarée et la participation officielle de chaque élection, l’écart de participation entre jeunes et aînés, et le rôle de l’intérêt pour la politique.</p>
+        </dd><dt><a href="fr-transitions.html">Changer d'idée pendant la campagne : les transitions des panels</a></dt>
+        <dd><p>Les mêmes répondants interrogés avant et après l’élection : combien ont voté comme prévu, et où sont allés les indécis.</p>
+        </dd><dt><a href="fr-enquetes-resultats.html">Les enquêtes se trompent-elles ? Vote déclaré et intentions face aux résultats officiels</a></dt>
+        <dd><p>Le vote déclaré de chaque étude et les résultats officiels, ce que la pondération change, et deux ans et demi de sondages CROP autour de l’élection de 2008.</p>
+        </dd><dt><a href="fr-recettes.html">Recettes : les variables regroupées en cinq minutes</a></dt>
+        <dd><p>Du code court, à copier, pour les variables harmonisées regroupées : une variable pour toutes les études, ses types et ses sources, des estimations pondérées par étude.</p>
       </dd></dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

@@ -111,31 +111,89 @@ vote or on turnout, so their index is unweighted. `qes1998` interviewed
 francophones only, a population the official results do not describe: it
 is shown for reference but not checked.
 
-``` r
+![Heatmap of the difference in points between each party's share of the
+reported vote and its official share of valid votes, one row per party
+and one column per study from 2007 to 2022; blue cells are
+over-reported, red cells under-reported, and differences of 5 points or
+more are outlined. The PLQ is under-reported in every study from 2007 to
+2014 and the CAQ in 2022. Values in the table
+view.](validation_files/figure-html/recall-light.png)![Heatmap of the
+difference in points between each party's share of the reported vote and
+its official share of valid votes, one row per party and one column per
+study from 2007 to 2022; blue cells are over-reported, red cells
+under-reported, and differences of 5 points or more are outlined. The
+PLQ is under-reported in every study from 2007 to 2014 and the CAQ in
+2022. Values in the table
+view.](validation_files/figure-html/recall-dark.png)
 
-# the weighted distribution where the study has a reviewed weight
-shown <- best(idx[idx$study != "qes1998", ])
-lv <- report[report$check == "recall" & !is.na(report$level) &
-               paste(report$study, report$weight) %in% paste(shown$study, shown$weight), ]
-lv$party <- ifelse(lv$level == "other", tr("Other", "Autre"), lv$level)
-lv$label <- paste0(lv$study, " (", lv$weighting, ")")
-lv$label <- factor(lv$label, unique(lv$label[order(lv$year, lv$study)]))
-ggplot(lv, aes(x = value, y = party)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_segment(aes(x = 0, xend = value, yend = party), colour = "grey70") +
-  geom_point(size = 2.2, colour = "#0468b9") +
-  facet_wrap(~label, ncol = 3, scales = "free_y") +
-  labs(
-    x = tr("Reported minus official share (points)", "Part déclarée moins part officielle (points)"),
-    y = NULL
-  ) +
-  theme_minimal(base_size = 11)
-```
+Weighted with the reviewed weight of the study where it has one; the
+2008 study and the 2007 and 2012 Durand panels are unweighted. A blank
+cell: the party did not run, or the study counts it in Other. The 1998
+polls, which interviewed francophones only, are left out.
 
-![For each study, the difference in points between the reported vote
-share of each party and its official share of valid votes; weighted
-where the study has a reviewed
-weight.](validation_files/figure-html/recall-plot-1.png)
+Table view
+
+| Study      | Weighting  | Party  | Reported minus official (points) |
+|:-----------|:-----------|:-------|:---------------------------------|
+| QES 2007   | weighted   | PLQ    | -7.3                             |
+| QES 2007   | weighted   | PQ     | +2.5                             |
+| QES 2007   | weighted   | ADQ    | +0.8                             |
+| QES 2007   | weighted   | QS     | +1.1                             |
+| QES 2007   | weighted   | PV/PVQ | +2.6                             |
+| QES 2007   | weighted   | Other  | +0.3                             |
+| 2007 panel | unweighted | PLQ    | -4.4                             |
+| 2007 panel | unweighted | PQ     | +2.4                             |
+| 2007 panel | unweighted | ADQ    | +1.3                             |
+| 2007 panel | unweighted | QS     | +0.2                             |
+| 2007 panel | unweighted | PV/PVQ | +0.6                             |
+| 2007 panel | unweighted | Other  | +0.0                             |
+| QES 2008   | unweighted | PLQ    | -2.9                             |
+| QES 2008   | unweighted | PQ     | +2.2                             |
+| QES 2008   | unweighted | ADQ    | -0.3                             |
+| QES 2008   | unweighted | QS     | +0.4                             |
+| QES 2008   | unweighted | PV/PVQ | +0.3                             |
+| QES 2008   | unweighted | Other  | +0.2                             |
+| QES 2012   | weighted   | PLQ    | -6.3                             |
+| QES 2012   | weighted   | PQ     | +6.9                             |
+| QES 2012   | weighted   | QS     | +0.5                             |
+| QES 2012   | weighted   | CAQ    | -1.7                             |
+| QES 2012   | weighted   | PV/PVQ | +0.0                             |
+| QES 2012   | weighted   | ON     | +0.4                             |
+| QES 2012   | weighted   | Other  | +0.2                             |
+| 2012 panel | unweighted | PLQ    | -4.8                             |
+| 2012 panel | unweighted | PQ     | +6.4                             |
+| 2012 panel | unweighted | QS     | +1.1                             |
+| 2012 panel | unweighted | CAQ    | -3.2                             |
+| 2012 panel | unweighted | PV/PVQ | +0.6                             |
+| 2012 panel | unweighted | ON     | +0.6                             |
+| 2012 panel | unweighted | Other  | -0.7                             |
+| QES 2014   | weighted   | PLQ    | -5.6                             |
+| QES 2014   | weighted   | PQ     | +4.4                             |
+| QES 2014   | weighted   | QS     | +0.6                             |
+| QES 2014   | weighted   | CAQ    | +0.1                             |
+| QES 2014   | weighted   | PV/PVQ | +0.4                             |
+| QES 2014   | weighted   | ON     | +0.0                             |
+| QES 2014   | weighted   | Other  | +0.1                             |
+| QES 2018   | weighted   | PLQ    | -1.6                             |
+| QES 2018   | weighted   | PQ     | +2.5                             |
+| QES 2018   | weighted   | QS     | +0.1                             |
+| QES 2018   | weighted   | CAQ    | -1.6                             |
+| QES 2018   | weighted   | Other  | +0.5                             |
+| 2018 panel | weighted   | PLQ    | +2.1                             |
+| 2018 panel | weighted   | PQ     | -2.2                             |
+| 2018 panel | weighted   | QS     | -3.3                             |
+| 2018 panel | weighted   | CAQ    | +1.7                             |
+| 2018 panel | weighted   | Other  | +1.8                             |
+| QES 2022   | weighted   | PLQ    | +2.8                             |
+| QES 2022   | weighted   | PQ     | +1.0                             |
+| QES 2022   | weighted   | QS     | +1.8                             |
+| QES 2022   | weighted   | CAQ    | -8.0                             |
+| QES 2022   | weighted   | PCQ    | +0.6                             |
+| QES 2022   | weighted   | Other  | +1.8                             |
+
+Surveys under-report the PLQ at every election from 2007 to 2014, by 3
+to 7 points, and the CAQ by 8 points in 2022Reported minus official vote
+share, in points, by party (rows) and study (columns)
 
 ## 2. Reported turnout
 
@@ -233,38 +291,104 @@ knitr::kable(
 | qes2012_panel      | Census 2011 | unweighted |    8.8 | 11.9 |           9.4 |           |
 | qes2014            | Census 2011 | unweighted |    6.5 |  4.7 |           8.1 |      21.3 |
 | qes2014            | Census 2011 | weighted   |    0.0 |  0.1 |           4.8 |       9.1 |
-| qes2018            | Census 2016 | unweighted |    0.2 | 14.1 |           8.6 |      18.7 |
-| qes2018            | Census 2016 | weighted   |    0.1 |  8.3 |           9.3 |      17.6 |
+| qes2018            | Census 2016 | unweighted |    0.2 | 14.0 |           8.6 |      18.7 |
+| qes2018            | Census 2016 | weighted   |    0.1 |  7.9 |           9.3 |      17.6 |
 | qes2018_panel      | Census 2016 | unweighted |    0.1 |      |           8.5 |           |
 | qes2018_panel      | Census 2016 | weighted   |    0.3 |      |           8.7 |           |
-| qes2022            | Census 2021 | unweighted |    1.2 |  2.5 |               |      19.4 |
-| qes2022            | Census 2021 | weighted   |    0.0 |  1.2 |               |       3.5 |
+| qes2022            | Census 2021 | unweighted |    1.2 |  2.5 |          11.9 |      19.4 |
+| qes2022            | Census 2021 | weighted   |    0.0 |  1.2 |           0.1 |       3.5 |
 
 Each cell is a dissimilarity index in points (0 is a perfect match); a
 blank cell is a margin the study did not ask, or one the collected
 census tables do not publish for that year (mother tongue in 2006).
 
-``` r
+![Heatmap of the difference in points between the weighted share of each
+category of education, mother tongue, age and gender and its census
+share, one column per study with a reviewed weight; blue cells are
+over-represented, red cells under-represented, and grey cells marked
+cal. are margins the weight is raked on. University graduates are
+over-represented in every study. Values in the table
+view.](validation_files/figure-html/census-light.png)![Heatmap of the
+difference in points between the weighted share of each category of
+education, mother tongue, age and gender and its census share, one
+column per study with a reviewed weight; blue cells are
+over-represented, red cells under-represented, and grey cells marked
+cal. are margins the weight is raked on. University graduates are
+over-represented in every study. Values in the table
+view.](validation_files/figure-html/census-dark.png)
 
-cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
-cl$variable <- factor(vars[cl$variable], unname(vars))
-cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
-ggplot(cl, aes(x = value, y = level, colour = study, shape = study)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_point(size = 2.2) +
-  facet_wrap(~variable, ncol = 2, scales = "free_y") +
-  labs(
-    x = tr("Weighted survey share minus census share (points)",
-           "Part pondérée de l'enquête moins part au recensement (points)"),
-    y = NULL, colour = tr("Study", "Étude"), shape = tr("Study", "Étude")
-  ) +
-  theme_minimal(base_size = 11)
-```
+Studies with a reviewed weight, weighted; the census of the year before
+each study (Statistics Canada). Gender and education have two
+categories, so one row is shown (women; university): the other is its
+mirror. A margin is marked cal. when every category is within half a
+point of the census, as a margin the weight is raked on is by
+construction; a close match there says nothing about representativeness.
 
-![For the studies with reviewed weights, the difference in points
-between the weighted share of each category of gender, age, mother
-tongue and education and its census
-share.](validation_files/figure-html/census-plot-1.png)
+Table view
+
+| Margin | Category | Study | Survey minus census (points) | Within half a point (cal.) |
+|:---|:---|:---|:---|:---|
+| Education | University | QES 2007 | +20.5 |  |
+| Education | University | QES 2012 | +17.6 |  |
+| Education | University | QES 2014 | +9.1 |  |
+| Education | University | QES 2018 | +17.6 |  |
+| Education | University | QES 2022 | +3.5 |  |
+| Mother tongue | English | QES 2012 | +0.9 |  |
+| Mother tongue | English | QES 2014 | -0.9 |  |
+| Mother tongue | English | QES 2018 | +9.3 |  |
+| Mother tongue | English | 2018 panel | +8.4 |  |
+| Mother tongue | English | QES 2022 | +0.1 | yes |
+| Mother tongue | French | QES 2012 | -0.4 |  |
+| Mother tongue | French | QES 2014 | +4.8 |  |
+| Mother tongue | French | QES 2018 | -2.0 |  |
+| Mother tongue | French | 2018 panel | +0.4 |  |
+| Mother tongue | French | QES 2022 | -0.1 | yes |
+| Mother tongue | Other | QES 2012 | -0.4 |  |
+| Mother tongue | Other | QES 2014 | -3.9 |  |
+| Mother tongue | Other | QES 2018 | -7.3 |  |
+| Mother tongue | Other | 2018 panel | -8.7 |  |
+| Mother tongue | Other | QES 2022 | -0.1 | yes |
+| Age | 18-24 | QES 2007 | +1.5 |  |
+| Age | 18-24 | QES 2012 | +0.0 | yes |
+| Age | 18-24 | QES 2014 | +0.0 | yes |
+| Age | 18-24 | QES 2018 | +0.4 |  |
+| Age | 18-24 | QES 2022 | -0.1 |  |
+| Age | 25-34 | QES 2007 | +1.4 |  |
+| Age | 25-34 | QES 2012 | +0.0 | yes |
+| Age | 25-34 | QES 2014 | +0.0 | yes |
+| Age | 25-34 | QES 2018 | +2.3 |  |
+| Age | 25-34 | QES 2022 | +0.1 |  |
+| Age | 35-44 | QES 2007 | +3.7 |  |
+| Age | 35-44 | QES 2012 | +0.0 | yes |
+| Age | 35-44 | QES 2014 | +0.0 | yes |
+| Age | 35-44 | QES 2018 | -4.0 |  |
+| Age | 35-44 | QES 2022 | +1.1 |  |
+| Age | 45-54 | QES 2007 | -0.8 |  |
+| Age | 45-54 | QES 2012 | +0.0 | yes |
+| Age | 45-54 | QES 2014 | +0.0 | yes |
+| Age | 45-54 | QES 2018 | -3.9 |  |
+| Age | 45-54 | QES 2022 | -0.2 |  |
+| Age | 55-64 | QES 2007 | -2.5 |  |
+| Age | 55-64 | QES 2012 | +0.0 | yes |
+| Age | 55-64 | QES 2014 | +0.0 | yes |
+| Age | 55-64 | QES 2018 | +4.6 |  |
+| Age | 55-64 | QES 2022 | -0.9 |  |
+| Age | 65 and over | QES 2007 | -3.3 |  |
+| Age | 65 and over | QES 2012 | +0.0 | yes |
+| Age | 65 and over | QES 2014 | +0.0 | yes |
+| Age | 65 and over | QES 2018 | +0.7 |  |
+| Age | 65 and over | QES 2022 | +0.0 |  |
+| Gender | Women | QES 2007 | +0.1 | yes |
+| Gender | Women | QES 2012 | +0.0 | yes |
+| Gender | Women | QES 2014 | +0.0 | yes |
+| Gender | Women | QES 2018 | +0.1 | yes |
+| Gender | Women | 2018 panel | -0.3 | yes |
+| Gender | Women | QES 2022 | +0.0 | yes |
+
+After weighting, university graduates are still over-represented by 4 to
+21 points; in 2018, English speakers by 9Weighted survey share minus
+census share, in points, by category and study; margins matched to
+within half a point, as raking targets are, are marked cal.
 
 ## 4. Relationships between answers
 

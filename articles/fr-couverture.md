@@ -11,8 +11,8 @@ spécification fournie avec qesR, à la construction du site ; rien n’y
 est écrit à la main.
 
 Cette grille est générée à partir de la spécification d’harmonisation
-fournie avec qesR : version 4.2.0 du 2026-09-28, empreinte du contenu
-`02b3b7edc509deff0db16859bef7bfb6`. Elle est **expérimentale**. Chaque
+fournie avec qesR : version 4.3.0 du 2026-09-29, empreinte du contenu
+`506f691e420e8d5d5de3657eef556d3d`. Elle est **expérimentale**. Chaque
 cellule donne le niveau de comparabilité de la question de l’étude pour
 la cible, par rapport à la question d’ancrage de la cible ; un tiret
 signifie que l’étude n’a pas de question pour la cible dans la
@@ -34,29 +34,44 @@ entre parenthèses.
 les niveaux non offerts sont des zéros structurels, listés dans la
 référence.
 
-Les 129 cellules utilisent toutes des lignes de correspondance
-approuvées par un réviseur (statut stable), que
+## Variables regroupées par étude
+
+[TABLE]
+
+Chaque cellule donne le type de membre dont une variable regroupée tire
+les valeurs d’une étude en disposition par répondant, et son niveau ; un
+tiret signifie qu’aucun membre de ses types par défaut n’a de question
+dans l’étude.
+
+230 des 233 cellules utilisent des lignes de correspondance approuvées
+par un réviseur (statut stable), que
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applique par défaut ; la colonne `reviewed_by` de la table de
-correspondance dit qui ou quoi a révisé chaque ligne (spécification
-4.0.0 : une double révision automatisée sur les fichiers et documents
-originaux, et non une révision humaine).
+correspondance dit qui ou quoi a révisé chaque ligne (spécifications
+4.0.0 et 4.3.0 : une double révision automatisée sur les fichiers et
+documents originaux, et non une révision humaine).
+
+3 des 233 cellules utilisent des lignes de correspondance vérifiées sur
+les fichiers et documents originaux, mais pas encore approuvées par un
+réviseur ;
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+ne les applique qu’avec `include_draft = TRUE`.
 
 ## Études
 
 | Étude | Vagues et pondérations recommandées | Cibles | Identique | Comparable | Approximatif |
 |----|----|----|----|----|----|
-| `qes2022` | cps (n = 1 521) : `cps_weight_general` ; pes (n = 1 220) : `pes_weight_general` | 18 | 7 | 5 | 6 |
-| `qes2018` | post (n = 3 072) : `pond` | 13 | 1 | 10 | 2 |
-| `qes2018_panel` | pre (n = 1 250) : `weight` ; post (n = 842) : `weight_rts` | 12 | 3 | 3 | 6 |
-| `qes2014` | post (n = 1 517) : `POND` | 13 | 4 | 9 | 0 |
-| `qes2012` | post (n = 1 505) : `pond` | 13 | 10 | 3 | 0 |
-| `qes2012_panel` | pre (n = 844) : `pondam1` (à réviser, non appliquée) ; post (n = 844) : `pond_post` (à réviser, non appliquée) | 9 | 1 | 5 | 3 |
-| `qes_crop_2007_2010` | 24 vagues de sondage, de poll_2007_06 à poll_2010_01 (n = 1 000 à 1 004 chacune) : `XPOND` (à réviser, non appliquée) | 8 | 1 | 5 | 2 |
-| `qes2008` | post (n = 1 151) : aucune pondération recommandée | 12 | 0 | 11 | 1 |
-| `qes2007` | post (n = 2 175) : `pond` | 12 | 4 | 7 | 1 |
-| `qes2007_panel` | pre (n = 2 050) : `pondam1` (à réviser, non appliquée) ; post (n = 2 054) : `pond_tot_am1` (à réviser, non appliquée) | 12 | 3 | 6 | 3 |
-| `qes1998` | pre (n = 1 483) : `ponder3` (à réviser, non appliquée) ; post (n = 1 483) : `ponder3` (à réviser, non appliquée) | 7 | 0 | 6 | 1 |
+| `qes2022` | cps (n = 1 521) : `cps_weight_general` ; pes (n = 1 220) : `pes_weight_general` | 35 | 7 | 14 | 14 |
+| `qes2018` | post (n = 3 072) : `pond` | 29 | 3 | 19 | 7 |
+| `qes2018_panel` | pre (n = 1 250) : `weight` ; post (n = 842) : `weight_rts` | 13 | 3 | 3 | 7 |
+| `qes2014` | post (n = 1 517) : `POND` | 30 | 9 | 20 | 1 |
+| `qes2012` | post (n = 1 505) : `pond` | 31 | 27 | 4 | 0 |
+| `qes2012_panel` | pre (n = 844) : `pondam1` (à réviser, non appliquée) ; post (n = 844) : `pond_post` (à réviser, non appliquée) | 10 | 1 | 6 | 3 |
+| `qes_crop_2007_2010` | 24 vagues de sondage, de poll_2007_06 à poll_2010_01 (n = 1 000 à 1 004 chacune) : `XPOND` (à réviser, non appliquée) | 10 | 1 | 7 | 2 |
+| `qes2008` | post (n = 1 151) : aucune pondération recommandée | 27 | 0 | 25 | 2 |
+| `qes2007` | post (n = 2 175) : `pond` | 25 | 6 | 16 | 3 |
+| `qes2007_panel` | pre (n = 2 050) : `pondam1` (à réviser, non appliquée) ; post (n = 2 054) : `pond_tot_am1` (à réviser, non appliquée) | 15 | 3 | 8 | 4 |
+| `qes1998` | pre (n = 1 483) : `ponder3` (à réviser, non appliquée) ; post (n = 1 483) : `ponder3` (à réviser, non appliquée) | 8 | 0 | 7 | 1 |
 
 `n` est le nombre de répondants de chaque vague. Une pondération à
 réviser n’est pas appliquée :

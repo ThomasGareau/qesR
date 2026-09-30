@@ -9,7 +9,7 @@ Quebec Election Study of qesR 0.4.4."><meta property="og:image" content="https:/
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,9 +34,13 @@ Quebec Election Study of qesR 0.4.4."><meta property="og:image" content="https:/
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -55,9 +59,13 @@ Quebec Election Study of qesR 0.4.4."><meta property="og:image" content="https:/
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -139,7 +147,9 @@ is in a row still in review is <code>NA</code> (reason <code>not_reviewed</code>
 <code>include_draft = TRUE</code> in <code><a href="qes_harmonize.html">qes_harmonize()</a></code> applies those rows too. The
 rows were signed off after an automated double review against the
 original files and documents (not a human review); since spec 4.1.0
-every row is signed off.</p>
+every reviewed row is signed off. The rows added in spec 4.3.0, not
+reviewed yet, are never read by <code>get_decon()</code> or <code><a href="get_qes_master.html">get_qes_master()</a></code>,
+even with their columns' targets: the legacy columns stay as they were.</p>
 <p><code>get_decon()</code> returns the data and assigns nothing unless
 <code>assign_global = TRUE</code>: write <code>decon &lt;- get_decon("qes2022")</code>. The first
 call in a session that leaves <code>assign_global</code> unset prints a one-time note
@@ -196,8 +206,9 @@ une colonne dont la question est dans une ligne encore en révision vaut
 pourquoi la ligne est retenue), et <code>include_draft = TRUE</code> dans
 <code><a href="qes_harmonize.html">qes_harmonize()</a></code> applique aussi ces lignes. Les lignes ont été
 approuvées après une double révision automatisée sur les fichiers et
-documents originaux (et non une révision humaine) ; toutes le sont depuis
-la spécification 4.1.0. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
+documents originaux (et non une révision humaine) ; toutes les lignes
+révisées le sont depuis la spécification 4.1.0, et les lignes ajoutées
+dans la 4.3.0, pas encore révisées, ne sont jamais lues. Chaque colonne est rendue à partir d'une cible du moteur d'harmonisation : facteurs aux niveaux
 anglais des cibles, nombres, et texte pour <code>income</code> et <code>religion</code> (le
 montant du revenu de <code>qes2022</code> reste un nombre).
 <code>turnout</code> et <code>votechoice</code> sont la participation et le vote déclarés

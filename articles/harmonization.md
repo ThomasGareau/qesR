@@ -15,9 +15,9 @@ through its cache.
 The harmonization engine is **experimental**. Its specification says,
 for each study and harmonized variable (“target”), which question feeds
 the target and how each of its codes maps to the target’s levels;
-nothing is matched by name. In specification 4.1.0 every row is signed
-off, after an automated double review against the original files and
-documents (not a human review), and
+nothing is matched by name. In specification 4.3.0 every row but three
+is signed off, after an automated double review against the original
+files and documents (not a human review), and
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applies them by default. The recommended weights of `qes1998`,
 `qes2007_panel`, `qes2012_panel` and the CROP polls still need review,
@@ -207,8 +207,9 @@ that row’s wave, so one design serves both targets.
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 hands the data to the `survey` package: each study is a stratum and, in
 the long layout, the respondent is the sampling unit. Estimates are
-computed within each study with `svyby()`; the table marks the levels a
-study did not offer instead of printing a 0.
+computed within each study with
+[`svyby()`](https://rdrr.io/pkg/survey/man/svyby.html); the table marks
+the levels a study did not offer instead of printing a 0.
 
 ``` r
 
@@ -347,9 +348,9 @@ cites qesR with the specification, then each dataset:
 spec_record <- qes_provenance(h, level = "spec")
 spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.2.0 02b3b7edc509deff0db16859bef7bfb6        0.7.1
+#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
-#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.7.1, https://github.com/ThomasGareau/qesR; harmonization spec 4.2.0 (content hash 02b3b7edc509deff0db16859bef7bfb6)
+#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.8.0, https://github.com/ThomasGareau/qesR; harmonization spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d)
 #> 
 #> Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]
 #> 
@@ -364,11 +365,11 @@ cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 #> Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura; Tanguay, Brian, 2023, "Étude électorale québécoise 2007", https://doi.org/10.5683/SP2/6XGOKA, Borealis, V1, UNF:6:fNjQ+LF7dCVuIrjEyQuOyg==
 ```
 
-## Four sovereignty questions, never pooled
+## Five sovereignty targets, one pooled variable
 
 A target is one question stimulus. Other studies asked about sovereignty
-with other wordings, so they feed other targets, which are never merged
-with `sov_indep`:
+with other wordings, so they feed other targets, never merged into
+`sov_indep`:
 
 ``` r
 
@@ -390,6 +391,10 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 | sov_partnership_1995 | qes2008 | q19 | comparable | NA |
 | sov_partnership_1995 | qes1998 | q16a_crop | comparable | ponder3 |
 | sov_partnership_1995 | qes2007_panel | intref1 | comparable | pondam1 |
+| sov_partnership_1995_push | qes2007 | q19 | identical | pond |
+| sov_partnership_1995_push | qes2008 | q19 | comparable | NA |
+| sov_partnership_1995_push | qes2007_panel | intref1 | comparable | pondam1 |
+| sov_partnership_1995_push | qes1998 | q16a_crop | comparable | ponder3 |
 
 `sov_sovereign_country` asks about a “sovereign country”
 (`qes2012_panel`), `sov_favour` is a four-point scale of favour
@@ -404,3 +409,26 @@ returns `NA` for them and
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 leaves these respondents out, with a message. Put the targets side by
 side and read each one against its own question.
+
+To follow support across every study anyway, the pooled variable
+`sov_support` takes each study’s referendum question, whatever its
+wording, and says which one each value comes from (`sov_support__type`),
+with the grade of that question (`sov_support__grade`); the favourable
+or opposed scale of `qes2018_panel` is collapsed to yes or no and graded
+approximate. `vote_choice` does the same for the vote (the reported
+vote, else the vote intention), and `pol_interest` for interest in
+politics:
+
+``` r
+
+pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```
+
+| type_name | member | precedence | default | grade_cap |
+|:---|:---|---:|:---|:---|
+| independence | sov_indep | 1 | TRUE | NA |
+| sovereign_country | sov_sovereign_country | 2 | TRUE | NA |
+| partnership_1995_push | sov_partnership_1995_push | 3 | TRUE | NA |
+| partnership_1995 | sov_partnership_1995 | 4 | TRUE | NA |
+| favour | sov_favour | 5 | TRUE | approximate |

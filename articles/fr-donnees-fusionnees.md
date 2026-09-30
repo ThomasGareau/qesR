@@ -91,9 +91,12 @@ table(master$qes_code)
   `party_lean` valent `NA` partout. `attr(master, "legacy_na_columns")`
   énumère chaque colonne et étude qui vaut `NA` d’un bout à l’autre,
   avec la raison, la règle en cause s’il y en a une (`cause` :
-  `reported_vote_only`, `independence_question_only`, `no_valid_source`
-  ou `not_harmonized_yet`) et, dans `basis`, l’explication en mots (en
-  anglais).
+  `reported_vote_only`, `independence_question_only`, `no_valid_source`,
+  `not_harmonized_yet` ou `legacy_frozen` : la question de l’étude est
+  harmonisée depuis la spécification 4.3.0, dans
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  mais la colonne garde le `NA` de qesR 0.7.1) et, dans `basis`,
+  l’explication en mots (en anglais).
 - `vote_choice_timing` et `sovereignty_item` indiquent ce que
   contiennent `vote_choice` et `sovereignty_support` dans chaque étude.
 - qesR 0.4.4 ajoutait aussi 70 colonnes en empilant des variables de

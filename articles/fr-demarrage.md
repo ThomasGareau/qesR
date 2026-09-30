@@ -321,13 +321,13 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
 Une ligne est appliquée une fois approuvée par un réviseur. Dans la
-spécification 4.1.0, toutes les lignes sont approuvées, après une double
-révision automatisée sur les fichiers et documents originaux (et non une
-révision humaine) ; une ligne encore en révision donnerait `NA` avec le
-motif `not_reviewed`, sauf avec `include_draft = TRUE`. Les pondérations
-recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel` et des
-sondages CROP restent à réviser, et valent donc `NA`. Sur l’étude de
-démonstration, qui tient lieu de `qes2014` :
+spécification 4.3.0, toutes les lignes sauf trois sont approuvées, après
+une double révision automatisée sur les fichiers et documents originaux
+(et non une révision humaine) ; une ligne encore en révision donne `NA`
+avec le motif `not_reviewed`, sauf avec `include_draft = TRUE`. Les
+pondérations recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel`
+et des sondages CROP restent à réviser, et valent donc `NA`. Sur l’étude
+de démonstration, qui tient lieu de `qes2014` :
 
 ``` r
 
@@ -394,13 +394,13 @@ cite qesR et les jeux de données utilisés (voir
 qes_provenance(demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-09-29 16:22:01 UTC (local_demo). Lu avec
+#> Obtenu le 2026-09-30 00:15:25 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
-#> qesR 2.3.0.
+#> qesR 2.4.0.
 #> 
 #> as.data.frame() donne toutes les colonnes.
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

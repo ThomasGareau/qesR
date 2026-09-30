@@ -19,7 +19,7 @@ ready for a replication log or a methods section."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,9 +44,13 @@ ready for a replication log or a methods section."><meta property="og:image" con
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -65,9 +69,13 @@ ready for a replication log or a methods section."><meta property="og:image" con
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -106,7 +114,7 @@ ready for a replication log or a methods section.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">qes_provenance</span><span class="op">(</span><span class="va">x</span>, level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"cell"</span>, <span class="st">"spec"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">qes_provenance</span><span class="op">(</span><span class="va">x</span>, level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"cell"</span>, <span class="st">"spec"</span>, <span class="st">"pooled"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -123,9 +131,10 @@ would read: nothing has been retrieved or checked yet, so
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
-<dd><p><code>"study"</code> (default): one row per file. <code>"cell"</code> and
-<code>"spec"</code> describe data harmonized by <code><a href="qes_harmonize.html">qes_harmonize()</a></code>; for other
-objects they are an error of class <code>qesR_error_no_provenance</code>.</p></dd>
+<dd><p><code>"study"</code> (default): one row per file. <code>"cell"</code>, <code>"spec"</code>
+and <code>"pooled"</code> describe data harmonized by <code><a href="qes_harmonize.html">qes_harmonize()</a></code> (<code>"pooled"</code>
+only when it has pooled variables); for other objects they are an
+error of class <code>qesR_error_no_provenance</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -163,6 +172,18 @@ wave's members who could not vote in it, <code>eligible_voter</code> <code>FALSE
 for other targets, and <code>NA</code> when eligibility is not available for any
 member of the wave, for example when its age rows are not signed off
 and <code>include_draft = FALSE</code>) and <code>note</code>.</p>
+<p>For <code>level = "pooled"</code> (harmonized data with pooled variables such as
+<code>vote_choice</code>), one row per study, pooled variable and member: <code>study</code>,
+<code>pooled</code>, <code>type</code> (the value of <code>&lt;pooled&gt;__type</code>), <code>member</code> (the
+target), <code>precedence</code> (1 is tried first), <code>wave</code> and <code>item</code>
+(<code>&lt;study&gt;:&lt;wave&gt;:&lt;source variables&gt;</code>) of the member's cell, <code>grade</code>
+(its grade, capped for lossy transforms), <code>used_in_layout</code> (<code>FALSE</code> for
+a member of another wave than the one the respondent layout takes the
+study's values from), <code>included</code> (its cell was applied and its grade
+is at least <code>min_grade</code>), <code>n_value</code> (rows whose value comes from it),
+<code>n_answer_na</code> (rows it made <code>NA</code> with an answer such as don't know or
+did not vote) and <code>n_fallthrough</code> (rows <code>NA</code> because no member asked
+them, reported under this member).</p>
 <p>For <code>level = "spec"</code>, one row (one per <code><a href="qes_harmonize.html">qes_harmonize()</a></code> call for
 results combined with <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code>): <code>spec_version</code>, <code>spec_hash</code>,
 <code>spec_custom</code>, <code>qesR_version</code>, <code>qesR_sha</code> (the commit of a GitHub
@@ -206,8 +227,8 @@ versions.</p>
 <span class="r-in"><span><span class="fu">qes_provenance</span><span class="op">(</span><span class="va">demo</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-09-29 16:20:14 UTC (local_demo). Read with haven::read_sav(user_na =</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.3.0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-09-30 00:14:43 UTC (local_demo). Read with haven::read_sav(user_na =</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> as.data.frame() gives every column.</span>
 <span class="r-in"><span></span></span>
@@ -221,12 +242,12 @@ versions.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> qes2018: file 425914 (Quebec Election Study 2018.dta) of the Dataverse</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dataset https://doi.org/10.5683/SP3/NWTGWS, version 1.0. Expected md5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> d24f5b0be727d688ad305b8eb61f0d30 (not yet checked). 3072 rows, 254 columns.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Licence: CC0 1.0. qesR catalog 2.3.0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Licence: CC0 1.0. qesR catalog 2.4.0.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> qes2014: file 425916 (Quebec Election Study 2014.sav) of the Dataverse</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dataset https://doi.org/10.5683/SP3/64F7WR, version 1.0. Expected md5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9549423b32526a2f11a3d954a87c6861 (not yet checked). 1517 rows, 140 columns.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Licence: CC0 1.0. qesR catalog 2.3.0.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Licence: CC0 1.0. qesR catalog 2.4.0.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> as.data.frame() gives every column.</span>
 <span class="r-in"><span></span></span>

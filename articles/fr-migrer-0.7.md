@@ -126,9 +126,9 @@ viennent :
 qes_provenance(qes_demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-09-29 16:22:26 UTC (local_demo). Lu avec
+#> Obtenu le 2026-09-30 00:16:10 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
-#> qesR 2.3.0.
+#> qesR 2.4.0.
 #> 
 #> as.data.frame() donne toutes les colonnes.
 ```
@@ -297,10 +297,19 @@ round(means, 2)
 #>        5.39        6.70        5.56        2.53        6.00        9.00
 ```
 
-Toutes les lignes de la spécification sont approuvées ; une ligne en
-révision ne serait appliquée qu’avec `include_draft = TRUE`, et la
-colonne `review_note` de `qes_spec("crosswalk")` dit ce que la révision
-a corrigé dans chaque ligne.
+La variable regroupée `vote_choice` (qesR 0.8.0) est la plus proche de
+la colonne `vote_choice` du fichier fusionné d’une étude à l’autre :
+avec `types = list(vote_choice = "recall")`, c’est le vote déclaré,
+comme dans le fichier fusionné (dont les étiquettes de partis sont
+celles de 0.4.4) ; par défaut, elle prend aussi l’intention de vote des
+études qui n’ont pas demandé le vote déclaré, et `vote_choice__type`
+indique laquelle.
+
+Toutes les lignes sont approuvées, sauf trois de celles ajoutées dans la
+spécification 4.3.0 ; une ligne en révision ne s’applique qu’avec
+`include_draft = TRUE`, et la colonne `review_note` de
+`qes_spec("crosswalk")` dit ce que la révision a corrigé dans chaque
+ligne, ou pourquoi elle est retenue.
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 montre quelle étude a quelle cible et à quel point sa question est
 comparable, et
@@ -358,9 +367,9 @@ Consignez ce à partir de quoi chaque résultat a été calculé, et citez-le
 
 qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.2.0 02b3b7edc509deff0db16859bef7bfb6        0.7.1
+#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

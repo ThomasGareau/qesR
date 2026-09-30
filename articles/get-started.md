@@ -310,9 +310,9 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
 A row is applied once a reviewer has signed it off. In specification
-4.1.0 every row is signed off, after an automated double review against
-the original files and documents (not a human review); a row still in
-review would give `NA` with the reason `not_reviewed`, unless
+4.3.0 all rows but three are signed off, after an automated double
+review against the original files and documents (not a human review); a
+row still in review gives `NA` with the reason `not_reviewed`, unless
 `include_draft = TRUE`. The recommended weights of `qes1998`,
 `qes2007_panel`, `qes2012_panel` and the CROP polls still need review,
 so their weights are `NA`. On the demonstration study, which stands in
@@ -380,12 +380,12 @@ cites qesR and the datasets you used (see
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-29 16:22:45 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.3.0.
+#> 2026-09-30 00:17:31 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> as.data.frame() gives every column.
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

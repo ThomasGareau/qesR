@@ -31,6 +31,7 @@ Les fonctions sont regroupées comme dans la référence du site web.
 | Harmonisation (expérimental) | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
 | Harmonisation (expérimental) | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
 | Harmonisation (expérimental) | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
+| Harmonisation (expérimental) | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 | Reproductibilité | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 | Reproductibilité | [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md) | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 | Cache | [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md), [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md) | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
@@ -173,7 +174,7 @@ qes_question("qes2014", "Q19", lang = "fr")
 #> 1            fr     FALSE questionnaire 352010:Q19;352009:Q19     <NA>
 demo <- get_qes("qes_demo", quiet = TRUE)
 qes_cite("qes2014", lang = "fr")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.7.1, https://github.com/ThomasGareau/qesR"               
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.8.0, https://github.com/ThomasGareau/qesR"               
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 options(old)
 ```

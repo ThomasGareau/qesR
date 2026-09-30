@@ -16,9 +16,9 @@ Le moteur d’harmonisation est **expérimental**. Sa spécification
 indique, pour chaque étude et chaque variable harmonisée (« cible »),
 quelle question alimente la cible et comment chacun de ses codes
 correspond aux niveaux de la cible ; rien n’est apparié par le nom. Dans
-la spécification 4.1.0, toutes les lignes sont approuvées, après une
-double révision automatisée sur les fichiers et documents originaux (et
-non une révision humaine), et
+la spécification 4.3.0, toutes les lignes sauf trois sont approuvées,
+après une double révision automatisée sur les fichiers et documents
+originaux (et non une révision humaine), et
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 les applique par défaut. Les pondérations recommandées de `qes1998`,
 `qes2007_panel`, `qes2012_panel` et des sondages CROP restent à réviser
@@ -359,9 +359,9 @@ cite qesR avec la spécification, puis chaque jeu de données :
 spec_record <- qes_provenance(h, level = "spec")
 spec_record[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.2.0 02b3b7edc509deff0db16859bef7bfb6        0.7.1
+#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
-#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.7.1, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.2.0 (empreinte du contenu 02b3b7edc509deff0db16859bef7bfb6)
+#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.8.0, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.3.0 (empreinte du contenu 506f691e420e8d5d5de3657eef556d3d)
 #> 
 #> Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence : CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]
 #> 
@@ -376,12 +376,11 @@ cat(qes_cite(h, lang = params$lang), sep = "\n\n")
 #> Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura; Tanguay, Brian, 2023, "Étude électorale québécoise 2007", https://doi.org/10.5683/SP2/6XGOKA, Borealis, V1, UNF:6:fNjQ+LF7dCVuIrjEyQuOyg==
 ```
 
-## Quatre questions sur la souveraineté, jamais regroupées
+## Cinq cibles sur la souveraineté, une variable regroupée
 
 Une cible correspond à un seul stimulus de question. D’autres études ont
 posé des questions sur la souveraineté avec d’autres libellés : elles
-alimentent d’autres cibles, qui ne sont jamais fusionnées avec
-`sov_indep`.
+alimentent d’autres cibles, jamais fusionnées avec `sov_indep`.
 
 ``` r
 
@@ -403,6 +402,10 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 | sov_partnership_1995 | qes2008 | q19 | comparable | NA |
 | sov_partnership_1995 | qes1998 | q16a_crop | comparable | ponder3 |
 | sov_partnership_1995 | qes2007_panel | intref1 | comparable | pondam1 |
+| sov_partnership_1995_push | qes2007 | q19 | identical | pond |
+| sov_partnership_1995_push | qes2008 | q19 | comparable | NA |
+| sov_partnership_1995_push | qes2007_panel | intref1 | comparable | pondam1 |
+| sov_partnership_1995_push | qes1998 | q16a_crop | comparable | ponder3 |
 
 `sov_sovereign_country` porte sur un « pays souverain »
 (`qes2012_panel`), `sov_favour` est une échelle d’appui en quatre points
@@ -417,3 +420,27 @@ renvoie `NA` pour celles-ci et
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 laisse ces répondants de côté, avec un message. Placez les cibles côte à
 côte et lisez chacune à la lumière de sa propre question.
+
+Pour suivre l’appui dans toutes les études malgré tout, la variable
+regroupée `sov_support` prend la question référendaire de chaque étude,
+quel que soit son libellé, et indique de laquelle vient chaque valeur
+(`sov_support__type`), avec le niveau de comparabilité de cette question
+(`sov_support__grade`) ; l’échelle favorable ou opposé de
+`qes2018_panel` est regroupée en oui ou non, au niveau approximate.
+`vote_choice` fait de même pour le vote (le vote déclaré, sinon
+l’intention de vote) et `pol_interest` pour l’intérêt pour la politique
+:
+
+``` r
+
+pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```
+
+| type_name | member | precedence | default | grade_cap |
+|:---|:---|---:|:---|:---|
+| independence | sov_indep | 1 | TRUE | NA |
+| sovereign_country | sov_sovereign_country | 2 | TRUE | NA |
+| partnership_1995_push | sov_partnership_1995_push | 3 | TRUE | NA |
+| partnership_1995 | sov_partnership_1995 | 4 | TRUE | NA |
+| favour | sov_favour | 5 | TRUE | approximate |

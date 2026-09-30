@@ -2,31 +2,39 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
-  articles/analysis-descriptive: analysis-descriptive.html
-  articles/analysis-sovereignty: analysis-sovereignty.html
-  articles/analysis-vote-choice: analysis-vote-choice.html
   citations: citations.html
   articles/coverage: coverage.html
-  articles/fr-analyse-choix-vote: fr-analyse-choix-vote.html
-  articles/fr-analyse-descriptive: fr-analyse-descriptive.html
-  articles/fr-analyse-souverainete: fr-analyse-souverainete.html
+  articles/dimensions: dimensions.html
   fr-citations: fr-citations.html
   articles/fr-couverture: fr-couverture.html
   fr-demarrage: fr-demarrage.html
+  articles/fr-dimensions: fr-dimensions.html
   articles/fr-donnees-fusionnees: fr-donnees-fusionnees.html
+  articles/fr-enquetes-resultats: fr-enquetes-resultats.html
   articles/fr-etudes: fr-etudes.html
   articles/fr-harmonisation: fr-harmonisation.html
   fr-migrer-0.7: fr-migrer-0.7.html
+  articles/fr-participation: fr-participation.html
+  articles/fr-realignement: fr-realignement.html
+  articles/fr-recettes: fr-recettes.html
   fr-reference-harmonisation: fr-reference-harmonisation.html
+  articles/fr-souverainete-generations: fr-souverainete-generations.html
+  articles/fr-transitions: fr-transitions.html
   articles/fr-validation: fr-validation.html
   get-started: get-started.html
   harmonization-reference: harmonization-reference.html
   articles/harmonization: harmonization.html
   articles/merged-dataset: merged-dataset.html
   migrating-0.7: migrating-0.7.html
+  articles/realignment: realignment.html
+  articles/recipes: recipes.html
+  articles/sovereignty-generations: sovereignty-generations.html
   articles/studies: studies.html
+  articles/survey-vs-official: survey-vs-official.html
+  articles/transitions: transitions.html
+  articles/turnout: turnout.html
   articles/validation: validation.html
-last_built: 2026-09-29T16:20Z
+last_built: 2026-09-30T00:14Z
 urls:
   reference: https://thomasgareau.github.io/qesR/reference
   article: https://thomasgareau.github.io/qesR/articles

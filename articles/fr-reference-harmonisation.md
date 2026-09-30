@@ -10,8 +10,8 @@ spécification fournie avec qesR : elle décrit donc toujours les règles
 que la version installée applique.
 
 Cette référence est générée à partir de la spécification d’harmonisation
-fournie avec qesR : version 4.2.0 du 2026-09-28, empreinte du contenu
-`02b3b7edc509deff0db16859bef7bfb6`. Elle est **expérimentale** : les
+fournie avec qesR : version 4.3.0 du 2026-09-29, empreinte du contenu
+`506f691e420e8d5d5de3657eef556d3d`. Elle est **expérimentale** : les
 cibles, les niveaux de comparabilité et les appariements sont révisés
 étude par étude et peuvent changer. Rien sur cette page n’est écrit à la
 main ;
@@ -22,20 +22,22 @@ renvoie les mêmes informations sous forme de tableaux.
 
 Chaque cible correspond à un seul stimulus de question : une
 formulation, une échelle, un moment ou un format différent donne une
-autre cible, et les cibles ne sont jamais regroupées. Pour chaque étude,
-le tableau de couverture donne la variable source et sa vague, le niveau
-de comparabilité de la question de l’étude par rapport à la question
-d’ancrage de la cible et sa raison, l’instrument (le format de la
-question), les niveaux offerts, le libellé de la question (ou, quand il
-ne peut pas être fourni, le document et la page qui le donnent), la
-question filtre et le sens de chacun de ses codes, la pondération
-recommandée de l’étude (signalée quand elle est à réviser :
-qes_harmonize() ne l’applique pas, et ses colonnes de pondération valent
-NA) et si « je ne sais pas » était offert.
+autre cible ; une variable regroupée (dernier chapitre) réunit des
+cibles en une seule colonne et indique de laquelle vient chaque valeur.
+Pour chaque étude, le tableau de couverture donne la variable source et
+sa vague, le niveau de comparabilité de la question de l’étude par
+rapport à la question d’ancrage de la cible et sa raison, l’instrument
+(le format de la question), les niveaux offerts, le libellé de la
+question (ou, quand il ne peut pas être fourni, le document et la page
+qui le donnent), la question filtre et le sens de chacun de ses codes,
+la pondération recommandée de l’étude (signalée quand elle est à
+réviser : qes_harmonize() ne l’applique pas, et ses colonnes de
+pondération valent NA) et si « je ne sais pas » était offert.
 
 Une ligne sans mention est approuvée par un réviseur (statut stable ;
-dans la spécification 4.0.0, par une double révision automatisée sur les
-fichiers et documents originaux, et non par une révision humaine), et
+dans les spécifications 4.0.0 et 4.3.0, par une double révision
+automatisée sur les fichiers et documents originaux, et non par une
+révision humaine), et
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 l’applique par défaut. Une ligne marquée « en révision » a été vérifiée
 sur les fichiers et documents originaux mais n’est pas approuvée (la
@@ -511,13 +513,90 @@ Expérimental · ajoutée dans la spécification 0.1.0
   valeurs, aucun filtre, niveau, ensemble de niveaux, aucune marge
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `vote_prov_intent_push` : Intention de vote provinciale, indécis relancés
 
-Intention de vote où les personnes indécises à la première question ont
-été relancées sur le parti vers lequel elles penchent, les deux réponses
-étant combinées. Stimulus différent de vote_prov_intent : jamais
-regroupé avec elle.
+Intention de vote où les personnes qui n’ont nommé aucun parti à la
+première question (les indécises et, dans certaines études, aussi celles
+qui ne voteraient pas, pour aucun parti ou refusaient) ont été relancées
+sur le parti vers lequel elles penchent, les deux réponses étant
+combinées. Stimulus différent de vote_prov_intent, et cible distincte ;
+la variable regroupée vote_choice l’utilise avant vote_prov_intent, et
+vote_choice\_\_type indique de laquelle vient une valeur.
 
 Famille `vote_prov` · type Catégorielle · moment Préélectoral · statut
 Expérimental · ajoutée dans la spécification 0.1.0
@@ -541,7 +620,8 @@ Expérimental · ajoutée dans la spécification 0.1.0
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
-| qes2018_panel | `rv1ab` (pre) | `approximate` | Combinaison, faite par le producteur, de rv1a et de la relance rv1b, en mode mixte téléphone et Web ; l’ancrage est une relance téléphonique. Le filtre de la relance est plus étroit que celui de l’ancrage : les personnes qui disaient ne pas voter ou n’appuyer aucun parti (63) n’ont pas été relancées, alors que l’ancrage les relançait, et 31 des 233 indécis, tous interviewés par téléphone, n’ont pas reçu rv1b et restent indécis. | intent_lean_push | PLQ, PQ, CAQ, QS, other, no_party; non offerts : PVQ, PCQ, ON, ADQ | En pensant à ce que vous ressentez maintenant, si une élection PROVINCIALE était tenue demain, le candidat de quel parti appuieriez-vous probablement? (relance, rv1b : Et pour quel parti diriez-vous que vous auriez tendance à voter?) |  | `weight` | Non documenté |
+| qes2022 | `cps_votechoice1` + `cps_votechoice2` + `cps_votelean` (cps) | `approximate` | Liste Web avec « je ne sais pas » et refus affichés : la première question (cps_votechoice1) posée aux personnes certaines ou susceptibles de voter, une question conditionnelle (« si vous décidez de voter », cps_votechoice2) posée à celles peu susceptibles de voter, et la question d’inclination (cps_votelean) posée à celles qui ne savaient pas à l’une ou l’autre ; pas d’option « ne voterait pas » ; l’ancrage est une question téléphonique posée à tous. | intent_lean_push | PLQ, PQ, CAQ, QS, PCQ, other; non offerts : PVQ, ON, ADQ, no_party | Pour quel parti prévoyez-vous voter? \[Si peu susceptible de voter :\] Si vous décidez de voter, pour quel parti prévoyez-vous voter? \[Si ne sait pas :\] Êtes-vous tenté(e) d’appuyer un parti en particulier? | cps_turnout: 3 = inapplicable, 4 = inapplicable, 5 = inapplicable, 6 = ineligible | `cps_weight_general` | Offert explicitement |
+| qes2018_panel | `rv1ab` (pre) | `approximate` | Combinaison, faite par le producteur, de rv1a et de la relance rv1b, en mode mixte téléphone et Web ; l’ancrage est une relance téléphonique. Le filtre de la relance est plus étroit que celui de l’ancrage : les personnes qui disaient ne pas voter ou n’appuyer aucun parti (63) n’ont pas été relancées, alors que l’ancrage les relançait, et 31 des 233 indécis, tous interviewés par téléphone, n’ont pas reçu rv1b et restent indécis. rv1a, dont rv1ab reprend la réponse pour les codes 1 à 6 (1 017 personnes), demande à celles qui ont déjà voté par anticipation d’indiquer ce vote, de sorte qu’une partie des réponses rapportent un vote déjà exprimé. | intent_lean_push | PLQ, PQ, CAQ, QS, other, no_party; non offerts : PVQ, PCQ, ON, ADQ | En pensant à ce que vous ressentez maintenant, si une élection PROVINCIALE était tenue demain, le candidat de quel parti appuieriez-vous probablement? Si vous avez déjà voté par anticipation, veuillez indiquer pour quel parti. (relance, rv1b : Et pour quel parti diriez-vous que vous auriez tendance à voter?) |  | `weight` | Non documenté |
 | qes2012_panel | `intvoteprov` (pre) | `approximate` | Combinaison, faite par le producteur, de la première question (qui demande déjà un parti pour lequel la personne « serait tentée de voter ») et de la relance ; le questionnaire préélectoral n’est pas déposé (libellé tiré de l’étiquette de la variable et du livre de codes, fichier 654292) ; par téléphone, comme l’ancrage. | intent_lean_push | PLQ, PQ, CAQ, QS, PVQ, ON, other, no_party; non offerts : PCQ, ADQ | Q2+Q3 - Si des élections provinciales devaient avoir lieu aujourd’hui, pour lequel des partis suivants voteriez-vous ou seriez-vous tenté de voter? (relance : Peut-être que votre choix n’est pas définitif, mais y a-t-il tout de même un parti que vous seriez tenté d’appuyer?) |  | `pondam1` (à réviser, non appliquée) | Non documenté |
 | qes_crop_2007_2010 | `intvoteprov` (chaque sondage) | `comparable` | Combinaison, faite par le producteur, de la première question et de la relance, comme dans l’ancrage, par la même firme et le même mode ; sondages téléphoniques CROP ; le livre de codes déposé (fichier 341537) ne donne que des étiquettes tronquées, mais les rapports de CROP pour La Presse (mai 2008, janvier 2009 ; voir dev/open-questions.md 1.1) donnent le même libellé et la même relance que l’ancrage, les partis et leurs chefs étant lus en rotation et le « ne sais pas » n’étant noté que s’il est spontané ; pas identique, car ce sont des sondages omnibus mensuels, pour la plupart hors campagne (l’élection de référence est celle de 2008 ou de 2012 selon le sondage), sur un échantillon stratifié par région (500 Montréal, 200 Québec, 300 ailleurs). | intent_lean_push | ADQ, PLQ, PQ, QS, PVQ, other, no_party; non offerts : CAQ, PCQ, ON | S’il y avait des élections provinciales aujourd’hui au Québec, pour lequel des partis suivants voteriez-vous? Voteriez-vous pour… (relance : Peut-être n’êtes-vous pas complètement décidé(e), mais actuellement pour lequel de ces partis seriez-vous tenté(e) de voter? Est-ce…) |  | `XPOND` (à réviser, non appliquée) | Spontané seulement |
 | qes2007_panel | `intvote` (pre) | `identical` (ancrage) | Ligne d’ancrage de la cible. | intent_lean_push | ADQ, PLQ, PQ, QS, PVQ, other, no_party; non offerts : CAQ, PCQ, ON | S’il y avait des élections provinciales aujourd’hui au Québec, pour lequel des partis suivants voteriez-vous? (relance, Q5 : pour lequel de ces partis seriez-vous tenté(e) de voter?) |  | `pondam1` (à réviser, non appliquée) | Spontané seulement |
@@ -647,6 +727,80 @@ Expérimental · ajoutée dans la spécification 0.1.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `turnout_prov_recall` : A voté à l’élection provinciale (rappel)
 
@@ -799,8 +953,9 @@ statut Expérimental · ajoutée dans la spécification 0.1.0
 Probabilité que la personne dit avoir de voter à la prochaine élection
 générale québécoise, question posée avant cette élection. Avoir déjà
 voté (par anticipation) est une réponse. Stimulus différent de
-turnout_prov_recall (participation déclarée) : jamais regroupé avec
-elle.
+turnout_prov_recall (participation déclarée), et cible distincte ; la
+variable regroupée turnout ne l’utilise que sur demande (types =
+list(turnout = c(“recall”, “intention”))).
 
 Famille `turnout_prov` · type Ordinale · moment Préélectoral · statut
 Expérimental · ajoutée dans la spécification 1.0.0
@@ -884,6 +1039,80 @@ Expérimental · ajoutée dans la spécification 1.0.0
   valeurs, aucun filtre, niveau, ensemble de niveaux, aucune marge
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `vote_prov_intent_other` : Intention de vote provinciale : autre parti (texte)
 
@@ -1002,6 +1231,261 @@ Expérimental · ajoutée dans la spécification 1.0.0
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
 
+#### `vote_prov_prev` : Vote provincial à l’élection précédente (rappel)
+
+Parti pour lequel la personne dit avoir voté à l’élection générale
+québécoise qui précède celle de l’étude (election_ref indique laquelle).
+Rappelé des années plus tard : penche vers le gagnant de cette élection.
+Les abstentionnistes, les bulletins annulés et les personnes qui
+n’étaient pas admissibles alors sont des valeurs manquantes avec un
+motif, jamais un parti.
+
+Famille `vote_prov_past` · type Catégorielle · moment Tout moment ·
+statut Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom     | Étiquette   |
+|------|---------|-------------|
+| 1    | `PLQ`   | PLQ         |
+| 2    | `PQ`    | PQ          |
+| 3    | `CAQ`   | CAQ         |
+| 4    | `QS`    | QS          |
+| 5    | `PVQ`   | PVQ         |
+| 6    | `PCQ`   | PCQ         |
+| 7    | `ON`    | ON          |
+| 8    | `ADQ`   | ADQ         |
+| 90   | `other` | Autre parti |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_qc_vote_2018` (cps) | `comparable` | Le vote de 2018, demandé pendant la campagne de 2022 après une question distincte sur la participation (cps_qc_turnout_2018 : non donne not_voted, pas admissible donne ineligible) ; Web, quatre partis nommés ; aucune option « je ne sais pas », refus ou bulletin annulé, de sorte que ces réponses ont été saisies sous « un autre parti » et restent dans other. | vote_recall_prev_list | PLQ, PQ, CAQ, QS, other; non offerts : PVQ, PCQ, ON, ADQ | Pour quel parti avez-vous voté lors de l’élection de 2018 au Québec? | cps_qc_turnout_2018: 2 = not_voted, 3 = ineligible | `cps_weight_general` | Non offert |
+| qes2018 | `q9` (post) | `comparable` (en révision) | Le vote de 2014 (« il y a 4 ans »), demandé après l’élection de 2018 ; la liste nomme quatre partis (les autres sont « un autre parti ») ; non posée aux 270 personnes à qui le vote de 2018 n’a pas été demandé non plus (moins de 18 ans en 2018 ou âge inconnu). | vote_recall_prev_list | PLQ, PQ, CAQ, QS, other; non offerts : PVQ, PCQ, ON, ADQ | Pour quel parti aviez-vous voté il y a 4 ans lors de l’élection provinciale précédente, tenue le 7 avril 2014? |  | `pond` | Offert explicitement |
+| qes2014 | `Q6` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : le vote de 2012, demandé après l’élection de 2014. | vote_recall_prev_list | PLQ, PQ, CAQ, QS, PVQ, ON, other; non offerts : PCQ, ADQ | Pour quel parti aviez-vous voté lors de l’élection provinciale du 4 septembre 2012? |  | `POND` | Non offert |
+| qes2008 | `q13` (post) | `comparable` (en révision) | Le vote de mars 2007, demandé vingt mois plus tard, après l’élection de 2008, par téléphone ; la liste nomme les partis de 2007 ; « aucun » (8 lignes) peut être un bulletin annulé ou une abstention, il n’est donc pas apparié; le code 95 est « I did not vote / I spoiled my ballot » dans le questionnaire anglais (197296) et « n’a pas voté » dans le fichier : ses lignes not_voted peuvent inclure des bulletins annulés ; les 5 personnes nées en 1990 (moins de 18 ans en mars 2007) ont été interrogées et ont toutes répondu 95 : elles sont not_voted, et non ineligible, et celles nées en 1989 ne peuvent être départagées sans date de naissance. | vote_recall_prev_list | PLQ, PQ, QS, PVQ, ADQ, other; non offerts : CAQ, PCQ, ON | Pour quel parti aviez-vous voté lors de l’élection provinciale du 26 mars 2007? |  |  | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `vote_fed_recall` : Vote fédéral à la dernière élection fédérale (rappel)
+
+Parti pour lequel la personne dit avoir voté à la dernière élection
+fédérale canadienne avant l’étude (le libellé de chaque ligne la nomme :
+janvier 2006, octobre 2008, mai 2011, 2021). Les abstentionnistes, les
+bulletins annulés et les personnes qui n’étaient pas admissibles alors
+sont des valeurs manquantes avec un motif, jamais un parti.
+
+Famille `vote_fed` · type Catégorielle · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom     | Étiquette      |
+|------|---------|----------------|
+| 1    | `LPC`   | Libéral        |
+| 2    | `CPC`   | Conservateur   |
+| 3    | `NDP`   | NPD            |
+| 4    | `BQ`    | Bloc Québécois |
+| 5    | `GPC`   | Vert           |
+| 6    | `PPC`   | PPC            |
+| 90   | `other` | Un autre parti |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_pastpartyvote` (cps) | `comparable` | Le vote fédéral de 2021, demandé pendant la campagne provinciale de 2022 après une question distincte sur la participation (cps_pastvote) ; Web, le PPC nommé. | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, PPC, other | Pour quel parti avez-vous voté lors de la dernière élection fédérale de 2021? | cps_pastvote: 2 = not_voted, 3 = ineligible | `cps_weight_general` | Non offert |
+| qes2012 | `q27` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : le vote fédéral de mai 2011, après une question distincte sur la participation (q22). | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, other; non offerts : PPC | Et lors de la dernière élection fédérale en mai 2011? Avez-vous voté pour: | q22: 2 = not_voted, 8 = dk, 9 = refused | `pond` | Offert explicitement |
+| qes2008 | `q74` (post) | `comparable` | Le vote fédéral d’octobre 2008, demandé deux mois plus tard, avec l’abstention et le bulletin annulé comme réponses de la même question ; téléphone selon les métadonnées du dépôt (mode à confirmer). | vote_fed_recall_list | LPC, CPC, NDP, BQ, GPC, other; non offerts : PPC | Lors de la dernière élection FÉDÉRALE en octobre 2008, pour quel parti avez-vous voté ? |  |  | Non documenté |
+| qes2007 | `q74` (post) | `approximate` | Le vote fédéral de janvier 2006, demandé environ 15 mois plus tard, avec l’abstention et le bulletin annulé comme réponses de la même question ; le questionnaire téléphonique déposé indique de ne pas lire la liste (spontané), mais l’étude combine des entrevues téléphoniques (1 003) et Web (1 172) et seul le questionnaire téléphonique est déposé ; on ne sait donc pas comment la version Web présentait les choix. | vote_fed_recall_unprompted | LPC, CPC, NDP, BQ, GPC, other; non offerts : PPC | Lors de la dernière élection FÉDÉRALE en Janvier 2006, pour quel parti avez-vous voté ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
 ### Identification partisane
 
 #### `pid_prov` : Identification partisane provinciale
@@ -1104,6 +1588,7 @@ Expérimental · ajoutée dans la spécification 1.0.0
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
 | qes2022 | `cps_fedpid` (cps) | `identical` (ancrage) | Ligne d’ancrage de la cible. | pid_list | LPC, CPC, NDP, BQ, GPC, PPC, other, none | En politique fédérale, vous considérez-vous habituellement comme étant : |  | `cps_weight_general` | Non offert |
+| qes2012 | `q94` (post) | `comparable` | Même question que l’ancrage ; la liste n’a pas le Parti populaire (fondé en 2018) ni d’option « un autre parti » ; Web. | pid_list | LPC, CPC, NDP, BQ, GPC, none; non offerts : PPC, other | En politique fédérale, vous considérez-vous habituellement comme un…? |  | `pond` | Offert explicitement |
 
 **Historique**
 
@@ -1168,6 +1653,204 @@ Expérimental · ajoutée dans la spécification 1.0.0
   valeurs, aucun filtre, niveau, ensemble de niveaux, aucune marge
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `pid_prov_strength` : Force de l’identification partisane provinciale
+
+La force avec laquelle la personne s’identifie au parti provincial nommé
+à la question d’identification partisane (très, assez, pas très
+fortement), posée à celles qui ont nommé un parti. Celles qui n’en ont
+nommé aucun, ne savaient pas ou refusaient n’ont pas été interrogées :
+la valeur manque, motif inapplicable.
+
+Famille `party_id` · type Ordinale · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom        | Étiquette          |
+|------|------------|--------------------|
+| 1    | `very`     | Très fortement     |
+| 2    | `fairly`   | Assez fortement    |
+| 3    | `not_very` | Pas très fortement |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_provpidstr` (cps) | `approximate` (en révision) | La version anglaise demande la force du sentiment (very, fairly, not very strongly), mais la version française, remplie par 1 291 des 1 521 personnes (cps_UserLanguage FR-CA), qui donnent 1 164 des 1 352 réponses, demande à quel point la personne se sent proche (très proche, proche, pas très proche), formulation de proximité cotée approximative en 2007 et 2008 ; posée à qui a nommé un parti à cps_provpid (aucun de ceux-là, code 6, est écarté), Web, sans option « je ne sais pas », pendant la campagne. | pid_strength_3 | very, fairly, not_very | À quel point vous sentez-vous \${e://Field/fr_pid_pr}? | cps_provpid: 6 = inapplicable | `cps_weight_general` | Non offert |
+| qes2018 | `q57` (post) | `comparable` | Même énoncé et mêmes options que l’ancrage, posée à qui a nommé un parti à q56, dont la liste n’offre que quatre partis. | pid_strength_3 | very, fairly, not_very | Vous sentez-vous très fortement \[insérer réponse de Q56\], assez fortement, ou pas très fortement? | q56: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Offert explicitement |
+| qes2014 | `Q56` (post) | `identical` | Même énoncé, mêmes options et même filtre que l’ancrage (posée à qui a nommé un parti à Q55), Web. | pid_strength_3 | very, fairly, not_very | Vous sentez-vous très fortement \[insérer réponse de Q55\], assez fortement, ou pas très fortement? | Q55: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `POND` | Offert explicitement |
+| qes2012 | `q93` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | pid_strength_3 | very, fairly, not_very | Vous sentez-vous très fortement \[insérer réponse de Q92\], assez fortement, ou pas très fortement? | q92: 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Offert explicitement |
+| qes2008 | `q71` (post) | `approximate` | Demande à quel point la personne se sent proche du parti (très proche, assez proche, pas très proche), et non la force de son identification ; posée à qui a nommé un des partis de la liste à q70 (un autre parti, aucun, ne sait pas et refus sont écartés) ; par téléphone. | pid_closeness_3 | very, fairly, not_very | Vous sentez-vous très proche du / de , assez proche, ou pas très proche ? | q70: 96 = inapplicable, 97 = inapplicable, 98 = inapplicable, 99 = inapplicable |  | Non documenté |
+| qes2007 | `q71` (post) | `approximate` | Demande à quel point la personne se sent proche du parti (très proche, assez proche, pas très proche), et non la force de son identification ; posée à qui a nommé un des partis de la liste à q70 (un autre parti, aucun, ne sait pas et refus sont écartés) ; par téléphone. | pid_closeness_3 | very, fairly, not_very | Vous sentez-vous très proche du , assez proche, ou pas très proche ? | q70: 96 = inapplicable, 97 = inapplicable, 98 = inapplicable, 99 = inapplicable | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 ### Attitudes
 
@@ -1253,8 +1936,9 @@ Expérimental · ajoutée dans la spécification 0.1.0
 
 Comment la personne voterait à un référendum demandant si le Québec doit
 devenir un pays souverain. Stimulus différent de sov_indep (souverain et
-non indépendant) : jamais regroupé avec elle. La question de relance
-posée aux indécis ne fait pas partie de cette cible.
+non indépendant), et cible distincte ; la variable regroupée sov_support
+les combine et indique le libellé dans sov_support\_\_type. La question
+de relance posée aux indécis ne fait pas partie de cette cible.
 
 Famille `sovereignty` · type Catégorielle · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 0.1.0
@@ -1370,6 +2054,80 @@ Expérimental · ajoutée dans la spécification 0.1.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `sov_favour` : Appui à l’indépendance du Québec (4 points)
 
@@ -1521,8 +2279,9 @@ Expérimental · ajoutée dans la spécification 0.1.0
 #### `interest_4pt` : Intérêt pour la politique (4 points)
 
 Intérêt de la personne pour la politique, sur une échelle verbale à
-quatre points. Jamais converti en ni regroupé avec les échelles
-d’intérêt de 0 à 10.
+quatre points. Cible distincte des échelles d’intérêt de 0 à 10, jamais
+convertie ; la variable regroupée pol_interest la note sur 0-1, au mieux
+au niveau approximate.
 
 Famille `interest` · type Ordinale · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 0.1.0
@@ -1643,14 +2402,90 @@ Expérimental · ajoutée dans la spécification 0.1.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `sov_partnership_1995` : Vote référendaire : la question de souveraineté-partenariat de 1995
 
 Comment la personne voterait si un référendum avait lieu aujourd’hui sur
 la question du référendum de 1995, la souveraineté assortie d’une offre
 de partenariat au reste du Canada. Stimulus différent de sov_indep et de
-sov_sovereign_country : jamais regroupé avec elles. La question de
-relance posée aux indécis ne fait pas partie de cette cible.
+sov_sovereign_country, et cible distincte ; la variable regroupée
+sov_support les combine et indique le libellé dans sov_support\_\_type.
+La question de relance posée aux indécis ne fait pas partie de cette
+cible (sov_partnership_1995_push l’inclut).
 
 Famille `sovereignty` · type Catégorielle · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 0.3.0
@@ -1751,12 +2586,87 @@ Expérimental · ajoutée dans la spécification 0.3.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `interest_0_10` : Intérêt pour la politique (0-10)
 
 Intérêt de la personne pour la politique en général, de 0 (aucun
-intérêt) à 10 (beaucoup d’intérêt). Jamais regroupé avec l’échelle en
-quatre points (interest_4pt) ni converti vers elle.
+intérêt) à 10 (beaucoup d’intérêt). Cible distincte de l’échelle en
+quatre points (interest_4pt), jamais convertie ; la variable regroupée
+pol_interest la divise par 10.
 
 Famille `interest` · type Numérique · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 1.0.0
@@ -1833,6 +2743,80 @@ Expérimental · ajoutée dans la spécification 1.0.0
   valeurs, aucun filtre, niveau, ensemble de niveaux, aucune marge
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `interest_election_0_10` : Intérêt pour l’élection provinciale (0-10)
 
@@ -2039,6 +3023,1584 @@ Expérimental · ajoutée dans la spécification 1.0.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+
+#### `sov_partnership_1995_push` : Vote référendaire : la question de 1995, indécis relancés
+
+Comment la personne voterait sur la question du référendum de 1995 (la
+souveraineté assortie d’une offre de partenariat au reste du Canada),
+les personnes qui ne savaient pas à la première question ayant été
+relancées sur le côté vers lequel elles pencheraient, les deux réponses
+étant combinées : la première réponse s’il y en a une, sinon la réponse
+à la relance. Cible distincte de sov_partnership_1995, qui ne contient
+que la première question ; la variable regroupée sov_support utilise
+celle-ci en premier.
+
+Famille `sovereignty` · type Catégorielle · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom              | Étiquette                      |
+|------|------------------|--------------------------------|
+| 1    | `yes`            | Oui                            |
+| 2    | `no`             | Non                            |
+| 95   | `would_not_vote` | N’irait pas voter / annulerait |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2008 | `q19` + `q20` (post) | `comparable` | Même première question et même relance que l’ancrage (q19, puis q20 pour les personnes qui ne savaient pas) ; le mode diffère (téléphone selon les métadonnées du dépôt ; l’étude d’ancrage combine téléphone et Web). | sov_partnership_1995_push | yes, no, would_not_vote | Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté assortie d’une offre de partenariat au reste du Canada, voteriez-vous OUI ou voteriez-vous NON ? \[Si ne sait pas :\] Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter pour le OUI ou pour le NON ? |  |  | Non documenté |
+| qes2007 | `q19` + `q20` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : la question de 1995 lue au complet (q19) et, pour les personnes qui ne savaient pas, la relance q20. | sov_partnership_1995_push | yes, no, would_not_vote | Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté assortie d’une offre de partenariat au reste du Canada, voteriez-vous OUI ou voteriez-vous NON ? \[Si ne sait pas :\] Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter pour le OUI ou pour le NON ? |  | `pond` | Non documenté |
+| qes2007_panel | `intref1` + `intref2` (pre) | `comparable` | Même question et même relance que l’ancrage, par téléphone ; l’énoncé dit « accompagnée d’une offre de partenariat » où l’ancrage dit « assortie d’une offre » ; « ne voterait pas », « ne sait pas » et le refus ne sont pas lus. La relance intref2 a été posée aux personnes qui ne voteraient pas, ne savaient pas ou refusaient (seules celles qui ne savaient pas sont relancées ici, comme dans l’ancrage). | sov_partnership_1995_push | yes, no, would_not_vote | Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté accompagnée d’une offre de partenariat au reste du Canada, voteriez-vous Oui ou voteriez-vous Non? \[Si ne sait pas :\] Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter Oui ou de voter Non? |  | `pondam1` (à réviser, non appliquée) | Spontané seulement |
+| qes1998 | `q16a_crop` + `q16b_crop` (pre) | `comparable` | Même question et même relance que l’ancrage, par téléphone ; posée par CROP seulement (426 des 1 483), pas par CREATEC. La relance q16b_crop a été posée aux personnes qui ne voteraient pas, ne savaient pas ou refusaient (seules celles qui ne savaient pas sont relancées ici, comme dans l’ancrage). | sov_partnership_1995_push | yes, no, would_not_vote | 16a. Si un référendum avait lieu aujourd’hui sur la même question que celle qui a été posée lors du dernier référendum de 1995, c’est-à-dire sur la souveraineté assortie d’une offre de partenariat au reste du Canada, voteriez-vous OUI ou voteriez-vous NON \[Si ne sait pas :\] 16b. Même si vous n’avez peut-être pas encore fait votre choix, s’il y avait un référendum aujourd’hui sur cette question, seriez-vous tenté(e) de voter pour le OUI ou pour le NON? | firme_post: 1 = inapplicable | `ponder3` (à réviser, non appliquée) | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `satis_demo_qc` : Satisfaction à l’égard de la démocratie au Québec
+
+À quel point la personne est satisfaite, dans l’ensemble, de la façon
+dont la démocratie fonctionne au Québec, sur une échelle verbale à
+quatre points (très, assez, pas très, pas du tout satisfaite).
+
+Famille `democracy_satisfaction` · type Ordinale · moment Tout moment ·
+statut Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom          | Étiquette                |
+|------|--------------|--------------------------|
+| 1    | `very`       | Très satisfait(e)        |
+| 2    | `fairly`     | Assez satisfait(e)       |
+| 3    | `not_very`   | Pas très satisfait(e)    |
+| 4    | `not_at_all` | Pas du tout satisfait(e) |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_satis_prov` (cps) | `comparable` | Même concept et mêmes options ; l’énoncé demande « quel est votre niveau de satisfaction » ; Web, sans option « je ne sais pas » (une question sautée est no_answer) ; posée pendant la campagne. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, quel est votre niveau de satisfaction quant au fonctionnement de la démocratie au Québec? |  | `cps_weight_general` | Non offert |
+| qes2018 | `q1` (post) | `comparable` | L’énoncé demande « à quel point êtes-vous satisfait(e) » (ancrage : « êtes-vous satisfait(e) ») ; la deuxième option se lit « Somewhat satisfied » en anglais (ancrage : « Fairly satisfied ») et la troisième « Peu satisfait(e) » en français (ancrage : « Pas très satisfait(e) ») ; Web, « je ne sais pas » et refus affichés. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, à quel point êtes-vous satisfait(e) de la façon dont la démocratie fonctionne au Québec? Êtes-vous: |  | `pond` | Offert explicitement |
+| qes2014 | `Q35` (post) | `identical` | Même énoncé et mêmes options que l’ancrage en anglais et en français, Web, avec « je ne sais pas » et refus affichés. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, êtes-vous satisfait(e) de la façon dont la démocratie fonctionne au Québec? Êtes-vous: |  | `POND` | Offert explicitement |
+| qes2012 | `q74` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, êtes-vous satisfait(e) de la façon dont la démocratie fonctionne au Québec? Êtes-vous: |  | `pond` | Offert explicitement |
+| qes2008 | `q27` (post) | `comparable` | Même énoncé et mêmes options que l’ancrage en anglais et en français ; téléphone selon les métadonnées du dépôt (les questionnaires déposés ressemblent à un questionnaire Web, voir waves.csv) ; « je ne sais pas » et refus codés 8 et 9. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, êtes-vous SATISFAIT de la façon dont la démocratie fonctionne au Québec ? Êtes-vous… |  |  | Non documenté |
+| qes2007 | `q27` (post) | `comparable` | Même énoncé et mêmes options que l’ancrage ; l’étude combine des entrevues téléphoniques et Web (seul le questionnaire téléphonique est déposé), « ne sais pas » non lu. | satis_4pt | very, fairly, not_very, not_at_all | Dans l’ensemble, êtes-vous SATISFAIT de la façon dont la démocratie fonctionne au Québec ? Êtes-vous… |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `gov_satisfaction` : Satisfaction à l’égard du gouvernement du Québec
+
+À quel point la personne est satisfaite de la performance du
+gouvernement du Québec en place, sur une échelle à quatre points. Le
+gouvernement change par construction : le libellé de chaque ligne le
+nomme (le gouvernement libéral en 2012, le gouvernement péquiste en
+2014, celui de Philippe Couillard en 2018, le gouvernement sous François
+Legault en 2022).
+
+Famille `government_satisfaction` · type Ordinale · moment Tout moment ·
+statut Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom          | Étiquette                |
+|------|--------------|--------------------------|
+| 1    | `very`       | Très satisfait(e)        |
+| 2    | `fairly`     | Assez satisfait(e)       |
+| 3    | `not_very`   | Pas très satisfait(e)    |
+| 4    | `not_at_all` | Pas du tout satisfait(e) |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_province_gov_sat` (cps) | `comparable` | Le gouvernement caquiste sortant, nommé par son chef (sous François Legault) ; Web, sans option « je ne sais pas » ; posée pendant la campagne. | gov_satis_4pt | very, fairly, not_very, not_at_all | Quel est votre niveau de satisfaction de la performance du gouvernement du Québec sous François Legault? |  | `cps_weight_general` | Non offert |
+| qes2018 | `q10` (post) | `comparable` | Le gouvernement libéral sortant, nommé par son chef (celui de Philippe Couillard) ; l’énoncé demande le niveau global de satisfaction et la troisième option se lit « Peu satisfait(e) ». | gov_satis_4pt | very, fairly, not_very, not_at_all | Quel est votre niveau global de satisfaction envers la performance du gouvernement libéral de Philippe Couillard? |  | `pond` | Offert explicitement |
+| qes2014 | `Q10` (post) | `comparable` | Même énoncé et mêmes options que l’ancrage sur le gouvernement en place, le gouvernement péquiste sortant de Pauline Marois (nommé par son parti). | gov_satis_4pt | very, fairly, not_very, not_at_all | À quel point êtes-vous satisfait(e) de la performance du gouvernement péquiste en général? |  | `POND` | Offert explicitement |
+| qes2012 | `q35` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : le gouvernement libéral sortant de Jean Charest. | gov_satis_4pt | very, fairly, not_very, not_at_all | À quel point êtes-vous satisfait(e) de la performance du gouvernement libéral provincial en général? |  | `pond` | Offert explicitement |
+| qes2007_panel | `satisf` (pre) | `approximate` | Une échelle bipolaire (très ou plutôt satisfait, plutôt ou très insatisfait) lue au téléphone pendant la campagne, sur le présent gouvernement du Québec (le gouvernement libéral de Jean Charest) ; plutôt insatisfait et très insatisfait sont pris pour pas très et pas du tout satisfait. | gov_satis_bipolar | very, fairly, not_very, not_at_all | Diriez-vous que vous êtes très satisfait(e), plutôt satisfait(e), plutôt insatisfait(e) ou très insatisfait(e) du présent gouvernement du Québec? |  | `pondam1` (à réviser, non appliquée) | Spontané seulement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `econ_retro_qc` : L’économie du Québec depuis un an
+
+Si la personne pense que l’économie du Québec s’est améliorée, est
+restée à peu près la même ou s’est détériorée depuis un an (une
+évaluation rétrospective et sociotropique).
+
+Famille `economy_retrospective` · type Ordinale · moment Tout moment ·
+statut Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom      | Étiquette          |
+|------|----------|--------------------|
+| 1    | `better` | Améliorée          |
+| 2    | `same`   | À peu près la même |
+| 3    | `worse`  | Détériorée         |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_provecon` (cps) | `comparable` | Même question et mêmes options, Web, sans option « je ne sais pas » ; posée pendant la campagne, marquée par l’inflation de 2022. | econ_retro_3 | better, same, worse | Depuis un an, l’économie du Québec s’est-elle… |  | `cps_weight_general` | Non offert |
+| qes2018 | `q53` (post) | `identical` | Même énoncé et mêmes options que l’ancrage en anglais et en français, Web, avec « je ne sais pas » et refus affichés (codes 98 et 99). | econ_retro_3 | better, same, worse | Selon vous, l’économie du Québec s’est-elle améliorée, détériorée ou est-elle restée à peu près la même depuis un an? |  | `pond` | Offert explicitement |
+| qes2014 | `Q52` (post) | `identical` | Même énoncé et mêmes options que l’ancrage en anglais et en français, Web, avec « je ne sais pas » et refus affichés. | econ_retro_3 | better, same, worse | Selon vous, l’économie du Québec s’est-elle améliorée, détériorée ou est-elle restée à peu près la même depuis un an? |  | `POND` | Offert explicitement |
+| qes2012 | `q91` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | econ_retro_3 | better, same, worse | Selon vous, l’économie du Québec s’est-elle améliorée, détériorée ou est-elle restée à peu près la même depuis un an? |  | `pond` | Offert explicitement |
+| qes2008 | `q47` (post) | `comparable` | Même question et mêmes options, par téléphone, en décembre 2008 au début de la crise financière. | econ_retro_3 | better, same, worse | Selon vous, l’économie québécoise s’est-elle AMÉLIORÉE, DÉTÉRIORÉE, ou est-elle restée à PEU PRÈS LA MÊME depuis un an ? |  |  | Non documenté |
+| qes2007 | `q47` (post) | `comparable` | Même question et mêmes options ; l’étude combine des entrevues téléphoniques et Web (seul le questionnaire téléphonique est déposé). | econ_retro_3 | better, same, worse | Selon vous, l’économie québécoise s’est-elle AMÉLIORÉE, DÉTÉRIORÉE, ou est-elle restée à PEU PRÈS LA MÊME depuis un an ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `attach_qc` : Attachement au Québec
+
+À quel point la personne se sent attachée au Québec, sur une échelle à
+quatre points (très, assez, pas très, pas du tout).
+
+Famille `attachment` · type Ordinale · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom          | Étiquette              |
+|------|--------------|------------------------|
+| 1    | `very`       | Très attaché(e)        |
+| 2    | `fairly`     | Assez attaché(e)       |
+| 3    | `not_very`   | Pas très attaché(e)    |
+| 4    | `not_at_all` | Pas du tout attaché(e) |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_qc_attach` (cps) | `comparable` | Même énoncé que l’ancrage ; les options françaises se lisent « Assez attaché(e) » et « Peu attaché(e) » ; Web ; « je ne sais pas » est une option, mais il n’y a pas d’option de refus ; posée pendant la campagne (préélectorale), alors que l’ancrage est postélectoral. | attach_4pt | very, fairly, not_very, not_at_all | Quel est votre degré d’attachement au Québec? |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q18` (post) | `comparable` | Même énoncé que l’ancrage ; la deuxième option anglaise se lit « Somewhat attached » (ancrage « Fairly attached ») et les options françaises se lisent « Assez attaché(e) » et « Peu attaché(e) » (ancrage « Plutôt attaché(e) », « Pas très attaché(e) »). | attach_4pt | very, fairly, not_very, not_at_all | Quel est votre degré d’attachement au Québec? |  | `pond` | Offert explicitement |
+| qes2014 | `Q12` (post) | `comparable` | Même énoncé que l’ancrage ; les options françaises se lisent « Plutôt attaché(e) » et « Pas très attaché(e) ». | attach_4pt | very, fairly, not_very, not_at_all | Quel est votre degré d’attachement au Québec? |  | `POND` | Offert explicitement |
+| qes2012 | `q1` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | attach_4pt | very, fairly, not_very, not_at_all | Quel est votre degré d’attachement au Québec? |  | `pond` | Offert explicitement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `attach_ca` : Attachement au Canada
+
+À quel point la personne se sent attachée au Canada, sur une échelle à
+quatre points (très, assez, pas très, pas du tout).
+
+Famille `attachment` · type Ordinale · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom          | Étiquette              |
+|------|--------------|------------------------|
+| 1    | `very`       | Très attaché(e)        |
+| 2    | `fairly`     | Assez attaché(e)       |
+| 3    | `not_very`   | Pas très attaché(e)    |
+| 4    | `not_at_all` | Pas du tout attaché(e) |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_can_attach` (cps) | `comparable` | Même énoncé et mêmes options que l’ancrage en anglais (sans le « And » initial) ; les options françaises se lisent « Assez attaché(e) » et « Peu attaché(e) » (ancrage : « Plutôt attaché(e) », « Pas très attaché(e) ») ; Web ; « je ne sais pas » est une option (code 5) ; posée pendant la campagne, l’ancrage après l’élection. | attach_4pt | very, fairly, not_very, not_at_all | Quel est votre degré d’attachement au Canada? |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q19` (post) | `comparable` | Même énoncé que l’ancrage ; l’option 2 se lit « Somewhat attached » en anglais (ancrage « Fairly attached ») et les options françaises se lisent « Assez attaché(e) » et « Peu attaché(e) » (ancrage « Plutôt attaché(e) », « Pas très attaché(e) »). Le fichier n’a pas d’étiquettes de valeur ; les codes proviennent du questionnaire avec valeurs programmées (367181). | attach_4pt | very, fairly, not_very, not_at_all | Et quel est votre degré d’attachement au Canada? |  | `pond` | Offert explicitement |
+| qes2014 | `Q13` (post) | `comparable` | Même énoncé que l’ancrage ; les options françaises se lisent « Plutôt attaché(e) » et « Pas très attaché(e) ». | attach_4pt | very, fairly, not_very, not_at_all | Et quel est votre degré d’attachement au Canada? |  | `POND` | Offert explicitement |
+| qes2012 | `q2` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | attach_4pt | very, fairly, not_very, not_at_all | Et quel est votre degré d’attachement au Canada? |  | `pond` | Offert explicitement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `identity_qc_ca` : Identité québécoise ou canadienne
+
+Comment la personne se définit, d’uniquement québécoise à uniquement
+canadienne (la question en cinq points de Moreno) ; une autre définition
+de soi est une réponse (niveau other).
+
+Famille `national_identity` · type Catégorielle · moment Tout moment ·
+statut Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom        | Étiquette                               |
+|------|------------|-----------------------------------------|
+| 1    | `qc_only`  | Uniquement québécois(e)                 |
+| 2    | `qc_first` | D’abord québécois(e), puis canadien(ne) |
+| 3    | `equal`    | Également québécois(e) et canadien(ne)  |
+| 4    | `ca_first` | D’abord canadien(ne), puis québécois(e) |
+| 5    | `ca_only`  | Uniquement canadien(ne)                 |
+| 90   | `other`    | Autre                                   |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `pes_identity_qc_ca` (cps) | `comparable` | L’énoncé français de l’ancrage, Web, avec « Je ne sais pas » comme option toujours présentée en dernier ; les cinq options ont été présentées d’uniquement canadien à uniquement québécois à 741 personnes et dans l’ordre inverse aux 780 autres (variables d’ordre d’affichage pes_identity_qc_ca_DO_1 à *DO_6), en une seule variable, si bien que l’effet d’ordre s’annule en moyenne comme en 2014, 2007 et 2008. Malgré son préfixe pes*, la question fait partie du sondage de campagne : toutes les personnes y ont répondu, celles de la vague postélectorale comme les 301 qui n’y ont pas participé (livre de codes p. 52, dans la section de la campagne). | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; non offerts : other | Les gens ont différentes façons de se définir. Diriez-vous que vous vous considérez \_\_\_\_\_\_\_\_\_\_ |  | `cps_weight_general` | Offert explicitement |
+| qes2014 | `Q14A` + `Q14B` (post) | `comparable` | La question de l’ancrage en anglais et en français, posée en échantillon divisé : la moitié de l’échantillon (Q14A, SEL1 = 1) a vu les options d’uniquement québécois à uniquement canadien, l’autre moitié (Q14B) dans l’ordre inverse ; les deux moitiés sont combinées, ce qui fait la moyenne de l’effet d’ordre. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; non offerts : other | Les gens ont différentes façons de se définir. Diriez-vous que vous vous considérez…? (options dans un ordre pour la moitié de l’échantillon, Q14A, dans l’ordre inverse pour l’autre moitié, Q14B) |  | `POND` | Offert explicitement |
+| qes2012 | `q3` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only; non offerts : other | Les gens ont différentes façons de se définir. Diriez-vous que vous vous considérez…? |  | `pond` | Offert explicitement |
+| qes2008 | `q18a` + `q18b` (post) | `comparable` | L’énoncé français de l’ancrage, les cinq options lues dans un ordre pour la moitié de l’échantillon (q18a) et dans l’ordre inverse pour l’autre moitié (q18b), combinées ; une autre définition de soi (96, « autres (précisez) ») figure comme option dans les deux questionnaires, sans consigne de lecture ; par téléphone (selon les métadonnées du dépôt). | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only, other | Les gens ont différentes façons de se définir. Diriez-vous que vous vous considérez…? |  |  | Non documenté |
+| qes2007 | `q18a` + `q18b` (post) | `comparable` | L’énoncé français de l’ancrage, les cinq options lues dans un ordre pour la moitié de l’échantillon (q18a) et dans l’ordre inverse pour l’autre moitié (q18b), combinées ; une autre définition de soi (96) est spontanée ; téléphone et Web. | identity_moreno_5 | qc_only, qc_first, equal, ca_first, ca_only, other | Les gens ont différentes façons de se définir. Diriez-vous que vous vous considérez…? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `therm_leader_plq` : Évaluation du chef du PLQ (0-100)
+
+À quel point la personne aime la personne à la tête du PLQ, de 0 (n’aime
+vraiment pas du tout) à 100 (aime vraiment beaucoup) ; la personne
+évaluée change par construction et chaque ligne la nomme. Ne pas
+connaître la personne est « ne sait pas » (dk).
+
+Famille `leader_ratings` · type Numérique · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Plage valide** : 0-100
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_1` (cps) | `approximate` | Un curseur de 0 à 100 pour chaque chef provincial, Web, posée pendant la campagne ; -99 est l’option explicite « Je ne connais pas ce chef(fe) » (livre de codes 7449514, p. 26) et, selon la note sous cps_intelligent, peut aussi inclure un curseur laissé vide (le fichier n’a aucune valeur manquante système) ; il est lu comme « ne sait pas ». | therm_0_100 |  | Sur la même échelle, que pensez-vous des chef(fe)s de partis politiques provinciaux énumérés ci-dessous? \[Dominique Anglade\] |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q33_a` (post) | `approximate` | Une échelle de 0 à 10 multipliée par 10 (affine 10\*x) : le même concept sur une échelle plus grossière ; ne pas connaître la personne (97) est « ne sait pas » ; Web. | therm_0_10 |  | Sur une échelle de 0 à 10, où 0 veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et 10 veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… Philippe Couillard? |  | `pond` | Offert explicitement |
+| qes2014 | `Q29A` (post) | `comparable` | Même énoncé et même échelle de 0 à 100 que l’ancrage, Web ; ne pas connaître la personne (997) est « ne sait pas ». | therm_0_100 |  | Sur une échelle de ZERO à CENT, où zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… |  | `POND` | Offert explicitement |
+| qes2012 | `q68` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | therm_0_100 |  | Sur une échelle de ZERO à CENT, où zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de JEAN CHAREST? |  | `pond` | Offert explicitement |
+| qes2008 | `q39` (post) | `comparable` | Même échelle de 0 à 100 ; téléphone selon les métadonnées du dépôt (à confirmer) ; ne connaître aucun chef (995) ou celui-ci (997) est « ne sait pas ». Le libellé français est celui de l’ancrage ; le questionnaire anglais déposé demande seulement « How do you feel about JEAN CHAREST? » sans définir 0 et 100 (l’anglais de l’ancrage les définit). | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous JEAN CHAREST ? |  |  | Non documenté |
+| qes2007 | `q39` (post) | `comparable` | Même échelle de 0 à 100 ; l’étude combine des entrevues téléphoniques et Web ; ne connaître ni ce chef ni aucun chef (995, 997) est « ne sait pas ». | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous JEAN CHAREST ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `therm_leader_pq` : Évaluation du chef du PQ (0-100)
+
+À quel point la personne aime la personne à la tête du PQ, de 0 (n’aime
+vraiment pas du tout) à 100 (aime vraiment beaucoup) ; la personne
+évaluée change par construction et chaque ligne la nomme. Ne pas
+connaître la personne est « ne sait pas » (dk).
+
+Famille `leader_ratings` · type Numérique · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Plage valide** : 0-100
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_2` (cps) | `approximate` | Un curseur de 0 à 100 pour chaque chef provincial, Web, posée pendant la campagne ; -99 est l’option explicite « Je ne connais pas ce chef(fe) » (livre de codes 7449514, p. 26) et, selon la note sous cps_intelligent, peut aussi inclure un curseur laissé vide (le fichier n’a aucune valeur manquante système) ; il est lu comme « ne sait pas ». | therm_0_100 |  | Sur la même échelle, que pensez-vous des chef(fe)s de partis politiques provinciaux énumérés ci-dessous? \[Paul St-Pierre Plamondon\] |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q33_b` (post) | `approximate` | Une échelle de 0 à 10 multipliée par 10 (affine 10\*x) : le même concept sur une échelle plus grossière ; ne pas connaître la personne (97) est « ne sait pas » ; Web. | therm_0_10 |  | Sur une échelle de 0 à 10, où 0 veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et 10 veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… Jean-François Lisée? |  | `pond` | Offert explicitement |
+| qes2014 | `Q29B` (post) | `comparable` | Même énoncé et même échelle de 0 à 100 que l’ancrage, Web ; ne pas connaître la personne (997) est « ne sait pas ». | therm_0_100 |  | Sur une échelle de ZERO à CENT, où zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… PAULINE MAROIS? |  | `POND` | Offert explicitement |
+| qes2012 | `q68b` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | therm_0_100 |  | Sur la même échelle, que pensez-vous de PAULINE MAROIS? |  | `pond` | Offert explicitement |
+| qes2008 | `q40` (post) | `comparable` | Même échelle de 0 à 100 ; téléphone selon les métadonnées du dépôt (à confirmer) ; ne connaître aucun chef (995) ou celui-ci (997) est « ne sait pas ». Le libellé français est celui de l’ancrage ; le questionnaire anglais déposé demande seulement « How do you feel about PAULINE MAROIS? » sans définir 0 et 100 (l’anglais de l’ancrage les définit). | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous PAULINE MAROIS ? |  |  | Non documenté |
+| qes2007 | `q40` (post) | `comparable` | Même échelle de 0 à 100 ; l’étude combine des entrevues téléphoniques et Web ; ne connaître ni ce chef ni aucun chef (995, 997) est « ne sait pas ». | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous ANDRÉ BOISCLAIR ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `therm_leader_caq` : Évaluation du chef du CAQ (0-100)
+
+À quel point la personne aime la personne à la tête du CAQ, de 0 (n’aime
+vraiment pas du tout) à 100 (aime vraiment beaucoup) ; la personne
+évaluée change par construction et chaque ligne la nomme. Ne pas
+connaître la personne est « ne sait pas » (dk).
+
+Famille `leader_ratings` · type Numérique · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Plage valide** : 0-100
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_3` (cps) | `approximate` | Un curseur de 0 à 100 pour chaque chef provincial, Web, posée pendant la campagne ; -99 est l’option explicite « Je ne connais pas ce chef(fe) » (livre de codes 7449514, p. 26) et, selon la note sous cps_intelligent, peut aussi inclure un curseur laissé vide (le fichier n’a aucune valeur manquante système) ; il est lu comme « ne sait pas ». | therm_0_100 |  | Sur la même échelle, que pensez-vous des chef(fe)s de partis politiques provinciaux énumérés ci-dessous? \[François Legault\] |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q33_c` (post) | `approximate` | Une échelle de 0 à 10 multipliée par 10 (affine 10\*x) : le même concept sur une échelle plus grossière ; ne pas connaître la personne (97) est « ne sait pas » ; Web. | therm_0_10 |  | Sur une échelle de 0 à 10, où 0 veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et 10 veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… François Legault? |  | `pond` | Offert explicitement |
+| qes2014 | `Q29C` (post) | `comparable` | Même énoncé et même échelle de 0 à 100 que l’ancrage, Web ; ne pas connaître la personne (997) est « ne sait pas ». | therm_0_100 |  | Sur une échelle de ZERO à CENT, où zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… FRANÇOIS LEGAULT? |  | `POND` | Offert explicitement |
+| qes2012 | `q68c` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | therm_0_100 |  | Sur la même échelle, que pensez-vous de FRANÇOIS LEGAULT? |  | `pond` | Offert explicitement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `therm_leader_qs` : Évaluation du chef du QS (0-100)
+
+À quel point la personne aime la personne à la tête du QS, de 0 (n’aime
+vraiment pas du tout) à 100 (aime vraiment beaucoup) ; la personne
+évaluée change par construction et chaque ligne la nomme (QS a deux
+porte-parole : celle ou celui que l’étude a fait évaluer, ou sa
+candidate ou son candidat au poste de première ministre quand l’étude a
+fait évaluer les deux). Ne pas connaître la personne est « ne sait pas »
+(dk).
+
+Famille `leader_ratings` · type Numérique · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Plage valide** : 0-100
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_leadertherm_7` (cps) | `approximate` | Un curseur de 0 à 100 pour chaque chef provincial, Web, posée pendant la campagne ; -99 est l’option explicite « Je ne connais pas ce chef(fe) » (livre de codes 7449514, p. 26) et, selon la note sous cps_intelligent, peut aussi inclure un curseur laissé vide (le fichier n’a aucune valeur manquante système) ; il est lu comme « ne sait pas ». | therm_0_100 |  | Sur la même échelle, que pensez-vous des chef(fe)s de partis politiques provinciaux énumérés ci-dessous? \[Gabriel Nadeau-Dubois\] |  | `cps_weight_general` | Offert explicitement |
+| qes2018 | `q33_d` (post) | `approximate` | Une échelle de 0 à 10 multipliée par 10 (affine 10\*x) : le même concept sur une échelle plus grossière ; ne pas connaître la personne (97) est « ne sait pas » ; Web. | therm_0_10 |  | Sur une échelle de 0 à 10, où 0 veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et 10 veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… Manon Massé? |  | `pond` | Offert explicitement |
+| qes2014 | `Q29D` (post) | `comparable` | Même énoncé et même échelle de 0 à 100 que l’ancrage, Web ; ne pas connaître la personne (997) est « ne sait pas ». | therm_0_100 |  | Sur une échelle de ZERO à CENT, où zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un politicien, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP, que pensez-vous de… FRANÇOISE DAVID? |  | `POND` | Offert explicitement |
+| qes2012 | `q68d` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | therm_0_100 |  | Sur la même échelle, que pensez-vous de AMIR KHADIR? |  | `pond` | Offert explicitement |
+| qes2008 | `q42` (post) | `comparable` | Même échelle de 0 à 100 ; téléphone selon les métadonnées du dépôt (à confirmer) ; ne connaître aucun chef (995) ou celui-ci (997) est « ne sait pas ». Le libellé français est celui de l’ancrage ; le questionnaire anglais déposé demande seulement « How do you feel about FRANÇOISE DAVID? » sans définir 0 et 100 (l’anglais de l’ancrage les définit). | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous FRANÇOISE DAVID ? |  |  | Non documenté |
+| qes2007 | `q42` (post) | `comparable` | Même échelle de 0 à 100 ; l’étude combine des entrevues téléphoniques et Web ; ne connaître ni ce chef ni aucun chef (995, 997) est « ne sait pas ». | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous FRANÇOISE DAVID ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `therm_leader_adq` : Évaluation du chef du ADQ (0-100)
+
+À quel point la personne aime la personne à la tête du ADQ, de 0 (n’aime
+vraiment pas du tout) à 100 (aime vraiment beaucoup) ; la personne
+évaluée change par construction et chaque ligne la nomme. Ne pas
+connaître la personne est « ne sait pas » (dk).
+
+Famille `leader_ratings` · type Numérique · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Plage valide** : 0-100
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2008 | `q41` (post) | `comparable` | Même échelle de 0 à 100 ; téléphone selon les métadonnées du dépôt (à confirmer) ; ne connaître aucun chef (995) ou celui-ci (997) est « ne sait pas ». Le libellé français est celui de l’ancrage ; le questionnaire anglais déposé demande seulement « How do you feel about MARIO DUMONT? » sans définir 0 et 100 (l’anglais de l’ancrage les définit). | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous MARIO DUMONT ? |  |  | Non documenté |
+| qes2007 | `q41` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | therm_0_100 |  | Maintenant nous parlons des chefs de partis. En utilisant une échelle de zéro à cent. zéro veut dire que vous N’AIMEZ VRAIMENT PAS DU TOUT un chef, et cent veut dire que vous L’AIMEZ VRAIMENT BEAUCOUP. Aimez-vous MARIO DUMONT ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+### Enjeux
+
+#### `mip_issue` : Enjeu le plus important de l’élection
+
+Quel enjeu, dans la liste fermée de l’étude, était le plus important
+pour la personne à l’élection générale québécoise de l’étude. Les listes
+changent d’une élection à l’autre : un enjeu qu’une étude n’a pas
+proposé y est un zéro structurel (levels_not_offered), pas une absence
+de préoccupation.
+
+Famille `issues` · type Catégorielle · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom               | Étiquette                           |
+|------|-------------------|-------------------------------------|
+| 1    | `economy`         | L’économie                          |
+| 2    | `health`          | La santé                            |
+| 3    | `environment`     | L’environnement                     |
+| 4    | `education`       | L’éducation                         |
+| 5    | `families`        | L’aide aux familles                 |
+| 6    | `poverty`         | La pauvreté                         |
+| 7    | `integrity`       | L’intégrité et la corruption        |
+| 8    | `taxes_finances`  | Les taxes et les finances publiques |
+| 9    | `sovereignty`     | La souveraineté du Québec           |
+| 10   | `secularism`      | La laïcité de l’État (la charte)    |
+| 11   | `immigration`     | L’immigration                       |
+| 12   | `cost_of_living`  | Le coût de la vie                   |
+| 13   | `housing`         | Le logement                         |
+| 14   | `french_language` | La langue française                 |
+| 90   | `other`           | Un autre enjeu                      |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_impissue_matrix` (cps) | `comparable` | La même question (« pour vous personnellement, le plus important ») sur l’élection de l’étude, avec la liste fermée propre à l’étude : les enjeux qu’elle ne proposait pas sont des zéros structurels. Quatorze enjeux, posée pendant la campagne, Web, sans option « je ne sais pas » ; le troisième lien de Québec et la violence par armes à feu sont d’autres enjeux. | mip_closed_list | economy, health, environment, education, poverty, integrity, taxes_finances, sovereignty, immigration, cost_of_living, housing, french_language, other; non offerts : families, secularism | Quel est l’enjeu le plus important, pour vous personnellement, dans cette élection provinciale? |  | `cps_weight_general` | Non offert |
+| qes2018 | `q2` (post) | `comparable` | La même question (« pour vous personnellement, le plus important ») sur l’élection de l’étude, avec la liste fermée propre à l’étude : les enjeux qu’elle ne proposait pas sont des zéros structurels. Dix enjeux et un autre enjeu ; l’intégrité se lit « des politiciens et la corruption ». | mip_closed_list | economy, health, environment, education, families, poverty, integrity, taxes_finances, sovereignty, immigration, other; non offerts : secularism, cost_of_living, housing, french_language | Parmi les enjeux suivants, lequel était, pour vous personnellement, le plus important lors de l’élection provinciale du 1er octobre dernier? |  | `pond` | Offert explicitement |
+| qes2014 | `Q1` (post) | `comparable` | La même question (« pour vous personnellement, le plus important ») sur l’élection de l’étude, avec la liste fermée propre à l’étude : les enjeux qu’elle ne proposait pas sont des zéros structurels. Dix enjeux, dont la charte de la laïcité (la Charte des valeurs du PQ). | mip_closed_list | economy, health, environment, education, families, poverty, integrity, taxes_finances, sovereignty, secularism; non offerts : immigration, cost_of_living, housing, french_language, other | Parmi les enjeux suivants, lequel était, pour vous personnellement, le plus important lors de l’élection provinciale du 7 avril dernier? |  | `POND` | Offert explicitement |
+| qes2012 | `q34bb` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : huit enjeux, sans option « autre enjeu ». | mip_closed_list | economy, health, environment, education, families, poverty, integrity, sovereignty; non offerts : taxes_finances, secularism, immigration, cost_of_living, housing, french_language, other | Parmi les enjeux suivants, lequel était, pour vous personnellement, le plus important lors de l’élection provinciale du 4 septembre dernier? |  | `pond` | Offert explicitement |
+| qes2008 | `q1` (post) | `comparable` | La même question (« pour vous personnellement, le plus important ») sur l’élection de l’étude, avec la liste fermée propre à l’étude : les enjeux qu’elle ne proposait pas sont des zéros structurels. Six enjeux et un autre enjeu, par téléphone. | mip_closed_list | economy, health, environment, education, families, poverty, other; non offerts : integrity, taxes_finances, sovereignty, secularism, immigration, cost_of_living, housing, french_language | Parmi les enjeux suivants, lequel était, pour vous personnellement, le plus important lors de l’élection provinciale du 8 décembre dernier ? |  |  | Non offert |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 ### Sociodémographie
 
@@ -2278,9 +4840,11 @@ Expérimental · ajoutée dans la spécification 0.2.0
 #### `age_group3` : Groupe d’âge (3 tranches)
 
 Groupe d’âge de la personne au moment de l’entrevue, en trois tranches :
-18-34, 35-54, 55 et plus. Construit seulement à partir d’une question
-offrant ces tranches ou des tranches qui s’y regroupent exactement,
-jamais par estimation.
+18-34, 35-54, 55 et plus. Construit à partir d’une question offrant ces
+tranches ou des tranches qui s’y regroupent exactement ; là où l’étude
+n’a pas une telle question, dérivé de l’âge (exact) ou de l’année de
+naissance (niveau approximate : un âge à la limite d’une tranche peut
+être décalé d’un an).
 
 Famille `age_bands` · type Ordinale · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 0.2.0
@@ -2410,6 +4974,80 @@ Expérimental · ajoutée dans la spécification 0.2.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `citizen` : Citoyenneté canadienne
 
@@ -2488,9 +5126,11 @@ Expérimental · ajoutée dans la spécification 0.2.0
 #### `age_group6` : Groupe d’âge (6 tranches)
 
 Groupe d’âge de la personne à l’entrevue, en six tranches : 18-24,
-25-34, 35-44, 45-54, 55-64, 65 et plus. Construit seulement à partir
-d’une question offrant ces tranches ou des tranches qui s’y regroupent
-exactement, jamais d’une supposition.
+25-34, 35-44, 45-54, 55-64, 65 et plus. Construit à partir d’une
+question offrant ces tranches ou des tranches qui s’y regroupent
+exactement ; là où l’étude n’a pas une telle question, dérivé de l’âge
+(exact) ou de l’année de naissance (niveau approximate : un âge à la
+limite d’une tranche peut être décalé d’un an).
 
 Famille `age_bands` · type Ordinale · moment Tout moment · statut
 Expérimental · ajoutée dans la spécification 1.0.0
@@ -2633,6 +5273,80 @@ Expérimental · ajoutée dans la spécification 1.0.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `gender` : Genre
 
@@ -3033,6 +5747,7 @@ Expérimental · ajoutée dans la spécification 1.0.0
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `cps_lang_1` + `cps_lang_2` + `cps_lang_3` (cps) | `approximate` | Une question à choix multiples (les langues apprises en premier et encore comprises) : une personne qui a coché une seule option la reçoit ; deux ou plus (146) sont not_mappable, comme une seconde langue maternelle ailleurs ; Web, posée pendant la campagne. | lang_first_multiselect | french, english, other | Quelle est la/les première(s) langue(s) que vous avez apprise(s) et que vous comprenez encore? (Sélectionnez toutes celles qui s’ appliquent) |  | `cps_weight_general` | Non offert |
 | qes2018 | `qlangue` (post) | `comparable` | Même énoncé sur le Web, qui demande la langue principale apprise en premier ; le fichier n’a pas d’étiquettes de valeur. | lang_first | french, english, other | Quelle est la langue principale que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours? |  | `pond` | Offert explicitement |
 | qes2018_panel | `s1` (pre) | `comparable` | Énoncé plus court (première langue apprise et encore comprise, sans « à la maison dans votre enfance »), par téléphone et sur le Web ; une seule langue. | lang_first | french, english, other | Quelle est la première langue que vous avez apprise et que vous comprenez toujours? |  | `weight` | Non documenté |
 | qes2014 | `QLANG` (post) | `comparable` | Même énoncé sur le Web, avec trois options pour deux premières langues, qui sont ici des valeurs manquantes (not_mappable). | lang_first_multi | french, english, other | Quelle est la langue que vous avez apprise en premier lieu à la maison dans votre enfance et que vous comprenez toujours? |  | `POND` | Offert explicitement |
@@ -3199,6 +5914,80 @@ Expérimental · ajoutée dans la spécification 1.0.0
   Aucune correspondance de valeurs, aucun filtre, ensemble de niveaux,
   marge attendue ni empreinte de colonne n’a changé : MINEURE, des
   lignes sont seulement ajoutées au résultat par défaut.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
 
 #### `born_canada` : Né(e) au Canada
 
@@ -3637,3 +6426,1050 @@ ajoutée dans la spécification 1.0.0
   valeurs, aucun filtre, niveau, ensemble de niveaux, aucune marge
   enregistrée ni empreinte de colonne n’a changé : MINEURE, des clés
   sont seulement ajoutées à expected/.
+
+#### `region_cma3` : Région (RMR de Montréal et de Québec)
+
+Où vit la personne : la région métropolitaine de recensement (RMR) de
+Montréal, celle de Québec ou le reste du Québec, d’après la région que
+l’étude a enregistrée pour l’échantillonnage, les quotas ou la
+pondération (pas une question en soi).
+
+Famille `region` · type Catégorielle · moment Invariant · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom          | Étiquette       |
+|------|--------------|-----------------|
+| 1    | `mtl_cma`    | RMR de Montréal |
+| 2    | `quebec_cma` | RMR de Québec   |
+| 3    | `rest`       | Reste du Québec |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `regio` (post) | `identical` | La région d’échantillonnage de l’étude : les trois mêmes territoires que l’ancrage. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425914, regio |  | `pond` | Non offert |
+| qes2018_panel | `region` (pre) | `approximate` | La région recodée par le producteur (île de Montréal, sa « Couronne », la « Région de Québec », reste du Québec) : la couronne et la région de Québec ne sont pas documentées comme les régions métropolitaines de recensement. | region_recoded | mtl_cma, quebec_cma, rest | document 333052, region |  | `weight` | Non offert |
+| qes2014 | `REGIO` (post) | `identical` | La région d’échantillonnage de l’étude : les trois mêmes territoires que l’ancrage. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425916, REGIO |  | `POND` | Non offert |
+| qes2012 | `regio` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : la variable de région dérivée par le producteur, REGIO (RMR de Montréal, RMR de Québec, autres régions ; étiquette de variable vide), qui correspond à la RÉGION parmi les variables de pondération de POND (rapport technique, fichier 196368 : SEXE, ÂGE, RÉGION, LANGUE). Pas une question : Q110 (17 régions administratives) est dans le fichier sous q0qc, mais REGIO découpe les régions à cheval sur les RMR ; ce n’est donc pas un simple recodage de q0qc. Q111 (code postal) n’est pas dans le fichier. | region_cma_sample | mtl_cma, quebec_cma, rest | document 425917, REGIO; document 196368, RÉGION |  | `pond` | Non offert |
+| qes2012_panel | `reg` (pre) | `comparable` | La région d’échantillonnage du panel en quatre territoires (île de Montréal, reste de la RMR de Montréal, RMR de Québec, reste du Québec), les deux premiers réunis exactement. | region_cma_sample | mtl_cma, quebec_cma, rest | document 361043, reg |  | `pondam1` (à réviser, non appliquée) | Non offert |
+| qes_crop_2007_2010 | `REG` (chaque sondage) | `comparable` | La région d’échantillonnage de CROP en quatre territoires (île de Montréal, reste de la RMR de Montréal, RMR de Québec, reste du Québec), les deux premiers réunis exactement. | region_cma_sample | mtl_cma, quebec_cma, rest | document 329990, REG |  | `XPOND` (à réviser, non appliquée) | Non offert |
+| qes2008 | `regio` (post) | `comparable` | Calculée dans le questionnaire (CALCM/CALCQ/CALCA -\> REGIO) à partir des questions de filtrage sur la région administrative (Q0QC) et la ville (Q0QCA-Q0QCE), et utilisée pour les quotas : les trois mêmes territoires que l’ancrage, les parties RMR étant définies par les listes de villes du questionnaire. Niveau comparable plutôt qu’identical : le dépôt indique un mode téléphonique (voir waves.csv ; non confirmé), contrairement à l’ancrage Web. | region_cma_sample | mtl_cma, quebec_cma, rest | Dans quelle région du Québec demeurez-vous? \[+ Dans quelle ville demeurez-vous?\] |  |  | Non offert |
+| qes2007 | `nomx` (post) | `comparable` | Les 21 sous-groupes d’échantillonnage (régions administratives, celles qui bordent les deux régions métropolitaines étant divisées en leur partie RMR et le reste), réunis en trois territoires : RMR de Montréal = Montréal, Laval et les parties RMR de Lanaudière, des Laurentides et de la Montérégie ; RMR de Québec = Québec RMR et la partie RMR de Chaudière-Appalaches. | region_admin_cma | mtl_cma, quebec_cma, rest | document 425921, nomx |  | `pond` | Non offert |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `lang_home` : Langue parlée le plus souvent à la maison
+
+La langue que la personne parle le plus souvent à la maison : français,
+anglais ou une autre langue.
+
+Famille `language` · type Catégorielle · moment Invariant · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom       | Étiquette |
+|------|-----------|-----------|
+| 1    | `french`  | Français  |
+| 2    | `english` | Anglais   |
+| 3    | `other`   | Autre     |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2022 | `pes_langhome_1` + `pes_langhome_2` + `pes_langhome_3` + `pes_langhome_4` + `pes_langhome_5` + `pes_langhome_6` + `pes_langhome_7` + `pes_langhome_8` + `pes_langhome_9` + `pes_langhome_10` + `pes_langhome_11` + `pes_langhome_12` + `pes_langhome_13` + `pes_langhome_14` + `pes_langhome_15` + `pes_langhome_16` + `pes_langhome_17` (pes) | `approximate` | Une question à choix multiples (les langues parlées normalement à la maison, 17 options), et non celle parlée le plus souvent : une personne qui a coché des options d’un seul niveau le reçoit ; l’anglais et le français, ou l’un d’eux avec une autre langue (171 en tout), sont not_mappable ; Web, posée après l’élection. | lang_home_multiselect | french, english, other | Quelle est la langue (ou les langues) que vous parlez normalement à la maison? |  | `pes_weight_general` | Non offert |
+| qes2018 | `q70` (post) | `comparable` | Même question et même liste que l’ancrage, Web, avec « je ne sais pas » et refus affichés. | lang_home_list | french, english, other | Quelle langue parlez-vous le plus souvent à la maison? |  | `pond` | Offert explicitement |
+| qes2014 | `Q66` (post) | `comparable` | Même question et même liste que l’ancrage, Web, avec « je ne sais pas » et refus affichés. | lang_home_list | french, english, other | Quelle langue parlez-vous le plus souvent à la maison? |  | `POND` | Offert explicitement |
+| qes2012 | `q107` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | lang_home_list | french, english, other | Quelle langue parlez-vous le plus souvent à la maison? |  | `pond` | Non documenté |
+| qes_crop_2007_2010 | `lusag` (chaque sondage) | `comparable` | La langue parlée le plus souvent dans le foyer, trois options, par téléphone, dans chaque sondage. | lang_home_3 | french, english, other | Quelle langue parle-t-on le plus souvent dans votre foyer? |  | `XPOND` (à réviser, non appliquée) | Non documenté |
+| qes2008 | `q80` (post) | `comparable` | Même question que l’ancrage ; la liste est presque la même (sans l’inuktitut, donc le cri au code 13, et sans code « je ne sais pas ») ; téléphone selon les métadonnées du dépôt, l’ancrage est Web. | lang_home_list | french, english, other | Quelle langue parlez-vous LE PLUS SOUVENT à la maison ? |  |  | Non offert |
+| qes2007 | `q80` (post) | `comparable` | Même question et même liste que l’ancrage ; l’étude combine des entrevues téléphoniques et Web. | lang_home_list | french, english, other | Quelle langue parlez-vous LE PLUS SOUVENT à la maison ? |  | `pond` | Non documenté |
+| qes2007_panel | `lusage` (toute vague) | `comparable` | La langue parlée le plus souvent dans le foyer, et non celle de la personne elle-même, trois options, par téléphone ; une seule langue. | lang_home_3 | french, english, other | Quelle langue parle-t-on le plus souvent dans votre foyer? |  |  | Spontané seulement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `relig_attend` : Assistance aux services religieux
+
+À quelle fréquence la personne assiste aux services de son lieu de
+culte, sans compter les mariages et les funérailles, de chaque semaine à
+presque jamais ou jamais. Là où l’étude n’a interrogé que les personnes
+qui appartiennent à une religion, les autres sont presque jamais ou
+jamais (niveau approximate).
+
+Famille `faith` · type Ordinale · moment Tout moment · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom           | Étiquette                  |
+|------|---------------|----------------------------|
+| 1    | `weekly`      | Chaque semaine             |
+| 2    | `twice_month` | Deux fois par mois         |
+| 3    | `monthly`     | Une fois par mois          |
+| 4    | `yearly`      | Une ou deux fois par année |
+| 5    | `never`       | Presque jamais ou jamais   |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `q68` (post) | `approximate` | Posée seulement aux personnes qui appartiennent à une religion (la question filtre) : les autres reçoivent presque jamais ou jamais, et celles qui ont refusé le filtre sont inapplicable. L’ancrage interroge tout le monde : les proportions ne sont pas directement comparables. | attend_5_filtered | weekly, twice_month, monthly, yearly, never | Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte? | q66: 2 = never, 9 = inapplicable | `pond` | Offert explicitement |
+| qes2014 | `Q64` (post) | `approximate` | Posée seulement aux personnes qui appartiennent à une religion (la question filtre) : les autres reçoivent presque jamais ou jamais, et celles qui ont refusé le filtre sont inapplicable. L’ancrage interroge tout le monde : les proportions ne sont pas directement comparables. | attend_5_filtered | weekly, twice_month, monthly, yearly, never | Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte? | Q62: 2 = never, 9 = inapplicable | `POND` | Offert explicitement |
+| qes2012 | `q104` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible : posée à toutes les personnes. | attend_5 | weekly, twice_month, monthly, yearly, never | Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte? |  | `pond` | Offert explicitement |
+| qes2008 | `q81` (post) | `comparable` | Même question et mêmes options, posée à toutes les personnes, par téléphone. | attend_5 | weekly, twice_month, monthly, yearly, never | Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte ? Est-ce… |  |  | Non documenté |
+| qes2007 | `q81` (post) | `comparable` | Même question et mêmes options, posée à toutes les personnes ; l’étude combine des entrevues téléphoniques et Web. | attend_5 | weekly, twice_month, monthly, yearly, never | Sans compter les mariages et les funérailles, combien de fois assistez-vous aux messes à votre lieu de culte ? Est-ce à chaque semaine, deux fois par mois, une fois par mois, une ou deux fois par année ou presque jamais ? |  | `pond` | Non documenté |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+#### `birthplace3` : Lieu de naissance (Québec, reste du Canada, étranger)
+
+Où la personne est née : au Québec, ailleurs au Canada ou hors du
+Canada. Là où les deux sont harmonisées, born_canada vaut oui exactement
+là où celle-ci vaut quebec ou other_canada.
+
+Famille `birthplace` · type Catégorielle · moment Invariant · statut
+Expérimental · ajoutée dans la spécification 4.3.0
+
+**Niveaux**
+
+| Code | Nom            | Étiquette          |
+|------|----------------|--------------------|
+| 1    | `quebec`       | Québec             |
+| 2    | `other_canada` | Ailleurs au Canada |
+| 3    | `abroad`       | Hors du Canada     |
+
+**Couverture**
+
+| Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
+|----|----|----|----|----|----|----|----|----|----|
+| qes2018 | `q69` (post) | `comparable` | Même question et mêmes options, Web, avec « je ne sais pas » affiché. | birthplace_3 | quebec, other_canada, abroad | Où êtes-vous né(e)? |  | `pond` | Offert explicitement |
+| qes2014 | `Q65` (post) | `comparable` | Même question et mêmes options, Web, avec « je ne sais pas » affiché. | birthplace_3 | quebec, other_canada, abroad | Où êtes-vous né(e)? |  | `POND` | Offert explicitement |
+| qes2012 | `q105` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | birthplace_3 | quebec, other_canada, abroad | Où êtes-vous né(e)? |  | `pond` | Offert explicitement |
+
+**Historique**
+
+- 0.1.0 (2026-09-27) : Première spécification : 11 cibles de base avec
+  des lignes vérifiées sur les fichiers originaux, en révision, pour
+  qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel et
+  qes2018_panel, leurs ensembles de niveaux, vagues et pondérations.
+- 0.1.1 (2026-09-27) : Contrôles hors ligne : gates.csv, les effectifs
+  croisés du code de filtre et du code source parmi les membres de la
+  vague pour les 28 lignes projetables des études dont les métadonnées
+  sont fournies, et expected/marginals.csv, les marges non pondérées
+  projetées des 28 lignes projetables des études dont les métadonnées
+  sont fournies. Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 0.1.2 (2026-09-27) : Empreintes des colonnes du moteur :
+  expected/hashes.csv, la somme md5 de chaque colonne harmonisée (étude,
+  cible) que qes_harmonize() produit sur les fichiers retenus, pour les
+  35 lignes appariées, vérifiée sur les fichiers originaux par les tests
+  en direct (V-L1). Aucune ligne, aucun code ni aucun niveau de
+  comparabilité n’a changé.
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+## Variables regroupées
+
+Une variable regroupée est une seule colonne pour toutes les études qui
+regroupe plusieurs cibles, ses membres : `vote_choice` regroupe le vote
+déclaré et les intentions de vote, `sov_support` les libellés
+référendaires, `pol_interest` les échelles d’intérêt. Les membres
+restent des cibles, chacune un seul stimulus ; la colonne regroupée
+indique, ligne par ligne, de quel membre vient sa valeur
+(`<variable>__type`), le niveau de comparabilité de ce membre
+(`<variable>__grade`, jamais relevé ; une transformation avec perte le
+plafonne à approximate) et sa question (`<variable>__item`,
+`étude:vague:variables sources`).
+`qes_harmonize(targets = "vote_choice")` renvoie la colonne regroupée et
+ses compagnes ; `types = list(vote_choice = "recall")` ne garde que
+certains membres.
+
+Comment une ligne reçoit sa valeur : les membres des types demandés sont
+essayés par ordre de priorité. Le premier membre dont la cellule a une
+valeur, ou une valeur manquante qui est une réponse (ne sait pas, refus,
+n’a pas voté, …), détermine la ligne. Un membre qui n’a pas interrogé la
+personne (absente de la vague, question non posée, ligne non approuvée,
+sous le niveau demandé, écartée par un filtre, valeur manquante système,
+code à cheval sur plusieurs niveaux) passe au suivant. Quand tous les
+membres passent, la ligne est `NA` avec le motif du premier membre
+utilisable qui a une ligne dans l’étude et la vague, sinon du premier
+membre qui a une ligne. En disposition par répondant (une ligne par
+personne), les valeurs d’une étude viennent d’une seule vague : celle du
+premier membre qu’elle applique, pour qu’une seule colonne de
+pondération leur convienne ; la disposition longue (`layout = "long"`,
+une ligne par personne et par vague) garde toutes les vagues.
+
+### `vote_choice` : Choix de vote provincial (regroupé)
+
+Le parti du vote de la personne à l’élection générale québécoise de
+l’étude, une seule variable pour toutes les études : le vote déclaré
+(rappel), demandé après l’élection, là où l’étude l’a demandé ; sinon
+l’intention de vote avec relance, vers le parti vers lequel elles
+penchent, des personnes qui n’ont nommé aucun parti (les indécis et,
+dans certaines études, celles qui ne voteraient pas, pour aucun parti ou
+refusaient), si bien que no_party est plus bas sous intention_push que
+sous intention ; sinon l’intention de vote à la première question. Les
+libellés diffèrent d’une étude à l’autre et vote_choice\_\_type dit de
+quelle question vient chaque valeur. Ne voterait pas, aucun ou
+annulerait (niveau no_party) est une réponse seulement dans les
+intentions ; dans un vote déclaré, les abstentionnistes et les bulletins
+annulés sont des valeurs manquantes avec un motif.
+
+type Catégorielle · statut Expérimental · ajoutée dans la spécification
+4.3.0
+
+**Niveaux**
+
+| Code | Nom        | Étiquette                            |
+|------|------------|--------------------------------------|
+| 1    | `PLQ`      | PLQ                                  |
+| 2    | `PQ`       | PQ                                   |
+| 3    | `CAQ`      | CAQ                                  |
+| 4    | `QS`       | QS                                   |
+| 5    | `PVQ`      | PVQ                                  |
+| 6    | `PCQ`      | PCQ                                  |
+| 7    | `ON`       | ON                                   |
+| 8    | `ADQ`      | ADQ                                  |
+| 90   | `other`    | Autre parti                          |
+| 95   | `no_party` | Ne voterait pas / aucun / annulerait |
+
+**Membres**
+
+| Priorité | Type | Membre (cible) | Par défaut | Transformation | Plafond |
+|----|----|----|----|----|----|
+| 1 | `recall`: Vote déclaré (après l’élection). Le geste sur lequel porte l’étude, celui que mesurent les résultats officiels : utilisé en premier. | [`vote_prov_recall`](#target-vote_prov_recall) | oui | `identity` |  |
+| 2 | `intention_push`: Intention de vote, indécis relancés. La première question plus une relance posée à qui n’y a nommé aucun parti : un parti nommé à la première question n’est jamais changé. Les personnes relancées diffèrent selon l’étude : les indécis partout, et aussi celles qui ne voteraient pas, pour aucun parti ou annuleraient (qes1998, qes2007_panel, qes2012_panel, les sondages CROP) ou qui refusaient (qes1998, qes2012_panel). La relance peut changer une telle réponse en un parti (moins ferme) ou en une autre réponse sans parti : dans qes2012_panel, sur 172 « je ne sais pas », 77 nomment un parti, 1 ne voterait pas et 1 refuse, sur 30 refus, 6 nomment un parti, 2 ne voteraient pas et 4 ne savent pas, et sur 14 « ne voterait pas », 3 nomment un parti et 2 ne savent pas ; dans qes2007_panel, sur 81 « ne voterait pas, aucun ou annulerait », 25 nomment un parti et 14 ne savent pas ou refusent ; dans qes1998, 5 réponses « ne voterait pas » et 20 refus nomment un parti, et 4 et 6 deviennent « je ne sais pas ». no_party est donc plus bas sous intention_push que sous intention. Dans qes2022, elle ajoute aussi l’intention conditionnelle des personnes peu susceptibles de voter, à qui la première question n’a pas été posée (cps_votechoice2, « Si vous décidez de voter, pour quel parti prévoyez-vous voter? », puis cps_votelean si elles ne savaient pas : 62 personnes, dont 43 nomment un parti). | [`vote_prov_intent_push`](#target-vote_prov_intent_push) | oui | `identity` |  |
+| 3 | `intention`: Intention de vote (première question) | [`vote_prov_intent`](#target-vote_prov_intent) | oui | `identity` |  |
+
+**Couverture**
+
+| Étude | `recall` | `intention_push` | `intention` | Disposition par répondant |
+|----|----|----|----|----|
+| `qes2022` | Comparable (pes) | Approximatif (cps) | Approximatif (cps) | `recall` |
+| `qes2018` | Comparable (post) | — | — | `recall` |
+| `qes2018_panel` | Comparable (post) | Approximatif (pre) | Approximatif (pre) | `recall` |
+| `qes2014` | Comparable (post) | — | — | `recall` |
+| `qes2012` | Identique (post) | — | — | `recall` |
+| `qes2012_panel` | Approximatif (post) | Approximatif (pre) | Approximatif (pre) | `recall` |
+| `qes_crop_2007_2010` | — | Comparable (chaque sondage) | Comparable (chaque sondage) | `intention_push` |
+| `qes2008` | Comparable (post) | — | — | `recall` |
+| `qes2007` | Comparable (post) | — | — | `recall` |
+| `qes2007_panel` | Approximatif (post) | Identique (pre) | Identique (pre) | `recall` |
+| `qes1998` | Comparable (post) | Approximatif (pre) | — | `recall` |
+
+Chaque cellule donne le niveau du membre dans l’étude (plafonné) et la
+vague qui a posé la question ; un tiret signifie que l’étude n’a pas de
+question pour le membre. La dernière colonne donne le membre dont la
+disposition par répondant tire les valeurs de l’étude, parmi les membres
+par défaut (la disposition longue utilise toutes les vagues).
+
+**Historique**
+
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+### `sov_support` : Appui à la souveraineté (regroupé)
+
+Comment la personne voterait (oui, non, n’irait pas voter) sur la
+souveraineté du Québec, une seule variable pour toutes les études qui
+l’ont demandé, à travers les libellés référendaires : un pays
+indépendant ; un pays souverain ; la question de 1995 (la souveraineté
+assortie d’une offre de partenariat), avec relance des indécis là où
+l’étude les a relancés ; et, regroupé en oui ou non, être favorable ou
+opposé à l’indépendance du Québec. L’appui dépend du libellé :
+sov_support\_\_type dit de quel libellé vient chaque valeur.
+
+type Catégorielle · statut Expérimental · ajoutée dans la spécification
+4.3.0
+
+**Niveaux**
+
+| Code | Nom              | Étiquette                      |
+|------|------------------|--------------------------------|
+| 1    | `yes`            | Oui                            |
+| 2    | `no`             | Non                            |
+| 95   | `would_not_vote` | N’irait pas voter / annulerait |
+
+**Membres**
+
+| Priorité | Type | Membre (cible) | Par défaut | Transformation | Plafond |
+|----|----|----|----|----|----|
+| 1 | `independence`: Référendum sur un pays indépendant | [`sov_indep`](#target-sov_indep) | oui | `identity` |  |
+| 2 | `sovereign_country`: Référendum sur un pays souverain | [`sov_sovereign_country`](#target-sov_sovereign_country) | oui | `identity` |  |
+| 3 | `partnership_1995_push`: Question de 1995, indécis relancés | [`sov_partnership_1995_push`](#target-sov_partnership_1995_push) | oui | `identity` |  |
+| 4 | `partnership_1995`: Question de 1995 (souveraineté-partenariat) | [`sov_partnership_1995`](#target-sov_partnership_1995) | oui | `identity` |  |
+| 5 | `favour`: Favorable ou opposé à l’indépendance (regroupé en oui ou non). Quatre points regroupés en deux : au mieux approximate. | [`sov_favour`](#target-sov_favour) | oui | `recode:very_favourable=yes,somewhat_favourable=yes,somewhat_opposed=no,very_opposed=no` | `approximate` |
+
+**Couverture**
+
+| Étude | `independence` | `sovereign_country` | `partnership_1995_push` | `partnership_1995` | `favour` | Disposition par répondant |
+|----|----|----|----|----|----|----|
+| `qes2022` | Comparable (cps) | — | — | — | — | `independence` |
+| `qes2018` | Comparable (post) | — | — | — | — | `independence` |
+| `qes2018_panel` | — | — | — | — | Approximatif (post) | `favour` |
+| `qes2014` | Identique (post) | — | — | — | — | `independence` |
+| `qes2012` | Identique (post) | — | — | — | — | `independence` |
+| `qes2012_panel` | — | Identique (pre) | — | — | — | `sovereign_country` |
+| `qes_crop_2007_2010` | — | — | — | — | — | — |
+| `qes2008` | — | — | Comparable (post) | Comparable (post) | — | `partnership_1995_push` |
+| `qes2007` | — | — | Identique (post) | Identique (post) | — | `partnership_1995_push` |
+| `qes2007_panel` | — | — | Comparable (pre) | Comparable (pre) | — | `partnership_1995_push` |
+| `qes1998` | — | — | Comparable (pre) | Comparable (pre) | — | `partnership_1995_push` |
+
+Chaque cellule donne le niveau du membre dans l’étude (plafonné) et la
+vague qui a posé la question ; un tiret signifie que l’étude n’a pas de
+question pour le membre. La dernière colonne donne le membre dont la
+disposition par répondant tire les valeurs de l’étude, parmi les membres
+par défaut (la disposition longue utilise toutes les vagues).
+
+**Historique**
+
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+### `pol_interest` : Intérêt pour la politique (regroupé, 0-1)
+
+Intérêt de la personne pour la politique, sur une échelle de 0 (pas du
+tout) à 1 (très), une seule variable pour toutes les études qui l’ont
+demandé : les questions à quatre points notées 1, 0,7, 0,3 et 0 (très,
+plutôt, pas très et pas du tout intéressé : les notes de la colonne
+political_interest de l’ancien fichier, divisées par 10), les questions
+de 0 à 10 divisées par 10. L’intérêt pour la politique en général passe
+avant l’intérêt pour la campagne ou l’élection. pol_interest\_\_type dit
+de quelle question vient chaque valeur ; une question à quatre points
+notée a au mieux le niveau approximate, ses notes étant une hypothèse.
+
+type Numérique · statut Expérimental · ajoutée dans la spécification
+4.3.0
+
+**Plage valide** : 0-1
+
+**Membres**
+
+| Priorité | Type | Membre (cible) | Par défaut | Transformation | Plafond |
+|----|----|----|----|----|----|
+| 1 | `general_4pt`: Intérêt pour la politique, quatre points (notés). Notée 1, 0,7, 0,3 et 0, comme la colonne political_interest de l’ancien fichier (10, 7, 3, 0) divisée par 10. | [`interest_4pt`](#target-interest_4pt) | oui | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
+| 2 | `general_0_10`: Intérêt pour la politique, 0-10 | [`interest_0_10`](#target-interest_0_10) | oui | `affine:0.1*x` |  |
+| 3 | `campaign_4pt`: Intérêt pour la campagne, quatre points (notés) | [`interest_campaign_4pt`](#target-interest_campaign_4pt) | oui | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
+| 4 | `election_0_10`: Intérêt pour l’élection, 0-10. Intérêt pour une élection, pas pour la politique : au mieux approximate. | [`interest_election_0_10`](#target-interest_election_0_10) | oui | `affine:0.1*x` | `approximate` |
+
+**Couverture**
+
+| Étude | `general_4pt` | `general_0_10` | `campaign_4pt` | `election_0_10` | Disposition par répondant |
+|----|----|----|----|----|----|
+| `qes2022` | — | Approximatif (cps) | — | — | `general_0_10` |
+| `qes2018` | Approximatif (post) | — | — | — | `general_4pt` |
+| `qes2018_panel` | — | — | — | — | — |
+| `qes2014` | Approximatif (post) | — | — | — | `general_4pt` |
+| `qes2012` | Approximatif (post) | — | — | — | `general_4pt` |
+| `qes2012_panel` | — | — | — | — | — |
+| `qes_crop_2007_2010` | — | — | — | — | — |
+| `qes2008` | — | — | — | Approximatif (post) | `election_0_10` |
+| `qes2007` | — | Identique (post) | — | Approximatif (post) | `general_0_10` |
+| `qes2007_panel` | — | — | Approximatif (pre) | — | `campaign_4pt` |
+| `qes1998` | — | — | — | — | — |
+
+Chaque cellule donne le niveau du membre dans l’étude (plafonné) et la
+vague qui a posé la question ; un tiret signifie que l’étude n’a pas de
+question pour le membre. La dernière colonne donne le membre dont la
+disposition par répondant tire les valeurs de l’étude, parmi les membres
+par défaut (la disposition longue utilise toutes les vagues).
+
+**Historique**
+
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.
+
+### `turnout` : Participation à l’élection provinciale (regroupée)
+
+Si la personne a voté à l’élection générale québécoise de l’étude (oui,
+non) : la participation déclarée, demandée après l’élection. Avec types
+= list(turnout = c(“recall”, “intention”)), une étude qui n’a pas
+demandé la participation déclarée donne à la place la probabilité de
+voter demandée avant l’élection, regroupée en oui (certain ou probable
+de voter, a déjà voté) ou non (peu probable, certain de ne pas voter),
+au mieux au niveau approximate : une intention n’est pas une
+participation, elle n’est donc pas utilisée par défaut.
+
+type Catégorielle · statut Expérimental · ajoutée dans la spécification
+4.3.0
+
+**Niveaux**
+
+| Code | Nom   | Étiquette |
+|------|-------|-----------|
+| 1    | `yes` | Oui       |
+| 2    | `no`  | Non       |
+
+**Membres**
+
+| Priorité | Type | Membre (cible) | Par défaut | Transformation | Plafond |
+|----|----|----|----|----|----|
+| 1 | `recall`: Participation déclarée (après l’élection) | [`turnout_prov_recall`](#target-turnout_prov_recall) | oui | `identity` |  |
+| 2 | `intention`: Probabilité de voter (avant l’élection, regroupée). Non utilisée par défaut : une intention n’est pas une participation (design.md, section 5.7). | [`turnout_prov_likely`](#target-turnout_prov_likely) | non | `recode:certain=yes,likely=yes,already_voted=yes,unlikely=no,certain_not=no` | `approximate` |
+
+**Couverture**
+
+| Étude | `recall` | `intention` | Disposition par répondant |
+|----|----|----|----|
+| `qes2022` | Approximatif (pes) | Approximatif (cps) | `recall` |
+| `qes2018` | Approximatif (post) | — | `recall` |
+| `qes2018_panel` | Approximatif (post) | — | `recall` |
+| `qes2014` | Comparable (post) | — | `recall` |
+| `qes2012` | Identique (post) | — | `recall` |
+| `qes2012_panel` | Comparable (post) | — | `recall` |
+| `qes_crop_2007_2010` | — | — | — |
+| `qes2008` | Comparable (post) | — | `recall` |
+| `qes2007` | Comparable (post) | — | `recall` |
+| `qes2007_panel` | Comparable (post) | — | `recall` |
+| `qes1998` | Comparable (post) | — | `recall` |
+
+Chaque cellule donne le niveau du membre dans l’étude (plafonné) et la
+vague qui a posé la question ; un tiret signifie que l’étude n’a pas de
+question pour le membre. La dernière colonne donne le membre dont la
+disposition par répondant tire les valeurs de l’étude, parmi les membres
+par défaut (la disposition longue utilise toutes les vagues).
+
+**Historique**
+
+- 4.3.0 (2026-09-29) : Variables regroupées et 20 nouvelles cibles
+  (schéma 3). Deux nouvelles tables, pooled.csv et pooled_members.csv,
+  déclarent quatre variables regroupées : une seule colonne de sortie
+  qui réunit plusieurs cibles selon un ordre de priorité et indique,
+  ligne par ligne, de quel membre vient chaque valeur (\_\_type), son
+  niveau de comparabilité (\_\_grade, plafonné à approximate pour une
+  transformation avec perte, jamais relevé) et sa question (\_\_item).
+  vote_choice réunit le vote déclaré, l’intention de vote avec relance
+  et l’intention de vote (toutes les études) ; sov_support les libellés
+  référendaires (pays indépendant, pays souverain, la question de 1995
+  avec et sans relance, et l’appui regroupé en oui ou non) ;
+  pol_interest les échelles d’intérêt ramenées de 0 à 1 (questions à
+  quatre points notées 1, 0,7, 0,3 et 0 ; questions de 0 à 10 divisées
+  par 10) ; turnout la participation déclarée (la probabilité de voter
+  seulement sur demande). Les membres restent des cibles ; le validateur
+  vérifie les tables regroupées (V-F1 à V-F7) et expected/hashes.csv
+  reçoit les colonnes regroupées (V-F9, vague \*). Nouvelle règle de
+  correspondance coalesce (une question, puis sa relance ou l’autre
+  moitié d’un échantillon divisé, chacune avec sa table) et une fonction
+  enregistrée fn:multiselect (une question à choix multiples). Une étape
+  de dérivation : age_group3 et age_group6 sont dérivés de l’âge ou de
+  l’année de naissance là où une étude n’a pas de question par tranches
+  (derive_rule age_band dans targets.csv), si bien que toutes les études
+  ont un groupe d’âge. 20 cibles : satis_demo_qc, gov_satisfaction,
+  econ_retro_qc, attach_qc, attach_ca, identity_qc_ca,
+  pid_prov_strength, vote_prov_prev, vote_fed_recall, mip_issue,
+  therm_leader_plq, therm_leader_pq, therm_leader_caq, therm_leader_qs,
+  therm_leader_adq, region_cma3, lang_home, relig_attend, birthplace3 et
+  sov_partnership_1995_push, avec 10 ensembles de niveaux (satis4,
+  econ3, attach4, identity5, strength3, region3, attend5, birthplace3,
+  party_ca, issue_qc). 104 lignes de correspondance, vérifiées sur les
+  fichiers retenus par les contrôles de données et par les effectifs de
+  codes et de filtres du générateur, puis par une double révision
+  automatisée sur les fichiers et documents originaux (codes et données,
+  libellés et comparabilité, arbitrée là où les réviseurs divergeaient ;
+  pas une révision humaine) du 2026-09-29 : 101 sont stables (45 d’entre
+  elles corrigées ou complétées, surtout dans le texte : libellés
+  anglais et citations de qes2008 et qes2014, motifs de niveau,
+  dk_offered, effectifs des preuves ; les évaluations des chefs de
+  qes2022 lisent -99 comme dk, l’option « Je ne connais pas ce chef(fe)
+  » du livre de codes, et non no_answer) et 3 restent en révision pour
+  le propriétaire (pid_prov_strength de qes2022, cotée approximative
+  parce que sa version française porte sur la proximité ; vote_prov_prev
+  de qes2008 et qes2018, dont les personnes mineures à cette élection
+  ont été interrogées), dont l’intention de vote avec relance de
+  qes2022, la question de 1995 avec relance de qes2007, qes2008,
+  qes2007_panel et qes1998, et trois ajouts : pid_fed de qes2012,
+  lang_mother et lang_home de qes2022. Les fonctions de l’ancien fichier
+  ne lisent jamais une ligne que personne n’a révisée, ni une cellule
+  dérivée (V-S19 signale les lignes qu’une ancienne colonne lirait une
+  fois approuvées) ; les deux lignes approuvées qu’une ancienne colonne
+  lirait sont gelées par des lignes de legacy.csv de la nouvelle cause
+  legacy_frozen (federal_pid et fed_pid de qes2012, language de qes2022
+  : le moteur de rendu lit leurs cibles comme si l’étude n’avait pas de
+  ligne, de sorte qu’elles sont NA comme en 0.7.1, motif no_source ;
+  seules la cause et l’explication changent dans legacy_na_columns), si
+  bien que les valeurs de get_qes_master() et get_decon() ne changent
+  pas. Moteur : une ligne regroupée que tous les membres passent prend
+  le motif du premier membre utilisable qui a une ligne dans la vague,
+  sinon du premier membre qui en a une. Texte de la révision des
+  variables regroupées : la relance de vote_prov_intent_push reprend les
+  personnes qui n’ont nommé aucun parti (dans certaines études aussi «
+  ne voterait pas » et refus), dans sa définition, dans
+  pooled_members.csv et dans pooled.csv ; l’énoncé rv1ab de
+  qes2018_panel reçoit sa phrase sur le vote par anticipation. Texte
+  seulement : les définitions de vote_prov_intent_push,
+  sov_sovereign_country, sov_partnership_1995, turnout_prov_likely,
+  interest_4pt et interest_0_10 nomment la variable regroupée qui les
+  utilise au lieu de dire qu’elles ne sont jamais regroupées ; celles de
+  age_group3 et age_group6 décrivent la dérivation. gates.csv,
+  expected/marginals.csv et expected/hashes.csv reçoivent les clés des
+  nouvelles lignes (aucune marge ni empreinte de colonne enregistrée en
+  4.2.0 n’a changé ; des lignes sont seulement ajoutées à la sortie par
+  défaut) : MINEURE.

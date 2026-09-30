@@ -21,7 +21,7 @@ target, how comparable each study's question is, and the exact mapping."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,9 +46,13 @@ target, how comparable each study's question is, and the exact mapping."><meta p
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -67,9 +71,13 @@ target, how comparable each study's question is, and the exact mapping."><meta p
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -124,7 +132,8 @@ target, how comparable each study's question is, and the exact mapping.</p>
 <span>  data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  spec <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lang <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"en"</span>, <span class="st">"fr"</span><span class="op">)</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  types <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -139,9 +148,11 @@ the Quebec Election Studies the spec covers, or the studies named in
 
 
 <dt id="arg-targets">targets<a class="anchor" aria-label="anchor" href="#arg-targets"></a></dt>
-<dd><p>Target, family or set names (see <code><a href="qes_spec.html">qes_spec()</a></code>); the
-default <code>"core"</code> is the core set, and <code>"decon"</code> the targets of the
-columns of <code><a href="get_decon.html">get_decon()</a></code>.</p></dd>
+<dd><p>Target, family, set or pooled variable names (see
+<code><a href="qes_spec.html">qes_spec()</a></code>); the default <code>"core"</code> is the core set (with the pooled
+variables <code>vote_choice</code>, <code>sov_support</code> and <code>pol_interest</code>), <code>"decon"</code>
+the targets of the columns of <code><a href="get_decon.html">get_decon()</a></code>, and <code>"pooled"</code> every
+pooled variable.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -217,6 +228,14 @@ do not depend on it.</p></dd>
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
 <dd><p>If <code>TRUE</code>, no progress or informational messages.</p></dd>
 
+
+<dt id="arg-types">types<a class="anchor" aria-label="anchor" href="#arg-types"></a></dt>
+<dd><p><code>NULL</code> (default: the default members of each pooled
+variable) or a named list, pooled variable -&gt; the type names of the
+members to use (a member's target name is accepted too), for example
+<code>list(vote_choice = "recall")</code> or <code>list(turnout = c("recall", "intention"))</code>. The order given does not matter: the members are tried
+in the spec's order of precedence. See <em>Pooled variables</em>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -234,20 +253,23 @@ for <code>qes1998</code>; <code>NA</code> for a study drawn as one sample), <cod
 with <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code> on <code>study</code> and <code>source_row</code>), <code>survey_mode</code>,
 <code>interview_date</code> (of the respondent's first wave in the respondent
 layout), <code>days_to_election</code> and <code>eligible_voter</code>. Then one column per
-target, carrying its label in <code>attr(, "label")</code>, then the <code>__na</code> and
-<code>__src</code> companions, then the weight columns: <code>weight_pre</code>,
+target, carrying its label in <code>attr(, "label")</code>, then one per pooled
+variable, then the <code>__type</code>, <code>__grade</code> and <code>__item</code> companions of each
+pooled variable, then the <code>__na</code> and <code>__src</code> companions (targets, then
+pooled variables), then the weight columns: <code>weight_pre</code>,
 <code>weight_post</code>, <code>weight_pre_var</code> and <code>weight_post_var</code> (respondent
 layout) or <code>weight</code> and <code>weight_var</code> (long layout). Attributes:
 <code>qes_spec</code> (spec <code>version</code>, <code>hash</code>, <code>custom</code>, <code>engine</code>),
 <code>qes_provenance</code> (see <code><a href="qes_provenance.html">qes_provenance()</a></code>, with levels <code>"study"</code>,
-<code>"cell"</code> and <code>"spec"</code>), <code>qes_weight_guide</code> (<code>target</code>, <code>study</code>, <code>wave</code>,
+<code>"cell"</code>, <code>"spec"</code> and, with pooled variables, <code>"pooled"</code>),
+<code>qes_weight_guide</code> (<code>target</code> or pooled variable, <code>study</code>, <code>wave</code>,
 <code>target_timing</code>, <code>weight_column</code>, <code>weight_var</code>, <code>weight_status</code>) and
 <code>failed_studies</code> (<code>study</code>, <code>class</code>, <code>message</code>, <code>parent_message</code>).</p>
 <p>Results for different studies built with the same spec can be combined
 with <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code>, which also combines their provenance. It is an error
 (class <code>qesR_error_input</code>) if the spec content hashes differ, the parts
-were built with different <code>lang</code>, <code>layout</code>, <code>values</code>, <code>missing</code> or
-<code>weights</code>, their columns differ (different <code>targets</code> or <code>keep_source</code>),
+were built with different <code>lang</code>, <code>layout</code>, <code>values</code>, <code>missing</code>,
+<code>weights</code> or <code>types</code>, their columns differ (different <code>targets</code> or <code>keep_source</code>),
 or a study appears twice; harmonizing all the studies in one call is
 simpler.</p>
     </div>
@@ -263,7 +285,10 @@ are applied only with <code>include_draft = TRUE</code>, and a message says so. 
 spec 4.1.0 every row is signed off, after an automated double review
 against the original files and documents (not a human review; the
 crosswalk's <code>reviewed_by</code> says so, and <code>review_note</code> what the review
-corrected). A row's sign-off is about its content: the recommended
+corrected). The rows added in spec 4.3.0 (the push of 2022, the new
+targets such as satisfaction with democracy or the leader ratings) are
+checked against the files but not reviewed yet: they are in review, and
+applied only with <code>include_draft = TRUE</code>. A row's sign-off is about its content: the recommended
 weights that still need review (those of <code>qes1998</code>, <code>qes2007_panel</code>,
 <code>qes2012_panel</code> and the CROP polls) do not hold the rows of their waves,
 but are themselves <code>NA</code> until they are reviewed (see <em>Weights</em>). A row
@@ -288,9 +313,10 @@ as <code>spec</code>.</p>
 <p>A target is one question stimulus: a different wording, scale, timing or
 format makes another target (vote intention and reported vote, the
 "independent country" and "sovereign country" referendum questions, the
-four-point and 0-10 interest scales are all separate targets, never
-pooled). Each study's question gets a grade against the target's anchor
-question:</p><ul><li><p><code>identical</code>: the same question, options and format;</p></li>
+four-point and 0-10 interest scales are all separate targets). A pooled
+variable (see <em>Pooled variables</em>) combines such targets into one column,
+and records row by row which one each value comes from. Each study's
+question gets a grade against the target's anchor question:</p><ul><li><p><code>identical</code>: the same question, options and format;</p></li>
 <li><p><code>comparable</code>: the same stimulus, with differences (option order, whether
 "don't know" is offered, minor parties listed) not expected to move the
 shares of the common answers;</p></li>
@@ -363,6 +389,64 @@ lists them, and printing the result names them.</p>
 
 
 </dl><p><code>not_asked</code> means the study has no question for the target; <code>not_reviewed</code> that it has one, whose crosswalk row is not yet signed off by a reviewer (applied with <code>include_draft = TRUE</code>). <code>missing = "reasons"</code> adds a factor column <code>&lt;target&gt;__na</code> with the reason of each missing value.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="pooled-variables">Pooled variables<a class="anchor" aria-label="anchor" href="#pooled-variables"></a></h2>
+
+
+<p>A pooled variable is one column, for every study, that pools several
+targets (its members) with a precedence among them. <code>vote_choice</code> is the
+provincial vote choice: the reported vote (recall) where the study asked
+it, else the vote intention with those who named no party pushed (the
+undecided and, in some studies, those who would not vote or refused),
+else the vote intention at the first question, whatever the wording of
+each study.
+<code>sov_support</code> pools the referendum wordings on sovereignty (an
+independent country, a sovereign country, the 1995 question, and,
+collapsed to yes or no, being favourable to independence),
+<code>pol_interest</code> the interest scales on 0 to 1 (four-point items scored 1,
+0.7, 0.3 and 0; 0-10 items divided by 10) and <code>turnout</code> the reported
+turnout (the likelihood of voting only when asked for). The first three
+are in the default set <code>"core"</code>; <code>qes_spec("pooled")</code> lists their members.</p>
+<p>A row's value comes from the first member, by precedence, that asked the
+respondent: a member that has a value, or a missing value that is an
+answer (don't know, refused, did not vote), sets the row; a member that
+did not ask the respondent, or whose answer cannot be used (not in the
+wave, not asked in the study, not reviewed, below <code>min_grade</code>, routed
+out, system missing, a code that straddles levels: <code>not_mappable</code>, such
+as CROP's code 7 of the pushed intention), passes to the next. So a
+respondent who did not vote is <code>NA</code> (reason <code>not_voted</code>) in
+<code>vote_choice</code>, never given their earlier intention. When every member
+passes, the row is <code>NA</code> with the reason, <code>__type</code>, <code>__grade</code> and
+<code>__item</code> of the first usable member that has a row in the study and
+wave, else of the first member that has a row: with
+<code>min_grade = "comparable"</code>, a study whose only members are approximate
+gets <code>NA</code> (reason <code>below_grade</code>) with that member's type and grade
+(<code>approximate</code>), which say why the row is empty. With each pooled
+column come <code>&lt;pooled&gt;__type</code> (the member's type name, such as <code>recall</code>
+or <code>intention_push</code>), <code>&lt;pooled&gt;__grade</code> (the member row's grade, capped
+at approximate for a transform that loses information, such as scoring a
+four-point scale; never raised) and <code>&lt;pooled&gt;__item</code> (the source:
+<code>&lt;study&gt;:&lt;wave&gt;:&lt;variables&gt;</code>), and <code>&lt;pooled&gt;__na</code> and <code>&lt;pooled&gt;__src</code>
+with <code>missing = "reasons"</code> and <code>keep_source = TRUE</code>. <code>types</code> keeps some
+members only, for example <code>types = list(vote_choice = "recall")</code>; the
+precedence stays the spec's. The members are harmonized too, but are
+columns of the result only when <code>targets</code> names them.</p>
+<p>In the respondent layout (one row per respondent), a study's values of a
+pooled variable come from one wave: that of the first member the study
+applies (the post-election recall of a pre/post study, say), so that one
+weight column fits them; the respondents of its other waves are <code>NA</code>
+(reason <code>not_in_wave</code>). The long layout keeps every wave, each row with
+the members of its own wave. <code><a href="qes_design.html">qes_design()</a></code> then weights each study with
+the column of that wave. A message (class <code>qesR_message_pooled</code>) and
+<code>qes_provenance(x, level = "pooled")</code> say which member each study used,
+and how many rows it gave.</p>
+<p>A target a study has no row for can be derived from other targets
+(targets.csv <code>derive_rule</code>): the age groups <code>age_group3</code> and
+<code>age_group6</code> from the age, else the year of birth (graded approximate:
+an age at a band edge can be one year off), so that every study has an
+age group. A direct row always wins, and cell provenance says
+<code>rule = "derive:age_band"</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a></h2>
@@ -480,7 +564,9 @@ pinned files; field <code>study</code>), and <code>qesR_warning_label_mismatch</
 <code>qesR_warning_universe</code> (such <code>data</code> whose value labels differ from
 the pinned file's, or whose answers do not fit the question's
 universe; fields <code>study</code>, <code>problems</code>);</p></li>
-<li><p>messages, silenced by <code>quiet = TRUE</code>: <code>qesR_message_unreviewed_skipped</code>
+<li><p>messages, silenced by <code>quiet = TRUE</code>: <code>qesR_message_pooled</code> (which
+member of each pooled variable each study used; field <code>pooled</code>, the
+pooled provenance), <code>qesR_message_unreviewed_skipped</code>
 (cells left <code>NA</code> because their rows are not signed off),
 <code>qesR_message_unreviewed_cells</code> (cells that use rows not signed off,
 with <code>include_draft = TRUE</code>), <code>qesR_message_approximate_cells</code> (cells
@@ -551,7 +637,19 @@ pas les lignes de façon unique) ; avertissements <code>qesR_warning_unmapped</c
 <code>qesR_warning_partial</code> et <code>qesR_warning_unverified_source</code> ; messages
 <code>qesR_message_*</code>, masqués par <code>quiet = TRUE</code> ; <code><a href="qes_design.html">qes_design()</a></code> envoie
 <code>qesR_message_design_dropped</code> quand il écarte des lignes sans la
-pondération choisie. Voir
+pondération choisie. Une variable regroupée (section <em>Pooled
+variables</em>) réunit plusieurs cibles en une seule colonne pour toutes les
+études : <code>vote_choice</code> est le vote déclaré là où l'étude l'a demandé,
+sinon l'intention de vote avec relance des personnes qui n'ont nommé
+aucun parti (les indécis et, dans certaines études, celles qui ne
+voteraient pas ou refusaient), sinon l'intention de vote ; <code>sov_support</code> réunit les libellés référendaires, <code>pol_interest</code>
+les échelles d'intérêt ramenées de 0 à 1 et <code>turnout</code> la participation
+déclarée. Le premier membre, par ordre de priorité, qui a interrogé la
+personne donne la valeur ; <code>&lt;variable&gt;__type</code> indique ce membre,
+<code>&lt;variable&gt;__grade</code> son niveau de comparabilité et <code>&lt;variable&gt;__item</code> sa
+question ; <code>types = list(vote_choice = "recall")</code> ne garde que certains
+membres. Les groupes d'âge sont dérivés de l'âge ou de l'année de
+naissance là où l'étude n'a pas de question par tranches. Voir
 <code><a href="../articles/fr-reference-harmonisation.html">vignette("fr-reference-harmonisation", package = "qesR")</a></code>.</p>
     </div>
     <div class="section level2">
@@ -563,6 +661,7 @@ reference generated from the spec, <code><a href="qes_provenance.html">qes_prove
 value came from.</p>
 <p>Other harmonization:
 <code><a href="qes_design.html">qes_design()</a></code>,
+<code><a href="qes_party_lineage.html">qes_party_lineage()</a></code>,
 <code><a href="qes_spec.html">qes_spec()</a></code></p></div>
     </div>
 
@@ -571,10 +670,14 @@ value came from.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># the synthetic demonstration study, harmonized with the signed-off</span></span></span>
 <span class="r-in"><span><span class="co"># qes2014 rows (its gender row, still in review, is left NA)</span></span></span>
 <span class="r-in"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Cells graded approximate are included (min_grade = "approximate"): qes_demo age_group3, qes_demo age_group6. Their question format is expected to move the shares; min_grade = "comparable" sets them to NA.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.</span>
 <span class="r-in"><span><span class="va">h</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.2.0 (content hash 02b3b7edc509deff0db16859bef7bfb6).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Approximate cells: qes_demo age_group3, qes_demo age_group6.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      study year election_date family study_design     target_population waves</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 qes_demo 2014    2014-04-07   demo         post None (synthetic data)  post</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 qes_demo 2014    2014-04-07   demo         post None (synthetic data)  post</span>
@@ -603,34 +706,48 @@ value came from.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                  &lt;NA&gt;                 Yes       Yes                  &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5                  &lt;NA&gt;                 Yes        No                  &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6                  &lt;NA&gt;                 Yes       Yes                  &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   sov_favour lr_self pid_prov      interest_4pt birth_year age age_group3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;       0     &lt;NA&gt; Hardly interested       1958  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;       3     &lt;NA&gt; Hardly interested       1951  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;       7     &lt;NA&gt;  Quite interested       1939  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;      NA     &lt;NA&gt;   Very interested       1933  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;       0     &lt;NA&gt;  Quite interested       1961  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;       6     &lt;NA&gt;   Very interested       1976  NA       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   citizen sov_partnership_1995 pid_fed interest_0_10 age_group6 gender</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;  Woman</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;  Woman</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;    Man</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;    Man</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;    Man</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       &lt;NA&gt;  Woman</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   education4 lang_mother born_canada weight_pre weight_post weight_pre_var</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   1.2593217           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   0.6685168           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   1.3786438           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   0.9836078           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   0.9091710           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         NA   1.1417860           &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   weight_post_var</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            POND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2            POND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3            POND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4            POND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5            POND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sov_favour lr_self pid_prov      interest_4pt birth_year age  age_group3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;       0     &lt;NA&gt; Hardly interested       1958  NA 55 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;       3     &lt;NA&gt; Hardly interested       1951  NA 55 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;       7     &lt;NA&gt;  Quite interested       1939  NA 55 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;      NA     &lt;NA&gt;   Very interested       1933  NA 55 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;       0     &lt;NA&gt;  Quite interested       1961  NA       35-54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;       6     &lt;NA&gt;   Very interested       1976  NA       35-54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   citizen sov_partnership_1995 pid_fed interest_0_10  age_group6 gender</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       55-64  Woman</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       55-64  Woman</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA 65 and over    Man</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA 65 and over    Man</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       45-54    Man</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    &lt;NA&gt;                 &lt;NA&gt;    &lt;NA&gt;            NA       35-44  Woman</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   education4 lang_mother born_canada vote_choice sov_support pol_interest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         CAQ          No          0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;          QS          No          0.3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         PLQ         Yes          0.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;          PQ         Yes          1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;          QS          No          0.7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;         CAQ         Yes          1.0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vote_choice__type vote_choice__grade vote_choice__item sov_support__type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            recall         comparable  qes_demo:post:Q3      independence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sov_support__grade sov_support__item pol_interest__type pol_interest__grade</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          identical qes_demo:post:Q19        general_4pt         approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pol_interest__item weight_pre weight_post weight_pre_var weight_post_var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  qes_demo:post:Q28         NA   1.2593217           &lt;NA&gt;            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  qes_demo:post:Q28         NA   0.6685168           &lt;NA&gt;            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  qes_demo:post:Q28         NA   1.3786438           &lt;NA&gt;            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  qes_demo:post:Q28         NA   0.9836078           &lt;NA&gt;            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  qes_demo:post:Q28         NA   0.9091710           &lt;NA&gt;            POND</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  qes_demo:post:Q28         NA   1.1417860           &lt;NA&gt;            POND</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ... and 54 more row(s).</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">vote_prov_recall</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -661,6 +778,8 @@ value came from.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 qes_demo   turnout_prov_recall         Q2 comparable      57</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 qes_demo             sov_indep        Q19  identical      55</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 qes_demo   turnout_prov_likely       &lt;NA&gt;       &lt;NA&gt;       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 qes_demo        vote_prov_prev         Q6  identical       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 qes_demo       vote_fed_recall       &lt;NA&gt;       &lt;NA&gt;       0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># French labels, same codes</span></span></span>
 <span class="r-in"><span><span class="va">h_fr</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"interest_4pt"</span>, lang <span class="op">=</span> <span class="st">"fr"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -683,12 +802,38 @@ value came from.</p>
 <span class="r-in"><span><span class="co"># one row per respondent and wave</span></span></span>
 <span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"sov_indep"</span>, layout <span class="op">=</span> <span class="st">"long"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># one vote choice for every study: here the reported vote of the</span></span></span>
+<span class="r-in"><span><span class="co"># demonstration study (a qes2014 stand-in)</span></span></span>
+<span class="r-in"><span><span class="va">v</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"vote_choice"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">v</span><span class="op">$</span><span class="va">vote_choice</span>, <span class="va">v</span><span class="op">$</span><span class="va">vote_choice__type</span>, useNA <span class="op">=</span> <span class="st">"ifany"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                       recall intention_push intention</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PLQ                                     14              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PQ                                      13              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   CAQ                                      8              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   QS                                       7              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PVQ                                      1              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   PCQ                                      0              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ON                                       0              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ADQ                                      0              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Other party                              1              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Would not vote / none / would spoil      0              0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;NA&gt;                                    16              0         0</span>
+<span class="r-in"><span><span class="fu"><a href="qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">v</span>, level <span class="op">=</span> <span class="st">"pooled"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"type"</span>, <span class="st">"member"</span>, <span class="st">"grade"</span>, <span class="st">"n_value"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      study           type                member      grade n_value</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 qes_demo         recall      vote_prov_recall comparable      44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 qes_demo intention_push vote_prov_intent_push       &lt;NA&gt;       0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 qes_demo      intention      vote_prov_intent       &lt;NA&gt;       0</span>
+<span class="r-in"><span><span class="co"># recall only, or intentions only</span></span></span>
+<span class="r-in"><span><span class="va">v2</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"vote_choice"</span>,</span></span>
+<span class="r-in"><span>                    types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"intention"</span><span class="op">)</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># what the review corrected in each row, and which rows are in review</span></span></span>
 <span class="r-in"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">xw</span><span class="op">$</span><span class="va">status</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> stable </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    132 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> review stable </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      3    233 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">xw</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">xw</span><span class="op">$</span><span class="va">review_note</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"target"</span>, <span class="st">"review_note"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            study                target</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21       qes2022      vote_prov_intent</span>
@@ -697,13 +842,13 @@ value came from.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27 qes2018_panel vote_prov_intent_push</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 33 qes2007_panel      vote_prov_intent</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 34 qes2007_panel vote_prov_intent_push</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                          review_note</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                          Corrected in this review (spec 4.0.0): the routing of cps_turnout codes 3 to 6 in the evidence and grade reasons (code 4 was asked no vote-choice item).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                                                                Corrected in this review (spec 4.0.0): the codebook page of the -99 convention (p. 7); the undocumented slider claim removed (instrument lr_0_10).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                                                                                                             Corrected in this review (spec 4.0.0): the stem's second sentence on advance voting (Ipsos report of the same poll); grade comparable to approximate.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                                                                                                        Corrected in this review (spec 4.0.0): the push filter is narrower than the anchor's (would-not-vote answers not pushed); grade comparable to approximate.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                            review_note</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                                                                                            Corrected in this review (spec 4.0.0): the routing of cps_turnout codes 3 to 6 in the evidence and grade reasons (code 4 was asked no vote-choice item).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                                                                                                                                  Corrected in this review (spec 4.0.0): the codebook page of the -99 convention (p. 7); the undocumented slider claim removed (instrument lr_0_10).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                                                                                                                                                                               Corrected in this review (spec 4.0.0): the stem's second sentence on advance voting (Ipsos report of the same poll); grade comparable to approximate.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 Corrected in this review (spec 4.0.0): the push filter is narrower than the anchor's (would-not-vote answers not pushed); grade comparable to approximate. Corrected in spec 4.3.0 (text only): the stem's second sentence on advance voting; the codebook label (file 341538) leaves it out, and it comes from the Ipsos report cited on the rv1a row (rapport_la_presse_global_news_29_septembre_2018.pdf, p. 4).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">wave</span>, <span class="va">l</span><span class="op">$</span><span class="va">wave_timing</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        post</span>

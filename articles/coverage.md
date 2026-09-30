@@ -10,8 +10,8 @@ table of studies below are generated from the specification that ships
 with qesR when the site is built; none of it is written by hand.
 
 This grid is generated from the harmonization spec shipped with qesR:
-version 4.2.0 of 2026-09-28, content hash
-`02b3b7edc509deff0db16859bef7bfb6`. It is **experimental**. Each cell
+version 4.3.0 of 2026-09-29, content hash
+`506f691e420e8d5d5de3657eef556d3d`. It is **experimental**. Each cell
 gives the comparability grade of the study’s question for the target,
 against the target’s anchor question; a dash means the study has no
 question for the target in the spec. A target’s name links to its
@@ -32,28 +32,41 @@ in parentheses.
 \* The study’s question did not offer every level of the target: the
 levels it did not offer are structural zeros, listed in the reference.
 
-All 129 cells use crosswalk rows signed off by a reviewer (status
+## Pooled variables by study
+
+[TABLE]
+
+Each cell gives the member type a pooled variable takes a study’s values
+from in the respondent layout, and its grade; a dash means no member of
+its default types has a question in the study.
+
+230 of the 233 cells use crosswalk rows signed off by a reviewer (status
 stable), which
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applies by default; the crosswalk’s `reviewed_by` says who or what
-reviewed each row (spec 4.0.0: an automated double review against the
-original files and documents, not a human review).
+reviewed each row (specs 4.0.0 and 4.3.0: an automated double review
+against the original files and documents, not a human review).
+
+3 of the 233 cells use crosswalk rows that are checked against the
+original files and documents but not yet signed off by a reviewer;
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+applies them only with `include_draft = TRUE`.
 
 ## Studies
 
 | Study | Waves and recommended weights | Targets | Identical | Comparable | Approximate |
 |----|----|----|----|----|----|
-| `qes2022` | cps (n = 1,521): `cps_weight_general`; pes (n = 1,220): `pes_weight_general` | 18 | 7 | 5 | 6 |
-| `qes2018` | post (n = 3,072): `pond` | 13 | 1 | 10 | 2 |
-| `qes2018_panel` | pre (n = 1,250): `weight`; post (n = 842): `weight_rts` | 12 | 3 | 3 | 6 |
-| `qes2014` | post (n = 1,517): `POND` | 13 | 4 | 9 | 0 |
-| `qes2012` | post (n = 1,505): `pond` | 13 | 10 | 3 | 0 |
-| `qes2012_panel` | pre (n = 844): `pondam1` (needs review, not applied); post (n = 844): `pond_post` (needs review, not applied) | 9 | 1 | 5 | 3 |
-| `qes_crop_2007_2010` | 24 poll waves, poll_2007_06 to poll_2010_01 (n = 1,000 to 1,004 each): `XPOND` (needs review, not applied) | 8 | 1 | 5 | 2 |
-| `qes2008` | post (n = 1,151): no recommended weight | 12 | 0 | 11 | 1 |
-| `qes2007` | post (n = 2,175): `pond` | 12 | 4 | 7 | 1 |
-| `qes2007_panel` | pre (n = 2,050): `pondam1` (needs review, not applied); post (n = 2,054): `pond_tot_am1` (needs review, not applied) | 12 | 3 | 6 | 3 |
-| `qes1998` | pre (n = 1,483): `ponder3` (needs review, not applied); post (n = 1,483): `ponder3` (needs review, not applied) | 7 | 0 | 6 | 1 |
+| `qes2022` | cps (n = 1,521): `cps_weight_general`; pes (n = 1,220): `pes_weight_general` | 35 | 7 | 14 | 14 |
+| `qes2018` | post (n = 3,072): `pond` | 29 | 3 | 19 | 7 |
+| `qes2018_panel` | pre (n = 1,250): `weight`; post (n = 842): `weight_rts` | 13 | 3 | 3 | 7 |
+| `qes2014` | post (n = 1,517): `POND` | 30 | 9 | 20 | 1 |
+| `qes2012` | post (n = 1,505): `pond` | 31 | 27 | 4 | 0 |
+| `qes2012_panel` | pre (n = 844): `pondam1` (needs review, not applied); post (n = 844): `pond_post` (needs review, not applied) | 10 | 1 | 6 | 3 |
+| `qes_crop_2007_2010` | 24 poll waves, poll_2007_06 to poll_2010_01 (n = 1,000 to 1,004 each): `XPOND` (needs review, not applied) | 10 | 1 | 7 | 2 |
+| `qes2008` | post (n = 1,151): no recommended weight | 27 | 0 | 25 | 2 |
+| `qes2007` | post (n = 2,175): `pond` | 25 | 6 | 16 | 3 |
+| `qes2007_panel` | pre (n = 2,050): `pondam1` (needs review, not applied); post (n = 2,054): `pond_tot_am1` (needs review, not applied) | 15 | 3 | 8 | 4 |
+| `qes1998` | pre (n = 1,483): `ponder3` (needs review, not applied); post (n = 1,483): `ponder3` (needs review, not applied) | 8 | 0 | 7 | 1 |
 
 `n` is the number of respondents of each wave. A weight that needs
 review is not applied:

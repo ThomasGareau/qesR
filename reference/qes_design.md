@@ -48,8 +48,10 @@ qes_design(
 A `survey.design2` (engine `"survey"`) or `tbl_svy` (engine `"srvyr"`)
 object whose data are the rows of `x` with a value of the weight, as a
 plain data frame, with the added column `qes_stratum` (the study, or
-`<study>:<stratum>` where the `stratum` column is set). The weight is
-the column named by `weight`.
+`<study>:<stratum>` where the `stratum` column is set), and
+`weight_auto` when each study takes its own weight column (see *Choosing
+a weight*). The weight is the column named by `weight`, or
+`weight_auto`.
 
 ## Choosing a weight
 
@@ -67,11 +69,15 @@ With `weight = NULL`, `qes_design()` looks at the wave each target of
 that do not depend on the moment of the interview, such as the year of
 birth, do not count; a question that can be asked in any wave, such as
 sovereignty, counts through the wave that asked it): if all these waves
-call for the same column, it uses that column; if they call for both
-(the default `targets = "core"` does), it stops and asks you to choose.
-With no such target, it uses the one weight column that has values, and
-asks you to choose when both have values. In the long layout the weight
-is the `weight` column.
+call for the same column, it uses that column. If they call for both,
+but each study's call for one only (a pooled variable such as
+`vote_choice` takes the post-election recall of most studies and the
+pre-election intention of the CROP polls), each study gets its own, in a
+new column `weight_auto` that the design uses. If one study's targets
+call for both (the default `targets = "core"` does, for the studies with
+two waves), it stops and asks you to choose. With no such target, it
+uses the one weight column that has values, and asks you to choose when
+both have values. In the long layout the weight is the `weight` column.
 
 Rows without a value of the weight (respondents outside the waves that
 have it, or waves whose weight needs review) are left out of the design,
@@ -119,12 +125,15 @@ comme dans `waves`). Avec `weight = NULL`, la pondération est choisie
 d'après la vague d'où vient chaque cible (`attr(x, "qes_weight_guide")`)
 : `weight_pre` pour des cibles de vagues préélectorales, `weight_post`
 pour des cibles de vagues postélectorales ; les cibles fixes, comme
-l'année de naissance, ne comptent pas ; si `x` mêle les deux, la
-fonction demande de choisir. Chaque vague a au plus une pondération
-recommandée. Les lignes sans valeur de pondération sont laissées hors du
-plan, avec un message. `pool = "equal"` donne le même total à chaque
-étude (et vague en disposition longue ; les sondages regroupés comptent
-pour une seule étude).
+l'année de naissance, ne comptent pas ; si les études appellent des
+colonnes différentes mais chacune une seule (une variable regroupée
+comme `vote_choice`), chaque étude reçoit la sienne dans une nouvelle
+colonne `weight_auto` ; si une même étude mêle les deux, la fonction
+demande de choisir. Chaque vague a au plus une pondération recommandée.
+Les lignes sans valeur de pondération sont laissées hors du plan, avec
+un message. `pool = "equal"` donne le même total à chaque étude (et
+vague en disposition longue ; les sondages regroupés comptent pour une
+seule étude).
 
 ## See also
 
@@ -134,6 +143,7 @@ which weight fits each target.
 
 Other harmonization:
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+[`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md),
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 
 ## Examples

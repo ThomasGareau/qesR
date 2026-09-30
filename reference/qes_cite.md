@@ -88,20 +88,20 @@ Other reproducibility:
 
 ``` r
 qes_cite()
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"
 qes_cite(c("qes2018", "qes2014"))
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                                                            
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                                                            
 #> [2] "Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust, Jean-François, 2023, \"Étude électorale québécoise 2018\", https://doi.org/10.5683/SP3/NWTGWS, Borealis, V1, UNF:6:luhys2QSLNTONPOXO4LYpg=="
 #> [3] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="                                            
 qes_cite("qes1998_crop", lang = "fr")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.7.1, https://github.com/ThomasGareau/qesR"                                                                                  
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.8.0, https://github.com/ThomasGareau/qesR"                                                                                  
 #> [2] "Durand, Claire, 2023, \"Sondages électoraux sur les élections générales québécoises de 1998\", https://doi.org/10.5683/SP2/QFUAWG, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== [fichier : Total_sondages_election_CROP1998.sav]"
 cat(qes_cite("qes2022", style = "bibtex"), sep = "\n\n")
 #> @Manual{qesR,
 #>   title = {{qesR}: Access Quebec Election Study Datasets},
 #>   author = {Thomas Gareau-Paquette},
 #>   year = {2026},
-#>   note = {R package version 0.7.1},
+#>   note = {R package version 0.8.0},
 #>   url = {https://github.com/ThomasGareau/qesR},
 #> }
 #> 

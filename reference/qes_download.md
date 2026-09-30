@@ -188,14 +188,14 @@ Other studies and documents:
 dir <- file.path(tempdir(), "qes-files")
 dir.create(dir)
 files <- qes_download("qes_demo", path = dir)
-#> 1 file(s) saved in '/tmp/Rtmps5g1bn/qes-files', 0 already there.
+#> 1 file(s) saved in '/tmp/RtmpOtuzzy/qes-files', 0 already there.
 files[, c("study", "file_name", "md5", "downloaded")]
 #>      study    file_name                              md5 downloaded
 #> 1 qes_demo qes_demo.sav e956e315800690cb0894c86ed85c8bea       TRUE
 qes_provenance(files)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-29 16:20:17 UTC (local_demo). Licence: CC0 1.0. qesR catalog 2.3.0.
+#> 2026-09-30 00:14:46 UTC (local_demo). Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> as.data.frame() gives every column.
 unlink(dir, recursive = TRUE)

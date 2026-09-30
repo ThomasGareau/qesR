@@ -11,7 +11,7 @@ and the same 30 harmonized columns for every study."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +36,13 @@ and the same 30 harmonized columns for every study."><meta property="og:image" c
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -57,9 +61,13 @@ and the same 30 harmonized columns for every study."><meta property="og:image" c
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -188,8 +196,12 @@ country, which the study did not ask), <code>"no_valid_source"</code> (no study
 has a valid source for the column), <code>"invalid_044_source"</code> (the
 source qesR 0.4.4 read was verified wrong in 0.5.0, and the spec has
 no row for the column in the study since), <code>"not_comparable_source"</code>
-(the study's only source is graded <code>not_comparable</code>) or
-<code>"not_harmonized_yet"</code>; <code>basis</code>
+(the study's only source is graded <code>not_comparable</code>),
+<code>"not_harmonized_yet"</code> or <code>"legacy_frozen"</code> (reason <code>"no_source"</code>:
+the study's question is harmonized since spec 4.3.0, in
+<code><a href="qes_harmonize.html">qes_harmonize()</a></code>, but the legacy column keeps the <code>NA</code> of qesR
+0.7.1: <code>federal_pid</code> of <code>qes2012</code> and <code>language</code> of <code>qes2022</code>);
+<code>basis</code>
 says in words why the column is <code>NA</code> in the study.
 0.5.0's <code>"blanked"</code> reason is gone: no value is blanked after it is
 read;</p></li>
@@ -239,8 +251,9 @@ rows).</p>
 <p>The engine applies only the crosswalk rows signed off by a reviewer
 (status <code>stable</code>), as <code><a href="qes_harmonize.html">qes_harmonize()</a></code> does by default. The rows were
 signed off after an automated double review against the original files
-and documents (not a human review); since spec 4.1.0 every row is signed
-off. A row still in review would not be applied, and the columns it
+and documents (not a human review); since spec 4.1.0 every reviewed row
+is signed off, and the rows added in spec 4.3.0, not reviewed yet, are
+never read (the legacy columns stay as they were). A row still in review would not be applied, and the columns it
 would fill would be <code>NA</code>: <code>attr(, "legacy_na_columns")</code> lists such
 columns with the reason <code>not_reviewed</code> and says why each row is held, and
 a message names them. The recommended weights that still need review
@@ -334,7 +347,9 @@ Seules les lignes de correspondance approuvées par un réviseur (statut
 <code>stable</code>) sont appliquées, comme le fait <code><a href="qes_harmonize.html">qes_harmonize()</a></code> par défaut ;
 elles ont été approuvées après une double révision automatisée sur les
 fichiers et documents originaux (et non une révision humaine), et toutes
-le sont depuis la spécification 4.1.0. Les colonnes d'une ligne encore
+les lignes révisées le sont depuis la spécification 4.1.0 ; les lignes
+ajoutées dans la 4.3.0, pas encore révisées, ne sont jamais lues. Les
+colonnes d'une ligne encore
 en révision vaudraient <code>NA</code> ; <code>attr(, "legacy_na_columns")</code> les
 énumérerait avec le motif <code>not_reviewed</code> en disant pourquoi la ligne est
 retenue, et un message les nommerait. Les pondérations recommandées

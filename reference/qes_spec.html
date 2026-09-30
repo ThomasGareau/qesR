@@ -15,7 +15,7 @@ each study's question is to the target's anchor question."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +40,13 @@ each study's question is to the target's anchor question."><meta property="og:im
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -61,9 +65,13 @@ each study's question is to the target's anchor question."><meta property="og:im
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -101,7 +109,7 @@ each study's question is to the target's anchor question.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">qes_spec</span><span class="op">(</span></span>
-<span>  view <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"targets"</span>, <span class="st">"crosswalk"</span>, <span class="st">"spec"</span><span class="op">)</span>,</span>
+<span>  view <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"targets"</span>, <span class="st">"crosswalk"</span>, <span class="st">"spec"</span>, <span class="st">"pooled"</span><span class="op">)</span>,</span>
 <span>  targets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  studies <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"code"</span><span class="op">)</span>,</span>
@@ -118,7 +126,7 @@ each study's question is to the target's anchor question.</p>
 
 
 <dl><dt id="arg-view">view<a class="anchor" aria-label="anchor" href="#arg-view"></a></dt>
-<dd><p><code>"targets"</code>, <code>"crosswalk"</code> or <code>"spec"</code>.</p></dd>
+<dd><p><code>"targets"</code>, <code>"crosswalk"</code>, <code>"spec"</code> or <code>"pooled"</code>.</p></dd>
 
 
 <dt id="arg-targets">targets<a class="anchor" aria-label="anchor" href="#arg-targets"></a></dt>
@@ -183,11 +191,17 @@ marks a row that applies to every poll of pooled polls (the CROP
 polls of 2007-2010, one wave per poll), or, in a panel, a question
 that does not change over the study (gender, education), asked in
 whichever wave the respondent took part (the 2007 panel).</p></li>
+<li><p><code>"pooled"</code>: a data frame with columns <code>pooled</code>, <code>label</code>,
+<code>definition</code>, <code>type</code> (of the pooled variable), <code>levels</code> (<code>code=label</code>,
+or the range of a numeric one), <code>type_name</code>, <code>type_label</code>, <code>member</code>,
+<code>precedence</code>, <code>default</code>, <code>transform</code>, <code>grade_cap</code>, <code>note</code>, <code>status</code>,
+<code>added_in</code>, then one column per study.</p></li>
 <li><p><code>"spec"</code>: an object of class <code>qes_spec</code>: a list with the spec
 <code>version</code>, its content <code>hash</code>, <code>custom</code> (<code>TRUE</code> when it is not the
 shipped spec) and <code>tables</code> (targets, levels, crosswalk, valuemaps,
 waves, weights, changes, gates, expected, hashes, legacy: the renderer of
-<code><a href="get_qes_master.html">get_qes_master()</a></code> and <code><a href="get_decon.html">get_decon()</a></code>); <code>attr(, "check")</code>
+<code><a href="get_qes_master.html">get_qes_master()</a></code> and <code><a href="get_decon.html">get_decon()</a></code>, pooled and pooled_members: the
+pooled variables); <code>attr(, "check")</code>
 holds the problems table (<code>rule</code>, <code>severity</code>, <code>table</code>, <code>row</code>, <code>key</code>,
 <code>detail</code>).</p></li>
 </ul></div>
@@ -205,6 +219,13 @@ the document that gives it), recommended weight and review status. With
 maps to; <code>format = "retroharmonize"</code> gives that table under the column
 names of the retroharmonize package's crosswalk tables. Printing the
 view of a single target shows its section of the generated reference.</p></li>
+<li><p><code>view = "pooled"</code>: one row per member of each pooled variable (such as
+<code>vote_choice</code>, which pools the reported vote and the vote intentions):
+its type name (the value of <code>&lt;pooled&gt;__type</code>), precedence (the member
+tried first is 1), whether it is used by default, the transform of its
+values and its grade cap, and one column per study giving the member's
+grade there (capped; <code>NA</code>: no question). <code>targets</code> selects pooled
+variables (or the set <code>"pooled"</code>).</p></li>
 <li><p><code>view = "spec"</code>: the spec itself, as an object of class <code>qes_spec</code>
 (tables, version and content hash), checked by the validator and the
 data checks; this is what <code>spec =</code> of <code><a href="qes_harmonize.html">qes_harmonize()</a></code> accepts.</p></li>
@@ -232,12 +253,15 @@ sondage des sondages CROP regroupés) ; la vue <code>"spec"</code> renvoie la
 spécification vérifiée, dont la table <code>tables$legacy</code>, qui rend les
 colonnes de <code><a href="get_qes_master.html">get_qes_master()</a></code> et de <code><a href="get_decon.html">get_decon()</a></code> à partir des cibles.
 L'ensemble de cibles <code>"decon"</code> réunit les cibles des colonnes de
-<code><a href="get_decon.html">get_decon()</a></code>. <code>lang = "fr"</code> donne les étiquettes, définitions et raisons en français.
+<code><a href="get_decon.html">get_decon()</a></code>. La vue <code>"pooled"</code> décrit les variables regroupées (comme
+<code>vote_choice</code>, qui réunit le vote déclaré et les intentions de vote) :
+leurs membres, leur ordre de priorité et le niveau de chaque membre dans
+chaque étude. <code>lang = "fr"</code> donne les étiquettes, définitions et raisons en français.
 <code><a href="../articles/fr-reference-harmonisation.html">vignette("fr-reference-harmonisation", package = "qesR")</a></code> en est la
 référence complète.</p>
     </div>
     <div class="section level2">
-    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.2.0)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
+    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.3.0)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
 
 
 <p>Generated from the spec by roxygen; <code>qes_spec()</code> gives the same list with each study's grade.</p><dl><dt><code>vote_prov_recall</code></dt>
@@ -247,7 +271,7 @@ référence complète.</p>
 <dd><p>Provincial vote intention (family <code>vote_prov</code>; sets <code>core</code>, <code>vote</code>, <code>decon</code>; categorical). Studies: qes2022, qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010.</p></dd>
 
 <dt><code>vote_prov_intent_push</code></dt>
-<dd><p>Provincial vote intention, undecided pushed (family <code>vote_prov</code>; sets <code>core</code>, <code>vote</code>; categorical). Studies: qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010, qes1998.</p></dd>
+<dd><p>Provincial vote intention, undecided pushed (family <code>vote_prov</code>; sets <code>core</code>, <code>vote</code>; categorical). Studies: qes2018_panel, qes2007_panel, qes2012_panel, qes_crop_2007_2010, qes1998, qes2022.</p></dd>
 
 <dt><code>turnout_prov_recall</code></dt>
 <dd><p>Voted in the provincial election (recall) (family <code>turnout_prov</code>; sets <code>core</code>, <code>vote</code>, <code>decon</code>; categorical). Studies: qes2012, qes2014, qes2018, qes2022, qes2018_panel, qes2007, qes2008, qes2012_panel, qes1998, qes2007_panel.</p></dd>
@@ -298,7 +322,7 @@ référence complète.</p>
 <dd><p>Provincial vote intention: another party (text) (family <code>vote_prov</code>; sets <code>decon</code>; string). Studies: qes2022.</p></dd>
 
 <dt><code>pid_fed</code></dt>
-<dd><p>Federal party identification (family <code>party_id</code>; sets <code>core</code>, <code>decon</code>; categorical). Studies: qes2022.</p></dd>
+<dd><p>Federal party identification (family <code>party_id</code>; sets <code>core</code>, <code>decon</code>; categorical). Studies: qes2022, qes2012.</p></dd>
 
 <dt><code>interest_0_10</code></dt>
 <dd><p>Interest in politics (0-10) (family <code>interest</code>; sets <code>core</code>, <code>decon</code>; numeric). Studies: qes2007, qes2022.</p></dd>
@@ -319,7 +343,7 @@ référence complète.</p>
 <dd><p>Education (4 groups) (family <code>education</code>; sets <code>core</code>, <code>decon</code>; ordinal). Studies: qes2014, qes2012, qes2018, qes2022, qes2007, qes2008, qes2018_panel, qes2007_panel, qes_crop_2007_2010.</p></dd>
 
 <dt><code>lang_mother</code></dt>
-<dd><p>Mother tongue (family <code>language</code>; sets <code>core</code>; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2018, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010.</p></dd>
+<dd><p>Mother tongue (family <code>language</code>; sets <code>core</code>; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2018, qes2007_panel, qes2012_panel, qes2018_panel, qes_crop_2007_2010, qes2022.</p></dd>
 
 <dt><code>born_canada</code></dt>
 <dd><p>Born in Canada (family <code>birthplace</code>; sets <code>core</code>, <code>decon</code>; categorical). Studies: qes2022, qes2012, qes2014, qes2018.</p></dd>
@@ -330,6 +354,79 @@ référence complète.</p>
 <dt><code>religion</code></dt>
 <dd><p>Religion (each study's own categories) (family <code>faith</code>; sets <code>decon</code>; string). Studies: qes2012, qes2014, qes2022.</p></dd>
 
+<dt><code>sov_partnership_1995_push</code></dt>
+<dd><p>Referendum vote: the 1995 question, undecided pushed (family <code>sovereignty</code>; no set; categorical). Studies: qes2007, qes2008, qes2007_panel, qes1998.</p></dd>
+
+<dt><code>satis_demo_qc</code></dt>
+<dd><p>Satisfaction with democracy in Quebec (family <code>democracy_satisfaction</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.</p></dd>
+
+<dt><code>gov_satisfaction</code></dt>
+<dd><p>Satisfaction with the Quebec government (family <code>government_satisfaction</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007_panel.</p></dd>
+
+<dt><code>econ_retro_qc</code></dt>
+<dd><p>Quebec's economy over the past year (family <code>economy_retrospective</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.</p></dd>
+
+<dt><code>attach_qc</code></dt>
+<dd><p>Attachment to Quebec (family <code>attachment</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>attach_ca</code></dt>
+<dd><p>Attachment to Canada (family <code>attachment</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>identity_qc_ca</code></dt>
+<dd><p>Québécois or Canadian identity (family <code>national_identity</code>; sets <code>attitudes</code>; categorical). Studies: qes2012, qes2014, qes2007, qes2008, qes2022.</p></dd>
+
+<dt><code>pid_prov_strength</code></dt>
+<dd><p>Strength of provincial party identification (family <code>party_id</code>; sets <code>attitudes</code>; ordinal). Studies: qes2012, qes2014, qes2018, qes2022, qes2007, qes2008.</p></dd>
+
+<dt><code>vote_prov_prev</code></dt>
+<dd><p>Provincial vote at the previous election (recall) (family <code>vote_prov_past</code>; sets <code>vote</code>; categorical). Studies: qes2014, qes2008, qes2018, qes2022.</p></dd>
+
+<dt><code>therm_leader_plq</code></dt>
+<dd><p>Rating of the PLQ leader (0-100) (family <code>leader_ratings</code>; sets <code>attitudes</code>; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>therm_leader_pq</code></dt>
+<dd><p>Rating of the PQ leader (0-100) (family <code>leader_ratings</code>; sets <code>attitudes</code>; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>therm_leader_caq</code></dt>
+<dd><p>Rating of the CAQ leader (0-100) (family <code>leader_ratings</code>; sets <code>attitudes</code>; numeric). Studies: qes2012, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>therm_leader_qs</code></dt>
+<dd><p>Rating of the QS leader (0-100) (family <code>leader_ratings</code>; sets <code>attitudes</code>; numeric). Studies: qes2012, qes2007, qes2008, qes2014, qes2018, qes2022.</p></dd>
+
+<dt><code>therm_leader_adq</code></dt>
+<dd><p>Rating of the ADQ leader (0-100) (family <code>leader_ratings</code>; sets <code>attitudes</code>; numeric). Studies: qes2007, qes2008.</p></dd>
+
+<dt><code>region_cma3</code></dt>
+<dd><p>Region (Montreal and Quebec CMAs) (family <code>region</code>; sets <code>socio</code>; categorical). Studies: qes2012, qes2008, qes2014, qes2018, qes2012_panel, qes_crop_2007_2010, qes2018_panel, qes2007.</p></dd>
+
+<dt><code>lang_home</code></dt>
+<dd><p>Language spoken most often at home (family <code>language</code>; sets <code>socio</code>; categorical). Studies: qes2012, qes2014, qes2018, qes2007, qes2008, qes2007_panel, qes_crop_2007_2010, qes2022.</p></dd>
+
+<dt><code>relig_attend</code></dt>
+<dd><p>Attendance at religious services (family <code>faith</code>; sets <code>socio</code>; ordinal). Studies: qes2012, qes2007, qes2008, qes2014, qes2018.</p></dd>
+
+<dt><code>birthplace3</code></dt>
+<dd><p>Birthplace (Quebec, rest of Canada, abroad) (family <code>birthplace</code>; sets <code>socio</code>; categorical). Studies: qes2012, qes2014, qes2018.</p></dd>
+
+<dt><code>vote_fed_recall</code></dt>
+<dd><p>Federal vote at the last federal election (recall) (family <code>vote_fed</code>; sets <code>vote</code>; categorical). Studies: qes2012, qes2007, qes2008, qes2022.</p></dd>
+
+<dt><code>mip_issue</code></dt>
+<dd><p>Most important issue of the election (family <code>issues</code>; sets <code>attitudes</code>; categorical). Studies: qes2012, qes2008, qes2014, qes2018, qes2022.</p></dd>
+
+
+</dl><p>Pooled variables (one column that pools several targets; <code>qes_spec("pooled")</code> gives each study's grade):</p><dl><dt><code>vote_choice</code></dt>
+<dd><p>Provincial vote choice (pooled) (pooled, categorical; sets <code>pooled</code>, <code>core</code>, <code>vote</code>). Members, in order of precedence: <code>vote_prov_recall</code> (recall), <code>vote_prov_intent_push</code> (intention_push), <code>vote_prov_intent</code> (intention).</p></dd>
+
+<dt><code>sov_support</code></dt>
+<dd><p>Support for sovereignty (pooled) (pooled, categorical; sets <code>pooled</code>, <code>core</code>). Members, in order of precedence: <code>sov_indep</code> (independence), <code>sov_sovereign_country</code> (sovereign_country), <code>sov_partnership_1995_push</code> (partnership_1995_push), <code>sov_partnership_1995</code> (partnership_1995), <code>sov_favour</code> (favour).</p></dd>
+
+<dt><code>pol_interest</code></dt>
+<dd><p>Interest in politics (pooled, 0-1) (pooled, numeric; sets <code>pooled</code>, <code>core</code>). Members, in order of precedence: <code>interest_4pt</code> (general_4pt), <code>interest_0_10</code> (general_0_10), <code>interest_campaign_4pt</code> (campaign_4pt), <code>interest_election_0_10</code> (election_0_10).</p></dd>
+
+<dt><code>turnout</code></dt>
+<dd><p>Turnout in the provincial election (pooled) (pooled, categorical; sets <code>pooled</code>, <code>vote</code>). Members, in order of precedence: <code>turnout_prov_recall</code> (recall), <code>turnout_prov_likely</code> (intention, not by default).</p></dd>
+
 
 </dl></div>
     <div class="section level2">
@@ -339,44 +436,65 @@ référence complète.</p>
 generated from the spec.</p>
 <p>Other harmonization:
 <code><a href="qes_design.html">qes_design()</a></code>,
-<code><a href="qes_harmonize.html">qes_harmonize()</a></code></p></div>
+<code><a href="qes_harmonize.html">qes_harmonize()</a></code>,
+<code><a href="qes_party_lineage.html">qes_party_lineage()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># which studies have which target, and how comparable they are</span></span></span>
 <span class="r-in"><span><span class="fu">qes_spec</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    target         family        type target_timing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        vote_prov_recall      vote_prov categorical          post</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        vote_prov_intent      vote_prov categorical           pre</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   vote_prov_intent_push      vote_prov categorical           pre</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     turnout_prov_recall   turnout_prov categorical          post</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5               sov_indep    sovereignty categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   sov_sovereign_country    sovereignty categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7              sov_favour    sovereignty     ordinal           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                 lr_self     left_right     numeric           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                pid_prov       party_id categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10           interest_4pt       interest     ordinal           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11             birth_year          birth     numeric        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12            birth_month          birth     numeric        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13                    age      age_years     numeric           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14             age_group3      age_bands     ordinal           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15                citizen    citizenship categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16            survey_mode interview_mode categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17   sov_partnership_1995    sovereignty categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    turnout_prov_likely   turnout_prov     ordinal           pre</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 vote_prov_intent_other      vote_prov      string           pre</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20                pid_fed       party_id categorical           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21          interest_0_10       interest     numeric           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 interest_election_0_10       interest     numeric          post</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  interest_campaign_4pt       interest     ordinal           pre</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24             age_group6      age_bands     ordinal           any</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25                 gender     sex_gender categorical        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26             education4      education     ordinal        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27            lang_mother       language categorical        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28            born_canada     birthplace categorical        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29          income_native         income      string        static</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30               religion          faith      string        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       target                  family        type target_timing</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           vote_prov_recall               vote_prov categorical          post</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           vote_prov_intent               vote_prov categorical           pre</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      vote_prov_intent_push               vote_prov categorical           pre</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        turnout_prov_recall            turnout_prov categorical          post</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                  sov_indep             sovereignty categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6      sov_sovereign_country             sovereignty categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                 sov_favour             sovereignty     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                    lr_self              left_right     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                   pid_prov                party_id categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10              interest_4pt                interest     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                birth_year                   birth     numeric        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12               birth_month                   birth     numeric        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                       age               age_years     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                age_group3               age_bands     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                   citizen             citizenship categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16               survey_mode          interview_mode categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17      sov_partnership_1995             sovereignty categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18       turnout_prov_likely            turnout_prov     ordinal           pre</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19    vote_prov_intent_other               vote_prov      string           pre</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                   pid_fed                party_id categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21             interest_0_10                interest     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22    interest_election_0_10                interest     numeric          post</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23     interest_campaign_4pt                interest     ordinal           pre</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                age_group6               age_bands     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                    gender              sex_gender categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                education4               education     ordinal        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27               lang_mother                language categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28               born_canada              birthplace categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29             income_native                  income      string        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                  religion                   faith      string        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 sov_partnership_1995_push             sovereignty categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32             satis_demo_qc  democracy_satisfaction     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33          gov_satisfaction government_satisfaction     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34             econ_retro_qc   economy_retrospective     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                 attach_qc              attachment     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                 attach_ca              attachment     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37            identity_qc_ca       national_identity categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38         pid_prov_strength                party_id     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39            vote_prov_prev          vote_prov_past categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40          therm_leader_plq          leader_ratings     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41           therm_leader_pq          leader_ratings     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42          therm_leader_caq          leader_ratings     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43           therm_leader_qs          leader_ratings     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44          therm_leader_adq          leader_ratings     numeric           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45               region_cma3                  region categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                 lang_home                language categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47              relig_attend                   faith     ordinal           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48               birthplace3              birthplace categorical        static</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49           vote_fed_recall                vote_fed categorical           any</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50                 mip_issue                  issues categorical           any</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                         label</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                    Provincial vote (recall)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                   Provincial vote intention</span>
@@ -408,99 +526,179 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28                                             Born in Canada</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29               Household income (each study's own brackets)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30                     Religion (each study's own categories)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       Referendum vote: the 1995 question, undecided pushed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                      Satisfaction with democracy in Quebec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                    Satisfaction with the Quebec government</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                        Quebec's economy over the past year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                                       Attachment to Quebec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                                       Attachment to Canada</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37                             Québécois or Canadian identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                Strength of provincial party identification</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39          Provincial vote at the previous election (recall)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                           Rating of the PLQ leader (0-100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                            Rating of the PQ leader (0-100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42                           Rating of the CAQ leader (0-100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43                            Rating of the QS leader (0-100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44                           Rating of the ADQ leader (0-100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45                          Region (Montreal and Quebec CMAs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                         Language spoken most often at home</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47                           Attendance at religious services</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48                Birthplace (Quebec, rest of Canada, abroad)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49         Federal vote at the last federal election (recall)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50                       Most important issue of the election</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                definition</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                                                                                                                                                                                                                                                                        Party the respondent reports having voted for in the Quebec general election of the study, asked after that election. Nonvoters, spoiled ballots and respondents not eligible or not registered are missing values with a reason, never a party.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                                                                                                                                                                                                                            Party the respondent intends to vote for in the coming Quebec general election, asked before it, at the first question, without the push question for the undecided. Would not vote, none or would spoil is an answer (level no_party), not a missing value.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                                                                                                                                                                                                                                                            Vote intention in which respondents undecided at the first question were asked which party they lean toward (a push question), combined into one variable. A different stimulus from vote_prov_intent: never pooled with it.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                 Vote intention in which respondents who named no party at the first question (the undecided and, in some studies, also those who would not vote, would vote for none or refused) were asked which party they lean toward (a push question), combined into one variable. A different stimulus from vote_prov_intent, and a separate target; the pooled variable vote_choice uses it before vote_prov_intent, and vote_choice__type records which one a value comes from.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                                                                                                                                                                                                                                                                                                                                        Whether the respondent reports having voted in the Quebec general election of the study, asked after that election. Respondents not eligible or not registered are missing values with a reason.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   How the respondent would vote in a referendum on whether Quebec should become an independent country.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                                                                                                                                                                                                                         How the respondent would vote in a referendum on whether Quebec should become a sovereign country. A different stimulus from sov_indep (sovereign, not independent): never pooled with it. The push question asked of the undecided is not part of this target.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                                                                                                                            How the respondent would vote in a referendum on whether Quebec should become a sovereign country. A different stimulus from sov_indep (sovereign, not independent), and a separate target; the pooled variable sov_support combines them and records the wording in sov_support__type. The push question asked of the undecided is not part of this target.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       How favourable or opposed the respondent is to Quebec independence, on a four-point scale. Not a referendum vote.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Where the respondent places their own views on a scale from 0 (left) to 10 (right).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        The provincial party the respondent usually thinks of themselves as close to; none is an answer.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      How interested the respondent is in politics, on a four-point verbal scale. Never rescaled to or pooled with 0-10 interest items.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                                                                                                                                                                                                                                                                                             How interested the respondent is in politics, on a four-point verbal scale. A separate target from the 0-10 interest items, never rescaled; the pooled variable pol_interest scores it on 0-1, graded approximate at most.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          Year the respondent was born.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                                                                                                                                                                                                                                                                                                                               Month the respondent was born (1 = January). Asked with the year of birth in some studies; with birth_year, it tells whether a respondent born 18 years before the election year was 18 on election day.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                                                                                                                                                                                                                                                                                                                                                                                            The respondent's age in years at the interview, as asked. Never computed from the year of birth, which gives the age only to within a year.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                                                                                                                                                                                                                                                                                                                                  The respondent's age group at the interview in three bands: 18-34, 35-54, 55 and over. Built only from a question with these bands or with bands that collapse into them exactly, never from a guess.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                                                                                                                                                                                                  The respondent's age group at the interview in three bands: 18-34, 35-54, 55 and over. Built from a question with these bands or with bands that collapse into them exactly; where the study has no such question, derived from the age (exact) or the year of birth (graded approximate: an age at a band edge can be one year off).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       Whether the respondent is a Canadian citizen, where the study asked. Only citizens may vote in Quebec elections.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                                                                                                                                                                                                                                                                                              How the respondent was interviewed: web, telephone or mixed. A leading column of every result of qes_harmonize(), filled from the mode of each wave (waves.csv); crosswalk rows exist only for the waves whose mode varies by respondent.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                                                                                                                                                                                                      How the respondent would vote if a referendum were held today on the question of the 1995 referendum, sovereignty with an offer of partnership to the rest of Canada. A different stimulus from sov_indep and sov_sovereign_country: never pooled with them. The push question asked of the undecided is not part of this target.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                                                                                                                                                                                                                                                                  How likely the respondent says they are to vote in the coming Quebec general election, asked before it. Having already voted (in advance polls) is an answer. A different stimulus from turnout_prov_recall (reported turnout): never pooled with it.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                                                                   How the respondent would vote if a referendum were held today on the question of the 1995 referendum, sovereignty with an offer of partnership to the rest of Canada. A different stimulus from sov_indep and sov_sovereign_country, and a separate target; the pooled variable sov_support combines them and records the wording in sov_support__type. The push question asked of the undecided is not part of this target (sov_partnership_1995_push includes it).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                                                                                                                                                      How likely the respondent says they are to vote in the coming Quebec general election, asked before it. Having already voted (in advance polls) is an answer. A different stimulus from turnout_prov_recall (reported turnout), and a separate target; the pooled variable turnout uses it only when asked to (types = list(turnout = c("recall", "intention"))).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                                                                                                                                                                                                                                                                                                                                                                       The party the respondent typed after choosing another party at the vote-intention question (vote_prov_intent, level other), as typed. Open text, not harmonized.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          The federal party the respondent usually thinks of themselves as close to; none is an answer.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                                                                                                                                                                                                                                                                               How interested the respondent is in politics in general, from 0 (no interest) to 10 (a great deal). Never pooled with or rescaled to the four-point item (interest_4pt).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                                                                                                                                                                                                                      How interested the respondent is in politics in general, from 0 (no interest) to 10 (a great deal). A separate target from the four-point item (interest_4pt), never rescaled; the pooled variable pol_interest divides it by 10.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                                                                                                                                                                                                                                                                            How interested the respondent was in the Quebec general election that has just taken place, from 0 (no interest) to 10 (a great deal), asked after it. Interest in an election, not in politics in general.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                                                                                                                                                                                                                                                                                                                                            How interested the respondent is in the current Quebec election campaign, on a four-point verbal scale, asked during it. Interest in a campaign, not in politics in general (interest_4pt).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                                                                                                                                                                                                                                                                                                               The respondent's age group at the interview in six bands: 18-24, 25-34, 35-44, 45-54, 55-64, 65 and over. Built only from a question with these bands or with bands that collapse into them exactly, never from a guess.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                                                                                                                                                                               The respondent's age group at the interview in six bands: 18-24, 25-34, 35-44, 45-54, 55-64, 65 and over. Built from a question with these bands or with bands that collapse into them exactly; where the study has no such question, derived from the age (exact) or the year of birth (graded approximate: an age at a band edge can be one year off).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                                                                                                                                                                                                                                                                                                             The respondent's gender, as asked or, in some telephone surveys, as recorded by the interviewer. Most studies offered only man and woman (a question on sex, in some); qes2022 also offered non-binary and another gender.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26 The respondent's highest level of education in four groups: primary or less, secondary, college (CEGEP or technical), university (completed or not). From the highest level completed where the study asks for it, from years of schooling otherwise (graded approximate). A vocational or trade credential (the DEP) has no group of its own and is not placed alike in every study: secondary where the question lists the DEP as a secondary diploma (qes2018), college where it is a trade certificate or technical training (qes2018_panel and, probably, the studies with no DEP option); see the grade reasons.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                                                                                                                                                                                                                                                                                       The first language the respondent learned at home in childhood and still understands: French, English or another language. A respondent who reports two first languages is a missing value (reason not_mappable), never assigned to one of them.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                                                                                                                                                                                                                                                                                                                                                               Whether the respondent was born in Canada. From a question on birthplace (Quebec, elsewhere in Canada, outside Canada) where the study asks that one, collapsed exactly.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                                                                                                                                                                                                                                            The respondent's household income before taxes as each study recorded it: the text of the study's own bracket (or the amount, where the study asked for one). Brackets differ between studies, so the values are not comparable across studies; don't know and refusals are missing values.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                                                                                                                                                                The respondent's religion as each study recorded it: the text of the study's own category. Categories differ between studies. Where the question was asked only of respondents who belong to a religion, the others are missing values: reason inapplicable for those who said they belong to none, refused for those who would not answer the filter question, which is the gate of the crosswalk row.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                         levels</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                          1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 95=Would not vote / none / would spoil</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 95=Would not vote / none / would spoil</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                  1=Yes; 2=No</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                 1=Yes; 2=No; 95=Would not vote / would spoil</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                 1=Yes; 2=No; 95=Would not vote / would spoil</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                 1=Very favourable; 2=Somewhat favourable; 3=Somewhat opposed; 4=Very opposed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                         &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                        1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 97=None of these</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                         1=Very interested; 2=Quite interested; 3=Hardly interested; 4=Not at all interested</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                             1=18-34; 2=35-54; 3=55 and over</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                 1=Yes; 2=No</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                 1=Web; 2=Telephone; 3=Mixed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                1=Yes; 2=No; 95=Would not vote / would spoil</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18             5=Already voted; 1=Certain to vote; 2=Likely to vote; 3=Unlikely to vote; 4=Certain not to vote</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20      1=Liberal; 2=Conservative; 3=NDP; 4=Bloc Québécois; 5=Green; 6=PPC; 90=Another party; 97=None of these</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23                         1=Very interested; 2=Quite interested; 3=Hardly interested; 4=Not at all interested</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                  1=18-24; 2=25-34; 3=35-44; 4=45-54; 5=55-64; 6=65 and over</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                              1=Man; 2=Woman; 3=Non-binary; 4=Another gender</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                  1=Primary or less; 2=Secondary; 3=College (CEGEP, technical); 4=University</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                1=French; 2=English; 3=Other</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                 1=Yes; 2=No</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                                                        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          status added_in     qes2022     qes2018 qes2018_panel    qes2014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  experimental    0.1.0  comparable  comparable    comparable comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  experimental    0.1.0 approximate        &lt;NA&gt;   approximate       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  experimental    0.1.0        &lt;NA&gt;        &lt;NA&gt;   approximate       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  experimental    0.1.0 approximate approximate   approximate comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  experimental    0.1.0  comparable  comparable          &lt;NA&gt;  identical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  experimental    0.1.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  experimental    0.1.0        &lt;NA&gt;        &lt;NA&gt;     identical       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  experimental    0.1.0 approximate  comparable   approximate  identical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  experimental    0.1.0  comparable  comparable          &lt;NA&gt;  identical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 experimental    0.1.0        &lt;NA&gt;  comparable          &lt;NA&gt; comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 experimental    0.1.0   identical  comparable          &lt;NA&gt; comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 experimental    0.2.0        &lt;NA&gt;   identical          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 experimental    0.2.0   identical approximate          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 experimental    0.2.0        &lt;NA&gt;        &lt;NA&gt;     identical       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15 experimental    0.2.0   identical        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16 experimental    0.2.0        &lt;NA&gt;        &lt;NA&gt;     identical       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17 experimental    0.3.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21 experimental    1.0.0 approximate        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;       &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25 experimental    1.0.0  comparable  comparable    comparable comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 experimental    1.0.0  comparable  comparable   approximate  identical</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 experimental    1.0.0        &lt;NA&gt;  comparable    comparable comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 experimental    1.0.0   identical  comparable          &lt;NA&gt; comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29 experimental    1.0.0 approximate        &lt;NA&gt;   approximate comparable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30 experimental    1.0.0 approximate        &lt;NA&gt;          &lt;NA&gt; comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                                                                                                                     How the respondent would vote on the question of the 1995 referendum (sovereignty with an offer of partnership to the rest of Canada), with the respondents who did not know at the first question asked which way they would be inclined to vote (a push question), combined into one variable: the first answer where there is one, else the pushed answer. A separate target from sov_partnership_1995, which has the first question only; the pooled variable sov_support uses this one first.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                                                                                                                                                                                                                                                                                                                                                                    How satisfied the respondent is, on the whole, with the way democracy works in Quebec, on a four-point verbal scale (very, fairly, not very, not at all satisfied).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                                                                                                                                                                                                                                                How satisfied the respondent is with the performance of the Quebec government in office, on a four-point scale. The government changes by design: each row's wording names it (the Liberal government in 2012, the PQ government in 2014, Philippe Couillard's in 2018, the government under François Legault in 2022).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                                                                                                                                                                                                                                                                                                                                                                                                  Whether the respondent thinks Quebec's economy has gotten better, stayed about the same or gotten worse over the past year (a retrospective, sociotropic evaluation).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               How attached the respondent feels to Quebec, on a four-point scale (very, fairly, not very, not at all).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               How attached the respondent feels to Canada, on a four-point scale (very, fairly, not very, not at all).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37                                                                                                                                                                                                                                                                                                                                                                                                                                                      How the respondent defines themselves, from Québécois only to Canadian only (the five-point Moreno question); another self-definition is an answer (level other).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                                                                                                                                                                                                                                                                                                                              How strongly the respondent identifies with the provincial party named at the party identification question (very, fairly, not very strongly), asked of those who named a party. Those who named none, did not know or refused were not asked: the value is missing, reason inapplicable.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39                                                                                                                                                                                                                                                                                         Party the respondent reports having voted for in the Quebec general election before the study's election (election_ref gives which one). Recalled years later: known to lean toward the winner of that election. Nonvoters, spoiled ballots and respondents not eligible then are missing values with a reason, never a party.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                                                                                                                                                                                                                                                                                                                                                                                                       How much the respondent likes the leader of the PLQ, from 0 (really dislike) to 100 (really like); the leader changes by design, and each row names the person rated. Not knowing the leader is don't know (dk).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                                                                                                                                                                                                                                                                                                                                                                                                        How much the respondent likes the leader of the PQ, from 0 (really dislike) to 100 (really like); the leader changes by design, and each row names the person rated. Not knowing the leader is don't know (dk).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42                                                                                                                                                                                                                                                                                                                                                                                                       How much the respondent likes the leader of the CAQ, from 0 (really dislike) to 100 (really like); the leader changes by design, and each row names the person rated. Not knowing the leader is don't know (dk).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43                                                                                                                                                                                                                                                                                            How much the respondent likes the leader of the QS, from 0 (really dislike) to 100 (really like); the leader changes by design, and each row names the person rated (QS has two spokespersons: the one the study rated, or its candidate for premier when the study rated both). Not knowing the leader is don't know (dk).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44                                                                                                                                                                                                                                                                                                                                                                                                       How much the respondent likes the leader of the ADQ, from 0 (really dislike) to 100 (really like); the leader changes by design, and each row names the person rated. Not knowing the leader is don't know (dk).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45                                                                                                                                                                                                                                                                                                                                                                                                   Where the respondent lives: the Montreal census metropolitan area (CMA), the Quebec CMA or the rest of Quebec, from the region the study recorded for its sampling, quotas or weighting (not a question of its own).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            The language the respondent speaks most often at home: French, English or another language.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47                                                                                                                                                                                                                                                                                                                                           How often the respondent attends services at their place of worship, not counting weddings and funerals, from every week to hardly ever or never. Where the study asked only those who belong to a religion, those who do not are hardly ever or never (graded approximate).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48                                                                                                                                                                                                                                                                                                                                                                                                                                           Where the respondent was born: in Quebec, elsewhere in Canada or outside Canada. Where both are harmonized, born_canada is yes exactly where this is quebec or other_canada.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49                                                                                                                                                                                                                                                                                                                          Party the respondent reports having voted for in the last Canadian federal election before the study (each row's wording names it: January 2006, October 2008, May 2011, 2021). Nonvoters, spoiled ballots and respondents not eligible then are missing values with a reason, never a party.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50                                                                                                                                                                                                                                                                                                                      Which issue, from the study's closed list, was the most important to the respondent personally in the Quebec general election of the study. The lists change from election to election: an issue a study did not list is a structural zero there (levels_not_offered), not an absence of concern.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                   levels</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                                                                                                                                    1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                                                            1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 95=Would not vote / none / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                                                            1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 95=Would not vote / none / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                                                                                                                                                                                                            1=Yes; 2=No</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                                                                                                                                                                           1=Yes; 2=No; 95=Would not vote / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                                                                                                                           1=Yes; 2=No; 95=Would not vote / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                                                                                                                                                                           1=Very favourable; 2=Somewhat favourable; 3=Somewhat opposed; 4=Very opposed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                                                                                                                                                                                                   &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                                                                                                                                  1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party; 97=None of these</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                                                                                                                   1=Very interested; 2=Quite interested; 3=Hardly interested; 4=Not at all interested</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                                                                                                                                                                                       1=18-34; 2=35-54; 3=55 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                                                                                                                                                                                                           1=Yes; 2=No</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                                                                                                                                                                                           1=Web; 2=Telephone; 3=Mixed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                                                                                                                                                                          1=Yes; 2=No; 95=Would not vote / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                                                                                                       5=Already voted; 1=Certain to vote; 2=Likely to vote; 3=Unlikely to vote; 4=Certain not to vote</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                                                                                                                1=Liberal; 2=Conservative; 3=NDP; 4=Bloc Québécois; 5=Green; 6=PPC; 90=Another party; 97=None of these</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                                                                                                                                   1=Very interested; 2=Quite interested; 3=Hardly interested; 4=Not at all interested</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                                                                                                                                                            1=18-24; 2=25-34; 3=35-44; 4=45-54; 5=55-64; 6=65 and over</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                                                                                                                                                                        1=Man; 2=Woman; 3=Non-binary; 4=Another gender</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                                                                                                                                            1=Primary or less; 2=Secondary; 3=College (CEGEP, technical); 4=University</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                                                                                                                                                                                          1=French; 2=English; 3=Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                                                                                                                                                                                                           1=Yes; 2=No</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                                                                                                                                                                                                                                                          1=Yes; 2=No; 95=Would not vote / would spoil</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                                                                                                                                    1=Very satisfied; 2=Fairly satisfied; 3=Not very satisfied; 4=Not at all satisfied</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                                                                                                                                                                    1=Very satisfied; 2=Fairly satisfied; 3=Not very satisfied; 4=Not at all satisfied</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                                                                                                                                                                                                                   1=Better; 2=About the same; 3=Worse</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                                                                                                                                                                                                                        1=Very attached; 2=Fairly attached; 3=Not very attached; 4=Not at all attached</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                                                                                                                                                                                                                        1=Very attached; 2=Fairly attached; 3=Not very attached; 4=Not at all attached</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37                                                                                                                                                     1=Québécois only; 2=Québécois first, then Canadian; 3=Equally Québécois and Canadian; 4=Canadian first, then Québécois; 5=Canadian only; 90=Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38                                                                                                                                                                                                                                               1=Very strongly; 2=Fairly strongly; 3=Not very strongly</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39                                                                                                                                                                                                                                   1=PLQ; 2=PQ; 3=CAQ; 4=QS; 5=PVQ; 6=PCQ; 7=ON; 8=ADQ; 90=Other party</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44                                                                                                                                                                                                                                                                                                  &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45                                                                                                                                                                                                                                                        1=Montreal CMA; 2=Quebec CMA; 3=Rest of Quebec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46                                                                                                                                                                                                                                                                          1=French; 2=English; 3=Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47                                                                                                                                                                                                         1=Every week; 2=Twice a month; 3=Once a month; 4=Once or twice a year; 5=Hardly ever or never</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48                                                                                                                                                                                                                                                     1=Quebec; 2=Elsewhere in Canada; 3=Outside Canada</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49                                                                                                                                                                                                                  1=Liberal; 2=Conservative; 3=NDP; 4=Bloc Québécois; 5=Green; 6=PPC; 90=Another party</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 1=The economy; 2=Health care; 3=The environment; 4=Education; 5=Aid to families; 6=Poverty; 7=Integrity and corruption; 8=Taxes and public finances; 9=Quebec sovereignty; 10=State secularism (the charter); 11=Immigration; 12=Cost of living; 13=Housing; 14=The French language; 90=Another issue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          status added_in     qes2022     qes2018 qes2018_panel     qes2014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  experimental    0.1.0  comparable  comparable    comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  experimental    0.1.0 approximate        &lt;NA&gt;   approximate        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  experimental    0.1.0 approximate        &lt;NA&gt;   approximate        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  experimental    0.1.0 approximate approximate   approximate  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  experimental    0.1.0  comparable  comparable          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  experimental    0.1.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  experimental    0.1.0        &lt;NA&gt;        &lt;NA&gt;     identical        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  experimental    0.1.0 approximate  comparable   approximate   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  experimental    0.1.0  comparable  comparable          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 experimental    0.1.0        &lt;NA&gt;  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 experimental    0.1.0   identical  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 experimental    0.2.0        &lt;NA&gt;   identical          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 experimental    0.2.0   identical approximate          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 experimental    0.2.0        &lt;NA&gt;        &lt;NA&gt;     identical        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 experimental    0.2.0   identical        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16 experimental    0.2.0        &lt;NA&gt;        &lt;NA&gt;     identical        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17 experimental    0.3.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 experimental    1.0.0   identical        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21 experimental    1.0.0 approximate        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24 experimental    1.0.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25 experimental    1.0.0  comparable  comparable    comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 experimental    1.0.0  comparable  comparable   approximate   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27 experimental    1.0.0 approximate  comparable    comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 experimental    1.0.0   identical  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29 experimental    1.0.0 approximate        &lt;NA&gt;   approximate  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 experimental    1.0.0 approximate        &lt;NA&gt;          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31 experimental    4.3.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 experimental    4.3.0  comparable  comparable          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33 experimental    4.3.0  comparable  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34 experimental    4.3.0  comparable   identical          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 experimental    4.3.0  comparable  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36 experimental    4.3.0  comparable  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37 experimental    4.3.0  comparable        &lt;NA&gt;          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38 experimental    4.3.0 approximate  comparable          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39 experimental    4.3.0  comparable  comparable          &lt;NA&gt;   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40 experimental    4.3.0 approximate approximate          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41 experimental    4.3.0 approximate approximate          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42 experimental    4.3.0 approximate approximate          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43 experimental    4.3.0 approximate approximate          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44 experimental    4.3.0        &lt;NA&gt;        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45 experimental    4.3.0        &lt;NA&gt;   identical   approximate   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46 experimental    4.3.0 approximate  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47 experimental    4.3.0        &lt;NA&gt; approximate          &lt;NA&gt; approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48 experimental    4.3.0        &lt;NA&gt;  comparable          &lt;NA&gt;  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49 experimental    4.3.0  comparable        &lt;NA&gt;          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50 experimental    4.3.0  comparable  comparable          &lt;NA&gt;  comparable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       qes2012 qes2012_panel qes_crop_2007_2010     qes2008     qes2007</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   identical   approximate               &lt;NA&gt;  comparable  comparable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2        &lt;NA&gt;   approximate         comparable        &lt;NA&gt;        &lt;NA&gt;</span>
@@ -521,7 +719,7 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;  comparable   identical</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20 comparable          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;   identical</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;  comparable   identical</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
@@ -532,6 +730,26 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28 comparable          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29  identical          &lt;NA&gt;        approximate approximate approximate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;  comparable   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38  identical          &lt;NA&gt;               &lt;NA&gt; approximate approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;  comparable        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44       &lt;NA&gt;          &lt;NA&gt;               &lt;NA&gt;  comparable   identical</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45  identical    comparable         comparable  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46  identical          &lt;NA&gt;         comparable  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47  identical          &lt;NA&gt;               &lt;NA&gt;  comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48  identical          &lt;NA&gt;               &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49  identical          &lt;NA&gt;               &lt;NA&gt;  comparable approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50  identical          &lt;NA&gt;               &lt;NA&gt;  comparable        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    qes2007_panel     qes1998</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    approximate  comparable</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2      identical        &lt;NA&gt;</span>
@@ -563,6 +781,26 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 28          &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29   approximate        &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31    comparable  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   approximate        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 37          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 38          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 40          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 41          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 42          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 43          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 44          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 45          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 46    comparable        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 47          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 48          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49          &lt;NA&gt;        &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 50          &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># how each study's question maps to one target</span></span></span>
 <span class="r-in"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"vote_prov_recall"</span><span class="op">)</span></span></span>
@@ -638,21 +876,31 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3          NA         &lt;NA&gt;         &lt;NA&gt;        dk &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4          NA         &lt;NA&gt;         &lt;NA&gt;   refused &lt;NA&gt;</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># the pooled variables: which member each study uses, and its grade</span></span></span>
+<span class="r-in"><span><span class="va">pv</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"pooled"</span>, targets <span class="op">=</span> <span class="st">"vote_choice"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pv</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"type_name"</span>, <span class="st">"member"</span>, <span class="st">"precedence"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2022"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        type_name                member precedence   qes2012     qes2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         recall      vote_prov_recall          1 identical  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 intention_push vote_prov_intent_push          2      &lt;NA&gt; approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      intention      vote_prov_intent          3      &lt;NA&gt; approximate</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the checked spec itself</span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"spec"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">s</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.2.0 (2026-09-28), content hash 02b3b7edc509deff0db16859bef7bfb6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   targets: 30</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 62</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   crosswalk: 132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 599</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.3.0 (2026-09-29), content hash 506f691e420e8d5d5de3657eef556d3d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   targets: 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   crosswalk: 236</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 1175</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   waves: 39</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   weights: 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   gates: 1268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   expected: 1174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   hashes: 127</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   legacy: 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gates: 3209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   expected: 2914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   hashes: 269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   legacy: 102</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pooled: 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   pooled_members: 14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Check: 0 error(s), 0 warning(s), 0 note(s).</span>
 </code></pre></div>
     </div>

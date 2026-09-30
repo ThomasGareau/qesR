@@ -19,6 +19,41 @@ remotes::install_github("ThomasGareau/qesR")
 # install.packages("qesR")
 ```
 
+## What the pooled variables show
+
+One variable for every study, weighted within each study, with its
+confidence interval: two figures from the [example
+pages](https://thomasgareau.github.io/qesR/articles/realignment.md).
+
+[![Line chart of the effective number of parties at each Quebec election
+from 1998 to 2022, officially and among francophone and non-francophone
+respondents: it rises among francophones and stays low among
+non-francophones until 2022. Details on the realignment
+page.](articles/realignment_files/figure-html/enp-light.png)![Line chart
+of the effective number of parties at each Quebec election from 1998 to
+2022, officially and among francophone and non-francophone respondents:
+it rises among francophones and stays low among non-francophones until
+2022. Details on the realignment
+page.](articles/realignment_files/figure-html/enp-dark.png)](https://thomasgareau.github.io/qesR/articles/realignment.md)
+
+The francophone vote fragmented; the non-francophone vote stayed
+concentrated until 2018
+
+[![Line chart of the share of francophones who would vote Yes to an
+independent country, by birth cohort, in 2012, 2014, 2018 and 2022: the
+cohort born in 1990 or after falls from 53% to 30%, the lowest level,
+while the cohort born 1945-1959 stays at 50% to 54%. Details on the
+sovereignty
+page.](articles/sovereignty-generations_files/figure-html/cohorts-light.png)![Line
+chart of the share of francophones who would vote Yes to an independent
+country, by birth cohort, in 2012, 2014, 2018 and 2022: the cohort born
+in 1990 or after falls from 53% to 30%, the lowest level, while the
+cohort born 1945-1959 stays at 50% to 54%. Details on the sovereignty
+page.](articles/sovereignty-generations_files/figure-html/cohorts-dark.png)](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)
+
+Francophones born in 1990 or after went from 53% to 30% Yes, the least
+sovereigntist cohort
+
 ## One data frame across 11 studies (experimental)
 
 ``` r
@@ -50,8 +85,10 @@ with qesR:
 
 - **One question stimulus per target.** A reported vote and a vote
   intention are different targets, and so are the sovereignty questions
-  with different wordings; nothing is pooled across wordings behind your
-  back.
+  with different wordings. A pooled variable (`vote_choice`,
+  `sov_support`, `pol_interest`, `turnout`) puts them in one column for
+  every study, and says row by row which question each value comes from:
+  nothing is pooled behind your back.
 - **A grade for every study’s question**: identical, comparable or
   approximate, with the reason, in English and French.
   `min_grade = "comparable"` drops the approximate ones. A party a study
@@ -82,12 +119,15 @@ reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.
 | [`survey_mode`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-survey_mode) | — | — | I | — | — | — | — | — | I | — | — |
 | [`vote_prov_recall`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_recall) | C | C | C | C | I | A | — | C | C | A | C |
 | [`vote_prov_intent`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent) | A | — | A | — | — | A | C | — | — | I | — |
-| [`vote_prov_intent_push`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent_push) | — | — | A | — | — | A | C | — | — | I | A |
+| [`vote_prov_intent_push`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent_push) | A | — | A | — | — | A | C | — | — | I | A |
 | [`turnout_prov_recall`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-turnout_prov_recall) | A | A | A | C | I | C | — | C | C | C | C |
 | [`turnout_prov_likely`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-turnout_prov_likely) | I | — | — | — | — | — | — | — | — | — | — |
 | [`vote_prov_intent_other`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_intent_other) | I | — | — | — | — | — | — | — | — | — | — |
+| [`vote_prov_prev`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_prov_prev) | C | C | — | I | — | — | — | C | — | — | — |
+| [`vote_fed_recall`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-vote_fed_recall) | C | — | — | — | I | — | — | C | A | — | — |
 | [`pid_prov`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_prov) | C | C | — | I | I | — | — | C | C | — | — |
-| [`pid_fed`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_fed) | I | — | — | — | — | — | — | — | — | — | — |
+| [`pid_fed`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_fed) | I | — | — | — | C | — | — | — | — | — | — |
+| [`pid_prov_strength`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-pid_prov_strength) | A | C | — | I | I | — | — | A | A | — | — |
 | [`sov_indep`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_indep) | C | C | — | I | I | — | — | — | — | — | — |
 | [`sov_sovereign_country`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_sovereign_country) | — | — | — | — | — | I | — | — | — | — | — |
 | [`sov_favour`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_favour) | — | — | I | — | — | — | — | — | — | — | — |
@@ -97,6 +137,19 @@ reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.
 | [`interest_0_10`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_0_10) | A | — | — | — | — | — | — | — | I | — | — |
 | [`interest_election_0_10`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_election_0_10) | — | — | — | — | — | — | — | C | I | — | — |
 | [`interest_campaign_4pt`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-interest_campaign_4pt) | — | — | — | — | — | — | — | — | — | I | — |
+| [`sov_partnership_1995_push`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-sov_partnership_1995_push) | — | — | — | — | — | — | — | C | I | C | C |
+| [`satis_demo_qc`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-satis_demo_qc) | C | C | — | I | I | — | — | C | C | — | — |
+| [`gov_satisfaction`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-gov_satisfaction) | C | C | — | C | I | — | — | — | — | A | — |
+| [`econ_retro_qc`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-econ_retro_qc) | C | I | — | I | I | — | — | C | C | — | — |
+| [`attach_qc`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-attach_qc) | C | C | — | C | I | — | — | — | — | — | — |
+| [`attach_ca`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-attach_ca) | C | C | — | C | I | — | — | — | — | — | — |
+| [`identity_qc_ca`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-identity_qc_ca) | C | — | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_plq`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-therm_leader_plq) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_pq`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-therm_leader_pq) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_caq`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-therm_leader_caq) | A | A | — | C | I | — | — | — | — | — | — |
+| [`therm_leader_qs`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-therm_leader_qs) | A | A | — | C | I | — | — | C | C | — | — |
+| [`therm_leader_adq`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-therm_leader_adq) | — | — | — | — | — | — | — | C | I | — | — |
+| [`mip_issue`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-mip_issue) | C | C | — | C | I | — | — | C | — | — | — |
 | [`birth_year`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-birth_year) | I | C | — | C | C | — | — | C | C | — | — |
 | [`birth_month`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-birth_month) | — | I | — | — | — | — | — | — | — | — | — |
 | [`age`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-age) | I | A | — | — | — | — | — | — | — | — | — |
@@ -105,10 +158,18 @@ reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.
 | [`age_group6`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-age_group6) | — | — | — | — | — | C | I | C | — | C | C |
 | [`gender`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-gender) | C | C | C | C | I | C | C | C | C | C | C |
 | [`education4`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-education4) | C | C | A | I | C | — | A | C | C | A | — |
-| [`lang_mother`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-lang_mother) | — | C | C | C | I | C | C | C | C | C | — |
+| [`lang_mother`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-lang_mother) | A | C | C | C | I | C | C | C | C | C | — |
 | [`born_canada`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-born_canada) | I | C | — | C | C | — | — | — | — | — | — |
 | [`income_native`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-income_native) | A | — | A | C | I | — | A | A | A | A | — |
 | [`religion`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-religion) | A | — | — | C | I | — | — | — | — | — | — |
+| [`region_cma3`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-region_cma3) | — | I | A | I | I | C | C | C | C | — | — |
+| [`lang_home`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-lang_home) | A | C | — | C | I | — | C | C | C | C | — |
+| [`relig_attend`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-relig_attend) | — | A | — | A | I | — | — | C | C | — | — |
+| [`birthplace3`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#target-birthplace3) | — | C | — | C | I | — | — | — | — | — | — |
+| [`vote_choice`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#pooled-vote_choice) (pooled) | C | C | C | C | I | A | C | C | C | A | C |
+| [`sov_support`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#pooled-sov_support) (pooled) | C | C | A | I | I | I | — | C | I | C | C |
+| [`pol_interest`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#pooled-pol_interest) (pooled) | A | A | — | A | A | — | — | A | I | A | — |
+| [`turnout`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#pooled-turnout) (pooled) | A | A | A | C | I | C | — | C | C | C | C |
 
 [Coverage by
 study](https://thomasgareau.github.io/qesR/articles/coverage.md) adds
@@ -197,12 +258,20 @@ result.
   results](https://thomasgareau.github.io/qesR/articles/validation.md)
   and the [harmonization
   reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
-- Examples built from the full data files: [respondents by
-  study](https://thomasgareau.github.io/qesR/articles/analysis-descriptive.md),
-  [support for
-  independence](https://thomasgareau.github.io/qesR/articles/analysis-sovereignty.md)
-  and [reported
-  vote](https://thomasgareau.github.io/qesR/articles/analysis-vote-choice.md).
+- Examples built from the full data files, with weighted estimates and
+  confidence intervals: [the realignment of the party
+  system](https://thomasgareau.github.io/qesR/articles/realignment.md),
+  [sovereignty across
+  generations](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md),
+  [sovereignty and
+  left-right](https://thomasgareau.github.io/qesR/articles/dimensions.md),
+  [turnout](https://thomasgareau.github.io/qesR/articles/turnout.md),
+  [panel
+  transitions](https://thomasgareau.github.io/qesR/articles/transitions.md),
+  [surveys against the official
+  results](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md),
+  and [recipes](https://thomasgareau.github.io/qesR/articles/recipes.md)
+  for the pooled variables.
 - [Reference](https://thomasgareau.github.io/qesR/reference/index.md):
   every function, grouped by task. The functions of qesR 0.4.4 are under
   *Legacy and deprecated*; they keep working.
@@ -286,12 +355,22 @@ Statistique Canada (Licence ouverte de Statistique Canada). Le fichier
   l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 - [Le fichier fusionné
   hérité](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)
-- Exemples : [répondants par
-  étude](https://thomasgareau.github.io/qesR/articles/fr-analyse-descriptive.md),
-  [appui à
-  l’indépendance](https://thomasgareau.github.io/qesR/articles/fr-analyse-souverainete.md),
-  [vote
-  déclaré](https://thomasgareau.github.io/qesR/articles/fr-analyse-choix-vote.md)
+- Exemples, avec des estimations pondérées et des intervalles de
+  confiance : [le réalignement du système
+  partisan](https://thomasgareau.github.io/qesR/articles/fr-realignement.md),
+  [la souveraineté selon les
+  générations](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md),
+  [souveraineté et
+  gauche-droite](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md),
+  [la
+  participation](https://thomasgareau.github.io/qesR/articles/fr-participation.md),
+  [les transitions des
+  panels](https://thomasgareau.github.io/qesR/articles/fr-transitions.md),
+  [les enquêtes et les résultats
+  officiels](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)
+  et des
+  [recettes](https://thomasgareau.github.io/qesR/articles/fr-recettes.md)
+  pour les variables regroupées
 - [Aperçu des fonctions en
   français](https://thomasgareau.github.io/qesR/reference/qesR-fr.md)
   (`?qesR-fr`)

@@ -89,7 +89,10 @@ table(master$qes_code)
   `attr(master, "legacy_na_columns")` lists each column and study that
   is `NA` throughout, with the reason, the rule behind it where there is
   one (`cause`: `reported_vote_only`, `independence_question_only`,
-  `no_valid_source` or `not_harmonized_yet`) and, in `basis`, why in
+  `no_valid_source`, `not_harmonized_yet` or `legacy_frozen`: the
+  study’s question is harmonized since spec 4.3.0, in
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  but the column keeps the `NA` of qesR 0.7.1) and, in `basis`, why in
   words.
 - `vote_choice_timing` and `sovereignty_item` say what `vote_choice` and
   `sovereignty_support` hold in each study.

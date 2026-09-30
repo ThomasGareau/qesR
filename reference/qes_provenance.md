@@ -11,7 +11,7 @@ ready for a replication log or a methods section.
 ## Usage
 
 ``` r
-qes_provenance(x, level = c("study", "cell", "spec"))
+qes_provenance(x, level = c("study", "cell", "spec", "pooled"))
 ```
 
 ## Arguments
@@ -34,11 +34,11 @@ qes_provenance(x, level = c("study", "cell", "spec"))
 
 - level:
 
-  `"study"` (default): one row per file. `"cell"` and `"spec"` describe
-  data harmonized by
-  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md);
-  for other objects they are an error of class
-  `qesR_error_no_provenance`.
+  `"study"` (default): one row per file. `"cell"`, `"spec"` and
+  `"pooled"` describe data harmonized by
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  (`"pooled"` only when it has pooled variables); for other objects they
+  are an error of class `qesR_error_no_provenance`.
 
 ## Value
 
@@ -78,6 +78,19 @@ targets about an election: the wave's members who could not vote in it,
 eligibility is not available for any member of the wave, for example
 when its age rows are not signed off and `include_draft = FALSE`) and
 `note`.
+
+For `level = "pooled"` (harmonized data with pooled variables such as
+`vote_choice`), one row per study, pooled variable and member: `study`,
+`pooled`, `type` (the value of `<pooled>__type`), `member` (the target),
+`precedence` (1 is tried first), `wave` and `item`
+(`<study>:<wave>:<source variables>`) of the member's cell, `grade` (its
+grade, capped for lossy transforms), `used_in_layout` (`FALSE` for a
+member of another wave than the one the respondent layout takes the
+study's values from), `included` (its cell was applied and its grade is
+at least `min_grade`), `n_value` (rows whose value comes from it),
+`n_answer_na` (rows it made `NA` with an answer such as don't know or
+did not vote) and `n_fallthrough` (rows `NA` because no member asked
+them, reported under this member).
 
 For `level = "spec"`, one row (one per
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
@@ -131,8 +144,8 @@ demo <- get_qes("qes_demo", assign_global = FALSE, quiet = TRUE)
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-29 16:20:14 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.3.0.
+#> 2026-09-30 00:14:43 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> as.data.frame() gives every column.
 
@@ -146,12 +159,12 @@ qes_provenance(c("qes2018", "qes2014"))
 #> qes2018: file 425914 (Quebec Election Study 2018.dta) of the Dataverse
 #> dataset https://doi.org/10.5683/SP3/NWTGWS, version 1.0. Expected md5
 #> d24f5b0be727d688ad305b8eb61f0d30 (not yet checked). 3072 rows, 254 columns.
-#> Licence: CC0 1.0. qesR catalog 2.3.0.
+#> Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> qes2014: file 425916 (Quebec Election Study 2014.sav) of the Dataverse
 #> dataset https://doi.org/10.5683/SP3/64F7WR, version 1.0. Expected md5
 #> 9549423b32526a2f11a3d954a87c6861 (not yet checked). 1517 rows, 140 columns.
-#> Licence: CC0 1.0. qesR catalog 2.3.0.
+#> Licence: CC0 1.0. qesR catalog 2.4.0.
 #> 
 #> as.data.frame() gives every column.
 

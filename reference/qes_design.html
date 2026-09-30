@@ -13,7 +13,7 @@ the long layout, the respondent as the sampling unit."><meta property="og:image"
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,9 +38,13 @@ the long layout, the respondent as the sampling unit."><meta property="og:image"
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul></li>
@@ -59,9 +63,13 @@ the long layout, the respondent as the sampling unit."><meta property="og:image"
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul></li>
@@ -137,8 +145,10 @@ layout; the polls of pooled polls count as one) has the same total.</p></dd>
     <p>A <code>survey.design2</code> (engine <code>"survey"</code>) or <code>tbl_svy</code> (engine
 <code>"srvyr"</code>) object whose data are the rows of <code>x</code> with a value of the
 weight, as a plain data frame, with the added column <code>qes_stratum</code>
-(the study, or <code>&lt;study&gt;:&lt;stratum&gt;</code> where the <code>stratum</code> column is set).
-The weight is the column named by <code>weight</code>.</p>
+(the study, or <code>&lt;study&gt;:&lt;stratum&gt;</code> where the <code>stratum</code> column is set),
+and <code>weight_auto</code> when each study takes its own weight column (see
+<em>Choosing a weight</em>). The weight is the column named by <code>weight</code>, or
+<code>weight_auto</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="choosing-a-weight">Choosing a weight<a class="anchor" aria-label="anchor" href="#choosing-a-weight"></a></h2>
@@ -156,8 +166,13 @@ reported vote with <code>weight_post</code>.</p>
 that do not depend on the moment of the interview, such as the year of
 birth, do not count; a question that can be asked in any wave, such as
 sovereignty, counts through the wave that asked it): if all these waves
-call for the same column, it uses that column; if they call for both
-(the default <code>targets = "core"</code> does), it stops and asks you to choose.
+call for the same column, it uses that column. If they call for both, but
+each study's call for one only (a pooled variable such as <code>vote_choice</code>
+takes the post-election recall of most studies and the pre-election
+intention of the CROP polls), each study gets its own, in a new column
+<code>weight_auto</code> that the design uses. If one study's targets call for both
+(the default <code>targets = "core"</code> does, for the studies with two waves), it
+stops and asks you to choose.
 With no such target, it uses the one weight column that has values, and
 asks you to choose when both have values.
 In the long layout the weight is the <code>weight</code> column.</p>
@@ -213,7 +228,10 @@ nom de la vague du sondage, comme dans <code>waves</code>). Avec
 chaque cible (<code>attr(x, "qes_weight_guide")</code>) : <code>weight_pre</code> pour des
 cibles de vagues préélectorales, <code>weight_post</code> pour des cibles de vagues
 postélectorales ; les cibles fixes, comme l'année de naissance, ne
-comptent pas ; si <code>x</code> mêle les deux, la fonction demande de choisir.
+comptent pas ; si les études appellent des colonnes différentes mais
+chacune une seule (une variable regroupée comme <code>vote_choice</code>), chaque
+étude reçoit la sienne dans une nouvelle colonne <code>weight_auto</code> ; si une
+même étude mêle les deux, la fonction demande de choisir.
 Chaque vague a au plus une pondération recommandée.
 Les lignes sans valeur de pondération sont laissées hors du plan, avec un
 message. <code>pool = "equal"</code> donne le même total à chaque étude (et vague en
@@ -226,6 +244,7 @@ disposition longue ; les sondages regroupés comptent pour une seule
 <code>attr(, "qes_weight_guide")</code>, which says which weight fits each target.</p>
 <p>Other harmonization:
 <code><a href="qes_harmonize.html">qes_harmonize()</a></code>,
+<code><a href="qes_party_lineage.html">qes_party_lineage()</a></code>,
 <code><a href="qes_spec.html">qes_spec()</a></code></p></div>
     </div>
 

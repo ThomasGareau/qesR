@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,9 +53,13 @@
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul>
@@ -76,9 +80,13 @@
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul>
@@ -393,9 +401,9 @@ est comparable à la question d’ancrage de la cible :</p>
 <span><span class="co">#&gt; 3 qes2018 post               q26 comparable               pond</span></span>
 <span><span class="co">#&gt; 4 qes2022  cps cps_qc_referendum comparable cps_weight_general</span></span></code></pre></div>
 <p>Une ligne est appliquée une fois approuvée par un réviseur. Dans la
-spécification 4.1.0, toutes les lignes sont approuvées, après une double
-révision automatisée sur les fichiers et documents originaux (et non une
-révision humaine) ; une ligne encore en révision donnerait
+spécification 4.3.0, toutes les lignes sauf trois sont approuvées, après
+une double révision automatisée sur les fichiers et documents originaux
+(et non une révision humaine) ; une ligne encore en révision donne
 <code>NA</code> avec le motif <code>not_reviewed</code>, sauf avec
 <code>include_draft = TRUE</code>. Les pondérations recommandées de
 <code>qes1998</code>, <code>qes2007_panel</code>,
@@ -454,13 +462,13 @@ utilisés (voir
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">demo</span><span class="op">)</span></span>
 <span><span class="co">#&gt; qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.</span></span>
 <span><span class="co">#&gt; Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.</span></span>
-<span><span class="co">#&gt; Obtenu le 2026-09-29 16:22:01 UTC (local_demo). Lu avec</span></span>
+<span><span class="co">#&gt; Obtenu le 2026-09-30 00:15:25 UTC (local_demo). Lu avec</span></span>
 <span><span class="co">#&gt; haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue</span></span>
-<span><span class="co">#&gt; qesR 2.3.0.</span></span>
+<span><span class="co">#&gt; qesR 2.4.0.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; as.data.frame() donne toutes les colonnes.</span></span>
 <span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.7.1, https://github.com/ThomasGareau/qesR"                </span></span>
+<span><span class="co">#&gt; [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                </span></span>
 <span><span class="co">#&gt; [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="</span></span></code></pre></div>
 <p><code><a href="../reference/qes_download.html">qes_download()</a></code> enregistre les fichiers originaux
 eux-mêmes (fichier de données et documents), vérifiés par somme md5,

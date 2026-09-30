@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,9 +53,13 @@
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="../articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
   </ul>
@@ -76,9 +80,13 @@
     <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul>
@@ -131,9 +139,9 @@ cache.</p>
 <p>The harmonization engine is <strong>experimental</strong>. Its
 specification says, for each study and harmonized variable (“target”),
 which question feeds the target and how each of its codes maps to the
-target’s levels; nothing is matched by name. In specification 4.1.0
-every row is signed off, after an automated double review against the
-original files and documents (not a human review), and
+target’s levels; nothing is matched by name. In specification 4.3.0
+every row but three is signed off, after an automated double review
+against the original files and documents (not a human review), and
 <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applies them by default. The recommended
 weights of <code>qes1998</code>, <code>qes2007_panel</code>,
 <code>qes2012_panel</code> and the CROP polls still need review, so
@@ -302,7 +310,7 @@ post-election wave (<code>pes</code>), which have different weights.</p>
 each reason, for the referendum question:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">h</span><span class="op">$</span><span class="va">sov_indep__na</span><span class="op">)</span></span>
-<span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="va">reasons</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">reasons</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="va">reasons</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">reasons</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>valid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">sov_indep</span><span class="op">)</span>, <span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">sum</span><span class="op">)</span>, <span class="va">reasons</span><span class="op">[</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -508,7 +516,7 @@ the weight of that row’s wave, so one design serves both targets.</p>
 <p><code><a href="../reference/qes_design.html">qes_design()</a></code> hands the data to the <code>survey</code>
 package: each study is a stratum and, in the long layout, the respondent
 is the sampling unit. Estimates are computed within each study with
-<code>svyby()</code>; the table marks the levels a study did not offer
+<code><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby()</a></code>; the table marks the levels a study did not offer
 instead of printing a 0.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span></span>
@@ -898,9 +906,9 @@ specification, then each dataset:</p>
 <code class="sourceCode R"><span><span class="va">spec_record</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">h</span>, level <span class="op">=</span> <span class="st">"spec"</span><span class="op">)</span></span>
 <span><span class="va">spec_record</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec_version"</span>, <span class="st">"spec_hash"</span>, <span class="st">"qesR_version"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   spec_version                        spec_hash qesR_version</span></span>
-<span><span class="co">#&gt; 1        4.2.0 02b3b7edc509deff0db16859bef7bfb6        0.7.1</span></span>
+<span><span class="co">#&gt; 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="va">h</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.7.1, https://github.com/ThomasGareau/qesR; harmonization spec 4.2.0 (content hash 02b3b7edc509deff0db16859bef7bfb6)</span></span>
+<span><span class="co">#&gt; Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.8.0, https://github.com/ThomasGareau/qesR; harmonization spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -915,11 +923,11 @@ specification, then each dataset:</p>
 <span><span class="co">#&gt; Bélanger, Éric; Nadeau, Richard; Crête, Jean; Stephenson, Laura; Tanguay, Brian, 2023, "Étude électorale québécoise 2007", https://doi.org/10.5683/SP2/6XGOKA, Borealis, V1, UNF:6:fNjQ+LF7dCVuIrjEyQuOyg==</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="four-sovereignty-questions-never-pooled">Four sovereignty questions, never pooled<a class="anchor" aria-label="anchor" href="#four-sovereignty-questions-never-pooled"></a>
+<h2 id="five-sovereignty-targets-one-pooled-variable">Five sovereignty targets, one pooled variable<a class="anchor" aria-label="anchor" href="#five-sovereignty-targets-one-pooled-variable"></a>
 </h2>
 <p>A target is one question stimulus. Other studies asked about
-sovereignty with other wordings, so they feed other targets, which are
-never merged with <code>sov_indep</code>:</p>
+sovereignty with other wordings, so they feed other targets, never
+merged into <code>sov_indep</code>:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sovereignty"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
 <span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">sov</span><span class="op">[</span><span class="va">sov</span><span class="op">$</span><span class="va">rule</span> <span class="op">!=</span> <span class="st">"none"</span>, <span class="op">]</span></span>
@@ -927,11 +935,11 @@ never merged with <code>sov_indep</code>:</p>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sov</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"target"</span>, <span class="st">"study"</span>, <span class="st">"source_var"</span>, <span class="st">"grade"</span>, <span class="st">"weight_var"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
-<col width="26%">
-<col width="16%">
+<col width="29%">
+<col width="15%">
+<col width="20%">
+<col width="12%">
 <col width="21%">
-<col width="13%">
-<col width="22%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">target</th>
@@ -1011,6 +1019,34 @@ never merged with <code>sov_indep</code>:</p>
 <td align="left">comparable</td>
 <td align="left">pondam1</td>
 </tr>
+<tr class="odd">
+<td align="left">sov_partnership_1995_push</td>
+<td align="left">qes2007</td>
+<td align="left">q19</td>
+<td align="left">identical</td>
+<td align="left">pond</td>
+</tr>
+<tr class="even">
+<td align="left">sov_partnership_1995_push</td>
+<td align="left">qes2008</td>
+<td align="left">q19</td>
+<td align="left">comparable</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">sov_partnership_1995_push</td>
+<td align="left">qes2007_panel</td>
+<td align="left">intref1</td>
+<td align="left">comparable</td>
+<td align="left">pondam1</td>
+</tr>
+<tr class="even">
+<td align="left">sov_partnership_1995_push</td>
+<td align="left">qes1998</td>
+<td align="left">q16a_crop</td>
+<td align="left">comparable</td>
+<td align="left">ponder3</td>
+</tr>
 </tbody>
 </table>
 <p><code>sov_sovereign_country</code> asks about a “sovereign country”
@@ -1027,6 +1063,71 @@ need review, so <code><a href="../reference/qes_harmonize.html">qes_harmonize()<
 them and <code><a href="../reference/qes_design.html">qes_design()</a></code> leaves these respondents out, with a
 message. Put the targets side by side and read each one against its own
 question.</p>
+<p>To follow support across every study anyway, the pooled variable
+<code>sov_support</code> takes each study’s referendum question,
+whatever its wording, and says which one each value comes from
+(<code>sov_support__type</code>), with the grade of that question
+(<code>sov_support__grade</code>); the favourable or opposed scale of
+<code>qes2018_panel</code> is collapsed to yes or no and graded
+approximate. <code>vote_choice</code> does the same for the vote (the
+reported vote, else the vote intention), and <code>pol_interest</code>
+for interest in politics:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pooled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"pooled"</span>, targets <span class="op">=</span> <span class="st">"sov_support"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">pooled</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"type_name"</span>, <span class="st">"member"</span>, <span class="st">"precedence"</span>, <span class="st">"default"</span>, <span class="st">"grade_cap"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="27%">
+<col width="32%">
+<col width="13%">
+<col width="10%">
+<col width="15%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">type_name</th>
+<th align="left">member</th>
+<th align="right">precedence</th>
+<th align="left">default</th>
+<th align="left">grade_cap</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">independence</td>
+<td align="left">sov_indep</td>
+<td align="right">1</td>
+<td align="left">TRUE</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">sovereign_country</td>
+<td align="left">sov_sovereign_country</td>
+<td align="right">2</td>
+<td align="left">TRUE</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">partnership_1995_push</td>
+<td align="left">sov_partnership_1995_push</td>
+<td align="right">3</td>
+<td align="left">TRUE</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">partnership_1995</td>
+<td align="left">sov_partnership_1995</td>
+<td align="right">4</td>
+<td align="left">TRUE</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">favour</td>
+<td align="left">sov_favour</td>
+<td align="right">5</td>
+<td align="left">TRUE</td>
+<td align="left">approximate</td>
+</tr>
+</tbody>
+</table>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

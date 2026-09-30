@@ -31,7 +31,7 @@
 
     <a class="navbar-brand me-2" href="index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,9 +58,13 @@
     <li><a class="dropdown-item" href="articles/validation.html">Validation against official results</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="articles/analysis-descriptive.html">Respondents by study</a></li>
-    <li><a class="dropdown-item" href="articles/analysis-sovereignty.html">Support for independence</a></li>
-    <li><a class="dropdown-item" href="articles/analysis-vote-choice.html">Reported vote</a></li>
+    <li><a class="dropdown-item" href="articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+    <li><a class="dropdown-item" href="articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
+    <li><a class="dropdown-item" href="articles/turnout.html">Who votes? Turnout</a></li>
+    <li><a class="dropdown-item" href="articles/transitions.html">Changing minds during the campaign</a></li>
+    <li><a class="dropdown-item" href="articles/survey-vs-official.html">Surveys against the official results</a></li>
+    <li><a class="dropdown-item" href="articles/recipes.html">Recipes: pooled variables</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="reference/qesR-package.html">Function overview</a></li>
   </ul>
@@ -81,9 +85,13 @@
     <li><a class="dropdown-item" href="articles/fr-validation.html">Validation par les résultats officiels</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="articles/fr-analyse-descriptive.html">Répondants par étude</a></li>
-    <li><a class="dropdown-item" href="articles/fr-analyse-souverainete.html">Appui à l'indépendance</a></li>
-    <li><a class="dropdown-item" href="articles/fr-analyse-choix-vote.html">Vote déclaré</a></li>
+    <li><a class="dropdown-item" href="articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
+    <li><a class="dropdown-item" href="articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
+    <li><a class="dropdown-item" href="articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
+    <li><a class="dropdown-item" href="articles/fr-participation.html">Qui vote ? La participation</a></li>
+    <li><a class="dropdown-item" href="articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
+    <li><a class="dropdown-item" href="articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
+    <li><a class="dropdown-item" href="articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><a class="dropdown-item" href="reference/qesR-fr.html">Aperçu des fonctions</a></li>
   </ul>
@@ -128,6 +136,16 @@
 <span><span class="co"># install.packages("qesR")</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="what-the-pooled-variables-show">What the pooled variables show<a class="anchor" aria-label="anchor" href="#what-the-pooled-variables-show"></a>
+</h2>
+<p>One variable for every study, weighted within each study, with its confidence interval: two figures from the <a href="articles/realignment.html">example pages</a>.</p>
+<div class="qesr-hero">
+<figure><figcaption>The francophone vote fragmented; the non-francophone vote stayed concentrated until 2018</figcaption><a href="articles/realignment.html"><img class="qesr-img qesr-light" src="articles/realignment_files/figure-html/enp-light.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022, officially and among francophone and non-francophone respondents: it rises among francophones and stays low among non-francophones until 2022. Details on the realignment page." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="articles/realignment_files/figure-html/enp-dark.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022, officially and among francophone and non-francophone respondents: it rises among francophones and stays low among non-francophones until 2022. Details on the realignment page." width="672" height="384" loading="lazy"></a>
+</figure><figure><figcaption>Francophones born in 1990 or after went from 53% to 30% Yes, the least sovereigntist cohort</figcaption><a href="articles/sovereignty-generations.html"><img class="qesr-img qesr-light" src="articles/sovereignty-generations_files/figure-html/cohorts-light.png" alt="Line chart of the share of francophones who would vote Yes to an independent country, by birth cohort, in 2012, 2014, 2018 and 2022: the cohort born in 1990 or after falls from 53% to 30%, the lowest level, while the cohort born 1945-1959 stays at 50% to 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="articles/sovereignty-generations_files/figure-html/cohorts-dark.png" alt="Line chart of the share of francophones who would vote Yes to an independent country, by birth cohort, in 2012, 2014, 2018 and 2022: the cohort born in 1990 or after falls from 53% to 30%, the lowest level, while the cohort born 1945-1959 stays at 50% to 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"></a>
+</figure>
+</div>
+</div>
+<div class="section level2">
 <h2 id="one-data-frame-across-11-studies-experimental">One data frame across 11 studies (experimental)<a class="anchor" aria-label="anchor" href="#one-data-frame-across-11-studies-experimental"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -143,7 +161,7 @@
 <p><code><a href="reference/qes_harmonize.html">qes_harmonize()</a></code> reads each study from its pinned file and maps each study’s question to a harmonized variable (“target”) following a specification that ships with qesR:</p>
 <ul>
 <li>
-<strong>One question stimulus per target.</strong> A reported vote and a vote intention are different targets, and so are the sovereignty questions with different wordings; nothing is pooled across wordings behind your back.</li>
+<strong>One question stimulus per target.</strong> A reported vote and a vote intention are different targets, and so are the sovereignty questions with different wordings. A pooled variable (<code>vote_choice</code>, <code>sov_support</code>, <code>pol_interest</code>, <code>turnout</code>) puts them in one column for every study, and says row by row which question each value comes from: nothing is pooled behind your back.</li>
 <li>
 <strong>A grade for every study’s question</strong>: identical, comparable or approximate, with the reason, in English and French. <code>min_grade = "comparable"</code> drops the approximate ones. A party a study did not list is a structural zero, not 0% support.</li>
 <li>
@@ -228,7 +246,7 @@
 </tr>
 <tr>
 <td><a href="articles/harmonization-reference.html#target-vote_prov_intent_push"><code>vote_prov_intent_push</code></a></td>
-<td>—</td>
+<td>A</td>
 <td>—</td>
 <td>A</td>
 <td>—</td>
@@ -283,6 +301,34 @@
 <td>—</td>
 </tr>
 <tr>
+<td><a href="articles/harmonization-reference.html#target-vote_prov_prev"><code>vote_prov_prev</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-vote_fed_recall"><code>vote_fed_recall</code></a></td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
 <td><a href="articles/harmonization-reference.html#target-pid_prov"><code>pid_prov</code></a></td>
 <td>C</td>
 <td>C</td>
@@ -302,11 +348,25 @@
 <td>—</td>
 <td>—</td>
 <td>—</td>
+<td>C</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-pid_prov_strength"><code>pid_prov_strength</code></a></td>
+<td>A</td>
+<td>C</td>
+<td>—</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>A</td>
 <td>—</td>
 <td>—</td>
 </tr>
@@ -437,6 +497,188 @@
 <td>—</td>
 </tr>
 <tr>
+<td><a href="articles/harmonization-reference.html#target-sov_partnership_1995_push"><code>sov_partnership_1995_push</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-satis_demo_qc"><code>satis_demo_qc</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-gov_satisfaction"><code>gov_satisfaction</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-econ_retro_qc"><code>econ_retro_qc</code></a></td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-attach_qc"><code>attach_qc</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-attach_ca"><code>attach_ca</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-identity_qc_ca"><code>identity_qc_ca</code></a></td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-therm_leader_plq"><code>therm_leader_plq</code></a></td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-therm_leader_pq"><code>therm_leader_pq</code></a></td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-therm_leader_caq"><code>therm_leader_caq</code></a></td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-therm_leader_qs"><code>therm_leader_qs</code></a></td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-therm_leader_adq"><code>therm_leader_adq</code></a></td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-mip_issue"><code>mip_issue</code></a></td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
 <td><a href="articles/harmonization-reference.html#target-birth_year"><code>birth_year</code></a></td>
 <td>I</td>
 <td>C</td>
@@ -550,7 +792,7 @@
 </tr>
 <tr>
 <td><a href="articles/harmonization-reference.html#target-lang_mother"><code>lang_mother</code></a></td>
-<td>—</td>
+<td>A</td>
 <td>C</td>
 <td>C</td>
 <td>C</td>
@@ -604,6 +846,122 @@
 <td>—</td>
 <td>—</td>
 </tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-region_cma3"><code>region_cma3</code></a></td>
+<td>—</td>
+<td>I</td>
+<td>A</td>
+<td>I</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-lang_home"><code>lang_home</code></a></td>
+<td>A</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-relig_attend"><code>relig_attend</code></a></td>
+<td>—</td>
+<td>A</td>
+<td>—</td>
+<td>A</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><a href="articles/harmonization-reference.html#target-birthplace3"><code>birthplace3</code></a></td>
+<td>—</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>
+<a href="articles/harmonization-reference.html#pooled-vote_choice"><code>vote_choice</code></a> (pooled)</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>I</td>
+<td>A</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>A</td>
+<td>C</td>
+</tr>
+<tr>
+<td>
+<a href="articles/harmonization-reference.html#pooled-sov_support"><code>sov_support</code></a> (pooled)</td>
+<td>C</td>
+<td>C</td>
+<td>A</td>
+<td>I</td>
+<td>I</td>
+<td>I</td>
+<td>—</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>C</td>
+</tr>
+<tr>
+<td>
+<a href="articles/harmonization-reference.html#pooled-pol_interest"><code>pol_interest</code></a> (pooled)</td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>A</td>
+<td>A</td>
+<td>—</td>
+<td>—</td>
+<td>A</td>
+<td>I</td>
+<td>A</td>
+<td>—</td>
+</tr>
+<tr>
+<td>
+<a href="articles/harmonization-reference.html#pooled-turnout"><code>turnout</code></a> (pooled)</td>
+<td>A</td>
+<td>A</td>
+<td>A</td>
+<td>C</td>
+<td>I</td>
+<td>C</td>
+<td>—</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+<td>C</td>
+</tr>
 </tbody>
 </table>
 <!-- coverage: end -->
@@ -654,7 +1012,7 @@
 <li>
 <a href="articles/citations.html">Study citations</a>: how to cite qesR and each dataset you use.</li>
 <li>Harmonization (experimental): <a href="articles/harmonization.html">harmonizing across studies</a>, <a href="articles/coverage.html">coverage by study</a>, <a href="articles/validation.html">validation against official results</a> and the <a href="articles/harmonization-reference.html">harmonization reference</a>.</li>
-<li>Examples built from the full data files: <a href="articles/analysis-descriptive.html">respondents by study</a>, <a href="articles/analysis-sovereignty.html">support for independence</a> and <a href="articles/analysis-vote-choice.html">reported vote</a>.</li>
+<li>Examples built from the full data files, with weighted estimates and confidence intervals: <a href="articles/realignment.html">the realignment of the party system</a>, <a href="articles/sovereignty-generations.html">sovereignty across generations</a>, <a href="articles/dimensions.html">sovereignty and left-right</a>, <a href="articles/turnout.html">turnout</a>, <a href="articles/transitions.html">panel transitions</a>, <a href="articles/survey-vs-official.html">surveys against the official results</a>, and <a href="articles/recipes.html">recipes</a> for the pooled variables.</li>
 <li>
 <a href="reference/index.html">Reference</a>: every function, grouped by task. The functions of qesR 0.4.4 are under <em>Legacy and deprecated</em>; they keep working.</li>
 </ul>
@@ -682,8 +1040,7 @@
 <li>Harmonisation (expérimental) : <a href="articles/fr-harmonisation.html">harmoniser entre études</a>, <a href="articles/fr-couverture.html">couverture par étude</a>, <a href="articles/fr-validation.html">validation par les résultats officiels</a>, <a href="articles/fr-reference-harmonisation.html">référence de l’harmonisation</a>
 </li>
 <li><a href="articles/fr-donnees-fusionnees.html">Le fichier fusionné hérité</a></li>
-<li>Exemples : <a href="articles/fr-analyse-descriptive.html">répondants par étude</a>, <a href="articles/fr-analyse-souverainete.html">appui à l’indépendance</a>, <a href="articles/fr-analyse-choix-vote.html">vote déclaré</a>
-</li>
+<li>Exemples, avec des estimations pondérées et des intervalles de confiance : <a href="articles/fr-realignement.html">le réalignement du système partisan</a>, <a href="articles/fr-souverainete-generations.html">la souveraineté selon les générations</a>, <a href="articles/fr-dimensions.html">souveraineté et gauche-droite</a>, <a href="articles/fr-participation.html">la participation</a>, <a href="articles/fr-transitions.html">les transitions des panels</a>, <a href="articles/fr-enquetes-resultats.html">les enquêtes et les résultats officiels</a> et des <a href="articles/fr-recettes.html">recettes</a> pour les variables regroupées</li>
 <li>
 <a href="reference/qesR-fr.html">Aperçu des fonctions en français</a> (<code>?qesR-fr</code>)</li>
 </ul>
