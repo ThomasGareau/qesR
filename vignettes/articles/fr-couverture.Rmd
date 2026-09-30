@@ -14,11 +14,11 @@ options(qesR.lang = params$lang)
 
 Quelles variables harmonisées (« cibles ») de `qes_harmonize()` chaque
 étude possède, et à quel point sa question est comparable. La grille et le
-tableau des études ci-dessous sont générés à partir de la spécification
-fournie avec qesR, à la construction du site ; rien n'y est écrit à la main.
+tableau des études ci-dessous sont générés à partir des règles livrées avec
+qesR.
 
 ```{r coverage, echo = FALSE, results = "asis"}
-cat(qesR:::.spec_coverage_md(lang = params$lang))
+cat(qesR:::.spec_coverage_md(lang = params$lang, site = TRUE))
 ```
 
 ## La même grille dans R
@@ -33,6 +33,6 @@ qes_spec(lang = params$lang)
 ```
 
 Un niveau compare la question d'une étude à la question d'ancrage de la
-cible. [Harmoniser entre études](fr-harmonisation.html) montre comment les
+cible. [Comment fonctionne l'harmonisation](fr-harmonisation.html) montre comment les
 niveaux, les valeurs manquantes et les pondérations se rendent jusqu'à une
 estimation.

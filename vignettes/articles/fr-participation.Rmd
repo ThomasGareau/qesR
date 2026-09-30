@@ -1,9 +1,8 @@
 ---
-title: "Qui vote ? L'écart d'âge et ce que les enquêtes surestiment"
+title: "Qui vote ? L'âge, l'intérêt pour la politique et la participation au Québec"
 description: >
-  La participation déclarée et la participation officielle de chaque
-  élection, l'écart de participation entre jeunes et aînés, et le rôle de
-  l'intérêt pour la politique.
+  L'écart d'âge dans la participation déclarée à chaque élection québécoise
+  depuis 1998, et la part de cet écart qui tient à l'intérêt pour la politique.
 params:
   lang: "fr"
 ---
@@ -16,7 +15,7 @@ source("_setup.R", encoding = "UTF-8")
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = "all",
   targets = c("turnout", "age_group3", "pol_interest"),
   missing = "reasons", quiet = TRUE
 )
@@ -43,6 +42,8 @@ est <- est[est$level == "Yes", ]
 est$year <- qz_year(est$study)
 official <- qz_official_turnout()
 est$official <- official$turnout[match(est$year, official$year)]
+tv <- function(s, g = "all") est$pct[est$study == s & est$group == g]
+ot <- function(y) official$turnout[official$year == y]
 
 by_both <- do.call(rbind, lapply(c("qes2007", "qes2012", "qes2014", "qes2018", "qes2022"), function(s) {
   d <- qz_design(h, s, "weight_post")
@@ -54,7 +55,6 @@ by_both <- by_both[by_both$level == "Yes", ]
 by_both$age <- sub("\\|.*$", "", by_both$group)
 by_both$interest <- sub("^.*\\|", "", by_both$group)
 by_both$year <- qz_year(by_both$study)
-tv <- function(s, g = "all") est$pct[est$study == s & est$group == g]
 
 # the age gap (55 and over minus 18 to 34) and, within each age group, the
 # interest gap (high minus low interest), in points, with 95% intervals
@@ -73,36 +73,104 @@ igap <- do.call(rbind, lapply(unique(by_both$study), function(s) {
 }))
 igap$year <- qz_year(igap$study)
 itype <- setNames(qz_first(h, "pol_interest__type", turnout_studies), turnout_studies)
+
+# The age gap at equal interest (this page only). Among the respondents of
+# study `s` with a turnout report, an age group and an interest answer: the
+# gap between the 55 and over and the 18 to 34 in reported turnout, first
+# among all of them, then among respondents who gave the same answer to the
+# interest question (a weighted linear regression of turnout on the age
+# group and one indicator per answer). Points, with 95% intervals; also the
+# share of each age group with low interest.
+equal_interest_gap <- function(s) {
+  d <- qz_design(h, s, "weight_post")
+  weighted <- isTRUE(attr(d, "qz_weighted"))
+  d <- subset(d, !is.na(turnout) & !is.na(age_group3) & !is.na(pol_interest))
+  d <- update(d, voted = as.numeric(turnout == "Yes"),
+              age = factor(as.character(age_group3), levels = ages),
+              answer = factor(round(10 * pol_interest)))
+  old <- "age55 and over"
+  fit <- function(f) {
+    m <- svyglm(f, d)
+    b <- 100 * coef(m)[[old]]
+    se <- 100 * SE(m)[[old]]
+    c(b, b - 1.96 * se, b + 1.96 * se)
+  }
+  raw <- fit(voted ~ age)
+  adj <- fit(voted ~ age + answer)
+  low <- qz_share(d, "interest", by = "age")
+  low <- low[low$level == "low", ]
+  data.frame(study = s, raw = raw[1], raw_lo = raw[2], raw_hi = raw[3],
+             adj = adj[1], lo = adj[2], hi = adj[3], n = nrow(d),
+             low_young = low$pct[low$group == "18-34"], low_old = low$pct[low$group == "55 and over"],
+             weighted = weighted, row.names = NULL)
+}
+eq <- do.call(rbind, lapply(setdiff(qz_primary, "qes1998"), equal_interest_gap))
+eq$year <- qz_year(eq$study)
+eq$drop <- eq$raw - eq$adj
+ev <- function(y, col) eq[[col]][eq$year == y]
+# the interest question of each study, in words
+itype_lab <- c(general_4pt = tr("politics, four points", "la politique, quatre points"),
+               general_0_10 = tr("politics, 0 to 10", "la politique, 0 à 10"),
+               campaign_4pt = tr("the campaign, four points", "la campagne, quatre points"),
+               election_0_10 = tr("the election, 0 to 10", "l'élection, 0 à 10"))
+
+prim <- est[est$group == "all" & est$study %in% qz_primary, ]
+gp <- gaps[gaps$study %in% qz_primary & !is.na(gaps$gap), ]
+gap_age <- function(s) gaps$gap[gaps$study == s]
+small <- gp[which.min(gp$gap), ]
+top <- gp[which.max(gp$gap), ]
+
+# French typography in the figure text: a non-breaking space before : ; ? ! %
+# and inside « » (a "%s" placeholder is left alone)
+trs <- function(en, fr) tr(en, gsub("« ", "«\u00a0", gsub(" (?=[:;?!»]|%(?!s))", "\u00a0", fr, perl = TRUE)))
+# "a, b and c" / "a, b et c"
+and_list <- function(x) if (length(x) < 2) as.character(x) else
+  paste0(paste(head(x, -1), collapse = ", "), tr(" and ", " et "), tail(x, 1))
 ```
 
-Les enquêtes surestiment la participation. En 2022,
-`r qz_pct(tv("qes2022"), 0)` des répondants de l'Étude électorale québécoise
-ont dit avoir voté ; la participation officielle était de
-`r qz_pct(official$turnout[official$year == 2022], 0)`. L'écart est présent
-à chaque élection, parce que les personnes qui votent répondent aussi
-davantage aux enquêtes, et que certaines qui n'ont pas voté disent l'avoir
-fait. Dans les enquêtes, les jeunes déclarent voter moins que les aînés à
-chaque élection : en 2018, `r qz_pct(tv("qes2018", "18-34"), 0)` des
-répondants de 18 à 34 ans, contre `r qz_pct(tv("qes2018", "55 and over"), 0)`
-de ceux de 55 ans et plus. L'écart est le plus grand chez les personnes
-les moins intéressées par la politique.
+Au Québec, la participation électorale a reculé. Selon Élections Québec,
+elle est passée de `r qz_num(ot(1998), 0)` % en 1998 à
+`r qz_num(ot(2022), 0)` % en 2022, avec un creux de
+`r qz_num(ot(2008), 0)` % en 2008. La croyance populaire attribue ce recul
+aux jeunes électrices et électeurs, et elle n'est pas sans fondement : le
+fait que les jeunes votent moins que leurs aînés est l'un des constats les
+plus solides de l'étude des comportements électoraux, et il s'accompagne
+au Canada d'une explication bien établie. Blais et collaborateurs (2004)
+montrent que le déclin de la participation aux élections fédérales tient
+surtout aux générations nées après le baby-boom, qui votent moins que leurs
+aînés ne le faisaient au même âge, en bonne partie parce qu'elles
+s'intéressent moins à la politique et voient moins le vote comme un devoir.
+Or, l'essentiel de ce que nous savons de l'écart d'âge provient des
+élections fédérales. Dans cette page, nous nous appuyons sur les Études
+électorales québécoises pour répondre à deux questions. Quelle est
+l'ampleur de l'écart d'âge dans la participation déclarée à chaque élection
+provinciale depuis 1998 ? Et quelle part de cet écart l'intérêt pour la
+politique explique-t-il ?
 
-## Les données
+Notre réponse est ambivalente. D'une part, les répondants de 18 à 34 ans
+déclarent voter moins que ceux de 55 ans et plus à chaque élection, avec un
+écart de `r qz_num(gap_age("qes2007"), 0)` points de pourcentage en 2007 et
+de `r qz_num(gap_age("qes2018"), 0)` en 2018, et ils s'intéressent moins à
+la politique. D'autre part, lorsque nous comparons des jeunes et des aînés
+qui se disent aussi intéressés les uns que les autres, l'essentiel de
+l'écart demeure : en 2018, il passe de `r qz_num(ev(2018, "raw"), 0)` à
+`r qz_num(ev(2018, "adj"), 0)` points. Autrement dit, l'intérêt fait partie
+de l'explication, mais il n'en représente qu'une petite part à la plupart
+des élections.
 
-`turnout` est la participation déclarée regroupée, demandée après
-l'élection, et `pol_interest` met l'intérêt pour la politique sur une même
-échelle de 0 à 1, à travers les questions à quatre points et de 0 à 10 :
+## Les enquêtes surestiment la participation
 
-```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
-```
-
-```{r example}
-table(h$study, h$pol_interest__type)
-d18 <- qes_design(h[h$study == "qes2018", ], weight = "weight_post")
-svyciprop(~I(turnout == "Yes"), subset(d18, !is.na(turnout)), method = "logit")
-```
-
-## Participation déclarée et participation officielle
+Avant de nous pencher sur l'âge, précisons que les enquêtes surestiment la
+participation, et les Études électorales québécoises ne font pas exception.
+En 2022, `r qz_num(tv("qes2022"), 0)` % des répondants disent avoir voté,
+alors que la participation officielle est de `r qz_num(ot(2022), 0)` %.
+Deux mécanismes l'expliquent (Selb et Munzert, 2013). Premièrement, les
+personnes qui votent acceptent plus volontiers de répondre à une enquête
+politique. Deuxièmement, certaines personnes qui n'ont pas voté disent
+l'avoir fait. La pondération ne corrige ni l'un ni l'autre : elle ajuste
+chaque échantillon aux données du recensement sur l'âge, le sexe et la
+langue (et, selon l'étude, la région ou la scolarité), et non à la
+participation.
 
 ```{r fig-overreport, echo = FALSE}
 d <- est[est$group == "all", ]
@@ -124,7 +192,7 @@ fig_overreport <- function(mode) {
     geom_text(aes(x = 101.5, label = gap), hjust = 0, size = 3.1, colour = k$ink, family = qz_font()) +
     scale_x_continuous(limits = c(50, 108), breaks = seq(50, 100, 10), labels = qz_pct_axis,
                        expand = expansion(0)) +
-    labs(x = tr("Turnout (the axis starts at 50%)", "Participation (l'axe commence à 50 %)"), y = NULL) +
+    labs(x = trs("Turnout (the axis starts at 50%)", "Participation (l'axe commence à 50 %)"), y = NULL) +
     theme_qes(mode, grid = "x")
 }
 
@@ -132,42 +200,52 @@ tab <- d
 tab_overreport <- setNames(data.frame(
   tab$year, qz_study_label(tab$study), qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n,
   qz_num(tab$official), tab$gap, qz_weight_text(tab$weighted), row.names = NULL
-), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Reported turnout, % [95% CI]", "Participation déclarée, % [IC à 95 %]"),
+), c(tr("Election", "Élection"), tr("Study", "Étude"), trs("Reported turnout, % [95% CI]", "Participation déclarée, % [IC à 95 %]"),
      "n", tr("Official turnout, %", "Participation officielle, %"), tr("Gap", "Écart"), tr("Weighting", "Pondération")))
-alt <- sprintf(tr(
+alt <- sprintf(trs(
   "Dumbbell chart, one row per study from 1998 to 2022: the official turnout of the election as a tick and the turnout reported by the study's respondents as a dot with its confidence interval. Every study is above the official turnout, by %s to %s. Values in the table view.",
   "Graphique en haltères, une rangée par étude de 1998 à 2022 : la participation officielle de l'élection en trait et la participation déclarée par les répondants de l'étude en point avec son intervalle de confiance. Toutes les études sont au-dessus de la participation officielle, de %s à %s. Valeurs dans la vue en tableau."),
   qz_pts(min(d$pct - d$official)), qz_pts(max(d$pct - d$official)))
 qz_figure(fig_overreport, "overreport",
-  title = sprintf(tr("Surveys overstate turnout by %s to %s points", "Les enquêtes surestiment la participation de %s à %s points"),
+  title = sprintf(trs("Surveys overstate turnout by %s to %s points", "Les enquêtes surestiment la participation de %s à %s points"),
                   over[1], over[2]),
-  subtitle = tr("Reported turnout in each study (dot, 95% CI) against the official turnout of the election (tick)",
+  subtitle = trs("Reported turnout in each study (dot, 95% CI) against the official turnout of the election (tick)",
                 "Participation déclarée dans chaque étude (point, IC à 95 %) et participation officielle de l'élection (trait)"),
   alt = alt, table = tab_overreport, height = 4.0,
-  note = tr("Source: qesR, pooled turnout (reported, after the election), every study that asked it; official turnout of Élections Québec (ballots cast over registered electors). Dots: reported turnout with 95% confidence intervals (logit), weighted with each study's post-election weight; hollow: unweighted, weight under review. The 1998 polls interviewed francophones only, and their recontact over-selected undecided voters and refusers. The 2018 study also sampled 16- and 17-year-olds, who could not vote; they are left out. Respondents are not the list of registered electors, so part of the gap is not error.",
-            "Source : qesR, variable regroupée turnout (déclarée, après l'élection), toutes les études qui l'ont demandée ; participation officielle d'Élections Québec (bulletins déposés sur électeurs inscrits). Points : participation déclarée avec intervalles de confiance à 95 % (logit), pondérée avec la pondération postélectorale de chaque étude ; creux : non pondéré, pondération en révision. Les sondages de 1998 n'ont interrogé que des francophones, et leur recontact a surreprésenté les indécis et les refus. L'étude de 2018 a aussi interrogé des jeunes de 16 et 17 ans, qui ne pouvaient pas voter ; ils sont laissés de côté. Les répondants ne sont pas la liste des électeurs inscrits : une partie de l'écart n'est pas une erreur."))
+  note = trs("Source: Quebec Election Studies, turnout reported after the election, every study that asked it; official turnout of Élections Québec. Official turnout is ballots cast over registered electors, while the surveys interview adults, so the two do not cover exactly the same people. Dots: reported turnout, weighted, with 95% confidence intervals; hollow dots: unweighted. The 1998 polls interviewed francophones only. The 16- and 17-year-olds of the 2018 study, who could not vote, are left out.",
+             "Source : Études électorales québécoises, participation déclarée après l'élection, toutes les études qui l'ont demandée ; participation officielle d'Élections Québec. La participation officielle rapporte les bulletins déposés aux électeurs inscrits, alors que les enquêtes interrogent des adultes : les deux ne portent donc pas exactement sur les mêmes personnes. Points : participation déclarée, pondérée, avec intervalles de confiance à 95 % ; points creux : non pondérée. Les sondages de 1998 n'ont interrogé que des francophones. Les jeunes de 16 et 17 ans de l'étude de 2018, qui ne pouvaient pas voter, sont laissés de côté."))
 ```
 
-À remarquer :
-
-- Toutes les études sont au-dessus de la participation officielle, de
-  `r qz_pts(min(d$pct - d$official))` à `r qz_pts(max(d$pct - d$official))`.
-- L'écart est le plus grand en 2008, l'élection où la participation
-  officielle est la plus basse (`r qz_pct(official$turnout[official$year == 2008], 0)`),
-  et la participation déclarée varie beaucoup moins que la participation
-  officielle.
-- Les pondérations révisées s'ajustent aux marges du recensement (âge,
-  sexe, région, langue et, dans certaines études, scolarité), pas à la
-  participation : la pondération n'efface donc pas l'écart.
+Toutes les études se situent au-dessus du chiffre officiel, de
+`r qz_num(min(d$pct - d$official), 0)` à
+`r qz_num(max(d$pct - d$official), 0)` points, et l'écart est le plus grand en
+`r d$year[which.max(d$pct - d$official)]``r if (d$year[which.max(d$pct - d$official)] == d$year[which.min(d$official)]) ", l'élection où la participation officielle a été la plus faible" else ""`.
+Plus largement, la participation déclarée varie beaucoup moins que la
+participation officielle. D'une Étude électorale québécoise à l'autre, elle
+va de `r qz_num(min(prim$pct), 0)` % à `r qz_num(max(prim$pct), 0)` %, alors
+que la participation officielle va de `r qz_num(min(prim$official), 0)` % à
+`r qz_num(max(prim$official), 0)` %. Autrement dit, ces enquêtes renseignent
+mal sur le niveau de la participation ; elles servent davantage à comparer
+des groupes, et c'est l'usage que nous en faisons plus bas. Notons toutefois
+qu'une comparaison entre groupes ne vaut que ce que valent les déclarations
+qui la fondent. Si les jeunes abstentionnistes affirment avoir voté plus
+souvent que les abstentionnistes plus âgés, l'écart entre les déclarations
+des jeunes et celles des aînés sous-estime l'écart réel ; s'ils l'affirment
+moins souvent, il le surestime. Les enquêtes ne permettent pas de trancher.
+La sélection appelle la même prudence : les jeunes qui acceptent de
+répondre à une enquête politique sont sans doute plus engagés que les
+autres jeunes de leur âge, ce qui, le cas échéant, réduirait l'écart entre
+les déclarations.
 
 ## L'écart d'âge, élection par élection
 
 ```{r fig-age, echo = FALSE}
-d <- gaps[gaps$study %in% qz_primary & !is.na(gaps$gap), ]
+d <- gp
 d$x <- qz_ex(d$year)
 d$era <- qz_era(d$year)
-top <- d[which.max(d$gap), ]
-top$label <- sprintf(tr("%s in %s", "%s en %s"), qz_pts(top$gap), top$year)
+top_lab <- top
+top_lab$x <- qz_ex(top_lab$year)
+top_lab$label <- sprintf(tr("%s in %s", "%s en %s"), qz_pts(top_lab$gap), top_lab$year)
 
 fig_age <- function(mode) {
   k <- qz_tokens[[mode]]
@@ -177,7 +255,7 @@ fig_age <- function(mode) {
     geom_line(aes(group = era), colour = k$yes, linewidth = 0.7, lineend = "round") +
     qz_ci(data = d[d$era == "before", ], aes(ymin = lo, ymax = hi), colour = k$yes) +
     qz_dots(mode, d, aes(x, gap), fixed = k$yes) +
-    geom_text(data = top, aes(x, hi + 1.2, label = label), vjust = 0, size = 3.2, colour = k$ink,
+    geom_text(data = top_lab, aes(x, hi + 1.2, label = label), vjust = 0, size = 3.2, colour = k$ink,
               family = qz_font(), fontface = "bold") +
     geom_text(data = d[d$year == 1998, ], aes(x, lo - 1.2, label = tr("francophones\nonly", "francophones\nseulement")),
               vjust = 1, size = 2.8, colour = k$ink2, family = qz_font(), lineheight = 0.9) +
@@ -189,46 +267,61 @@ fig_age <- function(mode) {
     theme(axis.line.x = element_blank())
 }
 
-tab <- merge(gaps, reshape(est[est$group %in% ages, c("study", "group", "pct", "n")], idvar = "study",
-                           timevar = "group", direction = "wide"), by = "study")
-tab <- tab[order(tab$year, tab$study), ]
+tab <- gaps[order(gaps$year, gaps$study), ]
+age_cell <- function(s, a) {
+  r <- est[est$by == "age" & est$study == s & est$group == a, ]
+  qz_cell(r$pct, NA, NA, r$n)
+}
 tab_age <- setNames(data.frame(
   tab$year, qz_study_label(tab$study),
-  qz_cell(tab[["pct.18-34"]], NA, NA, tab[["n.18-34"]]), qz_cell(tab[["pct.35-54"]], NA, NA, tab[["n.35-54"]]),
-  qz_cell(tab[["pct.55 and over"]], NA, NA, tab[["n.55 and over"]]),
-  ifelse(is.na(tab$gap), tr("n < 30", "n < 30"), paste0(qz_pts(tab$gap, 1), " [", qz_num(tab$lo), tr(", ", " ; "), qz_num(tab$hi), "]")),
+  mapply(age_cell, tab$study, "18-34"), mapply(age_cell, tab$study, "35-54"),
+  mapply(age_cell, tab$study, "55 and over"),
+  ifelse(is.na(tab$gap), tr("n < 30", "n < 30"), paste0(qz_pts(tab$gap, 1), " [", qz_num(tab$lo), trs(", ", " ; "), qz_num(tab$hi), "]")),
   qz_weight_text(tab$weighted), row.names = NULL
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), paste0(age_lab, tr(", %", ", %")),
-     tr("Gap, 55+ minus 18-34 [95% CI]", "Écart, 55+ moins 18-34 [IC à 95 %]"), tr("Weighting", "Pondération")))
-gap_age <- function(s) gaps$gap[gaps$study == s]
-alt <- sprintf(tr(
+     trs("Gap, 55+ minus 18-34 [95% CI]", "Écart, 55+ moins 18-34 [IC à 95 %]"), tr("Weighting", "Pondération")))
+alt <- sprintf(trs(
   "Line chart with a confidence band of the gap in reported turnout between respondents aged 55 and over and those aged 18 to 34, in points, at each election from 1998 to 2022. The gap is positive at every election: %s in 2007, %s in 2018 (the largest) and %s in 2022. Values in the table view.",
   "Graphique linéaire avec bande de confiance de l'écart de participation déclarée entre les répondants de 55 ans et plus et ceux de 18 à 34 ans, en points, à chaque élection de 1998 à 2022. L'écart est positif à chaque élection : %s en 2007, %s en 2018 (le plus grand) et %s en 2022. Valeurs dans la vue en tableau."),
   qz_pts(gap_age("qes2007")), qz_pts(gap_age("qes2018")), qz_pts(gap_age("qes2022")))
 qz_figure(fig_age, "age",
-  title = sprintf(tr("The old report voting more than the young at every election; the gap peaked at %s points in %s",
-                     "Les aînés déclarent voter plus que les jeunes à chaque élection ; l'écart a culminé à %s points en %s"),
+  title = sprintf(trs("Older respondents report voting more than the young at every election; the gap peaked at %s points in %s",
+                      "Les aînés déclarent voter plus que les jeunes à chaque élection ; l'écart a culminé à %s points en %s"),
                   qz_num(top$gap, 0), top$year),
-  subtitle = tr("Reported turnout of the 55 and over minus that of the 18 to 34, in points, with its 95% confidence interval",
-                "Participation déclarée des 55 ans et plus moins celle des 18 à 34 ans, en points, avec son intervalle de confiance à 95 %"),
+  subtitle = trs("Reported turnout of respondents aged 55 and over minus that of those aged 18 to 34, in points, with its 95% confidence interval",
+                 "Participation déclarée des 55 ans et plus moins celle des 18 à 34 ans, en points, avec son intervalle de confiance à 95 %"),
   alt = alt, table = tab_age, height = 3.6,
-  note = tr("Source: qesR, pooled turnout and age_group3; one Quebec Election Study per election and the 1998 polls (francophones only). Band: 95% confidence interval of the difference, from the covariance of the two age groups' estimates. Weighted with each study's post-election weight; hollow (1998, 2008): unweighted, weight under review. The x axis is in years, with a break between 1998 and 2007. The shares of each age group and the Durand panels are in the table view. Official turnout by age is not among the benchmarks kept with qesR, so the gap is a gap between reports.",
-            "Source : qesR, variables regroupées turnout et age_group3 ; une Étude électorale québécoise par élection et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 % de la différence, à partir de la covariance des estimations des deux groupes d'âge. Pondéré avec la pondération postélectorale de chaque étude ; creux (1998, 2008) : non pondéré, pondération en révision. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. Les parts de chaque groupe d'âge et les panels Durand sont dans la vue en tableau. La participation officielle selon l'âge ne fait pas partie des références conservées avec qesR : l'écart est un écart entre déclarations."))
+  note = sprintf(trs("Source: one Quebec Election Study per election, and the 1998 polls (francophones only). Band: 95%% confidence interval of the difference. Weighted; hollow dots (%s): unweighted. The horizontal axis is in years, with a break between 1998 and 2007. The table view also gives the turnout of each age group, and the panels led by Claire Durand at the %s elections.",
+                     "Source : une Étude électorale québécoise par élection, et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %% de la différence. Pondéré ; points creux (%s) : non pondéré. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La vue en tableau donne aussi la participation de chaque groupe d'âge, ainsi que les panels menés par Claire Durand aux élections de %s."),
+                 and_list(d$year[!d$weighted]), and_list(tab$year[grepl("_panel$", tab$study)])))
 ```
 
-À remarquer :
+Premier constat : l'écart d'âge est présent à chaque élection. Les
+répondants de 55 ans et plus déclarent voter davantage que ceux de 18 à
+34 ans, de `r qz_num(gap_age("qes2007"), 0)` points en 2007, de
+`r qz_num(gap_age("qes2018"), 0)` en 2018 et de
+`r qz_num(gap_age("qes2022"), 0)` en 2022. Son ampleur, en revanche, est
+loin d'être stable. L'écart est le plus faible en `r small$year`
+(`r qz_num(small$gap, 0)` points), alors que la participation officielle
+atteignait `r qz_num(ot(small$year), 0)` %, et le plus grand en
+`r top$year`, lorsqu'elle est tombée à `r qz_num(ot(top$year), 0)` %. En
+2018, le recul de la participation se voit chez les jeunes, et à peine chez
+les aînés : par rapport à 2014, la participation déclarée baisse de
+`r qz_num(tv("qes2014", "18-34") - tv("qes2018", "18-34"), 0)` points chez
+les 18 à 34 ans (à `r qz_num(tv("qes2018", "18-34"), 0)` %) et de
+`r qz_num(tv("qes2014", "55 and over") - tv("qes2018", "55 and over"), 0)`
+chez les 55 ans et plus (à `r qz_num(tv("qes2018", "55 and over"), 0)` %).
+On pourrait en conclure que, lorsque la participation recule, elle recule
+chez les jeunes. L'élection de 2022 ne cadre pourtant pas avec cette
+lecture. La participation officielle y est de `r qz_num(ot(2022), 0)` %,
+comme en 2018, mais l'écart
+`r if (gap_age("qes2022") < gap_age("qes2018") / 2) "ne fait pas la moitié de celui de 2018" else "est plus faible"`,
+et les 18 à 34 ans déclarent voter à peu près aussi souvent que les 35 à
+54 ans (`r if (qz_num(tv("qes2022", "18-34"), 0) == qz_num(tv("qes2022", "35-54"), 0)) paste0(qz_num(tv("qes2022", "18-34"), 0), " % dans les deux cas") else paste0(qz_num(tv("qes2022", "18-34"), 0), " % et ", qz_num(tv("qes2022", "35-54"), 0), " %")`,
+bien que le chiffre des jeunes ne repose que sur
+`r est$n[est$study == "qes2022" & est$group == "18-34"]` répondants).
 
-- À chaque élection, les 55 ans et plus déclarent la participation la plus
-  élevée, au-dessus des 18 à 34 ans de `r qz_pts(gap_age("qes2007"))` en 2007,
-  `r qz_pts(gap_age("qes2018"))` en 2018 et `r qz_pts(gap_age("qes2022"))` en 2022.
-- L'écart est le plus grand en 2018, quand la participation officielle est
-  tombée à `r qz_pct(official$turnout[official$year == 2018], 0)` : la baisse
-  se voit chez les jeunes et à peine chez les aînés.
-- En 2022, les 18 à 34 ans déclarent avoir voté autant que les 35 à
-  54 ans, avec un intervalle large
-  (`r est$n[est$study == "qes2022" & est$group == "18-34"]` jeunes répondants).
-
-## L'intérêt pour la politique et l'écart d'âge
+## L'intérêt pour la politique compte surtout avant 55 ans
 
 ```{r fig-interest, echo = FALSE}
 bands <- c("low", "mid", "high")
@@ -264,66 +357,233 @@ iv <- function(s, a, b) by_both$pct[by_both$study == s & by_both$age == a & by_b
 tab <- by_both[order(by_both$year, match(by_both$age, ages), match(by_both$interest, bands)), ]
 tab_interest <- setNames(data.frame(
   tab$year, qz_study_label(tab$study), age_lab[tab$age], band_lab[tab$interest],
-  qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n, itype[tab$study], qz_weight_text(tab$weighted),
+  qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n, qz_weight_text(tab$weighted),
   row.names = NULL
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Age", "Âge"), tr("Interest", "Intérêt"),
-     tr("Reported turnout, % [95% CI]", "Participation déclarée, % [IC à 95 %]"), "n",
-     tr("Interest question (type)", "Question d'intérêt (type)"), tr("Weighting", "Pondération")))
-alt <- sprintf(tr(
-  "Line chart, one line per age group (18 to 34, 35 to 54, 55 and over), of the gap in reported turnout between respondents with high and with low interest in politics, in points, at each Quebec Election Study from 2007 to 2022, with confidence intervals. Under 55 the gap reaches %s; among the 55 and over it is %s at most. Values in the table view.",
-  "Graphique linéaire, une ligne par groupe d'âge (18 à 34 ans, 35 à 54 ans, 55 ans et plus), de l'écart de participation déclarée entre les répondants très et peu intéressés par la politique, en points, à chaque Étude électorale québécoise de 2007 à 2022, avec intervalles de confiance. Avant 55 ans, l'écart atteint %s ; chez les 55 ans et plus, il est d'au plus %s. Valeurs dans la vue en tableau."),
-  qz_pts(under55), qz_pts(old55))
+     trs("Reported turnout, % [95% CI]", "Participation déclarée, % [IC à 95 %]"), "n",
+     tr("Weighting", "Pondération")))
+alt <- sprintf(trs(
+  "Line chart, one line per age group (18 to 34, 35 to 54, 55 and over), of the gap in reported turnout between respondents with high and with low interest in politics, in points, at the %s Quebec Election Studies, with confidence intervals. Under 55 the gap reaches %s; among those aged 55 and over it is %s at most. Values in the table view.",
+  "Graphique linéaire, une ligne par groupe d'âge (18 à 34 ans, 35 à 54 ans, 55 ans et plus), de l'écart de participation déclarée entre les répondants très et peu intéressés par la politique, en points, aux Études électorales québécoises de %s, avec intervalles de confiance. Avant 55 ans, l'écart atteint %s ; chez les 55 ans et plus, il est d'au plus %s. Valeurs dans la vue en tableau."),
+  and_list(sort(unique(d$year))), qz_pts(under55), qz_pts(old55))
 qz_figure(fig_interest, "interest",
-  title = sprintf(tr("Under 55, interest in politics moves reported turnout by up to %s points; among the 55 and over, by %s at most",
-                     "Avant 55 ans, l'intérêt pour la politique fait varier la participation déclarée de %s points au plus ; chez les 55 ans et plus, de %s au plus"),
+  title = sprintf(trs("Under 55, the most interested report voting up to %s points more than the least interested; among those aged 55 and over, %s at most",
+                      "Avant 55 ans, les plus intéressés déclarent voter jusqu'à %s points de plus que les moins intéressés ; chez les 55 ans et plus, %s au plus"),
                   qz_num(under55, 0), qz_num(old55, 0)),
-  subtitle = tr("Reported turnout of the highly interested minus that of the least interested, within each age group, in points, with 95% confidence intervals",
-                "Participation déclarée des très intéressés moins celle des peu intéressés, dans chaque groupe d'âge, en points, avec intervalles de confiance à 95 %"),
+  subtitle = trs("Reported turnout of the most interested minus that of the least interested, within each age group, in points, with 95% confidence intervals",
+                 "Participation déclarée des très intéressés moins celle des peu intéressés, dans chaque groupe d'âge, en points, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_interest, height = 3.8,
-  note = tr("Source: qesR, pooled turnout and pol_interest, age_group3; QES 2007 to 2022, weighted with each study's post-election weight. Interest on the pooled 0-1 scale: low 0 to 0.4 (not at all or hardly interested), some 0.5 to 0.7, high 0.8 to 1. The four-point items (2012 to 2018) and the 0-10 items (2007, 2022) do not cut the same way: compare the groups within a study. Lines: 95% confidence intervals of the difference; a gap whose low or high cell has fewer than 30 respondents is not drawn. The turnout of each cell is in the table view.",
-            "Source : qesR, variables regroupées turnout et pol_interest, age_group3 ; EEQ 2007 à 2022, pondérées avec la pondération postélectorale de chaque étude. Intérêt sur l'échelle regroupée de 0 à 1 : faible de 0 à 0,4 (pas du tout ou pas très intéressé), moyen de 0,5 à 0,7, élevé de 0,8 à 1. Les questions à quatre points (2012 à 2018) et de 0 à 10 (2007, 2022) ne coupent pas de la même façon : comparer les groupes à l'intérieur d'une étude. Traits : intervalles de confiance à 95 % de la différence ; un écart dont la cellule faible ou élevée compte moins de 30 répondants n'est pas tracé. La participation de chaque cellule est dans la vue en tableau."))
+  note = sprintf(trs("Source: Quebec Election Studies of %s, weighted (the 2008 study asked about interest in the election instead). Low interest: not at all or hardly interested in politics; high: very interested (on the 0-10 questions of 2007 and 2022, 0 to 4 and 8 to 10). The four-point and the 0-10 questions do not cut the public the same way, so the age groups are best compared within an election rather than across elections. Lines: 95%% confidence intervals of the difference; a gap resting on fewer than 30 respondents is not drawn. The turnout of each group is in the table view.",
+                     "Source : Études électorales québécoises de %s, pondérées (l'étude de 2008 portait plutôt sur l'intérêt pour l'élection). Intérêt faible : pas du tout ou pas très intéressé par la politique ; élevé : très intéressé (sur les questions de 0 à 10 de 2007 et de 2022, de 0 à 4 et de 8 à 10). Les questions à quatre points et de 0 à 10 ne découpent pas le public de la même façon : mieux vaut comparer les groupes d'âge à l'intérieur d'une élection qu'une élection à l'autre. Traits : intervalles de confiance à 95 %% de la différence ; un écart qui repose sur moins de 30 répondants n'est pas tracé. La participation de chaque groupe est dans la vue en tableau."),
+                 and_list(sort(unique(d$year)))))
 ```
 
-À remarquer :
+Deuxième constat : la première partie de l'explication habituelle tient. À
+chaque élection, les jeunes s'intéressent moins à la politique que leurs
+aînés. En 2018, `r qz_num(ev(2018, "low_young"), 0)` % des répondants de 18
+à 34 ans se disent « pas du tout » ou « pas très » intéressés, contre
+`r qz_num(ev(2018, "low_old"), 0)` % de ceux de 55 ans et plus. L'intérêt
+est aussi lié à la participation, mais surtout avant 55 ans. Avant cet âge,
+les répondants très intéressés déclarent voter jusqu'à
+`r qz_num(under55, 0)` points de plus que les moins intéressés ; chez les
+55 ans et plus, la différence est d'au plus `r qz_num(old55, 0)` points.
+Sans surprise, les répondants plus âgés sont près du plafond : la plupart
+déclarent voter, quel que soit leur intérêt. Autrement dit, l'écart d'âge
+est le plus grand chez les moins intéressés. En 2018, il atteint
+`r qz_num(iv("qes2018", "55 and over", "low") - iv("qes2018", "18-34", "low"), 0)`
+points entre aînés et jeunes peu intéressés, contre
+`r qz_num(iv("qes2018", "55 and over", "high") - iv("qes2018", "18-34", "high"), 0)`
+chez les très intéressés.
 
-- Dans chaque groupe d'âge et à chaque élection, les très intéressés
-  déclarent une participation plus élevée que les peu intéressés. Entre
-  intérêt moyen et élevé, l'ordre n'est pas stable : les groupes plus âgés
-  sont près du plafond (plus de 90 % chez les 55 ans et plus).
-- L'écart d'âge est le plus grand chez les moins intéressés : en 2018,
-  `r qz_pts(iv("qes2018", "55 and over", "low") - iv("qes2018", "18-34", "low"))`
-  entre aînés et jeunes peu intéressés, et
-  `r qz_pts(iv("qes2018", "55 and over", "high") - iv("qes2018", "18-34", "high"))`
-  chez les très intéressés. En 2014, jeunes et aînés très intéressés
-  déclarent la même participation.
-- L'étude de 2022 a mesuré l'intérêt pendant la campagne sur une échelle
-  de 0 à 10 et la participation après l'élection : ses niveaux ne sont pas
-  ceux de 2018.
+## À intérêt égal, l'essentiel de l'écart demeure
+
+Si les jeunes votent moins parce qu'ils s'intéressent moins à la politique,
+comparer des jeunes et des aînés qui ont le même intérêt devrait réduire
+l'écart de façon marquée. C'est ce que nous vérifions maintenant. Pour chaque
+élection, nous comparons l'écart d'âge parmi l'ensemble des répondants à
+l'écart parmi les répondants qui ont donné la même réponse à la question sur
+l'intérêt.
+
+```{r fig-equal, echo = FALSE}
+d <- eq[order(eq$year), ]
+d$row <- factor(d$year, levels = rev(d$year))
+d$lab <- qz_pts(d$adj - d$raw, 1)
+# the share of the age gap that holding interest equal removes
+d$share <- d$drop / d$raw
+most <- d[which.max(d$share), ]
+others <- d[d$year != most$year, ]
+# that share in words: "by less than a third" at most elections, "by more than half" at the exception
+share_txt <- function(x, at_most) {
+  if (at_most && x < 1/3) return(tr("by less than a third", "de moins du tiers"))
+  if (!at_most && x > 1/2) return(tr("by more than half", "de plus de la moitié"))
+  sprintf(if (at_most) trs("by at most %s%%", "d'au plus %s %%") else trs("by %s%%", "de %s %%"), qz_num(100 * x, 0))
+}
+about_txt <- function(x) if (abs(x - 0.5) < 0.1) tr("about half", "environ la moitié") else
+  sprintf(trs("about %s%%", "environ %s %%"), qz_num(100 * x, 0))
+
+fig_equal <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(y = row)) +
+    geom_vline(xintercept = 0, colour = k$axis, linewidth = 0.35) +
+    geom_point(aes(x = raw), shape = "|", size = 5.5, colour = k$ink) +
+    qz_cih(aes(xmin = lo, xmax = hi), colour = k$yes) +
+    qz_dots(mode, d, aes(x = adj, y = row), fixed = k$yes) +
+    geom_text(aes(x = 26, label = lab), hjust = 0, size = 3.1, colour = k$ink, family = qz_font()) +
+    scale_x_continuous(limits = c(-5, 31), breaks = seq(-5, 25, 5), labels = function(x) sub("-", "\u2212", qz_num(x, 0), fixed = TRUE),
+                       expand = expansion(0)) +
+    labs(x = tr("55 and over minus 18 to 34 (points)", "55 ans et plus moins 18 à 34 ans (points)"), y = NULL) +
+    theme_qes(mode, grid = "x")
+}
+
+gap_txt <- function(g, lo, hi) paste0(qz_pts(g, 1), " [", qz_num(lo), trs(", ", " ; "), qz_num(hi), "]")
+tab_equal <- setNames(data.frame(
+  d$year, qz_study_label(d$study), gap_txt(d$raw, d$raw_lo, d$raw_hi), gap_txt(d$adj, d$lo, d$hi),
+  qz_pts(d$adj - d$raw, 1), qz_num(d$low_young), qz_num(d$low_old), d$n, unname(itype_lab[itype[d$study]]),
+  qz_weight_text(d$weighted), row.names = NULL
+), c(tr("Election", "Élection"), tr("Study", "Étude"),
+     trs("Age gap, all respondents [95% CI]", "Écart d'âge, tous les répondants [IC à 95 %]"),
+     trs("Age gap, same interest [95% CI]", "Écart d'âge, même intérêt [IC à 95 %]"),
+     tr("Difference", "Différence"),
+     tr("Low interest, 18 to 34, %", "Intérêt faible, 18 à 34 ans, %"),
+     tr("Low interest, 55 and over, %", "Intérêt faible, 55 ans et plus, %"), "n",
+     tr("Interest in", "Intérêt pour"), tr("Weighting", "Pondération")))
+alt <- sprintf(trs(
+  "Dumbbell chart, one row per Quebec Election Study from 2007 to 2022: the gap in reported turnout between respondents aged 55 and over and those aged 18 to 34, among all respondents as a tick, and among respondents with the same interest in politics as a dot with its confidence interval. At %s of the %s elections, holding interest equal narrows the gap %s; in %s, it narrows it %s, from %s to %s points. Values in the table view.",
+  "Graphique en haltères, une rangée par Étude électorale québécoise de 2007 à 2022 : l'écart de participation déclarée entre les 55 ans et plus et les 18 à 34 ans, parmi tous les répondants en trait, et parmi les répondants qui ont le même intérêt pour la politique en point avec son intervalle de confiance. À %s élections sur %s, à intérêt égal, l'écart diminue %s ; en %s, il diminue %s, de %s à %s points. Valeurs dans la vue en tableau."),
+  nrow(others), nrow(d), share_txt(max(others$share), TRUE), most$year, share_txt(most$share, FALSE),
+  qz_num(most$raw, 0), qz_num(most$adj, 0))
+qz_figure(fig_equal, "equal",
+  title = sprintf(trs("At %s of %s elections, holding interest equal narrows the age gap %s; in %s, %s",
+                      "À %s élections sur %s, à intérêt égal, l'écart d'âge diminue %s ; en %s, %s"),
+                  nrow(others), nrow(d), share_txt(max(others$share), TRUE), most$year, share_txt(most$share, FALSE)),
+  subtitle = trs("Gap in reported turnout, 55 and over minus 18 to 34, among all respondents (tick) and among respondents with the same interest in politics (dot, 95% CI); at right, the difference",
+                 "Écart de participation déclarée, 55 ans et plus moins 18 à 34 ans, parmi tous les répondants (trait) et parmi les répondants qui ont le même intérêt pour la politique (point, IC à 95 %) ; à droite, la différence"),
+  alt = alt, table = tab_equal, height = 3.0,
+  note = sprintf(trs("Source: one Quebec Election Study per election, 2007 to 2022, respondents who answered the turnout, age and interest questions. The gap at equal interest compares younger and older respondents who gave the same answer to the interest question (a weighted linear regression of reported turnout on the age group, with one term for each answer). Weighted; hollow dot (%s): unweighted, and its question asked about interest in the election. The table view gives the share of each age group with low interest.",
+                     "Source : une Étude électorale québécoise par élection, de 2007 à 2022, répondants qui ont répondu aux questions de participation, d'âge et d'intérêt. L'écart à intérêt égal compare les jeunes et les aînés qui ont donné la même réponse à la question d'intérêt (une régression linéaire pondérée de la participation déclarée sur le groupe d'âge, avec un terme par réponse). Pondéré ; point creux (%s) : non pondéré, et sa question portait sur l'intérêt pour l'élection. La vue en tableau donne la part de chaque groupe d'âge dont l'intérêt est faible."),
+                 and_list(d$year[!d$weighted])))
+```
+
+Troisième constat : pour l'essentiel, l'écart ne se réduit pas. À
+`r nrow(others)` élections sur `r nrow(d)`, à intérêt égal, l'écart d'âge
+diminue `r share_txt(max(others$share), TRUE)`. En 2018, il passe de
+`r qz_num(ev(2018, "raw"), 0)` à `r qz_num(ev(2018, "adj"), 0)` points ; en
+2007, il bouge à peine (`r qz_num(ev(2007, "drop"), 1)` point).
+L'exception est l'élection de `r most$year`. Parmi les répondants qui ont
+aussi répondu à la question sur l'intérêt, l'écart est cette année-là
+d'environ `r qz_num(most$raw, 0)` points ; à intérêt égal, il diminue
+`r share_txt(most$share, FALSE)`, à environ `r qz_num(most$adj, 0)` points,
+`r if (most$lo < 0) "et ne peut plus être distingué de zéro" else "mais demeure supérieur à zéro"`.
+Cette année-là, l'écart d'intérêt entre les groupes d'âge est
+`r if ((most$low_young - most$low_old) > 2 * (ev(2007, "low_young") - ev(2007, "low_old"))) "bien plus marqué" else "plus marqué"`
+qu'en 2007, l'autre étude qui a posé la même question de 0 à 10 :
+`r qz_num(most$low_young, 0)` % des 18 à 34 ans se disent peu ou pas du
+tout intéressés, contre `r qz_num(most$low_old, 0)` % des 55 ans et plus
+(`r qz_num(ev(2007, "low_young"), 0)` % et `r qz_num(ev(2007, "low_old"), 0)` %
+en 2007). En somme, l'intérêt n'explique qu'une petite part de l'écart
+d'âge à la plupart des élections québécoises, et
+`r about_txt(most$share)` en `r most$year`.
+
+## Bilan
+
+Au final, l'écart d'âge se confirme, mais l'explication habituelle ne
+tient qu'en partie. L'écart est réel, présent à chaque élection depuis
+1998, et les jeunes s'intéressent moins à la politique que leurs aînés.
+Toutefois, l'intérêt n'explique que quelques points d'un écart qui a
+atteint `r qz_num(top$gap, 0)` points en `r top$year`. L'exception est
+`r most$year` : l'intérêt explique alors `r about_txt(most$share)` d'un
+écart `r if (most$raw < top$gap / 2) "beaucoup plus faible" else "plus faible"`.
+L'essentiel de l'écart tient donc à autre chose. Blais et collaborateurs
+(2004) évoquent deux autres sources : le cycle de vie, la participation
+augmentant avec l'âge au sein de chaque génération, et un sens du devoir
+civique moins marqué chez les générations récentes. Le premier fait partie
+de l'écart d'âge lui-même, puisqu'à une élection donnée l'effet de l'âge ne
+peut être distingué de celui de la génération ; le second n'est mesuré que
+par l'étude de 2022, ce qui ne permet pas de le suivre d'une élection à
+l'autre ; nous le laissons donc de côté. Notre analyse n'est toutefois pas
+sans limite. Premièrement, il s'agit de déclarations, et les enquêtes
+surestiment la participation : l'écart réel entre jeunes et aînés peut être
+plus grand ou plus petit que l'écart entre leurs déclarations.
+Deuxièmement, comme pour le cycle de vie, comparer les groupes d'âge à
+chaque élection ne permet pas de distinguer l'effet de l'âge de celui de la
+génération. Les jeunes de 2018 voteront-ils comme leurs aînés en
+vieillissant, ou garderont-ils une participation plus faible toute leur
+vie ? Les prochaines Études électorales québécoises aideront à répondre à
+cette question.
+
+## Pour aller plus loin
+
+- Blais, André, Elisabeth Gidengil, Neil Nevitte et Richard Nadeau. 2004.
+  « Where Does Turnout Decline Come From? » *European Journal of Political
+  Research* 43 (2) : 221–236.
+  <https://doi.org/10.1111/j.1475-6765.2004.00152.x>
+- Rubenson, Daniel, André Blais, Patrick Fournier, Elisabeth Gidengil et
+  Neil Nevitte. 2004. « Accounting for the Age Gap in Turnout ». *Acta
+  Politica* 39 (4) : 407–421. <https://doi.org/10.1057/palgrave.ap.5500079>
+- Selb, Peter, et Simon Munzert. 2013. « Voter Overrepresentation, Vote
+  Misreporting, and Turnout Bias in Postelection Surveys ». *Electoral
+  Studies* 32 (1) : 186–196. <https://doi.org/10.1016/j.electstud.2012.11.004>
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+  Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election ».
+  *Canadian Journal of Political Science/Revue canadienne de science
+  politique* 58 (2) : 277–296. <https://doi.org/10.1017/S0008423924000829>
+
+Bélanger et collaborateurs (2025) s'appuient sur la même étude de 2022 pour
+expliquer le vote en faveur du Parti conservateur du Québec (PCQ), un parti
+dont l'électorat était plus jeune que celui de la plupart des autres partis
+(seul celui de Québec solidaire l'était autant). L'écart entre les enquêtes
+et les résultats officiels pour le choix de vote, plutôt que pour la
+participation, fait l'objet d'[un autre exemple](fr-enquetes-resultats.html).
+
+## Les données dans R
+
+La page repose sur trois variables regroupées : `turnout`, la participation
+déclarée après l'élection ; `age_group3` ; et `pol_interest`, l'intérêt pour
+la politique ramené à une échelle de 0 à 1, que la question compte quatre
+points ou aille de 0 à 10.
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+La participation de chaque groupe d'âge en 2018, et l'écart d'âge à intérêt égal :
+
+```{r example}
+d18 <- qes_design(h[h$study == "qes2018" & !h$eligible_voter %in% FALSE, ], weight = "weight_post")
+d18 <- subset(d18, !is.na(turnout) & !is.na(age_group3))
+svyby(~I(turnout == "Yes"), ~age_group3, d18, svyciprop, vartype = "ci", method = "logit")
+
+d18 <- update(subset(d18, !is.na(pol_interest)), voted = as.numeric(turnout == "Yes"),
+              age = factor(as.character(age_group3)), answer = factor(pol_interest))
+coef(summary(svyglm(voted ~ age + answer, d18)))[2:3, ]
+```
 
 ## À propos des données
 
-- **Études.** Toutes les études qui ont demandé la participation déclarée
-  après l'élection (les sondages CROP ne l'ont pas demandée).
-  Participation officielle : bulletins déposés sur électeurs inscrits,
-  d'Élections Québec.
-- **Variables.** `turnout` (regroupée ; par défaut la participation
-  déclarée seulement ; `types = list(turnout = c("recall", "intention"))`
-  ajouterait la probabilité de voter là où une étude n'a pas demandé la
-  participation déclarée), `age_group3`, et `pol_interest`, l'intérêt pour
-  la politique de 0 à 1 : les questions à quatre points notées 1, 0,7, 0,3
-  et 0 (niveau `approximate`, les notes étant une hypothèse), les
-  questions de 0 à 10 divisées par 10. `pol_interest__type` dit de quelle
-  question vient chaque valeur.
-- **La participation officielle selon l'âge** est publiée par Élections
-  Québec pour certaines élections, mais elle ne fait pas partie des
-  références conservées avec qesR : cette page ne la présente pas.
-- **Pondérations.** La pondération postélectorale recommandée de chaque
-  étude, par `qes_design()`. Les sondages de 1998, l'étude de 2008 et les
-  panels Durand de 2007 et 2012 sont non pondérés (pondérations en
-  révision) et tracés en creux ; le panel 2018 utilise sa pondération
-  postélectorale révisée.
-- **Population.** Les sondages de 1998 n'ont interrogé que des
-  francophones, et leur recontact a surreprésenté les indécis et les
-  refus. L'étude de 2018 a aussi interrogé des jeunes de 16 et 17 ans, qui
-  ne pouvaient pas voter ; ils sont laissés de côté dans les estimations
-  de participation.
+- **Études.** Toutes les études qui ont demandé, après l'élection, si le
+  répondant avait voté ; les sondages CROP ne l'ont pas fait. Outre une
+  Étude électorale québécoise par élection, les vues en tableau comprennent
+  les panels menés par Claire Durand aux élections de 2007, 2012 et 2018,
+  qui ont interrogé les mêmes répondants avant et après le vote. La
+  participation officielle correspond aux bulletins déposés sur les
+  électeurs inscrits, selon Élections Québec.
+- **Intérêt pour la politique.** Les études de 2012 à 2018 posaient une
+  question à quatre points, codée 1 ; 0,7 ; 0,3 et 0 ; celles de 2007 et de
+  2022, une question de 0 à 10, divisée par 10. Les valeurs de la question
+  à quatre points relèvent d'une convention de codage et non d'une mesure :
+  mieux vaut donc comparer les catégories d'intérêt à l'intérieur d'une
+  élection. L'étude de 2008 demandait plutôt, après le vote, à quel point
+  les répondants s'étaient intéressés à l'élection (de 0 à 10), et le panel
+  de 2007 portait sur l'intérêt pour la campagne ; les panels de 2012 et de
+  2018 n'ont pas de question comparable.
+- **Pondération.** La pondération postélectorale de chaque étude. Les
+  sondages de 1998 et les panels de 2007 et de 2012 ne sont pas pondérés,
+  leur pondération n'étant pas assez documentée pour être utilisée, et sont
+  représentés par des points creux. Les seules pondérations de l'étude de
+  2008 sont calées sur le vote déclaré ou sur la participation ; aucune ne
+  peut servir ici, et l'étude est elle aussi représentée en creux.
+- **Qui a été interrogé.** Les sondages de 1998 n'ont interrogé que des
+  francophones, et les répondants qu'ils ont interrogés de nouveau après le
+  vote ne sont pas représentatifs de l'ensemble des francophones. L'étude de
+  2018 a aussi interrogé des jeunes de 16 et 17 ans, qui ne pouvaient pas
+  voter ; ils sont exclus.

@@ -7,7 +7,7 @@ params:
 *[English version](validation.html)*
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 6)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE, fig.width = 7, fig.height = 6)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
 ```
@@ -24,21 +24,10 @@ spécification d'harmonisation :
 4. quelques **relations entre les réponses** que toute mesure valide
    devrait montrer (validité de construit).
 
-La page est construite à la construction du site : les fichiers de données
-sont téléchargés depuis leurs dépôts Dataverse par le cache de qesR et
-harmonisés avec `qes_harmonize()`. Les données de référence se trouvent dans
-`inst/extdata/validation/` du dépôt source de qesR, chaque ligne avec sa
-source ; les marges du recensement sont aussi fournies avec le paquet, les
-résultats officiels d'Élections Québec et le rapport consigné ne le sont
-pas (leurs conditions d'utilisation exigent l'autorisation écrite
-d'Élections Québec, qui est en attente). Les
-mêmes vérifications tournent chaque semaine sur les fichiers épinglés
-et échouent lorsque l'indice pondéré du vote déclaré (vérification V-L2
-de la spécification) ou un indice pondéré du recensement dépasse de plus
-de 2 points sa valeur consignée, lorsque la surdéclaration de la
-participation sort de l'intervalle de 0 à 35 points, ou lorsqu'une
-direction de validité de construit (vérification V-L4) échoue. Un indice
-qui baisse, ou qui monte moins, passe.
+Chaque étude est harmonisée avec `qes_harmonize()` à partir de son fichier
+de données original. Les mêmes comparaisons tournent automatiquement sur
+les fichiers originaux : une erreur d'appariement qui déplacerait ces
+chiffres serait détectée.
 
 ```{r packages, message = FALSE, warning = FALSE}
 library(qesR)
@@ -51,7 +40,7 @@ num <- function(x, digits = 1, sign = FALSE) {
   formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
           decimal.mark = tr(".", ","))
 }
-# every study the specification covers, harmonized from the pinned files,
+# every study the specification covers, harmonized from the original files,
 # against the benchmarks that ship with qesR
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
@@ -60,7 +49,7 @@ report$year <- studies$year[match(report$study, studies$study)]
 report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
                            tr("weighted", "pondéré"))
 # one row per study and check: the weighted value where the study has a
-# reviewed weight, the unweighted one otherwise
+# usable weight, the unweighted one otherwise
 best <- function(x) {
   x <- x[order(x$study, x$variable, x$weight == "none"), ]
   x[!duplicated(paste(x$study, x$variable)), ]
@@ -98,12 +87,11 @@ knitr::kable(
 
 L'indice pondéré utilise la pondération que la spécification recommande
 pour la vague qui a posé la question ; `qes2007`, `qes2012`, `qes2014`,
-`qes2018`, `qes2022` et le panel de 2018 ont pour l'instant une
-pondération révisée. Les pondérations de `qes2007_panel`, de
-`qes2012_panel`, des sondages CROP et de `qes1998` ne sont pas assez
-documentées pour être utilisées (leurs lignes sont `needs_review`), et les
-deux pondérations de `qes2008` sont calées sur le vote ou sur la
-participation : leur indice est non pondéré. `qes1998` n'a interrogé que des francophones, une population que
+`qes2018`, `qes2022` et le panel de 2018 en ont une. Les pondérations de
+`qes2007_panel`, de `qes2012_panel`, des sondages CROP et de `qes1998` ne
+sont pas assez documentées pour être utilisées, et les deux pondérations de
+`qes2008` sont calées sur le vote ou sur la participation : leur indice est
+non pondéré. `qes1998` n'a interrogé que des francophones, une population que
 les résultats officiels ne décrivent pas : l'étude est montrée à titre
 indicatif, sans être vérifiée.
 
@@ -113,7 +101,7 @@ indicatif, sans être vérifiée.
 qz_num <- function(x, digits = 1) num(x, digits)
 source("_theme.R", encoding = "UTF-8", local = TRUE)
 source("_data.R", encoding = "UTF-8", local = TRUE)
-# the weighted distribution where the study has a reviewed weight
+# the weighted distribution where the study has a usable weight
 shown <- best(idx[idx$study != "qes1998", ])
 lv <- report[report$check == "recall" & !is.na(report$level) &
                paste(report$study, report$weight) %in% paste(shown$study, shown$weight), ]
@@ -166,8 +154,8 @@ qz_figure(fig_recall, "recall",
                               row.names = NULL),
                    tr(c("Study", "Weighting", "Party", "Reported minus official (points)"),
                       c("Étude", "Pondération", "Parti", "Déclaré moins officiel (points)"))),
-  note = tr("Weighted with the reviewed weight of the study where it has one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.",
-            "Pondéré avec la pondération révisée de l'étude lorsqu'elle en a une ; l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés. Une case vide : le parti ne s'est pas présenté, ou l'étude le compte dans Autres. Les sondages de 1998, qui n'ont interrogé que des francophones, sont laissés de côté."),
+  note = tr("Weighted with the study's weight where it has a usable one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.",
+            "Pondéré avec la pondération de l'étude lorsqu'elle en a une utilisable ; l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés. Une case vide : le parti ne s'est pas présenté, ou l'étude le compte dans Autres. Les sondages de 1998, qui n'ont interrogé que des francophones, sont laissés de côté."),
   height = 4.6)
 ```
 
@@ -307,14 +295,14 @@ qz_figure(fig_census, "census",
                   num(min(uni), 0), num(max(uni), 0), num(eng18, 0)),
   subtitle = tr("Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.",
                 "Part pondérée de l'enquête moins part au recensement, en points, selon la catégorie et l'étude ; les marges atteintes à moins d'un demi-point, comme le sont les marges de calage, sont marquées cal."),
-  alt = tr("Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a reviewed weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view.",
-           "Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude dont la pondération est révisée ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau."),
+  alt = tr("Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view.",
+           "Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude qui a une pondération utilisable ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau."),
   table = setNames(data.frame(as.character(tab$variable), tab$level_label, as.character(tab$study_lab), signed(tab$value),
                               ifelse(tab$calibrated, tr("yes", "oui"), ""), row.names = NULL),
                    tr(c("Margin", "Category", "Study", "Survey minus census (points)", "Within half a point (cal.)"),
                       c("Marge", "Catégorie", "Étude", "Enquête moins recensement (points)", "À moins d'un demi-point (cal.)"))),
-  note = tr("Studies with a reviewed weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.",
-            "Études dont la pondération est révisée, pondérées ; le recensement qui précède chaque étude (Statistique Canada). Le genre et la scolarité ont deux catégories : une seule rangée est montrée (femmes ; université), l'autre en est le miroir. Une marge est marquée cal. quand chaque catégorie est à moins d'un demi-point du recensement, comme l'est par construction une marge sur laquelle la pondération est calée ; un bon accord n'y dit rien de la représentativité."),
+  note = tr("Studies with a usable weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.",
+            "Études qui ont une pondération utilisable, pondérées ; le recensement qui précède chaque étude (Statistique Canada). Le genre et la scolarité ont deux catégories : une seule rangée est montrée (femmes ; université), l'autre en est le miroir. Une marge est marquée cal. quand chaque catégorie est à moins d'un demi-point du recensement, comme l'est par construction une marge sur laquelle la pondération est calée ; un bon accord n'y dit rien de la représentativité."),
   height = 5.0)
 ```
 
@@ -415,8 +403,8 @@ de l'autre, si bien qu'une étude qui aurait inversé leurs codes
 concorderait à peu près aussi bien avec les résultats officiels. C'est
 pourquoi l'harmonisation est aussi vérifiée par les effectifs exacts de
 chaque réponse dans les fichiers originaux et par les relations de la
-section 4, et pourquoi chaque ligne de correspondance est révisée par
-rapport au questionnaire.
+section 4, et pourquoi chaque appariement est vérifié par rapport au
+questionnaire.
 
 ## Sources
 
@@ -436,9 +424,5 @@ rapport au questionnaire.
   sexe ; la copie du fichier de Statistique Canada conservée par
   l'Internet Archive).
 
-Les tableaux de référence se trouvent dans `inst/extdata/validation/` du
-dépôt source, avec la source de chaque ligne ; le paquet installé
-(`system.file("extdata", "validation", package = "qesR")`) n'a que les
-marges du recensement. Les résultats consignés de chaque étude s'y trouvent
-dans `validation_report.csv` ; ceux de `qes2022` gardent la licence de
-l'étude, CC BY-NC 4.0 (le fichier `COPYRIGHTS` du package).
+Les tableaux de référence, avec la source de chaque ligne, se trouvent
+dans le [dépôt source de qesR](https://github.com/ThomasGareau/qesR).

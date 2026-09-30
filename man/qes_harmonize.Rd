@@ -141,13 +141,13 @@ reviewed study by study and may still change. A crosswalk row is applied
 only once a reviewer has signed it off (status \code{"stable"}); rows checked
 against the files but not yet signed off (status \code{"review"} or \code{"draft"})
 are applied only with \code{include_draft = TRUE}, and a message says so. In
-spec 4.1.0 every row is signed off, after an automated double review
-against the original files and documents (not a human review; the
-crosswalk's \code{reviewed_by} says so, and \code{review_note} what the review
-corrected). The rows added in spec 4.3.0 (the push of 2022, the new
-targets such as satisfaction with democracy or the leader ratings) are
-checked against the files but not reviewed yet: they are in review, and
-applied only with \code{include_draft = TRUE}. A row's sign-off is about its content: the recommended
+the shipped spec every row but three is signed off, after an automated
+double review against the original files and documents (not a human
+review; the crosswalk's \code{reviewed_by} says so, and \code{review_note} what the
+review corrected). The three others (the strength of provincial party
+identification of \code{qes2022} and the previous provincial vote of
+\code{qes2008} and \code{qes2018}) are in review, and applied only with
+\code{include_draft = TRUE}. A row's sign-off is about its content: the recommended
 weights that still need review (those of \code{qes1998}, \code{qes2007_panel},
 \code{qes2012_panel} and the CROP polls) do not hold the rows of their waves,
 but are themselves \code{NA} until they are reviewed (see \emph{Weights}). A row
@@ -454,9 +454,12 @@ colonnes (sinon, une erreur de classe \code{qesR_error_input}). Une ligne de
 correspondance n'est appliquée qu'une fois approuvée par un réviseur
 (statut \code{"stable"}) ; \code{include_draft = TRUE} applique aussi les lignes
 vérifiées mais pas encore approuvées (statut \code{"review"} ou \code{"draft"}).
-Dans la spécification 4.1.0, toutes les lignes sont approuvées, après
-une double révision automatisée sur les fichiers et documents originaux
-(et non une révision humaine ; la colonne \code{reviewed_by} le dit).
+Dans la spécification livrée, toutes les lignes sauf trois sont
+approuvées, après une double révision automatisée sur les fichiers et
+documents originaux (et non une révision humaine ; la colonne
+\code{reviewed_by} le dit) ; les trois autres (la force de l'identification
+partisane provinciale de \code{qes2022} et le vote provincial précédent de
+\code{qes2008} et de \code{qes2018}) sont en révision.
 L'approbation d'une ligne porte sur son contenu : les pondérations
 recommandées encore à réviser (celles de \code{qes1998}, \code{qes2007_panel},
 \code{qes2012_panel} et des sondages CROP) ne retiennent pas les lignes de
@@ -513,6 +516,7 @@ attr(h, "qes_weight_guide")
 
 # one row per respondent and wave
 l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
+table(l$wave, l$wave_timing)
 
 # one vote choice for every study: here the reported vote of the
 # demonstration study (a qes2014 stand-in)
@@ -523,11 +527,10 @@ qes_provenance(v, level = "pooled")[, c("study", "type", "member", "grade", "n_v
 v2 <- qes_harmonize("qes_demo", targets = "vote_choice",
                     types = list(vote_choice = "intention"), quiet = TRUE)
 
-# what the review corrected in each row, and which rows are in review
+# which rows are signed off (stable), and which are still in review
 xw <- qes_spec("crosswalk")
 table(xw$status)
-head(xw[!is.na(xw$review_note), c("study", "target", "review_note")])
-table(l$wave, l$wave_timing)
+xw[xw$status == "review", c("study", "target", "source_var", "grade")]
 }
 \seealso{
 \code{\link[=qes_design]{qes_design()}} to use the weights in a survey design,

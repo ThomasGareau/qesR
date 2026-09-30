@@ -40,19 +40,81 @@ template:
     line-height-base: 1.6
     headings-font-weight: 650
     border-radius: 0.375rem
+  # The FR/EN button of the navbar (styled by .qesr-lang-switch in
+  # pkgdown/extra.css). It goes to the page's translation: the page's own
+  # "Version française" / "English version" link, which every article has
+  # and data-raw/check_vignette_pairs.R checks, so it cannot drift from the
+  # pairs. Pages without such a link use the fallback map below; any other
+  # page goes to the other language's home. data-raw/check_site.R reads
+  # this map and checks that every built page gets a target that exists.
+  # No dollar sign in the script: pkgdown passes it through the pandoc
+  # template of each article, where "$" starts a variable.
+  includes:
+    before_body: |
+      <script>
+      (function () {
+        var fallback = {
+          "index.html": "articles/fr-accueil.html",
+          "reference/index.html": "reference/qesR-fr.html",
+          "reference/qesR-package.html": "reference/qesR-fr.html",
+          "reference/qesR-fr.html": "reference/qesR-package.html"
+        };
+        var french = ["reference/qesR-fr.html"];
+        document.addEventListener("DOMContentLoaded", function () {
+          var container = document.querySelector(".navbar .container") ||
+            document.querySelector(".navbar .container-fluid");
+          var brand = document.querySelector(".navbar .navbar-brand");
+          if (!container || !brand) return;
+          // the site root, from the brand link (pkgdown writes it relative)
+          var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+          root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+          var here = window.location.href.split("#")[0].split("?")[0];
+          var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+          if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+          var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+          // the page's own link to its translation
+          var target = null;
+          var links = document.querySelectorAll("main a[href]");
+          for (var i = 0; i < links.length; i++) {
+            var text = links[i].textContent.replace(/\s+/g, " ").trim();
+            if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+              target = new URL(links[i].getAttribute("href"), window.location.href).href;
+              break;
+            }
+          }
+          if (!target) {
+            target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+          }
+          var wrap = document.createElement("div");
+          wrap.className = "qesr-lang-switch-wrap";
+          var link = document.createElement("a");
+          link.className = "qesr-lang-switch";
+          link.href = target;
+          link.textContent = isFrench ? "EN" : "FR";
+          link.lang = isFrench ? "en" : "fr";
+          link.hreflang = isFrench ? "en" : "fr";
+          link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+          link.title = isFrench ? "English" : "Fran\u00e7ais";
+          wrap.appendChild(link);
+          // before the menu button, so that it stays visible on a phone;
+          // extra.css moves it after the menus on a wide screen
+          var toggler = container.querySelector(".navbar-toggler");
+          if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+        });
+      })();
+      </script>
 
 home:
   title: qesR
   description: >
     Load the Quebec Election Studies and related Quebec election surveys in
-    R, pinned to their original files, and harmonize 11 of them into one
-    data frame with a comparability grade for every question, offline
-    codebooks, bilingual search and citations.
+    R, and harmonize 11 of them into one data frame, with codebooks, search
+    and citations in English and French.
   sidebar:
     structure: [links, license, citation, authors, dev]
   links:
-  - text: Aperçu en français (?qesR-fr)
-    href: reference/qesR-fr.html
+  - text: Français
+    href: articles/fr-accueil.html
   - text: Quebec Election Studies (CECD)
     href: https://csdc-cecd.ca/portail-quebecois-sur-lopinion-publique/
 
@@ -61,46 +123,22 @@ authors:
     href: https://thomasgp.com
 
 navbar:
+  # One English navbar; the FR/EN button (template.includes above) goes to
+  # each page's translation. data-raw/check_site.R checks that every entry
+  # is a page with a French partner.
   structure:
-    left: [intro, studies, guides, guides_fr, reference, news]
+    left: [intro, examples, studies, harmonization, reference, news]
     right: [search, lightswitch, github]
   components:
     intro:
       text: Get started
       href: articles/get-started.html
-    studies:
-      text: Studies
-      href: articles/studies.html
-    # Each entry of "Guides" has its French partner at the same position in
-    # "Guides (FR)"; data-raw/check_site.R checks it.
-    guides:
-      text: Guides
+    examples:
+      text: Examples
       menu:
-      - text: Getting started
-        href: articles/get-started.html
-      - text: Study catalog
-        href: articles/studies.html
-      - text: Study citations
-        href: articles/citations.html
-      - text: Moving from qesR 0.4.4 to 0.7.0
-        href: articles/migrating-0.7.html
-      - text: Legacy merged file
-        href: articles/merged-dataset.html
-      - text: "-------"
-      - text: Harmonization (experimental)
-      - text: Harmonizing across studies
-        href: articles/harmonization.html
-      - text: Coverage by study
-        href: articles/coverage.html
-      - text: Harmonization reference
-        href: articles/harmonization-reference.html
-      - text: Validation against official results
-        href: articles/validation.html
-      - text: "-------"
-      - text: Examples (built from the full data files)
       - text: "From two parties to four: realignment"
         href: articles/realignment.html
-      - text: Sovereignty across generations
+      - text: "A generation gap that reversed: sovereignty"
         href: articles/sovereignty-generations.html
       - text: "Two dimensions: sovereignty and left-right"
         href: articles/dimensions.html
@@ -108,55 +146,32 @@ navbar:
         href: articles/turnout.html
       - text: Changing minds during the campaign
         href: articles/transitions.html
-      - text: Surveys against the official results
+      - text: How far off are surveys?
         href: articles/survey-vs-official.html
-      - text: "Recipes: pooled variables"
+      - text: "-------"
+      - text: "Recipes: pooled variables in five minutes"
         href: articles/recipes.html
-      - text: "-------"
-      - text: Function overview
-        href: reference/qesR-package.html
-    guides_fr:
-      text: Guides (FR)
+    studies:
+      text: Studies
       menu:
-      - text: Démarrage
-        href: articles/fr-demarrage.html
-      - text: Catalogue des études
-        href: articles/fr-etudes.html
-      - text: Citations des études
-        href: articles/fr-citations.html
-      - text: Passer de qesR 0.4.4 à 0.7.0
-        href: articles/fr-migrer-0.7.html
-      - text: Fichier fusionné hérité
-        href: articles/fr-donnees-fusionnees.html
-      - text: "-------"
-      - text: Harmonisation (expérimental)
-      - text: Harmoniser entre études
-        href: articles/fr-harmonisation.html
-      - text: Couverture par étude
-        href: articles/fr-couverture.html
-      - text: Référence de l'harmonisation
-        href: articles/fr-reference-harmonisation.html
-      - text: Validation par les résultats officiels
-        href: articles/fr-validation.html
-      - text: "-------"
-      - text: Exemples (construits à partir des fichiers complets)
-      - text: "De deux partis à quatre : le réalignement"
-        href: articles/fr-realignement.html
-      - text: La souveraineté selon les générations
-        href: articles/fr-souverainete-generations.html
-      - text: "Deux dimensions : souveraineté et gauche-droite"
-        href: articles/fr-dimensions.html
-      - text: Qui vote ? La participation
-        href: articles/fr-participation.html
-      - text: Changer d'idée pendant la campagne
-        href: articles/fr-transitions.html
-      - text: Les enquêtes et les résultats officiels
-        href: articles/fr-enquetes-resultats.html
-      - text: "Recettes : les variables regroupées"
-        href: articles/fr-recettes.html
-      - text: "-------"
-      - text: Aperçu des fonctions
-        href: reference/qesR-fr.html
+      - text: Study catalog
+        href: articles/studies.html
+      - text: Citing qesR and the studies
+        href: articles/citations.html
+    harmonization:
+      text: Harmonization
+      menu:
+      - text: How it works
+        href: articles/harmonization.html
+      - text: Coverage by study
+        href: articles/coverage.html
+      - text: Variable reference
+        href: articles/harmonization-reference.html
+      - text: Validation against official results
+        href: articles/validation.html
+    reference:
+      text: Reference
+      href: reference/index.html
     news:
       text: Changelog
       href: news/index.html
@@ -177,9 +192,9 @@ reference:
   - qesR-fr
 - title: Data
   desc: >
-    Load a study from its pinned original file, or build the legacy merged
-    file of qesR 0.4.4. Data are returned, never written into your workspace
-    unless you ask.
+    Load a study from its original data file, or build the legacy merged
+    file. Data are returned, never written into your workspace unless you
+    ask.
   contents:
   - get_qes
   - get_qes_master
@@ -196,30 +211,20 @@ reference:
   desc: >
     What each variable measures, the exact question asked, in English and
     French, and which codes mean "don't know" or "refused". Offline for every
-    study (the metadata of the 2022 study keeps its licence, CC BY-NC 4.0).
+    study.
   contents:
   - qes_codebook
   - qes_question
   - qes_search
   - qes_missing
-- title: Harmonization (experimental)
+- title: Harmonization
   desc: >
-    One data frame across the 11 studies, from a specification checked
-    against the original files (rows signed off by a reviewer are applied
-    by default, the rows still in review only with `include_draft = TRUE`):
-    `qes_spec()` shows which
-    studies have which harmonized variable and how comparable each study's
-    question is; `qes_harmonize()` applies it, with a reason for every
-    missing value and each respondent's waves and weights; `qes_design()`
-    turns the result into a survey design. Articles, in English and French:
-    [Harmonizing across studies](../articles/harmonization.html), from
-    `qes_harmonize()` to a weighted estimate;
-    [Coverage by study](../articles/coverage.html), the grade of every
-    target in every study;
-    [Validation against official results](../articles/validation.html),
-    the harmonized studies against the official results and the census;
-    and the
-    [Harmonization reference](../articles/harmonization-reference.html).
+    One data frame across the 11 studies: `qes_spec()` shows which studies
+    have which harmonized variable and how comparable each study's question
+    is; `qes_harmonize()` applies the rules, with a reason for every missing
+    value and each respondent's waves and weights; `qes_design()` turns the
+    result into a survey design. See
+    [How harmonization works](../articles/harmonization.html).
   contents:
   - qes_spec
   - qes_harmonize
@@ -237,11 +242,11 @@ reference:
   contents:
   - qes_cache_info
   - qes_cache_clear
-- title: Legacy and deprecated
+- title: Older functions (qesR 0.4.4)
   desc: |
     Functions from qesR 0.4.4. They keep working, with the same arguments,
     and will not be removed; each prints a one-time notice naming its
-    replacement. [Moving from qesR 0.4.4 to 0.7.0](../articles/migrating-0.7.html)
+    replacement. [Upgrading from qesR 0.4.4](../articles/migrating-0.7.html)
     says what changed in their results.
 
     | 0.4.4 | Replacement |
@@ -268,33 +273,18 @@ reference:
   - get_decon
 
 articles:
-- title: Guides
+# Every English section has its French pages, in the same order, in the
+# section "En français" (after its home, fr-accueil); data-raw/check_site.R
+# checks it.
+- title: Get started
   navbar: ~
   contents:
   - get-started
-  - articles/studies
-  - citations
-  - migrating-0.7
-  - articles/merged-dataset
-- title: Harmonization (experimental)
-  desc: >
-    Built from the specification that ships with qesR. The first article
-    and the validation read the full data files through qesR's cache when
-    the site is built; the coverage grid and the reference are generated
-    from the specification alone.
-  navbar: ~
-  contents:
-  - articles/harmonization
-  - articles/coverage
-  - harmonization-reference
-  - articles/validation
 - title: Examples
   desc: >
-    Built on the pooled harmonized variables (`vote_choice`,
-    `sov_support`, `pol_interest`, `turnout`) when the site is built, from
-    the full data files downloaded through qesR's cache, with weighted
-    estimates and 95% confidence intervals; each estimate is within one
-    study and wave, with that study's reviewed weight.
+    Analyses of 25 years of Quebec elections, built on the pooled variables,
+    with weighted estimates and 95% confidence intervals, each within one
+    study.
   navbar: ~
   contents:
   - articles/realignment
@@ -304,36 +294,34 @@ articles:
   - articles/transitions
   - articles/survey-vs-official
   - articles/recipes
-- title: Guides en français
+- title: Studies
   navbar: ~
   contents:
+  - articles/studies
+  - citations
+- title: Harmonization
+  navbar: ~
+  contents:
+  - articles/harmonization
+  - articles/coverage
+  - harmonization-reference
+  - articles/validation
+- title: Upgrading from qesR 0.4.4
+  navbar: ~
+  contents:
+  - migrating-0.7
+  - articles/merged-dataset
+- title: En français
+  desc: >
+    Toutes les pages en français, dans l'ordre des sections anglaises :
+    démarrage, exemples (des analyses de 25 ans d'élections québécoises,
+    construites sur les variables regroupées, avec des estimations
+    pondérées et des intervalles de confiance à 95 %, chacune dans une
+    seule étude), études, harmonisation et passage de qesR 0.4.4.
+  navbar: ~
+  contents:
+  - articles/fr-accueil
   - fr-demarrage
-  - articles/fr-etudes
-  - fr-citations
-  - fr-migrer-0.7
-  - articles/fr-donnees-fusionnees
-- title: Harmonisation en français (expérimental)
-  desc: >
-    Construits à partir de la spécification fournie avec qesR. Le premier
-    article et la validation lisent les fichiers de données complets par le
-    cache de qesR à la construction du site ; la grille de couverture et la
-    référence sont générées à partir de la spécification seule.
-  navbar: ~
-  contents:
-  - articles/fr-harmonisation
-  - articles/fr-couverture
-  - fr-reference-harmonisation
-  - articles/fr-validation
-- title: Exemples en français
-  desc: >
-    Construits sur les variables harmonisées regroupées (`vote_choice`,
-    `sov_support`, `pol_interest`, `turnout`) à la construction du site, à
-    partir des fichiers de données complets téléchargés par le cache de
-    qesR, avec des estimations pondérées et des intervalles de confiance à
-    95 % ; chaque estimation est faite dans une seule étude et une seule
-    vague, avec la pondération révisée de cette étude.
-  navbar: ~
-  contents:
   - articles/fr-realignement
   - articles/fr-souverainete-generations
   - articles/fr-dimensions
@@ -341,3 +329,11 @@ articles:
   - articles/fr-transitions
   - articles/fr-enquetes-resultats
   - articles/fr-recettes
+  - articles/fr-etudes
+  - fr-citations
+  - articles/fr-harmonisation
+  - articles/fr-couverture
+  - fr-reference-harmonisation
+  - articles/fr-validation
+  - fr-migrer-0.7
+  - articles/fr-donnees-fusionnees

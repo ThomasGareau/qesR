@@ -1,9 +1,9 @@
 ---
-title: "Recettes : les variables regroupées en cinq minutes"
+title: "Recettes : le clivage linguistique du vote libéral, pas à pas"
 description: >
-  Du code court, à copier, pour les variables harmonisées regroupées : une
-  variable pour toutes les études, ses types et ses sources, des
-  estimations pondérées par étude.
+  Du code à copier pour les variables harmonisées regroupées, appliqué à
+  une question : le clivage linguistique du vote libéral
+  s'est-il resserré à mesure que la souveraineté reculait ?
 params:
   lang: "fr"
 ---
@@ -13,11 +13,99 @@ params:
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
 options(qesR.lang = params$lang)
+# the site's helpers (numbers in the page's language, the chart system,
+# the official results); the recipes themselves do not need them
+source("_setup.R", encoding = "UTF-8")
 ```
 
-Chaque recette ci-dessous s'exécute telle quelle sur les fichiers de
-données complets, que qesR télécharge une fois par son cache. Les autres
-pages d'exemples sont construites à partir de ces mêmes étapes.
+```{r early, include = FALSE, ref.label = c("packages", "pooled", "recall", "loop", "composition", "pool")}
+# runs the recipes once before the text, so that the opening paragraph can
+# quote their results; each recipe runs again, with its output, below
+```
+
+```{r numbers, include = FALSE}
+gap_of <- function(y) plq$pct[plq$year == y & plq$group == "other"] - plq$pct[plq$year == y & plq$group == "francophone"]
+fr_of <- function(y) plq$pct[plq$year == y & plq$group == "francophone"]
+other_of <- function(y) plq$pct[plq$year == y & plq$group == "other"]
+comp_of <- function(y) comp$pct[comp$year == y]
+first <- min(plq$year)
+last <- max(plq$year)
+b1 <- 100 * coef(m1)[["francophoneother"]]
+b2 <- 100 * coef(m2)[["francophoneother"]]
+ci1 <- 100 * confint(m1)["francophoneother", ]
+p_equal <- as.numeric(regTermTest(m3, ~ francophone:study)$p)
+n_four <- if (identical(params$lang, "fr")) c("une", "deux", "trois", "quatre", "cinq", "six")[length(four)] else
+  xfun::numbers_to_words(length(four))
+stopifnot(p_equal > 0.05)  # "the evidence that the gap changed is weak"
+
+# the weighted share of non-francophones among the voters of each study, and
+# the share of non-francophones among Liberal voters had it stayed at its
+# first level (each group's Liberal vote as estimated in that study)
+voters_other <- setNames(sapply(qes, function(s) {
+  ds <- subset(study_design(s), !is.na(vote_choice) & !is.na(francophone))
+  100 * as.numeric(coef(svymean(~as.numeric(francophone == "other"), ds)))
+}), plq$year[match(qes, plq$study)])
+comp_fixed <- function(y) {
+  s <- voters_other[[as.character(first)]] / 100
+  100 * s * other_of(y) / (s * other_of(y) + (1 - s) * fr_of(y))
+}
+low_share <- voters_other[c("2007", "2014")]
+high_share <- voters_other[c("2012", "2018", "2022")]
+stopifnot(abs(diff(low_share)) < 1, min(high_share) > max(low_share) + 4,
+          comp_fixed(last) > 50, comp_fixed(last) < comp_of(last))
+
+# French typography in the figure strings (the prose has it already): a
+# no-break space before ":" and "%", a narrow one before ";"
+typo <- function(x) if (identical(params$lang, "fr")) gsub(" ;", " ;", gsub(" ([:%])", " \\1", x)) else x
+typo_table <- function(d) {
+  names(d) <- typo(names(d))
+  d[] <- lapply(d, function(v) if (is.character(v)) typo(v) else v)
+  d
+}
+# the weighting column of the table views, and the weighting key of the charts
+weight_text <- function(w) ifelse(w, tr("weighted", "pondéré"), tr("unweighted", "non pondéré"))
+weight_key <- function(mode) {
+  s <- scale_weight_key(mode)
+  s$labels <- tr("hollow point: unweighted", "point vide : non pondéré")
+  s
+}
+```
+
+Depuis les premières études électorales provinciales, le vote québécois se
+lit à travers deux clivages, la langue et la question nationale (Hamilton
+et Pinard, 1976 ; Pinard et Hamilton, 1978 ; Bélanger et al., 2018). Le
+Parti libéral du Québec (PLQ) obtient la majorité du vote anglophone et
+allophone, et ce sont ses appuis chez les francophones qui décident des
+élections. Selon une lecture répandue, ce clivage linguistique ne serait
+que la question nationale sous un autre nom : les non-francophones
+voteraient libéral parce qu'ils sont fédéralistes. Si cette lecture est
+juste, l'écart aurait dû se resserrer après 2012, à mesure que la
+Coalition avenir Québec (CAQ), un parti nationaliste qui met l'indépendance
+de côté, courtisait les francophones fédéralistes et que la souveraineté
+perdait, disait-on, du terrain. Ce recul est lui-même moins net qu'il n'y
+paraît : aux élections fédérales, le poids de l'appui à l'indépendance dans
+le vote est resté remarquablement stable de 2006 à 2021 (Daoust et
+Gareau-Paquette, 2024).
+
+Dans l'ensemble, les Études électorales québécoises n'appuient que
+partiellement cette lecture. L'écart du vote libéral entre non-francophones
+et francophones est d'environ `r qz_num(gap_of(first), 0)` points de
+pourcentage en `r first` et de `r qz_num(gap_of(2012), 0)` points en 2012 ;
+il se creuse en 2014 et en 2018, et il atteint encore
+`r qz_num(gap_of(last), 0)` points en `r last`. L'appui à l'indépendance en
+explique une partie, mais une partie seulement : dans les `r n_four` études
+de 2012 à 2022, à opinion égale sur l'indépendance, l'écart passe de
+`r qz_num(b1, 0)` à `r qz_num(b2, 0)` points. Ce qui a changé, c'est
+l'électorat libéral lui-même. Les francophones l'ont quitté
+(`r qz_num(fr_of(first), 0)` % d'entre eux votaient pour le PLQ en
+`r first`, contre `r qz_num(fr_of(last), 0)` % en `r last`), si bien que les
+non-francophones, qui formaient `r qz_num(comp_of(first), 0)` % des
+électeurs libéraux, en forment désormais `r qz_num(comp_of(last), 0)` %
+(`r qz_num(comp_fixed(last), 0)` % si leur part des électeurs de chaque
+échantillon était restée celle de `r first`).
+
+Les recettes qui suivent construisent cette réponse pas à pas ; chacune
+s'exécute telle quelle.
 
 ```{r packages}
 library(qesR)
@@ -27,9 +115,10 @@ library(ggplot2)
 
 ## 1. Une variable de choix de vote pour toutes les études
 
-`vote_choice` regroupe le vote déclaré, l'intention avec relance et
-l'intention simple de toutes les études en une seule colonne ;
-`vote_choice__type` dit à quelle question répond chaque ligne.
+`vote_choice` réunit trois questions dans une seule colonne : le vote
+déclaré après l'élection, l'intention de vote avec relance des indécis et
+l'intention simple. `vote_choice__type` indique à quelle question répond
+chaque ligne.
 
 ```{r pooled}
 studies <- c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010",
@@ -39,126 +128,388 @@ h <- qes_harmonize(studies = studies, targets = c("vote_choice", "lang_mother"),
 table(h$study, h$vote_choice__type)
 ```
 
-En disposition longue, une étude pré/post a une ligne par vague :
-l'intention avant l'élection et le vote déclaré après. Dans la disposition
-par répondant (par défaut), la valeur regroupée de chaque étude vient
-d'une seule vague, pour qu'une seule pondération lui convienne.
+Dans ce format long, une étude qui compte une vague avant et une vague
+après l'élection a une ligne par vague : le même répondant y figure une
+fois avec son intention et une fois avec son vote déclaré. Les sondages
+CROP, menés entre les élections, ne comportent que des intentions.
 
-## 2. Ne garder qu'un type
+## 2. Ne garder que le vote déclaré
 
-`types` restreint une variable regroupée à certains de ses membres. Le
-vote déclaré seulement :
+Opposer l'intention mesurée dans une étude au vote déclaré dans une autre
+reviendrait à comparer deux questions différentes. Pour le clivage
+linguistique, nous retenons donc le vote déclaré, que toutes les Études
+électorales québécoises ont mesuré après l'élection, et nous lisons chaque
+étude dans le format par défaut (une ligne par répondant). L'argument
+`types` ne retient que certaines des questions que regroupe la variable :
 
 ```{r recall}
-r <- qes_harmonize(studies = studies, targets = c("vote_choice", "lang_mother"),
+r <- qes_harmonize(studies = studies, targets = c("vote_choice", "lang_mother", "sov_support"),
                    types = list(vote_choice = "recall"), quiet = TRUE)
 table(r$study, r$vote_choice__type, useNA = "ifany")
 ```
 
-À l'intérieur d'une vague d'une étude, les membres sont essayés dans un
-ordre fixe (le vote déclaré, puis l'intention avec relance des indécis,
-puis l'intention simple), et le premier qui a interrogé le répondant
-fixe la ligne. `qes_spec("pooled")` donne cet ordre.
+La variable `vote_choice` est désormais manquante pour les sondages CROP,
+ainsi que pour les répondants qui n'ont pas été joints après le scrutin.
+Lorsqu'une étude a posé plusieurs de ces questions et qu'aucun type n'est
+précisé, le vote déclaré passe en premier, puis l'intention avec relance,
+puis l'intention simple (`qes_spec("pooled")` donne cet ordre).
 
 ## 3. D'où vient chaque valeur
 
 ```{r sources}
-unique(r[!is.na(r$vote_choice__item), c("study", "vote_choice__item", "vote_choice__grade")])
-qes_provenance(r, level = "pooled")
+prov <- qes_provenance(r, level = "pooled")
+prov[prov$pooled == "vote_choice", c("study", "type", "wave", "grade", "n_value")]
 ```
 
-Le niveau est celui de la question de l'étude (`identical`, `comparable`,
-`approximate`) ; la référence de l'harmonisation en donne les raisons.
+```{r sources-text, include = FALSE}
+approx <- prov$study[prov$pooled == "vote_choice" & prov$grade %in% "approximate"]
+```
+
+La question de chaque étude reçoit un niveau de comparabilité. Ce niveau
+est `identical` lorsque la question, les choix de réponse et le format sont
+les mêmes, `comparable` lorsque les différences (l'ordre des choix, la
+présence ou non d'une option « ne sait pas ») ne devraient pas déplacer les
+parts, et `approximate` lorsqu'un format ou un filtre risque de les
+déplacer. Seules les questions
+`r knitr::combine_words(paste0("du ", sub("^Panel ", "panel de ", qz_study_label(approx))), and = " et ")`
+sont ici de niveau `approximate`. Les figures qui suivent laissent donc les
+panels de côté et ne retiennent qu'une Étude électorale québécoise par
+élection.
 
 ## 4. Une part pondérée et son intervalle de confiance, dans une étude
 
 ```{r one-study}
 d <- qes_design(r[r$study == "qes2018", ], weight = "weight_post")
 d <- subset(d, !is.na(vote_choice))
-svyciprop(~I(vote_choice == "CAQ"), d, method = "logit")
+caq18 <- svyciprop(~I(vote_choice == "CAQ"), d, method = "logit")
+caq18
 ```
+
+```{r one-study-text, include = FALSE}
+off <- qz_official()
+caq18_ci <- 100 * attr(caq18, "ci")
+caq18_off <- off$share_valid[off$year == 2018 & off$party == "CAQ"]
+caq18_in <- caq18_off >= caq18_ci[[1]] & caq18_off <= caq18_ci[[2]]
+```
+
+La CAQ a obtenu `r qz_num(caq18_off)` % des votes valides en 2018, et
+`r qz_num(100 * as.numeric(caq18))` % des répondants de l'étude de 2018
+déclarent avoir voté pour elle (intervalle de confiance à 95 % : de
+`r qz_num(caq18_ci[[1]])` à `r qz_num(caq18_ci[[2]])`). Le résultat
+officiel se situe donc `r if (caq18_in) "à l'intérieur" else "en dehors"`
+de cet intervalle.
 
 ## 5. Par groupe
 
 ```{r by-group}
-svyby(~I(vote_choice == "PLQ"), ~lang_mother, subset(d, !is.na(lang_mother)),
-      svyciprop, method = "logit", vartype = "ci")
+plq18 <- svyby(~I(vote_choice == "PLQ"), ~lang_mother, subset(d, !is.na(lang_mother)),
+               svyciprop, method = "logit", vartype = "ci")
+plq18
 ```
 
-## 6. Toutes les études, sans les regrouper
+```{r by-group-text, include = FALSE}
+plq18_pct <- setNames(100 * plq18[[2]], plq18$lang_mother)
+n_allo18 <- sum(d$variables$lang_mother %in% "Other")
+```
 
-Les études diffèrent par la population, le mode, le libellé et la
-pondération : estimer à l'intérieur de chaque étude, puis comparer. Les
-études dont la pondération est encore en révision ont des pondérations
-`NA`, et `qes_design()` laisse leurs lignes de côté.
+En 2018, `r qz_num(plq18_pct[["English"]], 0)` % des anglophones et
+`r qz_num(plq18_pct[["Other"]], 0)` % des allophones ont voté libéral,
+contre `r qz_num(plq18_pct[["French"]], 0)` % des francophones.
+L'estimation chez les allophones repose sur `r n_allo18` répondants, d'où
+son intervalle plus large. Les recettes suivantes réunissent donc
+anglophones et allophones sous l'étiquette de non-francophones : pris
+seuls, les échantillons d'allophones sont trop petits pour être suivis
+d'une élection à l'autre.
+
+## 6. Chaque étude, une à la fois
+
+Les études diffèrent par leur population, leur mode d'enquête, leurs
+libellés et leur pondération ; chaque estimation est donc faite à
+l'intérieur d'une étude, avant toute comparaison. L'étude de 1998 ne mesure
+pas la langue maternelle : la série commence donc en 2007. La pondération
+de l'étude de 2008 est encore en révision : ses estimations ne sont pas
+pondérées, et les figures les représentent par un point vide.
 
 ```{r loop}
-weighted <- c("qes2007", "qes2012", "qes2014", "qes2018", "qes2018_panel", "qes2022")
-# 2007: the CAQ did not yet exist (it was founded in 2011), so the loop starts in 2012
-caq <- do.call(rbind, lapply(setdiff(weighted, "qes2007"), function(s) {
-  ds <- qes_design(r[r$study == s, ], weight = "weight_post")
-  ds <- subset(ds, !is.na(vote_choice))
-  est <- svyciprop(~I(vote_choice == "CAQ"), ds, method = "logit")
-  ci <- attr(est, "ci")
-  data.frame(study = s, pct = 100 * as.numeric(est), lo = 100 * ci[[1]], hi = 100 * ci[[2]])
+qes <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
+r$francophone <- factor(ifelse(r$lang_mother == "French", "francophone", "other"))
+
+# one design per study; a study without a post-election weight (2008) gets
+# a unit weight, so its estimates are unweighted
+is_weighted <- function(s, data = r) !all(is.na(data$weight_post[data$study == s]))
+study_design <- function(s, data = r) {
+  x <- data[data$study == s, ]
+  if (!is_weighted(s, data)) x$weight_post <- 1
+  qes_design(x, weight = "weight_post")
+}
+
+plq <- do.call(rbind, lapply(qes, function(s) {
+  ds <- subset(study_design(s), !is.na(vote_choice) & !is.na(francophone))
+  est <- svyby(~I(vote_choice == "PLQ"), ~francophone, ds, svyciprop, method = "logit", vartype = "ci")
+  data.frame(study = s, year = as.integer(substr(ds$variables$year[1], 1, 4)),
+             weighted = is_weighted(s), group = est$francophone,
+             pct = 100 * est[[2]], lo = 100 * est$ci_l, hi = 100 * est$ci_u)
 }))
-caq
+print(plq, digits = 3, row.names = FALSE)
 ```
 
-Regrouper a un sens pour un modèle qui garde les études distinctes, comme
-une régression avec un terme par étude : le coefficient de la langue
-maternelle française est alors estimé à l'intérieur des études (sur
-l'échelle logit, commun à toutes). (Une seule part du PLQ regroupée sur 2007-2022 ne voudrait rien
-dire.) `pool = "equal"` donne à chaque étude le même poids total ; par
-défaut, une étude compte en proportion de son nombre de répondants :
+```{r loop-site, echo = FALSE}
+# the gap and its interval (from the covariance of the two estimates) and
+# the sample sizes, for the figure's table view
+n_lang <- with(r[!is.na(r$vote_choice) & r$study %in% qes, ], table(study, francophone))
+gaps <- do.call(rbind, lapply(qes, function(s) {
+  ds <- subset(study_design(s), !is.na(vote_choice) & !is.na(francophone))
+  qz_tag(qz_gap(ds, "vote_choice", "PLQ", "francophone", "other", "francophone"),
+         study = s, year = plq$year[plq$study == s][1], weighted = is_weighted(s))
+}))
+gap_rng <- range(gaps$gap)
+gap_lo_year <- gaps$year[which.min(gaps$gap)]
+gap_hi_year <- gaps$year[which.max(gaps$gap)]
+gap_last <- gaps[gaps$year == last, ]
+n_other <- n_lang[qes, "other"]
+other_rng <- range(plq$pct[plq$group == "other"])
+# the claims of the text below
+stopifnot(gap_of(2014) > gap_of(2012), gap_of(2018) > gap_of(2012),
+          gap_last$lo < gap_of(2012), gap_last$hi > gap_of(2012),
+          other_of(last) < other_of(first),
+          other_of(2018) - other_of(last) > fr_of(2018) - fr_of(last),
+          which.min(n_other) == length(qes))
 
-```{r pool}
-dp <- qes_design(r[r$study %in% weighted, ], weight = "weight_post", pool = "equal")
-dp <- subset(dp, !is.na(vote_choice) & !is.na(lang_mother))
-m <- svyglm(I(vote_choice == "PLQ") ~ I(lang_mother == "French") + study, dp,
-            family = quasibinomial())
-summary(m)$coefficients[1:2, ]
+dl <- plq
+dl$series <- ifelse(dl$group == "francophone", "fr", "other")
+dl$x <- qz_ex(dl$year)
+series_lab <- c(fr = tr("Francophones", "Francophones"), other = tr("Non-francophones", "Non-francophones"))
+dl$label <- series_lab[dl$series]
+years <- sort(unique(dl$year))
+
+qz_figure(function(mode) {
+  k <- qz_tokens[[mode]]
+  cols <- c(fr = k$grp[["fr"]], other = k$grp[["other"]])
+  ggplot(dl, aes(x, pct, colour = series, group = series)) +
+    qz_band(aes(ymin = lo, ymax = hi, fill = series), mode = mode) +
+    qz_line(show.legend = FALSE) +
+    qz_dots(mode, dl, aes(x, pct), colour_aes = "series") +
+    weight_key(mode) +
+    qz_end_labels(dl, "x", "pct", "label", "series", mode, min_gap = 7, nudge_x = 1.1) +
+    scale_colour_manual(values = cols, guide = "none") +
+    scale_fill_manual(values = cols, guide = "none") +
+    scale_x_election(years = years, add = c(0.9, 5.4)) +
+    scale_y_continuous(breaks = seq(0, 100, 25), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(0, 100), expand = FALSE, clip = "off") +
+    labs(x = NULL, y = tr("Reported vote for the PLQ", "Vote déclaré pour le PLQ")) +
+    theme_qes(mode)
+}, "plq-language",
+  title = typo(sprintf(tr("At every election since %s, non-francophones were %s to %s points more likely than francophones to vote Liberal",
+                          "À chaque élection depuis %s, le vote libéral est de %s à %s points de pourcentage plus élevé chez les non-francophones que chez les francophones"),
+                       first, qz_num(gap_rng[1], 0), qz_num(gap_rng[2], 0))),
+  subtitle = typo(tr("Share of the reported vote for the PLQ among francophones and non-francophones (mother tongue), one Quebec Election Study per election, with 95% confidence intervals",
+                     "Part du vote déclaré pour le PLQ chez les francophones et les non-francophones (langue maternelle), une Étude électorale québécoise par élection, avec intervalles de confiance à 95 %")),
+  alt = typo(sprintf(tr("Line chart of the share of the reported vote for the PLQ at each Quebec election from %s to %s, among francophones and among non-francophones. Among francophones it goes from %s to %s; among non-francophones it stays between %s and %s. Values in the table view.",
+                        "Graphique linéaire de la part du vote déclaré pour le PLQ à chaque élection québécoise de %s à %s, chez les francophones et chez les non-francophones. Chez les francophones, elle passe de %s à %s ; chez les non-francophones, elle reste entre %s et %s. Valeurs dans la vue en tableau."),
+                     first, last, qz_pct(fr_of(first), 0), qz_pct(fr_of(last), 0),
+                     qz_pct(other_rng[1], 0), qz_pct(other_rng[2], 0))),
+  table = typo_table(setNames(data.frame(
+    gaps$year, qz_study_label(gaps$study),
+    qz_cell(plq$pct[plq$group == "francophone"], plq$lo[plq$group == "francophone"],
+            plq$hi[plq$group == "francophone"], n_lang[gaps$study, "francophone"]),
+    qz_cell(plq$pct[plq$group == "other"], plq$lo[plq$group == "other"],
+            plq$hi[plq$group == "other"], n_lang[gaps$study, "other"]),
+    paste0(qz_pts(gaps$gap, 1), " [", qz_num(gaps$lo), tr(", ", " ; "), qz_num(gaps$hi), "]"),
+    as.integer(n_lang[gaps$study, "francophone"]), as.integer(n_lang[gaps$study, "other"]),
+    weight_text(gaps$weighted), row.names = NULL),
+    c(tr("Election", "Élection"), tr("Study", "Étude"),
+      tr("Francophones, % PLQ [95% CI]", "Francophones, % PLQ [IC à 95 %]"),
+      tr("Non-francophones, % PLQ [95% CI]", "Non-francophones, % PLQ [IC à 95 %]"),
+      tr("Gap [95% CI]", "Écart [IC à 95 %]"),
+      tr("n, francophones", "n, francophones"), tr("n, non-francophones", "n, non-francophones"),
+      tr("Weighting", "Pondération")))),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother; non-francophones are respondents whose mother tongue is English or another language. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
+                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother ; les non-francophones sont les répondants de langue maternelle anglaise ou autre. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
+  height = 4)
 ```
 
-## 7. Souveraineté : une variable, plusieurs libellés
+Deux constats s'imposent. Premièrement, le clivage est important à chaque
+élection, de `r qz_num(gap_rng[1], 0)` points en `r gap_lo_year` à
+`r qz_num(gap_rng[2], 0)` points en `r gap_hi_year`, et il ne s'est pas
+nettement resserré après 2012. Par rapport à 2012 (environ
+`r qz_num(gap_of(2012), 0)` points), l'écart s'est creusé en 2014 et en
+2018, puis est revenu à environ `r qz_num(gap_of(last), 0)` points en
+`r last`, une estimation dont l'intervalle (de `r qz_num(gap_last$lo, 0)` à
+`r qz_num(gap_last$hi, 0)`) inclut l'écart de 2012. Deuxièmement, les deux
+groupes n'ont pas évolué au même rythme. Chez les francophones, le vote
+libéral recule de `r qz_num(fr_of(first), 0)` % en `r first` à
+`r qz_num(fr_of(last), 0)` % en `r last`. Chez les non-francophones, il
+oscille entre `r qz_num(other_rng[1], 0)` % et `r qz_num(other_rng[2], 0)` %
+sans tendance claire, et il se situe en `r last` environ
+`r qz_num(other_of(first) - other_of(last), 0)` points sous son niveau de
+`r first`. L'écart plus étroit de `r last` vient du côté des
+non-francophones : de 2018 à `r last`, le vote libéral a reculé de
+`r qz_num(other_of(2018) - other_of(last), 0)` points chez eux, contre
+`r qz_num(fr_of(2018) - fr_of(last), 0)` chez les francophones.
+L'estimation de `r last` chez les non-francophones ne repose toutefois que
+sur `r n_other[[length(qes)]]` répondants, le plus petit échantillon de la
+série (le plus grand en compte `r max(n_other)`), et son intervalle est
+large. C'est aussi pourquoi la page ne divise pas les non-francophones
+entre anglophones et allophones.
 
-`sov_support` regroupe les questions référendaires ; comparer à
-l'intérieur d'un même libellé (`sov_support__type`) :
+## 7. Qui vote libéral
+
+Les mêmes données se lisent aussi dans l'autre sens : non plus la part de
+chaque groupe qui vote libéral, mais la part des électeurs libéraux qui
+appartiennent à chaque groupe. Vue sous cet angle, la transformation est
+nette.
+
+```{r composition}
+comp <- do.call(rbind, lapply(qes, function(s) {
+  ds <- subset(study_design(s), vote_choice %in% "PLQ" & !is.na(francophone))
+  est <- svyciprop(~I(francophone == "other"), ds, method = "logit")
+  data.frame(study = s, year = plq$year[plq$study == s][1], weighted = is_weighted(s),
+             pct = 100 * as.numeric(est), lo = 100 * attr(est, "ci")[[1]], hi = 100 * attr(est, "ci")[[2]])
+}))
+print(comp, digits = 3, row.names = FALSE)
+```
+
+```{r composition-site, echo = FALSE}
+n_plq <- with(r[r$vote_choice %in% "PLQ" & !is.na(r$francophone) & r$study %in% qes, ], table(study))
+stopifnot(max(n_plq) < 1000)  # "a few hundred Liberal voters at most"
+dc <- comp
+dc$x <- qz_ex(dc$year)
+
+qz_figure(function(mode) {
+  k <- qz_tokens[[mode]]
+  col <- k$grp[["other"]]
+  ggplot(dc, aes(x, pct)) +
+    geom_hline(yintercept = 50, colour = k$axis, linewidth = 0.35, linetype = "22") +
+    annotate("text", x = qz_ex(first) - 0.6, y = 51.5, label = tr("half of PLQ voters", "la moitié des électeurs du PLQ"),
+             hjust = 0, vjust = 0, size = 3, colour = k$ink2, family = qz_font()) +
+    qz_band(aes(ymin = lo, ymax = hi), fill = col, mode = mode) +
+    qz_line(colour = col) +
+    qz_dots(mode, dc, aes(x, pct), fixed = col) +
+    weight_key(mode) +
+    scale_x_election(years = years, add = c(0.9, 0.9)) +
+    scale_y_continuous(breaks = seq(0, 100, 25), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(0, 100), expand = FALSE, clip = "off") +
+    labs(x = NULL, y = tr("Non-francophones among PLQ voters", "Non-francophones parmi les électeurs du PLQ")) +
+    theme_qes(mode)
+}, "plq-composition",
+  title = typo(sprintf(tr("Non-francophones went from %s of Liberal voters in %s to %s in %s",
+                          "Les non-francophones passent de %s des électeurs libéraux en %s à %s en %s"),
+                       qz_pct(comp_of(first), 0), first, qz_pct(comp_of(last), 0), last)),
+  subtitle = typo(tr("Share of respondents whose mother tongue is not French among those who reported a vote for the PLQ, one Quebec Election Study per election, with 95% confidence intervals",
+                     "Part des répondants dont la langue maternelle n'est pas le français parmi ceux qui déclarent avoir voté pour le PLQ, une Étude électorale québécoise par élection, avec intervalles de confiance à 95 %")),
+  alt = typo(sprintf(tr("Line chart of the share of non-francophones among respondents who reported a PLQ vote, at each Quebec election from %s to %s, with a dashed line at 50%%. It goes from %s in %s to %s in %s. Values in the table view.",
+                        "Graphique linéaire de la part des non-francophones parmi les répondants qui déclarent un vote pour le PLQ, à chaque élection québécoise de %s à %s, avec une ligne pointillée à 50 %%. Elle passe de %s en %s à %s en %s. Valeurs dans la vue en tableau."),
+                     first, last, qz_pct(comp_of(first), 0), first, qz_pct(comp_of(last), 0), last)),
+  table = typo_table(setNames(data.frame(
+    comp$year, qz_study_label(comp$study),
+    qz_cell(comp$pct, comp$lo, comp$hi, as.integer(n_plq[comp$study])),
+    as.integer(n_plq[comp$study]), qz_num(voters_other[as.character(comp$year)]),
+    qz_num(sapply(comp$year, comp_fixed)), weight_text(comp$weighted), row.names = NULL),
+    c(tr("Election", "Élection"), tr("Study", "Étude"),
+      tr("Non-francophones among PLQ voters, % [95% CI]", "Non-francophones parmi les électeurs du PLQ, % [IC à 95 %]"),
+      tr("n, PLQ voters", "n, électeurs du PLQ"),
+      tr("Non-francophones among all voters, %", "Non-francophones parmi tous les électeurs, %"),
+      sprintf(tr("Non-francophones among PLQ voters, at their %s share of all voters, %%", "Non-francophones parmi les électeurs du PLQ, à leur part de %s parmi tous les électeurs, %%"), first),
+      tr("Weighting", "Pondération")))),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
+                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
+  height = 3.4)
+```
+
+Les non-francophones forment `r qz_num(comp_of(first), 0)` % des électeurs
+du PLQ en `r first` et `r qz_num(comp_of(last), 0)` % en `r last`. Le
+tracé n'est pas régulier, et chaque point repose tout au plus sur quelques
+centaines d'électeurs libéraux. Cette part dépend en outre d'autre chose
+que du vote libéral de chaque groupe : la part pondérée des
+non-francophones parmi les électeurs de chaque étude, qui varie davantage
+que ne le ferait la population. Elle est d'environ
+`r qz_num(mean(low_share), 0)` % en 2007 et en 2014, et de
+`r qz_num(min(high_share), 0)` % à `r qz_num(max(high_share), 0)` % en
+2012, en 2018 et en 2022 ; la baisse de 2014 coïncide d'ailleurs avec la
+faible part de cette année-là. Si cette part était restée à son niveau de
+`r first`, les non-francophones formeraient encore
+`r qz_num(comp_fixed(last), 0)` % des électeurs libéraux en `r last`. La
+hausse tient donc, mais son ampleur dépend de la composition de chaque
+échantillon. Autrement dit, le PLQ est passé d'un parti dont l'électorat
+était majoritairement francophone à un parti dont l'électorat ne l'est
+plus, sans que les non-francophones s'y rallient en plus grand nombre. Ce
+sont les francophones qui sont partis.
+
+## 8. La souveraineté : une variable, plusieurs libellés
+
+`sov_support` regroupe les questions référendaires. Le libellé a changé au
+fil du temps, et la colonne regroupée le consigne dans `sov_support__type` :
+les parts ne se comparent qu'à l'intérieur d'un même libellé.
 
 ```{r sovereignty}
-s <- qes_harmonize(studies = studies, targets = "sov_support", quiet = TRUE)
-table(s$study, s$sov_support__type)
+table(r$study, r$sov_support__type)
 ```
 
-## 8. L'ADQ et la CAQ dans une même série
+Les `r n_four` Études électorales québécoises de 2012 à 2022 ont posé la
+même question sur l'indépendance, que la recette suivante utilise. Les
+études antérieures posaient la question de souveraineté-partenariat du
+référendum de 1995, et les panels de 2012 et de 2018 ont employé leurs
+propres libellés.
 
-Les colonnes harmonisées gardent l'ADQ et la CAQ distinctes.
-`qes_party_lineage()` ajoute une colonne qui les réunit, pour les séries
-chronologiques ; les lignes recueillies avant la fusion de 2012 y ont le
-niveau `approximate`.
+## 9. Regrouper les études dans un modèle
+
+Regrouper des études n'a de sens que dans un modèle qui les garde
+distinctes, avec des effets fixes d'étude, de sorte que chaque association
+soit estimée à l'intérieur des études. `pool = "equal"` donne à chaque
+étude le même poids total parmi les lignes qu'on lui fournit ; nous
+sélectionnons donc d'abord les lignes du modèle. Par défaut, une étude
+compte en proportion de son nombre de répondants. Nous employons un modèle
+de probabilité linéaire : un coefficient multiplié par 100 se lit donc en
+points de pourcentage. Le premier modèle ne comporte que les effets fixes
+d'étude ; le deuxième ajoute l'appui à l'indépendance ; le troisième permet
+à l'écart linguistique de varier d'une étude à l'autre.
+
+```{r pool}
+four <- c("qes2012", "qes2014", "qes2018", "qes2022")
+x <- r[r$study %in% four & !is.na(r$vote_choice) & !is.na(r$francophone) & !is.na(r$sov_support), ]
+dp <- qes_design(x, weight = "weight_post", pool = "equal")
+m1 <- svyglm(I(vote_choice == "PLQ") ~ francophone + study, dp)
+m2 <- svyglm(I(vote_choice == "PLQ") ~ francophone + I(sov_support == "Yes") + study, dp)
+m3 <- svyglm(I(vote_choice == "PLQ") ~ francophone * study + I(sov_support == "Yes"), dp)
+100 * rbind(study_effects = coef(m1)[2], plus_independence = coef(m2)[2])
+regTermTest(m3, ~ francophone:study)
+```
+
+Sur l'ensemble des `r n_four` élections, et avec les seuls effets fixes
+d'étude, la probabilité de voter libéral est d'environ `r qz_num(b1, 0)`
+points plus élevée chez les non-francophones que chez les francophones
+(intervalle de confiance à 95 % : de `r qz_num(ci1[[1]], 0)` à
+`r qz_num(ci1[[2]], 0)`). À opinion égale sur l'indépendance, l'écart est
+encore de `r qz_num(b2, 0)` points. L'appui à l'indépendance explique donc
+environ `r qz_num(b1 - b2, 0)` des `r qz_num(b1, 0)` points du clivage
+linguistique du vote libéral. Autrement dit, l'essentiel de ce clivage
+n'est pas la question nationale sous un autre nom, du moins telle que la
+mesure une seule question sur l'indépendance. Enfin, les indices d'une
+évolution de l'écart entre 2012 et 2022 sont faibles (un test d'égalité des
+écarts dans les `r n_four` études donne p = `r qz_num(p_equal, 2)`).
+
+## 10. L'ADQ et la CAQ en une seule série, face au décompte des votes
+
+Les colonnes harmonisées gardent distinctes l'Action démocratique du Québec
+(ADQ) et la CAQ. `qes_party_lineage()` ajoute une colonne qui les réunit,
+pour les séries chronologiques ; ses lignes recueillies avant la fusion de
+2012 ont le niveau `approximate`.
 
 ```{r lineage}
 l <- qes_party_lineage(r, cols = "vote_choice")
 table(l$study, l$vote_choice_lineage)[, c("PLQ", "PQ", "ADQ/CAQ", "QS")]
 ```
 
-## 9. Une première figure : l'ADQ et la CAQ en une seule série
-
-La colonne de lignée de la recette 8, pondérée à l'intérieur de chaque
-étude, face au résultat officiel. `p` est un graphique ggplot2 simple,
-prêt à adapter (l'afficher avec `p`) ; le site dessine le même graphique
-avec le thème de ses pages d'exemples, ci-dessous.
+Pondérée à l'intérieur de chaque étude et mise en regard du résultat
+officiel, cette colonne offre une première vérification du vote déclaré.
+`p` est un graphique ggplot2 simple, prêt à adapter (l'afficher avec `p`).
 
 ```{r plot}
-qes <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
 lineage <- do.call(rbind, lapply(qes, function(s) {
-  x <- l[l$study == s, ]
-  weighted <- any(!is.na(x$weight_post))
-  if (!weighted) x$weight_post <- 1   # qes2008: weight under review, so unweighted
-  ds <- subset(qes_design(x, weight = "weight_post"), !is.na(vote_choice_lineage))
+  ds <- subset(study_design(s, l), !is.na(vote_choice_lineage))
   est <- svyciprop(~I(vote_choice_lineage == "ADQ/CAQ"), ds, method = "logit")
   ci <- attr(est, "ci")
-  data.frame(study = s, year = as.integer(substr(x$year[1], 1, 4)), weighted = weighted,
+  data.frame(study = s, year = plq$year[plq$study == s][1], weighted = is_weighted(s, l),
              pct = 100 * as.numeric(est), lo = 100 * ci[[1]], hi = 100 * ci[[2]])
 }))
 # the official share of valid votes of the ADQ (2007, 2008) and of the CAQ
@@ -166,10 +517,10 @@ lineage <- do.call(rbind, lapply(qes, function(s) {
 official <- data.frame(year = c(2007, 2008, 2012, 2014, 2018, 2022),
                        pct = c(30.8, 16.4, 27.1, 23.1, 37.4, 41.0))
 fr <- identical(params$lang, "fr")
-lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
+lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
   c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result")
-lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré (pondération en révision)") else
-  c(`TRUE` = "weighted", `FALSE` = "unweighted (weight under review)")
+lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré") else
+  c(`TRUE` = "weighted", `FALSE` = "unweighted")
 
 p <- ggplot(lineage, aes(year, pct)) +
   geom_line(data = official, aes(colour = "official")) +
@@ -181,16 +532,17 @@ p <- ggplot(lineage, aes(year, pct)) +
   scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022)) +
   scale_y_continuous(limits = c(0, 50)) +
   labs(x = NULL, y = if (fr) "% du vote déclaré" else "% of the reported vote", colour = NULL, fill = NULL)
-lineage
+print(lineage, digits = 3, row.names = FALSE)
 ```
 
 ```{r plot-site, echo = FALSE}
 # the same chart in the example pages' chart system (vignettes/articles/_theme.R),
 # drawn for the light and the dark theme, with its table view
-source("_setup.R", encoding = "UTF-8")
 lineage$official <- official$pct[match(lineage$year, official$year)]
+n_lineage <- with(l[!is.na(l$vote_choice_lineage) & l$study %in% qes, ], table(study))
 gap <- lineage$pct - lineage$official
-before <- max(abs(gap[lineage$year < 2022]))
+before <- max(abs(gap[lineage$year < last]))
+before_year <- max(lineage$year[lineage$year < last])
 qz_figure(function(mode) {
   k <- qz_tokens[[mode]]
   p +
@@ -200,31 +552,99 @@ qz_figure(function(mode) {
                       guide = guide_legend(order = 2, override.aes = list(colour = k$ink2, linetype = 0, shape = 21))) +
     theme_qes(mode)
 }, "lineage",
-  title = sprintf(tr("Read as one lineage, the ADQ/CAQ vote is within %s points of its result until 2018, and %s points short in 2022",
-                     "Lu comme une seule lignée, le vote ADQ/CAQ est à %s points ou moins de son résultat jusqu'en 2018, et %s points sous lui en 2022"),
-                  qz_num(before, 0), qz_num(abs(gap[lineage$year == 2022]), 0)),
-  subtitle = tr("Share of the reported vote for the ADQ (2007, 2008) and the CAQ (2012 on), one Quebec Election Study per election, with 95% confidence intervals and the official result",
-                "Part du vote déclaré pour l'ADQ (2007, 2008) et la CAQ (à partir de 2012), une Étude électorale québécoise par élection, avec intervalles de confiance à 95 % et résultat officiel"),
-  alt = sprintf(tr("Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has %s against %s officially. Values in the table view.",
-                   "Graphique à points avec intervalles de confiance de la part du vote déclaré pour l'ADQ en 2007 et 2008 et pour la CAQ de 2012 à 2022, dans les Études électorales québécoises, avec le résultat officiel en ligne avec des traits. En 2022, l'étude donne %s contre %s officiellement. Valeurs dans la vue en tableau."),
-                qz_pct(lineage$pct[lineage$year == 2022], 0), qz_pct(lineage$official[lineage$year == 2022], 0)),
-  table = setNames(data.frame(lineage$year, qz_study_label(lineage$study),
-                              ifelse(lineage$year < 2012, "ADQ", "CAQ"),
-                              qz_cell(lineage$pct, lineage$lo, lineage$hi, 100),
-                              qz_num(lineage$official), qz_pts(gap, 1), qz_weight_text(lineage$weighted), row.names = NULL),
-                   c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Party", "Parti"),
-                     tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"),
-                     tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
-                     tr("Weighting", "Pondération"))),
-  note = tr("Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012: the lineage column joins them for a time series, and its rows before the merger are graded approximate. Weighted with each study's post-election weight; hollow (2008): unweighted, weight under review.",
-            "Source : qesR, variable regroupée vote_choice (vote déclaré) avec qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a fusionné avec la CAQ en 2012 : la colonne de lignée les réunit pour une série chronologique, et ses lignes d'avant la fusion ont le niveau approximatif. Pondéré avec la pondération postélectorale de chaque étude ; creux (2008) : non pondéré, pondération en révision."),
+  title = typo(sprintf(tr("With the ADQ and the CAQ joined, the reported vote is within %s points of the official result until %s, and %s points short in %s",
+                          "L'ADQ et la CAQ réunies, le vote déclaré reste à %s points ou moins du résultat officiel jusqu'en %s, puis se situe %s points en deçà en %s"),
+                       qz_num(before, 0), before_year, qz_num(abs(gap[lineage$year == last]), 0), last)),
+  subtitle = typo(tr("Share of the reported vote for the ADQ (2007, 2008) and the CAQ (2012 on), one Quebec Election Study per election, with 95% confidence intervals and the official result",
+                     "Part du vote déclaré pour l'ADQ (2007, 2008) et la CAQ (à partir de 2012), une Étude électorale québécoise par élection, avec intervalles de confiance à 95 % et résultat officiel")),
+  alt = typo(sprintf(tr("Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has %s against %s officially. Values in the table view.",
+                        "Graphique à points avec intervalles de confiance de la part du vote déclaré pour l'ADQ en 2007 et 2008 et pour la CAQ de 2012 à 2022, dans les Études électorales québécoises, avec le résultat officiel en ligne avec des traits. En 2022, l'étude donne %s contre %s officiellement. Valeurs dans la vue en tableau."),
+                     qz_pct(lineage$pct[lineage$year == last], 0), qz_pct(lineage$official[lineage$year == last], 0))),
+  table = typo_table(setNames(data.frame(lineage$year, qz_study_label(lineage$study),
+                                         ifelse(lineage$year < 2012, "ADQ", "CAQ"),
+                                         qz_cell(lineage$pct, lineage$lo, lineage$hi, as.integer(n_lineage[lineage$study])),
+                                         qz_num(lineage$official), qz_pts(gap, 1), weight_text(lineage$weighted), row.names = NULL),
+                              c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Party", "Parti"),
+                                tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"),
+                                tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
+                                tr("Weighting", "Pondération")))),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012, and the lineage column joins them for a time series. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
+                 "Source : qesR, variable regroupée vote_choice (vote déclaré) avec qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a fusionné avec la CAQ en 2012, et la colonne de lignée les réunit pour une série chronologique. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
   height = 3.6)
 ```
 
-## 10. Répondants par étude
-
-```{r respondents}
-n <- aggregate(qes_id ~ study + year, data = r, FUN = length)
-names(n)[3] <- "respondents"
-n[order(n$year, n$study), ]
+```{r plot-text, include = FALSE}
+plq_last <- svyciprop(~I(vote_choice == "PLQ"), subset(study_design(qes[length(qes)]), !is.na(vote_choice)),
+                      method = "logit")
+plq_last_off <- off$share_valid[off$year == last & off$party == "PLQ"]
 ```
+
+Jusqu'en `r before_year`, le vote déclaré reste à `r qz_num(before, 0)`
+points ou moins du résultat officiel. En `r last`, contrairement à la
+surestimation habituelle du parti gagnant dans les enquêtes
+postélectorales, il se situe `r qz_num(abs(gap[lineage$year == last]), 0)`
+points sous ce résultat, alors que la même étude place le PLQ à
+`r qz_num(100 * as.numeric(plq_last), 0)` % contre
+`r qz_num(plq_last_off, 0)` % officiellement. Les niveaux de `r last`
+appellent donc une certaine prudence. Notre argument repose toutefois sur
+des différences entre groupes à l'intérieur de chaque étude, moins
+exposées que les niveaux à une erreur de ce type, sans en être tout à fait
+à l'abri.
+
+## Ce que montrent les recettes
+
+En somme, les Études électorales québécoises n'appuient que partiellement
+l'idée selon laquelle le clivage linguistique ne serait que la question
+nationale sous un autre nom. L'appui à l'indépendance explique une partie
+de l'écart du vote libéral, et cet écart ne s'est pas nettement resserré
+après 2012. Ce qui a changé, c'est qui vote libéral : à mesure que les
+francophones le quittaient, le PLQ est devenu un parti dont l'électorat est
+majoritairement non francophone. Notre analyse n'est toutefois pas sans
+limite. D'une part, la langue maternelle est une mesure grossière. Des
+travaux récents abordent aussi la langue comme une attitude, l'inquiétude
+que le français soit menacé, et cette inquiétude varie chez les
+francophones eux-mêmes (Daoust et Gareau-Paquette, 2026). D'autre part,
+les estimations sont des associations mesurées dans des coupes
+transversales, et non des causes ; les échantillons de non-francophones
+sont petits, et leur part de chaque échantillon varie d'une étude à
+l'autre. Bien entendu, le clivage ne joue pas de la même manière pour tous
+les partis : le vote pour le Parti conservateur du Québec (PCQ) traversait
+ce clivage en 2022, puisant autant chez les non-francophones que chez les
+francophones (Bélanger et al., 2025). Reste à savoir où sont allés les
+électrices et électeurs francophones qui ont quitté le PLQ, une question
+que reprennent les pages sur le
+[réalignement du système partisan](fr-realignement.html) et sur les
+[changements d'idée pendant la campagne](fr-transitions.html).
+
+## Pour aller plus loin
+
+Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et Valérie-Anne
+Mahéo. 2025. « A Party that Went Viral? The Drivers of Support for the
+Parti Conservateur du Québec in the 2022 Election ». *Revue canadienne de
+science politique* 58 (2) : 277–296.
+<https://doi.org/10.1017/S0008423924000829>
+
+Bélanger, Éric, Richard Nadeau, Ailsa Henderson et Eve Hepburn. 2018.
+*The National Question and Electoral Politics in Quebec and Scotland*.
+Montréal et Kingston : McGill-Queen's University Press.
+<https://doi.org/10.1515/9780773554139>
+
+Daoust, Jean-François et Thomas Gareau-Paquette. 2024. « Is Quebec
+Independence Still Key in Making Sense of Canadian Elections? A
+Longitudinal Analysis (2000–2021) ». *Regional & Federal Studies* 34 (5) :
+781–806. <https://doi.org/10.1080/13597566.2023.2233422>
+
+Daoust, Jean-François et Thomas Gareau-Paquette. 2026. « De plus en plus
+inquiets : qui sont les Québécois qui considèrent le français comme menacé
+et quelles en sont les conséquences électorales ? » *Revue canadienne de
+science politique* 59 (1) : 61–80.
+<https://doi.org/10.1017/S0008423925100942>
+
+Hamilton, Richard et Maurice Pinard. 1976. « The Bases of Parti Québécois
+Support in Recent Quebec Elections ». *Revue canadienne de science
+politique* 9 (1) : 3–26. <https://doi.org/10.1017/S0008423900043158>
+
+Pinard, Maurice et Richard Hamilton. 1978. « The Parti Québécois Comes to
+Power: An Analysis of the 1976 Quebec Election ». *Revue canadienne de
+science politique* 11 (4) : 739–776.
+<https://doi.org/10.1017/S000842390004659X>

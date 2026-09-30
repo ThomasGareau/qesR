@@ -28,7 +28,7 @@
 #   4. V-P3, the generated documentation is current: the target list of
 #      man/qes_spec.Rd (roxygen @eval .rd_targets()) names the spec version
 #      and every target (re-run roxygen otherwise), and the coverage grids
-#      of README.md and pkgdown/index.md are the grid of the spec (re-run
+#      of README.md are the grid of the spec (re-run
 #      data-raw/readme_coverage.R otherwise). The reference vignettes
 #      are generated when they are built, so they cannot be stale;
 #   5. the source grep: the calls that tests/testthat/test-forbidden-calls.R
@@ -177,13 +177,11 @@ if (file.exists(rd_path)) {
   failed <- TRUE
 }
 
-# The coverage grids of README.md and of the website's home page
-# (pkgdown/index.md), between the "coverage" markers, are the grid of the
-# spec, .spec_readme_md(); data-raw/readme_coverage.R writes them (on the
-# home page, the target names link to the harmonization reference).
-for (f in list(list(path = "README.md", reference = NULL),
-               list(path = file.path("pkgdown", "index.md"),
-                    reference = "articles/harmonization-reference.html"))) {
+# The coverage grids of README.md, between the "coverage" markers, are the
+# grid of the spec, .spec_readme_md(); data-raw/readme_coverage.R writes
+# them. (The website's home page has no grid since qesR 0.8.0: it links to
+# the coverage page, which is generated when the site is built.)
+for (f in list(list(path = "README.md", reference = NULL))) {
   readme <- if (file.exists(f$path)) enc2utf8(readLines(f$path, encoding = "UTF-8", warn = FALSE)) else character(0)
   start <- grep("^<!-- coverage: start", readme)
   end <- grep("^<!-- coverage: end", readme)

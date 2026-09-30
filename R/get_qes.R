@@ -8,8 +8,8 @@
 #' `qes2018 <- get_qes("qes2018")`. A real study is downloaded once per
 #' session, or kept between sessions with `options(qesR.cache = "disk")`
 #' (see [qes_cache_info()]). The first call in a session that leaves
-#' `assign_global` unset prints a one-time note about this change from qesR
-#' 0.4.4; passing `assign_global` explicitly (TRUE or FALSE) avoids it.
+#' `assign_global` unset prints a one-time note about it; passing
+#' `assign_global` explicitly (TRUE or FALSE) avoids it.
 #'
 #' @section Which file is read:
 #' Each study is pinned to one data file of one Dataverse dataset version
@@ -25,17 +25,17 @@
 #' turns this off).
 #'
 #' The data is returned as deposited: column names, codes and missing values
-#' (`NA`) are those of the file, and no row is dropped or recoded. For qesR
-#' 0.4.4 users, names, codes and `is.na()` counts are unchanged; three
-#' columns of `qes2007_panel` keep their 0.4.4 names (`AFFGÉN`, `PROPRIÉ`,
-#' `PROPGÉN`). Compared with 0.4.4, accented text is no longer damaged,
-#' `qes2022` dates are date-times, and labels are those of the file (below).
+#' (`NA`) are those of the file, and no row is dropped or recoded. The one
+#' exception: three columns of `qes2007_panel` are named `AFFGÉN`,
+#' `PROPRIÉ` and `PROPGÉN` (`AffGénérale`, `propriété` and `PropGénérale`
+#' in the file), the names Dataverse gives them. `qes2022` dates are
+#' date-times, and labels are those of the file (below).
 #'
 #' @section Labels and missing values:
 #' Labelled columns are [haven::labelled()] vectors; convert one with
 #' [haven::as_factor()]. Variable and value labels come from the data file
 #' itself, never from Dataverse's metadata or from a variable name. For
-#' `qes2012`, whose Stata file (the one qesR 0.4.4 read, with its lowercase
+#' `qes2012`, whose Stata file (the one read, with its lowercase
 #' names) has labels that Stata lowercased and cut at 80 characters, the
 #' complete labels of the SPSS twin of the same data are used. A few labels
 #' of the CROP files typed in another character set are corrected (for
@@ -44,7 +44,7 @@
 #' from the study's questionnaire, without changing the data.
 #'
 #' Codes that an SPSS file declares as user-missing (such as 8 or 9 for "Don't
-#' know") are kept as values, as in qesR 0.4.4; the declaration is kept in
+#' know") are kept as values; the declaration is kept in
 #' the column attributes `qes_na_values` and `qes_na_range`. [qes_missing()]
 #' sets these codes, and the "don't know" and "refused" codes the codebook
 #' types, to `NA`.

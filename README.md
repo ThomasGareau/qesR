@@ -4,13 +4,23 @@
   <img src="man/figures/logo.png" alt="qesR logo" width="180" />
 </p>
 
-qesR loads the Quebec Election Studies and related Quebec election surveys
-into R by study code. Each code points to one Dataverse deposit (Borealis or
-the Harvard Dataverse), pinned to a dataset version and to one original
-SPSS or Stata data file, checked against its md5 checksum before use. The
-catalog of studies, their documents, their citations and the description of
-every variable of every study ship with the package, so codebooks, question
-wording and search work offline, in English and French.
+The Quebec Election Studies, with the panels and polls that accompanied
+them, cover seven provincial elections, from 1998 to 2022, and their data
+are public. Using them together is another matter: they sit in separate
+deposits, in SPSS or Stata files, each with a codebook of its own, and the
+wording of a question often changed from one study to the next. qesR brings
+them into R. Each study loads by its code, from one original file of one
+pinned version of its Dataverse deposit (Borealis or the Harvard
+Dataverse), checked against its md5 checksum before use. The codebooks,
+question wording and search ship with the package and work offline, in
+English and French. qesR also harmonizes the 11 studies of 1998 to 2022
+into one data frame, question by question, with a comparability grade for
+each study's question and a reason for each missing value.
+
+The [website](https://thomasgareau.github.io/qesR/) has worked examples on
+25 years of Quebec elections: the fragmentation of the vote, support for
+independence by generation, sovereignty and left-right, turnout, vote
+changes during the campaign, and surveys against the official results.
 
 Une présentation en français suit la version anglaise (section *En
 français*).
@@ -260,14 +270,26 @@ each file, its source and its licence.
 
 ## En français
 
-qesR charge dans R les Études électorales québécoises et d'autres enquêtes
-électorales québécoises à partir d'un code d'étude. Chaque code désigne un
-dépôt Dataverse (Borealis ou Harvard Dataverse), fixé à une version du jeu
-de données et à un fichier de données original SPSS ou Stata, vérifié par
-sa somme de contrôle md5 avant usage. Le catalogue des études, leurs
-documents, leurs citations et la description de chaque variable de chaque
-étude sont livrés avec le package : codebooks, libellés des questions et
-recherche fonctionnent sans réseau, en français et en anglais.
+Les Études électorales québécoises, avec les panels et les sondages qui les
+ont accompagnées, couvrent sept élections provinciales, de 1998 à 2022, et
+leurs données sont publiques. Les utiliser ensemble est toutefois une autre
+affaire : elles se trouvent dans des dépôts distincts, dans des fichiers
+SPSS ou Stata, chacune avec son propre codebook, et le libellé d'une même
+question a souvent changé d'une étude à l'autre. qesR les réunit dans R.
+Chaque étude se charge par son code, à partir d'un fichier original d'une
+version fixée de son dépôt Dataverse (Borealis ou Harvard Dataverse),
+vérifié par sa somme de contrôle md5 avant usage. Les codebooks, les
+libellés des questions et la recherche sont livrés avec le package et
+fonctionnent sans réseau, en français et en anglais. qesR harmonise aussi
+les 11 études de 1998 à 2022 en un seul tableau, question par question,
+avec un niveau de comparabilité pour la question de chaque étude et un
+motif pour chaque valeur manquante.
+
+Le [site web](https://thomasgareau.github.io/qesR/articles/fr-accueil.html)
+présente des exemples sur 25 ans d'élections québécoises : la
+fragmentation du vote, l'appui à l'indépendance selon la génération,
+souveraineté et gauche-droite, la participation, les changements de vote
+pendant la campagne, et les enquêtes face aux résultats officiels.
 
 ```r
 # install.packages("remotes")

@@ -14,7 +14,7 @@ study datasets available via Dataverse repositories.
 Grouped as in the reference index of the website.\tabular{lll}{
    Group \tab Function \tab What it does \cr
    Data \tab \code{\link[=get_qes]{get_qes()}} \tab Loads a study: \code{qes2018 <- get_qes("qes2018")}. The data are returned, never written into your workspace by default. \cr
-   Data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see \code{NEWS}). \cr
+   Data \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab The legacy merged file: 30 harmonized columns, 11 studies, built from the harmonized variables. \cr
    Studies and documents \tab \code{\link[=qes_studies]{qes_studies()}} \tab Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; \code{check_updates = TRUE} asks Dataverse whether a newer version exists. \cr
    Studies and documents \tab \code{\link[=qes_docs]{qes_docs()}} \tab Lists the codebooks, questionnaires and reports of each study, offline. \cr
    Studies and documents \tab \code{\link[=qes_download]{qes_download()}} \tab Saves the original files (data and documents), md5-checked, in a folder you choose. \cr
@@ -22,10 +22,10 @@ Grouped as in the reference index of the website.\tabular{lll}{
    Codebooks and search \tab \code{\link[=qes_question]{qes_question()}} \tab The exact wording of one or more questions, in English or French. \cr
    Codebooks and search \tab \code{\link[=qes_search]{qes_search()}} \tab Searches variables across every study, ignoring case and accents: \code{qes_search("souverain")}. \cr
    Codebooks and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
-   Harmonization (experimental) \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
-   Harmonization (experimental) \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. \cr
-   Harmonization (experimental) \tab \code{\link[=qes_design]{qes_design()}} \tab Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. \cr
-   Harmonization (experimental) \tab \code{\link[=qes_party_lineage]{qes_party_lineage()}} \tab Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. \cr
+   Harmonization \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
+   Harmonization \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, following the harmonization rules; waves, weights and eligibility of each respondent. \cr
+   Harmonization \tab \code{\link[=qes_design]{qes_design()}} \tab Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. \cr
+   Harmonization \tab \code{\link[=qes_party_lineage]{qes_party_lineage()}} \tab Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. \cr
    Reproducibility \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. \cr
    Reproducibility \tab \code{\link[=qes_cite]{qes_cite()}} \tab Citation of qesR and of each dataset, as text, BibTeX or \code{bibentry}. \cr
    Cache \tab \code{\link[=qes_cache_info]{qes_cache_info()}}, \code{\link[=qes_cache_clear]{qes_cache_clear()}} \tab Lists or deletes the files kept in the download cache. \cr
@@ -37,13 +37,13 @@ reviewed spec, \code{\link[=qes_harmonize]{qes_harmonize()}} applies it and \cod
 result into a survey design; the reference generated from the spec is
 \code{vignette("harmonization-reference", package = "qesR")}.
 
-The functions of qesR 0.4.4 (\code{get_codebook()}, \code{get_question()},
-\code{get_preview()}, \code{get_qescodes()}, ...) keep working and will not be
-removed; \link{qesR-deprecated} gives the replacement of each one.
+Older functions (\code{get_codebook()}, \code{get_question()}, \code{get_preview()},
+\code{get_qescodes()}, ...) keep working and will not be removed;
+\link{qesR-deprecated} gives the replacement of each one.
 
 Guides: \code{vignette("get-started", package = "qesR")} (from a study code to a
 weighted estimate), \code{vignette("citations", package = "qesR")},
-\code{vignette("migrating-0.7", package = "qesR")} and
+\code{vignette("migrating-0.7", package = "qesR")} (upgrading older code) and
 \code{vignette("harmonization-reference", package = "qesR")} (the reference
 generated from the harmonization spec). The website,
 \url{https://thomasgareau.github.io/qesR/}, also has the study catalog and
@@ -179,7 +179,7 @@ not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
 \code{qesR_message_arg_ignored}, shown when a legacy argument that no longer
 changes the result is used; and \code{qesR_message_values_changed} and
 \code{qesR_message_legacy_columns}, shown by \code{\link[=get_qes_master]{get_qes_master()}} and
-\code{\link[=get_decon]{get_decon()}}, whose values changed in qesR 0.5.0 and 0.7.0. Every condition carries
+\code{\link[=get_decon]{get_decon()}}, whose values differ from earlier versions. Every condition carries
 the fields \code{id} (its message key) and \code{lang} (the language of its message).
 }
 
@@ -336,7 +336,7 @@ masqués par \code{quiet = TRUE}.
 \code{qesR_message_deprecated}, \code{qesR_message_assign_default},
 \code{qesR_message_arg_ignored} (argument hérité qui ne change plus le résultat),
 \code{qesR_message_values_changed} et \code{qesR_message_legacy_columns} (valeurs de
-\code{\link[=get_qes_master]{get_qes_master()}} et \code{\link[=get_decon]{get_decon()}} modifiées dans qesR 0.5.0 et 0.7.0)
+\code{\link[=get_qes_master]{get_qes_master()}} et \code{\link[=get_decon]{get_decon()}} modifiées depuis les versions antérieures)
 s'affichent au plus une fois par session et ne sont pas masqués par
 \code{quiet}. Chaque
 condition porte les champs \code{id} (sa clé de message) et \code{lang} (la langue de

@@ -14,11 +14,10 @@ options(qesR.lang = params$lang)
 
 Which harmonized variable ("target") of `qes_harmonize()` each study has,
 and how comparable its question is. The grid and the table of studies below
-are generated from the specification that ships with qesR when the site is
-built; none of it is written by hand.
+are generated from the rules that ship with qesR.
 
 ```{r coverage, echo = FALSE, results = "asis"}
-cat(qesR:::.spec_coverage_md(lang = params$lang))
+cat(qesR:::.spec_coverage_md(lang = params$lang, site = TRUE))
 ```
 
 ## The same grid in R
@@ -32,5 +31,5 @@ qes_spec(lang = params$lang)
 ```
 
 A grade compares a study's question with the target's anchor question.
-[Harmonizing across studies](harmonization.html) shows how grades, missing
+[How harmonization works](harmonization.html) shows how grades, missing
 values and weights carry into an estimate.

@@ -410,3 +410,44 @@ test_that("the README grid gives the first letter of each grade qes_spec() gives
     expect_identical(r[-1], unname(ifelse(is.na(g), "\u2014", letter[g])), label = p)
   }
 })
+
+test_that("the website's reference and coverage grid leave out the spec's internals", {
+  s <- hz_spec()
+  for (lang in c("en", "fr")) {
+    ref <- .spec_reference_md(lang, site = TRUE)
+    cov <- .spec_coverage_md(lang, site = TRUE)
+    for (md in list(ref, cov)) {
+      expect_false(grepl(s$hash, md, fixed = TRUE), label = lang)
+      expect_false(grepl("waves.csv", md, fixed = TRUE), label = lang)
+      expect_false(grepl(.qes_rt("cov_weight_review", lang), md, fixed = TRUE), label = lang)
+    }
+    expect_false(grepl(paste0("**", .qes_rt("history", lang), "**"), ref, fixed = TRUE), label = lang)
+    expect_false(grepl(.qes_rt("added_in", lang), ref, fixed = TRUE), label = lang)
+    # the same targets and anchors as the full reference
+    for (t in s$tables$targets$target) {
+      expect_true(grepl(sprintf("{#target-%s}", t), ref, fixed = TRUE), label = t)
+    }
+    for (p in getFromNamespace(".qes_pool_names", "qesR")(s)) {
+      expect_true(grepl(sprintf("{#pooled-%s}", p), ref, fixed = TRUE), label = p)
+    }
+    # the weights that need review, in plain words; the licence notice links to the citations
+    expect_true(grepl(.qes_rt("site_weight_review", lang), cov, fixed = TRUE), label = lang)
+    expect_true(grepl(.qes_rt("site_citations", lang), ref, fixed = TRUE), label = lang)
+  }
+  # the rows awaiting sign-off are marked, in the reference and in the grid
+  xw <- s$tables$crosswalk
+  pending <- any(xw$status[xw$rule != "none"] %in% c("draft", "review"))
+  expect_identical(grepl("(awaiting sign-off)", .spec_reference_md("en", site = TRUE), fixed = TRUE), pending)
+  expect_identical(grepl(" †", .spec_coverage_md("en", site = TRUE), fixed = TRUE), pending)
+  # English and French line up, as in the full versions
+  for (f in list(function(l) .spec_reference_md(l, site = TRUE), function(l) .spec_coverage_md(l, site = TRUE))) {
+    en <- strsplit(f("en"), "\n", fixed = TRUE)[[1]]
+    fr <- strsplit(f("fr"), "\n", fixed = TRUE)[[1]]
+    expect_identical(length(en), length(fr))
+    expect_identical(grepl("^#", en), grepl("^#", fr))
+    expect_identical(grepl("^\\|", en), grepl("^\\|", fr))
+  }
+  # the console and the full reference are unchanged
+  expect_true(grepl(s$hash, .spec_reference_md("en"), fixed = TRUE))
+  expect_true(grepl(s$hash, .spec_coverage_md("en"), fixed = TRUE))
+})

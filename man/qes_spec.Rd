@@ -142,7 +142,7 @@ chaque étude. \code{lang = "fr"} donne les étiquettes, définitions et raisons
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 4.3.0)}{
+\section{Targets in the shipped spec (version 4.3.1)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{
@@ -214,7 +214,6 @@ qes_spec()
 # how each study's question maps to one target
 xw <- qes_spec("crosswalk", targets = "vote_prov_recall")
 xw[, c("study", "source_var", "grade", "levels_not_offered")]
-xw # prints the target's section of the reference
 
 # code by code, in French
 qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",

@@ -1,6 +1,7 @@
 /* qesR site styles. Colours come from the logo: blue #0468b9, gold #ffe542,
    slate #3e4b63. Everything else is Bootstrap 5, set in _pkgdown.yml, so the
-   light and dark themes both work. No custom JavaScript. */
+   light and dark themes both work. The only script is the FR/EN button of
+   the navbar (template.includes.before_body of _pkgdown.yml). */
 
 :root {
   --qesr-gold: #f2c200;
@@ -49,6 +50,49 @@ summary:focus-visible,
   outline-color: var(--qesr-gold);
 }
 
+/* The FR/EN button of the navbar: a pill in the link colour, which
+   Bootstrap sets per theme (#0357a0 on the light theme, 7.3:1 on white;
+   #68a4d5 on the dark theme, 5.9:1 on #212529), so it reads in both. On a
+   phone it sits before the menu button, always visible; on a wide screen
+   it moves after the menus. */
+.qesr-lang-switch-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .qesr-lang-switch-wrap {
+    order: 10;
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
+}
+
+.qesr-lang-switch {
+  display: inline-block;
+  min-width: 2.6rem;
+  border: 1.5px solid var(--bs-link-color);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--bs-link-color);
+  background: var(--bs-body-bg);
+  text-decoration: none;
+}
+
+.qesr-lang-switch:hover,
+.qesr-lang-switch:focus-visible {
+  background: var(--bs-link-color);
+  color: var(--bs-body-bg);
+  text-decoration: none;
+}
+
 /* Section headings inside the navbar menus ("Examples"). */
 .dropdown-header {
   font-weight: 600;
@@ -79,35 +123,6 @@ main table td {
 
 main table td code {
   white-space: nowrap;
-}
-
-/* The coverage grid of the home page (11 studies): compact, so that every
-   study fits in the column on a laptop; the study codes of the header wrap
-   only where the generated grid allows it (after "qes" and at "_"). */
-.qesr-grid table {
-  font-size: 0.8rem;
-}
-
-.qesr-grid th,
-.qesr-grid td {
-  padding: 0.25rem 0.3rem;
-  text-align: center;
-  hyphens: none;
-}
-
-.qesr-grid th {
-  white-space: normal;
-  vertical-align: bottom;
-}
-
-.qesr-grid th code {
-  white-space: normal;
-  padding: 0;
-  background: none;
-}
-
-.qesr-grid td:first-child {
-  text-align: left;
 }
 
 /* The EN/FR link at the top of each guide. */

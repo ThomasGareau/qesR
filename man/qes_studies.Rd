@@ -61,7 +61,7 @@ Studies that are not Quebec Election Studies (the three Durand panels,
 the CROP polls and the 1998 polls) are listed under their own titles and
 authors. The 1998 deposit
 holds three surveys, each with its own code: \code{qes1998} (the combined
-CROP-CREATEC panel file, as in qesR 0.4.4), \code{qes1998_crop} and
+CROP-CREATEC panel file), \code{qes1998_crop} and
 \code{qes1998_createc}. All three cover francophones only, each with its own
 definition (see \code{notes_en}).
 }

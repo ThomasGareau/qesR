@@ -1,8 +1,9 @@
 ---
-title: "Changing minds during the campaign: panel transitions"
+title: "Are Quebec elections decided during the campaign?"
 description: >
   The same respondents interviewed before and after the election: how
-  many voted as they intended, and where the undecided went.
+  many voted as they intended, where the undecided went, and which party
+  won the campaign.
 params:
   lang: "en"
 ---
@@ -22,7 +23,27 @@ h <- qes_harmonize(
 ```
 
 ```{r estimates, echo = FALSE}
+# French typography on this page: a non-breaking space before "%"
+qz_pct <- function(x, digits = 1) {
+  out <- paste0(qz_num(x, digits), tr("%", " %"))
+  out[is.na(x)] <- ""
+  out
+}
+# small counts in words, and a capital for the start of a sentence
+num_word <- function(n) tr(c("one", "two", "three", "four", "five", "six", "seven")[n],
+                           c("un", "deux", "trois", "quatre", "cinq", "six", "sept")[n])
+cap <- function(x) paste0(toupper(substr(x, 1, 1)), substring(x, 2))
+# a party with its article ("the CAQ" / "la CAQ"), and after "of" ("of the
+# CAQ" / "de la CAQ"), for the figure text
+party_the <- function(p) unname(tr(
+  c(PLQ = "the PLQ", PQ = "the PQ", ADQ = "the ADQ", QS = "QS", CAQ = "the CAQ", PCQ = "the PCQ"),
+  c(PLQ = "le PLQ", PQ = "le PQ", ADQ = "l'ADQ", QS = "QS", CAQ = "la CAQ", PCQ = "le PCQ"))[p])
+party_of <- function(p) unname(tr(
+  c(PLQ = "of the PLQ", PQ = "of the PQ", ADQ = "of the ADQ", QS = "of QS", CAQ = "of the CAQ", PCQ = "of the PCQ"),
+  c(PLQ = "du PLQ", PQ = "du PQ", ADQ = "de l'ADQ", QS = "de QS", CAQ = "de la CAQ", PCQ = "du PCQ"))[p])
+
 panels <- c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022")
+n_panels <- length(panels)
 # before the election: the party intended (the undecided pushed toward the
 # party they lean to), "none" (would not vote, none, would spoil) or
 # "undecided" (still no answer after the push: don't know)
@@ -40,65 +61,128 @@ post_cat <- function(x) {
 }
 pre_levels <- c(qz_parties, "none", "undecided")
 post_levels <- c(qz_parties, "abstained")
+path_levels <- c("same", "switched", "undecided", "none")
 
 # one row per respondent interviewed after the election, with the answer
 # the same respondent gave before it
-moves <- do.call(rbind, lapply(panels, function(s) {
+pairs <- lapply(panels, function(s) {
   pre <- h[h$study == s & h$wave_timing %in% "pre", ]
   post <- h[h$study == s & h$wave_timing %in% "post", ]
   post$before <- factor(pre_cat(pre)[match(post$qes_id, pre$qes_id)], levels = pre_levels)
   post$after <- factor(post_cat(post), levels = post_levels)
-  post$stayed <- factor(ifelse(as.character(post$after) == as.character(post$before), "same", "other"),
-                        levels = c("same", "other"))
-  post$pre_type <- pre$vote_choice__type[match(post$qes_id, pre$qes_id)]
+  b <- as.character(post$before)
+  a <- as.character(post$after)
+  post$stayed <- factor(ifelse(a == b, "same", "other"), levels = c("same", "other"))
+  # among those who voted: voted as intended, switched from another party,
+  # were undecided, or had said they would not vote
+  post$path <- factor(ifelse(!a %in% qz_parties, NA,
+                      ifelse(a == b, "same", ifelse(b %in% qz_parties, "switched", b))),
+                      levels = path_levels)
+  # the net gain of each party between intention and vote, in points
+  for (p in setdiff(qz_parties, "other")) {
+    post[[paste0("gain_", p)]] <- 100 * ((a %in% p) - (b %in% p))
+  }
   d <- qz_design(post, s, "weight")
-  d <- subset(d, !is.na(before) & !is.na(after))
+  subset(d, !is.na(before) & !is.na(after))
+})
+names(pairs) <- panels
+
+moves <- do.call(rbind, lapply(panels, function(s) {
+  d <- pairs[[s]]
   rbind(qz_tag(qz_share(d, "after", by = "before"), study = s, what = "row"),
-        qz_tag(qz_share(subset(d, after != "abstained"), "stayed", by = "before"), study = s, what = "loyal"))
+        qz_tag(qz_share(subset(d, after != "abstained"), "stayed", by = "before"), study = s, what = "loyal"),
+        qz_tag(qz_share(d, "path"), study = s, what = "path"),
+        qz_tag(qz_share(subset(d, before %in% qz_parties), "after"), study = s, what = "named"))
 }))
 moves$year <- qz_year(moves$study)
+
+gains <- do.call(rbind, lapply(panels, function(s) {
+  ps <- setdiff(qz_parties, "other")
+  ps <- ps[qz_party_status(s, ps) == "offered"]
+  do.call(rbind, lapply(ps, function(p) qz_tag(qz_mean(pairs[[s]], paste0("gain_", p)), study = s, party = p)))
+}))
+gains$year <- qz_year(gains$study)
+n_unweighted <- sum(!tapply(moves$weighted, moves$study, all))
+
+# 1998: the recontact over-represents the undecided, non-disclosers and
+# third-party supporters, so its unweighted net gains cannot be read. The
+# weight the producers used for their published tables (ponder3, still
+# under review, so not applied in the figures) shows how much this matters.
+raw98 <- get_qes("qes1998", quiet = TRUE)
+v98 <- pairs[["qes1998"]]$variables
+v98$w_pi <- as.numeric(raw98$ponder3[v98$source_row])
+d98 <- survey::svydesign(ids = ~1, weights = ~w_pi, data = v98)
+gains98 <- do.call(rbind, lapply(c("PLQ", "PQ", "ADQ"), function(p) qz_tag(qz_mean(d98, paste0("gain_", p)), party = p)))
+gw98 <- function(p, col = "mean") gains98[[col]][gains98$party == p]
+adq98 <- c(unweighted = 100 * mean(v98$before %in% "ADQ"),
+           weighted = 100 * stats::weighted.mean(v98$before %in% "ADQ", v98$w_pi))
+
 before_lab <- c(PLQ = "PLQ", PQ = "PQ", ADQ = "ADQ", QS = "QS", CAQ = "CAQ", PCQ = "PCQ",
                 other = tr("Other", "Autres"), none = tr("None / would not vote", "Aucun / ne voterait pas"),
                 undecided = tr("Undecided", "Indécis"))
 after_lab <- c(before_lab[qz_parties], abstained = tr("Did not vote", "N'a pas voté"))
 loyal <- moves[moves$what == "loyal" & moves$level == "same", ]
 lv <- function(s, p) loyal$pct[loyal$study == s & loyal$group == p]
+lr <- function(p) range(loyal$pct[loyal$group == p & loyal$n >= qz_min_n])
 mv <- function(s, b, a) moves$pct[moves$what == "row" & moves$study == s & moves$group == b & moves$level == a]
+path <- moves[moves$what == "path", ]
+pv <- function(s, l) path$pct[path$study == s & path$level == l]
+pr <- function(l) range(path$pct[path$level == l])
+gv <- function(s, p, col = "mean") gains[[col]][gains$study == s & gains$party == p]
+official <- qz_official()
+ov <- function(y, p) official$share_valid[official$year == y & official$party == p]
+# parties above 10% of the valid votes in 2022
+above <- 10
+n_above <- sum(official$share_valid[official$year == 2022 & official$party != "other"] > above)
+# the largest net gain and loss, without 1998 (see above)
+gains_fig <- gains[gains$study != "qes1998", ]
+best <- gains_fig[which.max(gains_fig$mean), ]
+worst <- gains_fig[which.min(gains_fig$mean), ]
+# abstention among those who had named a party, and the largest group of undecided
+named_abst <- range(moves$pct[moves$what == "named" & moves$level == "abstained"])
+und_n <- max(moves$n[moves$what == "row" & moves$group == "undecided"])
+row_n <- function(s, g) moves$n[moves$what == "row" & moves$study == s & moves$group == g][1]
 ```
 
-Cross-sections tell us how the vote ended up; panels tell us who moved.
-The 2018 Durand panel and the 2022 Quebec Election Study interviewed the
-same people during the campaign and after the vote. Most voters did what
-they said: `r qz_pct(lv("qes2022", "CAQ"), 0)` of those who intended to
-vote CAQ in 2022, and voted, reported a CAQ vote. Québec solidaire kept
-fewer, `r qz_pct(lv("qes2022", "QS"), 0)`. In 2018 the undecided broke
-toward the winner:
-`r qz_pct(mv("qes2018_panel", "undecided", "CAQ"), 0)`
-[`r qz_num(moves$lo[moves$what == "row" & moves$study == "qes2018_panel" & moves$group == "undecided" & moves$level == "CAQ"], 0)`,
-`r qz_num(moves$hi[moves$what == "row" & moves$study == "qes2018_panel" & moves$group == "undecided" & moves$level == "CAQ"], 0)`]
-of the panel's
-`r moves$n[moves$what == "row" & moves$study == "qes2018_panel" & moves$group == "undecided"][1]`
-undecided voted CAQ, and
-`r qz_pct(mv("qes2018_panel", "undecided", "abstained"), 0)` did not vote.
+Since the 1988 federal election, Canadian election studies have shown
+that opinion can move a great deal between the start of a campaign and
+the vote (Johnston et al. 1992). It is often said that Quebec elections
+are decided at the last minute, a claim that returns whenever the polls
+miss the result, as they did in 1998 and 2018. In 1998 the polls had the
+Parti Québécois (PQ) ahead, yet the Parti libéral du Québec (PLQ) took
+more of the valid votes (`r qz_pct(ov(1998, "PLQ"), 1)` compared to
+`r qz_pct(ov(1998, "PQ"), 1)`). In 2018 they forecast a close race
+between the PLQ and the Coalition avenir Québec (CAQ), which won by
+`r qz_num(ov(2018, "CAQ") - ov(2018, "PLQ"), 0)` points. Each time, part
+of the explanation was sought among voters who changed their minds at the
+end of the campaign and among non-disclosers, who would not reveal their
+intention. Durand and Blais (1999) reject both a late Liberal rise and a
+lower PQ turnout in 1998, and trace the error to sampling and to how
+non-respondents behaved; for 2018, they conclude that last-minute shifts
+and the vote of non-disclosers explain most of the gap (Durand and Blais
+2020).
 
-## The data
+However, a cross-section tells us how the vote ended up, not who moved.
+Panels can, because they interview the same people during the campaign
+and after the vote. `r cap(num_word(n_panels))` Quebec election surveys
+did so, from the 1998 CROP and CREATEC polls to the 2022 Quebec Election
+Study, including the panels Claire Durand ran in 2007, 2012 and 2018. We
+use them to ask a simple question: how many Quebec voters change their
+minds during a campaign, and who gains from it? Between
+`r qz_pct(pr("same")[1], 0)` and `r qz_pct(pr("same")[2], 0)` of those
+who voted reported the party they had named during the campaign. The
+undecided were a small group, from `r qz_pct(pr("undecided")[1], 0)` to
+`r qz_pct(pr("undecided")[2], 0)` of voters, and voters who switched from
+one party to another outnumbered them in every panel except 2018, where
+the two groups were about the same size. On net, these moves rarely
+changed a party's share by more than a few points. The largest gain is the
+one the 2018 post-mortem pointed to: among the same respondents, the CAQ
+gained `r qz_num(gv("qes2018_panel", "CAQ"), 1)` points between intention
+and vote, and `r qz_pct(mv("qes2018_panel", "undecided", "CAQ"), 0)` of
+that year's undecided voted CAQ. In short, a Quebec campaign moves many
+voters but, on net, few votes.
 
-The pooled `vote_choice` in the long layout keeps one row per respondent
-and wave: the intention (with the push of the undecided, type
-`intention_push`) before the election and the reported vote (`recall`)
-after it.
-
-```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
-```
-
-```{r example}
-with(h[h$study == "qes2022", ], table(wave, vote_choice__type))
-```
-
-Respondents are matched on `qes_id` within a study, and each transition
-is weighted with the post-election weight of the respondent.
-
-## Where each group of intenders ended up
+## Most voters did what they said
 
 ```{r fig-matrix, echo = FALSE}
 show <- c("qes2018_panel", "qes2022")
@@ -173,36 +257,52 @@ tab_matrix <- setNames(data.frame(
                                                 qz_cell(tab$pct, tab$lo, tab$hi, tab$n))),
   tab$n, qz_weight_text(tab$weighted), row.names = NULL
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Intention", "Intention"),
-     tr("Reported vote", "Vote déclaré"), tr("Row %, [95% CI]", "% de la rangée [IC à 95 %]"),
+     tr("Reported vote", "Vote déclaré"), tr("Row %, [95% CI]", "% de la rangée [IC à 95 %]"),
      tr("n (row)", "n (rangée)"), tr("Weighting", "Pondération")))
 alt <- sprintf(tr(
-  "Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, %s of CAQ intenders reported a CAQ vote and %s of QS intenders a QS vote; %s of the undecided did not vote. Values in the table view.",
-  "Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, %s des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et %s de celles qui comptaient voter QS, un vote QS ; %s des indécis n'ont pas voté. Valeurs dans la vue en tableau."),
+  "Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, %s of those who intended to vote CAQ reported a CAQ vote and %s of those who intended to vote QS a QS vote; %s of the undecided did not vote. Values in the table view.",
+  "Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, %s des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et %s de celles qui comptaient voter QS, un vote QS ; %s des indécis n'ont pas voté. Valeurs dans la vue en tableau."),
   qz_pct(mv("qes2022", "CAQ", "CAQ"), 0), qz_pct(mv("qes2022", "QS", "QS"), 0),
   qz_pct(mv("qes2022", "undecided", "abstained"), 0))
 qz_figure(fig_matrix, "matrix",
-  title = sprintf(tr("Most voters did what they said; in 2018 the CAQ drew from every side, including %s of PQ intenders",
-                     "La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la CAQ a puisé de tous les côtés, dont %s des personnes qui comptaient voter PQ"),
+  title = sprintf(tr("Most voters did what they said; in 2018 the CAQ drew from every side, including %s of those who intended to vote PQ",
+                     "La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la CAQ a puisé de tous les côtés, dont %s des personnes qui comptaient voter PQ"),
                   qz_pct(mv("qes2018_panel", "PQ", "CAQ"), 0)),
   subtitle = tr("From the intention during the campaign (rows) to the vote reported after the election (columns): the percentage of each row",
-                "De l'intention pendant la campagne (rangées) au vote déclaré après l'élection (colonnes) : le pourcentage de chaque rangée"),
+                "De l'intention pendant la campagne (rangées) au vote déclaré après l'élection (colonnes) : le pourcentage de chaque rangée"),
   alt = alt, table = tab_matrix, height = 6.2,
-  note = tr("Source: qesR, pooled vote_choice in the long layout, respondents interviewed in both waves of the 2018 Durand panel and of the QES 2022 (campaign and post-election waves), weighted with the post-election weight. Rows: the intention with the undecided pushed (intention_push), with the number of respondents; undecided: still no party after the push. The two blocks have the same rows and columns; grey cells have no value: the 2018 panel did not list the PCQ (n.l.), the 2022 campaign question has no 'none / would not vote' answer, and rows of fewer than 30 respondents are not drawn. The 95% confidence intervals and the panels of 1998, 2007 and 2012 (unweighted) are in the table view.",
-            "Source : qesR, variable regroupée vote_choice en disposition longue, répondants interrogés aux deux vagues du panel Durand 2018 et de l'EEQ 2022 (vagues de campagne et postélectorale), pondérés avec la pondération postélectorale. Rangées : l'intention avec relance des indécis (intention_push), avec le nombre de répondants ; indécis : toujours aucun parti après la relance. Les deux blocs ont les mêmes rangées et colonnes ; les cases grises n'ont pas de valeur : le panel 2018 ne proposait pas le PCQ (n.p.), la question de campagne de 2022 n'a pas de réponse « aucun / ne voterait pas », et les rangées de moins de 30 répondants ne sont pas tracées. Les intervalles de confiance à 95 % et les panels de 1998, 2007 et 2012 (non pondérés) sont dans la vue en tableau."))
+  note = tr("Source: qesR. Respondents interviewed during the campaign and after the election, in the 2018 Durand panel and the QES 2022, weighted with the post-election weight. Rows: the party intended, with the number of respondents; the undecided named no party, even when asked (where the panel asked) which party they leaned to. Each row includes those who did not vote. Grey cells have no value: the 2018 panel did not list the PCQ (n.l.), the 2022 campaign question had no 'would not vote' answer, and rows of fewer than 30 respondents are not drawn. Confidence intervals and the 1998, 2007 and 2012 panels are in the table view.",
+            "Source : qesR. Répondants interrogés pendant la campagne et après l'élection, dans le panel Durand 2018 et l'EEQ 2022, pondérés avec la pondération postélectorale. Rangées : le parti prévu, avec le nombre de répondants ; les indécis n'ont nommé aucun parti, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient. Chaque rangée inclut les personnes qui n'ont pas voté. Les cases grises n'ont pas de valeur : le panel 2018 ne proposait pas le PCQ (n.p.), la question de campagne de 2022 n'avait pas de réponse « ne voterait pas », et les rangées de moins de 30 répondants ne sont pas tracées. Les intervalles de confiance et les panels de 1998, 2007 et 2012 sont dans la vue en tableau."))
 ```
 
-What to notice:
+The diagonal dominates. In 2022, `r qz_pct(mv("qes2022", "CAQ", "CAQ"), 0)`
+of those who intended to vote CAQ reported a CAQ vote (a share that counts
+those who did not vote), and the flows between parties were small.
+Québec solidaire (QS) kept the smallest share of its campaign supporters,
+`r qz_pct(mv("qes2022", "QS", "QS"), 0)`:
+`r qz_pct(mv("qes2022", "QS", "PLQ"), 0)` of them voted PLQ and
+`r qz_pct(mv("qes2022", "QS", "PQ"), 0)` PQ. In 2018, the picture is quite
+different. The CAQ drew from every side, with
+`r qz_pct(mv("qes2018_panel", "PQ", "CAQ"), 0)` of those who intended to
+vote PQ, `r qz_pct(mv("qes2018_panel", "QS", "CAQ"), 0)` of those who
+intended to vote QS and `r qz_pct(mv("qes2018_panel", "none", "CAQ"), 0)`
+of those who had said they would not vote. In other words, the winner of
+2018 did not only hold its voters; it kept recruiting during the campaign.
 
-- The diagonal: most voters reported the party they intended to vote
-  for.
-- In 2018 the CAQ drew from every side: `r qz_pct(mv("qes2018_panel", "PQ", "CAQ"), 0)`
-  of PQ intenders, `r qz_pct(mv("qes2018_panel", "QS", "CAQ"), 0)` of QS intenders,
-  `r qz_pct(mv("qes2018_panel", "none", "CAQ"), 0)` of those who said they would
-  not vote and `r qz_pct(mv("qes2018_panel", "undecided", "CAQ"), 0)` of the
-  undecided.
-- In 2022 the flows between parties are small, and QS lost the most:
-  `r qz_pct(mv("qes2022", "QS", "PLQ"), 0)` of its intenders voted PLQ and
-  `r qz_pct(mv("qes2022", "QS", "PQ"), 0)` PQ.
+Taken together, the share of voters who did not vote as they had said is
+far from trivial: it ranges from `r qz_pct(100 - pr("same")[2], 0)` to
+`r qz_pct(100 - pr("same")[1], 0)` across the `r num_word(n_panels)`
+panels. The largest group among them switched from one party to another,
+from `r qz_pct(pr("switched")[1], 0)` to `r qz_pct(pr("switched")[2], 0)`
+of voters, while the undecided and those who had said they would not vote
+made up the rest. In 2018 the two groups were about the same size
+(`r qz_pct(pv("qes2018_panel", "switched"), 0)` switchers,
+`r qz_pct(pv("qes2018_panel", "undecided"), 0)` undecided). That panel,
+however, did not ask the follow-up question of some undecided respondents
+interviewed by telephone, nor of those who said they would not vote, so
+it counts more undecided than the others. The 2007 election, a three-way
+race between the PLQ, the PQ and the Action démocratique du Québec (ADQ),
+produced the most switchers, `r qz_pct(pv("qes2007_panel", "switched"), 0)`.
 
 ## Loyalty: voted as they intended
 
@@ -216,7 +316,7 @@ d$row <- factor(d$key, levels = rev(unique(d$key[order(d$party, qz_year(d$study)
 row_lab <- stats::setNames(d$lab, d$key)
 low <- d[d$study == "qes2007_panel" & d$group == "QS", ]
 big <- range(d$pct[d$group %in% c("PLQ", "PQ", "CAQ")])
-low$label <- sprintf(tr("%s: QS kept fewer than half", "%s : QS en a gardé moins de la moitié"), qz_pct(low$pct, 0))
+low$label <- sprintf(tr("%s: QS kept fewer than half", "%s : QS en a gardé moins de la moitié"), qz_pct(low$pct, 0))
 
 fig_loyal <- function(mode) {
   k <- qz_tokens[[mode]]
@@ -231,7 +331,7 @@ fig_loyal <- function(mode) {
     scale_x_continuous(limits = c(30, 101), breaks = c(40, 60, 80, 100), labels = qz_pct_axis,
                        expand = expansion(0)) +
     labs(x = tr("Voted as intended (among those who voted; the axis starts at 30%)",
-                "A voté comme prévu (parmi les votants ; l'axe commence à 30 %)"), y = NULL) +
+                "A voté comme prévu (parmi les votants ; l'axe commence à 30 %)"), y = NULL) +
     theme_qes(mode, grid = "x") +
     theme(strip.placement = "outside",
           strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 0.5, face = "bold", colour = k$ink,
@@ -245,40 +345,53 @@ tab_loyal <- setNames(data.frame(
   tab$year, qz_study_label(tab$study), before_lab[tab$group], qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n,
   qz_weight_text(tab$weighted), row.names = NULL
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Intention", "Intention"),
-     tr("Voted as intended, % [95% CI]", "A voté comme prévu, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
+     tr("Voted as intended, % [95% CI]", "A voté comme prévu, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
 alt <- sprintf(tr(
-  "Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of the party's campaign intenders who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between %s and %s; QS in the 2007 panel kept %s. In 2022 the CAQ kept %s and the PLQ %s. Values in the table view.",
-  "Graphique à points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une rangée par étude par panel de 1998 à 2022 : la part des personnes qui comptaient voter pour le parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, avec intervalles de confiance. Le PLQ, le PQ et la CAQ sont entre %s et %s ; QS, dans le panel 2007, en a gardé %s. En 2022, la CAQ en a gardé %s et le PLQ %s. Valeurs dans la vue en tableau."),
+  "Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of those who intended to vote for the party during the campaign who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between %s and %s; QS in the 2007 panel kept %s. In 2022 the CAQ kept %s and the PLQ %s. Values in the table view.",
+  "Graphique à points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une rangée par étude par panel de 1998 à 2022 : la part des personnes qui comptaient voter pour le parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, avec intervalles de confiance. Le PLQ, le PQ et la CAQ sont entre %s et %s ; QS, dans le panel 2007, en a gardé %s. En 2022, la CAQ en a gardé %s et le PLQ %s. Valeurs dans la vue en tableau."),
   qz_pct(big[1], 0), qz_pct(big[2], 0), qz_pct(lv("qes2007_panel", "QS"), 0), qz_pct(lv("qes2022", "CAQ"), 0),
   qz_pct(lv("qes2022", "PLQ"), 0))
 qz_figure(fig_loyal, "loyal",
-  title = sprintf(tr("The PLQ, the PQ and the CAQ keep %s to %s of their intenders; QS keeps fewer, down to %s in 2007",
-                     "Le PLQ, le PQ et la CAQ gardent de %s à %s des personnes qui comptaient voter pour eux ; QS en garde moins, jusqu'à %s en 2007"),
+  title = sprintf(tr("The PLQ, the PQ and the CAQ keep %s to %s of their campaign supporters; QS keeps fewer, down to %s in 2007",
+                     "Le PLQ, le PQ et la CAQ gardent de %s à %s des personnes qui comptaient voter pour eux ; QS en garde moins, jusqu'à %s en 2007"),
                   qz_pct(big[1], 0), qz_pct(big[2], 0), qz_pct(lv("qes2007_panel", "QS"), 0)),
-  subtitle = tr("Share of each party's campaign intenders who reported voting for it, among those who voted, by panel study, with 95% confidence intervals",
-                "Part des personnes qui comptaient voter pour chaque parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, selon l'étude par panel, avec intervalles de confiance à 95 %"),
+  subtitle = tr("Share of those who intended to vote for each party during the campaign who reported voting for it, among those who voted, by panel study, with 95% confidence intervals",
+                "Part des personnes qui comptaient voter pour chaque parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, selon l'étude par panel, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_loyal, height = 5.4,
-  note = tr("Source: qesR, pooled vote_choice in the long layout, respondents interviewed before and after the election who reported a vote. Lines: 95% confidence intervals (logit). Weighted with the post-election weight (2018 panel, QES 2022); hollow (1998, 2007 and 2012 panels): unweighted, weight under review. The studies differ in design (the QES 2022 is a campaign and post-election survey, the others telephone panels): compare within a party with care. Cells of fewer than 30 respondents are not drawn; the other parties are in the table view.",
-            "Source : qesR, variable regroupée vote_choice en disposition longue, répondants interrogés avant et après l'élection qui ont déclaré un vote. Traits : intervalles de confiance à 95 % (logit). Pondéré avec la pondération postélectorale (panel 2018, EEQ 2022) ; creux (panels 1998, 2007 et 2012) : non pondéré, pondération en révision. Les études diffèrent par leur plan (l'EEQ 2022 est une enquête de campagne et postélectorale, les autres des panels téléphoniques) : comparer à l'intérieur d'un parti avec prudence. Les cellules de moins de 30 répondants ne sont pas tracées ; les autres partis sont dans la vue en tableau."))
+  note = tr("Source: qesR. Respondents interviewed during the campaign and after the election who reported a vote. Lines: 95% confidence intervals. Filled dots are weighted with the post-election weight (2018 panel, QES 2022); hollow dots (1998, 2007 and 2012 panels) are not weighted here, because their weights are under review. The studies differ in design and mode, so comparisons across studies are best made within a party. Cells of fewer than 30 respondents are not drawn; the other parties are in the table view.",
+            "Source : qesR. Répondants interrogés pendant la campagne et après l'élection qui ont déclaré un vote. Traits : intervalles de confiance à 95 %. Points pleins : pondérés avec la pondération postélectorale (panel 2018, EEQ 2022) ; points creux (panels 1998, 2007 et 2012) : non pondérés ici, leurs pondérations étant en révision. Les études diffèrent par leur devis et leur mode de collecte ; les comparaisons entre études se font donc de préférence à l'intérieur d'un parti. Les cellules de moins de 30 répondants ne sont pas tracées ; les autres partis sont dans la vue en tableau."))
 ```
 
-What to notice:
+Two patterns stand out. First, the PLQ is the most consistent party over
+time: it keeps from `r qz_pct(lr("PLQ")[1], 0)` to
+`r qz_pct(lr("PLQ")[2], 0)` of its campaign supporters at every election,
+whereas the PQ ranges from `r qz_pct(lr("PQ")[1], 0)` to
+`r qz_pct(lr("PQ")[2], 0)` and the CAQ from `r qz_pct(lr("CAQ")[1], 0)`
+to `r qz_pct(lr("CAQ")[2], 0)`. These shares leave out those who did not
+vote, which is why the CAQ keeps `r qz_pct(lv("qes2022", "CAQ"), 0)` here
+in 2022, compared to `r qz_pct(mv("qes2022", "CAQ", "CAQ"), 0)` in the
+matrix above. Second, the smaller parties keep the fewest. The ADQ kept
+`r qz_pct(lv("qes1998", "ADQ"), 0)` in 1998, and QS kept
+`r qz_pct(lv("qes2007_panel", "QS"), 0)` in 2007 and
+`r qz_pct(lv("qes2012_panel", "QS"), 0)` in 2012. This is consistent with
+a familiar account in which a voter who likes a small party during the
+campaign returns to a party that can win on election day, although the
+panels alone cannot tell strategic desertion from a simple change of
+mind.
 
-- The third parties keep the fewest: the ADQ in 1998
-  (`r qz_pct(lv("qes1998", "ADQ"), 0)`), QS in 2007
-  (`r qz_pct(lv("qes2007_panel", "QS"), 0)`) and 2012
-  (`r qz_pct(lv("qes2012_panel", "QS"), 0)`).
-- The PLQ keeps between `r qz_pct(min(loyal$pct[loyal$group == "PLQ"]), 0)` and
-  `r qz_pct(max(loyal$pct[loyal$group == "PLQ"]), 0)` of its intenders at every
-  election.
-- Loyalty is not a fixed trait of a party: the CAQ kept
-  `r qz_pct(lv("qes2012_panel", "CAQ"), 0)` of its intenders in 2012 and
-  `r qz_pct(lv("qes2018_panel", "CAQ"), 0)` in 2018, the ADQ
-  `r qz_pct(lv("qes1998", "ADQ"), 0)` in 1998 and
-  `r qz_pct(lv("qes2007_panel", "ADQ"), 0)` in 2007. The studies differ:
-  the 1998 polls and the 2007 and 2012 panels are unweighted, the 2018
-  panel is weighted, and the QES 2022 is a campaign and post-election
-  survey rather than a telephone panel.
+Loyalty is not a fixed trait of a party, however. The CAQ kept
+`r qz_pct(lv("qes2012_panel", "CAQ"), 0)` of its campaign supporters in
+2012, its first election, and `r qz_pct(lv("qes2018_panel", "CAQ"), 0)` in
+2018, when it went on to win. The ADQ went from
+`r qz_pct(lv("qes1998", "ADQ"), 0)` in 1998 to
+`r qz_pct(lv("qes2007_panel", "ADQ"), 0)` in 2007, the year it became the
+official opposition. These cases suggest, without establishing it, that
+loyalty follows a party's momentum more than its size. The Parti
+conservateur du Québec (PCQ) points the same way only if momentum, rather
+than the chance of winning, is what matters: with
+`r qz_pct(ov(2018, "PCQ"), 1)` of the vote in 2018, it kept
+`r qz_pct(lv("qes2022", "PCQ"), 0)` of its campaign supporters in 2022 and
+won no seat (on that surge, see Bélanger et al. 2025).
 
 ## Where the undecided went
 
@@ -330,48 +443,232 @@ tab_undecided <- setNames(data.frame(
                                                 qz_cell(tab$pct, tab$lo, tab$hi, tab$n))),
   tab$n, qz_weight_text(tab$weighted), row.names = NULL
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Reported vote", "Vote déclaré"),
-     tr("Share of the undecided, % [95% CI]", "Part des indécis, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
+     tr("Share of the undecided, % [95% CI]", "Part des indécis, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
 alt <- sprintf(tr(
   "100%% stacked horizontal bars, one per panel study from 1998 to 2022: what the respondents who were still undecided during the campaign reported after the election, with those who did not vote first. Between %s and %s did not vote; in 2018, %s voted CAQ; in 2022, %s did not vote and %s voted CAQ. Values in the table view.",
-  "Barres horizontales empilées à 100 %%, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre %s et %s n'ont pas voté ; en 2018, %s ont voté CAQ ; en 2022, %s n'ont pas voté et %s ont voté CAQ. Valeurs dans la vue en tableau."),
+  "Barres horizontales empilées à 100 %%, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre %s et %s n'ont pas voté ; en 2018, %s ont voté CAQ ; en 2022, %s n'ont pas voté et %s ont voté CAQ. Valeurs dans la vue en tableau."),
   qz_pct(min(abst), 0), qz_pct(max(abst), 0), qz_pct(mv("qes2018_panel", "undecided", "CAQ"), 0),
   qz_pct(mv("qes2022", "undecided", "abstained"), 0), qz_pct(mv("qes2022", "undecided", "CAQ"), 0))
 qz_figure(fig_undecided, "undecided",
   title = sprintf(tr("%s to %s of the campaign's undecided did not vote; in 2018, %s of them voted CAQ, the winner",
-                     "De %s à %s des indécis de la campagne n'ont pas voté ; en 2018, %s d'entre eux ont voté CAQ, le parti gagnant"),
+                     "De %s à %s des indécis de la campagne n'ont pas voté ; en 2018, %s d'entre eux ont voté CAQ, le parti gagnant"),
                   qz_pct(min(abst), 0), qz_pct(max(abst), 0), qz_pct(mv("qes2018_panel", "undecided", "CAQ"), 0)),
   subtitle = tr("What the respondents still undecided during the campaign reported after the election, by panel study",
                 "Ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, selon l'étude par panel"),
   alt = alt, table = tab_undecided, height = 3.2,
-  note = tr("Source: qesR, pooled vote_choice in the long layout; the undecided are respondents who named no party during the campaign, even after the push question, and answered after the election. Weighted (2018 panel, QES 2022) or unweighted (1998, 2007 and 2012 panels; weights under review). Outlined segment: did not vote. Numbers: shares of 8% or more; the 95% confidence intervals are in the table view, and they are wide: each row rests on fewer than 110 respondents. In the 2007 and 2018 panels don't know and refused are one code.",
-            "Source : qesR, variable regroupée vote_choice en disposition longue ; les indécis sont les répondants qui n'ont nommé aucun parti pendant la campagne, même après la question de relance, et qui ont répondu après l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré (panels 1998, 2007 et 2012 ; pondérations en révision). Segment vide : n'a pas voté. Nombres : parts de 8 % ou plus ; les intervalles de confiance à 95 % sont dans la vue en tableau, et ils sont larges : chaque rangée repose sur moins de 110 répondants. Dans les panels 2007 et 2018, ne sait pas et refus forment un seul code."))
+  note = sprintf(tr("Source: qesR. The undecided are respondents who named no party during the campaign, even when asked (where the panel asked) which party they leaned to, and who answered after the election. Weighted (2018 panel, QES 2022) or not weighted here, because their weights are under review (1998, 2007 and 2012 panels). Outlined segment: did not vote. Numbers: shares of 8%% or more. Each row rests on %s respondents or fewer, so the confidence intervals in the table view are wide. In the 2007 and 2018 panels, 'don't know' and 'refused' cannot be told apart and are both counted as undecided.",
+            "Source : qesR. Les indécis sont les répondants qui n'ont nommé aucun parti pendant la campagne, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient, et qui ont répondu après l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré ici, les pondérations étant en révision (panels 1998, 2007 et 2012). Segment vide : n'a pas voté. Nombres : parts de 8 %% ou plus. Chaque rangée repose sur %s répondants ou moins : les intervalles de confiance de la vue en tableau sont donc larges. Dans les panels 2007 et 2018, « ne sait pas » et « refus » ne peuvent être distingués et sont tous deux comptés comme indécis."), und_n))
 ```
 
-What to notice:
+The undecided matter less for the result than for turnout. Between
+`r qz_pct(min(abst), 0)` and `r qz_pct(max(abst), 0)` of them did not
+vote, compared to `r qz_pct(named_abst[1], 0)` to
+`r qz_pct(named_abst[2], 0)` of those who had named a party. Voters who
+decide during the campaign are known to be the most open to its effects
+(Fournier et al. 2004); in Quebec, a sizeable minority of the undecided
+simply stay home. Those who did vote went in no single direction. In 1998 they
+leaned to the PLQ (`r qz_pct(mv("qes1998", "undecided", "PLQ"), 0)`
+versus `r qz_pct(mv("qes1998", "undecided", "PQ"), 0)` for the PQ), but
+on only `r row_n("qes1998", "undecided")` respondents. In 2018 they broke
+for the CAQ, and in 2022 they split across all the parties. The idea that
+the undecided lean toward one party finds no steady support here.
 
-- Between `r qz_pct(min(moves$pct[moves$what == "row" & moves$group == "undecided" & moves$level == "abstained"]), 0)`
-  and `r qz_pct(max(moves$pct[moves$what == "row" & moves$group == "undecided" & moves$level == "abstained"]), 0)`
-  of the undecided did not vote.
-- Those who voted broke for the winner in 2018 (the CAQ); in 2022 they
-  split almost evenly among five parties.
+## Who won the campaign
+
+The matrix shows who moved; it does not show who came out ahead once the
+moves in both directions are added up. We take, for each party, its
+share of the reported vote minus its share of the intentions, among the
+same respondents. A positive gap means the party won more voters during
+the campaign than it lost.
+
+```{r fig-gains, echo = FALSE}
+# without 1998, whose unweighted net gains reflect how the recontact was
+# drawn (see the text)
+d <- gains_fig[gains_fig$n >= qz_min_n, ]
+d$party <- factor(d$party, levels = qz_parties)
+d$panel <- factor(qz_study_label(d$study), levels = qz_study_label(panels))
+d$key <- paste(d$study, d$party)
+d$row <- factor(d$key, levels = rev(d$key[order(match(d$study, panels), d$party)]))
+row_lab <- stats::setNames(as.character(d$party), d$key)
+d$label <- qz_pts(d$mean, 1)
+lim <- max(abs(c(d$lo, d$hi))) + 2.5
+
+fig_gains <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(mean, row)) +
+    geom_vline(xintercept = 0, colour = k$axis, linewidth = 0.45) +
+    geom_linerange(aes(xmin = lo, xmax = hi, colour = party), linewidth = 0.45, alpha = 0.6) +
+    qz_dots(mode, d, aes(mean, row), colour_aes = "party", size = 2.6) +
+    # each value on the side away from zero, past the end of its interval
+    geom_text(aes(x = ifelse(mean >= 0, hi + 0.4, lo - 0.4), label = label, hjust = ifelse(mean >= 0, 0, 1)),
+              size = 2.8, colour = k$ink2, family = qz_font()) +
+    facet_grid(panel ~ ., scales = "free_y", space = "free_y", switch = "y") +
+    scale_party(mode) +
+    scale_y_discrete(labels = function(x) row_lab[x]) +
+    scale_x_continuous(limits = c(-lim, lim), labels = function(x) qz_pts(x, 0), expand = expansion(0)) +
+    labs(x = tr("Reported vote minus intention, among the same respondents (points)",
+                "Vote déclaré moins intention, chez les mêmes répondants (points)"), y = NULL) +
+    theme_qes(mode, grid = "x") +
+    theme(strip.placement = "outside",
+          strip.text.y.left = element_text(angle = 0, hjust = 1, vjust = 0.5, face = "bold", colour = k$ink,
+                                           margin = margin(r = 8)),
+          panel.spacing.y = unit(8, "pt"))
+}
+
+tab <- gains_fig[order(gains_fig$year, match(gains_fig$party, qz_parties)), ]
+tab_gains <- setNames(data.frame(
+  tab$year, qz_study_label(tab$study), tab$party,
+  ifelse(tab$n < qz_min_n, tr("n < 30", "n < 30"),
+         paste0(qz_num(tab$mean, 1), " [", qz_num(tab$lo, 1), tr(", ", " ; "), qz_num(tab$hi, 1), "]")),
+  tab$n, qz_weight_text(tab$weighted), row.names = NULL
+), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Party", "Parti"),
+     tr("Net gain, points [95% CI]", "Gain net, points [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
+alt <- sprintf(tr(
+  "Dot chart in %s panels, one per panel study from 2007 to 2022, one row per party: the party's share of the reported vote minus its share of the campaign intentions, among the same respondents, in points, with confidence intervals. Most gaps are within a few points of zero. The largest gain is that %s in %s, %s, the largest loss that %s in %s, %s; in 2022 the CAQ is at %s and the PQ at %s. Values in the table view.",
+  "Graphique à points en %s panneaux, un par étude par panel de 2007 à 2022, une rangée par parti : la part du vote déclaré moins la part des intentions de campagne, chez les mêmes répondants, en points, avec intervalles de confiance. La plupart des écarts sont à quelques points de zéro. Le plus grand gain est celui %s en %s, %s, la plus grande perte celle %s en %s, %s ; en 2022, la CAQ est à %s et le PQ à %s. Valeurs dans la vue en tableau."),
+  num_word(length(unique(d$study))), party_of(best$party), best$year, qz_pts(best$mean, 1),
+  party_of(worst$party), worst$year, qz_pts(worst$mean, 1),
+  qz_pts(gv("qes2022", "CAQ"), 1), qz_pts(gv("qes2022", "PQ"), 1))
+qz_figure(fig_gains, "gains",
+  title = sprintf(tr("On net, the campaign moved a few points at most: from %s for %s in %s to %s for %s in %s",
+                     "En solde net, la campagne a déplacé quelques points tout au plus : de %s pour %s en %s à %s pour %s en %s"),
+                  qz_pts(worst$mean, 1), party_the(worst$party), worst$year,
+                  qz_pts(best$mean, 1), party_the(best$party), best$year),
+  subtitle = tr("Each party's share of the reported vote minus its share of the campaign intentions, among the same respondents, with 95% confidence intervals",
+                "Part du vote déclaré de chaque parti moins sa part des intentions de campagne, chez les mêmes répondants, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_gains, height = 5,
+  note = tr("Source: qesR. All respondents interviewed during the campaign and after the election, including the undecided, those who said they would not vote and those who did not vote, so that the gains of the parties and of abstention add up. Filled dots: weighted with the post-election weight (2018 panel, QES 2022); hollow dots: not weighted here, because their weights are under review (2007 and 2012 panels). The 1998 polls are left out: their recontact over-represents the undecided, non-disclosers and third-party (ADQ) supporters, so their unweighted gains cannot be read (see the text). Parties that did not run, or that the question did not list, are left out.",
+            "Source : qesR. Tous les répondants interrogés pendant la campagne et après l'élection, y compris les indécis, ceux qui disaient ne pas vouloir voter et ceux qui n'ont pas voté, de sorte que les gains des partis et de l'abstention s'additionnent. Points pleins : pondérés avec la pondération postélectorale (panel 2018, EEQ 2022) ; points creux : non pondérés ici, les pondérations étant en révision (panels 2007 et 2012). Les sondages de 1998 sont omis : leur recontact surreprésente les indécis, les discrets et les partisans des tiers partis (ADQ), de sorte que leurs gains non pondérés ne peuvent être lus (voir le texte). Les partis qui ne se présentaient pas, ou que la question ne proposait pas, sont omis."))
+```
+
+Most gaps are small, within a few points of zero. This is what one would
+expect when most voters keep their intention and the remaining moves
+partly cancel out. The two largest gains went to parties that went on to
+form the government: the CAQ in 2018, with
+`r qz_num(gv("qes2018_panel", "CAQ"), 1)` points (95% confidence interval:
+`r qz_num(gv("qes2018_panel", "CAQ", "lo"), 1)` to
+`r qz_num(gv("qes2018_panel", "CAQ", "hi"), 1)`), and the PQ in 2012, with
+`r qz_num(gv("qes2012_panel", "PQ"), 1)` points
+(`r qz_num(gv("qes2012_panel", "PQ", "lo"), 1)` to
+`r qz_num(gv("qes2012_panel", "PQ", "hi"), 1)`). The 2018 gain fits
+Durand and Blais's (2020) account. Winning the government did not require
+winning the campaign. The PLQ in 2007 and the CAQ in 2022 formed
+the government while losing ground during the campaign (by
+`r qz_num(-gv("qes2007_panel", "PLQ"), 1)` and
+`r qz_num(-gv("qes2022", "CAQ"), 1)` points), and the PQ gained
+`r qz_num(gv("qes2022", "PQ"), 1)` points in 2022 without forming it.
+
+We leave the 1998 polls out of the figure, because their net gains cannot
+be read as they stand. The 1998 panel in qesR is made of two of the three
+polls that Durand and Blais (1999) recontacted, those of CROP and
+CREATEC, which interviewed francophones only. The recontact was drawn to
+over-represent the undecided, non-disclosers and supporters of third
+parties, and it is analysed here without weights (its weights are under
+review). Unweighted, those who intended to vote ADQ make up
+`r qz_pct(adq98["unweighted"], 0)` of the pairs; with the weight the
+producers used for their own published tables, they make up
+`r qz_pct(adq98["weighted"], 0)`. The unweighted numbers show the PLQ and
+the PQ gaining about as much (`r qz_num(gv("qes1998", "PLQ"), 1)` and
+`r qz_num(gv("qes1998", "PQ"), 1)` points), so there is no Liberal swing
+at the PQ's expense, and the ADQ losing
+`r qz_num(-gv("qes1998", "ADQ"), 1)` points. With the producers' weight,
+the PLQ's gain is close to zero (`r qz_num(gw98("PLQ"), 1)` points) and
+the PQ's loss is small (`r qz_num(-gw98("PQ"), 1)` points), both with
+confidence intervals that include zero, while the ADQ's loss shrinks to
+`r qz_num(-gw98("ADQ"), 1)` points. Either way, these numbers are
+consistent with Durand and Blais (1999). This is hardly surprising: they
+come from the same respondents, so they confirm the original analysis
+rather than test it independently.
+
+## What the numbers mean and their limits
+
+Overall, we find mixed support for the view that Quebec elections are
+decided at the last minute. On the one hand, from
+`r qz_pct(100 - pr("same")[2], 0)` to `r qz_pct(100 - pr("same")[1], 0)`
+of voters did not vote as they had said, and the CAQ of 2018 gained ground
+during the campaign itself. On the other hand, most of these moves
+cancel out, the undecided are few and abstain more often than the other
+voters, and the net effect of the campaign on a party's share is usually
+a few points. Two limits of these data call for caution.
+
+First, the panels see only those who stayed. Respondents who dropped out
+after the campaign are not in these tables, and if leaving the panel is
+related to changing one's mind, the transitions lean toward stability.
+Second, the vote after the election is a vote that respondents report
+once the winner is known. Some voters may recall a vote closer to the
+result than the one they cast, which would inflate the gains of the
+winner, the CAQ in 2018 included. If recall simply leaned toward the
+winner, though, the party that formed the government would gain every
+time, and it lost ground in 2007 and 2022. The `r num_word(n_panels)`
+studies also differ in design and mode, and `r num_word(n_unweighted)` of
+them are analysed without weights, so comparisons across elections are
+best read as orders of magnitude.
+
+That most voters keep their intention across `r num_word(n_panels)`
+elections and several survey designs is itself a finding. Of course, this
+stability may not survive more fragmented elections, with
+`r num_word(n_above)` parties above `r qz_pct(above, 0)` of the vote as in
+2022; that is a question the next panels will have to answer.
+
+## Going further
+
+- Durand, Claire, and André Blais. 1999. "Why Did the Polls Go Wrong in
+  the 1998 Quebec Election? The Answer from Post-Election Polls."
+  *Bulletin of Sociological Methodology / Bulletin de Méthodologie
+  Sociologique* 62 (1): 43–47.
+  <https://doi.org/10.1177/075910639906200105>
+- Durand, Claire, and André Blais. 2020. "Quebec 2018: A Failure of the
+  Polls?" *Canadian Journal of Political Science* 53 (1): 133–150.
+  <https://doi.org/10.1017/S0008423919000787>
+- Fournier, Patrick, Richard Nadeau, André Blais, Elisabeth Gidengil, and
+  Neil Nevitte. 2004. "Time-of-Voting Decision and Susceptibility to
+  Campaign Effects." *Electoral Studies* 23 (4): 661–681.
+  <https://doi.org/10.1016/j.electstud.2003.09.001>
+- Johnston, Richard, André Blais, Henry E. Brady, and Jean Crête. 1992.
+  *Letting the People Decide: Dynamics of a Canadian Election*. Montreal
+  and Kingston: McGill-Queen's University Press.
+  <https://doi.org/10.1515/9780773563643>
+- On the PCQ voters of 2022, from the same Quebec Election Study:
+  Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+  Valérie-Anne Mahéo. 2025. "A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election."
+  *Canadian Journal of Political Science* 58 (2): 277–296.
+  <https://doi.org/10.1017/S0008423924000829>
 
 ## About the data
 
-- **Studies.** The studies that interviewed the same respondents before
-  and after the election: the 1998 polls (CROP and CREATEC), the Durand
-  panels of 2007, 2012 and 2018, and the QES 2022 (campaign and
-  post-election waves). Only respondents of both waves are used.
-- **Variable.** `vote_choice` in the long layout, one row per wave. Before
-  the election, the intention with the undecided pushed toward a party
-  (`intention_push`; in the 2007 panel, a few respondents had no push
-  question and keep their first answer, type `intention`); after it, the
-  reported vote (`recall`). Would not vote, none or would spoil is the
-  level `no_party` of the intention; did not vote is the missing reason
-  `not_voted` of the reported vote.
-- **Weights.** The post-election weight of each respondent, through
-  `qes_design()` in the long layout (the respondent is the sampling
-  unit). The 1998, 2007 and 2012 panels are unweighted (weights under
-  review) and drawn hollow.
+- **Studies.** The studies that interviewed the same respondents during
+  the campaign and after the election: the 1998 CROP and CREATEC polls
+  (francophones only), the panels Claire Durand ran in 2007, 2012 and
+  2018, and the 2022 Quebec Election Study. Only respondents of both
+  waves are used. The 2022 study was an online panel, the 2018 panel
+  mixed telephone and web, and the older studies were by telephone.
+- **Intention.** The party named during the campaign. Respondents who
+  hesitated were asked which party they leaned to, and that answer
+  counts; those who still named no party are the undecided. In the 2018
+  panel, some undecided respondents interviewed by telephone and those
+  who said they would not vote were not asked the follow-up, so that
+  panel counts more undecided. In the 2007 panel, a few respondents keep
+  their first answer, where the producer's combined answer cannot be
+  used.
+- **Vote.** The party reported after the election, or did not vote.
+- **Weights.** The post-election weight of each respondent in the 2018
+  panel and the 2022 study. The 1998, 2007 and 2012 panels are not
+  weighted here, because their weights are under review, and they are
+  drawn hollow. The 1998 recontact also over-represents the undecided,
+  non-disclosers and third-party (ADQ) supporters, so its net gains are
+  left out of the last figure; the text compares them with and without
+  the weight the producers used.
 - **Attrition.** Respondents who left the panel after the campaign are
-  not in these tables; if leaving is related to changing one's mind, the
-  transitions are biased toward stability.
+  not in these tables.
+- **Code.** Every figure starts from the pooled `vote_choice`, in the
+  long layout (one row per respondent and wave), matched within each
+  study.
+
+<details>
+<summary>The call that builds the data</summary>
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+</details>

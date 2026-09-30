@@ -65,9 +65,9 @@
 #' The engine applies only the crosswalk rows signed off by a reviewer
 #' (status `stable`), as [qes_harmonize()] does by default. The rows were
 #' signed off after an automated double review against the original files
-#' and documents (not a human review); since spec 4.1.0 every reviewed row
-#' is signed off, and the rows added in spec 4.3.0, not reviewed yet, are
-#' never read (the legacy columns stay as they were). A row still in review would not be applied, and the columns it
+#' and documents (not a human review); a row that nobody has reviewed yet
+#' is never read (the legacy columns stay as they were). A row still in
+#' review would not be applied, and the columns it
 #' would fill would be `NA`: `attr(, "legacy_na_columns")` lists such
 #' columns with the reason `not_reviewed` and says why each row is held, and
 #' a message names them. The recommended weights that still need review
@@ -157,9 +157,8 @@
 #' Seules les lignes de correspondance approuvées par un réviseur (statut
 #' `stable`) sont appliquées, comme le fait [qes_harmonize()] par défaut ;
 #' elles ont été approuvées après une double révision automatisée sur les
-#' fichiers et documents originaux (et non une révision humaine), et toutes
-#' les lignes révisées le sont depuis la spécification 4.1.0 ; les lignes
-#' ajoutées dans la 4.3.0, pas encore révisées, ne sont jamais lues. Les
+#' fichiers et documents originaux (et non une révision humaine) ; une
+#' ligne que personne n'a encore révisée n'est jamais lue. Les
 #' colonnes d'une ligne encore
 #' en révision vaudraient `NA` ; `attr(, "legacy_na_columns")` les
 #' énumérerait avec le motif `not_reviewed` en disant pourquoi la ligne est
@@ -272,9 +271,9 @@
 #'     no row for the column in the study since), `"not_comparable_source"`
 #'     (the study's only source is graded `not_comparable`),
 #'     `"not_harmonized_yet"` or `"legacy_frozen"` (reason `"no_source"`:
-#'     the study's question is harmonized since spec 4.3.0, in
-#'     [qes_harmonize()], but the legacy column keeps the `NA` of qesR
-#'     0.7.1: `federal_pid` of `qes2012` and `language` of `qes2022`);
+#'     the study's question is now harmonized in [qes_harmonize()], but
+#'     the frozen column keeps its `NA`: `federal_pid` of `qes2012` and
+#'     `language` of `qes2022`);
 #'     `basis`
 #'     says in words why the column is `NA` in the study.
 #'     0.5.0's `"blanked"` reason is gone: no value is blanked after it is

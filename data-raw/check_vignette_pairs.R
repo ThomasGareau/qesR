@@ -4,7 +4,11 @@
 #
 # Every French vignette or article is named fr-*.Rmd and links to its English
 # partner in its first lines ("*[English version](<partner>.html)*"); the
-# partner links back ("*[Version française](fr-....html)*"). This script checks
+# partner links back ("*[Version française](fr-....html)*"). The French home
+# page (articles/fr-accueil.Rmd) is paired with the site's home page instead
+# ("*[English version](../index.html)*"), which links back from
+# pkgdown/index.md; it runs no code. The navbar's FR/EN button reads these
+# links, so they are the one record of the pairs. This script checks
 # that every page has a partner that links back and that both pages run the
 # same code: their knitr::purl() output, chunk labels and options included,
 # must be identical, so the prose may differ but the code may not. This holds
@@ -54,6 +58,17 @@ check_dir <- function(dir, compare_code) {
     if (is.na(partner)) {
       problems <- c(problems, sprintf("%s: no link to its %s partner", path,
                                       if (startsWith(stem, "fr-")) "English" else "French"))
+      next
+    }
+    if (identical(partner, "../index")) {
+      # the French home: its partner is the site's home page
+      home <- file.path(root, "pkgdown", "index.md")
+      back <- if (file.exists(home)) partner_link(home) else NA_character_
+      if (!startsWith(stem, "fr-")) {
+        problems <- c(problems, sprintf("%s: only a French page can pair with the home page", path))
+      } else if (!identical(back, paste0("articles/", stem))) {
+        problems <- c(problems, sprintf("%s: the home page (pkgdown/index.md) links to %s, not back", path, back))
+      }
       next
     }
     if (startsWith(stem, "fr-") == startsWith(partner, "fr-")) {

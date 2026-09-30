@@ -1,9 +1,10 @@
 ---
-title: "Les enquêtes se trompent-elles ? Vote déclaré et intentions face aux résultats officiels"
+title: "Les enquêtes sous-estiment-elles les libéraux ? Le vote déclaré face aux résultats officiels"
 description: >
-  Le vote déclaré de chaque étude et les résultats officiels, ce que la
-  pondération change, et deux ans et demi de sondages CROP autour de
-  l'élection de 2008.
+  Six Études électorales québécoises et trois panels confrontés aux
+  résultats d'Élections Québec : l'écart libéral, le PQ surestimé, ce
+  qu'expliquent la langue et la pondération, et l'ampleur des mouvements
+  d'intention de vote avant une élection.
 params:
   lang: "fr"
 ---
@@ -15,7 +16,8 @@ source("_setup.R", encoding = "UTF-8")
 ```
 
 ```{r harmonize, echo = FALSE}
-h <- qes_harmonize(studies = qz_studies, targets = "vote_choice", missing = "reasons", quiet = TRUE)
+h <- qes_harmonize(studies = qz_studies, targets = c("vote_choice", "lang_mother", "lang_home"),
+                   missing = "reasons", quiet = TRUE)
 ```
 
 ```{r estimates, echo = FALSE}
@@ -53,6 +55,65 @@ dissim$year <- qz_year(dissim$study)
 rv <- function(s, p, w = "weighted") recall$pct[recall$study == s & recall$level == p & recall$weighting == w]
 ov <- function(y, p) official$share_valid[official$year == y & official$party == p]
 di <- function(s, w) dissim$index[dissim$study == s & dissim$weighting == w]
+# the estimate a chart draws: weighted where the study has a reviewed weight, else unweighted
+rb <- function(s, p) {
+  x <- recall[recall$study == s & recall$level == p, ]
+  x$pct[order(x$weighting != "weighted")][1]
+}
+gap <- function(s, p) rb(s, p) - ov(qz_year(s), p)
+
+# the Quebec Election Studies, one per election, and the claims of the opening
+qes_series <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
+early <- recall_studies[qz_year(recall_studies) <= 2014]
+plq_early <- vapply(early, gap, numeric(1), p = "PLQ")
+pq_qes <- vapply(qes_series, gap, numeric(1), p = "PQ")
+winner <- vapply(qes_series, function(s) {
+  o <- official[official$year == qz_year(s), ]
+  o$party[which.max(o$share_valid)]
+}, character(1))
+win_gap <- mapply(gap, qes_series, winner)
+win_over <- qes_series[win_gap > 0]
+stopifnot(all(plq_early < 0), all(pq_qes > 0), length(win_over) == 1)
+# the typical number of voters in a study, and the widest 95% margin of error it gives a party
+n_typical <- stats::median(vapply(qes_series, function(s) recall$n[recall$study == s][1], numeric(1)))
+moe_typical <- 100 * 1.96 * sqrt(0.25 / n_typical)
+# a count with the page's thousands separator: 1,278 / 1 278
+qz_int <- function(x) formatC(round(x), format = "d", big.mark = tr(",", "\u00a0"))
+# the widest 95% margin of error, once weighted, that a Quebec Election Study gives a party
+wq <- recall[recall$study %in% qes_series & recall$weighting == "weighted" & recall$status == "offered", ]
+moe_weighted <- max((wq$hi - wq$lo) / 2)
+# the PQ in every study and panel, not only the Quebec Election Studies
+pq_all <- vapply(recall_studies, gap, numeric(1), p = "PQ")
+
+# is the official result inside the 95% CI of the estimate a chart draws?
+in_ci <- function(s, p) {
+  x <- recall[recall$study == s & recall$level == p, ]
+  x <- x[order(x$weighting != "weighted"), ][1, ]
+  o <- ov(qz_year(s), p)
+  x$lo <= o & o <= x$hi
+}
+pq_in <- qz_year(qes_series[vapply(qes_series, in_ci, logical(1), p = "PQ")])
+plq_in <- qz_year(qes_series[vapply(qes_series, in_ci, logical(1), p = "PLQ")])
+win_in <- qz_year(qes_series[mapply(in_ci, qes_series, winner)])
+stopifnot(length(pq_in) >= 2, length(plq_in) >= 2, length(win_in) >= 2, !in_ci("qes2022", "CAQ"),
+          all(win_gap[qz_year(qes_series) %in% win_in] < 0), moe_weighted > moe_typical,
+          mean(pq_all > 0) > 0.5)
+
+# page-local wording: small counts as words, a list of years, and a number of
+# points with the page's plural (1 point, 7 points; 1,4 point in French)
+num_word <- function(n) tr(c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")[n],
+                           c("un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf")[n])
+yrs_text <- function(y) {
+  y <- sort(unique(y))
+  if (length(y) < 2) return(as.character(y))
+  paste(paste(head(y, -1), collapse = ", "), tr("and", "et"), tail(y, 1))
+}
+pt_unit <- function(x, digits = 0) {
+  r <- abs(round(x, digits))
+  if (identical(qz_lang, "fr")) ifelse(r < 2, "point", "points") else ifelse(r == 1, "point", "points")
+}
+pt_text <- function(x, digits = 0) paste(qz_num(abs(x), digits), pt_unit(x, digits))
+pt_signed <- function(x, digits = 1) sub("pts$", pt_unit(x, digits), qz_pts(x, digits))
 
 # the CROP polls: monthly vote intentions, among respondents who named a party
 crop <- h[h$study == "qes_crop_2007_2010", ]
@@ -62,32 +123,34 @@ polls <- qz_share(dc, "intent", by = "waves")
 polls$date <- as.Date(paste0(sub("^poll_(\\d{4})_(\\d{2})$", "\\1-\\2", polls$group), "-15"))
 ```
 
-Les estimations du vote par les enquêtes s'approchent des résultats
-officiels, mais les atteignent rarement. En 2022, l'Étude électorale
-québécoise donnait à la CAQ `r qz_pct(rv("qes2022", "CAQ"), 0)` du vote
-déclaré, pondéré ; la CAQ a obtenu `r qz_pct(ov(2022, "CAQ"), 0)` des votes
-valides. Le PQ est surestimé dans la plupart des études, et le PLQ
-sous-estimé jusqu'en 2014. La pondération aux marges du recensement
-rapproche certaines études des résultats et pas d'autres : l'indice de
-dissimilarité entre le vote déclaré et le vote officiel de l'étude de 2012
-passe de `r qz_num(di("qes2012", "unweighted"))` points sans pondération à
-`r qz_num(di("qes2012", "weighted"))` avec, et celui de 2014 de
-`r qz_num(di("qes2014", "unweighted"))` à `r qz_num(di("qes2014", "weighted"))`.
+Au Québec, c'est presque un réflexe : les sondages sous-estimeraient le
+Parti libéral du Québec (PLQ). L'élection de 1998, où les sondages ont
+surestimé le Parti Québécois (PQ) et sous-estimé les libéraux, en demeure
+l'exemple type (Durand et Blais, 1999). Aux États-Unis, des travaux relèvent
+un tout autre biais : une fois le vote passé, plus de répondants disent
+avoir voté pour le gagnant que le résultat ne le permet (Atkeson, 1999, à
+propos des primaires présidentielles). Ces deux croyances portent sur les
+sondages et les enquêtes en général. Qu'en est-il des Études électorales
+québécoises, qui interrogent les répondants sur leur vote une fois
+l'élection terminée ? Certaines d'entre elles ont été comparées au résultat
+(Bélanger et collab., 2025, pour 2022), mais ces enquêtes ont rarement été
+confrontées aux résultats officiels sur plusieurs élections. C'est ce que
+nous faisons ici pour six élections, de 2007 à 2022, à partir des six
+études et des trois panels que Claire Durand et ses collègues ont menés en
+2007, 2012 et 2018. Au final, la première croyance ne tient qu'en partie, et
+la seconde pas du tout. D'une part, le PLQ est sous-estimé dans les
+`r num_word(length(early))` études et panels de 2007 à 2014, de
+`r qz_num(min(abs(plq_early)), 0)` à `r qz_num(max(abs(plq_early)), 0)`
+points de pourcentage des votes valides, et le PQ est surestimé dans chacune
+des Études électorales québécoises, parfois d'à peine
+`r pt_text(min(pq_qes))`. D'autre part, l'écart libéral s'amenuise en 2018
+et s'inverse légèrement en 2022, dans la marge d'erreur, et le gagnant n'est
+pas surestimé : il est au contraire sous-estimé lors de
+`r num_word(sum(win_gap < 0))` des `r num_word(length(qes_series))`
+élections. En 2022, la Coalition avenir Québec (CAQ) l'est de
+`r pt_text(gap("qes2022", "CAQ"))`.
 
-## Les données
-
-```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
-```
-
-`vote_choice` avec son ordre de priorité par défaut : le vote déclaré là
-où l'étude l'a demandé, sinon l'intention (les sondages CROP), comme
-l'indique `vote_choice__type` :
-
-```{r types}
-table(h$study, h$vote_choice__type)
-```
-
-## Vote déclaré et résultat officiel, parti par parti
+## Le vote déclaré, parti par parti
 
 ```{r fig-parties, echo = FALSE}
 panel_parties <- c("PLQ", "PQ", "QS", "ADQ", "CAQ")
@@ -102,7 +165,7 @@ o <- official[official$party %in% panel_parties & official$year >= 2007, ]
 o$party <- factor(o$party, levels = panel_parties)
 key_lab <- c(qes = tr("Quebec Election Study", "Étude électorale québécoise"),
              panel = tr("Durand panel (just right)", "Panel Durand (juste à droite)"),
-             unweighted = tr("hollow: unweighted\n(weight under review)", "creux : non pondéré\n(pondération en révision)"))
+             unweighted = tr("hollow: unweighted", "creux : non pondéré"))
 
 fig_parties <- function(mode) {
   k <- qz_tokens[[mode]]
@@ -150,38 +213,205 @@ tab_parties <- setNames(data.frame(
      tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
      tr("Weighting", "Pondération")))
 alt <- sprintf(tr(
-  "Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). In 2022 the QES has the CAQ at %s against %s officially, and QS at %s against %s. Values in the table view.",
-  "Cinq petits graphiques, un par parti (PLQ, PQ, QS, ADQ, CAQ) : la part officielle des votes valides à chaque élection de 2007 à 2022 en ligne avec un trait, et le vote déclaré de chaque étude en point avec son intervalle de confiance (cercles : Études électorales québécoises ; carrés : panels Durand). En 2022, l'EEQ donne la CAQ à %s contre %s officiellement, et QS à %s contre %s. Valeurs dans la vue en tableau."),
-  qz_pct(rv("qes2022", "CAQ"), 0), qz_pct(ov(2022, "CAQ"), 0), qz_pct(rv("qes2022", "QS"), 0), qz_pct(ov(2022, "QS"), 0))
+  "Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). The PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it. In 2022 the Quebec Election Study has the CAQ at %s against %s officially. Values in the table view.",
+  "Cinq petits graphiques, un par parti (PLQ, PQ, QS, ADQ, CAQ) : la part officielle des votes valides à chaque élection de 2007 à 2022 en ligne avec un trait, et le vote déclaré de chaque étude en point avec son intervalle de confiance (cercles : Études électorales québécoises ; carrés : panels Durand). Les points du PLQ sont sous la ligne de 2007 à 2014 et ceux du PQ au-dessus. L'Étude électorale québécoise de 2022 donne la CAQ à %s contre %s officiellement. Valeurs dans la vue en tableau."),
+  qz_pct(rv("qes2022", "CAQ"), 0), qz_pct(ov(2022, "CAQ"), 0))
 qz_figure(fig_parties, "parties",
-  title = sprintf(tr("Surveys under-report the PLQ from 2007 to 2014, and the CAQ by %s points in 2022",
-                     "Les enquêtes sous-estiment le PLQ de 2007 à 2014, et la CAQ de %s points en 2022"),
-                  qz_num(abs(rv("qes2022", "CAQ") - ov(2022, "CAQ")), 0)),
+  title = sprintf(tr("The PLQ is under-reported in every study from 2007 to 2014, the PQ over-reported, and the CAQ %s points below its result in 2022",
+                     "Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, le PQ surestimé, et la CAQ sous-estimée de %s points en 2022"),
+                  qz_num(abs(gap("qes2022", "CAQ")), 0)),
   subtitle = tr("Reported vote in each study (dot, 95% CI) against the official share of valid votes (line and tick), by party",
                 "Vote déclaré dans chaque étude (point, IC à 95 %) et part officielle des votes valides (ligne et trait), selon le parti"),
   alt = alt, table = tab_parties, height = 5.2,
-  note = tr("Source: qesR, pooled vote_choice (reported vote) of the Quebec Election Studies (circles, just left of each election) and the Durand panels (squares, just right); official results of Élections Québec. Dots: weighted with each study's post-election weight, 95% confidence intervals (logit). Hollow: unweighted, weight under review (the 2008 study and the 2007 and 2012 panels); the 2018 panel uses its reviewed post-election weight. The 1998 polls interviewed francophones only and are left out. The table view gives every party, with the unweighted estimates.",
-            "Source : qesR, variable regroupée vote_choice (vote déclaré) des Études électorales québécoises (cercles, juste à gauche de chaque élection) et des panels Durand (carrés, juste à droite) ; résultats officiels d'Élections Québec. Points : pondérés avec la pondération postélectorale de chaque étude, intervalles de confiance à 95 % (logit). Creux : non pondéré, pondération en révision (l'étude de 2008 et les panels de 2007 et 2012) ; le panel 2018 utilise sa pondération postélectorale révisée. Les sondages de 1998 n'ont interrogé que des francophones et sont laissés de côté. La vue en tableau donne tous les partis, avec les estimations non pondérées."))
+  note = tr("Source: Quebec Election Studies (circles, just left of each election) and Durand panels (squares, just right), reported vote among respondents who named a party; official results of Élections Québec. Dots are weighted, with 95% confidence intervals. Hollow dots: unweighted. The table view gives every party, with the unweighted estimates.",
+            "Source : Études électorales québécoises (cercles, juste à gauche de chaque élection) et panels Durand (carrés, juste à droite), vote déclaré parmi les répondants qui nomment un parti ; résultats officiels d'Élections Québec. Les points sont pondérés, avec des intervalles de confiance à 95 %. Points creux : non pondéré. La vue en tableau donne tous les partis, avec les estimations non pondérées."))
 ```
 
-À remarquer :
+Premièrement, les libéraux. De 2007 à 2014, le PLQ est sous-estimé dans
+les `r num_word(length(early))` études et panels, jusqu'à
+`r pt_text(gap("qes2007", "PLQ"))` en 2007 et
+`r pt_text(gap("qes2014", "PLQ"))` en 2014, l'année de son retour au
+pouvoir avec `r qz_pct(ov(2014, "PLQ"), 0)` des voix. Le phénomène
+s'estompe ensuite. L'étude de 2018 ne place plus le PLQ qu'à
+`r pt_text(gap("qes2018", "PLQ"))` sous son résultat, et celle de 2022 le
+place `r pt_text(gap("qes2022", "PLQ"))` au-dessus. Deuxièmement, le PQ est
+surestimé dans chaque Étude électorale québécoise, d'à peine
+`r pt_text(min(pq_qes))` en `r qz_year(names(which.min(pq_qes)))` et
+jusqu'à `r pt_text(max(pq_qes))` en `r qz_year(names(which.max(pq_qes)))`
+(`r qz_pct(rb("qes2012", "PQ"), 0)` de vote déclaré contre
+`r qz_pct(ov(2012, "PQ"), 0)` au résultat officiel). Pris un à un, plusieurs
+de ces écarts se situent dans la marge d'erreur : ceux du PQ en
+`r yrs_text(pq_in)`, et ceux du PLQ en `r yrs_text(plq_in)`.
 
-- Le PQ est surestimé dans la plupart des études :
-  `r qz_pts(rv("qes2012", "PQ") - ov(2012, "PQ"))` en 2012,
-  `r qz_pts(rv("qes2014", "PQ") - ov(2014, "PQ"))` en 2014.
-- Le PLQ est sous-estimé à chaque élection de 2007 à 2014, de
-  `r qz_pts(rv("qes2014", "PLQ") - ov(2014, "PLQ"))` en 2014, l'année de sa
-  victoire.
-- Le gagnant n'est pas toujours surestimé : en 2022, la CAQ est
-  `r qz_num(abs(rv("qes2022", "CAQ") - ov(2022, "CAQ")), 0)` points sous son
-  résultat.
+Troisièmement, et contrairement à ce que laisseraient attendre les travaux
+sur les enquêtes postélectorales, le gagnant est rarement surestimé. La
+seule exception est l'élection de `r qz_year(win_over)`, remportée par le
+`r winner[win_over]`. En `r yrs_text(win_in)`, la sous-estimation du
+gagnant reste dans la marge d'erreur. Il en va autrement en 2022 : la CAQ a
+obtenu `r qz_pct(ov(2022, "CAQ"), 0)` des voix, mais seulement
+`r qz_pct(rb("qes2022", "CAQ"), 0)` des répondants de l'étude disent avoir
+voté pour elle, comme le relèvent aussi Bélanger et collaborateurs (2025)
+avec la même étude (33,7 % contre 41 %). Tous les partis ne sont pas mal
+mesurés en 2022, toutefois : le Parti conservateur du Québec (PCQ) est
+proche de son résultat (`r qz_pct(rb("qes2022", "PCQ"), 0)` contre
+`r qz_pct(ov(2022, "PCQ"), 0)`), comme ces auteurs le constatent aussi.
+C'est le sens des écarts qui frappe. De 2007 à 2014 du moins, les écarts ne
+sont pas un bruit aléatoire : ils vont dans le même sens, pour les mêmes
+partis.
 
-## La pondération aide-t-elle ?
+## L'écart libéral est-il une affaire de langue ?
+
+```{r language, echo = FALSE}
+# mother tongue, or the language spoken at home where it is missing or mixed
+lang <- ifelse(is.na(h$lang_mother), as.character(h$lang_home), as.character(h$lang_mother))
+h$language <- factor(ifelse(lang %in% "French", "fr", ifelse(is.na(lang), NA, "other")), levels = c("fr", "other"))
+lang_studies <- c("qes2007", "qes2012", "qes2014", "qes2018", "qes2022")
+
+# In each weighted study, among respondents whose language is known: the
+# reported vote, the vote of each language group, and the reported vote once
+# non-francophones among voters get the share they have among all
+# respondents (post-stratification of the voters on language)
+rebal <- do.call(rbind, lapply(lang_studies, function(s) {
+  d <- subset(qz_design(h, s, "weight_post"), !is.na(language))
+  all <- qz_share(d, "language")
+  v <- subset(d, !is.na(party))
+  voters <- qz_share(v, "language")
+  groups <- qz_share(v, "party", by = "language")
+  pop <- data.frame(language = factor(c("fr", "other"), levels = c("fr", "other")),
+                    Freq = all$pct / 100 * sum(weights(v)))
+  as_reported <- qz_share(v, "party")
+  rebalanced <- qz_share(survey::postStratify(v, ~language, pop), "party")
+  o <- official[official$year == qz_year(s), ]
+  data.frame(study = s, party = as_reported$level, reported = as_reported$pct, rebalanced = rebalanced$pct,
+             lo = rebalanced$lo, hi = rebalanced$hi, n = as_reported$n,
+             official = o$share_valid[match(as_reported$level, o$party)],
+             fr = groups$pct[groups$group == "fr"], other = groups$pct[groups$group == "other"],
+             share_all = all$pct[all$level == "other"], share_voters = voters$pct[voters$level == "other"])
+}))
+rebal$gap <- rebal$reported - rebal$official
+rebal$gap_rb <- rebal$rebalanced - rebal$official
+# the share of non-francophones among voters that would match the official
+# PLQ result, given the PLQ vote of each language group in the study
+rebal$needed <- 100 * (rebal$official - rebal$fr) / (rebal$other - rebal$fr)
+lr <- function(s, p, col) rebal[[col]][rebal$study == s & rebal$party == p]
+early_lang <- c("qes2007", "qes2012", "qes2014")
+closed <- vapply(early_lang, function(s) lr(s, "PLQ", "gap_rb") - lr(s, "PLQ", "gap"), numeric(1))
+plq_gap_lang <- vapply(early_lang, function(s) abs(lr(s, "PLQ", "gap")), numeric(1))
+needed <- vapply(early_lang, function(s) lr(s, "PLQ", "needed"), numeric(1))
+share_all <- vapply(early_lang, function(s) lr(s, "PLQ", "share_all"), numeric(1))
+pq_closed <- vapply(early_lang, function(s) lr(s, "PQ", "gap") - lr(s, "PQ", "gap_rb"), numeric(1))
+stopifnot(all(closed > 0), all(lr(early_lang, "PLQ", "gap_rb") < 0), all(needed > share_all),
+          all(pq_closed > 0), lr("qes2018", "PLQ", "gap") < 0, lr("qes2018", "PLQ", "gap_rb") > 0)
+```
+
+L'explication la plus courante de l'écart libéral est linguistique. Les
+non-francophones votent massivement libéral : en 2014,
+`r qz_pct(lr("qes2014", "PLQ", "other"), 0)` des non-francophones qui
+déclarent un vote ont choisi le PLQ, contre
+`r qz_pct(lr("qes2014", "PLQ", "fr"), 0)` des francophones. Une enquête qui
+en joint trop peu sous-estimera donc le parti. Or, les études sont
+pondérées, entre autres, selon la langue, de sorte que les non-francophones
+devraient y avoir, parmi l'ensemble des répondants, à peu près le poids
+qu'ils ont dans le recensement. Parmi ceux qui déclarent un vote, ils sont
+toutefois moins nombreux : `r qz_pct(lr("qes2014", "PLQ", "share_voters"), 0)`
+en 2014, contre `r qz_pct(lr("qes2014", "PLQ", "share_all"), 0)` de
+l'ensemble des répondants. Nous examinons donc ce qui se passe lorsque nous
+redonnons aux non-francophones, parmi les votants, la part qu'ils occupent
+dans l'ensemble de l'échantillon. Le test est généreux, puisqu'il suppose
+qu'ils nomment un parti aussi souvent que les francophones.
+
+```{r fig-lang, echo = FALSE}
+d <- rebal[rebal$party %in% c("PLQ", "PQ"), ]
+d$row <- factor(qz_study_label(d$study), levels = rev(qz_study_label(lang_studies)))
+d$party <- factor(d$party, levels = c("PLQ", "PQ"))
+long <- rbind(transform(d, value = gap, kind = "reported"), transform(d, value = gap_rb, kind = "rebalanced"))
+long$kind <- factor(long$kind, levels = c("reported", "rebalanced"))
+kind_lab <- c(reported = tr("As reported", "Tel que déclaré"),
+              rebalanced = tr("Non-francophones given their share of all respondents",
+                              "Non-francophones ramenés à leur part de l'ensemble des répondants"))
+party_lab <- c(PLQ = tr("PLQ: reported minus official", "PLQ : déclaré moins officiel"),
+               PQ = tr("PQ: reported minus official", "PQ : déclaré moins officiel"))
+
+fig_lang <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(long, aes(value, row)) +
+    geom_vline(xintercept = 0, colour = k$ink, linewidth = 0.5) +
+    geom_segment(data = d, aes(x = gap, xend = gap_rb, y = row, yend = row), colour = k$muted, linewidth = 0.6) +
+    geom_point(data = long[long$kind == "reported", ], aes(fill = party, shape = kind), size = 3, stroke = 0.8,
+               colour = k$surface) +
+    geom_point(data = long[long$kind == "rebalanced", ], aes(shape = kind), size = 2.5, stroke = 0.7,
+               colour = k$surface, fill = k$ink2) +
+    facet_wrap(~party, ncol = 2, labeller = as_labeller(party_lab)) +
+    scale_party(mode, aesthetics = "fill") +
+    scale_shape_manual(values = c(reported = 21, rebalanced = 23), breaks = names(kind_lab), labels = kind_lab,
+                       guide = guide_legend(override.aes = list(fill = c(k$ink2, k$ink2), colour = k$surface,
+                                                                size = 3))) +
+    scale_x_continuous(limits = c(-9, 9), breaks = seq(-5, 5, 5),
+                       labels = function(x) ifelse(x == 0, "0", qz_pts(x)), expand = expansion(0)) +
+    labs(x = tr("Points from the official result (0)", "Points d'écart avec le résultat officiel (0)"), y = NULL) +
+    theme_qes(mode, grid = "x") +
+    theme(panel.spacing.x = unit(26, "pt"))
+}
+
+tab <- d[order(d$party, qz_year(d$study)), ]
+tab_lang <- setNames(data.frame(
+  qz_party_label(tab$party), qz_study_label(tab$study), qz_num(tab$reported), qz_num(tab$rebalanced),
+  qz_num(tab$official), qz_pts(tab$gap, 1), qz_pts(tab$gap_rb, 1),
+  qz_num(tab$fr), qz_num(tab$other), qz_num(tab$share_voters), qz_num(tab$share_all),
+  ifelse(tab$party == "PLQ", qz_num(tab$needed), ""), tab$n, row.names = NULL
+), c(tr("Party", "Parti"), tr("Study", "Étude"), tr("Reported, %", "Déclaré, %"),
+     tr("Rebalanced, %", "Rééquilibré, %"), tr("Official, %", "Officiel, %"),
+     tr("Gap as reported", "Écart déclaré"), tr("Gap rebalanced", "Écart rééquilibré"),
+     tr("Among francophones, %", "Chez les francophones, %"), tr("Among non-francophones, %", "Chez les non-francophones, %"),
+     tr("Non-francophones among voters, %", "Non-francophones parmi les votants, %"),
+     tr("Non-francophones among all respondents, %", "Non-francophones parmi tous les répondants, %"),
+     tr("Non-francophone share that would match the PLQ result, %", "Part de non-francophones qui donnerait le résultat du PLQ, %"),
+     "n"))
+alt <- sprintf(tr(
+  "Two dot charts side by side, one row per Quebec Election Study from 2007 to 2022: the PLQ's and the PQ's reported vote minus the official result, as reported (coloured dot) and once non-francophones among voters are given their share of all respondents (grey diamond). For the PLQ in 2014 the gap goes from %s to %s; in 2007 and 2012 the rebalancing also closes little of the gap. Values in the table view.",
+  "Deux graphiques à points côte à côte, une rangée par Étude électorale québécoise de 2007 à 2022 : le vote déclaré du PLQ et du PQ moins le résultat officiel, tel que déclaré (point de couleur) et une fois les non-francophones parmi les votants ramenés à leur part de l'ensemble des répondants (losange gris). Pour le PLQ en 2014, l'écart passe de %s à %s ; en 2007 et en 2012, le rééquilibrage comble aussi peu de l'écart. Valeurs dans la vue en tableau."),
+  qz_pts(lr("qes2014", "PLQ", "gap"), 1), qz_pts(lr("qes2014", "PLQ", "gap_rb"), 1))
+qz_figure(fig_lang, "language",
+  title = sprintf(tr("Giving non-francophones their full weight closes %s to %s points of a Liberal gap of %s to %s",
+                     "Donner tout leur poids aux non-francophones comble de %s à %s point d'un écart libéral de %s à %s points"),
+                  qz_num(min(closed)), qz_num(max(closed)), qz_num(min(plq_gap_lang), 0), qz_num(max(plq_gap_lang), 0)),
+  subtitle = tr("Reported vote minus the official result, as reported and with non-francophones among voters given their share of all respondents, in the weighted Quebec Election Studies",
+                "Vote déclaré moins le résultat officiel, tel que déclaré et avec les non-francophones parmi les votants ramenés à leur part de l'ensemble des répondants, dans les Études électorales québécoises pondérées"),
+  alt = alt, table = tab_lang, height = 3.4,
+  note = tr("Source: Quebec Election Studies, weighted, respondents whose mother tongue (or, where it is missing or mixed, home language) is known; official results of Élections Québec. Francophones: French mother tongue. Rebalanced: the respondents who reported a vote are weighted again so that non-francophones make up the same share as among all respondents; the vote of each language group is unchanged. The 2008 study, whose weights are calibrated on the vote, is left out. The table view gives the vote of each group and the share of non-francophones among voters that would have matched the PLQ's result.",
+            "Source : Études électorales québécoises, pondérées, répondants dont la langue maternelle (ou, si elle manque ou est multiple, la langue parlée à la maison) est connue ; résultats officiels d'Élections Québec. Francophones : langue maternelle française. Rééquilibré : les répondants qui déclarent un vote sont pondérés de nouveau pour que les non-francophones y aient la même part que parmi l'ensemble des répondants ; le vote de chaque groupe linguistique ne change pas. L'étude de 2008, dont la pondération est calée sur le vote, est laissée de côté. La vue en tableau donne le vote de chaque groupe et la part de non-francophones parmi les votants qui aurait donné le résultat du PLQ."))
+```
+
+La réponse est assez nette : la langue n'explique qu'une petite part de
+l'écart. Dans les `r num_word(length(early_lang))` Études électorales
+québécoises pondérées de `r yrs_text(qz_year(early_lang))`, où l'écart
+libéral atteint de `r qz_num(min(plq_gap_lang), 0)` à
+`r qz_num(max(plq_gap_lang), 0)` points, le rééquilibrage en comble de
+`r qz_num(min(closed))` à `r qz_num(max(closed))` point, et réduit
+l'excédent du PQ de `r qz_num(min(pq_closed))` à `r qz_num(max(pq_closed))`
+point. Pour combler l'écart du PLQ par la seule langue, il aurait fallu que
+les non-francophones forment de `r qz_pct(min(needed), 0)` à
+`r qz_pct(max(needed), 0)` des votants, alors qu'ils représentent de
+`r qz_pct(min(share_all), 0)` à `r qz_pct(max(share_all), 0)` de l'ensemble
+des répondants. Autrement dit, l'écart libéral ne tient pas seulement à un
+manque de non-francophones. Il y a lieu de croire qu'il s'agit aussi d'un
+écart à l'intérieur des groupes linguistiques, vraisemblablement chez les
+francophones : dans ces études, ou bien les électeurs libéraux manquent aux
+échantillons, ou bien ils ne déclarent pas leur vote libéral. En 2018, en
+revanche, la même correction porte le PLQ légèrement au-delà de son
+résultat (`r pt_signed(lr("qes2018", "PLQ", "gap_rb"), 1)`). L'écart était
+faible cette année-là, et la composition linguistique pourrait en expliquer
+l'essentiel.
+
+## La pondération aide-t-elle ?
 
 ```{r fig-dissim, echo = FALSE}
 # the studies with both a weighted and an unweighted estimate
 both <- intersect(dissim$study[dissim$weighting == "weighted"], dissim$study[dissim$weighting == "unweighted"])
 both <- both[order(qz_year(both), both)]
+w_index <- dissim$index[dissim$weighting == "weighted"]
+stopifnot(sum(w_index > di("qes2008", "unweighted")) > length(w_index) / 2,
+          sum(w_index > di("qes2007_panel", "unweighted")) > length(w_index) / 2)
 d <- dissim[dissim$study %in% both, ]
 d$row <- factor(qz_study_label(d$study), levels = rev(qz_study_label(both)))
 wide <- merge(d[d$weighting == "weighted", c("row", "index")], d[d$weighting == "unweighted", c("row", "index")],
@@ -226,8 +456,8 @@ tab_dissim <- setNames(data.frame(
 ), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Weighting", "Pondération"),
      tr("Index of dissimilarity (points)", "Indice de dissimilarité (points)")))
 alt <- sprintf(tr(
-  "Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from %s to %s points and 2022 from %s to %s, and moves 2014 from %s to %s. Values in the table view, with the studies that have no reviewed weight.",
-  "Graphique en haltères, une rangée par étude qui a les deux estimations (2007 à 2022) : l'indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré (anneau creux) et pondéré (point plein). La pondération fait passer 2012 de %s à %s points et 2022 de %s à %s, et 2014 de %s à %s. Valeurs dans la vue en tableau, avec les études sans pondération révisée."),
+  "Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from %s to %s points and 2022 from %s to %s, and moves 2014 from %s to %s. Values in the table view, with the unweighted studies.",
+  "Graphique en haltères, une rangée par étude qui a les deux estimations (2007 à 2022) : l'indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré (anneau creux) et pondéré (point plein). La pondération fait passer 2012 de %s à %s points et 2022 de %s à %s, et 2014 de %s à %s. Valeurs dans la vue en tableau, avec les études non pondérées."),
   qz_num(di("qes2012", "unweighted")), qz_num(di("qes2012", "weighted")),
   qz_num(di("qes2022", "unweighted")), qz_num(di("qes2022", "weighted")),
   qz_num(di("qes2014", "unweighted")), qz_num(di("qes2014", "weighted")))
@@ -235,30 +465,34 @@ qz_figure(fig_dissim, "dissim",
   title = sprintf(tr("Weighting cuts the 2012 error from %s to %s points, but does not bring every study closer to the result",
                      "La pondération réduit l'erreur de 2012 de %s à %s points, mais ne rapproche pas chaque étude du résultat"),
                   qz_num(di("qes2012", "unweighted"), 0), qz_num(di("qes2012", "weighted"), 0)),
-  subtitle = tr("Index of dissimilarity between the reported and the official vote, unweighted and weighted, for the studies with a reviewed weight",
-                "Indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré et pondéré, pour les études dont la pondération est révisée"),
+  subtitle = tr("Index of dissimilarity between the reported and the official vote, unweighted and weighted",
+                "Indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré et pondéré"),
   alt = alt, table = tab_dissim, height = 3.2,
-  note = tr("Source: qesR, pooled vote_choice (reported vote); official results of Élections Québec. Index of dissimilarity: half the sum over parties of the absolute difference between the reported and the official share, in points (0: identical; the share of voters that would have to change party). A party a study did not list counts in its Other. The 2008 study and the 2007 and 2012 panels have no reviewed weight: their unweighted index is in the table view.",
-            "Source : qesR, variable regroupée vote_choice (vote déclaré) ; résultats officiels d'Élections Québec. Indice de dissimilarité : la moitié de la somme, sur les partis, de l'écart absolu entre la part déclarée et la part officielle, en points (0 : identiques ; la part des votants qui devraient changer de parti). Un parti qu'une étude ne proposait pas compte dans ses Autres. L'étude de 2008 et les panels de 2007 et 2012 n'ont pas de pondération révisée : leur indice non pondéré est dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies and Durand panels, reported vote; official results of Élections Québec. Index of dissimilarity: half the sum, over parties, of the absolute difference between the reported and the official share, in points. It is the share of respondents who would have to change party for the survey to match the result (0: identical). A party a study did not list counts in its Other. The unweighted studies (2008, and the 2007 and 2012 panels) are in the table view.",
+            "Source : Études électorales québécoises et panels Durand, vote déclaré ; résultats officiels d'Élections Québec. Indice de dissimilarité : la moitié de la somme, sur les partis, de l'écart absolu entre la part déclarée et la part officielle, en points. C'est la part des répondants qui devraient changer de parti pour que l'enquête donne le résultat (0 : identiques). Un parti qu'une étude ne proposait pas compte dans ses Autres. Les études non pondérées (2008, et les panels de 2007 et 2012) sont dans la vue en tableau."))
 ```
 
-À remarquer :
+Si la langue explique peu, on ne peut guère attendre davantage de la
+pondération, qui ajuste l'échantillon au recensement, et non au vote.
+L'indice de dissimilarité permet de le vérifier : il donne la part des
+répondants qui devraient changer de parti pour que l'enquête reproduise le
+résultat. La pondération rapproche les études de 2012 et de 2022 du
+résultat : l'indice y recule de
+`r qz_num(di("qes2012", "unweighted") - di("qes2012", "weighted"))` points
+en 2012 et de
+`r qz_num(di("qes2022", "unweighted") - di("qes2022", "weighted"))` point
+en 2022. Elle éloigne en revanche légèrement l'étude de 2014. Notons
+toutefois que l'indice demeure entre
+`r qz_num(min(dissim$index[dissim$weighting == "weighted"]))` et
+`r qz_num(max(dissim$index[dissim$weighting == "weighted"]))` points dans
+les études pondérées, et que deux études non pondérées, celle de 2008 et
+le panel de 2007, font mieux que la plupart d'entre elles
+(`r qz_num(di("qes2008", "unweighted"))` et
+`r qz_num(di("qes2007_panel", "unweighted"))` points). Une pondération
+fondée sur les totaux du recensement ne rend donc pas, à elle seule, le
+vote déclaré d'une étude plus exact.
 
-- La pondération rapproche 2012 et 2022 du résultat officiel, de
-  `r qz_num(di("qes2012", "unweighted") - di("qes2012", "weighted"))` et
-  `r qz_num(di("qes2022", "unweighted") - di("qes2022", "weighted"))` points, et
-  éloigne légèrement 2014 : elle ajuste l'échantillon aux marges du
-  recensement, pas au vote.
-- L'étude de 2008 et le panel 2007, non pondérés, à
-  `r qz_num(di("qes2008", "unweighted"))` et
-  `r qz_num(di("qes2007_panel", "unweighted"))` points, sont plus proches du
-  résultat officiel que la plupart des études pondérées (de
-  `r qz_num(min(dissim$index[dissim$weighting == "weighted" & dissim$study != "qes2018"]))` à
-  `r qz_num(max(dissim$index[dissim$weighting == "weighted"]))` ; seule celle
-  de 2018 les égale, à `r qz_num(di("qes2018", "weighted"))`) : pondérer aux
-  marges du recensement ne garantit pas un vote plus juste.
-
-## Deux ans et demi de sondages CROP autour de l'élection de 2008
+## Avant le vote : l'ampleur des mouvements d'intention
 
 ```{r fig-crop, echo = FALSE}
 crop_parties <- c("PLQ", "PQ", "ADQ", "QS")
@@ -270,20 +504,39 @@ d <- do.call(rbind, lapply(split(d, d$party), function(g) {
   g$smooth <- vapply(g$x, function(t) mean(g$pct[abs(g$x - t) <= 46]), numeric(1))
   g
 }))
-election <- as.numeric(as.Date("2008-12-08"))
+election_date <- as.Date(h$election_date[h$study == "qes2008"][1])
+election <- as.numeric(election_date)
+months <- tr(c("Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."),
+             c("janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."))
+day_lab <- function(x) paste(as.integer(format(x, "%d")), months[as.integer(format(x, "%m"))], format(x, "%Y"))
+month_lab <- function(x) paste(months[as.integer(format(x, "%m"))], format(x, "%Y"))
+# months in full, for the prose
+months_full <- tr(month.name, c("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+                                "septembre", "octobre", "novembre", "décembre"))
+month_text <- function(x) paste(months_full[as.integer(format(x, "%m"))], format(x, "%Y"))
 o <- official[official$year == 2008 & official$party %in% crop_parties, ]
 o$party <- factor(o$party, levels = crop_parties)
 last <- d[d$date == max(d$date), ]
 last$label <- qz_party_label(last$party)
 breaks <- as.Date(c("2007-07-01", "2008-01-01", "2008-07-01", "2009-01-01", "2009-07-01", "2010-01-01"))
-month_lab <- function(x) paste(tr(c("Jan.", "Jul."), c("janv.", "juil."))[ifelse(format(x, "%m") == "01", 1, 2)], format(x, "%Y"))
-pv <- function(date, p) polls$pct[format(polls$date, "%Y-%m") == date & polls$level == p]
+pv <- function(date, p, col = "pct") polls[[col]][format(polls$date, "%Y-%m") == date & polls$level == p]
+# the last poll before the election, and the range of each party's monthly intentions before it
+before <- polls[polls$date < election_date & polls$level %in% crop_parties, ]
+last_poll <- format(max(before$date), "%Y-%m")
+n_polls <- length(unique(polls$group))
+stopifnot(ov(2008, "PLQ") >= pv(last_poll, "PLQ", "lo"), ov(2008, "PLQ") <= pv(last_poll, "PLQ", "hi"),
+          pv("2008-06", "PQ") > pv("2008-06", "PLQ"), pv("2008-05", "PLQ") > pv("2008-05", "PQ"),
+          abs(gap("qes2008", "PLQ")) > abs(pv(last_poll, "PLQ") - ov(2008, "PLQ")))
+# the polls' samples by region: the Québec City area was over-sampled by design
+crop_reg <- qes_harmonize(studies = "qes_crop_2007_2010", targets = "region_cma3", quiet = TRUE)
+quebec_cma <- 100 * mean(crop_reg$region_cma3 == "Quebec CMA", na.rm = TRUE)
+stopifnot(quebec_cma > 15)
 
 fig_crop <- function(mode) {
   k <- qz_tokens[[mode]]
   ggplot(d, aes(x, colour = party, group = party)) +
     geom_vline(xintercept = election, colour = k$axis, linewidth = 0.35) +
-    annotate("text", x = election, y = 57, label = tr("Election, 8 Dec. 2008", "Élection, 8 déc. 2008"),
+    annotate("text", x = election, y = 57, label = paste(tr("Election,", "Élection,"), day_lab(election_date)),
              hjust = -0.04, size = 3, colour = k$ink2, family = qz_font()) +
     geom_line(aes(y = pct), linewidth = 0.35, alpha = 0.45, show.legend = FALSE) +
     geom_line(aes(y = smooth), linewidth = 0.8, lineend = "round", linejoin = "round") +
@@ -293,7 +546,7 @@ fig_crop <- function(mode) {
                   min_gap = 2.6, nudge_x = 60) +
     scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1)) +
     scale_party(mode, aesthetics = "fill") +
-    scale_shape_manual(values = c(official = 23), labels = c(official = tr("Official result, 8 Dec. 2008", "Résultat officiel, 8 déc. 2008")),
+    scale_shape_manual(values = c(official = 23), labels = c(official = paste(tr("Official result,", "Résultat officiel,"), day_lab(election_date))),
                        guide = guide_legend(order = 2, override.aes = list(fill = k$ink2, colour = k$surface, size = 3))) +
     scale_x_continuous(breaks = as.numeric(breaks), labels = month_lab(breaks), expand = expansion(add = c(15, 110))) +
     scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, 10), labels = qz_pct_axis, expand = expansion(0)) +
@@ -313,51 +566,132 @@ tab_crop <- setNames(data.frame(
   row.names = NULL
 ), c(tr("Poll (month)", "Sondage (mois)"), tr("Party", "Parti"),
      tr("Intention, % [95% CI]", "Intention, % [IC à 95 %]"), "n"))
+first_poll <- format(min(polls$date), "%Y-%m")
 alt <- sprintf(tr(
-  "Line chart of monthly CROP vote intentions from June 2007 to January 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 December 2008 and the official results as diamonds. The ADQ falls from %s in June 2007 to %s in November 2008; the PLQ is at %s in the last poll before the election and took %s; the PQ leads in March to May and in October 2009. Values in the table view.",
-  "Graphique linéaire des intentions de vote mensuelles de CROP de juin 2007 à janvier 2010 pour le PLQ, le PQ, l'ADQ et QS, chacune en moyenne sur trois mois par-dessus les valeurs mensuelles en pâle, avec une ligne à l'élection du 8 décembre 2008 et les résultats officiels en losanges. L'ADQ passe de %s en juin 2007 à %s en novembre 2008 ; le PLQ est à %s au dernier sondage avant l'élection et a obtenu %s ; le PQ mène de mars à mai et en octobre 2009. Valeurs dans la vue en tableau."),
-  qz_pct(pv("2007-06", "ADQ"), 0), qz_pct(pv("2008-11", "ADQ"), 0), qz_pct(pv("2008-11", "PLQ"), 0), qz_pct(ov(2008, "PLQ"), 0))
+  "Line chart of monthly CROP vote intentions from %s to %s for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of %s and the official results as diamonds. The ADQ falls from %s in the first poll to %s in the last poll before the election; the PLQ is at %s in that poll and took %s. Values in the table view.",
+  "Graphique linéaire des intentions de vote mensuelles de CROP de %s à %s pour le PLQ, le PQ, l'ADQ et QS, chacune en moyenne sur trois mois par-dessus les valeurs mensuelles en pâle, avec une ligne à l'élection du %s et les résultats officiels en losanges. L'ADQ passe de %s au premier sondage à %s au dernier sondage avant l'élection ; le PLQ est à %s dans ce sondage et a obtenu %s. Valeurs dans la vue en tableau."),
+  month_lab(min(polls$date)), month_lab(max(polls$date)), day_lab(election_date),
+  qz_pct(pv(first_poll, "ADQ"), 0), qz_pct(pv(last_poll, "ADQ"), 0), qz_pct(pv(last_poll, "PLQ"), 0), qz_pct(ov(2008, "PLQ"), 0))
 qz_figure(fig_crop, "crop",
-  title = sprintf(tr("The ADQ fell from %s to %s before the 2008 election; the PLQ led from August 2008, and the PQ passed it in 2009",
-                     "L'ADQ est passée de %s à %s avant l'élection de 2008 ; le PLQ a mené à partir d'août 2008, et le PQ l'a dépassé en 2009"),
-                  qz_pct(pv("2007-06", "ADQ"), 0), qz_pct(pv("2008-11", "ADQ"), 0)),
-  subtitle = tr("Monthly vote intentions in the CROP polls, June 2007 to January 2010: three-month means over the monthly values, and the official result",
-                "Intentions de vote mensuelles des sondages CROP, de juin 2007 à janvier 2010 : moyennes sur trois mois par-dessus les valeurs mensuelles, et résultat officiel"),
+  title = sprintf(tr("The ADQ fell from %s to %s before the 2008 election; the last poll had the PLQ at %s, and it took %s",
+                     "L'ADQ est passée de %s à %s avant l'élection de 2008 ; le dernier sondage plaçait le PLQ à %s, et il a obtenu %s"),
+                  qz_pct(pv(first_poll, "ADQ"), 0), qz_pct(pv(last_poll, "ADQ"), 0),
+                  qz_pct(pv(last_poll, "PLQ"), 0), qz_pct(ov(2008, "PLQ"), 0)),
+  subtitle = sprintf(tr("Monthly vote intentions in the CROP polls, %s to %s: three-month means over the monthly values, and the official result",
+                        "Intentions de vote mensuelles des sondages CROP, de %s à %s : moyennes sur trois mois par-dessus les valeurs mensuelles, et résultat officiel"),
+                     month_lab(min(polls$date)), month_lab(max(polls$date))),
   alt = alt, table = tab_crop, height = 4.2,
-  note = tr("Source: qesR, pooled vote_choice of the CROP polls (the intention, with the undecided pushed where the poll pushed them), about 1,000 respondents a month, among those who named a party. Unweighted: the polls' weight (XPOND) is under review. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95% confidence intervals (logit) of every poll are in the table view. Diamonds: official results of 8 December 2008.",
-            "Source : qesR, variable regroupée vote_choice des sondages CROP (l'intention, avec relance des indécis là où le sondage les a relancés), environ 1 000 répondants par mois, parmi ceux qui nomment un parti. Non pondéré : la pondération des sondages (XPOND) est en révision. Lignes foncées : la moyenne des sondages à un mois et demi ou moins de chaque sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95 % (logit) de chaque sondage sont dans la vue en tableau. Losanges : résultats officiels du 8 décembre 2008."))
+  note = sprintf(tr("Source: CROP polls, vote intention (with the undecided asked which party they lean towards, where the poll asked it), about %s respondents a month, among those who named a party; official results of Élections Québec (diamonds). Unweighted. By design, the polls over-sampled the Québec City area (%s of respondents, about twice its share of the population), so these shares give it too much weight. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95%% confidence intervals of every poll are in the table view.",
+                     "Source : sondages CROP, intention de vote (avec relance des indécis sur le parti vers lequel ils penchent, là où le sondage l'a demandé), environ %s répondants par mois, parmi ceux qui nomment un parti ; résultats officiels d'Élections Québec (losanges). Non pondéré. Par construction, les sondages surreprésentent la région de Québec (%s des répondants, environ le double de son poids dans la population) ; ces parts lui accordent donc trop de poids. Lignes foncées : la moyenne des sondages à un mois et demi ou moins de chaque sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95 %% de chaque sondage sont dans la vue en tableau."),
+                 qz_num(round(stats::median(polls$n[polls$level == "PLQ"]) / 50) * 50, 0), qz_pct(quebec_cma, 0)))
 ```
 
-À remarquer :
+Une enquête postélectorale a un avantage sur un sondage : le vote sur
+lequel elle porte a déjà eu lieu. Durand et Blais (2020) distinguent à cet
+égard le simple raté (*polling miss*), lorsque des électeurs changent d'avis
+après le dernier sondage ou que les indécis se répartissent inégalement, de
+l'échec des sondages (*poll failure*), lorsque c'est la méthode qui est en
+cause. Les sondages mensuels de CROP montrent bien pourquoi la distinction
+importe. Entre `r month_text(min(polls$date))` et
+`r month_text(max(before$date))`, l'Action démocratique du Québec (ADQ),
+alors opposition officielle, passe de `r qz_pct(pv(first_poll, "ADQ"), 0)`
+à `r qz_pct(pv(last_poll, "ADQ"), 0)` des intentions de vote, et le PQ
+repasse devant le PLQ en `r month_text(as.Date("2008-06-15"))`
+(`r qz_pct(pv("2008-06", "PQ"), 0)` contre `r qz_pct(pv("2008-06", "PLQ"), 0)`).
+Le dernier sondage avant l'élection, en `r month_text(max(before$date))`,
+place le PLQ à `r qz_pct(pv(last_poll, "PLQ"), 0)` ; le parti obtient
+`r qz_pct(ov(2008, "PLQ"), 0)`, à l'intérieur de la marge d'erreur du
+sondage. L'étude de 2008, qui mesure le vote après l'élection et n'est pas
+pondérée non plus, place le PLQ à `r qz_pct(rb("qes2008", "PLQ"), 0)`, plus
+loin du résultat que le dernier sondage. Comme elle a été menée après le
+vote, des mouvements de dernière minute ne peuvent expliquer cet écart, si
+faible soit-il. Il tient à qui répond, et à ce que les répondants
+déclarent.
 
-- L'ADQ, opposition officielle après mars 2007, recule tout au long de
-  2008 et finit près de son score électoral.
-- Le PLQ mène d'août 2008 à l'élection, et son sondage de novembre 2008
-  (`r qz_pct(pv("2008-11", "PLQ"), 0)`) est proche de son résultat
-  (`r qz_pct(ov(2008, "PLQ"), 0)`). En juin 2008, le PQ était encore en tête
-  (`r qz_pct(pv("2008-06", "PQ"), 0)` contre `r qz_pct(pv("2008-06", "PLQ"), 0)`).
-- En 2009, le PQ dépasse le PLQ au printemps (de mars à mai) et en
-  octobre, et les deux sont à égalité en janvier 2010.
+## En somme
+
+La croyance selon laquelle les enquêtes sous-estiment les libéraux tient
+pour les Études électorales québécoises de 2007 à 2014, mais non par la
+suite, et la langue, suspect habituel, n'en explique que
+`r qz_num(min(closed))` à `r qz_num(max(closed))` point. Le PQ est
+surestimé dans la plupart des études, et le gagnant est plus souvent
+sous-estimé que surestimé. Notre analyse n'est toutefois pas sans limite.
+D'abord, le vote déclaré repose sur la mémoire des répondants et n'est
+mesuré que parmi ceux qui nomment un parti. Ensuite, une étude de
+`r qz_int(n_typical)` votants (la médiane des six études) comporte, avant
+pondération, une marge d'erreur pouvant atteindre `r qz_num(moe_typical)`
+points pour chaque parti, et près de `r qz_num(moe_weighted, 0)` points une
+fois la pondération prise en compte, comme le montrent les intervalles des
+vues en tableau. Surtout, la comparaison avec les résultats officiels ne
+permet pas de départager deux sources d'erreur : les électeurs qui ne
+participent pas à l'enquête, et les répondants qui ne déclarent pas leur
+vote tel qu'ils l'ont exprimé. Au Royaume-Uni, l'erreur des sondages de
+2015 tenait d'abord à des échantillons non représentatifs (Sturgis et
+collab., 2018), comme au Québec en 1998 (Durand et Blais, 1999) ; rien ici
+ne permet de dire s'il en va encore de même. Une question reste ouverte :
+l'écart de la CAQ en 2022 est-il ponctuel, ou ses électrices et électeurs
+jouent-ils désormais le rôle longtemps tenu par l'électorat libéral, celui
+d'un électorat moins enclin à répondre aux enquêtes ?
+
+## Pour aller plus loin
+
+- Atkeson, Lonna Rae. 1999. « “Sure, I Voted for the Winner!” Overreport of
+  the Primary Vote for the Party Nominee in the National Election Studies ».
+  *Political Behavior* 21 (3) : 197–215.
+  [doi:10.1023/A:1022031432535](https://doi.org/10.1023/A:1022031432535)
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+  Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election ».
+  *Revue canadienne de science politique* 58 (2) : 277–296.
+  [doi:10.1017/S0008423924000829](https://doi.org/10.1017/S0008423924000829)
+  (l'étude de 2022 : la CAQ sous-représentée, le PCQ proche de son
+  résultat)
+- Durand, Claire, et André Blais. 1999. « Why Did the Polls Go Wrong in the
+  1998 Quebec Election? The Answer from Post-Election Polls ». *Bulletin de
+  méthodologie sociologique* 62 (1) : 43–47.
+  [doi:10.1177/075910639906200105](https://doi.org/10.1177/075910639906200105)
+- Durand, Claire, et André Blais. 2020. « Quebec 2018: A Failure of the
+  Polls? ». *Revue canadienne de science politique* 53 (1) : 133–150.
+  [doi:10.1017/S0008423919000787](https://doi.org/10.1017/S0008423919000787)
+- Sturgis, Patrick, Jouni Kuha, Nick Baker, Mario Callegaro, Stephen Fisher,
+  Jane Green, Will Jennings, Benjamin E. Lauderdale et Patten Smith. 2018.
+  « An Assessment of the Causes of the Errors in the 2015 UK General
+  Election Opinion Polls ». *Journal of the Royal Statistical Society:
+  Series A* 181 (3) : 757–781.
+  [doi:10.1111/rssa.12329](https://doi.org/10.1111/rssa.12329)
+
+Sur ce site, [De deux partis à quatre](fr-realignement.html) suit le vote
+des francophones et des non-francophones depuis 1998, et
+[Validation par les résultats officiels](fr-validation.html) reprend ces
+comparaisons pour chaque étude.
 
 ## À propos des données
 
-- **Études.** Toutes les études qui ont demandé le vote déclaré après
-  l'élection, sauf les sondages de 1998, qui n'ont interrogé que des
-  francophones ; les sondages CROP pour les intentions.
-- **Variable.** `vote_choice`, le vote déclaré (`recall`) dans toutes les
-  études sauf les sondages CROP, dont les valeurs sont des intentions
-  (`intention_push`, ou `intention` là où aucune relance n'a été posée).
-  Les parts sont calculées parmi les répondants qui ont nommé un parti ;
-  ne voterait pas, n'a pas voté, ne sait pas et refus sont exclus.
+- **Études.** Les six Études électorales québécoises (de 2007 à 2022) et
+  les trois panels Durand (2007, 2012, 2018), qui ont interrogé les
+  répondants sur leur vote après l'élection. Les sondages de 1998, qui
+  n'ont interrogé que des francophones, sont laissés de côté. Les
+  `r n_polls` sondages CROP, réalisés presque chaque mois de
+  `r month_text(min(polls$date))` à `r month_text(max(polls$date))`,
+  mesurent plutôt une intention de vote.
+- **Parts.** Calculées parmi les répondants qui nomment un parti. Ceux qui
+  n'ont pas voté, ne savent pas ou refusent de répondre sont exclus. Le
+  Parti vert, Option nationale et les petits partis sont regroupés dans
+  « Autres », tout comme un parti qu'une étude ne proposait pas.
 - **Résultats officiels.** La part des votes valides de chaque parti,
-  d'Élections Québec, conservée dans le dépôt source de qesR
-  (`inst/extdata/validation/official_results.csv`). Le PV, ON et les autres
-  partis forment « Autres » ; un parti qu'une étude ne proposait pas
-  compte dans ses Autres.
-- **Pondérations.** La pondération postélectorale recommandée de chaque
-  étude, par `qes_design()` ; l'estimation non pondérée est présentée à
-  côté. L'étude de 2008, les panels Durand de 2007 et 2012 et les
-  sondages CROP sont non pondérés (pondérations en révision) ; le panel
-  2018 utilise sa pondération postélectorale révisée.
-  [Validation par les résultats officiels](fr-validation.html) fait ces
-  vérifications sur chaque étude chaque semaine.
+  selon Élections Québec.
+- **Pondérations.** La pondération postélectorale de chaque étude, qui
+  ajuste l'échantillon au recensement selon l'âge, le sexe et la langue,
+  et, d'une étude à l'autre, selon la région ou la scolarité. L'étude de
+  2008, les panels de 2007 et 2012 et les sondages CROP sont présentés
+  sans pondération (en points creux dans les graphiques). Les pondérations
+  de l'étude de 2008 sont calées sur le vote lui-même ; elles ne peuvent
+  donc pas servir à évaluer le vote déclaré.
+- **Langue.** Sont considérés comme francophones les répondants dont la
+  langue maternelle est le français. Lorsque la langue maternelle manque ou
+  est multiple, la langue parlée à la maison la remplace.
+
+Les données de cette page proviennent d'un seul appel :
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```

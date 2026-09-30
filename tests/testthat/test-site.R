@@ -36,9 +36,9 @@ site_groups <- data.frame(
   family = c("data", "studies and documents", "codebooks and search",
              "harmonization", "reproducibility", "cache", "legacy"),
   en = c("Data", "Studies and documents", "Codebooks and search",
-         "Harmonization (experimental)", "Reproducibility", "Cache", NA),
+         "Harmonization", "Reproducibility", "Cache", NA),
   fr = c("Données", "Études et documents", "Codebooks et recherche",
-         "Harmonisation (expérimental)", "Reproductibilité", "Cache", NA),
+         "Harmonisation", "Reproductibilité", "Cache", NA),
   stringsAsFactors = FALSE
 )
 

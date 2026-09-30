@@ -1081,13 +1081,13 @@
 #' only once a reviewer has signed it off (status `"stable"`); rows checked
 #' against the files but not yet signed off (status `"review"` or `"draft"`)
 #' are applied only with `include_draft = TRUE`, and a message says so. In
-#' spec 4.1.0 every row is signed off, after an automated double review
-#' against the original files and documents (not a human review; the
-#' crosswalk's `reviewed_by` says so, and `review_note` what the review
-#' corrected). The rows added in spec 4.3.0 (the push of 2022, the new
-#' targets such as satisfaction with democracy or the leader ratings) are
-#' checked against the files but not reviewed yet: they are in review, and
-#' applied only with `include_draft = TRUE`. A row's sign-off is about its content: the recommended
+#' the shipped spec every row but three is signed off, after an automated
+#' double review against the original files and documents (not a human
+#' review; the crosswalk's `reviewed_by` says so, and `review_note` what the
+#' review corrected). The three others (the strength of provincial party
+#' identification of `qes2022` and the previous provincial vote of
+#' `qes2008` and `qes2018`) are in review, and applied only with
+#' `include_draft = TRUE`. A row's sign-off is about its content: the recommended
 #' weights that still need review (those of `qes1998`, `qes2007_panel`,
 #' `qes2012_panel` and the CROP polls) do not hold the rows of their waves,
 #' but are themselves `NA` until they are reviewed (see *Weights*). A row
@@ -1351,9 +1351,12 @@
 #' correspondance n'est appliquée qu'une fois approuvée par un réviseur
 #' (statut `"stable"`) ; `include_draft = TRUE` applique aussi les lignes
 #' vérifiées mais pas encore approuvées (statut `"review"` ou `"draft"`).
-#' Dans la spécification 4.1.0, toutes les lignes sont approuvées, après
-#' une double révision automatisée sur les fichiers et documents originaux
-#' (et non une révision humaine ; la colonne `reviewed_by` le dit).
+#' Dans la spécification livrée, toutes les lignes sauf trois sont
+#' approuvées, après une double révision automatisée sur les fichiers et
+#' documents originaux (et non une révision humaine ; la colonne
+#' `reviewed_by` le dit) ; les trois autres (la force de l'identification
+#' partisane provinciale de `qes2022` et le vote provincial précédent de
+#' `qes2008` et de `qes2018`) sont en révision.
 #' L'approbation d'une ligne porte sur son contenu : les pondérations
 #' recommandées encore à réviser (celles de `qes1998`, `qes2007_panel`,
 #' `qes2012_panel` et des sondages CROP) ne retiennent pas les lignes de
@@ -1500,6 +1503,7 @@
 #'
 #' # one row per respondent and wave
 #' l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
+#' table(l$wave, l$wave_timing)
 #'
 #' # one vote choice for every study: here the reported vote of the
 #' # demonstration study (a qes2014 stand-in)
@@ -1510,11 +1514,10 @@
 #' v2 <- qes_harmonize("qes_demo", targets = "vote_choice",
 #'                     types = list(vote_choice = "intention"), quiet = TRUE)
 #'
-#' # what the review corrected in each row, and which rows are in review
+#' # which rows are signed off (stable), and which are still in review
 #' xw <- qes_spec("crosswalk")
 #' table(xw$status)
-#' head(xw[!is.na(xw$review_note), c("study", "target", "review_note")])
-#' table(l$wave, l$wave_timing)
+#' xw[xw$status == "review", c("study", "target", "source_var", "grade")]
 #' @export
 qes_harmonize <- function(studies = NULL, targets = "core", layout = c("respondent", "long"),
                           values = c("factor", "labelled", "code"), missing = c("na", "reasons"),

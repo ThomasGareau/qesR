@@ -85,9 +85,9 @@ source qesR 0.4.4 read was verified wrong in 0.5.0, and the spec has
 no row for the column in the study since), \code{"not_comparable_source"}
 (the study's only source is graded \code{not_comparable}),
 \code{"not_harmonized_yet"} or \code{"legacy_frozen"} (reason \code{"no_source"}:
-the study's question is harmonized since spec 4.3.0, in
-\code{\link[=qes_harmonize]{qes_harmonize()}}, but the legacy column keeps the \code{NA} of qesR
-0.7.1: \code{federal_pid} of \code{qes2012} and \code{language} of \code{qes2022});
+the study's question is now harmonized in \code{\link[=qes_harmonize]{qes_harmonize()}}, but
+the frozen column keeps its \code{NA}: \code{federal_pid} of \code{qes2012} and
+\code{language} of \code{qes2022});
 \code{basis}
 says in words why the column is \code{NA} in the study.
 0.5.0's \code{"blanked"} reason is gone: no value is blanked after it is
@@ -143,9 +143,9 @@ rows).
 The engine applies only the crosswalk rows signed off by a reviewer
 (status \code{stable}), as \code{\link[=qes_harmonize]{qes_harmonize()}} does by default. The rows were
 signed off after an automated double review against the original files
-and documents (not a human review); since spec 4.1.0 every reviewed row
-is signed off, and the rows added in spec 4.3.0, not reviewed yet, are
-never read (the legacy columns stay as they were). A row still in review would not be applied, and the columns it
+and documents (not a human review); a row that nobody has reviewed yet
+is never read (the legacy columns stay as they were). A row still in
+review would not be applied, and the columns it
 would fill would be \code{NA}: \code{attr(, "legacy_na_columns")} lists such
 columns with the reason \code{not_reviewed} and says why each row is held, and
 a message names them. The recommended weights that still need review
@@ -241,9 +241,8 @@ lignes). \code{attr(, "legacy_column_map")} décrit chaque colonne et
 Seules les lignes de correspondance approuvées par un réviseur (statut
 \code{stable}) sont appliquées, comme le fait \code{\link[=qes_harmonize]{qes_harmonize()}} par défaut ;
 elles ont été approuvées après une double révision automatisée sur les
-fichiers et documents originaux (et non une révision humaine), et toutes
-les lignes révisées le sont depuis la spécification 4.1.0 ; les lignes
-ajoutées dans la 4.3.0, pas encore révisées, ne sont jamais lues. Les
+fichiers et documents originaux (et non une révision humaine) ; une
+ligne que personne n'a encore révisée n'est jamais lue. Les
 colonnes d'une ligne encore
 en révision vaudraient \code{NA} ; \code{attr(, "legacy_na_columns")} les
 énumérerait avec le motif \code{not_reviewed} en disant pourquoi la ligne est

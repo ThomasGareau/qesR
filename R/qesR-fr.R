@@ -18,7 +18,7 @@
 #' | Groupe | Fonction | Rôle |
 #' |---|---|---|
 #' | Données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
-#' | Données | [get_qes_master()] | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir `NEWS`). |
+#' | Données | [get_qes_master()] | Fichier fusionné hérité : 30 colonnes harmonisées, 11 études, construit à partir des variables harmonisées. |
 #' | Études et documents | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
 #' | Études et documents | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
 #' | Études et documents | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
@@ -26,10 +26,10 @@
 #' | Codebooks et recherche | [qes_question()] | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
 #' | Codebooks et recherche | [qes_search()] | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
 #' | Codebooks et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
-#' | Harmonisation (expérimental) | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
-#' | Harmonisation (expérimental) | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
-#' | Harmonisation (expérimental) | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
-#' | Harmonisation (expérimental) | [qes_party_lineage()] | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
+#' | Harmonisation | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
+#' | Harmonisation | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne. |
+#' | Harmonisation | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
+#' | Harmonisation | [qes_party_lineage()] | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 #' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 #' | Reproductibilité | [qes_cite()] | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
@@ -40,7 +40,7 @@
 #' générée à partir de la spécification est
 #' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
-#' Les fonctions de qesR 0.4.4 (`get_codebook()`, `get_question()`,
+#' Les anciennes fonctions (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) continuent de fonctionner et ne
 #' seront pas retirées ; voir [qesR-deprecated] pour la fonction qui remplace
 #' chacune.
@@ -74,13 +74,12 @@
 #' @section Guides:
 #' `vignette("fr-demarrage", package = "qesR")` (démarrage : du code d'étude
 #' à une estimation pondérée), `vignette("fr-citations", package = "qesR")`
-#' (citations), `vignette("fr-migrer-0.7", package = "qesR")` (passer de
-#' qesR 0.4.4 à 0.7.0) et
+#' (citations), `vignette("fr-migrer-0.7", package = "qesR")` (mettre à jour du
+#' code ancien) et
 #' `vignette("fr-reference-harmonisation", package = "qesR")` (référence de
 #' l'harmonisation, générée à partir de la spécification). Le site web, <https://thomasgareau.github.io/qesR/>,
 #' offre aussi en français le catalogue des études et des exemples
-#' d'analyse construits à partir des fichiers complets (menu « Guides
-#' (FR) »).
+#' d'analyse construits à partir des fichiers complets (bouton FR/EN de la barre de navigation).
 #'
 #' @section Licence:
 #' La licence MIT de qesR (fichier `LICENSE`) couvre le code du package

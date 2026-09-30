@@ -9,18 +9,24 @@
 #   - pkgdown::check_pkgdown() passes;
 #   - every help page is in the reference index, and every vignette or
 #     article in the articles index;
-#   - the "Guides" and "Guides (FR)" menus are parallel: same length, the same
-#     separators and headings at the same places, and each French entry is the
-#     partner of the English entry at its position (the page it links to as
-#     its translation; qesR-package pairs with qesR-fr);
-#   - the English and French sections of the articles index are parallel in
-#     the same way.
+#   - the navbar is English only: every entry is an English page (an
+#     article with a French partner, the page it links to as its
+#     translation, or a page of the reference or the changelog), and the
+#     FR/EN button's script (template.includes.before_body) has a fallback
+#     map to pages of the site;
+#   - the section "En français" of the articles index lists the French home
+#     (fr-accueil), then the partner of every page of the English sections,
+#     in their order;
+#   - the French home links to every French page and to ?qesR-fr.
 # With a site directory (the output of pkgdown::build_site()) it also checks
 # the built pages:
 #   - every page named in the configuration was built, and the search index;
 #   - every internal link and image resolves to a file of the site, and every
 #     link to an anchor ("page.html#id") to an id on that page;
 #   - every article links to its partner in the other language;
+#   - on every page, the FR/EN button (as its script resolves it: the page's
+#     "Version française" / "English version" link, else the fallback map,
+#     else the other language's home) points to a page that was built;
 #   - the tables of each EN/FR article pair have the same shape, and no cell
 #     is NA on one page but not on its partner;
 #   - no page but the changelog mentions the old 40,606-row master file, and
@@ -38,6 +44,7 @@ root <- if (length(args) >= 1L) args[[1]] else "."
 site <- if (length(args) >= 2L) args[[2]] else NA_character_
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
+`%|NA|%` <- function(a, b) if (length(a) == 0L || is.na(a[1])) b else a
 problems <- character(0)
 problem <- function(...) problems <<- c(problems, sprintf(...))
 
@@ -115,61 +122,101 @@ partner_of <- function(stem) {
   sub("^.*\\(([^)]+)\\.html\\).*$", "\\1", hit[[1]])
 }
 page_of <- function(href) sub("\\.html$", "", basename(href))
-pair_of <- function(href) {
-  if (grepl("^reference/", href)) {
-    return(c("qesR-package" = "qesR-fr")[page_of(href)])
-  }
-  partner_of(page_of(href))
-}
 
-menu <- function(name) config$navbar$components[[name]]$menu
-kind <- function(item) {
-  if (!is.null(item$href)) "link" else if (grepl("^-+$", item$text)) "separator" else "heading"
-}
-en_menu <- menu("guides")
-fr_menu <- menu("guides_fr")
-if (length(en_menu) != length(fr_menu)) {
-  problem("navbar: Guides has %d entries and Guides (FR) %d", length(en_menu), length(fr_menu))
-} else {
-  for (i in seq_along(en_menu)) {
-    k_en <- kind(en_menu[[i]])
-    k_fr <- kind(fr_menu[[i]])
-    if (k_en != k_fr) {
-      problem("navbar: entry %d is a %s in Guides but a %s in Guides (FR)", i, k_en, k_fr)
-    } else if (k_en == "link") {
-      want <- pair_of(en_menu[[i]]$href)
-      got <- page_of(fr_menu[[i]]$href)
-      if (is.na(want) || !identical(unname(want), got)) {
-        problem("navbar: Guides entry %d (%s) is paired with %s in Guides (FR), not %s",
-                i, en_menu[[i]]$href, got, want)
+# The navbar: English entries only, each an article with a French partner
+# (or a page of the reference or the changelog).
+nav_items <- unlist(lapply(config$navbar$components, function(comp) {
+  if (!is.null(comp$menu)) lapply(comp$menu, `[[`, "href") else list(comp$href)
+}))
+nav_items <- nav_items[!is.na(nav_items) & !grepl("^https?://", nav_items)]
+article_stems <- sub("^articles/", "", articles)
+for (href in nav_items) {
+  if (grepl("^articles/", href)) {
+    stem <- page_of(href)
+    if (!stem %in% article_stems) {
+      problem("navbar: %s is not an article", href)
+    } else if (startsWith(stem, "fr-")) {
+      problem("navbar: %s is a French page; the navbar is English, the FR/EN button leads to French", href)
+    } else {
+      partner <- partner_of(stem)
+      if (is.na(partner) || !partner %in% article_stems) {
+        problem("navbar: %s has no French partner", href)
       }
     }
+  } else if (!grepl("^(reference|news)/", href)) {
+    problem("navbar: %s is not an article, a reference page or the changelog", href)
   }
 }
-for (href in c(vapply(en_menu, function(x) x$href %||% NA_character_, ""),
-               vapply(fr_menu, function(x) x$href %||% NA_character_, ""))) {
-  if (!is.na(href) && grepl("^articles/", href) && !page_of(href) %in% sub("^articles/", "", articles)) {
-    problem("navbar: %s is not an article", href)
+for (name in names(config$navbar$components)) {
+  if (grepl("_fr$|\\(FR\\)", paste(name, config$navbar$components[[name]]$text %||% ""))) {
+    problem("navbar: the menu '%s' is French; the FR/EN button replaces the French menus", name)
   }
 }
 
+# The FR/EN button: its script's fallback map ("page": "partner") and the
+# pages it counts as French besides articles/fr-*.
+toggle_js <- config$template$includes$before_body %||% ""
+toggle_map <- local({
+  body <- regmatches(toggle_js, regexpr("var fallback = \\{[^}]*\\}", toggle_js))
+  pairs <- regmatches(body, gregexpr('"[^"]+"\\s*:\\s*"[^"]+"', body))[[1]]
+  stats::setNames(sub('^.*:\\s*"([^"]+)"$', "\\1", pairs), sub('^"([^"]+)".*$', "\\1", pairs))
+})
+toggle_french <- local({
+  body <- regmatches(toggle_js, regexpr("var french = \\[[^]]*\\]", toggle_js))
+  gsub('"', "", regmatches(body, gregexpr('"[^"]+"', body))[[1]])
+})
+if (!grepl("qesr-lang-switch", toggle_js, fixed = TRUE) || length(toggle_map) == 0L) {
+  problem("template.includes.before_body: no FR/EN button script with a fallback map")
+}
+# pkgdown passes the script through the pandoc template of each article,
+# where "$" starts a template variable
+if (grepl("$", toggle_js, fixed = TRUE)) {
+  problem("template.includes.before_body: the script has a \"$\", which breaks the pandoc template of the articles")
+}
+# the pages of the site the map may name: articles, the home page, the
+# reference pages and the indexes
+site_pages <- c("index.html", "news/index.html", "reference/index.html", "articles/index.html",
+                paste0("reference/", topics, ".html"), paste0("articles/", article_stems, ".html"))
+for (p in unique(c(names(toggle_map), toggle_map, "articles/fr-accueil.html"))) {
+  if (!p %in% site_pages) problem("FR/EN button: its map names %s, which is not a page of the site", p)
+}
+if (!identical(unname(toggle_map["index.html"]), "articles/fr-accueil.html")) {
+  problem("FR/EN button: the home page should switch to articles/fr-accueil.html")
+}
+
+# The articles index: every English page, section by section, then the
+# section "En français" with the French home and the partners in the same
+# order.
 sections <- vapply(config$articles, `[[`, "", "title")
-en_sections <- c("Guides", "Harmonization (experimental)", "Examples")
-fr_sections <- c("Guides en français", "Harmonisation en français (expérimental)",
-                 "Exemples en français")
-for (i in seq_along(en_sections)) {
-  en <- config$articles[[match(en_sections[i], sections)]]$contents
-  fr <- config$articles[[match(fr_sections[i], sections)]]$contents
-  if (length(en) != length(fr)) {
-    problem("articles index: '%s' has %d pages and '%s' %d", en_sections[i], length(en),
-            fr_sections[i], length(fr))
-    next
+fr_section <- match("En français", sections)
+if (is.na(fr_section)) {
+  problem("articles index: no section 'En français'")
+} else {
+  en <- unlist(lapply(config$articles[-fr_section], `[[`, "contents"))
+  fr <- unlist(config$articles[[fr_section]]$contents)
+  en_fr <- en[startsWith(sub("^articles/", "", en), "fr-")]
+  for (a in en_fr) problem("articles index: the French page %s is outside the section 'En français'", a)
+  want <- c("fr-accueil", vapply(setdiff(en, en_fr), function(a) partner_of(sub("^articles/", "", a)) %|NA|% NA_character_, ""))
+  got <- sub("^articles/", "", fr)
+  if (!identical(unname(want), got)) {
+    problem("articles index: 'En français' should list %s, in that order (got %s)",
+            paste(want, collapse = ", "), paste(got, collapse = ", "))
   }
-  for (j in seq_along(en)) {
-    want <- partner_of(en[[j]])
-    if (!identical(want, sub("^articles/", "", fr[[j]]))) {
-      problem("articles index: %s is paired with %s, not %s", en[[j]], fr[[j]], want)
-    }
+}
+
+# The French home links to every French page and to ?qesR-fr.
+home_fr <- file.path(root, "vignettes", "articles", "fr-accueil.Rmd")
+if (!file.exists(home_fr)) {
+  problem("articles: no French home page (vignettes/articles/fr-accueil.Rmd)")
+} else {
+  text <- paste(enc2utf8(readLines(home_fr, encoding = "UTF-8", warn = FALSE)), collapse = "\n")
+  linked <- unique(sub("^\\]\\(([A-Za-z0-9._-]+)\\.html.*$", "\\1",
+                       regmatches(text, gregexpr("\\]\\(([A-Za-z0-9._-]+)\\.html[^)]*\\)", text))[[1]]))
+  for (a in setdiff(article_stems[startsWith(article_stems, "fr-")], c("fr-accueil", linked))) {
+    problem("articles/fr-accueil.Rmd does not link to %s.html", a)
+  }
+  if (!grepl("](../reference/qesR-fr.html)", text, fixed = TRUE)) {
+    problem("articles/fr-accueil.Rmd does not link to ../reference/qesR-fr.html")
   }
 }
 
@@ -256,6 +303,35 @@ if (!is.na(site)) {
       problem("site: articles/%s.html has no link to its translation", a)
     }
   }
+  # The FR/EN button on every page, resolved as its script does: the page's
+  # own link to its translation, else the fallback map, else the other
+  # language's home.
+  n_toggle <- 0L
+  for (file in html) {
+    doc <- xml2::read_html(file.path(site, file))
+    if (length(xml2::xml_find_all(doc, "//nav//a[contains(@class, 'navbar-brand')]")) == 0L) next
+    n_toggle <- n_toggle + 1L
+    french <- startsWith(file, "articles/fr-") || file %in% toggle_french
+    want <- if (french) "English version" else "Version fran\u00e7aise"
+    links <- xml2::xml_find_all(doc, "//main//a[@href]")
+    text <- trimws(gsub("\\s+", " ", xml2::xml_text(links)))
+    hit <- which(text == want)
+    target <- if (length(hit)) {
+      file.path(dirname(file), sub("[?#].*$", "", xml2::xml_attr(links[hit[1]], "href")))
+    } else if (!is.na(toggle_map[file])) {
+      toggle_map[[file]]
+    } else if (french) "index.html" else "articles/fr-accueil.html"
+    dest <- normalizePath(file.path(site, target), mustWork = FALSE)
+    if (!file.exists(dest)) {
+      problem("site: the FR/EN button of %s leads to %s, which was not built", file, target)
+    } else if (startsWith(dest, site)) {
+      rel <- substring(dest, nchar(site) + 2L)
+      if ((startsWith(rel, "articles/fr-") || rel %in% toggle_french) == french) {
+        problem("site: the FR/EN button of %s leads to %s, a page in the same language", file, rel)
+      }
+    }
+  }
+
   # Content parity of the tables of each EN/FR pair: the pages run the same
   # code, so a cell that is NA on one page and not on its partner means the
   # data differ by language (e.g. a question documented in one language only).
@@ -298,12 +374,12 @@ if (!is.na(site)) {
       }
     }
   }
-  cat(sprintf("Site: %d pages, %d internal links checked; tables of %d EN/FR article pairs compared.\n",
-              length(html), n_links, n_pairs))
+  cat(sprintf("Site: %d pages, %d internal links checked; FR/EN button of %d pages resolved; tables of %d EN/FR article pairs compared.\n",
+              length(html), n_links, n_toggle, n_pairs))
 }
 
 if (length(problems)) {
   cat("Website:\n", paste0("- ", problems, collapse = "\n"), "\n", sep = "")
   quit(save = "no", status = 1L)
 }
-cat("Website: configuration and pages consistent; every help page and article indexed; EN/FR menus and articles paired.\n")
+cat("Website: configuration and pages consistent; every help page and article indexed; navbar English, French pages paired and reachable.\n")

@@ -62,8 +62,8 @@ workspace unless you ask for it with \code{assign_global = TRUE}: write
 \code{qes2018 <- get_qes("qes2018")}. A real study is downloaded once per
 session, or kept between sessions with \code{options(qesR.cache = "disk")}
 (see \code{\link[=qes_cache_info]{qes_cache_info()}}). The first call in a session that leaves
-\code{assign_global} unset prints a one-time note about this change from qesR
-0.4.4; passing \code{assign_global} explicitly (TRUE or FALSE) avoids it.
+\code{assign_global} unset prints a one-time note about it; passing
+\code{assign_global} explicitly (TRUE or FALSE) avoids it.
 }
 \section{Which file is read}{
 
@@ -80,11 +80,11 @@ memory, so a second call makes no request (\code{options(qesR.memo = FALSE)}
 turns this off).
 
 The data is returned as deposited: column names, codes and missing values
-(\code{NA}) are those of the file, and no row is dropped or recoded. For qesR
-0.4.4 users, names, codes and \code{is.na()} counts are unchanged; three
-columns of \code{qes2007_panel} keep their 0.4.4 names (\code{AFFGÉN}, \code{PROPRIÉ},
-\code{PROPGÉN}). Compared with 0.4.4, accented text is no longer damaged,
-\code{qes2022} dates are date-times, and labels are those of the file (below).
+(\code{NA}) are those of the file, and no row is dropped or recoded. The one
+exception: three columns of \code{qes2007_panel} are named \code{AFFGÉN},
+\code{PROPRIÉ} and \code{PROPGÉN} (\code{AffGénérale}, \code{propriété} and \code{PropGénérale}
+in the file), the names Dataverse gives them. \code{qes2022} dates are
+date-times, and labels are those of the file (below).
 }
 
 \section{Labels and missing values}{
@@ -92,7 +92,7 @@ columns of \code{qes2007_panel} keep their 0.4.4 names (\code{AFFGÉN}, \code{PR
 Labelled columns are \code{\link[haven:labelled]{haven::labelled()}} vectors; convert one with
 \code{\link[haven:as_factor]{haven::as_factor()}}. Variable and value labels come from the data file
 itself, never from Dataverse's metadata or from a variable name. For
-\code{qes2012}, whose Stata file (the one qesR 0.4.4 read, with its lowercase
+\code{qes2012}, whose Stata file (the one read, with its lowercase
 names) has labels that Stata lowercased and cut at 80 characters, the
 complete labels of the SPSS twin of the same data are used. A few labels
 of the CROP files typed in another character set are corrected (for
@@ -101,7 +101,7 @@ only a few variables; the codebook (see \code{\link[=qes_codebook]{qes_codebook(
 from the study's questionnaire, without changing the data.
 
 Codes that an SPSS file declares as user-missing (such as 8 or 9 for "Don't
-know") are kept as values, as in qesR 0.4.4; the declaration is kept in
+know") are kept as values; the declaration is kept in
 the column attributes \code{qes_na_values} and \code{qes_na_range}. \code{\link[=qes_missing]{qes_missing()}}
 sets these codes, and the "don't know" and "refused" codes the codebook
 types, to \code{NA}.

@@ -1,6 +1,6 @@
-Spec-Version: 4.3.0
-Spec-Date: 2026-09-29
+Spec-Version: 4.3.1
+Spec-Date: 2026-09-30
 Schema-Version: 3
 Engine-Min: 0.8.0
-Hash: 506f691e420e8d5d5de3657eef556d3d
+Hash: cd62e566cd051bde5b236c3511555c91
 Licence: MIT (see the qesR LICENSE file), except the qes2022 content listed in inst/COPYRIGHTS, section 2, which is CC BY-NC 4.0; the content quoted from each study and its licence are listed in inst/COPYRIGHTS

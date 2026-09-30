@@ -7,17 +7,14 @@ params:
 *[English version](studies.html)*
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", echo = FALSE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE, echo = FALSE)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
 ```
 
-Toutes les études que qesR peut charger, avec ce que qesR fixe pour
-chacune : le dépôt et sa version, le fichier de données et sa somme de
-contrôle md5, et les documents. Cette page est produite à la construction
-du site à partir du catalogue livré avec le package
-(`inst/extdata/catalog/`) : ce sont les mêmes données que `qes_studies()`
-et `qes_docs()`. Rien n'y est recopié à la main.
+Toutes les études que qesR peut charger : leur devis, leur population,
+leur taille, leur licence et leurs documents. `qes_studies()` et
+`qes_docs()` renvoient les mêmes informations.
 
 ```{r catalog}
 library(qesR)
@@ -49,16 +46,7 @@ enum_list <- function(x) {
   if (length(x) < 2L) return(x)
   paste(paste(x[-length(x)], collapse = ", "), x[length(x)], sep = pick(" and ", " et "))
 }
-codes <- function(x) enum_list(sprintf("`%s`", x))
 other_families <- enum_list(unique(label("family", studies$family[studies$family != "qes"])))
-shared_doi <- unique(studies$doi[duplicated(studies$doi)])
-shared_deposits <- paste(vapply(shared_doi, function(x) codes(studies$study[studies$doi == x]), ""),
-                         collapse = semi)
-if (!nzchar(shared_deposits)) shared_deposits <- pick("none", "aucun")
-not_cc0 <- studies[studies$licence != "CC0 1.0", ]
-not_cc0 <- if (nrow(not_cc0)) paste0(codes(not_cc0$study), " (", enum_list(unique(not_cc0$licence)), ")") else pick("none", "aucune")
-no_metadata <- studies$study[!as.logical(studies$metadata_shipped)]
-no_metadata <- if (length(no_metadata)) codes(no_metadata) else pick("none", "aucune")
 ```
 
 ```{r overview}
@@ -78,21 +66,18 @@ knitr::kable(data.frame(
 ), align = "llllllrll")
 ```
 
-`n` est le nombre de lignes du fichier de données fixé. Les études des
-familles `r other_families` ne sont pas des Études électorales
-québécoises : elles figurent sous leur propre titre, et leurs devis et leurs
-populations diffèrent ; vérifiez les deux avant de comparer des études.
-Codes qui partagent un même dépôt : `r shared_deposits`.
-Études qui ne sont pas dans le domaine public : `r not_cc0` ; les
-métadonnées que qesR en livre gardent leur licence (le fichier `COPYRIGHTS`
-du package en donne la liste). Études dont qesR ne livre pas les
-métadonnées : `r no_metadata`.
+`n` est le nombre de répondants du fichier de données. Toutes les études
+ne sont pas des Études électorales québécoises : celles des familles
+`r other_families` figurent sous leur propre titre, et leurs devis et leurs
+populations diffèrent ; vérifiez les deux avant de comparer des études. Les
+licences, et l'attribution que demande l'étude de 2022, sont dans [Citer
+qesR et les études](fr-citations.html).
 
 ## Par étude
 
 La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents téléchargent
-le fichier depuis Dataverse ; `qes_download()` les enregistre, vérifiés par
-md5, dans un dossier de votre choix.
+le fichier depuis Dataverse ; `qes_download()` les enregistre dans un dossier
+de votre choix.
 
 ```{r by-study, results = "asis"}
 for (i in seq_len(nrow(studies))) {
@@ -106,10 +91,10 @@ for (i in seq_len(nrow(studies))) {
   cat(sprintf("- **%s**%s[%s](%s), %s, version %s%slicence [%s](%s)\n", pick("Deposit", "Dépôt"),
               colon, s$doi_url, s$doi_url, s$publisher, s$dataset_version, semi,
               label("licence", s$licence), s$licence_url))
-  cat(sprintf("- **%s**%s`%s` (%s), %s %s \u00d7 %s %s, md5 `%s`\n",
-              pick("Pinned data file", "Fichier de données fixé"), colon,
+  cat(sprintf("- **%s**%s`%s` (%s), %s %s\n",
+              pick("Data file", "Fichier de données"), colon,
               f$original_file_name, label("format", f$format), number(f$n_rows),
-              pick("rows", "lignes"), number(f$n_cols), pick("columns", "colonnes"), f$md5))
+              pick("rows", "lignes")))
   cat(sprintf("- **%s**%s%s\n", pick("Offline codebook", "Livre de codes hors ligne"), colon,
               if (as.logical(s$metadata_shipped)) {
                 paste0(pick("yes, shipped with qesR (`qes_codebook()`, `qes_search()`)",
@@ -137,4 +122,4 @@ for (i in seq_len(nrow(studies))) {
 ## Citer
 
 `qes_cite()` donne la citation de chaque étude ; voir
-[Citations des études](fr-citations.html).
+[Citer qesR et les études](fr-citations.html).

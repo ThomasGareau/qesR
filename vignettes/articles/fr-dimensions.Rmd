@@ -1,8 +1,10 @@
 ---
-title: "Deux dimensions de la concurrence : souveraineté et gauche-droite"
+title: "Deux dimensions de la concurrence : souveraineté et gauche-droite"
 description: >
-  Où se situent les électeurs de chaque parti sur la souveraineté et sur
-  l'axe gauche-droite, et pour qui votent souverainistes et fédéralistes.
+  L'axe gauche-droite a-t-il remplacé la question nationale dans les
+  élections québécoises ? Où se situent les électeurs de chaque parti sur
+  les deux axes, pour qui votent les camps du Oui et du Non, et dans quelle
+  mesure chaque axe structure encore le vote.
 params:
   lang: "fr"
 ---
@@ -16,7 +18,7 @@ source("_setup.R", encoding = "UTF-8")
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
   studies = qz_studies,
-  targets = c("vote_choice", "sov_support", "lr_self"),
+  targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
 )
@@ -47,46 +49,103 @@ where <- do.call(rbind, lapply(bar_studies, function(s) {
 }))
 where$year <- qz_year(where$study)
 where$status <- qz_party_status(where$study, where$level)
+
+# How much of the variation in each attitude lies between the parties'
+# electorates: the weighted share of the variance accounted for by the
+# vote (eta squared), for the referendum vote (Yes = 1, No = 0) and for
+# the left-right placement, among the same respondents (those who answered
+# both and voted for a listed party). The 95% intervals come from 500
+# bootstrap replicates of each study's design.
+eta2 <- function(y, g, w) {
+  m <- sum(w * y) / sum(w)
+  wg <- tapply(w, g, sum)
+  mg <- tapply(w * y, g, sum) / wg
+  sum(wg * (mg - m)^2, na.rm = TRUE) / sum(w * (y - m)^2)
+}
+sorting <- do.call(rbind, lapply(dim_studies, function(s) {
+  x <- h[h$study == s & h$party %in% setdiff(qz_parties, "other") & !is.na(h$yes) & !is.na(h$lr_self), ]
+  x <- x[qz_party_status(s, as.character(x$party)) == "offered", ]
+  x$y_sov <- as.numeric(x$yes == "yes")
+  groups <- list(all = rep(TRUE, nrow(x)), fr = x$lang_mother %in% "French")
+  do.call(rbind, lapply(names(groups), function(g) {
+    do.call(rbind, lapply(c(FALSE, TRUE), function(no_pcq) {
+      xx <- x[groups[[g]] & !(no_pcq & x$party %in% "PCQ"), ]
+      xx$party <- droplevels(xx$party)
+      set.seed(2012)
+      r <- survey::as.svrepdesign(qz_design(xx, s, "weight_post"), type = "subbootstrap", replicates = 500)
+      est <- survey::withReplicates(r, function(w, data) {
+        c(eta2(data$y_sov, data$party, w), eta2(data$lr_self, data$party, w))
+      })
+      se <- sqrt(diag(as.matrix(attr(est, "var"))))
+      data.frame(study = s, group = g, no_pcq = no_pcq, measure = c("sov", "lr"),
+                 est = 100 * as.numeric(est), lo = 100 * (as.numeric(est) - 1.96 * se),
+                 hi = 100 * (as.numeric(est) + 1.96 * se), n = nrow(xx),
+                 weighted = qz_weighted(xx, s, "weight_post"))
+    }))
+  }))
+}))
+sorting$year <- qz_year(sorting$study)
+
 ev <- function(s, p, col = "yes") electorates[[col]][electorates$study == s & electorates$party == p]
 wv <- function(s, g, p) where$pct[where$study == s & where$group == g & where$level == p]
+sv <- function(s, m, g = "all", no_pcq = FALSE) {
+  sorting$est[sorting$study == s & sorting$measure == m & sorting$group == g & sorting$no_pcq == no_pcq]
+}
+# for the prose: a gap between two values rounded as the text shows them, so
+# that the gap agrees with the figures cited next to it
+rgap <- function(a, b, digits = 0) round(a, digits) - round(b, digits)
+# the share of each study's respondents who placed themselves on the
+# left-right scale (the 2022 item offered no "don't know")
+lr_answered <- vapply(dim_studies, function(s) 100 * mean(!is.na(h$lr_self[h$study == s])), numeric(1))
+# official results, share of valid votes
+off <- function(y, p) qz_official()$share_valid[qz_official()$year == y & qz_official()$party == p]
 ```
 
-Pendant quarante ans, le PQ et le PLQ ont divisé le Québec sur la
-question nationale. Les Études électorales québécoises montrent que cet
-axe ne classe plus les partis comme avant. En 2012,
-`r qz_pct(ev("qes2012", "PQ"), 0)` des électeurs du PQ auraient voté Oui à
-un pays indépendant, contre `r qz_pct(ev("qes2012", "PLQ"), 0)` de ceux du
-PLQ. En 2022, le vote pour le Oui était divisé : le PQ en a obtenu
-`r qz_pct(wv("qes2022", "yes", "PQ"), 0)`, Québec solidaire
-`r qz_pct(wv("qes2022", "yes", "QS"), 0)` et la CAQ
-`r qz_pct(wv("qes2022", "yes", "CAQ"), 0)`, alors qu'en 2012 le PQ seul en
-obtenait `r qz_pct(wv("qes2012", "yes", "PQ"), 0)`. Sur l'axe gauche-droite,
-les électeurs de Québec solidaire sont les plus à gauche
-(`r qz_num(ev("qes2022", "QS", "lr"))` sur 10 en 2022) et ceux des
-conservateurs les plus à droite (`r qz_num(ev("qes2022", "PCQ", "lr"))`).
+Pendant une quarantaine d'années, la question nationale a structuré la
+concurrence partisane au Québec. Le Parti québécois (PQ) portait le projet
+souverainiste, le Parti libéral du Québec (PLQ) défendait le fédéralisme,
+et la position d'un électeur sur l'indépendance permettait de prévoir en
+bonne partie son vote (Bélanger et al., 2018). La montée de la Coalition
+avenir Québec (CAQ) et de Québec solidaire (QS), puis la victoire de la CAQ
+en 2018, ont brouillé ce portrait. Selon une croyance désormais répandue,
+dont témoignent les travaux récents sur le nouveau système partisan
+(Bélanger et Mahéo, 2020 ; Bélanger et al., 2022), l'axe souverainiste
+s'est estompé et un axe gauche-droite a pris sa place, le PQ se trouvant
+coincé entre un parti nationaliste qui a mis le référendum de côté et un
+parti souverainiste de gauche. Dans cette page, nous examinons si les
+Études électorales québécoises confirment cette lecture. La question
+nationale a-t-elle cessé de structurer le vote des électrices et des
+électeurs du Québec, et l'axe gauche-droite a-t-il pris le relais ?
 
-## Les données
+Notre verdict est ambivalent. D'une part, la question nationale structure
+beaucoup moins le vote. En 2012, le choix partisan était lié à
+`r qz_num(sv("qes2012", "sov"), 0)` % de la variation du vote référendaire
+(savoir pour quel parti un répondant avait voté nous apprenait
+`r qz_num(sv("qes2012", "sov"), 0)` % de ce qu'il y avait à savoir de son
+vote référendaire) ; en 2022, à `r qz_num(sv("qes2022", "sov"), 0)` %.
+D'autre part, l'axe gauche-droite n'a pas pris le relais : le choix
+partisan était lié à `r qz_num(sv("qes2012", "lr"), 0)` % de la variation
+de l'autopositionnement gauche-droite en 2012 et à
+`r qz_num(sv("qes2022", "lr"), 0)` % en 2022. Si l'on met de côté les
+électeurs du Parti conservateur du Québec (PCQ), qui est passé de
+`r qz_num(off(2018, "PCQ"), 1)` % des votes en 2018 à
+`r qz_num(off(2022, "PCQ"), 1)` % en 2022, cette part tombe à
+`r qz_num(sv("qes2022", "lr", no_pcq = TRUE), 0)` %. Autrement dit, la
+question nationale a perdu du terrain sans être remplacée. Elle sépare
+pourtant toujours aussi nettement les deux partis historiques : en 2022,
+`r qz_num(ev("qes2022", "PQ"), 0)` % des électeurs du PQ auraient voté Oui,
+contre `r qz_num(ev("qes2022", "PLQ"), 0)` % de ceux du PLQ.
 
-Trois variables harmonisées : le vote déclaré regroupé, le vote
-référendaire regroupé (`sov_support`) et l'autopositionnement sur l'axe
-gauche-droite (`lr_self`, de 0 à 10) :
+Nous utilisons trois questions posées, sous une forme semblable, dans
+chaque Étude électorale québécoise de 2012 à 2022 : le vote déclaré après
+l'élection, le vote à un référendum sur l'indépendance et
+l'autopositionnement de la personne sur une échelle gauche-droite, de 0
+(gauche) à 10 (droite). La langue maternelle permet d'examiner les
+francophones séparément. Dans les Études électorales québécoises utilisées
+ici, la question référendaire remonte à 2007 ; la deuxième figure commence
+donc à cette date. La fin de la page montre comment reproduire les figures.
 
-```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
-```
-
-`lr_self` a été demandé dans les Études électorales québécoises de 2012 à
-2022 ; en 2022, lui et la question référendaire ont été posés pendant la
-campagne, le vote déclaré après l'élection : la page garde donc les
-répondants des deux vagues et les pondère avec la pondération
-postélectorale. Pour un parti dans une étude :
-
-```{r example}
-d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
-svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
-      svymean, na.rm = TRUE)
-```
-
-## Les électorats sur deux axes, de 2012 à 2022
+## Les pôles ont tenu, les nouveaux venus se sont rapprochés
 
 ```{r fig-paths, echo = FALSE}
 path_parties <- c("PLQ", "PQ", "CAQ", "QS", "PCQ")
@@ -146,33 +205,53 @@ qz_figure(fig_paths, "paths",
   subtitle = tr("Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals",
                 "Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, de 2012 à 2022, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_paths, height = 4.2,
-  note = tr("Source: qesR, pooled vote_choice (reported vote) and sov_support (independence), lr_self; QES 2012, 2014, 2018 and 2022, weighted with each study's post-election weight. The parties are set side by side at each election. Lines: 95% confidence intervals (logit for the share, Wald for the mean). The two panels have their own scales. The PCQ was listed in 2022 only.",
-            "Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support (indépendance), lr_self ; EEQ 2012, 2014, 2018 et 2022, pondérées avec la pondération postélectorale de chaque étude. Les partis sont côte à côte à chaque élection. Traits : intervalles de confiance à 95 % (logit pour la part, Wald pour la moyenne). Les deux panneaux ont leur propre échelle. Le PCQ n'était proposé qu'en 2022."))
+  note = tr("Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Reported vote after the election; referendum vote among respondents who chose Yes or No. The parties are set side by side at each election, and the two panels have their own scales. The PCQ was offered as an answer in 2022 only.",
+            "Source : Études électorales québécoises de 2012, 2014, 2018 et 2022, pondérées. Vote déclaré après l'élection ; vote référendaire parmi les répondants qui ont choisi Oui ou Non. Les partis sont côte à côte à chaque élection, et les deux panneaux ont leur propre échelle. Le PCQ n'était proposé comme réponse qu'en 2022."))
 ```
 
-À remarquer :
+Deux constats s'imposent. D'abord, les deux pôles historiques n'ont pas
+bougé sur la question nationale. Les électeurs du PQ demeurent massivement
+souverainistes (`r qz_num(ev("qes2012", "PQ"), 0)` % voteraient Oui en
+2012, `r qz_num(ev("qes2022", "PQ"), 0)` % en 2022) et ceux du PLQ, presque
+unanimement fédéralistes (`r qz_num(ev("qes2012", "PLQ"), 0)` % et
+`r qz_num(ev("qes2022", "PLQ"), 0)` %). Ensuite, les deux partis plus
+récents se sont rapprochés l'un de l'autre. La part de Oui chez les
+électeurs de la CAQ passe de `r qz_num(ev("qes2012", "CAQ"), 0)` % en 2012 à
+`r qz_num(ev("qes2022", "CAQ"), 0)` % en 2022, et celle des électeurs de QS,
+de `r qz_num(ev("qes2012", "QS"), 0)` % à `r qz_num(ev("qes2022", "QS"), 0)` %.
+La CAQ tire maintenant une bonne partie de ses appuis de souverainistes.
+Fait étonnant pour un parti souverainiste, une majorité des électeurs de QS
+(`r qz_num(rgap(100, ev("qes2022", "QS")), 0)` %) voteraient désormais Non.
+Précisons que l'estimation de 2012 ne repose que sur
+`r ev("qes2012", "QS", "yes_n")` répondants et que son intervalle est large
+(de `r qz_num(ev("qes2012", "QS", "yes_lo"), 0)` % à
+`r qz_num(ev("qes2012", "QS", "yes_hi"), 0)` %).
 
-- Les électeurs du PQ et de QS sont les souverainistes ; ceux du PLQ sont
-  presque tous fédéralistes à chaque élection
-  (`r qz_pct(ev("qes2022", "PLQ"), 0)` de Oui en 2022).
-- Les deux partis les plus récents se sont rapprochés sur la
-  souveraineté : les électeurs de la CAQ passent de
-  `r qz_pct(ev("qes2012", "CAQ"), 0)` de Oui en 2012 à
-  `r qz_pct(ev("qes2022", "CAQ"), 0)` en 2022, ceux de QS de
-  `r qz_pct(ev("qes2012", "QS"), 0)` à `r qz_pct(ev("qes2022", "QS"), 0)`.
-- Les électeurs du PLQ se sont déplacés vers la gauche, de
-  `r qz_num(ev("qes2012", "PLQ", "lr"))` à `r qz_num(ev("qes2022", "PLQ", "lr"))` ;
-  les électeurs à droite du centre sont maintenant ceux de la CAQ et du
-  PCQ.
-- Les électeurs du PQ et de QS sont proches sur l'axe gauche-droite
-  (`r qz_num(ev("qes2012", "PQ", "lr") - ev("qes2012", "QS", "lr"))` point
-  d'écart en 2012, `r qz_num(ev("qes2022", "PQ", "lr") - ev("qes2022", "QS", "lr"))`
-  en 2022), mais leur écart sur la souveraineté est passé de
-  `r qz_num(ev("qes2012", "PQ") - ev("qes2012", "QS"), 0)` à
-  `r qz_num(ev("qes2022", "PQ") - ev("qes2022", "QS"), 0)` points : la
-  question nationale les sépare maintenant plus que l'axe gauche-droite.
+Sur l'axe gauche-droite, les mouvements sont plus modestes, à une exception
+près. Les électeurs de QS sont les plus à gauche à chaque élection
+(`r qz_num(ev("qes2022", "QS", "lr"))` sur 10 en 2022) et ceux du PCQ, les
+plus à droite (`r qz_num(ev("qes2022", "PCQ", "lr"))`). L'exception est le
+PLQ : ses électeurs passent de `r qz_num(ev("qes2012", "PLQ", "lr"))` en
+2012 à `r qz_num(ev("qes2022", "PLQ", "lr"))` en 2022. En 2022, ils se
+situent à gauche des électeurs de la CAQ
+(`r qz_num(ev("qes2022", "CAQ", "lr"))`), près de ceux du PQ
+(`r qz_num(ev("qes2022", "PQ", "lr"))`). Cette estimation repose sur
+`r ev("qes2022", "PLQ", "lr_n")` répondants, et la question de 2022 avait
+un autre libellé (voir [À propos des données](#à-propos-des-données)) ;
+l'ampleur du déplacement est donc à prendre avec prudence. La droite de
+l'échiquier revient désormais à la CAQ et au PCQ. Notons cependant ce qui
+s'est passé entre les deux partis souverainistes. Leurs électeurs sont
+proches sur l'axe gauche-droite (un écart de
+`r qz_num(rgap(ev("qes2012", "PQ", "lr"), ev("qes2012", "QS", "lr"), 1))`
+sur l'échelle de 0 à 10 en 2012, de
+`r qz_num(rgap(ev("qes2022", "PQ", "lr"), ev("qes2022", "QS", "lr"), 1))`
+en 2022), alors que leur écart sur la souveraineté est passé de
+`r qz_num(rgap(ev("qes2012", "PQ"), ev("qes2012", "QS")), 0)` à
+`r qz_num(rgap(ev("qes2022", "PQ"), ev("qes2022", "QS")), 0)` points de
+pourcentage. Ce qui distingue aujourd'hui l'électorat du PQ de celui de QS,
+c'est davantage la question nationale que l'axe gauche-droite.
 
-## Pour qui votent souverainistes et fédéralistes
+## Les électeurs du Oui se partagent désormais entre trois partis
 
 ```{r fig-where, echo = FALSE}
 line_parties <- c("PLQ", "PQ", "ADQ", "QS", "CAQ", "PCQ")
@@ -208,7 +287,7 @@ fig_where <- function(mode) {
     scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1, nrow = 1)) +
     scale_party(mode, aesthetics = "fill") +
     scale_shape_manual(values = c(weighted = 21, unweighted = 21), limits = c("weighted", "unweighted"),
-                       breaks = "unweighted", labels = tr("hollow: unweighted (2008, weight under review)", "creux : non pondéré (2008, pondération en révision)"),
+                       breaks = "unweighted", labels = tr("hollow: 2008, unweighted", "creux : 2008, non pondéré"),
                        guide = guide_legend(order = 2, override.aes = list(fill = k$surface, colour = k$ink2, stroke = 1.1, size = 2.6,
                                                                           alpha = 1, linetype = 0))) +
     geom_point(data = d[1, ], aes(shape = "unweighted"), alpha = 0, colour = NA, show.legend = c(colour = FALSE, shape = TRUE)) +
@@ -240,50 +319,270 @@ alt <- sprintf(tr(
   qz_pct(wv("qes2022", "yes", "QS"), 0), qz_pct(wv("qes2022", "yes", "CAQ"), 0),
   qz_pct(wv("qes2012", "no", "PLQ"), 0), qz_pct(wv("qes2022", "no", "PLQ"), 0))
 qz_figure(fig_where, "where",
-  title = sprintf(tr("The PQ's share of the Yes vote fell from %s to %s as QS and the CAQ took it; the No vote fragmented",
-                     "La part du PQ chez les électeurs du Oui est passée de %s à %s au profit de QS et de la CAQ ; le vote pour le Non s'est fragmenté"),
+  title = sprintf(tr("The PQ's share of the Yes vote fell from %s to %s as QS and the CAQ took it; No voters spread across more parties",
+                     "La part du PQ chez les électeurs du Oui est passée de %s à %s au profit de QS et de la CAQ ; les électeurs du Non se sont dispersés entre davantage de partis"),
                   qz_pct(wv("qes2012", "yes", "PQ"), 0), qz_pct(wv("qes2022", "yes", "PQ"), 0)),
   subtitle = tr("How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals",
                 "Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_where, height = 4.2,
-  note = tr("Source: qesR, pooled vote_choice (reported vote) and sov_support; QES 2007 to 2022, weighted with each study's post-election weight except 2008 (hollow: unweighted, weight under review). 2007 and 2008 asked the 1995 question, 2012 to 2022 about an independent country, so the lines break at the change. Lines: 95% confidence intervals (logit). The other parties (PV, ON and others) are in the table view.",
-            "Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support ; EEQ 2007 à 2022, pondérées avec la pondération postélectorale de chaque étude sauf 2008 (creux : non pondérée, pondération en révision). 2007 et 2008 ont posé la question de 1995, 2012 à 2022 la question sur un pays indépendant : les lignes s'interrompent au changement. Traits : intervalles de confiance à 95 % (logit). Les autres partis (PV, ON et autres) sont dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.",
+            "Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau."))
 ```
 
-À remarquer :
+Nous passons maintenant de la position des électeurs de chaque parti au
+choix des électeurs de chaque camp. En 2012, le PQ obtenait
+`r qz_num(wv("qes2012", "yes", "PQ"), 0)` % du vote déclaré des répondants
+qui voteraient Oui ; en 2022, il en obtenait
+`r qz_num(wv("qes2022", "yes", "PQ"), 0)` %, à peu près autant que la CAQ
+(`r qz_num(wv("qes2022", "yes", "CAQ"), 0)` %), et QS,
+`r qz_num(wv("qes2022", "yes", "QS"), 0)` %. Autrement dit, le PQ ne
+recueille plus qu'environ le tiers du vote du Oui. Le vote des électeurs du
+Non s'est lui aussi dispersé. La part du PLQ est passée de
+`r qz_num(wv("qes2012", "no", "PLQ"), 0)` % en 2012 à
+`r qz_num(wv("qes2022", "no", "PLQ"), 0)` % en 2022, alors que la CAQ en a
+conservé une large part tout au long de la période
+(`r qz_num(wv("qes2012", "no", "CAQ"), 0)` % en 2012,
+`r qz_num(wv("qes2022", "no", "CAQ"), 0)` % en 2022) et que le PCQ en a
+obtenu `r qz_num(wv("qes2022", "no", "PCQ"), 0)` % en 2022. Sans surprise,
+la CAQ, qui s'est engagée à ne pas tenir de référendum, est la seule
+formation à recueillir environ le tiers de chaque camp en 2022
+(`r qz_num(wv("qes2022", "yes", "CAQ"), 0)` % des électeurs du Oui et
+`r qz_num(wv("qes2022", "no", "CAQ"), 0)` % de ceux du Non).
 
-- En 2007 et en 2012, le PQ détenait la majeure partie du vote pour le Oui ;
-  en 2018, il en avait moins de la moitié, Québec solidaire et la CAQ en
-  prenant leur part.
-- Le vote pour le Non s'est fragmenté : la part du PLQ est passée de
-  `r qz_pct(wv("qes2012", "no", "PLQ"), 0)` en 2012 à
-  `r qz_pct(wv("qes2022", "no", "PLQ"), 0)` en 2022 ; la CAQ en a obtenu
-  `r qz_pct(wv("qes2012", "no", "CAQ"), 0)` en 2012,
-  `r qz_pct(wv("qes2018", "no", "CAQ"), 0)` en 2018 et
-  `r qz_pct(wv("qes2022", "no", "CAQ"), 0)` en 2022, et le PCQ
-  `r qz_pct(wv("qes2022", "no", "PCQ"), 0)` en 2022. En 2007, l'ADQ en
-  obtenait déjà `r qz_pct(wv("qes2007", "no", "ADQ"), 0)`. L'EEQ 2022
-  sous-estime la CAQ d'environ `r qz_num(caq_gap, 0)` points (voir
-  [Les enquêtes et les résultats officiels](fr-enquetes-resultats.html)),
-  ce qui touche les parts de 2022.
-- La CAQ est le seul parti qui obtient une grande part des deux camps.
+Deux nuances s'imposent. D'une part, les études de 2007 et de 2008 ont posé
+la question référendaire de 1995, et les suivantes une question sur un pays
+indépendant. Or, on sait que le libellé de la question influe sur l'appui à
+la souveraineté (Yale et Durand, 2011) ; c'est pourquoi les lignes
+s'interrompent au changement. D'autre part, l'étude de 2022 sous-estime le
+vote pour la CAQ d'environ `r qz_num(caq_gap, 0)` points par rapport au
+résultat officiel (voir la page sur
+[les enquêtes et les résultats officiels](fr-enquetes-resultats.html)), ce
+qui réduit la part de la CAQ dans les deux camps cette année-là. La
+quasi-égalité entre le PQ et la CAQ chez les électeurs du Oui avantage
+donc plutôt le PQ.
+
+## La souveraineté structure beaucoup moins le vote, sans que l'axe gauche-droite prenne le relais
+
+Les deux premières figures montrent des positions. Elles ne disent pas dans
+quelle mesure chaque axe sépare les électorats, ce qui est pourtant au cœur
+de la croyance populaire. Pour le savoir, nous appliquons la même mesure à
+chaque étude : de toute la variation du vote référendaire des répondants,
+ou de leur autopositionnement gauche-droite, quelle part se situe entre les
+électorats des partis plutôt qu'à l'intérieur de chacun d'eux ? Il s'agit
+de la part de la variance liée au choix partisan (un êta carré). À 100 %,
+connaître le vote d'une personne suffirait à connaître sa réponse ; à 0 %,
+cela n'en dirait rien. Les deux parts sont calculées sur les mêmes
+répondants, soit ceux qui ont répondu aux deux questions et voté pour l'un
+des partis présentés plus haut.
+
+```{r fig-sorting, echo = FALSE}
+d <- sorting[!sorting$no_pcq, ]
+group_lab <- c(all = tr("All voters", "Tous les électeurs"),
+               fr = tr("Francophone voters", "Électeurs francophones"))
+axis_lab <- c(sov = tr("Referendum vote (Yes or No)", "Vote référendaire (Oui ou Non)"),
+              lr = tr("Left-right placement", "Positionnement gauche-droite"))
+d$panel <- factor(group_lab[d$group], levels = group_lab)
+d$measure <- factor(d$measure, levels = names(axis_lab))
+# the two measures side by side at each election
+d$x <- d$year + c(sov = -0.18, lr = 0.18)[as.character(d$measure)]
+p <- sorting[sorting$no_pcq & sorting$measure == "lr" & sorting$year == 2022, ]
+p$panel <- factor(group_lab[p$group], levels = group_lab)
+p$x <- p$year + 0.9
+p$from <- vapply(p$group, function(g) sv("qes2022", "lr", g), numeric(1))
+
+fig_sorting <- function(mode) {
+  k <- qz_tokens[[mode]]
+  cols <- c(sov = k$grp[["fr"]], lr = k$grp[["other"]])
+  ggplot(d, aes(x, est, colour = measure, group = measure)) +
+    qz_ci(aes(ymin = lo, ymax = hi), show.legend = FALSE) +
+    qz_line(show.legend = FALSE) +
+    qz_dots(mode, d, aes(x, est), colour_aes = "measure") +
+    geom_segment(data = p, aes(x = 2022.18, xend = x - 0.12, y = from, yend = est),
+                 colour = k$muted, linewidth = 0.3, inherit.aes = FALSE) +
+    geom_point(data = p, aes(x, est), shape = 23, size = 2.3, stroke = 0.8, colour = k$surface,
+               fill = cols[["lr"]], inherit.aes = FALSE) +
+    geom_text(data = p, aes(x + 0.35, est, label = tr("without\nthe PCQ", "sans\nle PCQ")), hjust = 0,
+              size = 2.7, colour = k$ink2, family = qz_font(), lineheight = 0.9, inherit.aes = FALSE) +
+    facet_wrap(~panel, nrow = 1) +
+    scale_colour_manual(values = cols, guide = "none") +
+    scale_fill_manual(values = cols, breaks = names(axis_lab), labels = axis_lab, guide = guide_legend(order = 1)) +
+    scale_x_continuous(breaks = c(2012, 2014, 2018, 2022), limits = c(2011.3, 2026.4), expand = expansion(0)) +
+    scale_y_continuous(breaks = seq(0, 60, 20), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(0, 66), expand = FALSE, clip = "off") +
+    labs(x = NULL, y = tr("Share of the variance accounted for by party choice", "Part de la variance liée au choix partisan")) +
+    theme_qes(mode) +
+    theme(panel.spacing.x = unit(26, "pt"))
+}
+
+tab <- sorting[order(sorting$group, sorting$no_pcq, sorting$measure != "sov", sorting$year), ]
+tab_sorting <- setNames(data.frame(
+  ifelse(tab$group == "all", tr("All voters", "Tous les électeurs"), tr("Francophones", "Francophones")),
+  ifelse(tab$no_pcq, tr("without the PCQ", "sans le PCQ"), tr("all parties shown", "tous les partis montrés")),
+  unname(axis_lab[tab$measure]), tab$year, qz_study_label(tab$study),
+  qz_cell(tab$est, tab$lo, tab$hi, tab$n), tab$n, qz_weight_text(tab$weighted), row.names = NULL
+), c(tr("Voters", "Électeurs"), tr("Parties", "Partis"), tr("Question", "Question"), tr("Election", "Élection"),
+     tr("Study", "Étude"), tr("Share of variance, % [95% CI]", "Part de la variance, % [IC à 95 %]"), "n",
+     tr("Weighting", "Pondération")))
+alt <- sprintf(tr(
+  "Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from %s in 2012 to %s in 2022 among all voters, and from %s to %s among francophones; for left-right placement from %s to %s among all voters, and %s in 2022 without the PCQ. Values in the table view.",
+  "Graphiques linéaires en deux panneaux, tous les électeurs (à gauche) et les électeurs francophones (à droite), de 2012 à 2022 : la part de la variance du vote référendaire et du positionnement gauche-droite liée au choix partisan, avec intervalles de confiance. Pour le vote référendaire, elle passe de %s en 2012 à %s en 2022 chez l'ensemble des électeurs, et de %s à %s chez les francophones ; pour le positionnement gauche-droite, de %s à %s chez l'ensemble des électeurs, et %s en 2022 sans le PCQ. Valeurs dans la vue en tableau."),
+  qz_pct(sv("qes2012", "sov"), 0), qz_pct(sv("qes2022", "sov"), 0),
+  qz_pct(sv("qes2012", "sov", "fr"), 0), qz_pct(sv("qes2022", "sov", "fr"), 0),
+  qz_pct(sv("qes2012", "lr"), 0), qz_pct(sv("qes2022", "lr"), 0), qz_pct(sv("qes2022", "lr", no_pcq = TRUE), 0))
+qz_figure(fig_sorting, "sorting",
+  title = sprintf(tr("Party choice accounts for %s of the variance in the referendum vote in 2022, down from %s in 2012; left-right did not gain",
+                     "Le choix partisan est lié à %s de la variance du vote référendaire en 2022, contre %s en 2012 ; l'axe gauche-droite n'a pas progressé"),
+                  qz_pct(sv("qes2022", "sov"), 0), qz_pct(sv("qes2012", "sov"), 0)),
+  subtitle = tr("How much of the variation in each question lies between the parties' electorates, 2012 to 2022, with 95% confidence intervals",
+                "Quelle part de la variation de chaque question se situe entre les électorats des partis, de 2012 à 2022, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_sorting, height = 4.2,
+  note = tr("Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Respondents who answered both questions and reported a vote for the PLQ, the PQ, the CAQ, QS or (2022) the PCQ; francophones are respondents whose mother tongue is French. Diamond: the 2022 left-right share without the PCQ's voters. Intervals from 500 bootstrap replicates of each study.",
+            "Source : Études électorales québécoises de 2012, 2014, 2018 et 2022, pondérées. Répondants qui ont répondu aux deux questions et déclaré un vote pour le PLQ, le PQ, la CAQ, QS ou (2022) le PCQ ; les francophones sont les répondants de langue maternelle française. Losange : la part gauche-droite de 2022 sans les électeurs du PCQ. Intervalles tirés de 500 répliques bootstrap de chaque étude."))
+```
+
+Le constat est net pour la souveraineté. En 2012 et en 2014, le choix
+partisan était lié à plus de la moitié de la variation du vote référendaire
+(`r qz_num(sv("qes2012", "sov"), 0)` % et `r qz_num(sv("qes2014", "sov"), 0)` %),
+contre `r qz_num(sv("qes2012", "lr"), 0)` % et
+`r qz_num(sv("qes2014", "lr"), 0)` % pour l'autopositionnement
+gauche-droite. Cette part est ensuite tombée à
+`r qz_num(sv("qes2018", "sov"), 0)` % en 2018, puis à
+`r qz_num(sv("qes2022", "sov"), 0)` % en 2022. Le recul est plus prononcé
+chez les francophones : de `r qz_num(sv("qes2012", "sov", "fr"), 0)` % en
+2012 à `r qz_num(sv("qes2022", "sov", "fr"), 0)` % en 2022. Chez eux, les
+deux axes sont désormais à peu près aussi liés au choix partisan
+(`r qz_num(sv("qes2022", "lr", "fr"), 0)` % pour l'axe gauche-droite,
+`r qz_num(sv("qes2022", "sov", "fr"), 0)` % pour la souveraineté ; les
+intervalles se chevauchent), et la part gauche-droite tient pour beaucoup
+aux électeurs du PCQ : sans eux, elle est de
+`r qz_num(sv("qes2022", "lr", "fr", no_pcq = TRUE), 0)` %.
+
+Contrairement à la croyance populaire, l'axe gauche-droite ne s'est pas
+imposé à la place de la souveraineté. Sa part est passée de
+`r qz_num(sv("qes2012", "lr"), 0)` % en 2012 à
+`r qz_num(sv("qes2018", "lr"), 0)` % en 2018, et elle n'est remontée à
+`r qz_num(sv("qes2022", "lr"), 0)` % en 2022 qu'avec l'arrivée du PCQ, dont
+les électeurs sont les plus à droite. Sans eux, la part de 2022 est de
+`r qz_num(sv("qes2022", "lr", no_pcq = TRUE), 0)` %. C'est à la base du
+PCQ, qui traversait le clivage linguistique et devait peu à la souveraineté
+(Bélanger et al., 2025), que tient la remontée de 2022. En somme, le vote de
+2022 est beaucoup moins structuré par la question nationale, sans pour
+autant l'être davantage par l'axe gauche-droite.
+
+Ces mesures ne sont toutefois pas sans limite. Premièrement, une réponse
+Oui ou Non et un positionnement sur une échelle de 0 à 10 ne se mesurent pas
+de la même façon ; la comparaison porte donc sur les tendances et les ordres
+de grandeur, et non sur l'écart exact entre les deux courbes une année
+donnée. Deuxièmement, une part de variance dépend aussi du nombre de partis
+et de leur taille : l'arrivée du PCQ en 2022 montre à quel point un seul
+parti situé à l'extrémité de l'échelle peut la faire varier.
+Troisièmement, la question gauche-droite de 2022 diffère des précédentes
+(voir [À propos des données](#à-propos-des-données)) ; les chiffres
+gauche-droite de 2022, sur lesquels repose le principal constat, ne se
+comparent donc qu'approximativement aux années précédentes. Enfin, il
+s'agit de coupes transversales. Elles montrent comment les électorats se
+répartissent, et non pourquoi les électeurs ont choisi leur parti.
+
+## Ce qu'il faut en retenir
+
+Au final, la question nationale n'organise plus à elle seule le système
+partisan québécois, mais aucun autre axe ne l'a remplacée. Elle divise
+toujours le PQ et le PLQ aussi nettement qu'en 2012. Ce qui a changé, c'est
+que le vote souverainiste se partage maintenant entre trois partis et que la
+CAQ puise dans les deux camps. Connaître la position d'un électeur sur
+l'indépendance en dit donc beaucoup moins sur son vote qu'il y a une
+dizaine d'années. Ce constat diffère de ce qu'observent Daoust et
+Gareau-Paquette (2024), avec une autre mesure, aux élections fédérales, où
+le poids de la souveraineté dans le vote pour le Bloc québécois a diminué
+entre 2004 et 2006, puis est demeuré remarquablement stable de 2006 à 2021.
+À l'échelle provinciale, le recul s'est amorcé entre 2014 et 2018, pendant la
+montée de la CAQ, et ne s'était pas encore stabilisé en 2022. Bien entendu,
+les choses pourraient évoluer autrement à mesure que les cohortes plus
+jeunes, moins enclines à voter pour le PQ (Mahéo et Bélanger, 2018),
+occuperont une plus grande place dans l'électorat. La page sur
+[l'appui à la souveraineté selon les générations](fr-souverainete-generations.html)
+se penche sur cette question.
 
 ## À propos des données
 
 - **Études.** Les Études électorales québécoises de 2012 à 2022 pour
   l'autopositionnement gauche-droite, et de 2007 à 2022 pour le vote
-  référendaire ; les panels Durand sont exclus, puisqu'ils ont posé
-  d'autres libellés de la question référendaire.
-- **Variables.** `vote_choice` restreint au vote déclaré, `sov_support` en
-  part de Oui parmi Oui et Non, et `lr_self`, l'autopositionnement de la
-  personne de 0 (gauche) à 10 (droite). Les études de 2007 et de 2008 ont
-  posé la question de 1995, les autres la question sur un pays
-  indépendant : les rangées du graphique à barres ne forment pas une
-  seule série.
-- **Moment.** En 2022, les questions référendaire et gauche-droite ont
-  été posées pendant la campagne et le vote déclaré après l'élection ; les
-  estimations gardent les répondants des deux vagues, pondérés avec la
-  pondération postélectorale.
-- **Pondérations.** La pondération postélectorale recommandée de chaque
-  étude, par `qes_design()` ; 2008 est non pondérée (ses pondérations sont
-  calées sur le vote et en révision).
+  référendaire. Les panels menés par Claire Durand et ses collègues lors
+  des mêmes élections sont exclus, afin de garder une étude par élection ;
+  en 2012 et en 2018, ils ont en outre posé d'autres libellés de la
+  question référendaire. Les sondages de 1998 sont aussi exclus : ils ne
+  sont pas pondérés, et un seul des deux a posé la question référendaire.
+- **Questions.** Le vote déclaré après l'élection ; le vote référendaire,
+  en part de Oui parmi les répondants qui ont choisi Oui ou Non (ceux qui
+  restent indécis sont mis de côté) ; l'autopositionnement de la personne
+  de 0 (gauche) à 10 (droite). Les francophones sont les répondants de
+  langue maternelle française. Les études de 2007 et de 2008 ont posé la
+  question référendaire de 1995, avec une relance demandant aux indécis de
+  quel côté ils penchaient ; les autres, une question sur un pays
+  indépendant. En 2022, la question gauche-droite avait un autre libellé,
+  était posée seule plutôt qu'après le positionnement des partis, et
+  n'offrait pas de réponse « ne sais pas » ; presque tous les répondants y
+  ont répondu (`r qz_num(lr_answered[["qes2022"]], 0)` %, contre environ
+  `r qz_num(mean(lr_answered[c("qes2012", "qes2014", "qes2018")]), 0)` %
+  auparavant), de sorte que les chiffres gauche-droite de 2022 ne se
+  comparent qu'approximativement aux années précédentes.
+- **Moment.** En 2022, les questions référendaire et gauche-droite ont été
+  posées pendant la campagne, et la question sur le vote après l'élection ;
+  les estimations portent sur les répondants qui ont participé aux deux
+  vagues, avec la pondération postélectorale.
+- **Pondérations.** La pondération postélectorale de chaque étude. L'étude
+  de 2008 est présentée sans pondération : ses pondérations ont été calées
+  sur le résultat de l'élection, ce qui les rend peu adaptées à l'étude du
+  vote.
+- **Part de la variance.** Calculée dans chaque étude sur les répondants qui
+  ont répondu aux deux questions et voté pour l'un des partis présentés,
+  avec des intervalles à 95 % tirés de 500 répliques bootstrap du plan de
+  sondage de chaque étude.
+
+## Reproduire cette page
+
+Les données proviennent d'un seul appel à `qes_harmonize()`, qui regroupe
+le vote déclaré (`vote_choice`), le vote référendaire (`sov_support`),
+l'autopositionnement gauche-droite (`lr_self`) et la langue maternelle
+(`lang_mother`) des différentes études :
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+Une moyenne pondérée par parti, dans une étude :
+
+```{r example}
+d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
+svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
+      svymean, na.rm = TRUE)
+```
+
+## Pour aller plus loin
+
+- Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo et Richard
+  Nadeau. 2022. *Le nouvel électeur québécois*. Montréal : Presses de
+  l'Université de Montréal. <https://doi.org/10.1515/9782760645929>
+- Bélanger, Éric, et Valérie-Anne Mahéo. 2020. « Le Parti québécois dans
+  le nouveau système multipartite ». *Politique et Sociétés* 39 (3) :
+  19–55. <https://doi.org/10.7202/1072084ar>
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+  Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election ».
+  *Canadian Journal of Political Science* 58 (2) : 277–296. <https://doi.org/10.1017/S0008423924000829>
+- Bélanger, Éric, Richard Nadeau, Ailsa Henderson et Eve Hepburn. 2018.
+  *The National Question and Electoral Politics in Quebec and Scotland*.
+  Montréal et Kingston : McGill-Queen's University Press.
+  <https://doi.org/10.1515/9780773554139>
+- Daoust, Jean-François, et Thomas Gareau-Paquette. 2024. « Is Quebec
+  independence still key in making sense of Canadian elections? A
+  longitudinal analysis (2000–2021) ». *Regional & Federal Studies* 34 (5) :
+  781–806. <https://doi.org/10.1080/13597566.2023.2233422>
+- Mahéo, Valérie-Anne, et Éric Bélanger. 2018. « Is the Parti Québécois
+  Bound to Disappear? A Study of the Current Generational Dynamics of
+  Electoral Behaviour in Quebec ». *Canadian Journal of Political
+  Science* 51 (2) : 335–356.
+  <https://doi.org/10.1017/S0008423917001147>
+- Yale, François, et Claire Durand. 2011. « What did Quebeckers Want?
+  Impact of Question Wording, Constitutional Proposal and Context on
+  Support for Sovereignty, 1976–2008 ». *American Review of Canadian
+  Studies* 41 (3) : 242–258. <https://doi.org/10.1080/02722011.2011.594517>

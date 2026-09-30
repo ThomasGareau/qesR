@@ -9,7 +9,7 @@
 #' | Group | Function | What it does |
 #' |---|---|---|
 #' | Data | [get_qes()] | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
-#' | Data | [get_qes_master()] | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see `NEWS`). |
+#' | Data | [get_qes_master()] | The legacy merged file: 30 harmonized columns, 11 studies, built from the harmonized variables. |
 #' | Studies and documents | [qes_studies()] | Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; `check_updates = TRUE` asks Dataverse whether a newer version exists. |
 #' | Studies and documents | [qes_docs()] | Lists the codebooks, questionnaires and reports of each study, offline. |
 #' | Studies and documents | [qes_download()] | Saves the original files (data and documents), md5-checked, in a folder you choose. |
@@ -17,10 +17,10 @@
 #' | Codebooks and search | [qes_question()] | The exact wording of one or more questions, in English or French. |
 #' | Codebooks and search | [qes_search()] | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
 #' | Codebooks and search | [qes_missing()] | Sets "don't know", "refused" and declared missing codes to `NA`. |
-#' | Harmonization (experimental) | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
-#' | Harmonization (experimental) | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
-#' | Harmonization (experimental) | [qes_design()] | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
-#' | Harmonization (experimental) | [qes_party_lineage()] | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
+#' | Harmonization | [qes_spec()] | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
+#' | Harmonization | [qes_harmonize()] | One data frame across studies, one column per target, every missing value with a reason, following the harmonization rules; waves, weights and eligibility of each respondent. |
+#' | Harmonization | [qes_design()] | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
+#' | Harmonization | [qes_party_lineage()] | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
 #' | Reproducibility | [qes_provenance()] | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 #' | Reproducibility | [qes_cite()] | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 #' | Cache | [qes_cache_info()], [qes_cache_clear()] | Lists or deletes the files kept in the download cache. |
@@ -30,13 +30,13 @@
 #' result into a survey design; the reference generated from the spec is
 #' `vignette("harmonization-reference", package = "qesR")`.
 #'
-#' The functions of qesR 0.4.4 (`get_codebook()`, `get_question()`,
-#' `get_preview()`, `get_qescodes()`, ...) keep working and will not be
-#' removed; [qesR-deprecated] gives the replacement of each one.
+#' Older functions (`get_codebook()`, `get_question()`, `get_preview()`,
+#' `get_qescodes()`, ...) keep working and will not be removed;
+#' [qesR-deprecated] gives the replacement of each one.
 #'
 #' Guides: `vignette("get-started", package = "qesR")` (from a study code to a
 #' weighted estimate), `vignette("citations", package = "qesR")`,
-#' `vignette("migrating-0.7", package = "qesR")` and
+#' `vignette("migrating-0.7", package = "qesR")` (upgrading older code) and
 #' `vignette("harmonization-reference", package = "qesR")` (the reference
 #' generated from the harmonization spec). The website,
 #' <https://thomasgareau.github.io/qesR/>, also has the study catalog and
@@ -163,7 +163,7 @@
 #' `qesR_message_arg_ignored`, shown when a legacy argument that no longer
 #' changes the result is used; and `qesR_message_values_changed` and
 #' `qesR_message_legacy_columns`, shown by [get_qes_master()] and
-#' [get_decon()], whose values changed in qesR 0.5.0 and 0.7.0. Every condition carries
+#' [get_decon()], whose values differ from earlier versions. Every condition carries
 #' the fields `id` (its message key) and `lang` (the language of its message).
 #'
 #' @section Study catalog:
@@ -309,7 +309,7 @@
 #' `qesR_message_deprecated`, `qesR_message_assign_default`,
 #' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat),
 #' `qesR_message_values_changed` et `qesR_message_legacy_columns` (valeurs de
-#' [get_qes_master()] et [get_decon()] modifiées dans qesR 0.5.0 et 0.7.0)
+#' [get_qes_master()] et [get_decon()] modifiées depuis les versions antérieures)
 #' s'affichent au plus une fois par session et ne sont pas masqués par
 #' `quiet`. Chaque
 #' condition porte les champs `id` (sa clé de message) et `lang` (la langue de
