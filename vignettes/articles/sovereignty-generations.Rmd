@@ -1,0 +1,357 @@
+---
+title: "A generation gap that reversed: support for sovereignty, 1998-2022"
+description: >
+  The young carried the Yes side in the 2000s; today's youngest voters are
+  the least sovereigntist of all.
+params:
+  lang: "en"
+---
+
+*[Version française](fr-souverainete-generations.html)*
+
+```{r setup, include = FALSE}
+source("_setup.R", encoding = "UTF-8")
+```
+
+```{r harmonize, echo = FALSE}
+h <- qes_harmonize(
+  studies = qz_studies,
+  targets = c("sov_support", "birth_year", "lang_mother"),
+  missing = "reasons", quiet = TRUE
+)
+```
+
+```{r estimates, echo = FALSE}
+# share Yes among those who would vote Yes or No
+h$yes <- factor(ifelse(h$sov_support %in% "Yes", "yes",
+                       ifelse(h$sov_support %in% "No", "no", NA)), levels = c("yes", "no"))
+cohort_breaks <- c(-Inf, 1944, 1959, 1974, 1989, Inf)
+cohorts <- c("1944-", "1945-59", "1960-74", "1975-89", "1990+")
+h$cohort <- cut(h$birth_year, cohort_breaks, labels = cohorts)
+# the 1998 polls interviewed francophones only
+h$francophone <- h$study == "qes1998" | h$lang_mother %in% "French"
+sov_studies <- setdiff(qz_studies, "qes_crop_2007_2010")
+
+est <- do.call(rbind, lapply(sov_studies, function(s) {
+  d <- qz_design(h, s, qz_weight_col(h, s, "sov_support"))
+  fr <- subset(d, francophone)
+  rbind(qz_tag(qz_share(d, "yes"), study = s, lang = "all"),
+        qz_tag(qz_share(fr, "yes"), study = s, lang = "fr"),
+        qz_tag(qz_share(d, "yes", by = "cohort"), study = s, lang = "all"),
+        qz_tag(qz_share(fr, "yes", by = "cohort"), study = s, lang = "fr"))
+}))
+est <- est[est$level == "yes" & est$n > 0, ]
+est$year <- qz_year(est$study)
+est$type <- qz_first(h, "sov_support__type", est$study)
+est$grade <- qz_first(h, "sov_support__grade", est$study)
+y <- function(s, g, lang = "fr") est$pct[est$study == s & est$group == g & est$lang == lang]
+type_lab <- c(independence = tr("An independent country", "Un pays indépendant"),
+              sovereign_country = tr("A sovereign country", "Un pays souverain"),
+              partnership_1995_push = tr("The 1995 question (partnership)", "La question de 1995 (partenariat)"),
+              favour = tr("Favourable to independence", "Favorable à l'indépendance"))
+```
+
+In 2007 the youngest francophone voters were the most sovereigntist:
+`r qz_pct(y("qes2007", "1975-89"), 0)` of those born from 1975 to 1989 would
+have voted Yes to the 1995 question, against
+`r qz_pct(y("qes2007", "1944-"), 0)` of those born in 1944 or before. That
+question offered a partnership with Canada and draws more Yes than the
+question on an independent country asked from 2012 on, so the levels of
+2007 and 2022 cannot be compared; the order of the cohorts can. Within the
+independence question, the order has flipped since 2012: the cohort born
+from 1975 to 1989 fell from `r qz_pct(y("qes2012", "1975-89"), 0)` Yes to
+`r qz_pct(y("qes2022", "1975-89"), 0)` in 2022, and francophones born in 1990
+or after from `r qz_pct(y("qes2012", "1990+"), 0)` to
+`r qz_pct(y("qes2022", "1990+"), 0)`, the lowest of any cohort, while the
+cohort born from 1945 to 1959 stayed between
+`r qz_pct(min(est$pct[est$lang == "fr" & est$group == "1945-59" & est$type == "independence" & est$study %in% qz_primary]), 0)`
+and `r qz_pct(max(est$pct[est$lang == "fr" & est$group == "1945-59" & est$type == "independence" & est$study %in% qz_primary]), 0)`.
+The cohort that carried the Yes side in the 2000s did not keep its lead.
+The youngest cohort is open-ended, so its make-up changes: born from 1990
+to 1994 (aged 18 to 22) in 2012, from 1990 to 2004 in 2022, and in 2018 it
+includes 16- and 17-year-olds.
+
+## One variable, several questions
+
+`sov_support` pools the referendum questions of every study that asked
+one. The wording changes between studies, and `sov_support__type` says
+which question each value answers:
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+```{r types}
+table(h$study, h$sov_support__type)
+```
+
+Support depends on the wording, so this page compares cohorts within one
+wording and one study, and draws the wordings as separate series.
+
+## Support by study and wording
+
+```{r fig-wording, echo = FALSE}
+d <- est[est$group == "all" & est$lang == "all" & est$type %in% names(type_lab), ]
+d$weighted <- as.logical(d$weighted)
+# the Quebec Election Studies just left of each election, the Durand panels just right
+d$x <- qz_ex(d$year) + ifelse(grepl("_panel$", d$study), 0.3, ifelse(d$study %in% c("qes2007", "qes2012", "qes2018"), -0.3, 0))
+d$type <- factor(d$type, levels = names(type_lab))
+d$wt <- factor(ifelse(d$weighted, "weighted", "unweighted"), levels = c("weighted", "unweighted"))
+# the line joins the independence question in the Quebec Election Studies
+# (2012 to 2022); 2007 and 2008 (the 1995 question) and the 1998 point
+# (CROP half, francophones only) stand apart
+qes_points <- d[d$study %in% qz_primary & d$study != "qes1998", ]
+joined <- qes_points[qes_points$type == "independence", ]
+shapes <- c(independence = 21, sovereign_country = 24, partnership_1995_push = 23, favour = 22)
+p98 <- d[d$study == "qes1998", ]
+p98$label <- sprintf(tr("1998: francophones,\nCROP only, n = %s,\nunweighted", "1998 : francophones,\nCROP seulement, n = %s,\nnon pondéré"),
+                     format(p98$n, big.mark = tr(",", " ")))
+series_lab <- data.frame(x = c(qz_ex(2008) + 0.4, qz_ex(2022) + 0.5),
+                         pct = c(d$pct[d$study == "qes2008"], d$pct[d$study == "qes2022"]),
+                         label = c(tr("1995 question", "question de 1995"), tr("independent\ncountry", "pays\nindépendant")))
+w_range <- function(type) round(range(qes_points$pct[qes_points$type == type]))
+r95 <- w_range("partnership_1995_push")
+rind <- w_range("independence")
+
+fig_wording <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(x, pct)) +
+    annotate("rect", xmin = qz_ex(2008) + 0.6, xmax = qz_ex(2012) - 0.6, ymin = -Inf, ymax = Inf,
+             fill = k$wash) +
+    annotate("text", x = (qz_ex(2008) + qz_ex(2012)) / 2, y = 66, label = tr("the question\nchanges", "la question\nchange"),
+             size = 3, colour = k$ink2, family = qz_font(), lineheight = 0.9) +
+    geom_hline(yintercept = 49.42, colour = k$ink2, linewidth = 0.35) +
+    annotate("text", x = qz_ex(2007) - 0.6, y = 50.6, label = tr("1995 referendum, all voters: 49.4% Yes", "Référendum de 1995, tous les électeurs : 49,4 % Oui"),
+             hjust = 0, vjust = 0, size = 3, colour = k$ink2, family = qz_font()) +
+    qz_xbreak(mode) +
+    geom_line(data = joined, aes(group = type), colour = k$yes, linewidth = 0.7) +
+    qz_ci(aes(ymin = lo, ymax = hi), colour = k$yes) +
+    geom_point(aes(shape = type, fill = wt, colour = wt), size = 3, stroke = 1) +
+    geom_text(data = p98, aes(x, lo - 1.5, label = label), vjust = 1, size = 2.7, colour = k$ink2,
+              family = qz_font(), lineheight = 0.9) +
+    geom_text(data = series_lab, aes(x, pct, label = label), hjust = 0, size = 3, colour = k$ink,
+              family = qz_font(), lineheight = 0.9) +
+    scale_shape_manual(values = shapes, breaks = names(type_lab), labels = type_lab, drop = FALSE,
+                       guide = guide_legend(order = 1, nrow = 2, override.aes = list(fill = k$yes, colour = k$surface, size = 3))) +
+    scale_fill_manual(values = c(weighted = k$yes, unweighted = k$surface), guide = "none") +
+    scale_colour_manual(values = c(weighted = k$surface, unweighted = k$yes),
+                        breaks = "unweighted", labels = tr("hollow: unweighted (weight under review)", "creux : non pondéré (pondération en révision)"),
+                        guide = guide_legend(order = 2, override.aes = list(shape = 21, fill = k$surface, colour = k$ink2, size = 2.8, stroke = 1.1))) +
+    scale_x_election(add = c(0.9, 2.6)) +
+    scale_y_continuous(breaks = seq(20, 70, 10), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(15, 70), expand = FALSE, clip = "off") +
+    labs(x = NULL, y = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)")) +
+    theme_qes(mode) +
+    theme(axis.line.x = element_blank())
+}
+
+tab <- d[order(d$year, d$study), ]
+tab_wording <- setNames(data.frame(
+  tab$year, ifelse(tab$study == "qes1998", tr("1998 polls (CROP half, francophones)", "Sondages de 1998 (volet CROP, francophones)"),
+                   qz_study_label(tab$study)),
+  type_lab[as.character(tab$type)],
+  qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n, qz_weight_text(tab$weighted), qz_grade_text(tab$grade),
+  row.names = NULL
+), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Question", "Question"),
+     tr("Yes, % [95% CI]", "Oui, % [IC à 95 %]"), "n", tr("Weighting", "Pondération"), tr("Grade", "Niveau")))
+alt <- sprintf(tr(
+  "Dot chart with confidence intervals of the share who would vote Yes, among those who would vote Yes or No, in each study from 1998 to 2022, the shape of each dot giving the wording of the question. In the Quebec Election Studies, support is %s%% to %s%% on the 1995 question (2007, 2008) and %s%% to %s%% on an independent country (2012 to 2022). The 1998 point (francophones only, unweighted) stands apart. Values in the table view.",
+  "Graphique à points avec intervalles de confiance de la part qui voterait Oui, parmi celles et ceux qui voteraient Oui ou Non, dans chaque étude de 1998 à 2022, la forme de chaque point donnant le libellé de la question. Dans les Études électorales québécoises, l'appui est de %s %% à %s %% sur la question de 1995 (2007, 2008) et de %s %% à %s %% sur un pays indépendant (2012 à 2022). Le point de 1998 (francophones seulement, non pondéré) est à part. Valeurs dans la vue en tableau."),
+  r95[1], r95[2], rind[1], rind[2])
+qz_figure(fig_wording, "wording",
+  title = sprintf(tr("Yes draws fewer votes on independence than on the 1995 question: %s-%s%% against %s-%s%%",
+                     "Le Oui recueille moins de votes sur l'indépendance que sur la question de 1995 : %s à %s %% contre %s à %s %%"),
+                  rind[1], rind[2], r95[1], r95[2]),
+  subtitle = tr("Would vote Yes in a referendum, among those who would vote Yes or No, by study and wording of the question, with 95% confidence intervals",
+                "Voterait Oui à un référendum, parmi celles et ceux qui voteraient Oui ou Non, selon l'étude et le libellé de la question, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_wording, height = 4.2,
+  note = tr("Source: qesR, pooled sov_support, every study that asked a referendum question (all respondents). The line joins the independence question in the Quebec Election Studies (just left of each election); the Durand panels are just right of it. The 1998 point is the CROP half of the 1998 polls only (CREATEC did not ask the question): francophones only, unweighted, from a recontact that over-selected undecided voters and refusers, so it is not joined to the others and is not comparable with the 1995 result of all voters. Bars: 95% confidence intervals (logit). Weighted with the weight of the wave that asked; hollow: unweighted, weight under review. Favourable or opposed (2018 panel) is collapsed to yes or no, graded approximate. The x axis is in years, with a break between 1998 and 2007.",
+            "Source : qesR, variable regroupée sov_support, toutes les études qui ont posé une question référendaire (tous les répondants). La ligne relie la question sur l'indépendance dans les Études électorales québécoises (juste à gauche de chaque élection) ; les panels Durand sont juste à droite. Le point de 1998 ne vient que du volet CROP des sondages de 1998 (CREATEC n'a pas posé la question) : francophones seulement, non pondéré, d'un recontact qui a surreprésenté les indécis et les refus ; il n'est donc pas relié aux autres et n'est pas comparable au résultat de 1995, qui compte tous les électeurs. Barres : intervalles de confiance à 95 % (logit). Pondéré avec la pondération de la vague qui a posé la question ; creux : non pondéré, pondération en révision. Favorable ou opposé (panel 2018) est regroupé en oui ou non, niveau approximatif. L'axe horizontal est en années, avec une coupure entre 1998 et 2007."))
+```
+
+What to notice:
+
+- The 1995 question, which offered a partnership with Canada, draws more
+  Yes than a question on an independent country: the two are different
+  series, and the grey band marks where the Quebec Election Studies
+  changed question.
+- On the independence question, support in the Quebec Election Studies
+  falls from `r qz_pct(y("qes2012", "all", "all"), 0)` in 2012 to about
+  `r qz_pct(y("qes2022", "all", "all"), 0)` from 2014 on.
+- The Durand panels asked other wordings; each is a point of its own.
+
+## Cohorts over time
+
+```{r fig-cohorts, echo = FALSE}
+years <- c(2012, 2014, 2018, 2022)
+d <- est[est$lang == "fr" & est$group %in% cohorts & est$study %in% qz_primary[as.character(years)] & est$n >= qz_min_n, ]
+d$weighted <- as.logical(d$weighted)
+d$x <- d$year
+d$cohort <- factor(d$group, levels = cohorts)
+cohort_lab <- c(`1944-` = tr("born 1944 or before", "nés en 1944 ou avant"),
+                `1945-59` = tr("born 1945-59", "nés en 1945-1959"),
+                `1960-74` = tr("born 1960-74", "nés en 1960-1974"),
+                `1975-89` = tr("born 1975-89", "nés en 1975-1989"),
+                `1990+` = tr("born 1990+", "nés en 1990 ou après"))
+d$label <- cohort_lab[as.character(d$cohort)]
+# the story is two cohorts; the other three are grey context
+focus <- c("1945-59", "1990+")
+d$series <- factor(ifelse(d$group %in% focus, d$group, "context"), levels = c(focus, "context"))
+foc <- d[d$group %in% focus, ]
+ctx <- d[!d$group %in% focus, ]
+small <- unique(d$year[d$group == "1944-" & d$n < 100])
+
+fig_cohorts <- function(mode) {
+  k <- qz_tokens[[mode]]
+  # darker = older in both themes
+  cols <- if (mode == "light") c(`1945-59` = "#104281", `1990+` = "#5598e7", context = k$muted) else
+    c(`1945-59` = "#3987e5", `1990+` = "#b7d3f6", context = k$muted)
+  ggplot(d, aes(x, pct, colour = series, group = cohort)) +
+    geom_line(data = ctx, linewidth = 0.45, lineend = "round", show.legend = FALSE) +
+    qz_band(data = foc, aes(ymin = lo, ymax = hi, fill = series), mode = mode) +
+    qz_line(data = foc, show.legend = FALSE) +
+    qz_dots(mode, ctx, aes(x, pct), colour_aes = "series", size = 2) +
+    qz_dots(mode, foc, aes(x, pct), colour_aes = "series") +
+    qz_end_labels(d, "x", "pct", "label", "cohort", mode, min_gap = 2.6, nudge_x = 1.2) +
+    scale_colour_manual(values = cols, guide = "none") +
+    scale_fill_manual(values = cols, breaks = c(focus, "context"),
+                      labels = c(cohort_lab[focus], context = tr("other cohorts", "autres cohortes")),
+                      guide = guide_legend(order = 1)) +
+    scale_x_continuous(breaks = years, limits = c(2011.3, 2026.4), expand = expansion(0)) +
+    scale_y_continuous(breaks = seq(20, 60, 10), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(20, 66), expand = FALSE) +
+    labs(x = NULL, y = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)")) +
+    theme_qes(mode)
+}
+
+tab <- est[est$group %in% cohorts & est$study %in% qz_primary & est$year >= 2007, ]
+tab <- tab[order(tab$lang, tab$year, match(tab$group, cohorts)), ]
+lang_lab <- c(fr = tr("Francophones", "Francophones"), all = tr("All respondents", "Tous les répondants"))
+tab_cohorts <- setNames(data.frame(
+  lang_lab[tab$lang], tab$year, qz_study_label(tab$study), type_lab[tab$type], cohort_lab[tab$group],
+  qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n, qz_weight_text(as.logical(tab$weighted)),
+  row.names = NULL
+), c(tr("Respondents", "Répondants"), tr("Election", "Élection"), tr("Study", "Étude"),
+     tr("Question", "Question"), tr("Cohort", "Cohorte"), tr("Yes, % [95% CI]", "Oui, % [IC à 95 %]"),
+     "n", tr("Weighting", "Pondération")))
+r4559 <- round(range(d$pct[d$group == "1945-59"]))
+alt <- sprintf(tr(
+  "Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or after are highlighted with confidence bands. Those born in 1990 or after go from %s to %s; those born 1945-1959 stay between %s%% and %s%%. Values in the table view.",
+  "Graphique linéaire de la part des francophones qui voteraient Oui à ce que le Québec devienne un pays indépendant, pour cinq cohortes de naissance, aux élections de 2012, 2014, 2018 et 2022 ; les cohortes nées en 1945-1959 et en 1990 ou après sont mises en évidence avec des bandes de confiance. Les personnes nées en 1990 ou après passent de %s à %s ; celles nées en 1945-1959 restent entre %s %% et %s %%. Valeurs dans la vue en tableau."),
+  qz_pct(y("qes2012", "1990+"), 0), qz_pct(y("qes2022", "1990+"), 0), r4559[1], r4559[2])
+qz_figure(fig_cohorts, "cohorts",
+  title = sprintf(tr("Francophones born in 1990 or after went from %s to %s Yes; those born 1945-1959 stayed at %s-%s%%",
+                     "Les francophones nés en 1990 ou après sont passés de %s à %s de Oui ; ceux nés en 1945-1959 sont restés à %s-%s %%"),
+                  qz_pct(y("qes2012", "1990+"), 0), qz_pct(y("qes2022", "1990+"), 0), r4559[1], r4559[2]),
+  subtitle = tr("Francophones who would vote Yes to an independent country, by birth cohort, 2012 to 2022; two cohorts with 95% confidence bands, the others in grey",
+                "Francophones qui voteraient Oui à un pays indépendant, selon la cohorte de naissance, de 2012 à 2022 ; deux cohortes avec bandes de confiance à 95 %, les autres en gris"),
+  alt = alt, table = tab_cohorts, height = 4.2,
+  note = sprintf(tr("Source: qesR, pooled sov_support (type independence), birth_year and lang_mother; QES 2012, 2014, 2018 and 2022, francophone respondents, each study weighted with the weight of the wave that asked. Bands: 95%% confidence intervals (logit); the intervals of every cohort are in the next figure and the table view, which also gives all respondents and the 2007 and 2008 studies (1995 question). The line of the oldest cohort rests on fewer than 100 respondents in %s. The youngest cohort is open-ended: born 1990-1994 (aged 18 to 22) in 2012, born 1990-2004 in 2022; the 2018 study sampled people aged 16 and over.",
+                    "Source : qesR, variables regroupées sov_support (type independence), birth_year et lang_mother ; EEQ 2012, 2014, 2018 et 2022, répondants francophones, chaque étude pondérée avec la pondération de la vague qui a posé la question. Bandes : intervalles de confiance à 95 %% (logit) ; les intervalles de chaque cohorte sont dans la figure suivante et dans la vue en tableau, qui donne aussi tous les répondants et les études de 2007 et 2008 (question de 1995). La ligne de la cohorte la plus âgée repose sur moins de 100 répondants en %s. La cohorte la plus jeune est ouverte : nés en 1990-1994 (18 à 22 ans) en 2012, nés en 1990-2004 en 2022 ; l'étude de 2018 a interrogé les personnes de 16 ans et plus."),
+                 paste(small, collapse = tr(", ", ", "))))
+```
+
+What to notice:
+
+- The youngest cohort (born in 1990 or after) falls from
+  `r qz_pct(y("qes2012", "1990+"), 0)` Yes in 2012 to
+  `r qz_pct(y("qes2022", "1990+"), 0)` in 2022.
+- The cohort born from 1975 to 1989 falls from
+  `r qz_pct(y("qes2012", "1975-89"), 0)` to `r qz_pct(y("qes2022", "1975-89"), 0)`.
+  The oldest cohort (born in 1944 or before) does not change detectably:
+  `r est$n[est$study == "qes2012" & est$lang == "fr" & est$group == "1944-"]`
+  francophones of that cohort answered in 2012 and
+  `r est$n[est$study == "qes2022" & est$lang == "fr" & est$group == "1944-"]`
+  in 2022, and the cohort also shrinks through mortality.
+- The cohort born from 1945 to 1959, who voted in the referendums of 1980
+  and 1995, is the most sovereigntist in 2022
+  (`r qz_pct(y("qes2022", "1945-59"), 0)`).
+
+## The gradient flips
+
+```{r fig-gradient, echo = FALSE}
+years <- c(2007, 2008, 2012, 2014, 2018, 2022)
+d <- est[est$lang == "fr" & est$group %in% cohorts & est$study %in% qz_primary[as.character(years)] & est$n >= qz_min_n, ]
+d$weighted <- as.logical(d$weighted)
+d$cohort <- factor(d$group, levels = rev(cohorts))
+d$panel <- factor(paste0(d$year, " · ", ifelse(d$type == "independence", tr("independence", "indépendance"), tr("1995 question", "question de 1995"))),
+                  levels = unique(paste0(years, " · ", ifelse(years >= 2012, tr("independence", "indépendance"), tr("1995 question", "question de 1995")))))
+
+fig_gradient <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(pct, cohort)) +
+    geom_vline(xintercept = 50, colour = k$axis, linewidth = 0.35) +
+    annotate("text", x = 50.8, y = Inf, label = tr("50%", "50 %"), hjust = 0, vjust = 1.2, size = 2.7,
+             colour = k$ink2, family = qz_font()) +
+    qz_cih(aes(xmin = lo, xmax = hi), colour = k$yes) +
+    qz_dots(mode, d, aes(pct, cohort), fixed = k$yes) +
+    facet_wrap(~panel, nrow = 2) +
+    scale_x_continuous(limits = c(10, 72), breaks = c(20, 40, 60), labels = qz_pct_axis, expand = expansion(0)) +
+    scale_y_discrete(labels = function(x) c(`1944-` = tr("1944 or before", "1944 ou avant"), `1945-59` = "1945-1959",
+                                            `1960-74` = "1960-1974", `1975-89` = "1975-1989",
+                                            `1990+` = tr("1990 or after", "1990 ou après"))[x],
+                     expand = expansion(add = c(0.6, 1))) +
+    labs(x = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)"),
+         y = tr("Born", "Nés")) +
+    theme_qes(mode, grid = "x") +
+    theme(panel.spacing.x = unit(22, "pt"))
+}
+gap07 <- y("qes2007", "1975-89") - y("qes2007", "1944-")
+gap22 <- y("qes2022", "1990+") - y("qes2022", "1945-59")
+alt <- sprintf(tr(
+  "Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is %s above the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is %s from the cohort born 1945-1959. Values in the table view.",
+  "Graphiques à points avec intervalles de confiance en six panneaux, un par étude de 2007 à 2022 : la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née en 1975-1989) est %s au-dessus de celle née en 1944 ou avant ; en 2022, la plus jeune (née en 1990 ou après) est à %s de celle née en 1945-1959. Valeurs dans la vue en tableau."),
+  qz_pts(gap07), qz_pts(gap22))
+tab <- d[order(d$year, match(d$group, cohorts)), ]
+tab_gradient <- setNames(data.frame(
+  tab$year, type_lab[tab$type], cohort_lab[tab$group], qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n,
+  qz_weight_text(tab$weighted), row.names = NULL
+), c(tr("Election", "Élection"), tr("Question", "Question"), tr("Cohort", "Cohorte"),
+     tr("Yes, % [95% CI]", "Oui, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
+qz_figure(fig_gradient, "gradient",
+  title = tr("In 2007 the youngest francophones were the most sovereigntist cohort; in 2022 the youngest were the least",
+             "En 2007, les plus jeunes francophones formaient la cohorte la plus souverainiste ; en 2022, les plus jeunes étaient la moins souverainiste"),
+  subtitle = tr("Francophones who would vote Yes, by birth cohort, in each Quebec Election Study, with 95% confidence intervals",
+                "Francophones qui voteraient Oui, selon la cohorte de naissance, dans chaque Étude électorale québécoise, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_gradient, height = 4.8,
+  note = tr("Source: qesR, pooled sov_support, birth_year and lang_mother; one Quebec Election Study per election, francophone respondents. 2007 and 2008 asked the 1995 question, with the undecided pushed; 2012 to 2022 asked about an independent country, so compare the order of the cohorts within a panel, not the levels across the two questions. Bars: 95% confidence intervals (logit). Weighted; hollow (2008): unweighted, weight under review. Cohorts of fewer than 30 respondents are not drawn.",
+            "Source : qesR, variables regroupées sov_support, birth_year et lang_mother ; une Étude électorale québécoise par élection, répondants francophones. 2007 et 2008 ont posé la question de 1995, avec relance des indécis ; 2012 à 2022 ont posé la question sur un pays indépendant : comparer l'ordre des cohortes dans un panneau, pas les niveaux d'une question à l'autre. Barres : intervalles de confiance à 95 % (logit). Pondéré ; creux (2008) : non pondéré, pondération en révision. Les cohortes de moins de 30 répondants ne sont pas tracées."))
+```
+
+What to notice:
+
+- In 2007, on the 1995 question, support falls with age: the cohort
+  born from 1975 to 1989 is `r qz_pts(gap07)` above the oldest.
+- In 2018 the youngest and the oldest cohorts are level; in 2022 the
+  youngest is the least sovereigntist, `r qz_pts(gap22)` from the cohort
+  born from 1945 to 1959 (`r qz_pct(y("qes2022", "1945-59"), 0)`,
+  n = `r est$n[est$study == "qes2022" & est$lang == "fr" & est$group == "1945-59"]`).
+- The intervals of the oldest cohort (born in 1944 or before) are the
+  widest: fewer than 100 francophones of that cohort answered in 2012,
+  2014 and 2022.
+
+## About the data
+
+- **Studies.** Every study that asked a referendum question: the 1998
+  polls, the Quebec Election Studies of 2007 to 2022 and the Durand
+  panels. The CROP polls did not ask one.
+- **Variable.** `sov_support`, the pooled referendum vote, as the share
+  of Yes among those who would vote Yes or No; those who would not vote
+  or spoil, did not know or refused are left out. `sov_support__item`
+  names each study's question, and `qes_spec("pooled")` the precedence of
+  the wordings when a study asked several.
+- **Wordings.** An independent country (2012 to 2022), a sovereign
+  country (2012 panel), the 1995 question on sovereignty with a
+  partnership offer, the undecided pushed (1998, 2007, 2007 panel, 2008),
+  and favourable or opposed to independence (2018 panel), collapsed to
+  yes or no and graded `approximate`.
+- **Timing and population.** The 2022 study (campaign wave), the 1998
+  polls and the 2007 and 2012 panels asked the question before the
+  election; the other studies after it. Each is weighted with the weight
+  of the wave that asked. The 2018 study sampled people aged 16 and over.
+- **Cohorts.** From `birth_year`, which the 2007 to 2022 Quebec Election
+  Studies asked. Francophones are respondents whose `lang_mother` is
+  French; in 2022 those who ticked two languages are left out.
+- **Weights.** The recommended weight of the wave that asked, through
+  `qes_design()`. The 1998 polls, the 2008 study and the 2007 and 2012
+  Durand panels are unweighted (weights under review) and drawn hollow;
+  the 2018 panel uses its reviewed weight.

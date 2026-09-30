@@ -28,6 +28,28 @@ below.
 - `qes_spec("pooled")` lists the members of each pooled variable, their precedence, transform and grade cap, and each member's grade in each study; `qes_provenance(x, level = "pooled")` counts, per study, the rows each member gave. A message (class `qesR_message_pooled`, silenced by `quiet`) and `print()` say which member each study used. The generated reference (`vignette("harmonization-reference")` and its French version) has a chapter on them, and the coverage grids a row each.
 - `qes_party_lineage()` (new export) adds, for each party column, a column that joins the ADQ and the CAQ (into which it merged on 2012-01-21) as "ADQ/CAQ", and optionally Option nationale and Quebec solidaire, for time series of the Quebec parties; rows fielded before 2012 are graded approximate there. The harmonized columns keep the parties apart (OD11).
 
+## Example pages of the website
+
+The owner also asked for better example pages: the graphs were "ugly and
+not interesting". The three example pages and their French versions
+(`analysis-descriptive`, `analysis-sovereignty`, `analysis-vote-choice`)
+are replaced by six analyses and a page of recipes, in English and
+French, each built on the pooled variables with `qes_design()`, the
+reviewed weights and 95% confidence intervals, every estimate made within
+one study and wave. The old addresses redirect to the new pages. The
+pages are website-only (`vignettes/articles` is not in the package
+build); nothing changes in the package.
+
+- *From two parties to four* (`realignment`, `fr-realignement`): the effective number of parties and each party's vote among francophones and non-francophones, and the age gap party by party, 1998 to 2022.
+- *A generation gap that reversed* (`sovereignty-generations`, `fr-souverainete-generations`): support for sovereignty by study and wording (`sov_support__type`), and by birth cohort; the youngest francophones go from the most to the least sovereigntist.
+- *Two dimensions of competition* (`dimensions`, `fr-dimensions`): each party's voters on sovereignty and on the left-right scale from 2012 to 2022, and where the Yes and No voters cast their vote.
+- *Who votes?* (`turnout`, `fr-participation`): reported against official turnout, the age gap election by election, and turnout by interest in politics (`pol_interest`).
+- *Changing minds during the campaign* (`transitions`, `fr-transitions`): the panels' transitions from intention to reported vote, loyalty by party, and where the undecided went.
+- *How far off are surveys?* (`survey-vs-official`, `fr-enquetes-resultats`): reported vote against the official results party by party, what weighting changes (index of dissimilarity), and the CROP polls of 2007 to 2010.
+- *Recipes* (`recipes`, `fr-recettes`): short, copyable code for the pooled variables, `types`, sources and grades, weighted estimates by study, `pool = "equal"` and `qes_party_lineage()`.
+- The charts share one system (`vignettes/articles/_theme.R`, `_data.R`, `_setup.R`; not exported): a party palette checked with a colour-vision validator in the light and the dark theme (the output is recorded in `_theme.R`), each chart drawn for both themes, direct labels, hollow markers for studies whose weight is under review, a title and a note (source, weights, intervals) in HTML, alt text with the chart's numbers, and a table view with every value behind the chart. The two charts of the validation pages use it too, and the home page shows two of the new figures.
+- `Config/Needs/website` gains ragg, survey and systemfonts (website builds only).
+
 ## New targets and rows (specification 4.3.0)
 
 - 20 targets: satisfaction with democracy in Quebec (`satis_demo_qc`, 6 studies) and with the Quebec government (`gov_satisfaction`, 5), Quebec's economy over the past year (`econ_retro_qc`, 6), attachment to Quebec and to Canada (`attach_qc`, `attach_ca`, 4 each), Québécois or Canadian identity (`identity_qc_ca`, 5), strength of provincial party identification (`pid_prov_strength`, 6), the provincial vote at the previous election (`vote_prov_prev`, 4) and the last federal vote (`vote_fed_recall`, 4), the most important issue (`mip_issue`, 5), the ratings of the PLQ, PQ, CAQ, QS and ADQ leaders on 0-100 (`therm_leader_*`), the region (Montreal CMA, Quebec CMA, rest; `region_cma3`, 8), the language spoken most often at home (`lang_home`, 8), attendance at religious services (`relig_attend`, 5), the birthplace (Quebec, rest of Canada, abroad; `birthplace3`, 3) and the 1995 referendum question with the undecided pushed (`sov_partnership_1995_push`, 4). The new sets `"attitudes"` and `"socio"` name them; `"vote"` gains `vote_prov_prev` and `vote_fed_recall`.

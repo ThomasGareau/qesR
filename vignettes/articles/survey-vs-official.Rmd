@@ -1,0 +1,359 @@
+---
+title: "How far off are surveys? Reported vote and intentions against the official results"
+description: >
+  The reported vote of every study against the official results, what
+  weighting changes, and two and a half years of CROP polls around the
+  2008 election.
+params:
+  lang: "en"
+---
+
+*[Version française](fr-enquetes-resultats.html)*
+
+```{r setup, include = FALSE}
+source("_setup.R", encoding = "UTF-8")
+```
+
+```{r harmonize, echo = FALSE}
+h <- qes_harmonize(studies = qz_studies, targets = "vote_choice", missing = "reasons", quiet = TRUE)
+```
+
+```{r estimates, echo = FALSE}
+official <- qz_official()
+xw <- qes_spec("crosswalk", targets = "vote_prov_recall")
+offered <- setNames(strsplit(xw$levels_offered, ";", fixed = TRUE), xw$study)
+recall_studies <- setdiff(qz_studies, c("qes_crop_2007_2010", "qes1998"))
+
+# a study's parties: those its question listed; the official share of a
+# party it did not list goes to "other", the answer its voters had to give
+fold <- function(party, s) ifelse(party %in% c(offered[[s]], "other"), party, "other")
+h$party <- factor(qz_party_code(h$vote_choice), levels = qz_parties)
+
+recall <- do.call(rbind, lapply(recall_studies, function(s) {
+  w <- qz_design(h, s, "weight_post")
+  u <- qz_design(h, s, "weight_post", unweighted = TRUE)
+  rbind(qz_tag(qz_share(w, "party"), study = s, weighting = if (attr(w, "qz_weighted")) "weighted" else "unweighted"),
+        if (attr(w, "qz_weighted")) qz_tag(qz_share(u, "party"), study = s, weighting = "unweighted"))
+}))
+recall$year <- qz_year(recall$study)
+recall$status <- qz_party_status(recall$study, recall$level)
+off_study <- do.call(rbind, lapply(recall_studies, function(s) {
+  o <- official[official$year == qz_year(s), ]
+  o$level <- fold(o$party, s)
+  o <- stats::aggregate(share_valid ~ level, o, sum)
+  qz_tag(o, study = s)
+}))
+recall$official <- off_study$share_valid[match(paste(recall$study, recall$level), paste(off_study$study, off_study$level))]
+recall$official[is.na(recall$official) & recall$status == "offered"] <- 0
+
+# index of dissimilarity: half the sum of the absolute differences, in points
+dissim <- stats::aggregate(cbind(index = abs(pct - official)) ~ study + weighting,
+                           recall[recall$status == "offered", ], function(x) sum(x) / 2)
+dissim$year <- qz_year(dissim$study)
+rv <- function(s, p, w = "weighted") recall$pct[recall$study == s & recall$level == p & recall$weighting == w]
+ov <- function(y, p) official$share_valid[official$year == y & official$party == p]
+di <- function(s, w) dissim$index[dissim$study == s & dissim$weighting == w]
+
+# the CROP polls: monthly vote intentions, among respondents who named a party
+crop <- h[h$study == "qes_crop_2007_2010", ]
+crop$intent <- factor(qz_party_code(crop$vote_choice), levels = qz_parties)
+dc <- qz_design(crop, "qes_crop_2007_2010", "weight_pre")
+polls <- qz_share(dc, "intent", by = "waves")
+polls$date <- as.Date(paste0(sub("^poll_(\\d{4})_(\\d{2})$", "\\1-\\2", polls$group), "-15"))
+```
+
+Survey estimates of the vote come close to the official results, but
+rarely onto them. In 2022 the Quebec Election Study had the CAQ at
+`r qz_pct(rv("qes2022", "CAQ"), 0)` of the reported vote, weighted; the CAQ
+took `r qz_pct(ov(2022, "CAQ"), 0)` of the valid votes. The PQ is
+over-reported in most studies, and the PLQ under-reported until 2014. Weighting
+to census margins brings some studies closer and not others: the index of
+dissimilarity between the reported and the official vote of the 2012
+study goes from `r qz_num(di("qes2012", "unweighted"))` points unweighted to
+`r qz_num(di("qes2012", "weighted"))` weighted, and that of 2014 from
+`r qz_num(di("qes2014", "unweighted"))` to `r qz_num(di("qes2014", "weighted"))`.
+
+## The data
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+`vote_choice` with its default precedence: the reported vote where a
+study asked it, else the intention (the CROP polls), as
+`vote_choice__type` records:
+
+```{r types}
+table(h$study, h$vote_choice__type)
+```
+
+## Reported vote against the official result, party by party
+
+```{r fig-parties, echo = FALSE}
+panel_parties <- c("PLQ", "PQ", "QS", "ADQ", "CAQ")
+d <- recall[recall$level %in% panel_parties & recall$status == "offered" &
+              (recall$weighting == "weighted" | !recall$study %in% recall$study[recall$weighting == "weighted"]), ]
+d$weighted <- d$weighting == "weighted"
+# the Quebec Election Study just left of each election, the Durand panel just right
+d$family <- ifelse(grepl("_panel$", d$study), "panel", "qes")
+d$x <- d$year + ifelse(d$family == "panel", 0.35, ifelse(d$study %in% c("qes2007", "qes2012", "qes2018"), -0.35, 0))
+d$party <- factor(d$level, levels = panel_parties)
+o <- official[official$party %in% panel_parties & official$year >= 2007, ]
+o$party <- factor(o$party, levels = panel_parties)
+key_lab <- c(qes = tr("Quebec Election Study", "Étude électorale québécoise"),
+             panel = tr("Durand panel (just right)", "Panel Durand (juste à droite)"),
+             unweighted = tr("hollow: unweighted\n(weight under review)", "creux : non pondéré\n(pondération en révision)"))
+
+fig_parties <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(x, pct)) +
+    geom_line(data = o, aes(year, share_valid, group = party, linetype = "official"), colour = k$ink, linewidth = 0.6) +
+    geom_segment(data = o, aes(x = year - 0.4, xend = year + 0.4, y = share_valid, yend = share_valid),
+                 colour = k$ink, linewidth = 0.8) +
+    geom_linerange(aes(ymin = lo, ymax = hi, colour = party), linewidth = 0.45, alpha = 0.6) +
+    geom_point(data = d[d$weighted, ], aes(shape = family, fill = party), size = 2.9, stroke = 0.8, colour = k$surface) +
+    geom_point(data = d[!d$weighted, ], aes(shape = family, colour = party), size = 2.5, stroke = 1.1, fill = k$surface) +
+    # an invisible point that trains the "hollow" key of the shape legend
+    geom_point(data = d[1, ], aes(shape = "unweighted"), alpha = 0) +
+    facet_wrap(~party, ncol = 3, axes = "all_x") +
+    scale_party(mode) +
+    scale_linetype_manual(values = c(official = "solid"),
+                          labels = c(official = tr("Official result (line and tick)", "Résultat officiel (ligne et trait)")),
+                          guide = guide_legend(order = 1, override.aes = list(colour = k$ink, linewidth = 0.6))) +
+    # a third, unused level keys the hollow encoding
+    scale_shape_manual(values = c(qes = 21, panel = 22, unweighted = 21), limits = names(key_lab),
+                       breaks = names(key_lab), labels = key_lab,
+                       guide = guide_legend(order = 2, override.aes = list(
+                         fill = c(k$ink2, k$ink2, k$surface), colour = c(k$surface, k$surface, k$ink2),
+                         stroke = c(0.8, 0.8, 1.1), size = 3, alpha = 1))) +
+    scale_x_continuous(breaks = c(2007, 2012, 2018, 2022), labels = c("’07", "’12", "’18", "’22"),
+                       limits = c(2006, 2023), expand = expansion(0)) +
+    scale_y_continuous(limits = c(0, 52), breaks = seq(0, 50, 10), labels = qz_pct_axis, expand = expansion(0)) +
+    labs(x = NULL, y = NULL) +
+    theme_qes(mode) +
+    theme(panel.spacing.x = unit(22, "pt"),
+          legend.position = "inside", legend.position.inside = c(0.695, 0.25),
+          legend.justification.inside = c(0, 0.5), legend.direction = "vertical",
+          legend.key.spacing.y = unit(4, "pt"))
+}
+
+tab <- recall[recall$status != "not_run", ]
+tab <- tab[order(match(tab$level, qz_parties), tab$year, tab$study, tab$weighting), ]
+tab_parties <- setNames(data.frame(
+  qz_party_label(tab$level), tab$year, qz_study_label(tab$study),
+  ifelse(tab$status == "not_listed", tr("n.l.", "n.p."), qz_cell(tab$pct, tab$lo, tab$hi, tab$n)),
+  tab$n, qz_num(tab$official), ifelse(tab$status == "not_listed", "", qz_pts(tab$pct - tab$official, 1)),
+  ifelse(tab$weighting == "weighted", tr("weighted", "pondéré"), tr("unweighted", "non pondéré")),
+  row.names = NULL
+), c(tr("Party", "Parti"), tr("Election", "Élection"), tr("Study", "Étude"),
+     tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"), "n",
+     tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
+     tr("Weighting", "Pondération")))
+alt <- sprintf(tr(
+  "Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). In 2022 the QES has the CAQ at %s against %s officially, and QS at %s against %s. Values in the table view.",
+  "Cinq petits graphiques, un par parti (PLQ, PQ, QS, ADQ, CAQ) : la part officielle des votes valides à chaque élection de 2007 à 2022 en ligne avec un trait, et le vote déclaré de chaque étude en point avec son intervalle de confiance (cercles : Études électorales québécoises ; carrés : panels Durand). En 2022, l'EEQ donne la CAQ à %s contre %s officiellement, et QS à %s contre %s. Valeurs dans la vue en tableau."),
+  qz_pct(rv("qes2022", "CAQ"), 0), qz_pct(ov(2022, "CAQ"), 0), qz_pct(rv("qes2022", "QS"), 0), qz_pct(ov(2022, "QS"), 0))
+qz_figure(fig_parties, "parties",
+  title = sprintf(tr("Surveys under-report the PLQ from 2007 to 2014, and the CAQ by %s points in 2022",
+                     "Les enquêtes sous-estiment le PLQ de 2007 à 2014, et la CAQ de %s points en 2022"),
+                  qz_num(abs(rv("qes2022", "CAQ") - ov(2022, "CAQ")), 0)),
+  subtitle = tr("Reported vote in each study (dot, 95% CI) against the official share of valid votes (line and tick), by party",
+                "Vote déclaré dans chaque étude (point, IC à 95 %) et part officielle des votes valides (ligne et trait), selon le parti"),
+  alt = alt, table = tab_parties, height = 5.2,
+  note = tr("Source: qesR, pooled vote_choice (reported vote) of the Quebec Election Studies (circles, just left of each election) and the Durand panels (squares, just right); official results of Élections Québec. Dots: weighted with each study's post-election weight, 95% confidence intervals (logit). Hollow: unweighted, weight under review (the 2008 study and the 2007 and 2012 panels); the 2018 panel uses its reviewed post-election weight. The 1998 polls interviewed francophones only and are left out. The table view gives every party, with the unweighted estimates.",
+            "Source : qesR, variable regroupée vote_choice (vote déclaré) des Études électorales québécoises (cercles, juste à gauche de chaque élection) et des panels Durand (carrés, juste à droite) ; résultats officiels d'Élections Québec. Points : pondérés avec la pondération postélectorale de chaque étude, intervalles de confiance à 95 % (logit). Creux : non pondéré, pondération en révision (l'étude de 2008 et les panels de 2007 et 2012) ; le panel 2018 utilise sa pondération postélectorale révisée. Les sondages de 1998 n'ont interrogé que des francophones et sont laissés de côté. La vue en tableau donne tous les partis, avec les estimations non pondérées."))
+```
+
+What to notice:
+
+- The PQ is over-reported in most studies:
+  `r qz_pts(rv("qes2012", "PQ") - ov(2012, "PQ"))` in 2012,
+  `r qz_pts(rv("qes2014", "PQ") - ov(2014, "PQ"))` in 2014.
+- The PLQ is under-reported at every election from 2007 to 2014, by
+  `r qz_pts(rv("qes2014", "PLQ") - ov(2014, "PLQ"))` in 2014, the year it won.
+- The winner is not always over-reported: in 2022 the CAQ is
+  `r qz_num(abs(rv("qes2022", "CAQ") - ov(2022, "CAQ")), 0)` points short of
+  its result.
+
+## Does weighting help?
+
+```{r fig-dissim, echo = FALSE}
+# the studies with both a weighted and an unweighted estimate
+both <- intersect(dissim$study[dissim$weighting == "weighted"], dissim$study[dissim$weighting == "unweighted"])
+both <- both[order(qz_year(both), both)]
+d <- dissim[dissim$study %in% both, ]
+d$row <- factor(qz_study_label(d$study), levels = rev(qz_study_label(both)))
+wide <- merge(d[d$weighting == "weighted", c("row", "index")], d[d$weighting == "unweighted", c("row", "index")],
+              by = "row", suffixes = c("_w", "_u"))
+wide$change <- qz_pts(wide$index_w - wide$index_u, 1)
+wide$xmax <- pmax(wide$index_w, wide$index_u)
+d$weighting <- factor(d$weighting, levels = c("weighted", "unweighted"))
+
+fig_dissim <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(index, row)) +
+    geom_segment(data = wide, aes(x = index_u, xend = index_w, y = row, yend = row),
+                 colour = k$muted, linewidth = 0.6) +
+    # the unweighted ring is drawn larger, so it stays visible around an equal weighted dot
+    geom_point(data = d[d$weighting == "unweighted", ], aes(shape = weighting), size = 3.9, stroke = 1.1,
+               colour = k$ink2, fill = k$surface) +
+    geom_point(data = d[d$weighting == "weighted", ], aes(shape = weighting), size = 2.5, stroke = 0.8,
+               colour = k$surface, fill = k$ink) +
+    geom_text(data = wide, aes(x = 12.6, y = row, label = change), hjust = 0, size = 3.1, colour = k$ink,
+              family = qz_font()) +
+    annotate("text", x = 12.6, y = length(both) + 0.75, label = tr("weighted minus\nunweighted", "pondéré moins\nnon pondéré"),
+             hjust = 0, vjust = 0, size = 2.7, colour = k$ink2, family = qz_font(), lineheight = 0.9) +
+    scale_shape_manual(values = c(weighted = 21, unweighted = 21), limits = c("weighted", "unweighted"),
+                       breaks = c("weighted", "unweighted"),
+                       labels = c(tr("filled: weighted", "plein : pondéré"), tr("hollow: unweighted", "creux : non pondéré")),
+                       guide = guide_legend(override.aes = list(fill = c(k$ink, k$surface), colour = c(k$surface, k$ink2),
+                                                                size = c(2.6, 3.2), stroke = c(0.8, 1.1)))) +
+    scale_y_discrete(limits = levels(d$row), expand = expansion(add = c(0.6, 1.2))) +
+    scale_x_continuous(limits = c(0, 15.5), breaks = seq(0, 12, 2), labels = function(x) qz_num(x, 0),
+                       expand = expansion(0)) +
+    coord_cartesian(clip = "off") +
+    labs(x = tr("Index of dissimilarity with the official result (points)", "Indice de dissimilarité avec le résultat officiel (points)"),
+         y = NULL) +
+    theme_qes(mode, grid = "x")
+}
+
+tab <- dissim[order(dissim$year, dissim$study, dissim$weighting), ]
+tab_dissim <- setNames(data.frame(
+  tab$year, qz_study_label(tab$study),
+  ifelse(tab$weighting == "weighted", tr("weighted", "pondéré"), tr("unweighted", "non pondéré")),
+  qz_num(tab$index), row.names = NULL
+), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Weighting", "Pondération"),
+     tr("Index of dissimilarity (points)", "Indice de dissimilarité (points)")))
+alt <- sprintf(tr(
+  "Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from %s to %s points and 2022 from %s to %s, and moves 2014 from %s to %s. Values in the table view, with the studies that have no reviewed weight.",
+  "Graphique en haltères, une rangée par étude qui a les deux estimations (2007 à 2022) : l'indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré (anneau creux) et pondéré (point plein). La pondération fait passer 2012 de %s à %s points et 2022 de %s à %s, et 2014 de %s à %s. Valeurs dans la vue en tableau, avec les études sans pondération révisée."),
+  qz_num(di("qes2012", "unweighted")), qz_num(di("qes2012", "weighted")),
+  qz_num(di("qes2022", "unweighted")), qz_num(di("qes2022", "weighted")),
+  qz_num(di("qes2014", "unweighted")), qz_num(di("qes2014", "weighted")))
+qz_figure(fig_dissim, "dissim",
+  title = sprintf(tr("Weighting cuts the 2012 error from %s to %s points, but does not bring every study closer to the result",
+                     "La pondération réduit l'erreur de 2012 de %s à %s points, mais ne rapproche pas chaque étude du résultat"),
+                  qz_num(di("qes2012", "unweighted"), 0), qz_num(di("qes2012", "weighted"), 0)),
+  subtitle = tr("Index of dissimilarity between the reported and the official vote, unweighted and weighted, for the studies with a reviewed weight",
+                "Indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré et pondéré, pour les études dont la pondération est révisée"),
+  alt = alt, table = tab_dissim, height = 3.2,
+  note = tr("Source: qesR, pooled vote_choice (reported vote); official results of Élections Québec. Index of dissimilarity: half the sum over parties of the absolute difference between the reported and the official share, in points (0: identical; the share of voters that would have to change party). A party a study did not list counts in its Other. The 2008 study and the 2007 and 2012 panels have no reviewed weight: their unweighted index is in the table view.",
+            "Source : qesR, variable regroupée vote_choice (vote déclaré) ; résultats officiels d'Élections Québec. Indice de dissimilarité : la moitié de la somme, sur les partis, de l'écart absolu entre la part déclarée et la part officielle, en points (0 : identiques ; la part des votants qui devraient changer de parti). Un parti qu'une étude ne proposait pas compte dans ses Autres. L'étude de 2008 et les panels de 2007 et 2012 n'ont pas de pondération révisée : leur indice non pondéré est dans la vue en tableau."))
+```
+
+What to notice:
+
+- Weighting brings 2012 and 2022 closer to the official result, by
+  `r qz_num(di("qes2012", "unweighted") - di("qes2012", "weighted"))` and
+  `r qz_num(di("qes2022", "unweighted") - di("qes2022", "weighted"))` points, and
+  moves 2014 slightly away: it adjusts the sample to census margins, not
+  to the vote.
+- The unweighted 2008 study and 2007 panel, at
+  `r qz_num(di("qes2008", "unweighted"))` and
+  `r qz_num(di("qes2007_panel", "unweighted"))` points, are closer to the
+  official result than most weighted studies (from
+  `r qz_num(min(dissim$index[dissim$weighting == "weighted" & dissim$study != "qes2018"]))` to
+  `r qz_num(max(dissim$index[dissim$weighting == "weighted"]))`; only 2018
+  matches them, at `r qz_num(di("qes2018", "weighted"))`): weighting to census
+  margins does not guarantee a closer vote.
+
+## Two and a half years of CROP polls around the 2008 election
+
+```{r fig-crop, echo = FALSE}
+crop_parties <- c("PLQ", "PQ", "ADQ", "QS")
+d <- polls[polls$level %in% crop_parties, ]
+d$party <- factor(d$level, levels = crop_parties)
+d$x <- as.numeric(d$date)
+# a centred three-month mean: the polls within 46 days of each poll
+d <- do.call(rbind, lapply(split(d, d$party), function(g) {
+  g$smooth <- vapply(g$x, function(t) mean(g$pct[abs(g$x - t) <= 46]), numeric(1))
+  g
+}))
+election <- as.numeric(as.Date("2008-12-08"))
+o <- official[official$year == 2008 & official$party %in% crop_parties, ]
+o$party <- factor(o$party, levels = crop_parties)
+last <- d[d$date == max(d$date), ]
+last$label <- qz_party_label(last$party)
+breaks <- as.Date(c("2007-07-01", "2008-01-01", "2008-07-01", "2009-01-01", "2009-07-01", "2010-01-01"))
+month_lab <- function(x) paste(tr(c("Jan.", "Jul."), c("janv.", "juil."))[ifelse(format(x, "%m") == "01", 1, 2)], format(x, "%Y"))
+pv <- function(date, p) polls$pct[format(polls$date, "%Y-%m") == date & polls$level == p]
+
+fig_crop <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(x, colour = party, group = party)) +
+    geom_vline(xintercept = election, colour = k$axis, linewidth = 0.35) +
+    annotate("text", x = election, y = 57, label = tr("Election, 8 Dec. 2008", "Élection, 8 déc. 2008"),
+             hjust = -0.04, size = 3, colour = k$ink2, family = qz_font()) +
+    geom_line(aes(y = pct), linewidth = 0.35, alpha = 0.45, show.legend = FALSE) +
+    geom_line(aes(y = smooth), linewidth = 0.8, lineend = "round", linejoin = "round") +
+    geom_point(data = o, aes(x = election, y = share_valid, fill = party, shape = "official"), size = 3.1,
+               stroke = 0.8, colour = k$surface, inherit.aes = FALSE) +
+    qz_end_labels(transform(last, x = as.numeric(date)), "x", "smooth", "label", "party", mode,
+                  min_gap = 2.6, nudge_x = 60) +
+    scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1)) +
+    scale_party(mode, aesthetics = "fill") +
+    scale_shape_manual(values = c(official = 23), labels = c(official = tr("Official result, 8 Dec. 2008", "Résultat officiel, 8 déc. 2008")),
+                       guide = guide_legend(order = 2, override.aes = list(fill = k$ink2, colour = k$surface, size = 3))) +
+    scale_x_continuous(breaks = as.numeric(breaks), labels = month_lab(breaks), expand = expansion(add = c(15, 110))) +
+    scale_y_continuous(limits = c(0, 60), breaks = seq(0, 60, 10), labels = qz_pct_axis, expand = expansion(0)) +
+    labs(x = NULL, y = tr("Vote intention (among those naming a party)", "Intention de vote (parmi ceux qui nomment un parti)")) +
+    theme_qes(mode) +
+    theme(legend.box = "horizontal", legend.box.just = "top")
+}
+
+tab <- polls[polls$level %in% qz_parties & polls$n > 0, ]
+tab <- tab[order(tab$date, match(tab$level, qz_parties)), ]
+# the CAQ (founded in November 2011) and the PCQ did not run in 2008 and
+# did not exist or were not listed in these polls: "—", not a measured zero
+ran <- tab$level == "other" | tab$level %in% official$party[official$year == 2008]
+tab_crop <- setNames(data.frame(
+  format(tab$date, "%Y-%m"), qz_party_label(tab$level),
+  ifelse(ran, qz_cell(tab$pct, tab$lo, tab$hi, tab$n), "—"), ifelse(ran, tab$n, ""),
+  row.names = NULL
+), c(tr("Poll (month)", "Sondage (mois)"), tr("Party", "Parti"),
+     tr("Intention, % [95% CI]", "Intention, % [IC à 95 %]"), "n"))
+alt <- sprintf(tr(
+  "Line chart of monthly CROP vote intentions from June 2007 to January 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 December 2008 and the official results as diamonds. The ADQ falls from %s in June 2007 to %s in November 2008; the PLQ is at %s in the last poll before the election and took %s; the PQ leads in March to May and in October 2009. Values in the table view.",
+  "Graphique linéaire des intentions de vote mensuelles de CROP de juin 2007 à janvier 2010 pour le PLQ, le PQ, l'ADQ et QS, chacune en moyenne sur trois mois par-dessus les valeurs mensuelles en pâle, avec une ligne à l'élection du 8 décembre 2008 et les résultats officiels en losanges. L'ADQ passe de %s en juin 2007 à %s en novembre 2008 ; le PLQ est à %s au dernier sondage avant l'élection et a obtenu %s ; le PQ mène de mars à mai et en octobre 2009. Valeurs dans la vue en tableau."),
+  qz_pct(pv("2007-06", "ADQ"), 0), qz_pct(pv("2008-11", "ADQ"), 0), qz_pct(pv("2008-11", "PLQ"), 0), qz_pct(ov(2008, "PLQ"), 0))
+qz_figure(fig_crop, "crop",
+  title = sprintf(tr("The ADQ fell from %s to %s before the 2008 election; the PLQ led from August 2008, and the PQ passed it in 2009",
+                     "L'ADQ est passée de %s à %s avant l'élection de 2008 ; le PLQ a mené à partir d'août 2008, et le PQ l'a dépassé en 2009"),
+                  qz_pct(pv("2007-06", "ADQ"), 0), qz_pct(pv("2008-11", "ADQ"), 0)),
+  subtitle = tr("Monthly vote intentions in the CROP polls, June 2007 to January 2010: three-month means over the monthly values, and the official result",
+                "Intentions de vote mensuelles des sondages CROP, de juin 2007 à janvier 2010 : moyennes sur trois mois par-dessus les valeurs mensuelles, et résultat officiel"),
+  alt = alt, table = tab_crop, height = 4.2,
+  note = tr("Source: qesR, pooled vote_choice of the CROP polls (the intention, with the undecided pushed where the poll pushed them), about 1,000 respondents a month, among those who named a party. Unweighted: the polls' weight (XPOND) is under review. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95% confidence intervals (logit) of every poll are in the table view. Diamonds: official results of 8 December 2008.",
+            "Source : qesR, variable regroupée vote_choice des sondages CROP (l'intention, avec relance des indécis là où le sondage les a relancés), environ 1 000 répondants par mois, parmi ceux qui nomment un parti. Non pondéré : la pondération des sondages (XPOND) est en révision. Lignes foncées : la moyenne des sondages à un mois et demi ou moins de chaque sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95 % (logit) de chaque sondage sont dans la vue en tableau. Losanges : résultats officiels du 8 décembre 2008."))
+```
+
+What to notice:
+
+- The ADQ, official opposition after March 2007, falls through 2008 and
+  ends near its election score.
+- The PLQ leads from August 2008 to the election, and its November 2008
+  poll (`r qz_pct(pv("2008-11", "PLQ"), 0)`) is close to its result
+  (`r qz_pct(ov(2008, "PLQ"), 0)`). In June 2008 the PQ was still ahead
+  (`r qz_pct(pv("2008-06", "PQ"), 0)` against `r qz_pct(pv("2008-06", "PLQ"), 0)`).
+- In 2009 the PQ overtakes the PLQ in the spring (March to May) and in
+  October, and the two are level in January 2010.
+
+## About the data
+
+- **Studies.** Every study that asked the reported vote after the
+  election, except the 1998 polls, which interviewed francophones only;
+  the CROP polls for intentions.
+- **Variable.** `vote_choice`, the reported vote (`recall`) in every study
+  but the CROP polls, whose values are intentions (`intention_push`, or
+  `intention` where no push was asked). Shares are among respondents who
+  named a party; would not vote, did not vote, don't know and refused
+  are left out.
+- **Official results.** The share of valid votes of each party, from
+  Élections Québec, kept in the qesR source repository
+  (`inst/extdata/validation/official_results.csv`). The PV, ON and other
+  parties are "Other"; a party a study did not list counts in its Other.
+- **Weights.** Each study's recommended post-election weight, through
+  `qes_design()`; the unweighted estimate is shown next to it. The 2008
+  study, the 2007 and 2012 Durand panels and the CROP polls are
+  unweighted (weights under review); the 2018 panel uses its reviewed
+  post-election weight. [Validation against official results](validation.html)
+  runs these checks on every study every week.

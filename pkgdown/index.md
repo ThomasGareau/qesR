@@ -21,6 +21,25 @@ remotes::install_github("ThomasGareau/qesR")
 # install.packages("qesR")
 ```
 
+## What the pooled variables show
+
+One variable for every study, weighted within each study, with its
+confidence interval: two figures from the
+[example pages](articles/realignment.html).
+
+```{=html}
+<div class="qesr-hero">
+<figure>
+<figcaption>The francophone vote fragmented; the non-francophone vote stayed concentrated until 2018</figcaption>
+<a href="articles/realignment.html"><img class="qesr-img qesr-light" src="articles/realignment_files/figure-html/enp-light.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022, officially and among francophone and non-francophone respondents: it rises among francophones and stays low among non-francophones until 2022. Details on the realignment page." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="articles/realignment_files/figure-html/enp-dark.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022, officially and among francophone and non-francophone respondents: it rises among francophones and stays low among non-francophones until 2022. Details on the realignment page." width="672" height="384" loading="lazy"></a>
+</figure>
+<figure>
+<figcaption>Francophones born in 1990 or after went from 53% to 30% Yes, the least sovereigntist cohort</figcaption>
+<a href="articles/sovereignty-generations.html"><img class="qesr-img qesr-light" src="articles/sovereignty-generations_files/figure-html/cohorts-light.png" alt="Line chart of the share of francophones who would vote Yes to an independent country, by birth cohort, in 2012, 2014, 2018 and 2022: the cohort born in 1990 or after falls from 53% to 30%, the lowest level, while the cohort born 1945-1959 stays at 50% to 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="articles/sovereignty-generations_files/figure-html/cohorts-dark.png" alt="Line chart of the share of francophones who would vote Yes to an independent country, by birth cohort, in 2012, 2014, 2018 and 2022: the cohort born in 1990 or after falls from 53% to 30%, the lowest level, while the cohort born 1945-1959 stays at 50% to 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"></a>
+</figure>
+</div>
+```
+
 ## One data frame across 11 studies (experimental)
 
 ```r
@@ -200,10 +219,14 @@ changed, column by column, and how to reproduce a 0.4.4 result.
   [coverage by study](articles/coverage.html),
   [validation against official results](articles/validation.html) and the
   [harmonization reference](articles/harmonization-reference.html).
-- Examples built from the full data files:
-  [respondents by study](articles/analysis-descriptive.html),
-  [support for independence](articles/analysis-sovereignty.html) and
-  [reported vote](articles/analysis-vote-choice.html).
+- Examples built from the full data files, with weighted estimates and
+  confidence intervals: [the realignment of the party
+  system](articles/realignment.html), [sovereignty across
+  generations](articles/sovereignty-generations.html), [sovereignty and
+  left-right](articles/dimensions.html), [turnout](articles/turnout.html),
+  [panel transitions](articles/transitions.html), [surveys against the
+  official results](articles/survey-vs-official.html), and
+  [recipes](articles/recipes.html) for the pooled variables.
 - [Reference](reference/index.html): every function, grouped by task. The
   functions of qesR 0.4.4 are under *Legacy and deprecated*; they keep
   working.
@@ -273,9 +296,14 @@ et sa licence.
   [validation par les résultats officiels](articles/fr-validation.html),
   [référence de l'harmonisation](articles/fr-reference-harmonisation.html)
 - [Le fichier fusionné hérité](articles/fr-donnees-fusionnees.html)
-- Exemples : [répondants par étude](articles/fr-analyse-descriptive.html),
-  [appui à l'indépendance](articles/fr-analyse-souverainete.html),
-  [vote déclaré](articles/fr-analyse-choix-vote.html)
+- Exemples, avec des estimations pondérées et des intervalles de
+  confiance : [le réalignement du système partisan](articles/fr-realignement.html),
+  [la souveraineté selon les générations](articles/fr-souverainete-generations.html),
+  [souveraineté et gauche-droite](articles/fr-dimensions.html),
+  [la participation](articles/fr-participation.html),
+  [les transitions des panels](articles/fr-transitions.html),
+  [les enquêtes et les résultats officiels](articles/fr-enquetes-resultats.html)
+  et des [recettes](articles/fr-recettes.html) pour les variables regroupées
 - [Aperçu des fonctions en français](reference/qesR-fr.html) (`?qesR-fr`)
 
 ## Data licences

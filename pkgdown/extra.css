@@ -34,6 +34,7 @@
    white; gold would be 1.7:1), gold on the dark theme (9.2:1 on #212529). */
 a:focus-visible,
 button:focus-visible,
+summary:focus-visible,
 .nav-link:focus-visible,
 .dropdown-item:focus-visible {
   outline: 3px solid #0357a0;
@@ -42,6 +43,7 @@ button:focus-visible,
 
 [data-bs-theme="dark"] a:focus-visible,
 [data-bs-theme="dark"] button:focus-visible,
+[data-bs-theme="dark"] summary:focus-visible,
 [data-bs-theme="dark"] .nav-link:focus-visible,
 [data-bs-theme="dark"] .dropdown-item:focus-visible {
   outline-color: var(--qesr-gold);
@@ -114,9 +116,95 @@ main .contents > p:first-of-type > em:only-child > a {
   font-weight: 600;
 }
 
-/* Figures keep a light background in the dark theme, so the axis text of
-   the plots (drawn for a white page) stays readable. */
-[data-bs-theme="dark"] main img:not(.logo):not([src$="logo.png"]) {
+/* Ordinary plots (drawn for a white page) keep a light background in the
+   dark theme, so that their axis text stays readable. The figures of the
+   example pages are drawn twice instead, for each theme (below). */
+[data-bs-theme="dark"] main img:not(.logo):not([src$="logo.png"]):not(.qesr-img) {
   background-color: #fff;
   border-radius: var(--bs-border-radius);
+}
+
+/* The figures of the example pages (vignettes/articles/_theme.R): a title
+   in HTML, a light and a dark image of the same chart (the one that fits
+   the theme is shown), a note with the source, weights and intervals, and
+   a collapsible table view with the values behind the chart. */
+.qesr-fig {
+  margin: 1.5rem 0 2rem;
+}
+
+.qesr-fig figcaption {
+  margin-bottom: 0.5rem;
+  max-width: 720px;
+}
+
+/* the title states the finding; the subtitle says what the chart shows */
+.qesr-title {
+  display: block;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.qesr-sub {
+  display: block;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--bs-secondary-color);
+  margin-top: 0.15rem;
+}
+
+.qesr-img {
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  display: block;
+}
+
+.qesr-dark {
+  display: none;
+}
+
+[data-bs-theme="dark"] .qesr-light {
+  display: none;
+}
+
+[data-bs-theme="dark"] .qesr-dark {
+  display: block;
+}
+
+.qesr-note {
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color);
+  margin: 0.4rem 0 0;
+  max-width: 720px;
+}
+
+.qesr-table summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  width: max-content;
+}
+
+.qesr-table table {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.5rem;
+}
+
+/* The two hero figures of the home page, side by side on a wide screen. */
+.qesr-hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem 1.5rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.qesr-hero figure {
+  margin: 0;
+}
+
+.qesr-hero figcaption {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
 }

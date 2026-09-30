@@ -102,24 +102,68 @@ their index is unweighted. `qes1998` interviewed francophones only, a population
 the official results do not describe: it is shown for reference but not
 checked.
 
-```{r recall-plot, fig.height = 8, fig.alt = tr("For each study, the difference in points between the reported vote share of each party and its official share of valid votes; weighted where the study has a reviewed weight.", "Pour chaque étude, l'écart en points entre la part du vote déclaré de chaque parti et sa part officielle des votes valides ; pondéré lorsque l'étude a une pondération révisée.")}
+```{r recall-plot, echo = FALSE}
+# the site's chart system (vignettes/articles/_theme.R): each figure drawn
+# for the light and the dark theme, with its table view
+qz_num <- function(x, digits = 1) num(x, digits)
+source("_theme.R", encoding = "UTF-8", local = TRUE)
+source("_data.R", encoding = "UTF-8", local = TRUE)
 # the weighted distribution where the study has a reviewed weight
 shown <- best(idx[idx$study != "qes1998", ])
 lv <- report[report$check == "recall" & !is.na(report$level) &
                paste(report$study, report$weight) %in% paste(shown$study, shown$weight), ]
-lv$party <- ifelse(lv$level == "other", tr("Other", "Autre"), lv$level)
-lv$label <- paste0(lv$study, " (", lv$weighting, ")")
-lv$label <- factor(lv$label, unique(lv$label[order(lv$year, lv$study)]))
-ggplot(lv, aes(x = value, y = party)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_segment(aes(x = 0, xend = value, yend = party), colour = "grey70") +
-  geom_point(size = 2.2, colour = "#0468b9") +
-  facet_wrap(~label, ncol = 3, scales = "free_y") +
-  labs(
-    x = tr("Reported minus official share (points)", "Part déclarée moins part officielle (points)"),
-    y = NULL
-  ) +
-  theme_minimal(base_size = 11)
+lv$weighted <- lv$weight != "none"
+# one row per party (the same order in every study), one column per study
+party_order <- c("PLQ", "PQ", "ADQ", "QS", "CAQ", "PCQ", "PVQ", "ON", "other")
+lv$party <- factor(lv$level, levels = rev(intersect(party_order, lv$level)))
+cols <- unique(lv[order(lv$year, lv$study), c("study", "weighted")])
+col_lab <- paste0(qz_study_label(cols$study), ifelse(cols$weighted, "", tr("\nunweighted", "\nnon pondéré")))
+lv$col <- factor(col_lab[match(lv$study, cols$study)], levels = col_lab)
+# signed, rounded first so that a difference that rounds to zero is "0.0", not "-0.0"
+signed <- function(x) { r <- round(x, 1); r[r == 0] <- 0; num(r, 1, sign = TRUE) }
+lv$cell <- signed(lv$value)
+lim <- max(abs(lv$value), na.rm = TRUE)
+big <- lv[abs(lv$value) >= 5, ]
+plq <- lv$value[lv$level == "PLQ" & lv$year >= 2007 & lv$year <= 2014]
+caq22 <- lv$value[lv$level == "CAQ" & lv$study == "qes2022"]
+fig_recall <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ramp <- grDevices::colorRampPalette(c(k$no, k$wash, k$yes))(201)
+  lv$ink <- qz_label_ink(ramp[round(100 * lv$value / lim) + 101], mode)
+  ggplot(lv, aes(col, party)) +
+    qz_tile(mode, aes(fill = value)) +
+    # differences of 5 points or more are outlined
+    geom_tile(data = big, fill = NA, colour = k$ink, linewidth = 0.6, width = 0.94, height = 0.9) +
+    geom_text(aes(label = cell, colour = ink), size = 2.8, family = qz_font()) +
+    scale_fill_gradient2(low = k$no, mid = k$wash, high = k$yes, midpoint = 0, limits = c(-lim, lim),
+                         labels = function(x) num(x, 0),
+                         guide = guide_colourbar(title.position = "top", barwidth = unit(140, "pt"), barheight = unit(7, "pt"))) +
+    scale_colour_identity() +
+    scale_x_discrete(position = "top") +
+    scale_y_discrete(labels = function(x) qz_party_label(x)) +
+    labs(x = NULL, y = NULL,
+         fill = tr("Reported minus official share (points); outlined: 5 points or more",
+                   "Part déclarée moins part officielle (points) ; encadré : 5 points ou plus")) +
+    theme_qes(mode, grid = "none") +
+    theme(legend.position = "bottom", legend.title = element_text(colour = k$ink2, size = 9.4),
+          legend.ticks = element_blank(), axis.text.x.top = element_text(lineheight = 0.9, vjust = 0))
+}
+tab <- lv[order(lv$year, lv$study, match(lv$level, party_order)), ]
+qz_figure(fig_recall, "recall",
+  title = sprintf(tr("Surveys under-report the PLQ at every election from 2007 to 2014, by %s to %s points, and the CAQ by %s points in 2022",
+                     "Les enquêtes sous-estiment le PLQ à chaque élection de 2007 à 2014, de %s à %s points, et la CAQ de %s points en 2022"),
+                  num(min(abs(plq)), 0), num(max(abs(plq)), 0), num(abs(caq22), 0)),
+  subtitle = tr("Reported minus official vote share, in points, by party (rows) and study (columns)",
+                "Part du vote déclaré moins part officielle, en points, selon le parti (rangées) et l'étude (colonnes)"),
+  alt = tr("Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view.",
+           "Carte de chaleur de l'écart en points entre la part de chaque parti dans le vote déclaré et sa part officielle des votes valides, une rangée par parti et une colonne par étude de 2007 à 2022 ; les cases bleues sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, et la CAQ en 2022. Valeurs dans la vue en tableau."),
+  table = setNames(data.frame(qz_study_label(tab$study), tab$weighting, qz_party_label(tab$level), signed(tab$value),
+                              row.names = NULL),
+                   tr(c("Study", "Weighting", "Party", "Reported minus official (points)"),
+                      c("Étude", "Pondération", "Parti", "Déclaré moins officiel (points)"))),
+  note = tr("Weighted with the reviewed weight of the study where it has one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.",
+            "Pondéré avec la pondération révisée de l'étude lorsqu'elle en a une ; l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés. Une case vide : le parti ne s'est pas présenté, ou l'étude le compte dans Autres. Les sondages de 1998, qui n'ont interrogé que des francophones, sont laissés de côté."),
+  height = 4.6)
 ```
 
 ```{r recall-numbers, include = FALSE}
@@ -201,20 +245,66 @@ Each cell is a dissimilarity index in points (0 is a perfect match); a
 blank cell is a margin the study did not ask, or one the collected census
 tables do not publish for that year (mother tongue in 2006).
 
-```{r census-plot, fig.height = 7, fig.alt = tr("For the studies with reviewed weights, the difference in points between the weighted share of each category of gender, age, mother tongue and education and its census share.", "Pour les études dont la pondération est révisée, l'écart en points entre la part pondérée de chaque catégorie de genre, d'âge, de langue maternelle et de scolarité et sa part au recensement.")}
+```{r census-plot, echo = FALSE}
 cl <- report[report$check == "census" & !is.na(report$level) & report$weight != "none", ]
-cl$variable <- factor(vars[cl$variable], unname(vars))
-cl$study <- factor(cl$study, unique(cl$study[order(cl$year)]))
-ggplot(cl, aes(x = value, y = level, colour = study, shape = study)) +
-  geom_vline(xintercept = 0, colour = "grey50") +
-  geom_point(size = 2.2) +
-  facet_wrap(~variable, ncol = 2, scales = "free_y") +
-  labs(
-    x = tr("Weighted survey share minus census share (points)",
-           "Part pondérée de l'enquête moins part au recensement (points)"),
-    y = NULL, colour = tr("Study", "Étude"), shape = tr("Study", "Étude")
-  ) +
-  theme_minimal(base_size = 11)
+# a two-category margin is one row (women; university): the other row mirrors it
+cl <- cl[!cl$level %in% c("man", "below_university"), ]
+# the story first: education and mother tongue, then age and gender
+var_order <- c("education", "lang_mother", "age_group6", "gender")
+cl$variable <- factor(vars[cl$variable], unname(vars[var_order]))
+cl$study_lab <- factor(qz_study_label(cl$study), unique(qz_study_label(cl$study[order(cl$year)])))
+level_lab <- c(man = tr("Men", "Hommes"), woman = tr("Women", "Femmes"),
+               a18_24 = "18-24", a25_34 = "25-34", a35_44 = "35-44", a45_54 = "45-54",
+               a55_64 = "55-64", a65_plus = tr("65 and over", "65 et plus"),
+               french = tr("French", "Français"), english = tr("English", "Anglais"),
+               other = tr("Other", "Autre"), below_university = tr("Below university", "Sous l'université"),
+               university = tr("University", "Université"))
+cl$level_label <- ifelse(cl$level %in% names(level_lab), level_lab[cl$level], cl$level)
+cl$row <- factor(cl$level_label, levels = rev(unique(cl$level_label[order(cl$variable)])))
+# a margin the study's weight is raked on is 0 by design: grey, "cal."
+span <- stats::aggregate(value ~ study + variable, cl, function(v) max(abs(v)))
+cl$calibrated <- paste(cl$study, cl$variable) %in% paste(span$study, span$variable)[span$value < 0.5]
+cl$cell <- ifelse(cl$calibrated, tr("cal.", "cal."), signed(cl$value))
+lim <- max(abs(cl$value[!cl$calibrated]), na.rm = TRUE)
+uni <- cl$value[cl$level == "university"]
+eng18 <- cl$value[cl$level == "english" & cl$study == "qes2018"]
+fig_census <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ramp <- grDevices::colorRampPalette(c(k$no, k$wash, k$yes))(201)
+  cl$ink <- ifelse(cl$calibrated, k$ink2, qz_label_ink(ramp[round(100 * pmax(-1, pmin(1, cl$value / lim))) + 101], mode))
+  ggplot(cl, aes(study_lab, row)) +
+    qz_tile(mode, aes(fill = ifelse(calibrated, NA, value))) +
+    geom_text(aes(label = cell, colour = ink), size = 2.7, family = qz_font()) +
+    facet_grid(variable ~ ., scales = "free_y", space = "free_y") +
+    scale_fill_gradient2(low = k$no, mid = k$wash, high = k$yes, midpoint = 0, limits = c(-lim, lim),
+                         labels = function(x) num(x, 0), na.value = k$wash,
+                         guide = guide_colourbar(title.position = "top", barwidth = unit(140, "pt"), barheight = unit(7, "pt"))) +
+    scale_colour_identity() +
+    scale_x_discrete(position = "top") +
+    labs(x = NULL, y = NULL,
+         fill = tr("Survey minus census (points); cal.: within half a point on every category",
+                   "Enquête moins recensement (points) ; cal. : à moins d'un demi-point partout")) +
+    theme_qes(mode, grid = "none") +
+    theme(strip.text.y = element_text(angle = 0, hjust = 0, face = "bold", colour = k$ink),
+          legend.position = "bottom", legend.title = element_text(colour = k$ink2, size = 9.4),
+          legend.ticks = element_blank())
+}
+tab <- cl[order(cl$variable, cl$level, cl$year), ]
+qz_figure(fig_census, "census",
+  title = sprintf(tr("After weighting, university graduates are still over-represented by %s to %s points; in 2018, English speakers by %s",
+                     "Après pondération, les diplômés universitaires restent surreprésentés de %s à %s points ; en 2018, les anglophones de %s"),
+                  num(min(uni), 0), num(max(uni), 0), num(eng18, 0)),
+  subtitle = tr("Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.",
+                "Part pondérée de l'enquête moins part au recensement, en points, selon la catégorie et l'étude ; les marges atteintes à moins d'un demi-point, comme le sont les marges de calage, sont marquées cal."),
+  alt = tr("Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a reviewed weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view.",
+           "Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude dont la pondération est révisée ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau."),
+  table = setNames(data.frame(as.character(tab$variable), tab$level_label, as.character(tab$study_lab), signed(tab$value),
+                              ifelse(tab$calibrated, tr("yes", "oui"), ""), row.names = NULL),
+                   tr(c("Margin", "Category", "Study", "Survey minus census (points)", "Within half a point (cal.)"),
+                      c("Marge", "Catégorie", "Étude", "Enquête moins recensement (points)", "À moins d'un demi-point (cal.)"))),
+  note = tr("Studies with a reviewed weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.",
+            "Études dont la pondération est révisée, pondérées ; le recensement qui précède chaque étude (Statistique Canada). Le genre et la scolarité ont deux catégories : une seule rangée est montrée (femmes ; université), l'autre en est le miroir. Une marge est marquée cal. quand chaque catégorie est à moins d'un demi-point du recensement, comme l'est par construction une marge sur laquelle la pondération est calée ; un bon accord n'y dit rien de la représentativité."),
+  height = 5.0)
 ```
 
 ## 4. Relationships between answers

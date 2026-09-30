@@ -1,0 +1,284 @@
+---
+title: "Two dimensions of competition: sovereignty and left-right"
+description: >
+  Where each party's voters stand on sovereignty and on the left-right
+  scale, and where sovereigntists and federalists cast their vote.
+params:
+  lang: "en"
+---
+
+*[Version française](fr-dimensions.html)*
+
+```{r setup, include = FALSE}
+source("_setup.R", encoding = "UTF-8")
+```
+
+```{r harmonize, echo = FALSE}
+h <- qes_harmonize(
+  studies = qz_studies,
+  targets = c("vote_choice", "sov_support", "lr_self"),
+  types = list(vote_choice = "recall"),
+  missing = "reasons", quiet = TRUE
+)
+```
+
+```{r estimates, echo = FALSE}
+h$party <- factor(qz_party_code(h$vote_choice), levels = qz_parties)
+h$yes <- factor(ifelse(h$sov_support %in% "Yes", "yes",
+                       ifelse(h$sov_support %in% "No", "no", NA)), levels = c("yes", "no"))
+dim_studies <- c("qes2012", "qes2014", "qes2018", "qes2022")
+bar_studies <- c("qes2007", "qes2008", dim_studies)
+
+electorates <- do.call(rbind, lapply(dim_studies, function(s) {
+  d <- qz_design(h, s, "weight_post")
+  lr <- qz_mean(d, "lr_self", by = "party")
+  yes <- qz_share(d, "yes", by = "party", levels = "yes")
+  out <- merge(setNames(lr, c("party", "lr", "lr_lo", "lr_hi", "lr_n", "weighted")),
+               setNames(yes[, c("group", "pct", "lo", "hi", "n")], c("party", "yes", "yes_lo", "yes_hi", "yes_n")))
+  qz_tag(out, study = s)
+}))
+electorates$year <- qz_year(electorates$study)
+electorates$status <- qz_party_status(electorates$study, electorates$party)
+electorates <- electorates[electorates$status == "offered" & electorates$party != "other", ]
+
+where <- do.call(rbind, lapply(bar_studies, function(s) {
+  d <- qz_design(h, s, "weight_post")
+  qz_tag(qz_share(d, "party", by = "yes"), study = s)
+}))
+where$year <- qz_year(where$study)
+where$status <- qz_party_status(where$study, where$level)
+ev <- function(s, p, col = "yes") electorates[[col]][electorates$study == s & electorates$party == p]
+wv <- function(s, g, p) where$pct[where$study == s & where$group == g & where$level == p]
+```
+
+For forty years the PQ and the PLQ split Quebec on the national question.
+The Quebec Election Studies show that this axis no longer sorts the
+parties the way it did. In 2012, `r qz_pct(ev("qes2012", "PQ"), 0)` of PQ
+voters would have voted Yes to an independent country, against
+`r qz_pct(ev("qes2012", "PLQ"), 0)` of PLQ voters. By 2022 the Yes vote was
+split: the PQ took `r qz_pct(wv("qes2022", "yes", "PQ"), 0)` of it, Québec
+solidaire `r qz_pct(wv("qes2022", "yes", "QS"), 0)` and the CAQ
+`r qz_pct(wv("qes2022", "yes", "CAQ"), 0)`, while in 2012 the PQ alone took
+`r qz_pct(wv("qes2012", "yes", "PQ"), 0)`. On the left-right scale, Québec
+solidaire's voters are the furthest left
+(`r qz_num(ev("qes2022", "QS", "lr"))` out of 10 in 2022) and the
+Conservatives' the furthest right (`r qz_num(ev("qes2022", "PCQ", "lr"))`).
+
+## The data
+
+Three harmonized variables: the pooled reported vote, the pooled
+referendum vote (`sov_support`) and the self-placement on the left-right
+scale (`lr_self`, 0 to 10):
+
+```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
+```
+
+`lr_self` was asked in the Quebec Election Studies of 2012 to 2022; in
+2022 it and the referendum question were asked during the campaign, the
+reported vote after the election, so the page keeps the respondents of
+both waves and weights them with the post-election weight. For one party
+in one study:
+
+```{r example}
+d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
+svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
+      svymean, na.rm = TRUE)
+```
+
+## Party electorates on two axes, 2012 to 2022
+
+```{r fig-paths, echo = FALSE}
+path_parties <- c("PLQ", "PQ", "CAQ", "QS", "PCQ")
+e <- electorates[electorates$party %in% path_parties & electorates$lr_n >= qz_min_n & electorates$yes_n >= qz_min_n, ]
+measure_lab <- c(yes = tr("Would vote Yes (among Yes and No)", "Voteraient Oui (parmi Oui et Non)"),
+                 lr = tr("Left-right, mean (0 = left, 10 = right)", "Gauche-droite (0 = gauche, 10 = droite)"))
+d <- rbind(data.frame(e[, c("party", "year", "weighted")], measure = "yes", value = e$yes, lo = e$yes_lo, hi = e$yes_hi),
+           data.frame(e[, c("party", "year", "weighted")], measure = "lr", value = e$lr, lo = e$lr_lo, hi = e$lr_hi))
+d$party <- factor(d$party, levels = path_parties)
+d$panel <- factor(measure_lab[d$measure], levels = measure_lab)
+# the parties side by side at each election, so their intervals do not overlap
+d$x <- d$year + c(PLQ = -0.36, PQ = -0.18, CAQ = 0, QS = 0.18, PCQ = 0.36)[as.character(d$party)]
+d$label <- qz_party_label(d$party)
+# the two panels have their own scales: a share and a mean on 0-10
+blank <- data.frame(panel = factor(measure_lab, levels = measure_lab), x = 2012, value = c(0, 2.5), top = c(100, 7.4))
+
+fig_paths <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(x, value, colour = party, group = party)) +
+    geom_blank(data = blank, aes(x, value), inherit.aes = FALSE) +
+    geom_blank(data = blank, aes(x, top), inherit.aes = FALSE) +
+    geom_linerange(aes(ymin = lo, ymax = hi), linewidth = 0.4, alpha = 0.45) +
+    qz_line() +
+    qz_dots(mode, d, aes(x, value), colour_aes = "party", size = 2.4) +
+    qz_end_labels(d[d$measure == "yes", ], "x", "value", "label", "party", mode, min_gap = 5.5, nudge_x = 1.4, size = 3) +
+    qz_end_labels(d[d$measure == "lr", ], "x", "value", "label", "party", mode, min_gap = 0.24, nudge_x = 1.4, size = 3) +
+    facet_wrap(~panel, nrow = 1, scales = "free_y") +
+    scale_party(mode) +
+    scale_x_continuous(breaks = c(2012, 2014, 2018, 2022), limits = c(2011.3, 2026.2), expand = expansion(0)) +
+    # the share panel starts at 0, the left-right panel at 2.5: 0 and above 10 are percentages
+    scale_y_continuous(labels = function(x) ifelse(x > 10 | x == 0, qz_pct_axis(x), qz_num(x, 0)), expand = expansion(0)) +
+    labs(x = NULL, y = NULL) +
+    theme_qes(mode) +
+    theme(panel.spacing.x = unit(30, "pt"), strip.text = element_text(size = 9.5))
+}
+
+tab <- electorates[order(match(electorates$party, qz_parties), electorates$year), ]
+tab_paths <- setNames(data.frame(
+  qz_party_label(tab$party), tab$year, qz_study_label(tab$study),
+  qz_cell(tab$lr, tab$lr_lo, tab$lr_hi, tab$lr_n, 2), tab$lr_n,
+  qz_cell(tab$yes, tab$yes_lo, tab$yes_hi, tab$yes_n), tab$yes_n, qz_weight_text(tab$weighted),
+  row.names = NULL
+), c(tr("Party", "Parti"), tr("Election", "Élection"), tr("Study", "Étude"),
+     tr("Left-right, mean [95% CI]", "Gauche-droite, moyenne [IC à 95 %]"), tr("n (left-right)", "n (gauche-droite)"),
+     tr("Yes, % [95% CI]", "Oui, % [IC à 95 %]"), tr("n (Yes/No)", "n (Oui/Non)"), tr("Weighting", "Pondération")))
+alt <- sprintf(tr(
+  "Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from %s to %s Yes; CAQ voters from %s to %s; QS voters from %s to %s. PLQ voters move from %s to %s on the left-right scale; QS voters stay the furthest left, at %s in 2022. Values in the table view.",
+  "Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti qui voteraient Oui à l'indépendance, à droite leur autopositionnement gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ passent de %s à %s de Oui ; ceux de la CAQ, de %s à %s ; ceux de QS, de %s à %s. Les électeurs du PLQ passent de %s à %s sur l'axe gauche-droite ; ceux de QS restent les plus à gauche, à %s en 2022. Valeurs dans la vue en tableau."),
+  qz_pct(ev("qes2012", "PQ"), 0), qz_pct(ev("qes2022", "PQ"), 0),
+  qz_pct(ev("qes2012", "CAQ"), 0), qz_pct(ev("qes2022", "CAQ"), 0),
+  qz_pct(ev("qes2012", "QS"), 0), qz_pct(ev("qes2022", "QS"), 0),
+  qz_num(ev("qes2012", "PLQ", "lr")), qz_num(ev("qes2022", "PLQ", "lr")), qz_num(ev("qes2022", "QS", "lr")))
+qz_figure(fig_paths, "paths",
+  title = sprintf(tr("CAQ and QS voters converged on sovereignty (%s and %s Yes in 2022), while PLQ voters moved left",
+                     "Les électeurs de la CAQ et de QS se sont rapprochés sur la souveraineté (%s et %s de Oui en 2022), et ceux du PLQ se sont déplacés vers la gauche"),
+                  qz_pct(ev("qes2022", "CAQ"), 0), qz_pct(ev("qes2022", "QS"), 0)),
+  subtitle = tr("Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals",
+                "Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, de 2012 à 2022, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_paths, height = 4.2,
+  note = tr("Source: qesR, pooled vote_choice (reported vote) and sov_support (independence), lr_self; QES 2012, 2014, 2018 and 2022, weighted with each study's post-election weight. The parties are set side by side at each election. Lines: 95% confidence intervals (logit for the share, Wald for the mean). The two panels have their own scales. The PCQ was listed in 2022 only.",
+            "Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support (indépendance), lr_self ; EEQ 2012, 2014, 2018 et 2022, pondérées avec la pondération postélectorale de chaque étude. Les partis sont côte à côte à chaque élection. Traits : intervalles de confiance à 95 % (logit pour la part, Wald pour la moyenne). Les deux panneaux ont leur propre échelle. Le PCQ n'était proposé qu'en 2022."))
+```
+
+What to notice:
+
+- PQ and QS voters are the sovereigntist ones; PLQ voters are almost
+  all federalists at every election (`r qz_pct(ev("qes2022", "PLQ"), 0)` Yes in
+  2022).
+- The two newer parties moved toward each other on sovereignty: CAQ
+  voters from `r qz_pct(ev("qes2012", "CAQ"), 0)` Yes in 2012 to
+  `r qz_pct(ev("qes2022", "CAQ"), 0)` in 2022, QS voters from
+  `r qz_pct(ev("qes2012", "QS"), 0)` to `r qz_pct(ev("qes2022", "QS"), 0)`.
+- PLQ voters moved left, from `r qz_num(ev("qes2012", "PLQ", "lr"))` to
+  `r qz_num(ev("qes2022", "PLQ", "lr"))`; the voters right of centre are now
+  those of the CAQ and the PCQ.
+- PQ and QS voters are close on left-right
+  (`r qz_num(ev("qes2012", "PQ", "lr") - ev("qes2012", "QS", "lr"))` points
+  apart in 2012, `r qz_num(ev("qes2022", "PQ", "lr") - ev("qes2022", "QS", "lr"))`
+  in 2022), but their gap on sovereignty grew from
+  `r qz_num(ev("qes2012", "PQ") - ev("qes2012", "QS"), 0)` to
+  `r qz_num(ev("qes2022", "PQ") - ev("qes2022", "QS"), 0)` points: the
+  national question now separates them more than the left-right scale.
+
+## Where sovereigntists and federalists vote
+
+```{r fig-where, echo = FALSE}
+line_parties <- c("PLQ", "PQ", "ADQ", "QS", "CAQ", "PCQ")
+d <- where[where$group %in% c("yes", "no") & where$level %in% line_parties & where$status == "offered" &
+             where$n >= qz_min_n, ]
+d$party <- factor(d$level, levels = line_parties)
+d$x <- d$year
+# the question changes between 2008 (the 1995 question) and 2012 (independence): no line across
+d$era <- ifelse(d$year < 2010, "q1995", "indep")
+side_lab <- c(yes = tr("Would vote Yes", "Voteraient Oui"), no = tr("Would vote No", "Voteraient Non"))
+d$facet <- factor(side_lab[d$group], levels = side_lab)
+lab <- d[d$year == 2022, ]
+# the QES 2022 under-reports the CAQ (see the survey-vs-official page)
+caq_gap <- qz_official()$share_valid[qz_official()$year == 2022 & qz_official()$party == "CAQ"] -
+  qz_share(qz_design(h, "qes2022", "weight_post"), "party", levels = "CAQ")$pct
+lab$label <- qz_party_label(lab$party)
+
+fig_where <- function(mode) {
+  k <- qz_tokens[[mode]]
+  ggplot(d, aes(x, pct, colour = party, group = interaction(party, era))) +
+    annotate("rect", xmin = 2008.6, xmax = 2011.4, ymin = -Inf, ymax = Inf, fill = k$wash) +
+    annotate("text", x = 2010, y = 78, label = tr("the question\nchanges", "la question\nchange"),
+             size = 2.7, colour = k$ink2, family = qz_font(), lineheight = 0.9) +
+    geom_linerange(aes(ymin = lo, ymax = hi), linewidth = 0.4, alpha = 0.45, show.legend = FALSE) +
+    qz_line() +
+    geom_point(aes(fill = party), shape = 21, size = 2.4, stroke = 0.8,
+               colour = k$surface, data = d[d$year != 2008, ], show.legend = FALSE) +
+    geom_point(aes(colour = party), shape = 21, size = 2.2, stroke = 1.1, fill = k$surface, data = d[d$year == 2008, ],
+               show.legend = FALSE) +
+    qz_end_labels(lab[lab$group == "yes", ], "x", "pct", "label", "party", mode, min_gap = 4.2, nudge_x = 1.6, size = 3) +
+    qz_end_labels(lab[lab$group == "no", ], "x", "pct", "label", "party", mode, min_gap = 4.2, nudge_x = 1.6, size = 3) +
+    facet_wrap(~facet, nrow = 1, axes = "all_x") +
+    scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1, nrow = 1)) +
+    scale_party(mode, aesthetics = "fill") +
+    scale_shape_manual(values = c(weighted = 21, unweighted = 21), limits = c("weighted", "unweighted"),
+                       breaks = "unweighted", labels = tr("hollow: unweighted (2008, weight under review)", "creux : non pondéré (2008, pondération en révision)"),
+                       guide = guide_legend(order = 2, override.aes = list(fill = k$surface, colour = k$ink2, stroke = 1.1, size = 2.6,
+                                                                          alpha = 1, linetype = 0))) +
+    geom_point(data = d[1, ], aes(shape = "unweighted"), alpha = 0, colour = NA, show.legend = c(colour = FALSE, shape = TRUE)) +
+    scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022), labels = c("2007", "2012", "’14", "2018", "2022"),
+                       limits = c(2006.3, 2026.6), expand = expansion(0)) +
+    scale_y_continuous(breaks = seq(0, 80, 20), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(0, 84), expand = FALSE, clip = "off") +
+    labs(x = NULL, y = tr("Share of the side's reported vote", "Part du vote déclaré du camp")) +
+    theme_qes(mode) +
+    theme(panel.spacing.x = unit(26, "pt"))
+}
+
+tab <- where[where$group %in% c("yes", "no") & where$level %in% c(line_parties, "other"), ]
+tab <- tab[order(tab$year, tab$group == "no", match(tab$level, qz_parties)), ]
+tab_where <- setNames(data.frame(
+  tab$year, qz_study_label(tab$study),
+  ifelse(tab$group == "yes", tr("Yes", "Oui"), tr("No", "Non")),
+  qz_party_label(tab$level),
+  ifelse(tab$status == "not_run", "—", ifelse(tab$status == "not_listed", tr("n.l.", "n.p."),
+                                                  qz_cell(tab$pct, tab$lo, tab$hi, tab$n))),
+  tab$n, qz_weight_text(tab$weighted), row.names = NULL
+), c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Referendum vote", "Vote référendaire"),
+     tr("Party", "Parti"), tr("Share of reported vote [95% CI]", "Part du vote déclaré [IC à 95 %]"),
+     "n", tr("Weighting", "Pondération")))
+alt <- sprintf(tr(
+  "Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from %s in 2012 to %s in 2022, as QS rises to %s and the CAQ to %s; the PLQ's share of the No vote goes from %s in 2012 to %s in 2022. Values in the table view.",
+  "Graphiques linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote déclaré de chaque camp allée à chaque parti. La part du PQ chez les électeurs du Oui passe de %s en 2012 à %s en 2022, tandis que QS monte à %s et la CAQ à %s ; celle du PLQ chez les électeurs du Non passe de %s en 2012 à %s en 2022. Valeurs dans la vue en tableau."),
+  qz_pct(wv("qes2012", "yes", "PQ"), 0), qz_pct(wv("qes2022", "yes", "PQ"), 0),
+  qz_pct(wv("qes2022", "yes", "QS"), 0), qz_pct(wv("qes2022", "yes", "CAQ"), 0),
+  qz_pct(wv("qes2012", "no", "PLQ"), 0), qz_pct(wv("qes2022", "no", "PLQ"), 0))
+qz_figure(fig_where, "where",
+  title = sprintf(tr("The PQ's share of the Yes vote fell from %s to %s as QS and the CAQ took it; the No vote fragmented",
+                     "La part du PQ chez les électeurs du Oui est passée de %s à %s au profit de QS et de la CAQ ; le vote pour le Non s'est fragmenté"),
+                  qz_pct(wv("qes2012", "yes", "PQ"), 0), qz_pct(wv("qes2022", "yes", "PQ"), 0)),
+  subtitle = tr("How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals",
+                "Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_where, height = 4.2,
+  note = tr("Source: qesR, pooled vote_choice (reported vote) and sov_support; QES 2007 to 2022, weighted with each study's post-election weight except 2008 (hollow: unweighted, weight under review). 2007 and 2008 asked the 1995 question, 2012 to 2022 about an independent country, so the lines break at the change. Lines: 95% confidence intervals (logit). The other parties (PV, ON and others) are in the table view.",
+            "Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support ; EEQ 2007 à 2022, pondérées avec la pondération postélectorale de chaque étude sauf 2008 (creux : non pondérée, pondération en révision). 2007 et 2008 ont posé la question de 1995, 2012 à 2022 la question sur un pays indépendant : les lignes s'interrompent au changement. Traits : intervalles de confiance à 95 % (logit). Les autres partis (PV, ON et autres) sont dans la vue en tableau."))
+```
+
+What to notice:
+
+- In 2007 and 2012 the PQ held most of the Yes vote; by 2018 it had less
+  than half of it, as Québec solidaire and the CAQ took their shares.
+- The No vote fragmented: the PLQ's share fell from
+  `r qz_pct(wv("qes2012", "no", "PLQ"), 0)` in 2012 to
+  `r qz_pct(wv("qes2022", "no", "PLQ"), 0)` in 2022; the CAQ took
+  `r qz_pct(wv("qes2012", "no", "CAQ"), 0)` of it in 2012,
+  `r qz_pct(wv("qes2018", "no", "CAQ"), 0)` in 2018 and
+  `r qz_pct(wv("qes2022", "no", "CAQ"), 0)` in 2022, and the PCQ
+  `r qz_pct(wv("qes2022", "no", "PCQ"), 0)` in 2022. In 2007 the ADQ already
+  took `r qz_pct(wv("qes2007", "no", "ADQ"), 0)` of it. The QES 2022
+  under-reports the CAQ by about
+  `r qz_num(caq_gap, 0)`
+  points (see [Survey vs official results](survey-vs-official.html)),
+  which affects the 2022 shares.
+- The CAQ is the one party with a large share of both sides.
+
+## About the data
+
+- **Studies.** The Quebec Election Studies of 2012 to 2022 for the
+  left-right placement, and of 2007 to 2022 for the referendum vote; the
+  Durand panels are left out, since they asked other referendum wordings.
+- **Variables.** `vote_choice` restricted to the reported vote,
+  `sov_support` as the share of Yes among Yes and No, and `lr_self`, the
+  respondent's own placement from 0 (left) to 10 (right). The 2007 and 2008
+  studies asked the 1995 question, the others the question on an
+  independent country: the rows of the bar chart are not one series.
+- **Timing.** In 2022 the referendum and left-right questions were asked
+  during the campaign and the reported vote after the election; the
+  estimates keep the respondents of both waves, weighted with the
+  post-election weight.
+- **Weights.** Each study's recommended post-election weight, through
+  `qes_design()`; 2008 is unweighted (its weights are calibrated on the
+  vote and are under review).

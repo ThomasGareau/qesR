@@ -9,6 +9,23 @@ url: https://thomasgareau.github.io/qesR/
 redirects:
   - ["articles/study-citations.html", "articles/citations.html"]
   - ["articles/fr-citations-etudes.html", "articles/fr-citations.html"]
+  # the example pages of qesR 0.7 (replaced in 0.8.0)
+  - ["articles/analysis-vote-choice.html", "articles/realignment.html"]
+  - ["articles/analysis-sovereignty.html", "articles/sovereignty-generations.html"]
+  - ["articles/analysis-descriptive.html", "articles/recipes.html"]
+  - ["articles/fr-analyse-choix-vote.html", "articles/fr-realignement.html"]
+  - ["articles/fr-analyse-souverainete.html", "articles/fr-souverainete-generations.html"]
+  - ["articles/fr-analyse-descriptive.html", "articles/fr-recettes.html"]
+
+# Figures of ordinary chunks (the recipes page); the figures of the other
+# example pages are drawn by vignettes/articles/_theme.R, in a light and a
+# dark version.
+figures:
+  dev: ragg::agg_png
+  dpi: 96
+  fig.retina: 2
+  fig.width: 7
+  fig.height: 4.2
 
 template:
   bootstrap: 5
@@ -81,12 +98,20 @@ navbar:
         href: articles/validation.html
       - text: "-------"
       - text: Examples (built from the full data files)
-      - text: Respondents by study
-        href: articles/analysis-descriptive.html
-      - text: Support for independence
-        href: articles/analysis-sovereignty.html
-      - text: Reported vote
-        href: articles/analysis-vote-choice.html
+      - text: "From two parties to four: realignment"
+        href: articles/realignment.html
+      - text: Sovereignty across generations
+        href: articles/sovereignty-generations.html
+      - text: "Two dimensions: sovereignty and left-right"
+        href: articles/dimensions.html
+      - text: Who votes? Turnout
+        href: articles/turnout.html
+      - text: Changing minds during the campaign
+        href: articles/transitions.html
+      - text: Surveys against the official results
+        href: articles/survey-vs-official.html
+      - text: "Recipes: pooled variables"
+        href: articles/recipes.html
       - text: "-------"
       - text: Function overview
         href: reference/qesR-package.html
@@ -115,12 +140,20 @@ navbar:
         href: articles/fr-validation.html
       - text: "-------"
       - text: Exemples (construits à partir des fichiers complets)
-      - text: Répondants par étude
-        href: articles/fr-analyse-descriptive.html
-      - text: Appui à l'indépendance
-        href: articles/fr-analyse-souverainete.html
-      - text: Vote déclaré
-        href: articles/fr-analyse-choix-vote.html
+      - text: "De deux partis à quatre : le réalignement"
+        href: articles/fr-realignement.html
+      - text: La souveraineté selon les générations
+        href: articles/fr-souverainete-generations.html
+      - text: "Deux dimensions : souveraineté et gauche-droite"
+        href: articles/fr-dimensions.html
+      - text: Qui vote ? La participation
+        href: articles/fr-participation.html
+      - text: Changer d'idée pendant la campagne
+        href: articles/fr-transitions.html
+      - text: Les enquêtes et les résultats officiels
+        href: articles/fr-enquetes-resultats.html
+      - text: "Recettes : les variables regroupées"
+        href: articles/fr-recettes.html
       - text: "-------"
       - text: Aperçu des fonctions
         href: reference/qesR-fr.html
@@ -257,14 +290,20 @@ articles:
   - articles/validation
 - title: Examples
   desc: >
-    Built when the site is built, from the full data files downloaded
-    through qesR's cache. Each estimate is computed within one study, with
-    that study's own weight.
+    Built on the pooled harmonized variables (`vote_choice`,
+    `sov_support`, `pol_interest`, `turnout`) when the site is built, from
+    the full data files downloaded through qesR's cache, with weighted
+    estimates and 95% confidence intervals; each estimate is within one
+    study and wave, with that study's reviewed weight.
   navbar: ~
   contents:
-  - articles/analysis-descriptive
-  - articles/analysis-sovereignty
-  - articles/analysis-vote-choice
+  - articles/realignment
+  - articles/sovereignty-generations
+  - articles/dimensions
+  - articles/turnout
+  - articles/transitions
+  - articles/survey-vs-official
+  - articles/recipes
 - title: Guides en français
   navbar: ~
   contents:
@@ -287,11 +326,18 @@ articles:
   - articles/fr-validation
 - title: Exemples en français
   desc: >
-    Construits à la construction du site, à partir des fichiers de données
-    complets téléchargés par le cache de qesR. Chaque estimation est
-    calculée dans une seule étude, avec la pondération de cette étude.
+    Construits sur les variables harmonisées regroupées (`vote_choice`,
+    `sov_support`, `pol_interest`, `turnout`) à la construction du site, à
+    partir des fichiers de données complets téléchargés par le cache de
+    qesR, avec des estimations pondérées et des intervalles de confiance à
+    95 % ; chaque estimation est faite dans une seule étude et une seule
+    vague, avec la pondération révisée de cette étude.
   navbar: ~
   contents:
-  - articles/fr-analyse-descriptive
-  - articles/fr-analyse-souverainete
-  - articles/fr-analyse-choix-vote
+  - articles/fr-realignement
+  - articles/fr-souverainete-generations
+  - articles/fr-dimensions
+  - articles/fr-participation
+  - articles/fr-transitions
+  - articles/fr-enquetes-resultats
+  - articles/fr-recettes

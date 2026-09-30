@@ -1,0 +1,230 @@
+---
+title: "Recettes : les variables regroupées en cinq minutes"
+description: >
+  Du code court, à copier, pour les variables harmonisées regroupées : une
+  variable pour toutes les études, ses types et ses sources, des
+  estimations pondérées par étude.
+params:
+  lang: "fr"
+---
+
+*[English version](recipes.html)*
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE)
+options(qesR.lang = params$lang)
+```
+
+Chaque recette ci-dessous s'exécute telle quelle sur les fichiers de
+données complets, que qesR télécharge une fois par son cache. Les autres
+pages d'exemples sont construites à partir de ces mêmes étapes.
+
+```{r packages}
+library(qesR)
+library(survey)
+library(ggplot2)
+```
+
+## 1. Une variable de choix de vote pour toutes les études
+
+`vote_choice` regroupe le vote déclaré, l'intention avec relance et
+l'intention simple de toutes les études en une seule colonne ;
+`vote_choice__type` dit à quelle question répond chaque ligne.
+
+```{r pooled}
+studies <- c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010",
+             "qes2012", "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022")
+h <- qes_harmonize(studies = studies, targets = c("vote_choice", "lang_mother"),
+                   layout = "long", quiet = TRUE)
+table(h$study, h$vote_choice__type)
+```
+
+En disposition longue, une étude pré/post a une ligne par vague :
+l'intention avant l'élection et le vote déclaré après. Dans la disposition
+par répondant (par défaut), la valeur regroupée de chaque étude vient
+d'une seule vague, pour qu'une seule pondération lui convienne.
+
+## 2. Ne garder qu'un type
+
+`types` restreint une variable regroupée à certains de ses membres. Le
+vote déclaré seulement :
+
+```{r recall}
+r <- qes_harmonize(studies = studies, targets = c("vote_choice", "lang_mother"),
+                   types = list(vote_choice = "recall"), quiet = TRUE)
+table(r$study, r$vote_choice__type, useNA = "ifany")
+```
+
+À l'intérieur d'une vague d'une étude, les membres sont essayés dans un
+ordre fixe (le vote déclaré, puis l'intention avec relance des indécis,
+puis l'intention simple), et le premier qui a interrogé le répondant
+fixe la ligne. `qes_spec("pooled")` donne cet ordre.
+
+## 3. D'où vient chaque valeur
+
+```{r sources}
+unique(r[!is.na(r$vote_choice__item), c("study", "vote_choice__item", "vote_choice__grade")])
+qes_provenance(r, level = "pooled")
+```
+
+Le niveau est celui de la question de l'étude (`identical`, `comparable`,
+`approximate`) ; la référence de l'harmonisation en donne les raisons.
+
+## 4. Une part pondérée et son intervalle de confiance, dans une étude
+
+```{r one-study}
+d <- qes_design(r[r$study == "qes2018", ], weight = "weight_post")
+d <- subset(d, !is.na(vote_choice))
+svyciprop(~I(vote_choice == "CAQ"), d, method = "logit")
+```
+
+## 5. Par groupe
+
+```{r by-group}
+svyby(~I(vote_choice == "PLQ"), ~lang_mother, subset(d, !is.na(lang_mother)),
+      svyciprop, method = "logit", vartype = "ci")
+```
+
+## 6. Toutes les études, sans les regrouper
+
+Les études diffèrent par la population, le mode, le libellé et la
+pondération : estimer à l'intérieur de chaque étude, puis comparer. Les
+études dont la pondération est encore en révision ont des pondérations
+`NA`, et `qes_design()` laisse leurs lignes de côté.
+
+```{r loop}
+weighted <- c("qes2007", "qes2012", "qes2014", "qes2018", "qes2018_panel", "qes2022")
+# 2007: the CAQ did not yet exist (it was founded in 2011), so the loop starts in 2012
+caq <- do.call(rbind, lapply(setdiff(weighted, "qes2007"), function(s) {
+  ds <- qes_design(r[r$study == s, ], weight = "weight_post")
+  ds <- subset(ds, !is.na(vote_choice))
+  est <- svyciprop(~I(vote_choice == "CAQ"), ds, method = "logit")
+  ci <- attr(est, "ci")
+  data.frame(study = s, pct = 100 * as.numeric(est), lo = 100 * ci[[1]], hi = 100 * ci[[2]])
+}))
+caq
+```
+
+Regrouper a un sens pour un modèle qui garde les études distinctes, comme
+une régression avec un terme par étude : le coefficient de la langue
+maternelle française est alors estimé à l'intérieur des études (sur
+l'échelle logit, commun à toutes). (Une seule part du PLQ regroupée sur 2007-2022 ne voudrait rien
+dire.) `pool = "equal"` donne à chaque étude le même poids total ; par
+défaut, une étude compte en proportion de son nombre de répondants :
+
+```{r pool}
+dp <- qes_design(r[r$study %in% weighted, ], weight = "weight_post", pool = "equal")
+dp <- subset(dp, !is.na(vote_choice) & !is.na(lang_mother))
+m <- svyglm(I(vote_choice == "PLQ") ~ I(lang_mother == "French") + study, dp,
+            family = quasibinomial())
+summary(m)$coefficients[1:2, ]
+```
+
+## 7. Souveraineté : une variable, plusieurs libellés
+
+`sov_support` regroupe les questions référendaires ; comparer à
+l'intérieur d'un même libellé (`sov_support__type`) :
+
+```{r sovereignty}
+s <- qes_harmonize(studies = studies, targets = "sov_support", quiet = TRUE)
+table(s$study, s$sov_support__type)
+```
+
+## 8. L'ADQ et la CAQ dans une même série
+
+Les colonnes harmonisées gardent l'ADQ et la CAQ distinctes.
+`qes_party_lineage()` ajoute une colonne qui les réunit, pour les séries
+chronologiques ; les lignes recueillies avant la fusion de 2012 y ont le
+niveau `approximate`.
+
+```{r lineage}
+l <- qes_party_lineage(r, cols = "vote_choice")
+table(l$study, l$vote_choice_lineage)[, c("PLQ", "PQ", "ADQ/CAQ", "QS")]
+```
+
+## 9. Une première figure : l'ADQ et la CAQ en une seule série
+
+La colonne de lignée de la recette 8, pondérée à l'intérieur de chaque
+étude, face au résultat officiel. `p` est un graphique ggplot2 simple,
+prêt à adapter (l'afficher avec `p`) ; le site dessine le même graphique
+avec le thème de ses pages d'exemples, ci-dessous.
+
+```{r plot}
+qes <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
+lineage <- do.call(rbind, lapply(qes, function(s) {
+  x <- l[l$study == s, ]
+  weighted <- any(!is.na(x$weight_post))
+  if (!weighted) x$weight_post <- 1   # qes2008: weight under review, so unweighted
+  ds <- subset(qes_design(x, weight = "weight_post"), !is.na(vote_choice_lineage))
+  est <- svyciprop(~I(vote_choice_lineage == "ADQ/CAQ"), ds, method = "logit")
+  ci <- attr(est, "ci")
+  data.frame(study = s, year = as.integer(substr(x$year[1], 1, 4)), weighted = weighted,
+             pct = 100 * as.numeric(est), lo = 100 * ci[[1]], hi = 100 * ci[[2]])
+}))
+# the official share of valid votes of the ADQ (2007, 2008) and of the CAQ
+# (2012 on), from Élections Québec
+official <- data.frame(year = c(2007, 2008, 2012, 2014, 2018, 2022),
+                       pct = c(30.8, 16.4, 27.1, 23.1, 37.4, 41.0))
+fr <- identical(params$lang, "fr")
+lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
+  c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result")
+lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré (pondération en révision)") else
+  c(`TRUE` = "weighted", `FALSE` = "unweighted (weight under review)")
+
+p <- ggplot(lineage, aes(year, pct)) +
+  geom_line(data = official, aes(colour = "official")) +
+  geom_point(data = official, aes(colour = "official"), shape = 45, size = 9) +
+  geom_linerange(aes(ymin = lo, ymax = hi, colour = "lineage")) +
+  geom_point(aes(colour = "lineage", fill = weighted), shape = 21, size = 3, stroke = 1) +
+  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab_series) +
+  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab_weight) +
+  scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022)) +
+  scale_y_continuous(limits = c(0, 50)) +
+  labs(x = NULL, y = if (fr) "% du vote déclaré" else "% of the reported vote", colour = NULL, fill = NULL)
+lineage
+```
+
+```{r plot-site, echo = FALSE}
+# the same chart in the example pages' chart system (vignettes/articles/_theme.R),
+# drawn for the light and the dark theme, with its table view
+source("_setup.R", encoding = "UTF-8")
+lineage$official <- official$pct[match(lineage$year, official$year)]
+gap <- lineage$pct - lineage$official
+before <- max(abs(gap[lineage$year < 2022]))
+qz_figure(function(mode) {
+  k <- qz_tokens[[mode]]
+  p +
+    scale_colour_manual(values = c(lineage = k$party[["CAQ"]], official = k$ink), labels = lab_series,
+                        guide = guide_legend(order = 1, override.aes = list(fill = c(k$party[["CAQ"]], k$ink)))) +
+    scale_fill_manual(values = c(`TRUE` = k$party[["CAQ"]], `FALSE` = k$surface), labels = lab_weight,
+                      guide = guide_legend(order = 2, override.aes = list(colour = k$ink2, linetype = 0, shape = 21))) +
+    theme_qes(mode)
+}, "lineage",
+  title = sprintf(tr("Read as one lineage, the ADQ/CAQ vote is within %s points of its result until 2018, and %s points short in 2022",
+                     "Lu comme une seule lignée, le vote ADQ/CAQ est à %s points ou moins de son résultat jusqu'en 2018, et %s points sous lui en 2022"),
+                  qz_num(before, 0), qz_num(abs(gap[lineage$year == 2022]), 0)),
+  subtitle = tr("Share of the reported vote for the ADQ (2007, 2008) and the CAQ (2012 on), one Quebec Election Study per election, with 95% confidence intervals and the official result",
+                "Part du vote déclaré pour l'ADQ (2007, 2008) et la CAQ (à partir de 2012), une Étude électorale québécoise par élection, avec intervalles de confiance à 95 % et résultat officiel"),
+  alt = sprintf(tr("Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has %s against %s officially. Values in the table view.",
+                   "Graphique à points avec intervalles de confiance de la part du vote déclaré pour l'ADQ en 2007 et 2008 et pour la CAQ de 2012 à 2022, dans les Études électorales québécoises, avec le résultat officiel en ligne avec des traits. En 2022, l'étude donne %s contre %s officiellement. Valeurs dans la vue en tableau."),
+                qz_pct(lineage$pct[lineage$year == 2022], 0), qz_pct(lineage$official[lineage$year == 2022], 0)),
+  table = setNames(data.frame(lineage$year, qz_study_label(lineage$study),
+                              ifelse(lineage$year < 2012, "ADQ", "CAQ"),
+                              qz_cell(lineage$pct, lineage$lo, lineage$hi, 100),
+                              qz_num(lineage$official), qz_pts(gap, 1), qz_weight_text(lineage$weighted), row.names = NULL),
+                   c(tr("Election", "Élection"), tr("Study", "Étude"), tr("Party", "Parti"),
+                     tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"),
+                     tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
+                     tr("Weighting", "Pondération"))),
+  note = tr("Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012: the lineage column joins them for a time series, and its rows before the merger are graded approximate. Weighted with each study's post-election weight; hollow (2008): unweighted, weight under review.",
+            "Source : qesR, variable regroupée vote_choice (vote déclaré) avec qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a fusionné avec la CAQ en 2012 : la colonne de lignée les réunit pour une série chronologique, et ses lignes d'avant la fusion ont le niveau approximatif. Pondéré avec la pondération postélectorale de chaque étude ; creux (2008) : non pondéré, pondération en révision."),
+  height = 3.6)
+```
+
+## 10. Répondants par étude
+
+```{r respondents}
+n <- aggregate(qes_id ~ study + year, data = r, FUN = length)
+names(n)[3] <- "respondents"
+n[order(n$year, n$study), ]
+```
