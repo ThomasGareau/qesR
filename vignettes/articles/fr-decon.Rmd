@@ -192,8 +192,9 @@ mesuré la scolarité de plusieurs façons, de listes détaillées de diplômes
 à des tranches d'années d'études, et `qes_decon()` regroupe chaque
 réponse en trois catégories : sans diplôme d'études secondaires,
 secondaire au collégial (cégep, formation technique ou professionnelle) et
-université. Trois groupes, c'est le regroupement le plus fin que toutes
-les études permettent, y compris celle de 1998. Le fichier de 1998 ne
+université. Trois groupes, c'est le regroupement le plus fin que permettent toutes
+les études qui interrogent sur la scolarité, y compris celle de 1998
+(le panel de 2012 ne pose pas la question). Le fichier de 1998 ne
 compte en effet que trois tranches, 1 à 9 ans, 10 à 15 ans et université,
 et sa tranche du milieu chevauche le secondaire et le collégial ; un
 quatrième groupe laisserait l'étude de côté. L'appariement demeure

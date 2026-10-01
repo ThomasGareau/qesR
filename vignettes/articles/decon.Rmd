@@ -185,7 +185,8 @@ about schooling in different ways, from detailed lists of diplomas to
 bands of years of schooling, and `qes_decon()` groups every answer into
 three categories: no high school diploma, high school to college (CEGEP,
 technical or trade school) and university. Three groups is the finest
-grouping that every study supports, 1998 included. The 1998 file has only
+grouping that every study asking about schooling supports, 1998 included
+(the 2012 panel did not ask). The 1998 file has only
 three bands, 1 to 9 years, 10 to 15 years and university, and its middle
 band spans high school and college; a fourth group would leave the study
 out. The match is approximate, however. The CROP respondents of 1998 gave
