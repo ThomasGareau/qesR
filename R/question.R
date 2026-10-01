@@ -97,7 +97,7 @@ qes_question <- function(x, variables, lang = NULL) {
   .qes_with_licence_notice(out, study)
 }
 
-#' Get survey question text (legacy)
+#' Get survey question text (older name)
 #'
 #' Soft-deprecated: use [qes_question()]. `get_question()` keeps working and
 #' will not be removed; it prints a one-time notice (see [qesR-deprecated]).

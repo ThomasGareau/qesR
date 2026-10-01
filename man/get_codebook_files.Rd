@@ -3,7 +3,7 @@
 \name{get_codebook_files}
 \alias{get_codebook_files}
 \alias{get_qes_codebook_files}
-\title{Get codebook files (legacy)}
+\title{Get codebook files (older name)}
 \usage{
 get_codebook_files(
   srvy = NULL,

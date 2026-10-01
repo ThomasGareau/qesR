@@ -57,6 +57,12 @@ library or an renv project so that new work can use the current version:
 remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
 ```
 
+qesR 0.5.0 and 0.6.0 were development versions and were never released:
+a result computed with one of them is reproduced by installing the commit
+it was built from, which `packageDescription("qesR")$RemoteSha` records for
+an installation from GitHub (`remotes::install_github("ThomasGareau/qesR",
+ref = "<commit>")`).
+
 ## Assign the result yourself
 
 In 0.4.4, `get_qes("qes2018")` created an object `qes2018` in your
@@ -140,7 +146,7 @@ rules do not map is `NA`.
 `qes1998`, the Durand panels and the CROP polls have no usable weight yet:
 their answers are filled, but `weight_pre` and `weight_post` are `NA` there,
 and `survey_weight` keeps each study's own weight, as in 0.4.4. The
-[legacy merged file](https://thomasgareau.github.io/qesR/articles/merged-dataset.html) page describes every column. The
+[merged file](https://thomasgareau.github.io/qesR/articles/merged-dataset.html) page describes every column. The
 columns that change estimates:
 
 | Column | Now | Changed in |

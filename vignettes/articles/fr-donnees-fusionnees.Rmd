@@ -1,5 +1,5 @@
 ---
-title: "Le fichier fusionné hérité"
+title: "Le fichier fusionné (get_qes_master)"
 params:
   lang: "fr"
 ---
@@ -12,20 +12,22 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 options(qesR.lang = params$lang)
 ```
 
-`get_qes_master()` empile les Études électorales québécoises de qesR 0.4.4 dans un seul data.frame, avec les 30 colonnes harmonisées de 0.4.4 : mêmes noms, même ordre, mêmes types. C'est le format hérité, figé et stable pour le code écrit pour 0.4.4. [Passer de qesR 0.4.4 à la version actuelle](fr-migrer-0.7.html) dit ce qui a changé dans ses valeurs.
+`get_qes_master()` empile 11 Études électorales québécoises, de 1998 à 2022, dans un seul data.frame : une ligne par répondant de chaque étude, et les mêmes 30 colonnes pour toutes les études (choix de vote, participation, souveraineté, identification partisane, idéologie, intérêt pour la politique et les variables sociodémographiques habituelles, avec le code, l'année et les identifiants de l'étude). Son format est fixe : les noms, l'ordre et les types des 30 colonnes ne changent pas, et les colonnes ajoutées par la suite viennent après elles. Le code écrit pour lui continue de fonctionner.
 
-```{r}
-library(qesR)
-qes_studies()$study
-```
+## Quand l'utiliser, et quand préférer `qes_harmonize()`
 
-Par défaut, et avec `surveys = "all"`, `get_qes_master()` construit les 11 études de qesR 0.4.4. Les fichiers des deux firmes de 1998, `qes1998_crop` et `qes1998_createc`, ne font pas partie du fichier fusionné (leurs répondants sont déjà dans `qes1998`) ; lisez-les avec `get_qes()`, comme l'explique `?get_qes_master`.
+Le fichier fusionné donne une vue d'ensemble rapide et à plat : un appel, un tableau, une colonne par concept. Pour garder cette forme, certaines colonnes réunissent des questions différentes, et aucune colonne n'indique à quel point la réponse de chaque étude est comparable.
 
-## Construire la base fusionnée
+Préférez `qes_harmonize()` pour une analyse que vous publierez. Il garde séparé ce que le fichier fusionné réunit (un vote déclaré et une intention de vote, les formulations de la souveraineté, une échelle d'intérêt en quatre points et une de 0 à 10), donne à la question de chaque étude un niveau de comparabilité et à chaque valeur manquante un motif, et fournit la pondération de chaque vague ; `qes_design()` en fait ensuite un plan de sondage. [Comment fonctionne l'harmonisation](fr-harmonisation.html) l'explique, et la colonne `target` de `attr(master, "legacy_column_map")` nomme la variable harmonisée derrière chaque colonne du fichier fusionné.
+
+Utilisez `get_qes()` pour les questions d'une étude que ni l'un ni l'autre ne contient.
+
+## Construire le fichier fusionné
 
 L'étude de démonstration synthétique fonctionne hors ligne :
 
-```{r}
+```{r demo, message = FALSE}
+library(qesR)
 demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 dim(demo_master)
 head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
@@ -39,24 +41,28 @@ dim(master)
 table(master$qes_code)
 ```
 
-## Construction
+Par défaut, et avec `surveys = "all"`, `get_qes_master()` construit les 11 études. Les fichiers des deux firmes de 1998, `qes1998_crop` et `qes1998_createc`, n'en font pas partie (leurs répondants sont déjà dans `qes1998`) ; lisez-les avec `get_qes()`.
+
+## Ce que contient chaque colonne
 
 - Chaque étude est harmonisée par `qes_harmonize()`, et chaque colonne est construite à partir des variables harmonisées (« cibles ») dont elle a besoin. Un code que les règles d'harmonisation n'apparient pas vaut `NA`, jamais transmis tel quel. `attr(master, "source_map")` donne, pour chaque colonne de chaque étude, la question lue, sa cible et son niveau de comparabilité.
 - Tous les répondants de chaque fichier sont conservés : ni dédoublonnage, ni retrait des lignes vides. Les répondants des panels et des enquêtes transversales restent des lignes distinctes.
 - `vote_choice` et `turnout` sont le vote et la participation déclarés dans toutes les études ; les sondages CROP ne posaient que des intentions de vote (dans `vote_intent`). `sovereignty_support` est seulement le référendum sur un pays indépendant, et `party_best` et `party_lean` valent `NA` partout. `attr(master, "legacy_na_columns")` énumère chaque colonne et étude qui vaut `NA` d'un bout à l'autre, avec la raison et, dans `basis`, l'explication en mots (en anglais ; `?get_qes_master` énumère les causes).
 - `vote_choice_timing` et `sovereignty_item` indiquent ce que contiennent `vote_choice` et `sovereignty_support` dans chaque étude.
-- qesR 0.4.4 ajoutait aussi 70 colonnes en empilant des variables de même nom d'une étude à l'autre ; elles mêlaient des questions différentes et ne sont plus construites (`attr(master, "removed_columns")`). Lisez ces questions dans chaque étude avec `get_qes()`.
+- Les variables qui portent le même nom d'une étude à l'autre ne sont pas empilées : elles contiennent souvent des questions différentes. Lisez ces questions dans chaque étude avec `get_qes()`.
 
 ```{r}
 head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable", "target", "grade")])
 attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
 
-`attr(master, "legacy_column_map")` décrit chaque colonne (en anglais) et signale celles qui mêlent des instruments (`political_interest`, `age_group`, `education`). `survey_weight` est la pondération propre à chaque étude, sur sa propre échelle : ne combinez pas d'estimations pondérées entre études sans la remettre à l'échelle.
+`attr(master, "legacy_column_map")` décrit chaque colonne (en anglais) et signale celles qui mêlent des instruments (`political_interest`, `age_group`, `education`).
 
-Pour reproduire un résultat de 0.4.4, installez 0.4.4 (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+## Pondérations
 
-## Exporter
+`survey_weight` est la pondération propre à chaque étude, sur sa propre échelle, et n'est pas révisée : ne combinez pas d'estimations pondérées entre études avec elle. `weight_pre` et `weight_post` sont les pondérations recommandées des règles d'harmonisation ; elles valent `NA` là où la pondération d'une étude doit encore être révisée. Calculez chaque estimation à l'intérieur d'une seule étude.
+
+## Exporter le fichier fusionné
 
 `save_path` écrit un fichier CSV en UTF-8 ou un fichier RDS, et à côté `<racine>_provenance.csv`, le relevé du fichier lu pour chaque étude.
 
@@ -64,3 +70,5 @@ Pour reproduire un résultat de 0.4.4, installez 0.4.4 (`remotes::install_github
 get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)
 get_qes_master(save_path = file.path(tempdir(), "qes_master.rds"), strict = FALSE)
 ```
+
+Pour du code écrit avec une version antérieure de qesR, et pour en reproduire les résultats, voir [le guide de mise à niveau](fr-migrer-0.7.html).

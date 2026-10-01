@@ -1,5 +1,5 @@
 ---
-title: "The legacy merged file"
+title: "The merged file (get_qes_master)"
 params:
   lang: "en"
 ---
@@ -12,20 +12,22 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 options(qesR.lang = params$lang)
 ```
 
-`get_qes_master()` stacks the Quebec Election Studies of qesR 0.4.4 in one data frame, with the 30 harmonized columns of 0.4.4: same names, order and types. It is the fixed legacy schema, kept stable for code written for 0.4.4. [Upgrading from qesR 0.4.4](migrating-0.7.html) says what changed in its values.
+`get_qes_master()` stacks 11 Quebec Election Studies, from 1998 to 2022, in one data frame: one row per respondent of each study, and the same 30 columns for every study (vote choice, turnout, sovereignty, party identification, ideology, political interest and the usual demographics, with the study's code, year and identifiers). Its layout is fixed: the names, order and types of the 30 columns do not change, and columns added later come after them. Code written against it keeps working.
 
-```{r}
-library(qesR)
-qes_studies()$study
-```
+## When to use it, and when to prefer `qes_harmonize()`
 
-By default, and with `surveys = "all"`, `get_qes_master()` builds the 11 studies of qesR 0.4.4. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in the master (their respondents are already in `qes1998`); read them with `get_qes()`, as `?get_qes_master` explains.
+The merged file is a quick, flat overview: one call, one data frame, one column per concept. To keep that shape, some columns put different questions in one column, and it has no column that says how comparable each study's answer is.
 
-## Build merged data
+Prefer `qes_harmonize()` for an analysis you will publish. It keeps apart what the merged file joins (a reported vote and a vote intention, the sovereignty wordings, a four-point and a 0-10 interest scale), gives each study's question a comparability grade and each missing value a reason, and carries each wave's weight; `qes_design()` then makes a survey design of it. [How harmonization works](harmonization.html) explains it, and the `target` column of `attr(master, "legacy_column_map")` names the harmonized variable behind each column of the merged file.
+
+Use `get_qes()` for the questions of one study that neither has.
+
+## Build the merged file
 
 The synthetic demonstration study runs offline:
 
-```{r}
+```{r demo, message = FALSE}
+library(qesR)
 demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 dim(demo_master)
 head(demo_master[, c("qes_code", "age_group", "gender", "turnout", "vote_choice")])
@@ -39,24 +41,28 @@ dim(master)
 table(master$qes_code)
 ```
 
-## How it is built
+By default, and with `surveys = "all"`, `get_qes_master()` builds all 11 studies. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in it (their respondents are already in `qes1998`); read them with `get_qes()`.
+
+## What each column holds
 
 - Each study is harmonized by `qes_harmonize()`, and each column is built from the harmonized variables ("targets") it needs. A code the harmonization rules do not map is `NA`, never passed through. `attr(master, "source_map")` gives, for every column of every study, the question read, its target and its comparability grade.
 - Every respondent of every file is kept: there is no de-duplication and no removal of empty rows. Panel and cross-section respondents stay separate rows.
 - `vote_choice` and `turnout` are the reported vote and turnout in every study; the CROP polls asked only vote intentions (in `vote_intent`). `sovereignty_support` is the referendum on an independent country only, and `party_best` and `party_lean` are `NA` everywhere. `attr(master, "legacy_na_columns")` lists each column and study that is `NA` throughout, with the reason and, in `basis`, why in words (`?get_qes_master` lists the causes).
 - `vote_choice_timing` and `sovereignty_item` say what `vote_choice` and `sovereignty_support` hold in each study.
-- qesR 0.4.4 also appended 70 columns by stacking variables that share a name across studies; they mixed different questions and are no longer built (`attr(master, "removed_columns")`). Read those items from each study with `get_qes()`.
+- Variables that share a name across studies are not stacked: they often hold different questions. Read those items from each study with `get_qes()`.
 
 ```{r}
 head(attr(demo_master, "source_map")[, c("qes_code", "harmonized_variable", "source_variable", "target", "grade")])
 attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")]
 ```
 
-`attr(master, "legacy_column_map")` says what each column means and flags the columns that mix instruments (`political_interest`, `age_group`, `education`). `survey_weight` is each study's own weight on its own scale: do not pool weighted estimates across studies without rescaling.
+`attr(master, "legacy_column_map")` says what each column means and flags the columns that mix instruments (`political_interest`, `age_group`, `education`).
 
-To reproduce a 0.4.4 result, install 0.4.4 (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+## Weights
 
-## Save merged data
+`survey_weight` is each study's own weight, on its own scale, and is not reviewed: do not pool weighted estimates across studies with it. `weight_pre` and `weight_post` are the recommended weights of the harmonization rules, `NA` where a study's weight still needs review. Compute each estimate within one study.
+
+## Save the merged file
 
 `save_path` writes a UTF-8 CSV file or an RDS file, and next to it `<stem>_provenance.csv`, the record of the file read for each study.
 
@@ -64,3 +70,5 @@ To reproduce a 0.4.4 result, install 0.4.4 (`remotes::install_github("ThomasGare
 get_qes_master(save_path = file.path(tempdir(), "qes_master.csv"), strict = FALSE)
 get_qes_master(save_path = file.path(tempdir(), "qes_master.rds"), strict = FALSE)
 ```
+
+For code written for an earlier version of qesR, and to reproduce its results, see [the upgrading guide](migrating-0.7.html).

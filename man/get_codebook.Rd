@@ -3,7 +3,7 @@
 \name{get_codebook}
 \alias{get_codebook}
 \alias{get_qes_codebook}
-\title{Get a Quebec Election Study codebook (legacy)}
+\title{Get a Quebec Election Study codebook (older name)}
 \usage{
 get_codebook(
   srvy,

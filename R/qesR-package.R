@@ -9,7 +9,7 @@
 #' | Group | Function | What it does |
 #' |---|---|---|
 #' | Data | [get_qes()] | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
-#' | Data | [get_qes_master()] | The legacy merged file: 30 harmonized columns, 11 studies, built from the harmonized variables. |
+#' | Data | [get_qes_master()] | The merged file: 11 studies stacked in one data frame with 30 harmonized columns in a fixed layout, built from the harmonized variables. |
 #' | Studies and documents | [qes_studies()] | Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; `check_updates = TRUE` asks Dataverse whether a newer version exists. |
 #' | Studies and documents | [qes_docs()] | Lists the codebooks, questionnaires and reports of each study, offline. |
 #' | Studies and documents | [qes_download()] | Saves the original files (data and documents), md5-checked, in a folder you choose. |
@@ -30,9 +30,9 @@
 #' result into a survey design; the reference generated from the spec is
 #' `vignette("harmonization-reference", package = "qesR")`.
 #'
-#' Older functions (`get_codebook()`, `get_question()`, `get_preview()`,
-#' `get_qescodes()`, ...) keep working and will not be removed;
-#' [qesR-deprecated] gives the replacement of each one.
+#' Older function names (`get_codebook()`, `get_question()`,
+#' `get_preview()`, `get_qescodes()`, ...) keep working and will not be
+#' removed; [qesR-deprecated] gives the replacement of each one.
 #'
 #' Guides: `vignette("get-started", package = "qesR")` (from a study code to a
 #' weighted estimate), `vignette("citations", package = "qesR")`,
@@ -56,7 +56,7 @@
 #'     which case qesR follows `LANGUAGE`, then the messages locale. It never
 #'     changes the data or text that functions return.}
 #'   \item{`qesR.quiet_deprecated`}{`TRUE` hides the one-time notices of the
-#'     soft-deprecated legacy functions (see [qesR-deprecated]). Default
+#'     soft-deprecated functions (see [qesR-deprecated]). Default
 #'     `FALSE`.}
 #'   \item{`qesR.cache` (environment variable `QESR_CACHE`)}{Where downloaded
 #'     files are kept: `"session"` (default; a folder in [tempdir()], deleted
@@ -160,10 +160,12 @@
 #' not silenced by `quiet`: `qesR_message_deprecated` (see
 #' [qesR-deprecated]); `qesR_message_assign_default`, shown when `get_qes()`,
 #' `get_qes_master()` or `get_decon()` is called without `assign_global`;
-#' `qesR_message_arg_ignored`, shown when a legacy argument that no longer
+#' `qesR_message_arg_ignored`, shown when an argument that no longer
 #' changes the result is used; and `qesR_message_values_changed` and
 #' `qesR_message_legacy_columns`, shown by [get_qes_master()] and
-#' [get_decon()], whose values differ from earlier versions. Every condition carries
+#' [get_decon()] to say how their values and columns differ from those of
+#' earlier versions. Every
+#' condition carries
 #' the fields `id` (its message key) and `lang` (the language of its message).
 #'
 #' @section Study catalog:
@@ -246,7 +248,7 @@
 #' jamais les données ni le texte retournés, et ne fixe jamais l'argument
 #' `lang` des fonctions : voir la section *Langue* de [qesR-fr], qui donne
 #' son rôle dans chaque fonction. `qesR.quiet_deprecated = TRUE`
-#' masque les notes uniques des fonctions héritées (voir [qesR-deprecated]).
+#' masque les notes uniques des fonctions obsolètes (voir [qesR-deprecated]).
 #' `qesR.cache` (`QESR_CACHE`) fixe où sont gardés les fichiers téléchargés :
 #' `"session"` (par défaut ; un dossier de [tempdir()], supprimé à la
 #' fermeture de R), `"disk"` (gardés d'une session à l'autre dans
@@ -307,9 +309,10 @@
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 #' masqués par `quiet = TRUE`.
 #' `qesR_message_deprecated`, `qesR_message_assign_default`,
-#' `qesR_message_arg_ignored` (argument hérité qui ne change plus le résultat),
-#' `qesR_message_values_changed` et `qesR_message_legacy_columns` (valeurs de
-#' [get_qes_master()] et [get_decon()] modifiées depuis les versions antérieures)
+#' `qesR_message_arg_ignored` (argument qui ne change plus le résultat),
+#' `qesR_message_values_changed` et `qesR_message_legacy_columns` (en quoi
+#' les valeurs et les colonnes de [get_qes_master()] et de [get_decon()]
+#' diffèrent de celles des versions antérieures)
 #' s'affichent au plus une fois par session et ne sont pas masqués par
 #' `quiet`. Chaque
 #' condition porte les champs `id` (sa clé de message) et `lang` (la langue de

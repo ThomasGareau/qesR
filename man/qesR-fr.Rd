@@ -20,7 +20,7 @@ en anglais ; certaines ont une section « En français ».
 Les fonctions sont regroupées comme dans la référence du site web.\tabular{lll}{
    Groupe \tab Fonction \tab Rôle \cr
    Données \tab \code{\link[=get_qes]{get_qes()}} \tab Charge une étude : \code{qes2018 <- get_qes("qes2018")}. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. \cr
-   Données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Fichier fusionné hérité : 30 colonnes harmonisées, 11 études, construit à partir des variables harmonisées. \cr
+   Données \tab \code{\link[=get_qes_master]{get_qes_master()}} \tab Le fichier fusionné : 11 études empilées dans un seul tableau, avec 30 colonnes harmonisées dans un format fixe, construit à partir des variables harmonisées. \cr
    Études et documents \tab \code{\link[=qes_studies]{qes_studies()}} \tab Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; \code{check_updates = TRUE} demande à Dataverse si une version plus récente existe. \cr
    Études et documents \tab \code{\link[=qes_docs]{qes_docs()}} \tab Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. \cr
    Études et documents \tab \code{\link[=qes_download]{qes_download()}} \tab Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. \cr
@@ -44,10 +44,10 @@ fait un plan de sondage ; la référence
 générée à partir de la spécification est
 \code{vignette("fr-reference-harmonisation", package = "qesR")}.
 
-Les anciennes fonctions (\code{get_codebook()}, \code{get_question()},
+Les anciens noms de fonctions (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) continuent de fonctionner et ne
-seront pas retirées ; voir \link{qesR-deprecated} pour la fonction qui remplace
-chacune.
+seront pas retirés ; voir \link{qesR-deprecated} pour la fonction qui remplace
+chacun.
 }
 
 \section{Langue}{

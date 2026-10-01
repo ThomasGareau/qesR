@@ -81,7 +81,7 @@ qes_docs <- function(studies = NULL, role = NULL, lang = NULL) {
 
 # ---- get_codebook_files() / get_qes_codebook_files() (legacy) ----------------
 
-#' Get codebook files (legacy)
+#' Get codebook files (older name)
 #'
 #' Returns the documentation files (codebooks, questionnaires and reports)
 #' deposited with a study.

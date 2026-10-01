@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{format_codebook}
 \alias{format_codebook}
-\title{Reformat a qesR codebook (legacy)}
+\title{Reformat a qesR codebook (older name)}
 \usage{
 format_codebook(codebook, layout = c("compact", "wide", "long"))
 }

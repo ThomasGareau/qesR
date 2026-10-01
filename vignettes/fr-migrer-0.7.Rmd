@@ -60,6 +60,13 @@ puisse utiliser la version actuelle :
 remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
 ```
 
+qesR 0.5.0 et 0.6.0 étaient des versions de développement, jamais
+publiées : un résultat calculé avec l'une d'elles se reproduit en
+installant le commit dont il provient, que
+`packageDescription("qesR")$RemoteSha` enregistre pour une installation
+depuis GitHub (`remotes::install_github("ThomasGareau/qesR", ref =
+"<commit>")`).
+
 ## Assignez vous-même le résultat
 
 Avec 0.4.4, `get_qes("qes2018")` créait un objet `qes2018` dans votre espace
@@ -151,8 +158,8 @@ besoin, et un code que les règles d'harmonisation n'apparient pas vaut `NA`.
 `qes1998`, les panels Durand et les sondages CROP n'ont pas encore de
 pondération utilisable : leurs réponses sont remplies, mais `weight_pre` et
 `weight_post` y valent `NA`, et `survey_weight` garde la pondération propre
-à chaque étude, comme dans 0.4.4. La page du [fichier fusionné
-hérité](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html) décrit chaque colonne. Les colonnes qui
+à chaque étude, comme dans 0.4.4. La page du [fichier
+fusionné](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html) décrit chaque colonne. Les colonnes qui
 changent les estimations :
 
 | Colonne | Maintenant | Modifiée dans |

@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{download_codebook}
 \alias{download_codebook}
-\title{Download codebook files (legacy)}
+\title{Download codebook files (older name)}
 \usage{
 download_codebook(
   srvy,

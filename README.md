@@ -99,25 +99,23 @@ dir.create(dir)
 qes_download("qes2018", path = dir, what = c("data", "docs"))
 ```
 
-## The legacy merged file
+## The merged file
 
-`get_qes_master()` stacks the 11 studies of qesR 0.4.4 in one data frame
-with the 30 harmonized columns of 0.4.4 (same names, order and types).
-Since 0.5.0 it keeps every respondent and drops the columns that stacked
-different questions under one name; since 0.7.0 it is rendered from the
-harmonization engine below, so `vote_choice` is the reported vote in every
-study and a code the specification does not map is `NA`. Attributes say
-what each column holds and which question it read in each study.
+`get_qes_master()` stacks 11 studies in one data frame with 30 harmonized
+columns in a fixed layout (names, order and types do not change). It keeps
+every respondent, is built from the harmonized variables below, so
+`vote_choice` is the reported vote in every study and a code the
+specification does not map is `NA`, and its attributes say what each
+column holds and which question it read in each study. For an analysis you
+will publish, prefer `qes_harmonize()`.
 
 ```r
 master <- get_qes_master()
 head(attr(master, "legacy_column_map"))
 ```
 
-Results computed with qesR 0.4.4 change under 0.5.0 and 0.7.0. See
-`vignette("migrating-0.7", package = "qesR")` and NEWS; to reproduce a 0.4.4
-result exactly, install that version:
-`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`.
+Code written for qesR 0.4.4, and how to reproduce its results:
+`vignette("migrating-0.7", package = "qesR")`.
 
 ## Harmonized data (experimental)
 
@@ -229,7 +227,7 @@ goes from `qes_harmonize()` to a weighted estimate.
   and at least one second apart, with certificate checks and the
   User-Agent `qesR/<version> R/<version>`. A request that fails for a
   passing reason is retried a few times, honouring `Retry-After`.
-- The functions of qesR 0.4.4 (`get_codebook()`, `get_question()`,
+- Older function names (`get_codebook()`, `get_question()`,
   `get_preview()`, ...) keep working and print a one-time notice naming
   their replacement; see `?qesR-deprecated`.
 
@@ -328,16 +326,16 @@ dir.create(dir)
 qes_download("qes2018", path = dir, what = c("data", "docs"))
 ```
 
-### Le fichier fusionné hérité
+### Le fichier fusionné
 
-`get_qes_master()` empile les 11 études de qesR 0.4.4 dans un seul tableau,
-avec les 30 colonnes harmonisées de 0.4.4 (mêmes noms, ordre et types).
-Depuis 0.5.0, il garde tous les répondants et retire les colonnes qui
-empilaient des questions différentes sous un même nom ; depuis 0.7.0, il est
-produit par le moteur d'harmonisation décrit plus bas, de sorte que
-`vote_choice` est le vote déclaré dans toutes les études et qu'un code que
-la spécification n'apparie pas vaut `NA`. Ses attributs disent ce que
-contient chaque colonne et quelle question elle a lue dans chaque étude.
+`get_qes_master()` empile 11 études dans un seul tableau, avec 30 colonnes
+harmonisées dans un format fixe (noms, ordre et types ne changent pas). Il
+garde tous les répondants, est construit à partir des variables
+harmonisées décrites plus bas, de sorte que `vote_choice` est le vote
+déclaré dans toutes les études et qu'un code que la spécification
+n'apparie pas vaut `NA`, et ses attributs disent ce que contient chaque
+colonne et quelle question elle a lue dans chaque étude. Pour une analyse
+que vous publierez, préférez `qes_harmonize()`.
 
 ```r
 master <- get_qes_master()
@@ -463,12 +461,10 @@ pondérée.
   certificats et le User-Agent `qesR/<version> R/<version>`. Une requête qui
   échoue pour une raison passagère est reprise quelques fois, en respectant
   `Retry-After`.
-- Les fonctions de qesR 0.4.4 continuent de fonctionner et affichent une
+- Les anciens noms de fonctions continuent de fonctionner et affichent une
   note unique qui nomme leur remplacement (`?qesR-deprecated`).
-- Les résultats de `get_qes_master()` changent avec 0.5.0 et 0.7.0 : voir
-  `vignette("fr-migrer-0.7", package = "qesR")` ; pour reproduire
-  exactement un résultat de 0.4.4, installez cette version
-  (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
+- Du code écrit pour qesR 0.4.4, et comment en reproduire les résultats :
+  `vignette("fr-migrer-0.7", package = "qesR")`.
 
 ### Documentation, données et licences
 

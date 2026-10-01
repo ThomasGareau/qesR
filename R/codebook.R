@@ -432,7 +432,7 @@
 #' qu'elle exige, que garde aussi son attribut `licence_notice` (à
 #' conserver avec le codebook enregistré).
 #' L'attribut `selected_data_file` garde le nom Dataverse du fichier décrit
-#' (la copie `.tab` d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
+#' (la copie `.tab` d'un fichier ingéré) ; l'en-tête
 #' affiché nomme aussi le fichier original (`.sav` ou `.dta`) que
 #' [get_qes()] lit et que [qes_provenance()] indique.
 #'
@@ -475,8 +475,8 @@
 #' @return A data frame of class `qes_codebook`, returned visibly.
 #'
 #'   With `layout = "compact"`, one row per variable: `variable`, `label`
-#'   (the file's variable label), `question`, `n_value_labels` (the columns
-#'   of qesR 0.4.4, first and in that order), then `study`, `position` (in
+#'   (the file's variable label), `question`, `n_value_labels` (always
+#'   first and in that order), then `study`, `position` (in
 #'   the data), `type` (`numeric`, `character`, `date`, `datetime` or
 #'   `logical`), `question_lang`, `question_truncated`, `value_labels`
 #'   (`"1=Oui | 2=Non"`), `missing_codes` (`"8=dk | 9=refused"`), `targets`
@@ -492,7 +492,7 @@
 #'
 #'   Every layout has the attributes `survey_code`, `doi`, `doi_url`,
 #'   `selected_data_file` (the Dataverse name of the data file described:
-#'   for an ingested file, the `.tab` copy, as in qesR 0.4.4; the header
+#'   for an ingested file, the `.tab` copy; the header
 #'   printed by the codebook also names the original `.sav` or `.dta` that
 #'   [get_qes()] reads and [qes_provenance()] reports),
 #'   `variable_names_file` (the data file whose
@@ -536,7 +536,7 @@ qes_codebook <- function(
 
 # ---- legacy wrappers ------------------------------------------------------------------------
 
-#' Get a Quebec Election Study codebook (legacy)
+#' Get a Quebec Election Study codebook (older name)
 #'
 #' Soft-deprecated: use [qes_codebook()], which takes the same arguments.
 #' `get_codebook()` and `get_qes_codebook()` keep working and will not be
@@ -600,7 +600,7 @@ get_qes_codebook <- function(
   )
 }
 
-#' Reformat a qesR codebook (legacy)
+#' Reformat a qesR codebook (older name)
 #'
 #' Soft-deprecated: use `qes_codebook(codebook, layout = )`, which lays a
 #' codebook out again. `format_codebook()` keeps working and will not be
@@ -644,7 +644,7 @@ format_codebook <- function(codebook, layout = c("compact", "wide", "long")) {
   .qes_codebook_impl(codebook, layout = layout, fn = "format_codebook")
 }
 
-#' Get value labels from a codebook (legacy)
+#' Get value labels from a codebook (older name)
 #'
 #' Soft-deprecated: use `qes_codebook(layout = "long")`, which has one row per
 #' value with its label and missing type. `get_value_labels()` keeps working
@@ -709,7 +709,7 @@ get_value_labels <- function(codebook, variable = NULL, long = FALSE) {
   map
 }
 
-#' Download codebook files (legacy)
+#' Download codebook files (older name)
 #'
 #' Downloads a study's documentation files (codebooks, questionnaires and
 #' reports) into a local directory.

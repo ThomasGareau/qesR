@@ -18,7 +18,7 @@
 #' | Groupe | Fonction | Rôle |
 #' |---|---|---|
 #' | Données | [get_qes()] | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
-#' | Données | [get_qes_master()] | Fichier fusionné hérité : 30 colonnes harmonisées, 11 études, construit à partir des variables harmonisées. |
+#' | Données | [get_qes_master()] | Le fichier fusionné : 11 études empilées dans un seul tableau, avec 30 colonnes harmonisées dans un format fixe, construit à partir des variables harmonisées. |
 #' | Études et documents | [qes_studies()] | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
 #' | Études et documents | [qes_docs()] | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
 #' | Études et documents | [qes_download()] | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
@@ -40,10 +40,10 @@
 #' générée à partir de la spécification est
 #' `vignette("fr-reference-harmonisation", package = "qesR")`.
 #'
-#' Les anciennes fonctions (`get_codebook()`, `get_question()`,
+#' Les anciens noms de fonctions (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) continuent de fonctionner et ne
-#' seront pas retirées ; voir [qesR-deprecated] pour la fonction qui remplace
-#' chacune.
+#' seront pas retirés ; voir [qesR-deprecated] pour la fonction qui remplace
+#' chacun.
 #'
 #' @section Langue:
 #' `options(qesR.lang = "fr")` affiche les messages, avertissements et

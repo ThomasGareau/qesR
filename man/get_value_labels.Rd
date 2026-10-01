@@ -2,7 +2,7 @@
 % Please edit documentation in R/codebook.R
 \name{get_value_labels}
 \alias{get_value_labels}
-\title{Get value labels from a codebook (legacy)}
+\title{Get value labels from a codebook (older name)}
 \usage{
 get_value_labels(codebook, variable = NULL, long = FALSE)
 }

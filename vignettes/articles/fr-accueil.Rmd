@@ -124,7 +124,7 @@ Le [catalogue des études](fr-etudes.html), [comment fonctionne
 l'harmonisation](fr-harmonisation.html), la [couverture de chaque
 étude](fr-couverture.html), la [référence des
 variables](fr-reference-harmonisation.html), la [validation par les
-résultats officiels](fr-validation.html) et l'[aperçu des fonctions en
+résultats officiels](fr-validation.html), [le fichier
+fusionné](fr-donnees-fusionnees.html) et l'[aperçu des fonctions en
 français](../reference/qesR-fr.html). Pour du code écrit avec une version
-antérieure de qesR : [passer à la version actuelle](fr-migrer-0.7.html) et
-[le fichier fusionné hérité](fr-donnees-fusionnees.html).
+antérieure de qesR : [passer à la version actuelle](fr-migrer-0.7.html).

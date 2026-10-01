@@ -2,7 +2,7 @@
 title: qesR
 ---
 
-# qesR <img src="logo.png" align="right" height="139" alt="qesR logo" />
+# qesR <img src="logo.svg" align="right" height="139" alt="qesR logo" />
 
 *[Version française](articles/fr-accueil.html)*
 
@@ -115,7 +115,7 @@ The [study catalog](articles/studies.html), [how harmonization
 works](articles/harmonization.html), the [coverage of each
 study](articles/coverage.html), the [variable
 reference](articles/harmonization-reference.html), the [validation against
-official results](articles/validation.html) and the [function
+official results](articles/validation.html), [the merged
+file](articles/merged-dataset.html) and the [function
 reference](reference/index.html). For code written with an earlier version
-of qesR: [upgrading](articles/migrating-0.7.html) and [the legacy merged
-file](articles/merged-dataset.html).
+of qesR: [upgrading](articles/migrating-0.7.html).

@@ -9,8 +9,7 @@ qes_cache_info()
 \value{
 A data frame with one row per cached file: \code{study}, \code{file_id},
 \code{md5}, \code{bytes}, \code{retrieved} (modification time), \code{kind} (always
-\code{"file"}: qesR 0.5.0 to 0.7.0 also listed the \code{qes2022} metadata they
-built, \code{"shard"}, which now ships with the package) and \code{path}.
+\code{"file"}) and \code{path}.
 Attributes \code{mode} (the cache mode)
 and \code{dir} (the cache directory, \code{NA} in mode \code{"none"}). The data frame
 has class \code{c("qes_cache_info", "data.frame")} and prints compactly: the

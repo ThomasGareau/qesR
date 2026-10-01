@@ -2,7 +2,7 @@
 % Please edit documentation in R/question.R
 \name{get_question}
 \alias{get_question}
-\title{Get survey question text (legacy)}
+\title{Get survey question text (older name)}
 \usage{
 get_question(do, q, full = TRUE)
 }

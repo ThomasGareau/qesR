@@ -63,8 +63,8 @@ always those of the file.}
 A data frame of class \code{qes_codebook}, returned visibly.
 
 With \code{layout = "compact"}, one row per variable: \code{variable}, \code{label}
-(the file's variable label), \code{question}, \code{n_value_labels} (the columns
-of qesR 0.4.4, first and in that order), then \code{study}, \code{position} (in
+(the file's variable label), \code{question}, \code{n_value_labels} (always
+first and in that order), then \code{study}, \code{position} (in
 the data), \code{type} (\code{numeric}, \code{character}, \code{date}, \code{datetime} or
 \code{logical}), \code{question_lang}, \code{question_truncated}, \code{value_labels}
 (\code{"1=Oui | 2=Non"}), \code{missing_codes} (\code{"8=dk | 9=refused"}), \code{targets}
@@ -80,7 +80,7 @@ is \code{NA}.
 
 Every layout has the attributes \code{survey_code}, \code{doi}, \code{doi_url},
 \code{selected_data_file} (the Dataverse name of the data file described:
-for an ingested file, the \code{.tab} copy, as in qesR 0.4.4; the header
+for an ingested file, the \code{.tab} copy; the header
 printed by the codebook also names the original \code{.sav} or \code{.dta} that
 \code{\link[=get_qes]{get_qes()}} reads and \code{\link[=qes_provenance]{qes_provenance()}} reports),
 \code{variable_names_file} (the data file whose
@@ -144,7 +144,7 @@ codebook imprimé de \code{qes2022} rappelle cette licence et l'attribution
 qu'elle exige, que garde aussi son attribut \code{licence_notice} (à
 conserver avec le codebook enregistré).
 L'attribut \code{selected_data_file} garde le nom Dataverse du fichier décrit
-(la copie \code{.tab} d'un fichier ingéré, comme dans qesR 0.4.4) ; l'en-tête
+(la copie \code{.tab} d'un fichier ingéré) ; l'en-tête
 affiché nomme aussi le fichier original (\code{.sav} ou \code{.dta}) que
 \code{\link[=get_qes]{get_qes()}} lit et que \code{\link[=qes_provenance]{qes_provenance()}} indique.
 }

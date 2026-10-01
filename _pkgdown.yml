@@ -31,15 +31,33 @@ template:
   bootstrap: 5
   light-switch: true
   bslib:
-    # Colours from the logo. Contrast on the light background: links 7.3:1,
-    # primary 5.7:1; in dark mode Bootstrap derives #68a4d5 (5.9:1).
-    primary: "#0468b9"
+    # Colours from the logo (man/figures/logo.svg): navy #0B3D91, gold
+    # #F2B632. WCAG contrast ratios (AA asks for 4.5:1 for text):
+    # - light theme: primary and links navy #0B3D91, 10.0:1 on white
+    #   (8.3:1 on the light navbar, ~#E6E9EE); hover #093174, 12.3:1.
+    # - dark theme: navy is 1.5:1 on the #212529 background, and the tint
+    #   Bootstrap would derive for links (40% white, #6D8BBD) only 4.46:1,
+    #   so links and primary text use #93B4EC, a lighter blue of the navy's
+    #   hue: 7.3:1 on #212529, 6.3:1 on #2b3035, 6.4:1 on the dark navbar
+    #   (~#292F36); hover #A9C3F0, 8.6:1.
+    # - gold is decoration only (1.8:1 on white): the navbar rule and, in
+    #   the dark theme, the focus ring (8.5:1 on #212529, 7.4:1 on the
+    #   dark navbar; pkgdown/extra.css).
+    primary: "#0B3D91"
     secondary: "#3e4b63"
-    link-color: "#0357a0"
+    link-color: "#0B3D91"
+    link-color-dark: "#93B4EC"
+    primary-text-emphasis-dark: "#93B4EC"
     font-size-base: 1.0625rem
     line-height-base: 1.6
     headings-font-weight: 650
     border-radius: 0.375rem
+  # The image of shared links (og:image). pkgdown would use logo.svg, which
+  # Facebook, X, LinkedIn and Slack do not show; logo.png is the same logo.
+  opengraph:
+    image:
+      src: man/figures/logo.png
+      alt: "qesR logo"
   # The FR/EN button of the navbar (styled by .qesr-lang-switch in
   # pkgdown/extra.css). It goes to the page's translation: the page's own
   # "Version française" / "English version" link, which every article has
@@ -169,6 +187,8 @@ navbar:
         href: articles/harmonization-reference.html
       - text: Validation against official results
         href: articles/validation.html
+      - text: The merged file (get_qes_master)
+        href: articles/merged-dataset.html
     reference:
       text: Reference
       href: reference/index.html
@@ -192,8 +212,8 @@ reference:
   - qesR-fr
 - title: Data
   desc: >
-    Load a study from its original data file, or build the legacy merged
-    file. Data are returned, never written into your workspace unless you
+    Load a study from its original data file, or stack 11 studies in the
+    merged file. Data are returned, never written into your workspace unless you
     ask.
   contents:
   - get_qes
@@ -242,14 +262,14 @@ reference:
   contents:
   - qes_cache_info
   - qes_cache_clear
-- title: Older functions (qesR 0.4.4)
+- title: Older function names
   desc: |
-    Functions from qesR 0.4.4. They keep working, with the same arguments,
-    and will not be removed; each prints a one-time notice naming its
-    replacement. [Upgrading from qesR 0.4.4](../articles/migrating-0.7.html)
+    Earlier names of qesR functions. They keep working, with the same
+    arguments, and will not be removed; each prints a one-time notice
+    naming its replacement. [The upgrading guide](../articles/migrating-0.7.html)
     says what changed in their results.
 
-    | 0.4.4 | Replacement |
+    | Older name | Replacement |
     |---|---|
     | `get_codebook()`, `get_qes_codebook()` | `qes_codebook()` |
     | `format_codebook()` | `qes_codebook(codebook, layout = )` |
@@ -306,11 +326,11 @@ articles:
   - articles/coverage
   - harmonization-reference
   - articles/validation
+  - articles/merged-dataset
 - title: Upgrading from qesR 0.4.4
   navbar: ~
   contents:
   - migrating-0.7
-  - articles/merged-dataset
 - title: En français
   desc: >
     Toutes les pages en français, dans l'ordre des sections anglaises :
@@ -335,5 +355,5 @@ articles:
   - articles/fr-couverture
   - fr-reference-harmonisation
   - articles/fr-validation
-  - fr-migrer-0.7
   - articles/fr-donnees-fusionnees
+  - fr-migrer-0.7
