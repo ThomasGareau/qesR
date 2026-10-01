@@ -78,10 +78,13 @@ questions diffèrent ([Un seul fichier pour toutes les
 grille indique d’où viennent les valeurs de chaque étude : *stricte*
 lorsque la colonne est construite à partir d’une cible ou d’une variable
 regroupée de la grille ci-dessus, *souple* lorsqu’un appariement souple
-de la question propre à l’étude les fournit. Les colonnes souples n’ont
-pas de niveau de comparabilité, et un appariement laisse la colonne
-d’une étude manquante lorsque ses catégories chevauchent celles de la
-colonne.
+de la question propre à l’étude les fournit, et *souple (en révision)*
+lorsque cet appariement n’est pas encore approuvé, si bien que
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+laisse pour l’instant la colonne manquante dans cette étude. Les
+colonnes souples n’ont pas de niveau de comparabilité, et un appariement
+laisse la colonne d’une étude manquante lorsque ses catégories
+chevauchent celles de la colonne.
 
 [TABLE]
 

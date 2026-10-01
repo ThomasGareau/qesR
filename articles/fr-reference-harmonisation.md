@@ -1800,7 +1800,7 @@ ou un autre genre ; les questions diffèrent, pas les catégories.
 
 Aucun : les valeurs de chaque étude viennent de la base.
 
-### `education` : Scolarité
+### `education4` : Scolarité (quatre groupes)
 
 Le plus haut niveau de scolarité atteint par la personne, en quatre
 groupes.
@@ -1815,7 +1815,12 @@ universitaire, y compris des études universitaires non terminées ; le
 panel de 2007 et les sondages CROP ont demandé les années d’études, si
 bien que leur groupe secondaire compte aussi ceux qui ont quitté le
 secondaire sans diplôme, et leur groupe collégial peut compter des
-personnes ayant fait des études universitaires sans diplôme.
+personnes ayant fait des études universitaires sans diplôme. qes1998 est
+manquante (non appariable) : le groupe du milieu de son fichier
+regroupé, 10 à 15 années d’études, chevauche le secondaire et le
+collégial (education, en trois groupes, l’inclut). La cible stricte du
+même nom dans qes_harmonize() regroupe autrement : son groupe le plus
+bas est primaire ou moins.
 
 **Niveaux**
 
@@ -1838,8 +1843,44 @@ personnes ayant fait des études universitaires sans diplôme.
 | qes2007_panel | `scol` (toute vague) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études, en tranches nommées d’après un ordre d’enseignement : 7 ans ou moins (primaire) est sans diplôme, 8 à 12 ans (secondaire) est secondaire, 13 à 15 ans (cégep, école technique) est collégial et 16 ans ou plus est universitaire. Le groupe secondaire compte donc aussi ceux qui ont quitté le secondaire sans diplôme, et le groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme, que les autres études classent à l’universitaire. | stable |
 | qes2007 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | stable |
 | qes2008 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | stable |
-| qes1998 | `scol` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | OD-R1 : le fichier regroupé classe les années d’études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n’apparier que les deux autres groupes fausserait toutes les proportions, si bien que l’étude est laissée de côté. | stable |
+| qes1998 | `scol` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | OD-R1 : le fichier regroupé classe les années d’études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n’apparier que les deux autres groupes fausserait toutes les proportions, si bien que l’étude est laissée de côté des quatre groupes. Les trois groupes de education l’incluent (OD-R17). | stable |
 | qes_crop_2007_2010 | `scol` (chaque sondage) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études selon les quatre intervalles de CROP (7 ou moins, primaire ; 8 à 12, secondaire ; 13 à 15, cégep ou école technique ; 16 ou plus, université) : 7 ou moins est sans diplôme et 8 à 12 est secondaire, si bien que ce groupe compte aussi ceux qui ont quitté le secondaire sans diplôme ; le classement par années, et non par plus haut niveau atteint, peut aussi placer des études universitaires non terminées (14 ou 15 ans) au collégial. | stable |
+
+### `education` : Scolarité
+
+Le plus haut niveau de scolarité atteint par la personne, en trois
+groupes.
+
+Base : `column:education4` ·
+`recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university`
+· une valeur par personne
+
+**Comment elle est assouplie** : Les niveaux de chaque étude sont
+regroupés en trois : sans diplôme d’études secondaires, secondaire au
+collégial (diplôme d’études secondaires, cégep, formation technique ou
+professionnelle) et université, y compris des études universitaires non
+terminées. Ce sont les groupes de education4, secondaire et collégial
+réunis, ce qui permet d’inclure qes1998. Là où une étude a demandé les
+années d’études (le panel de 2007, les sondages CROP et les répondants
+de CROP dans qes1998), les tranches ne suivent pas les diplômes : des
+personnes sans diplôme (10 ans dans qes1998 ; 8 à 10 ans dans les
+autres, puisque le secondaire se termine après 11 ans au Québec) sont
+classées au secondaire au collégial, et des étudiants universitaires (14
+ou 15 ans) ne sont pas classés à l’université.
+
+**Niveaux**
+
+| Code | Nom                   | Étiquette                         |
+|------|-----------------------|-----------------------------------|
+| 1    | `no_diploma`          | Sans diplôme d’études secondaires |
+| 2    | `high_school_college` | Secondaire au collégial (cégep)   |
+| 3    | `university`          | Université                        |
+
+**Appariements souples**
+
+| Étude | Source | Recodage | Usage | Notes | statut |
+|----|----|----|----|----|----|
+| qes1998 | `scol` (pre) | 1 = Sans diplôme d’études secondaires; 2 = Secondaire au collégial (cégep); 3 = Université; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | OD-R17 : les trois groupes du fichier regroupé portent les étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux firmes les ont construits autrement. Pour les répondants de CREATEC (firme_post = 1), scol recode le plus haut niveau atteint (r15 : primaire ou études secondaires partielles ; secondaire terminé ou formation technique, collégiale ou cégep ; université, terminée ou non), si bien que les trois groupes tiennent. Pour les répondants de CROP (firme_post = 2), il regroupe les années d’études (question 19 de CROP : 7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l’appariement est approximatif : le secondaire se terminant après 11 ans au Québec, une personne qui compte 10 ans n’a pas de diplôme mais est classée au secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont des étudiants universitaires classés au secondaire au collégial. Le code 9, sans étiquette, est lu comme ne sait pas ou refus. | stable |
 
 ### `income_cat` : Revenu du ménage (tiers)
 
@@ -2060,6 +2101,38 @@ foyer, inapte au travail ou dans une autre situation est classée autre.
 | qes2008 | `q79` (post) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Retraité(e); 4 = Au chômage; 5 = Étudiant(e); 6, 7, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une seule situation par personne (le questionnaire de 2008 n’a pas de codes de double situation) : à son compte et salarié sont en emploi ; au foyer, handicapé et autre (préciser) sont autre. | stable |
 | qes1998 | `occup` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | OD-R2 : le fichier regroupé a temps plein, temps partiel et ne travaille pas ; ne travaille pas réunit chômeurs, retraités, étudiants et personnes au foyer, si bien que l’étude est laissée de côté. | stable |
 | qes_crop_2007_2010 | `Occup` (chaque sondage) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Au chômage; 4 = À la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e); 9 = Refus (NA) | complète l’étude | Temps plein et temps partiel sont en emploi ; à la maison à temps plein est autre. | stable |
+
+### `union` : Appartenance à un syndicat
+
+Si la personne, ou dans certaines études quelqu’un de son ménage, est
+syndiquée.
+
+Base : appariements souples seulement · `relaxed_only` · une valeur par
+personne
+
+**Comment elle est assouplie** : Si la personne est syndiquée en 2022,
+mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018
+(en 2018, les personnes qui vivent chez leurs parents ont été
+interrogées sur leur famille : parents, frères ou sœurs). Seules ces
+trois études posent la question, et celle de 2022 la pose après
+l’élection, si bien que ses répondants de la seule vague de campagne
+sont manquants ; la colonne est conservée quel que soit son nombre
+d’études (essentielle), selon la décision du 2026-10-01.
+
+**Niveaux**
+
+| Code | Nom   | Étiquette |
+|------|-------|-----------|
+| 1    | `yes` | Oui       |
+| 2    | `no`  | Non       |
+
+**Appariements souples**
+
+| Étude | Source | Recodage | Usage | Notes | statut |
+|----|----|----|----|----|----|
+| qes2022 | `pes_union` (pes) | 1 = Oui; 2 = Non | complète l’étude | La personne elle-même est syndiquée (et non son ménage). Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | stable |
+| qes2018 | `q65a` (post) | 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA); Sans objet (écarté par un filtre) (NA), Valeur manquante système (NA) passent à q65b: 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Q65 a deux versions, selon QPARENTS : les personnes qui ne vivent pas chez leurs parents (q65a, 2 558 répondants) ont été interrogées sur leur ménage, celles qui y vivent (q65b, 514) sur leur famille (parents, frères ou sœurs). La version du ménage est lue d’abord, puis celle de la famille pour les personnes à qui la première n’a pas été posée. La personne ou quelqu’un de son ménage (ou de sa famille) est syndiqué(e). | stable |
+| qes2014 | `Q61` (post) | 1 = Oui; 2 = Non; 9 = Refus (NA) | complète l’étude | La personne ou quelqu’un de son ménage est syndiqué(e). | stable |
 
 ### `region` : Région
 
@@ -2501,6 +2574,36 @@ an, tel que chaque étude l’a demandé.
 **Appariements souples**
 
 Aucun : les valeurs de chaque étude viennent de la base.
+
+### `econ_self` : Situation financière personnelle depuis un an
+
+L’avis de la personne sur sa propre situation financière depuis un an.
+
+Base : appariements souples seulement · `relaxed_only` · sur la vague
+qui l’a posée
+
+**Comment elle est assouplie** : Si la situation financière de la
+personne s’est améliorée, est restée à peu près la même ou s’est
+détériorée depuis un an. Seule qes2022 pose la question, pendant la
+campagne ; la colonne est conservée pour les analyses à l’intérieur de
+cette étude (essentielle), comme econ_self dans cesR, même si elle
+compte moins de trois études. La question de 2012 et de 2014 sur sa
+propre situation financière si le Québec devenait indépendant est une
+autre question et n’est pas utilisée.
+
+**Niveaux**
+
+| Code | Nom      | Étiquette          |
+|------|----------|--------------------|
+| 1    | `better` | Améliorée          |
+| 2    | `same`   | À peu près la même |
+| 3    | `worse`  | Détériorée         |
+
+**Appariements souples**
+
+| Étude | Source | Recodage | Usage | Notes | statut |
+|----|----|----|----|----|----|
+| qes2022 | `cps_ownfin` (cps) | 1 = Améliorée; 2 = Détériorée; 3 = À peu près la même | complète l’étude | Posée pendant la campagne à chaque personne ; le fichier n’a aucune valeur manquante. Ce n’est pas la question de 2012 et de 2014 sur sa propre situation financière si le Québec devenait indépendant (q85, Q47), qui porte sur une autre situation. | stable |
 
 ### `identity` : Identité québécoise et canadienne
 

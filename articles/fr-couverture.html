@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1375,9 +1375,12 @@ grille indique d’où viennent les valeurs de chaque étude :
 <em>stricte</em> lorsque la colonne est construite à partir d’une cible
 ou d’une variable regroupée de la grille ci-dessus, <em>souple</em>
 lorsqu’un appariement souple de la question propre à l’étude les
-fournit. Les colonnes souples n’ont pas de niveau de comparabilité, et
-un appariement laisse la colonne d’une étude manquante lorsque ses
-catégories chevauchent celles de la colonne.</p>
+fournit, et <em>souple (en révision)</em> lorsque cet appariement n’est
+pas encore approuvé, si bien que <code><a href="../reference/qes_decon.html">qes_decon()</a></code> laisse pour
+l’instant la colonne manquante dans cette étude. Les colonnes souples
+n’ont pas de niveau de comparabilité, et un appariement laisse la
+colonne d’une étude manquante lorsque ses catégories chevauchent celles
+de la colonne.</p>
 <table class="table">
 <colgroup>
 <col width="8%">
@@ -1472,7 +1475,8 @@ d’âge</td>
 </tr>
 <tr class="odd">
 <td>
-<a href="fr-reference-harmonisation.html#relaxed-education"><code>education</code></a><br>Scolarité</td>
+<a href="fr-reference-harmonisation.html#relaxed-education4"><code>education4</code></a><br>Scolarité
+(quatre groupes)</td>
 <td>souple</td>
 <td>souple</td>
 <td>souple</td>
@@ -1486,6 +1490,21 @@ d’âge</td>
 <td>souple</td>
 </tr>
 <tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-education"><code>education</code></a><br>Scolarité</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+</tr>
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-income_cat"><code>income_cat</code></a><br>Revenu
 du ménage (tiers)</td>
@@ -1501,7 +1520,7 @@ du ménage (tiers)</td>
 <td>souple</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-language"><code>language</code></a><br>Langue
 maternelle</td>
@@ -1517,7 +1536,7 @@ maternelle</td>
 <td>stricte</td>
 <td>souple</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-language_fr"><code>language_fr</code></a><br>Français,
 langue maternelle</td>
@@ -1533,7 +1552,7 @@ langue maternelle</td>
 <td>stricte</td>
 <td>souple</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-language_eng"><code>language_eng</code></a><br>Anglais,
 langue maternelle</td>
@@ -1549,7 +1568,7 @@ langue maternelle</td>
 <td>stricte</td>
 <td>souple</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-religion"><code>religion</code></a><br>Religion</td>
 <td>souple</td>
@@ -1564,7 +1583,7 @@ langue maternelle</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-marital"><code>marital</code></a><br>État
 matrimonial</td>
@@ -1580,7 +1599,7 @@ matrimonial</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-employment"><code>employment</code></a><br>Occupation</td>
 <td>souple</td>
@@ -1594,6 +1613,22 @@ matrimonial</td>
 <td>souple</td>
 <td>souple</td>
 <td>souple</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-union"><code>union</code></a><br>Appartenance
+à un syndicat</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr class="odd">
 <td>
@@ -1868,6 +1903,22 @@ du Québec depuis un an</td>
 </tr>
 <tr class="even">
 <td>
+<a href="fr-reference-harmonisation.html#relaxed-econ_self"><code>econ_self</code></a><br>Situation
+financière personnelle depuis un an</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
 <a href="fr-reference-harmonisation.html#relaxed-identity"><code>identity</code></a><br>Identité
 québécoise et canadienne</td>
 <td>stricte</td>
@@ -1882,7 +1933,7 @@ québécoise et canadienne</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-attach_quebec"><code>attach_quebec</code></a><br>Attachement
 au Québec</td>
@@ -1898,7 +1949,7 @@ au Québec</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="fr-reference-harmonisation.html#relaxed-attach_canada"><code>attach_canada</code></a><br>Attachement
 au Canada</td>

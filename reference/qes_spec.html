@@ -64,7 +64,7 @@ each study's question is to the target's anchor question."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -312,7 +312,7 @@ sont assouplies, puis l'appariement souple propre à chaque étude.
 référence complète.</p>
     </div>
     <div class="section level2">
-    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.5.0)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
+    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.6.0)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
 
 
 <p>Generated from the spec by roxygen; <code>qes_spec()</code> gives the same list with each study's grade.</p><dl><dt><code>vote_prov_recall</code></dt>
@@ -899,156 +899,138 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2               yob        target:birth_year</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3         age_group        target:age_group3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4            gender            target:gender</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         education                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        income_cat                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          language       target:lang_mother</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8       language_fr          column:language</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9      language_eng          column:language</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10         religion                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11          marital                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12       employment                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13           region       target:region_cma3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14     region_admin                     &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15      born_canada       target:born_canada</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16      born_quebec       target:birthplace3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17      vote_choice       pooled:vote_choice</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        vote_type pooled:vote_choice__type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19          turnout           pooled:turnout</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20        vote_prev    target:vote_prov_prev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21              pid          target:pid_prov</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22               lr           target:lr_self</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23         interest      pooled:pol_interest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24      interest_01      pooled:pol_interest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25      sovereignty       pooled:sov_support</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 sovereignty_type pooled:sov_support__type</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  satis_democracy     target:satis_demo_qc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28 gov_satisfaction  target:gov_satisfaction</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29       econ_retro     target:econ_retro_qc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30         identity    target:identity_qc_ca</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31    attach_quebec         target:attach_qc</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32    attach_canada         target:attach_ca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        education4                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         education        column:education4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        income_cat                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          language       target:lang_mother</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       language_fr          column:language</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10     language_eng          column:language</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11         religion                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12          marital                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13       employment                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14            union                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15           region       target:region_cma3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16     region_admin                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17      born_canada       target:born_canada</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18      born_quebec       target:birthplace3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19      vote_choice       pooled:vote_choice</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20        vote_type pooled:vote_choice__type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21          turnout           pooled:turnout</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22        vote_prev    target:vote_prov_prev</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23              pid          target:pid_prov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24               lr           target:lr_self</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25         interest      pooled:pol_interest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26      interest_01      pooled:pol_interest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27      sovereignty       pooled:sov_support</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 sovereignty_type pooled:sov_support__type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  satis_democracy     target:satis_demo_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30 gov_satisfaction  target:gov_satisfaction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31       econ_retro     target:econ_retro_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32        econ_self                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33         identity    target:identity_qc_ca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34    attach_quebec         target:attach_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35    attach_canada         target:attach_ca</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                      transform</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                            recode:yes=citizen,no=not_citizen</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                     identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                     identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                                                                     identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                                                                 relaxed_only</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                 relaxed_only</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                                                                                                     identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                        recode:french=yes,english=no,other=no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                                        recode:french=no,english=yes,other=no</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                               recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                                                                                                 relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                                                     identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                                        recode:french=yes,english=no,other=no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                       recode:french=no,english=yes,other=no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                                                                relaxed_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                                                                relaxed_only</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                                                                relaxed_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                                                                relaxed_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                                                                relaxed_only</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                                             bands:0.35,0.75:low,medium,high</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                                             bands:0.35,0.75:low,medium,high</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31                                                                                                                                                    identity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35                                                                                                                                                    identity</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    qes2022 qes1998</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   strict    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2   strict    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3   strict  strict</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4   strict  strict</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5  relaxed relaxed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  relaxed    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  relaxed    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8  relaxed relaxed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9  relaxed relaxed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 relaxed relaxed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 relaxed    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 relaxed relaxed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13    &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14    &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15    &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16    &lt;NA&gt;    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  strict  strict</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    &lt;NA&gt;    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 19  strict  strict</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  strict relaxed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  strict    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  strict relaxed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 23  strict    &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 24  strict    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  strict  strict</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  strict  strict</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  strict    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  strict relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  strict  strict</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 29  strict    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  strict relaxed</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 31  strict    &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35  strict    &lt;NA&gt;</span>
 <span class="r-in"><span><span class="fu">qes_spec</span><span class="op">(</span><span class="st">"relaxed_maps"</span>, targets <span class="op">=</span> <span class="st">"education"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"source_var"</span>, <span class="st">"recode"</span>, <span class="st">"status"</span><span class="op">)</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 study source_var</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1             qes2022    cps_edu</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2             qes2018      qscol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3             qes2014      QSCOL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4             qes2012       scol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       qes2018_panel         d3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       qes2007_panel       scol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7             qes2007        q77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8             qes2008        q77</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9             qes1998       scol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 qes_crop_2007_2010       scol</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                        recode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                           1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don't know or refused (one code) (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                   1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                               1-3 = Source category straddles target levels (NA); 9 = Don't know or refused (one code) (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                  1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    status</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  stable</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     study source_var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 qes1998       scol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                      recode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University; 9 = Don't know or refused (one code) (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 stable</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the checked spec itself</span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"spec"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">s</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.5.0 (2026-10-01), content hash 42816ecc38259a8deb01cd590d1c6a2b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.6.0 (2026-10-01), content hash 910e81120d19001bb1d7c0f9b0b32b3f</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   targets: 50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 166</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 169</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   crosswalk: 236</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 1734</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 1754</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   waves: 39</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   weights: 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 17</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   gates: 3209</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   expected: 2914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   hashes: 269</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   legacy: 102</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pooled: 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pooled_members: 14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed: 32</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed_maps: 60</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_expected: 2606</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_hashes: 352</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed: 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed_maps: 65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_expected: 2712</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_hashes: 385</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Check: 0 error(s), 0 warning(s), 0 note(s).</span>
 </code></pre></div>
     </div>

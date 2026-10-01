@@ -116,7 +116,7 @@ text. The data record which file they came from:
 qes_provenance(qes_demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-10-01 06:31:01 UTC (local_demo). Read with haven::read_sav(user_na =
+#> 2026-10-01 17:17:37 UTC (local_demo). Read with haven::read_sav(user_na =
 #> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
@@ -332,9 +332,9 @@ Record what each result was computed from, and cite it:
 
 qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.5.0 42816ecc38259a8deb01cd590d1c6a2b        0.9.0
+#> 1        4.6.0 910e81120d19001bb1d7c0f9b0b32b3f        0.9.1
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.1, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

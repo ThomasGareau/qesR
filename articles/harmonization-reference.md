@@ -1760,7 +1760,7 @@ questions differ, the categories do not.
 
 None: every study’s values come from the base.
 
-### `education`: Education
+### `education4`: Education (four groups)
 
 The highest level of schooling the respondent completed, in four groups.
 
@@ -1772,7 +1772,11 @@ school) and university, including some university; the 2007 panel and
 the CROP polls asked years of schooling, so their high school group also
 holds those who left secondary school without a diploma, and their
 college group may hold some respondents with some university but no
-degree.
+degree. qes1998 is missing (not mappable): the middle group of its
+pooled file, 10 to 15 years of schooling, spans high school and college
+(education, in three groups, includes it). The strict target of the same
+name in qes_harmonize() groups differently: its lowest group is primary
+or less.
 
 **Levels**
 
@@ -1795,8 +1799,42 @@ degree.
 | qes2007_panel | `scol` (any wave) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling, in bands named after a level: 7 years or less (primary) is no diploma, 8 to 12 years (secondary) is high school, 13 to 15 years (CEGEP, technical school) is college and 16 years or more is university. The high school group therefore also holds those who left secondary school without a diploma, and the college group may hold respondents with some university but no degree, whom other studies count as university. | stable |
 | qes2007 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
 | qes2008 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
-| qes1998 | `scol` (pre) | 1-3 = Source category straddles target levels (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out. | stable |
+| qes1998 | `scol` (pre) | 1-3 = Source category straddles target levels (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out of the four groups. The three groups of education include it (OD-R17). | stable |
 | qes_crop_2007_2010 | `scol` (each poll) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling in CROP’s four ranges (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP or technical school; 16 or more, university): 7 or fewer is no diploma and 8 to 12 is high school, so that group also holds those who left secondary school without a diploma; grouping by years, not by highest level, can also put some university (14 or 15 years) in college. | stable |
+
+### `education`: Education
+
+The highest level of schooling the respondent completed, in three
+groups.
+
+Base: `column:education4` ·
+`recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university`
+· one value per respondent
+
+**How it is relaxed**: Each study’s levels are grouped into three: no
+high school diploma, high school to college (a high school diploma,
+CEGEP, technical or trade school) and university, including some
+university. These are the groups of education4 with high school and
+college joined, which lets qes1998 in. Where a study asked years of
+schooling (the 2007 panel, the CROP polls and the CROP respondents of
+qes1998), the bands do not follow diplomas: some respondents without a
+diploma (10 years in qes1998; 8 to 10 years in the others, as Quebec
+high school ends after 11 years) count as high school to college, and
+some university students (14 or 15 years) are not counted in university.
+
+**Levels**
+
+| Code | Name                  | Label                          |
+|------|-----------------------|--------------------------------|
+| 1    | `no_diploma`          | No high school diploma         |
+| 2    | `high_school_college` | High school to college (CEGEP) |
+| 3    | `university`          | University                     |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes1998 | `scol` (pre) | 1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University; 9 = Don’t know or refused (one code) (NA) | replaces the base | OD-R17: the pooled file’s three groups are labelled 1-9 years, 10-15 years and university or more, but the two firms built them differently. For the CREATEC respondents (firme_post = 1), scol recodes the highest level completed (r15: elementary or some secondary; secondary completed or technical, college or CEGEP; university, completed or not), so the three groups hold. For the CROP respondents (firme_post = 2), it groups years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16 or more), so the match is approximate: Quebec high school ends after 11 years, so a respondent with 10 years has no diploma but counts as high school to college, and some respondents with 14 or 15 years are university students who count as high school to college. Code 9 is unlabelled and read as don’t know or refused. | stable |
 
 ### `income_cat`: Household income (thirds)
 
@@ -2008,6 +2046,36 @@ other.
 | qes2008 | `q79` (post) | 1, 2 = Working (employee or self-employed); 3 = Retired; 4 = Unemployed; 5 = Student; 6, 7, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | One status per respondent (the 2008 questionnaire has no two-status codes): self-employed and working for pay are working; at home, disabled and other (specify) are other. | stable |
 | qes1998 | `occup` (pre) | 1-3 = Source category straddles target levels (NA) | fills the study | OD-R2: the pooled file has full time, part time and not working; not working joins the unemployed, the retired, students and those at home, so the study is left out. | stable |
 | qes_crop_2007_2010 | `Occup` (each poll) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | stable |
+
+### `union`: Union membership
+
+Whether the respondent, or in some studies anyone in the household,
+belongs to a union.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: Whether the respondent belongs to a union in
+2022, but whether the respondent or anyone in the household does in 2014
+and 2018 (in 2018, respondents who live with their parents were asked
+about their family: parents, brothers or sisters). Only these three
+studies ask it, and 2022 asks it after the election, so its
+campaign-only respondents are missing; the column is kept whatever its
+number of studies (essential), as decided on 2026-10-01.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `pes_union` (pes) | 1 = Yes; 2 = No | fills the study | The respondent belongs to a union (not the household). Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
+| qes2018 | `q65a` (post) | 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA); Inapplicable (routed out) (NA), System missing (NA) pass to q65b: 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Q65 has two versions, split by QPARENTS: those who do not live with their parents (q65a, 2,558 respondents) were asked about their household, those who do (q65b, 514) about their family (parents, brothers or sisters). The household version is read first, then the family version for those who were not asked it. The respondent or anyone in the household (or family) belongs to a union. | stable |
+| qes2014 | `Q61` (post) | 1 = Yes; 2 = No; 9 = Refused (NA) | fills the study | The respondent or anyone in the household belongs to a union. | stable |
 
 ### `region`: Region
 
@@ -2436,6 +2504,35 @@ the same or got worse over the past year, as each study asked it.
 **Relaxed mappings**
 
 None: every study’s values come from the base.
+
+### `econ_self`: Personal financial situation over the past year
+
+The respondent’s view of their own financial situation over the past
+year.
+
+Base: relaxed mappings only · `relaxed_only` · on the wave that asked it
+
+**How it is relaxed**: Whether the respondent’s own financial situation
+got better, stayed about the same or got worse over the past year. Only
+qes2022 asks it, during the campaign; the column is kept for analyses
+within that study (essential), as cesR’s econ_self, although it has
+fewer than three studies. The 2012 and 2014 question on one’s own
+finances if Quebec became independent is another question and is not
+used.
+
+**Levels**
+
+| Code | Name     | Label          |
+|------|----------|----------------|
+| 1    | `better` | Better         |
+| 2    | `same`   | About the same |
+| 3    | `worse`  | Worse          |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_ownfin` (cps) | 1 = Better; 2 = Worse; 3 = About the same | fills the study | Asked during the campaign of every respondent; the file has no missing value. Not the 2012 and 2014 question on one’s own finances if Quebec became independent (q85, Q47), which asks about another situation. | stable |
 
 ### `identity`: Québécois and Canadian identity
 

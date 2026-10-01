@@ -74,9 +74,12 @@ questions differ ([One file for every
 study](https://thomasgareau.github.io/qesR/articles/decon.md)). The grid
 says where each study’s values come from: *strict* where the column is
 built from a target or a pooled variable of the grid above, *relaxed*
-where a relaxed mapping of the study’s own question gives them. Relaxed
-columns carry no grade, and a mapping leaves a study’s column missing
-where its categories straddle the column’s.
+where a relaxed mapping of the study’s own question gives them, and
+*relaxed (in review)* where that mapping is not yet signed off, so that
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+leaves the column missing there for now. Relaxed columns carry no grade,
+and a mapping leaves a study’s column missing where its categories
+straddle the column’s.
 
 [TABLE]
 

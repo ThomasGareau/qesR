@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -8622,8 +8622,8 @@ catégories.</p>
 <p>Aucun : les valeurs de chaque étude viennent de la base.</p>
 </div>
 <div class="section level3">
-<h3 id="relaxed-education">
-<code>education</code> : Scolarité<a class="anchor" aria-label="anchor" href="#relaxed-education"></a>
+<h3 id="relaxed-education4">
+<code>education4</code> : Scolarité (quatre groupes)<a class="anchor" aria-label="anchor" href="#relaxed-education4"></a>
 </h3>
 <p>Le plus haut niveau de scolarité atteint par la personne, en quatre
 groupes.</p>
@@ -8636,7 +8636,12 @@ universitaire, y compris des études universitaires non terminées ; le
 panel de 2007 et les sondages CROP ont demandé les années d’études, si
 bien que leur groupe secondaire compte aussi ceux qui ont quitté le
 secondaire sans diplôme, et leur groupe collégial peut compter des
-personnes ayant fait des études universitaires sans diplôme.</p>
+personnes ayant fait des études universitaires sans diplôme. qes1998 est
+manquante (non appariable) : le groupe du milieu de son fichier
+regroupé, 10 à 15 années d’études, chevauche le secondaire et le
+collégial (education, en trois groupes, l’inclut). La cible stricte du
+même nom dans qes_harmonize() regroupe autrement : son groupe le plus
+bas est primaire ou moins.</p>
 <p><strong>Niveaux</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -8797,7 +8802,8 @@ sait pas ou refus (un seul code) (NA)</td>
 <td>OD-R1 : le fichier regroupé classe les années d’études en 1-9, 10-15
 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et
 n’apparier que les deux autres groupes fausserait toutes les
-proportions, si bien que l’étude est laissée de côté.</td>
+proportions, si bien que l’étude est laissée de côté des quatre groupes.
+Les trois groupes de education l’incluent (OD-R17).</td>
 <td>stable</td>
 </tr>
 <tr class="even">
@@ -8818,6 +8824,96 @@ terminées (14 ou 15 ans) au collégial.</td>
 <td>stable</td>
 </tr>
 </tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="relaxed-education">
+<code>education</code> : Scolarité<a class="anchor" aria-label="anchor" href="#relaxed-education"></a>
+</h3>
+<p>Le plus haut niveau de scolarité atteint par la personne, en trois
+groupes.</p>
+<p>Base : <code>column:education4</code> ·
+<code>recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university</code>
+· une valeur par personne</p>
+<p><strong>Comment elle est assouplie</strong> : Les niveaux de chaque
+étude sont regroupés en trois : sans diplôme d’études secondaires,
+secondaire au collégial (diplôme d’études secondaires, cégep, formation
+technique ou professionnelle) et université, y compris des études
+universitaires non terminées. Ce sont les groupes de education4,
+secondaire et collégial réunis, ce qui permet d’inclure qes1998. Là où
+une étude a demandé les années d’études (le panel de 2007, les sondages
+CROP et les répondants de CROP dans qes1998), les tranches ne suivent
+pas les diplômes : des personnes sans diplôme (10 ans dans qes1998 ; 8 à
+10 ans dans les autres, puisque le secondaire se termine après 11 ans au
+Québec) sont classées au secondaire au collégial, et des étudiants
+universitaires (14 ou 15 ans) ne sont pas classés à l’université.</p>
+<p><strong>Niveaux</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Nom</th>
+<th>Étiquette</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>no_diploma</code></td>
+<td>Sans diplôme d’études secondaires</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>high_school_college</code></td>
+<td>Secondaire au collégial (cégep)</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>university</code></td>
+<td>Université</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Appariements souples</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Étude</th>
+<th>Source</th>
+<th>Recodage</th>
+<th>Usage</th>
+<th>Notes</th>
+<th>statut</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td>qes1998</td>
+<td>
+<code>scol</code> (pre)</td>
+<td>1 = Sans diplôme d’études secondaires; 2 = Secondaire au collégial
+(cégep); 3 = Université; 9 = Ne sait pas ou refus (un seul code)
+(NA)</td>
+<td>remplace la base</td>
+<td>OD-R17 : les trois groupes du fichier regroupé portent les
+étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux
+firmes les ont construits autrement. Pour les répondants de CREATEC
+(firme_post = 1), scol recode le plus haut niveau atteint (r15 :
+primaire ou études secondaires partielles ; secondaire terminé ou
+formation technique, collégiale ou cégep ; université, terminée ou non),
+si bien que les trois groupes tiennent. Pour les répondants de CROP
+(firme_post = 2), il regroupe les années d’études (question 19 de CROP :
+7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l’appariement est
+approximatif : le secondaire se terminant après 11 ans au Québec, une
+personne qui compte 10 ans n’a pas de diplôme mais est classée au
+secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont
+des étudiants universitaires classés au secondaire au collégial. Le code
+9, sans étiquette, est lu comme ne sait pas ou refus.</td>
+<td>stable</td>
+</tr></tbody>
 </table>
 </div>
 <div class="section level3">
@@ -9714,6 +9810,101 @@ la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e);
 <td>complète l’étude</td>
 <td>Temps plein et temps partiel sont en emploi ; à la maison à temps
 plein est autre.</td>
+<td>stable</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="relaxed-union">
+<code>union</code> : Appartenance à un syndicat<a class="anchor" aria-label="anchor" href="#relaxed-union"></a>
+</h3>
+<p>Si la personne, ou dans certaines études quelqu’un de son ménage, est
+syndiquée.</p>
+<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
+une valeur par personne</p>
+<p><strong>Comment elle est assouplie</strong> : Si la personne est
+syndiquée en 2022, mais si elle-même ou quelqu’un de son ménage l’est en
+2014 et en 2018 (en 2018, les personnes qui vivent chez leurs parents
+ont été interrogées sur leur famille : parents, frères ou sœurs). Seules
+ces trois études posent la question, et celle de 2022 la pose après
+l’élection, si bien que ses répondants de la seule vague de campagne
+sont manquants ; la colonne est conservée quel que soit son nombre
+d’études (essentielle), selon la décision du 2026-10-01.</p>
+<p><strong>Niveaux</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Nom</th>
+<th>Étiquette</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>yes</code></td>
+<td>Oui</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>no</code></td>
+<td>Non</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Appariements souples</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Étude</th>
+<th>Source</th>
+<th>Recodage</th>
+<th>Usage</th>
+<th>Notes</th>
+<th>statut</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>qes2022</td>
+<td>
+<code>pes_union</code> (pes)</td>
+<td>1 = Oui; 2 = Non</td>
+<td>complète l’étude</td>
+<td>La personne elle-même est syndiquée (et non son ménage). Posée après
+l’élection : les répondants de la seule vague de campagne sont manquants
+(absents de cette vague).</td>
+<td>stable</td>
+</tr>
+<tr class="even">
+<td>qes2018</td>
+<td>
+<code>q65a</code> (post)</td>
+<td>1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA); Sans objet
+(écarté par un filtre) (NA), Valeur manquante système (NA) passent à
+q65b: 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
+<td>complète l’étude</td>
+<td>Q65 a deux versions, selon QPARENTS : les personnes qui ne vivent
+pas chez leurs parents (q65a, 2 558 répondants) ont été interrogées sur
+leur ménage, celles qui y vivent (q65b, 514) sur leur famille (parents,
+frères ou sœurs). La version du ménage est lue d’abord, puis celle de la
+famille pour les personnes à qui la première n’a pas été posée. La
+personne ou quelqu’un de son ménage (ou de sa famille) est
+syndiqué(e).</td>
+<td>stable</td>
+</tr>
+<tr class="odd">
+<td>qes2014</td>
+<td>
+<code>Q61</code> (post)</td>
+<td>1 = Oui; 2 = Non; 9 = Refus (NA)</td>
+<td>complète l’étude</td>
+<td>La personne ou quelqu’un de son ménage est syndiqué(e).</td>
 <td>stable</td>
 </tr>
 </tbody>
@@ -10796,6 +10987,80 @@ depuis un an, tel que chaque étude l’a demandé.</p>
 </table>
 <p><strong>Appariements souples</strong></p>
 <p>Aucun : les valeurs de chaque étude viennent de la base.</p>
+</div>
+<div class="section level3">
+<h3 id="relaxed-econ_self">
+<code>econ_self</code> : Situation financière personnelle depuis un
+an<a class="anchor" aria-label="anchor" href="#relaxed-econ_self"></a>
+</h3>
+<p>L’avis de la personne sur sa propre situation financière depuis un
+an.</p>
+<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
+sur la vague qui l’a posée</p>
+<p><strong>Comment elle est assouplie</strong> : Si la situation
+financière de la personne s’est améliorée, est restée à peu près la même
+ou s’est détériorée depuis un an. Seule qes2022 pose la question,
+pendant la campagne ; la colonne est conservée pour les analyses à
+l’intérieur de cette étude (essentielle), comme econ_self dans cesR,
+même si elle compte moins de trois études. La question de 2012 et de
+2014 sur sa propre situation financière si le Québec devenait
+indépendant est une autre question et n’est pas utilisée.</p>
+<p><strong>Niveaux</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Nom</th>
+<th>Étiquette</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>better</code></td>
+<td>Améliorée</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>same</code></td>
+<td>À peu près la même</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>worse</code></td>
+<td>Détériorée</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Appariements souples</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Étude</th>
+<th>Source</th>
+<th>Recodage</th>
+<th>Usage</th>
+<th>Notes</th>
+<th>statut</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td>qes2022</td>
+<td>
+<code>cps_ownfin</code> (cps)</td>
+<td>1 = Améliorée; 2 = Détériorée; 3 = À peu près la même</td>
+<td>complète l’étude</td>
+<td>Posée pendant la campagne à chaque personne ; le fichier n’a aucune
+valeur manquante. Ce n’est pas la question de 2012 et de 2014 sur sa
+propre situation financière si le Québec devenait indépendant (q85,
+Q47), qui porte sur une autre situation.</td>
+<td>stable</td>
+</tr></tbody>
+</table>
 </div>
 <div class="section level3">
 <h3 id="relaxed-identity">

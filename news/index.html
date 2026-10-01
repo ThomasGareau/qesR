@@ -56,7 +56,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -112,6 +112,38 @@
       <small>Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.1" id="qesr-091">qesR 0.9.1<a class="anchor" aria-label="anchor" href="#qesr-091"></a></h2>
+<p><em>Upgrading from qesR 0.4.4? See <a href="../articles/migrating-0.7.html">Upgrading from qesR 0.4.4</a>.</em></p>
+<p><strong>In short:</strong> in <code><a href="../reference/qes_decon.html">qes_decon()</a></code>, <code>education</code> now has three groups instead of four, so that the 1998 study can be included; the four groups stay as <code>education4</code>. Two new columns, <code>union</code> and <code>econ_self</code>, are kept although few studies ask them. The legacy functions return the same values as in 0.9.0.</p>
+<div class="section level3">
+<h3 id="qes_decon-0-9-1"><code>qes_decon()</code><a class="anchor" aria-label="anchor" href="#qes_decon-0-9-1"></a></h3>
+<ul><li>
+<code>education</code> is in three groups for every study: no high school diploma, high school to college (CEGEP), and university (in French: sans diplôme d’études secondaires, secondaire au collégial (cégep), université). These are the four groups of 0.9.0 with high school and college joined; trade and vocational diplomas, with college in 0.9.0, are in high school to college. <strong>Code that used the four levels of <code>education</code> should use <code>education4</code>.</strong>
+</li>
+<li>New column <code>education4</code>: the four groups of 0.9.0 (no high school diploma, high school, college, university), with the same mappings and values. It is <code>NA</code> for <code>qes1998</code> (reason <code>not_mappable</code>), whose middle group, 10 to 15 years of schooling, spans high school and college. It is not the strict target <code>education4</code> of <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, whose lowest group is primary or less.</li>
+<li>
+<code>qes1998</code> enters <code>education</code> from the pooled file’s three groups (1 to 9 years, 10 to 15 years, university or more). The match is approximate for the CROP respondents, who gave years of schooling: in Quebec high school ends after 11 years, so a respondent with 10 years has no diploma but counts as high school to college, and some respondents with 14 or 15 years are university students. For the CREATEC respondents the groups recode the highest level completed. The column’s <code>relaxed</code> attribute and the row’s notes say so.</li>
+<li>New column <code>union</code> (union membership): whether the respondent belongs to a union (<code>qes2022</code>), or whether the respondent or anyone in the household does (<code>qes2014</code>, <code>qes2018</code>; in 2018, respondents who live with their parents were asked about their family). Three studies.</li>
+<li>New column <code>econ_self</code> (personal financial situation over the past year: better, about the same, worse), the counterpart of cesR’s <code>econ_self</code>, asked in <code>qes2022</code> only.</li>
+<li>Both are kept whatever their number of studies (<code>essential = TRUE</code> in <code>relaxed.csv</code>); their coverage is in their <code>relaxed</code> attribute, in <code><a href="../reference/qes_decon.html">?qes_decon</a></code> and in the article’s table of columns.</li>
+<li>The five new relaxed mappings (education of <code>qes1998</code>, <code>union</code> in three studies, <code>econ_self</code>) were signed off by the same kind of automated double review against the original files and documents as the other 60 (not a human review; their <code>reviewed_by</code> and <code>review_note</code> say so), and <code><a href="../reference/qes_decon.html">qes_decon()</a></code> applies them by default.</li>
+<li>
+<code><a href="../reference/qes_decon.html">qes_decon()</a></code> now has 35 columns. <code>education4</code> comes before <code>education</code> (a column built on another column must come after it), <code>union</code> after <code>employment</code> and <code>econ_self</code> after <code>econ_retro</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="website-0-9-1">Website<a class="anchor" aria-label="anchor" href="#website-0-9-1"></a></h3>
+<ul><li>The article <em>One file for every study: qes_decon()</em> and its French version explain the choice of three education groups and the 1998 match; their table of columns gives each column’s studies, <code>union</code> and <code>econ_self</code> included; the example across elections uses <code>education4</code>, which keeps college apart, and its estimates do not change. The coverage page shows the new columns, and marks a relaxed mapping as in review until it is signed off.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="harmonization-rules-specification-0-9-1">Harmonization rules (specification 4.6.0)<a class="anchor" aria-label="anchor" href="#harmonization-rules-specification-0-9-1"></a></h3>
+<ul><li>
+<code>relaxed.csv</code> gains <code>education4</code>, <code>union</code> and <code>econ_self</code>; <code>education</code> takes its values from <code>education4</code> (base <code>column:education4</code>, a recode that joins high school and college) and a new relaxed row for <code>qes1998</code>. New level set <code>rx_edu3</code>; 5 new relaxed rows, signed off by an automated double review (65 in all, all stable) and 6 new <code>rx_</code> maps (63). The ten former <code>education</code> rows are now <code>education4</code> rows, unchanged in codes and sign-off.</li>
+<li>V-R2 has a second exception: the relaxed column <code>education4</code> shares the name of the strict target <code>education4</code> without extending it, as <code>religion</code> does. Engine-Min is 0.9.1.</li>
+<li>
+<code>expected/relaxed_marginals.csv</code> and <code>expected/relaxed_hashes.csv</code> are rebuilt: the values of <code>education</code> change, those of <code>education4</code> equal the 0.9.0 values of <code>education</code>, and no other column changes. MINOR: no strict row, map, marginal or column hash changes.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.0" id="qesr-090">qesR 0.9.0<a class="anchor" aria-label="anchor" href="#qesr-090"></a></h2>
 <p><em>Upgrading from qesR 0.4.4? See <a href="../articles/migrating-0.7.html">Upgrading from qesR 0.4.4</a>.</em></p>

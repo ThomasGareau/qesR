@@ -81,7 +81,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -175,7 +175,7 @@ usages n’en demandent pas tant : un tableau descriptif, une variable de
 contrôle, un premier regard sur 25 ans de données.
 <code><a href="../reference/qes_decon.html">qes_decon()</a></code> répond à ce besoin. La fonction renvoie un seul
 tableau pour les 11 études harmonisées, avec 47 039 lignes (une par
-personne et par vague) et 32 colonnes de données, une par concept, même
+personne et par vague) et 35 colonnes de données, une par concept, même
 lorsque le libellé ou les choix de réponse changent d’une étude à
 l’autre. Le prix à payer est l’exactitude. Les catégories sont larges,
 et aucune colonne ne prétend que deux études ont posé la même
@@ -193,8 +193,8 @@ colonnes ne changent pas. Les premières lignes :</p>
 <span><span class="co">#&gt;     study wave    weight gender                         education vote_choice</span></span>
 <span><span class="co">#&gt; 1 qes2022  cps 1.4628887  Homme Sans diplôme d'études secondaires         CAQ</span></span>
 <span><span class="co">#&gt; 2 qes2022  pes 1.4407098  Homme Sans diplôme d'études secondaires         CAQ</span></span>
-<span><span class="co">#&gt; 3 qes2022  cps 0.1474534  Homme                     Universitaire          QS</span></span>
-<span><span class="co">#&gt; 4 qes2022  cps 0.4824134  Homme                     Universitaire        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3 qes2022  cps 0.1474534  Homme                        Université          QS</span></span>
+<span><span class="co">#&gt; 4 qes2022  cps 0.4824134  Homme                        Université        &lt;NA&gt;</span></span>
 <span><span class="co">#&gt;                              vote_type</span></span>
 <span><span class="co">#&gt; 1 Intention de vote (indécis relancés)</span></span>
 <span><span class="co">#&gt; 2      Vote déclaré (après l'élection)</span></span>
@@ -230,11 +230,11 @@ la section de la colonne dans la <a href="fr-reference-harmonisation.html">réf�
 donne la variable source et la règle de recodage de chaque étude.</p>
 <table class="table">
 <colgroup>
-<col width="2%">
-<col width="5%">
-<col width="22%">
-<col width="9%">
-<col width="60%">
+<col width="1%">
+<col width="4%">
+<col width="16%">
+<col width="7%">
+<col width="71%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Colonne</th>
@@ -283,8 +283,8 @@ homme ou femme partout, et en 2022 aussi non binaire ou un autre genre ;
 les questions diffèrent, pas les catégories.</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="fr-reference-harmonisation.html#relaxed-education"><code>education</code></a></td>
-<td align="left">Scolarité</td>
+<td align="left"><a href="fr-reference-harmonisation.html#relaxed-education4"><code>education4</code></a></td>
+<td align="left">Scolarité (quatre groupes)</td>
 <td align="left">Sans diplôme d’études secondaires · Diplôme d’études
 secondaires · Collégial, cégep ou formation professionnelle ·
 Universitaire</td>
@@ -297,9 +297,33 @@ formation technique ou professionnelle) et universitaire, y compris des
 CROP ont demandé les années d’études, si bien que leur groupe secondaire
 compte aussi ceux qui ont quitté le secondaire sans diplôme, et leur
 groupe collégial peut compter des personnes ayant fait des études
-universitaires sans diplôme.</td>
+universitaires sans diplôme. qes1998 est manquante (non appariable) : le
+groupe du milieu de son fichier regroupé, 10 à 15 années d’études,
+chevauche le secondaire et le collégial (education, en trois groupes,
+l’inclut). La cible stricte du même nom dans qes_harmonize() regroupe
+autrement : son groupe le plus bas est primaire ou moins.</td>
 </tr>
 <tr class="even">
+<td align="left"><a href="fr-reference-harmonisation.html#relaxed-education"><code>education</code></a></td>
+<td align="left">Scolarité</td>
+<td align="left">Sans diplôme d’études secondaires · Secondaire au
+collégial (cégep) · Université</td>
+<td align="left">10 (1998, 2007, panel 2007, 2008, CROP, 2012, 2014,
+2018, panel 2018, 2022)</td>
+<td align="left">Les niveaux de chaque étude sont regroupés en trois :
+sans diplôme d’études secondaires, secondaire au collégial (diplôme
+d’études secondaires, cégep, formation technique ou professionnelle) et
+université, y compris des études universitaires non terminées. Ce sont
+les groupes de education4, secondaire et collégial réunis, ce qui permet
+d’inclure qes1998. Là où une étude a demandé les années d’études (le
+panel de 2007, les sondages CROP et les répondants de CROP dans
+qes1998), les tranches ne suivent pas les diplômes : des personnes sans
+diplôme (10 ans dans qes1998 ; 8 à 10 ans dans les autres, puisque le
+secondaire se termine après 11 ans au Québec) sont classées au
+secondaire au collégial, et des étudiants universitaires (14 ou 15 ans)
+ne sont pas classés à l’université.</td>
+</tr>
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-income_cat"><code>income_cat</code></a></td>
 <td align="left">Revenu du ménage (tiers)</td>
 <td align="left">Faible (tiers inférieur) · Moyen · Élevé (tiers
@@ -312,7 +336,7 @@ tiers réunit les tranches entières dont le point milieu y tombe et
 compte rarement exactement un tiers ; les seuils en dollars diffèrent
 d’une étude à l’autre.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-language"><code>language</code></a></td>
 <td align="left">Langue maternelle</td>
 <td align="left">Français · Anglais · Autre</td>
@@ -323,7 +347,7 @@ classée au français, et l’anglais et une langue autre que le français, à
 l’anglais, et les répondants de CREATEC de 1998 sont francophones par la
 conception de leur échantillon.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-language_fr"><code>language_fr</code></a></td>
 <td align="left">Français, langue maternelle</td>
 <td align="left">Oui · Non</td>
@@ -332,7 +356,7 @@ conception de leur échantillon.</td>
 déclarées, si bien qu’une personne qui a deux langues maternelles peut
 avoir oui à la fois dans language_fr et dans language_eng.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-language_eng"><code>language_eng</code></a></td>
 <td align="left">Anglais, langue maternelle</td>
 <td align="left">Oui · Non</td>
@@ -341,7 +365,7 @@ avoir oui à la fois dans language_fr et dans language_eng.</td>
 déclarées, si bien qu’une personne qui a deux langues maternelles peut
 avoir oui à la fois dans language_eng et dans language_fr.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-religion"><code>religion</code></a></td>
 <td align="left">Religion</td>
 <td align="left">Catholique · Protestante · Autre chrétienne · Autre
@@ -352,7 +376,7 @@ question de 2022 offre une longue liste, où l’agnosticisme compte comme
 aucune religion, et les autres études demandent d’abord si la personne
 appartient à une religion.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-marital"><code>marital</code></a></td>
 <td align="left">État matrimonial</td>
 <td align="left">Marié(e) ou en couple · Séparé(e) ou divorcé(e) · Veuf
@@ -363,7 +387,7 @@ veuve, ou jamais marié(e) ; 2012 et 2014 ont demandé l’état civil
 officiel, sans union de fait, si bien que des conjoints de fait y sont
 jamais marié(e)s.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-employment"><code>employment</code></a></td>
 <td align="left">Occupation</td>
 <td align="left">En emploi (salarié(e) ou à son compte) · Au chômage ·
@@ -374,6 +398,20 @@ panel 2018, 2022)</td>
 personne qui donne deux situations, comme retraitée et salariée, prend
 celle qui n’est pas l’emploi, et la personne au foyer, inapte au travail
 ou dans une autre situation est classée autre.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="fr-reference-harmonisation.html#relaxed-union"><code>union</code></a></td>
+<td align="left">Appartenance à un syndicat</td>
+<td align="left">Oui · Non</td>
+<td align="left">3 (2014, 2018, 2022)</td>
+<td align="left">Si la personne est syndiquée en 2022, mais si elle-même
+ou quelqu’un de son ménage l’est en 2014 et en 2018 (en 2018, les
+personnes qui vivent chez leurs parents ont été interrogées sur leur
+famille : parents, frères ou sœurs). Seules ces trois études posent la
+question, et celle de 2022 la pose après l’élection, si bien que ses
+répondants de la seule vague de campagne sont manquants ; la colonne est
+conservée quel que soit son nombre d’études (essentielle), selon la
+décision du 2026-10-01.</td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-region"><code>region</code></a></td>
@@ -549,6 +587,20 @@ peu près la même ou s’est détériorée depuis un an, tel que chaque étude
 l’a demandé.</td>
 </tr>
 <tr class="even">
+<td align="left"><a href="fr-reference-harmonisation.html#relaxed-econ_self"><code>econ_self</code></a></td>
+<td align="left">Situation financière personnelle depuis un an</td>
+<td align="left">Améliorée · À peu près la même · Détériorée</td>
+<td align="left">1 (2022)</td>
+<td align="left">Si la situation financière de la personne s’est
+améliorée, est restée à peu près la même ou s’est détériorée depuis un
+an. Seule qes2022 pose la question, pendant la campagne ; la colonne est
+conservée pour les analyses à l’intérieur de cette étude (essentielle),
+comme econ_self dans cesR, même si elle compte moins de trois études. La
+question de 2012 et de 2014 sur sa propre situation financière si le
+Québec devenait indépendant est une autre question et n’est pas
+utilisée.</td>
+</tr>
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-identity"><code>identity</code></a></td>
 <td align="left">Identité québécoise et canadienne</td>
 <td align="left">Uniquement québécois(e) · D’abord québécois(e), puis
@@ -559,7 +611,7 @@ canadien(ne), puis québécois(e) · Uniquement canadien(ne) · Autre</td>
 également, d’abord canadien(ne) ou uniquement canadien(ne), d’après une
 question ou les deux ordres d’un questionnaire partagé.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-attach_quebec"><code>attach_quebec</code></a></td>
 <td align="left">Attachement au Québec</td>
 <td align="left">Très attaché(e) · Assez attaché(e) · Pas très
@@ -568,7 +620,7 @@ attaché(e) · Pas du tout attaché(e)</td>
 <td align="left">L’attachement au Québec en quatre points, tel que
 chaque étude l’a demandé.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-attach_canada"><code>attach_canada</code></a></td>
 <td align="left">Attachement au Canada</td>
 <td align="left">Très attaché(e) · Assez attaché(e) · Pas très
@@ -579,16 +631,24 @@ chaque étude l’a demandé.</td>
 </tr>
 </tbody>
 </table>
-<p>9 colonnes couvrent les 11 études, et 25 en couvrent au moins cinq.
-Les 7 autres ont été posées dans 2 à 4 études ; elles sont conservées
-pour les analyses à l’intérieur de ces études. Deux colonnes en
-accompagnent d’autres : <code>vote_type</code> indique si
-<code>vote_choice</code> provient du vote déclaré ou d’une intention de
-vote, et <code>sovereignty_type</code> de quelle question référendaire
-provient <code>sovereignty</code>. La règle est simple. À l’intérieur
-d’une étude, une colonne souple perd du détail, mais pas son sens ;
-d’une étude à l’autre, elle est aussi comparable que le dit la phrase de
-la dernière colonne, et pas davantage.</p>
+<p>9 colonnes couvrent les 11 études, et 26 en couvrent au moins cinq.
+Les 9 autres ont été posées dans 1 à 4 études ; elles sont conservées
+pour les analyses à l’intérieur de ces études. Deux colonnes vont plus
+loin et sont conservées même si peu d’études les posent :
+<code>union</code>, l’appartenance à un syndicat, posée en 2014, en 2018
+et en 2022 (au sujet du ménage dans les deux premières, de la personne
+elle-même en 2022), et <code>econ_self</code>, la situation financière
+de la personne depuis un an, posée en 2022 seulement et nommée d’après
+son équivalent dans cesR. Elles servent aux analyses à l’intérieur de
+ces études. D’une étude à l’autre, notons que <code>union</code> compare
+un ménage à une personne.</p>
+<p>Deux colonnes en accompagnent d’autres : <code>vote_type</code>
+indique si <code>vote_choice</code> provient du vote déclaré ou d’une
+intention de vote, et <code>sovereignty_type</code> de quelle question
+référendaire provient <code>sovereignty</code>. La règle est simple. À
+l’intérieur d’une étude, une colonne souple perd du détail, mais pas son
+sens ; d’une étude à l’autre, elle est aussi comparable que le dit la
+phrase de la dernière colonne, et pas davantage.</p>
 </div>
 <div class="section level2">
 <h2 id="comment-chaque-colonne-a-été-assouplie">Comment chaque colonne a été assouplie<a class="anchor" aria-label="anchor" href="#comment-chaque-colonne-a-%C3%A9t%C3%A9-assouplie"></a>
@@ -596,28 +656,37 @@ la dernière colonne, et pas davantage.</p>
 <p>Chaque colonne porte sa règle d’assouplissement et ses sources :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span>, <span class="st">"relaxed"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Les niveaux de chaque étude sont regroupés en quatre : sans diplôme d'études secondaires, secondaire, collégial (cégep, formation technique ou professionnelle) et universitaire, y compris des études universitaires non terminées ; le panel de 2007 et les sondages CROP ont demandé les années d'études, si bien que leur groupe secondaire compte aussi ceux qui ont quitté le secondaire sans diplôme, et leur groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme."</span></span>
+<span><span class="co">#&gt; [1] "Les niveaux de chaque étude sont regroupés en trois : sans diplôme d'études secondaires, secondaire au collégial (diplôme d'études secondaires, cégep, formation technique ou professionnelle) et université, y compris des études universitaires non terminées. Ce sont les groupes de education4, secondaire et collégial réunis, ce qui permet d'inclure qes1998. Là où une étude a demandé les années d'études (le panel de 2007, les sondages CROP et les répondants de CROP dans qes1998), les tranches ne suivent pas les diplômes : des personnes sans diplôme (10 ans dans qes1998 ; 8 à 10 ans dans les autres, puisque le secondaire se termine après 11 ans au Québec) sont classées au secondaire au collégial, et des étudiants universitaires (14 ou 15 ans) ne sont pas classés à l'université."</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span>, <span class="st">"sources"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"source_var"</span>, <span class="st">"recode"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     study wave source_var</span></span>
 <span><span class="co">#&gt; 1 qes2022  cps    cps_edu</span></span>
 <span><span class="co">#&gt; 2 qes2018 post      qscol</span></span>
 <span><span class="co">#&gt; 3 qes2014 post      QSCOL</span></span>
-<span><span class="co">#&gt;                                                                                                                                                                                                   recode</span></span>
-<span><span class="co">#&gt; 1 1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA)</span></span>
-<span><span class="co">#&gt; 2                                1-7 = Sans diplôme d'études secondaires; 8 = Diplôme d'études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA)</span></span>
-<span><span class="co">#&gt; 3                                  1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA)</span></span></code></pre></div>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                            recode</span></span>
+<span><span class="co">#&gt; 1 1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université</span></span>
+<span><span class="co">#&gt; 2                                1-7 = Sans diplôme d'études secondaires; 8 = Diplôme d'études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université</span></span>
+<span><span class="co">#&gt; 3                                  1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université</span></span></code></pre></div>
 <p>La scolarité illustre bien ce qu’assouplir veut dire. Les études ont
 mesuré la scolarité de plusieurs façons, de listes détaillées de
 diplômes à des tranches d’années d’études, et <code><a href="../reference/qes_decon.html">qes_decon()</a></code>
-regroupe chaque réponse en quatre catégories : sans diplôme d’études
-secondaires, secondaire, collégial (cégep, formation technique ou
-professionnelle) et universitaire. Le regroupement est large à dessein ;
-c’est le plus fin que toutes les études permettent. Lorsque les
-catégories d’une étude chevauchent deux groupes, la colonne reste
-manquante plutôt que de deviner : c’est le cas des Sondages de 1998,
-dont la question ne peut être répartie entre les quatre groupes.
-<code>attr(d, "decon_sources")</code> réunit les sources de toutes les
-colonnes, avec le nombre de valeurs et les motifs des valeurs
+regroupe chaque réponse en trois catégories : sans diplôme d’études
+secondaires, secondaire au collégial (cégep, formation technique ou
+professionnelle) et université. Trois groupes, c’est le regroupement le
+plus fin que permettent toutes les études qui interrogent sur la
+scolarité, y compris celle de 1998 (le panel de 2012 ne pose pas la
+question). Le fichier de 1998 ne compte en effet que trois tranches, 1 à
+9 ans, 10 à 15 ans et université, et sa tranche du milieu chevauche le
+secondaire et le collégial ; un quatrième groupe laisserait l’étude de
+côté. L’appariement demeure toutefois approximatif. Les répondants de
+CROP en 1998 ont déclaré leurs années d’études, or le secondaire se
+termine après 11 ans au Québec : une personne qui compte 10 ans n’a pas
+de diplôme, mais elle est classée au secondaire au collégial, et
+certaines qui comptent 14 ou 15 ans sont aux études universitaires.
+<code>education4</code> garde les quatre groupes, le secondaire et le
+collégial séparés, pour les 9 études dont les questions le
+permettent.</p>
+<p><code>attr(d, "decon_sources")</code> réunit les sources de toutes
+les colonnes, avec le nombre de valeurs et les motifs des valeurs
 manquantes ; <code>qes_spec("relaxed_maps")</code> donne les
 appariements souples eux-mêmes, avec leur statut de révision.</p>
 </div>
@@ -633,22 +702,20 @@ postélectorale (<code>pes</code>) :</p>
 <span><span class="va">d22</span><span class="op">$</span><span class="va">caq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">d22</span><span class="op">$</span><span class="va">vote_choice</span> <span class="op">==</span> <span class="st">"CAQ"</span><span class="op">)</span></span>
 <span><span class="va">des</span> <span class="op">&lt;-</span> <span class="fu">survey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html" class="external-link">svydesign</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, weights <span class="op">=</span> <span class="op">~</span><span class="va">weight</span>, data <span class="op">=</span> <span class="va">d22</span><span class="op">)</span></span>
 <span><span class="fu">survey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="op">~</span><span class="va">caq</span>, <span class="op">~</span><span class="va">education</span>, <span class="va">des</span>, <span class="fu">survey</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/survey/man/surveysummary.html" class="external-link">svymean</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt;                                                                                   education</span></span>
-<span><span class="co">#&gt; Sans diplôme d'études secondaires                         Sans diplôme d'études secondaires</span></span>
-<span><span class="co">#&gt; Diplôme d'études secondaires                                   Diplôme d'études secondaires</span></span>
-<span><span class="co">#&gt; Collégial, cégep ou formation professionnelle Collégial, cégep ou formation professionnelle</span></span>
-<span><span class="co">#&gt; Universitaire                                                                 Universitaire</span></span>
-<span><span class="co">#&gt;                                                     caq         se</span></span>
-<span><span class="co">#&gt; Sans diplôme d'études secondaires             0.4863666 0.09275489</span></span>
-<span><span class="co">#&gt; Diplôme d'études secondaires                  0.4647999 0.04515295</span></span>
-<span><span class="co">#&gt; Collégial, cégep ou formation professionnelle 0.3476850 0.03645673</span></span>
-<span><span class="co">#&gt; Universitaire                                 0.2072813 0.01808346</span></span></code></pre></div>
+<span><span class="co">#&gt;                                                           education       caq</span></span>
+<span><span class="co">#&gt; Sans diplôme d'études secondaires Sans diplôme d'études secondaires 0.4863666</span></span>
+<span><span class="co">#&gt; Secondaire au collégial (cégep)     Secondaire au collégial (cégep) 0.3901245</span></span>
+<span><span class="co">#&gt; Université                                               Université 0.2072813</span></span>
+<span><span class="co">#&gt;                                           se</span></span>
+<span><span class="co">#&gt; Sans diplôme d'études secondaires 0.09275489</span></span>
+<span><span class="co">#&gt; Secondaire au collégial (cégep)   0.02867901</span></span>
+<span><span class="co">#&gt; Université                        0.01808346</span></span></code></pre></div>
 <p>Le gradient est marqué. En 2022, 49 % des répondants sans diplôme
 d’études secondaires déclarent avoir voté pour la CAQ, contre 21 % des
-diplômés universitaires. Il faut toutefois se garder d’en conclure trop
-vite : la scolarité est liée à la langue maternelle, et les
-non-francophones ont beaucoup moins voté pour la CAQ que les
-francophones. L’exemple suivant tient la langue constante.</p>
+répondants qui ont fait des études universitaires. Il faut toutefois se
+garder d’en conclure trop vite : la scolarité est liée à la langue
+maternelle, et les non-francophones ont beaucoup moins voté pour la CAQ
+que les francophones. L’exemple suivant tient la langue constante.</p>
 </div>
 <div class="section level2">
 <h2 id="dune-élection-à-lautre-un-clivage-du-diplôme">D’une élection à l’autre : un clivage du diplôme ?<a class="anchor" aria-label="anchor" href="#dune-%C3%A9lection-%C3%A0-lautre-un-clivage-du-dipl%C3%B4me"></a>
@@ -659,10 +726,12 @@ sans diplôme universitaire. Les colonnes souples permettent un test
 rapide sur six élections, chez les francophones seulement. L’ADQ s’est
 présentée en 2007 et en 2008, la CAQ à partir de 2012 ; les deux partis
 restent distincts dans <code>vote_choice</code>, et chaque élection
-compte l’un des deux.</p>
+compte l’un des deux. Puisque le test sépare le collégial du secondaire,
+il utilise <code>education4</code> et en réunit les deux premiers
+groupes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">elections</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2007"</span>, <span class="st">"qes2008"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span></span>
-<span><span class="va">d</span><span class="op">$</span><span class="va">edu3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hs"</span>, <span class="st">"college"</span>, <span class="st">"university"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">d</span><span class="op">$</span><span class="va">edu3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hs"</span>, <span class="st">"college"</span>, <span class="st">"university"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">elections</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">study</span> <span class="op">==</span> <span class="va">s</span> <span class="op">&amp;</span> <span class="va">wave</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"post"</span>, <span class="st">"pes"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">language</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"French"</span>, <span class="st">"Français"</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>                <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span></span>
@@ -674,7 +743,7 @@ compte l’un des deux.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>study <span class="op">=</span> <span class="va">s</span>, edu3 <span class="op">=</span> <span class="va">e</span><span class="op">$</span><span class="va">edu3</span>, pct <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">adq_caq</span>, se <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">se</span>,</span>
 <span>             n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span>, weighted <span class="op">=</span> <span class="va">weighted</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Chez les francophones, l'écart de scolarité dans le vote caquiste passe de 5 points en 2014 à 21 en 2022</span><span class="qesr-sub">Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-decon_files/figure-html/divide-light.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-decon_files/figure-html/divide-dark.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée.</p>
+<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Chez les francophones, l'écart de scolarité dans le vote caquiste passe de 5 points en 2014 à 21 en 2022</span><span class="qesr-sub">Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-decon_files/figure-html/divide-light.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-decon_files/figure-html/divide-dark.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>

@@ -18,7 +18,7 @@ many uses do not call for that much: a descriptive table, a control
 variable, a first look at 25 years of data.
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 answers this need. It returns one data frame for the 11 harmonized
-studies, with 47,039 rows (one per respondent and wave) and 32 columns
+studies, with 47,039 rows (one per respondent and wave) and 35 columns
 of data, one per concept, even where the wording or the answer options
 differ from one study to the next. The price is exactness. The
 categories are coarse, and no column claims that two studies asked the
@@ -80,7 +80,8 @@ which gives each study’s source variable and recoding rule.
 | [`yob`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-yob) | Year of birth | number, 1900-2010 | 6 (2007, 2008, 2012, 2014, 2018, 2022) | The year of birth as reported; the studies that asked only an age group have none (see age_group). |
 | [`age_group`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-age_group) | Age group | 18-34 · 35-54 · 55 and over | all 11 | Three age groups (18-34, 35-54, 55 and over), from the study’s own age bands or from the age at the start of fieldwork; respondents under 18 are missing. |
 | [`gender`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-gender) | Gender | Man · Woman · Non-binary · Another gender | all 11 | Gender or sex as each study asked it: man or woman everywhere, and in 2022 also non-binary or another gender; the questions differ, the categories do not. |
-| [`education`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-education) | Education | No high school diploma · High school diploma · College, CEGEP or trade school · University | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | Each study’s levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree. |
+| [`education4`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-education4) | Education (four groups) | No high school diploma · High school diploma · College, CEGEP or trade school · University | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | Each study’s levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree. qes1998 is missing (not mappable): the middle group of its pooled file, 10 to 15 years of schooling, spans high school and college (education, in three groups, includes it). The strict target of the same name in qes_harmonize() groups differently: its lowest group is primary or less. |
+| [`education`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-education) | Education | No high school diploma · High school to college (CEGEP) · University | 10 (1998, 2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | Each study’s levels are grouped into three: no high school diploma, high school to college (a high school diploma, CEGEP, technical or trade school) and university, including some university. These are the groups of education4 with high school and college joined, which lets qes1998 in. Where a study asked years of schooling (the 2007 panel, the CROP polls and the CROP respondents of qes1998), the bands do not follow diplomas: some respondents without a diploma (10 years in qes1998; 8 to 10 years in the others, as Quebec high school ends after 11 years) count as high school to college, and some university students (14 or 15 years) are not counted in university. |
 | [`income_cat`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-income_cat) | Household income (thirds) | Low (bottom third) · Middle · High (top third) | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | Household income in thirds of each study’s own respondents: income brackets are never split, so a third holds the whole brackets whose midpoint falls in it and is rarely exactly a third; the dollar limits differ from study to study. |
 | [`language`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-language) | Mother tongue | French · English · Other | all 11 | The language first learned in childhood, in three groups; a respondent who reported French and another language is French, and English and a language other than French is English, and the 1998 CREATEC respondents are French by the design of their sample. |
 | [`language_fr`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-language_fr) | French as a mother tongue | Yes · No | all 11 | Yes when French is among the mother tongues reported, so a respondent with two mother tongues can be yes in both language_fr and language_eng. |
@@ -88,6 +89,7 @@ which gives each study’s source variable and recoding rule.
 | [`religion`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-religion) | Religion | Catholic · Protestant · Other Christian · Other religion · No religion | 4 (2012, 2014, 2018, 2022) | The religion the respondent belongs to, in five groups; the 2022 question offers a long list, where agnostic counts as no religion, and the other studies first ask whether the respondent belongs to a religion at all. |
 | [`marital`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-marital) | Marital status | Married or living with a partner · Separated or divorced · Widowed · Single, never married | 4 (2012, 2014, 2018, 2022) | Married or living with a partner, separated or divorced, widowed, or never married; 2012 and 2014 asked the official civil status, with no common-law option, so some partners who live together are never married there. |
 | [`employment`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-employment) | Employment | Working (employee or self-employed) · Unemployed · Retired · Student · At home, unable to work or other | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. |
+| [`union`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-union) | Union membership | Yes · No | 3 (2014, 2018, 2022) | Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing; the column is kept whatever its number of studies (essential), as decided on 2026-10-01. |
 | [`region`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-region) | Region | Montreal CMA · Quebec CMA · Rest of Quebec | 9 (2007, 2007 panel, 2008, CROP, 2012, 2012 panel, 2014, 2018, 2018 panel) | The Montreal census metropolitan area, the Quebec City census metropolitan area or the rest of Quebec, from each study’s region or sub-region variable, with the boundaries each study used. |
 | [`region_admin`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-region_admin) | Administrative region | 17 categories (Bas-Saint-Laurent, Saguenay–Lac-Saint-Jean…) | 5 (2007, 2007 panel, 2012, 2014, 2018) | The 17 administrative regions of Quebec, where a study recorded them or sub-regions that fit within them; the sub-regions of the 2007 study and the 2007 panel that split a region are joined. |
 | [`born_canada`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-born_canada) | Born in Canada | Yes · No | 4 (2012, 2014, 2018, 2022) | Born in Canada or not, as each study asked it: from the birthplace (Quebec, elsewhere in Canada or abroad), or asked directly in 2022. |
@@ -105,18 +107,27 @@ which gives each study’s source variable and recoding rule.
 | [`satis_democracy`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-satis_democracy) | Satisfaction with democracy in Quebec | Very satisfied · Fairly satisfied · Not very satisfied · Not at all satisfied | 6 (2007, 2008, 2012, 2014, 2018, 2022) | Satisfaction with the way democracy works in Quebec, on four points, as each study asked it. |
 | [`gov_satisfaction`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-gov_satisfaction) | Satisfaction with the Quebec government | Very satisfied · Fairly satisfied · Not very satisfied · Not at all satisfied | 6 (1998, 2007 panel, 2012, 2014, 2018, 2022) | Satisfaction with the Quebec government of the day, on four points; the 1998 question asks about the Bouchard government, in its own words. |
 | [`econ_retro`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-econ_retro) | Quebec’s economy over the past year | Better · About the same · Worse | 6 (2007, 2008, 2012, 2014, 2018, 2022) | Whether Quebec’s economy got better, stayed about the same or got worse over the past year, as each study asked it. |
+| [`econ_self`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-econ_self) | Personal financial situation over the past year | Better · About the same · Worse | 1 (2022) | Whether the respondent’s own financial situation got better, stayed about the same or got worse over the past year. Only qes2022 asks it, during the campaign; the column is kept for analyses within that study (essential), as cesR’s econ_self, although it has fewer than three studies. The 2012 and 2014 question on one’s own finances if Quebec became independent is another question and is not used. |
 | [`identity`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-identity) | Québécois and Canadian identity | Québécois only · Québécois first, then Canadian · Equally Québécois and Canadian · Canadian first, then Québécois · Canadian only · Other | 5 (2007, 2008, 2012, 2014, 2022) | Québécois only, Québécois first, both equally, Canadian first or Canadian only, from one question or from the two orders of a split ballot. |
 | [`attach_quebec`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-attach_quebec) | Attachment to Quebec | Very attached · Fairly attached · Not very attached · Not at all attached | 4 (2012, 2014, 2018, 2022) | Attachment to Quebec on four points, as each study asked it. |
 | [`attach_canada`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-attach_canada) | Attachment to Canada | Very attached · Fairly attached · Not very attached · Not at all attached | 4 (2012, 2014, 2018, 2022) | Attachment to Canada on four points, as each study asked it. |
 
-9 columns cover all 11 studies, and 25 cover at least five. The other 7
-were asked in 2 to 4 studies, and are kept for analyses within those
-studies. Two columns are companions: `vote_type` says whether
-`vote_choice` comes from the reported vote or from a vote intention, and
-`sovereignty_type` which referendum question `sovereignty` comes from.
-The rule of thumb is simple. Within one study, a relaxed column loses
-detail but not meaning; across studies, it is as comparable as the
-sentence in the last column says, and no more.
+9 columns cover all 11 studies, and 26 cover at least five. The other 9
+were asked in 1 to 4 studies, and are kept for analyses within those
+studies. Two columns go further and are kept even though few studies ask
+them: `union`, union membership, asked in 2014, 2018 and 2022 (of the
+household in the first two, of the respondent in 2022), and `econ_self`,
+the respondent’s own financial situation over the past year, asked in
+2022 only and named after its counterpart in cesR. They serve analyses
+within those studies. Across studies, note that `union` compares a
+household with a person.
+
+Two columns are companions: `vote_type` says whether `vote_choice` comes
+from the reported vote or from a vote intention, and `sovereignty_type`
+which referendum question `sovereignty` comes from. The rule of thumb is
+simple. Within one study, a relaxed column loses detail but not meaning;
+across studies, it is as comparable as the sentence in the last column
+says, and no more.
 
 ## How each column was relaxed
 
@@ -125,28 +136,36 @@ Each column carries its relaxation rule and its sources:
 ``` r
 
 attr(d$education, "relaxed")
-#> [1] "Each study's levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree."
+#> [1] "Each study's levels are grouped into three: no high school diploma, high school to college (a high school diploma, CEGEP, technical or trade school) and university, including some university. These are the groups of education4 with high school and college joined, which lets qes1998 in. Where a study asked years of schooling (the 2007 panel, the CROP polls and the CROP respondents of qes1998), the bands do not follow diplomas: some respondents without a diploma (10 years in qes1998; 8 to 10 years in the others, as Quebec high school ends after 11 years) count as high school to college, and some university students (14 or 15 years) are not counted in university."
 head(attr(d$education, "sources")[, c("study", "wave", "source_var", "recode")], 3)
 #>     study wave source_var
 #> 1 qes2022  cps    cps_edu
 #> 2 qes2018 post      qscol
 #> 3 qes2014 post      QSCOL
-#>                                                                                                                                                     recode
-#> 1 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)
-#> 2                      1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)
-#> 3                        1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)
+#>                                                                                                                                                                                                                                                                                                                                                           recode
+#> 1 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University
+#> 2                      1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University
+#> 3                        1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University
 ```
 
 Education is a good example of what relaxing means. The studies asked
 about schooling in different ways, from detailed lists of diplomas to
 bands of years of schooling, and
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
-groups every answer into four categories: no high school diploma, high
-school, college (CEGEP, technical or trade school) and university. The
-grouping is coarse on purpose; it is the finest one every study
-supports. Where a study’s categories straddle two groups, the column
-stays missing rather than guess: this is the case of the 1998 polls,
-whose question cannot be split into the four groups.
+groups every answer into three categories: no high school diploma, high
+school to college (CEGEP, technical or trade school) and university.
+Three groups is the finest grouping that every study asking about
+schooling supports, 1998 included (the 2012 panel did not ask). The 1998
+file has only three bands, 1 to 9 years, 10 to 15 years and university,
+and its middle band spans high school and college; a fourth group would
+leave the study out. The match is approximate, however. The CROP
+respondents of 1998 gave their years of schooling, and Quebec high
+school ends after 11 years: a respondent with 10 years has no diploma
+but counts as high school to college, and some of those with 14 or 15
+years are university students. `education4` keeps the four groups, with
+high school and college apart, for the 9 studies whose questions allow
+them.
+
 `attr(d, "decon_sources")` gathers the sources of every column, with the
 number of values and the reasons for missing ones;
 `qes_spec("relaxed_maps")` lists the relaxed mappings themselves, with
@@ -166,22 +185,20 @@ des <- survey::svydesign(ids = ~1, weights = ~weight, data = d22)
 survey::svyby(~caq, ~education, des, survey::svymean)
 #>                                                     education       caq
 #> No high school diploma                 No high school diploma 0.4863666
-#> High school diploma                       High school diploma 0.4647999
-#> College, CEGEP or trade school College, CEGEP or trade school 0.3476850
+#> High school to college (CEGEP) High school to college (CEGEP) 0.3901245
 #> University                                         University 0.2072813
 #>                                        se
 #> No high school diploma         0.09275489
-#> High school diploma            0.04515295
-#> College, CEGEP or trade school 0.03645673
+#> High school to college (CEGEP) 0.02867901
 #> University                     0.01808346
 ```
 
 The education gradient is steep. In 2022, 49% of respondents without a
-high school diploma report voting for the CAQ, against 21% of university
-graduates. Before reading too much into it, note that education is
-related to mother tongue, and that non-francophones voted for the CAQ
-far less than francophones did. The next example holds language
-constant.
+high school diploma report voting for the CAQ, against 21% of those with
+a university education. Before reading too much into it, note that
+education is related to mother tongue, and that non-francophones voted
+for the CAQ far less than francophones did. The next example holds
+language constant.
 
 ## Across elections: a diploma divide?
 
@@ -190,12 +207,13 @@ It is often said that the CAQ, like the Action démocratique du Québec
 degree. The relaxed columns allow a quick test over six elections, among
 francophones only. The ADQ ran in 2007 and 2008, the CAQ from 2012 on;
 the two parties stay separate in `vote_choice`, and each election has
-one of them.
+one of them. Since the test sets college apart from high school, it uses
+`education4` and joins its first two groups.
 
 ``` r
 
 elections <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
-d$edu3 <- cut(as.integer(d$education), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
+d$edu3 <- cut(as.integer(d$education4), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
 est <- do.call(rbind, lapply(elections, function(s) {
   x <- subset(d, study == s & wave %in% c("post", "pes") & language %in% c("French", "Français") &
                 !is.na(vote_choice) & !is.na(edu3))
@@ -223,7 +241,7 @@ in 2022. Values in the table
 view.](decon_files/figure-html/divide-dark.png)
 
 Source: qes_decon(), relaxed columns vote_choice (reported vote,
-post-election wave), education (in three groups: no diploma and high
+post-election wave), education4 (in three groups: no diploma and high
 school joined) and language (mother tongue French). One Quebec Election
 Study per election. The ADQ and the CAQ are separate parties and stay
 separate in the data; the dashed line marks the change of party.

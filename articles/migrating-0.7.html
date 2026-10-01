@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -297,7 +297,7 @@ came from:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">qes_demo</span><span class="op">)</span></span>
 <span><span class="co">#&gt; qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5</span></span>
 <span><span class="co">#&gt; e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on</span></span>
-<span><span class="co">#&gt; 2026-10-01 06:31:01 UTC (local_demo). Read with haven::read_sav(user_na =</span></span>
+<span><span class="co">#&gt; 2026-10-01 17:17:37 UTC (local_demo). Read with haven::read_sav(user_na =</span></span>
 <span><span class="co">#&gt; TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; as.data.frame() gives every column.</span></span></code></pre></div>
@@ -664,9 +664,9 @@ removed.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">h</span>, level <span class="op">=</span> <span class="st">"spec"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec_version"</span>, <span class="st">"spec_hash"</span>, <span class="st">"qesR_version"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   spec_version                        spec_hash qesR_version</span></span>
-<span><span class="co">#&gt; 1        4.5.0 42816ecc38259a8deb01cd590d1c6a2b        0.9.0</span></span>
+<span><span class="co">#&gt; 1        4.6.0 910e81120d19001bb1d7c0f9b0b32b3f        0.9.1</span></span>
 <span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="st">"qes2014"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"                </span></span>
+<span><span class="co">#&gt; [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.1, https://github.com/ThomasGareau/qesR"                </span></span>
 <span><span class="co">#&gt; [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="</span></span></code></pre></div>
 <p><code>qes_provenance(x)</code> gives the file of each study (DOI,
 dataset version), and <code>level = "spec"</code> the version of the

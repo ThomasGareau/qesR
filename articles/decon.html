@@ -81,7 +81,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -173,7 +173,7 @@ the difference between two questions matters. However, many uses do not
 call for that much: a descriptive table, a control variable, a first
 look at 25 years of data. <code><a href="../reference/qes_decon.html">qes_decon()</a></code> answers this need. It
 returns one data frame for the 11 harmonized studies, with 47,039 rows
-(one per respondent and wave) and 32 columns of data, one per concept,
+(one per respondent and wave) and 35 columns of data, one per concept,
 even where the wording or the answer options differ from one study to
 the next. The price is exactness. The categories are coarse, and no
 column claims that two studies asked the same question.</p>
@@ -225,11 +225,11 @@ the column’s section of the <a href="harmonization-reference.html">variable re
 each study’s source variable and recoding rule.</p>
 <table class="table">
 <colgroup>
-<col width="2%">
-<col width="5%">
-<col width="22%">
-<col width="11%">
-<col width="56%">
+<col width="1%">
+<col width="4%">
+<col width="16%">
+<col width="8%">
+<col width="68%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Column</th>
@@ -276,8 +276,8 @@ everywhere, and in 2022 also non-binary or another gender; the questions
 differ, the categories do not.</td>
 </tr>
 <tr class="odd">
-<td align="left"><a href="harmonization-reference.html#relaxed-education"><code>education</code></a></td>
-<td align="left">Education</td>
+<td align="left"><a href="harmonization-reference.html#relaxed-education4"><code>education4</code></a></td>
+<td align="left">Education (four groups)</td>
 <td align="left">No high school diploma · High school diploma · College,
 CEGEP or trade school · University</td>
 <td align="left">9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018
@@ -287,9 +287,32 @@ school diploma, high school, college (CEGEP, technical or trade school)
 and university, including some university; the 2007 panel and the CROP
 polls asked years of schooling, so their high school group also holds
 those who left secondary school without a diploma, and their college
-group may hold some respondents with some university but no degree.</td>
+group may hold some respondents with some university but no degree.
+qes1998 is missing (not mappable): the middle group of its pooled file,
+10 to 15 years of schooling, spans high school and college (education,
+in three groups, includes it). The strict target of the same name in
+qes_harmonize() groups differently: its lowest group is primary or
+less.</td>
 </tr>
 <tr class="even">
+<td align="left"><a href="harmonization-reference.html#relaxed-education"><code>education</code></a></td>
+<td align="left">Education</td>
+<td align="left">No high school diploma · High school to college (CEGEP)
+· University</td>
+<td align="left">10 (1998, 2007, 2007 panel, 2008, CROP, 2012, 2014,
+2018, 2018 panel, 2022)</td>
+<td align="left">Each study’s levels are grouped into three: no high
+school diploma, high school to college (a high school diploma, CEGEP,
+technical or trade school) and university, including some university.
+These are the groups of education4 with high school and college joined,
+which lets qes1998 in. Where a study asked years of schooling (the 2007
+panel, the CROP polls and the CROP respondents of qes1998), the bands do
+not follow diplomas: some respondents without a diploma (10 years in
+qes1998; 8 to 10 years in the others, as Quebec high school ends after
+11 years) count as high school to college, and some university students
+(14 or 15 years) are not counted in university.</td>
+</tr>
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-income_cat"><code>income_cat</code></a></td>
 <td align="left">Household income (thirds)</td>
 <td align="left">Low (bottom third) · Middle · High (top third)</td>
@@ -300,7 +323,7 @@ respondents: income brackets are never split, so a third holds the whole
 brackets whose midpoint falls in it and is rarely exactly a third; the
 dollar limits differ from study to study.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-language"><code>language</code></a></td>
 <td align="left">Mother tongue</td>
 <td align="left">French · English · Other</td>
@@ -310,7 +333,7 @@ groups; a respondent who reported French and another language is French,
 and English and a language other than French is English, and the 1998
 CREATEC respondents are French by the design of their sample.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-language_fr"><code>language_fr</code></a></td>
 <td align="left">French as a mother tongue</td>
 <td align="left">Yes · No</td>
@@ -319,7 +342,7 @@ CREATEC respondents are French by the design of their sample.</td>
 so a respondent with two mother tongues can be yes in both language_fr
 and language_eng.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-language_eng"><code>language_eng</code></a></td>
 <td align="left">English as a mother tongue</td>
 <td align="left">Yes · No</td>
@@ -328,7 +351,7 @@ and language_eng.</td>
 so a respondent with two mother tongues can be yes in both language_eng
 and language_fr.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-religion"><code>religion</code></a></td>
 <td align="left">Religion</td>
 <td align="left">Catholic · Protestant · Other Christian · Other
@@ -339,7 +362,7 @@ the 2022 question offers a long list, where agnostic counts as no
 religion, and the other studies first ask whether the respondent belongs
 to a religion at all.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-marital"><code>marital</code></a></td>
 <td align="left">Marital status</td>
 <td align="left">Married or living with a partner · Separated or
@@ -350,7 +373,7 @@ divorced, widowed, or never married; 2012 and 2014 asked the official
 civil status, with no common-law option, so some partners who live
 together are never married there.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-employment"><code>employment</code></a></td>
 <td align="left">Employment</td>
 <td align="left">Working (employee or self-employed) · Unemployed ·
@@ -361,6 +384,19 @@ panel, 2022)</td>
 who gave two statuses, such as retired and working, takes the one that
 is not work, and at home, unable to work and other statuses are
 other.</td>
+</tr>
+<tr class="even">
+<td align="left"><a href="harmonization-reference.html#relaxed-union"><code>union</code></a></td>
+<td align="left">Union membership</td>
+<td align="left">Yes · No</td>
+<td align="left">3 (2014, 2018, 2022)</td>
+<td align="left">Whether the respondent belongs to a union in 2022, but
+whether the respondent or anyone in the household does in 2014 and 2018
+(in 2018, respondents who live with their parents were asked about their
+family: parents, brothers or sisters). Only these three studies ask it,
+and 2022 asks it after the election, so its campaign-only respondents
+are missing; the column is kept whatever its number of studies
+(essential), as decided on 2026-10-01.</td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-region"><code>region</code></a></td>
@@ -527,6 +563,19 @@ its own words.</td>
 same or got worse over the past year, as each study asked it.</td>
 </tr>
 <tr class="even">
+<td align="left"><a href="harmonization-reference.html#relaxed-econ_self"><code>econ_self</code></a></td>
+<td align="left">Personal financial situation over the past year</td>
+<td align="left">Better · About the same · Worse</td>
+<td align="left">1 (2022)</td>
+<td align="left">Whether the respondent’s own financial situation got
+better, stayed about the same or got worse over the past year. Only
+qes2022 asks it, during the campaign; the column is kept for analyses
+within that study (essential), as cesR’s econ_self, although it has
+fewer than three studies. The 2012 and 2014 question on one’s own
+finances if Quebec became independent is another question and is not
+used.</td>
+</tr>
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-identity"><code>identity</code></a></td>
 <td align="left">Québécois and Canadian identity</td>
 <td align="left">Québécois only · Québécois first, then Canadian ·
@@ -537,7 +586,7 @@ Canadian only · Other</td>
 first or Canadian only, from one question or from the two orders of a
 split ballot.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-attach_quebec"><code>attach_quebec</code></a></td>
 <td align="left">Attachment to Quebec</td>
 <td align="left">Very attached · Fairly attached · Not very attached ·
@@ -546,7 +595,7 @@ Not at all attached</td>
 <td align="left">Attachment to Quebec on four points, as each study
 asked it.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-attach_canada"><code>attach_canada</code></a></td>
 <td align="left">Attachment to Canada</td>
 <td align="left">Very attached · Fairly attached · Not very attached ·
@@ -557,9 +606,16 @@ asked it.</td>
 </tr>
 </tbody>
 </table>
-<p>9 columns cover all 11 studies, and 25 cover at least five. The other
-7 were asked in 2 to 4 studies, and are kept for analyses within those
-studies. Two columns are companions: <code>vote_type</code> says whether
+<p>9 columns cover all 11 studies, and 26 cover at least five. The other
+9 were asked in 1 to 4 studies, and are kept for analyses within those
+studies. Two columns go further and are kept even though few studies ask
+them: <code>union</code>, union membership, asked in 2014, 2018 and 2022
+(of the household in the first two, of the respondent in 2022), and
+<code>econ_self</code>, the respondent’s own financial situation over
+the past year, asked in 2022 only and named after its counterpart in
+cesR. They serve analyses within those studies. Across studies, note
+that <code>union</code> compares a household with a person.</p>
+<p>Two columns are companions: <code>vote_type</code> says whether
 <code>vote_choice</code> comes from the reported vote or from a vote
 intention, and <code>sovereignty_type</code> which referendum question
 <code>sovereignty</code> comes from. The rule of thumb is simple. Within
@@ -573,28 +629,35 @@ and no more.</p>
 <p>Each column carries its relaxation rule and its sources:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span>, <span class="st">"relaxed"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Each study's levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree."</span></span>
+<span><span class="co">#&gt; [1] "Each study's levels are grouped into three: no high school diploma, high school to college (a high school diploma, CEGEP, technical or trade school) and university, including some university. These are the groups of education4 with high school and college joined, which lets qes1998 in. Where a study asked years of schooling (the 2007 panel, the CROP polls and the CROP respondents of qes1998), the bands do not follow diplomas: some respondents without a diploma (10 years in qes1998; 8 to 10 years in the others, as Quebec high school ends after 11 years) count as high school to college, and some university students (14 or 15 years) are not counted in university."</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span>, <span class="st">"sources"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"source_var"</span>, <span class="st">"recode"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     study wave source_var</span></span>
 <span><span class="co">#&gt; 1 qes2022  cps    cps_edu</span></span>
 <span><span class="co">#&gt; 2 qes2018 post      qscol</span></span>
 <span><span class="co">#&gt; 3 qes2014 post      QSCOL</span></span>
-<span><span class="co">#&gt;                                                                                                                                                     recode</span></span>
-<span><span class="co">#&gt; 1 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)</span></span>
-<span><span class="co">#&gt; 2                      1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)</span></span>
-<span><span class="co">#&gt; 3                        1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)</span></span></code></pre></div>
+<span><span class="co">#&gt;                                                                                                                                                                                                                                                                                                                                                           recode</span></span>
+<span><span class="co">#&gt; 1 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University</span></span>
+<span><span class="co">#&gt; 2                      1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University</span></span>
+<span><span class="co">#&gt; 3                        1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA); then No high school diploma = No high school diploma; High school diploma = High school to college (CEGEP); College, CEGEP or trade school = High school to college (CEGEP); University = University</span></span></code></pre></div>
 <p>Education is a good example of what relaxing means. The studies asked
 about schooling in different ways, from detailed lists of diplomas to
 bands of years of schooling, and <code><a href="../reference/qes_decon.html">qes_decon()</a></code> groups every
-answer into four categories: no high school diploma, high school,
-college (CEGEP, technical or trade school) and university. The grouping
-is coarse on purpose; it is the finest one every study supports. Where a
-study’s categories straddle two groups, the column stays missing rather
-than guess: this is the case of the 1998 polls, whose question cannot be
-split into the four groups. <code>attr(d, "decon_sources")</code>
-gathers the sources of every column, with the number of values and the
-reasons for missing ones; <code>qes_spec("relaxed_maps")</code> lists
-the relaxed mappings themselves, with their review status.</p>
+answer into three categories: no high school diploma, high school to
+college (CEGEP, technical or trade school) and university. Three groups
+is the finest grouping that every study asking about schooling supports,
+1998 included (the 2012 panel did not ask). The 1998 file has only three
+bands, 1 to 9 years, 10 to 15 years and university, and its middle band
+spans high school and college; a fourth group would leave the study out.
+The match is approximate, however. The CROP respondents of 1998 gave
+their years of schooling, and Quebec high school ends after 11 years: a
+respondent with 10 years has no diploma but counts as high school to
+college, and some of those with 14 or 15 years are university students.
+<code>education4</code> keeps the four groups, with high school and
+college apart, for the 9 studies whose questions allow them.</p>
+<p><code>attr(d, "decon_sources")</code> gathers the sources of every
+column, with the number of values and the reasons for missing ones;
+<code>qes_spec("relaxed_maps")</code> lists the relaxed mappings
+themselves, with their review status.</p>
 </div>
 <div class="section level2">
 <h2 id="a-weighted-estimate-in-one-study">A weighted estimate in one study<a class="anchor" aria-label="anchor" href="#a-weighted-estimate-in-one-study"></a>
@@ -609,17 +672,15 @@ education in 2022, from the post-election wave (<code>pes</code>):</p>
 <span><span class="fu">survey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="op">~</span><span class="va">caq</span>, <span class="op">~</span><span class="va">education</span>, <span class="va">des</span>, <span class="fu">survey</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/survey/man/surveysummary.html" class="external-link">svymean</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                                     education       caq</span></span>
 <span><span class="co">#&gt; No high school diploma                 No high school diploma 0.4863666</span></span>
-<span><span class="co">#&gt; High school diploma                       High school diploma 0.4647999</span></span>
-<span><span class="co">#&gt; College, CEGEP or trade school College, CEGEP or trade school 0.3476850</span></span>
+<span><span class="co">#&gt; High school to college (CEGEP) High school to college (CEGEP) 0.3901245</span></span>
 <span><span class="co">#&gt; University                                         University 0.2072813</span></span>
 <span><span class="co">#&gt;                                        se</span></span>
 <span><span class="co">#&gt; No high school diploma         0.09275489</span></span>
-<span><span class="co">#&gt; High school diploma            0.04515295</span></span>
-<span><span class="co">#&gt; College, CEGEP or trade school 0.03645673</span></span>
+<span><span class="co">#&gt; High school to college (CEGEP) 0.02867901</span></span>
 <span><span class="co">#&gt; University                     0.01808346</span></span></code></pre></div>
 <p>The education gradient is steep. In 2022, 49% of respondents without
-a high school diploma report voting for the CAQ, against 21% of
-university graduates. Before reading too much into it, note that
+a high school diploma report voting for the CAQ, against 21% of those
+with a university education. Before reading too much into it, note that
 education is related to mother tongue, and that non-francophones voted
 for the CAQ far less than francophones did. The next example holds
 language constant.</p>
@@ -632,10 +693,12 @@ language constant.</p>
 degree. The relaxed columns allow a quick test over six elections, among
 francophones only. The ADQ ran in 2007 and 2008, the CAQ from 2012 on;
 the two parties stay separate in <code>vote_choice</code>, and each
-election has one of them.</p>
+election has one of them. Since the test sets college apart from high
+school, it uses <code>education4</code> and joins its first two
+groups.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">elections</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2007"</span>, <span class="st">"qes2008"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span></span>
-<span><span class="va">d</span><span class="op">$</span><span class="va">edu3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hs"</span>, <span class="st">"college"</span>, <span class="st">"university"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">d</span><span class="op">$</span><span class="va">edu3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cut.html" class="external-link">cut</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">education4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"hs"</span>, <span class="st">"college"</span>, <span class="st">"university"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">elections</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">study</span> <span class="op">==</span> <span class="va">s</span> <span class="op">&amp;</span> <span class="va">wave</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"post"</span>, <span class="st">"pes"</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">language</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"French"</span>, <span class="st">"Français"</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>                <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span></span>
@@ -647,7 +710,7 @@ election has one of them.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>study <span class="op">=</span> <span class="va">s</span>, edu3 <span class="op">=</span> <span class="va">e</span><span class="op">$</span><span class="va">edu3</span>, pct <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">adq_caq</span>, se <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">se</span>,</span>
 <span>             n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span>, weighted <span class="op">=</span> <span class="va">weighted</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Among francophones, the education gap in the CAQ vote went from 5 points in 2014 to 21 in 2022</span><span class="qesr-sub">Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="decon_files/figure-html/divide-light.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="decon_files/figure-html/divide-dark.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.</p>
+<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Among francophones, the education gap in the CAQ vote went from 5 points in 2014 to 21 in 2022</span><span class="qesr-sub">Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="decon_files/figure-html/divide-light.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="decon_files/figure-html/divide-dark.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>

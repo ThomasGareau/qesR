@@ -216,7 +216,7 @@ l'appariement souple propre à chaque étude.
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 en est la référence complète.
 
-## Targets in the shipped spec (version 4.5.0)
+## Targets in the shipped spec (version 4.6.0)
 
 Generated from the spec by roxygen; `qes_spec()` gives the same list
 with each study's grade.
@@ -953,155 +953,137 @@ rx[, c("column", "base", "transform", "qes2022", "qes1998")]
 #> 2               yob        target:birth_year
 #> 3         age_group        target:age_group3
 #> 4            gender            target:gender
-#> 5         education                     <NA>
-#> 6        income_cat                     <NA>
-#> 7          language       target:lang_mother
-#> 8       language_fr          column:language
-#> 9      language_eng          column:language
-#> 10         religion                     <NA>
-#> 11          marital                     <NA>
-#> 12       employment                     <NA>
-#> 13           region       target:region_cma3
-#> 14     region_admin                     <NA>
-#> 15      born_canada       target:born_canada
-#> 16      born_quebec       target:birthplace3
-#> 17      vote_choice       pooled:vote_choice
-#> 18        vote_type pooled:vote_choice__type
-#> 19          turnout           pooled:turnout
-#> 20        vote_prev    target:vote_prov_prev
-#> 21              pid          target:pid_prov
-#> 22               lr           target:lr_self
-#> 23         interest      pooled:pol_interest
-#> 24      interest_01      pooled:pol_interest
-#> 25      sovereignty       pooled:sov_support
-#> 26 sovereignty_type pooled:sov_support__type
-#> 27  satis_democracy     target:satis_demo_qc
-#> 28 gov_satisfaction  target:gov_satisfaction
-#> 29       econ_retro     target:econ_retro_qc
-#> 30         identity    target:identity_qc_ca
-#> 31    attach_quebec         target:attach_qc
-#> 32    attach_canada         target:attach_ca
+#> 5        education4                     <NA>
+#> 6         education        column:education4
+#> 7        income_cat                     <NA>
+#> 8          language       target:lang_mother
+#> 9       language_fr          column:language
+#> 10     language_eng          column:language
+#> 11         religion                     <NA>
+#> 12          marital                     <NA>
+#> 13       employment                     <NA>
+#> 14            union                     <NA>
+#> 15           region       target:region_cma3
+#> 16     region_admin                     <NA>
+#> 17      born_canada       target:born_canada
+#> 18      born_quebec       target:birthplace3
+#> 19      vote_choice       pooled:vote_choice
+#> 20        vote_type pooled:vote_choice__type
+#> 21          turnout           pooled:turnout
+#> 22        vote_prev    target:vote_prov_prev
+#> 23              pid          target:pid_prov
+#> 24               lr           target:lr_self
+#> 25         interest      pooled:pol_interest
+#> 26      interest_01      pooled:pol_interest
+#> 27      sovereignty       pooled:sov_support
+#> 28 sovereignty_type pooled:sov_support__type
+#> 29  satis_democracy     target:satis_demo_qc
+#> 30 gov_satisfaction  target:gov_satisfaction
+#> 31       econ_retro     target:econ_retro_qc
+#> 32        econ_self                     <NA>
+#> 33         identity    target:identity_qc_ca
+#> 34    attach_quebec         target:attach_qc
+#> 35    attach_canada         target:attach_ca
 #>                                                                                                                                                      transform
 #> 1                                                                                                                            recode:yes=citizen,no=not_citizen
 #> 2                                                                                                                                                     identity
 #> 3                                                                                                                                                     identity
 #> 4                                                                                                                                                     identity
 #> 5                                                                                                                                                 relaxed_only
-#> 6                                                                                                                                                 relaxed_only
-#> 7                                                                                                                                                     identity
-#> 8                                                                                                                        recode:french=yes,english=no,other=no
-#> 9                                                                                                                        recode:french=no,english=yes,other=no
-#> 10                                                                                                                                                relaxed_only
+#> 6                                               recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university
+#> 7                                                                                                                                                 relaxed_only
+#> 8                                                                                                                                                     identity
+#> 9                                                                                                                        recode:french=yes,english=no,other=no
+#> 10                                                                                                                       recode:french=no,english=yes,other=no
 #> 11                                                                                                                                                relaxed_only
 #> 12                                                                                                                                                relaxed_only
-#> 13                                                                                                                                                    identity
+#> 13                                                                                                                                                relaxed_only
 #> 14                                                                                                                                                relaxed_only
 #> 15                                                                                                                                                    identity
-#> 16                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no
+#> 16                                                                                                                                                relaxed_only
 #> 17                                                                                                                                                    identity
-#> 18                                                                                                                                                    identity
+#> 18                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no
 #> 19                                                                                                                                                    identity
 #> 20                                                                                                                                                    identity
 #> 21                                                                                                                                                    identity
 #> 22                                                                                                                                                    identity
-#> 23                                                                                                                             bands:0.35,0.75:low,medium,high
+#> 23                                                                                                                                                    identity
 #> 24                                                                                                                                                    identity
-#> 25                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable
-#> 26 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour
-#> 27                                                                                                                                                    identity
-#> 28                                                                                                                                                    identity
+#> 25                                                                                                                             bands:0.35,0.75:low,medium,high
+#> 26                                                                                                                                                    identity
+#> 27                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable
+#> 28 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour
 #> 29                                                                                                                                                    identity
 #> 30                                                                                                                                                    identity
 #> 31                                                                                                                                                    identity
-#> 32                                                                                                                                                    identity
+#> 32                                                                                                                                                relaxed_only
+#> 33                                                                                                                                                    identity
+#> 34                                                                                                                                                    identity
+#> 35                                                                                                                                                    identity
 #>    qes2022 qes1998
 #> 1   strict    <NA>
 #> 2   strict    <NA>
 #> 3   strict  strict
 #> 4   strict  strict
 #> 5  relaxed relaxed
-#> 6  relaxed    <NA>
-#> 7  relaxed relaxed
+#> 6  relaxed relaxed
+#> 7  relaxed    <NA>
 #> 8  relaxed relaxed
 #> 9  relaxed relaxed
-#> 10 relaxed    <NA>
+#> 10 relaxed relaxed
 #> 11 relaxed    <NA>
-#> 12 relaxed relaxed
-#> 13    <NA>    <NA>
-#> 14    <NA>    <NA>
-#> 15  strict    <NA>
+#> 12 relaxed    <NA>
+#> 13 relaxed relaxed
+#> 14 relaxed    <NA>
+#> 15    <NA>    <NA>
 #> 16    <NA>    <NA>
-#> 17  strict  strict
-#> 18  strict  strict
+#> 17  strict    <NA>
+#> 18    <NA>    <NA>
 #> 19  strict  strict
-#> 20  strict relaxed
-#> 21  strict    <NA>
-#> 22  strict    <NA>
+#> 20  strict  strict
+#> 21  strict  strict
+#> 22  strict relaxed
 #> 23  strict    <NA>
 #> 24  strict    <NA>
-#> 25  strict  strict
-#> 26  strict  strict
-#> 27  strict    <NA>
-#> 28  strict relaxed
+#> 25  strict    <NA>
+#> 26  strict    <NA>
+#> 27  strict  strict
+#> 28  strict  strict
 #> 29  strict    <NA>
-#> 30  strict    <NA>
+#> 30  strict relaxed
 #> 31  strict    <NA>
-#> 32  strict    <NA>
+#> 32 relaxed    <NA>
+#> 33  strict    <NA>
+#> 34  strict    <NA>
+#> 35  strict    <NA>
 qes_spec("relaxed_maps", targets = "education")[, c("study", "source_var", "recode", "status")]
-#>                 study source_var
-#> 1             qes2022    cps_edu
-#> 2             qes2018      qscol
-#> 3             qes2014      QSCOL
-#> 4             qes2012       scol
-#> 5       qes2018_panel         d3
-#> 6       qes2007_panel       scol
-#> 7             qes2007        q77
-#> 8             qes2008        q77
-#> 9             qes1998       scol
-#> 10 qes_crop_2007_2010       scol
-#>                                                                                                                                                        recode
-#> 1    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)
-#> 2                         1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)
-#> 3                           1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)
-#> 4     1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don't know (NA); 99 = Refused (NA)
-#> 5  1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don't know or refused (one code) (NA)
-#> 6                                   1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)
-#> 7    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)
-#> 8    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)
-#> 9                                                               1-3 = Source category straddles target levels (NA); 9 = Don't know or refused (one code) (NA)
-#> 10                                  1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)
-#>    status
-#> 1  stable
-#> 2  stable
-#> 3  stable
-#> 4  stable
-#> 5  stable
-#> 6  stable
-#> 7  stable
-#> 8  stable
-#> 9  stable
-#> 10 stable
+#>     study source_var
+#> 1 qes1998       scol
+#>                                                                                                                      recode
+#> 1 1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University; 9 = Don't know or refused (one code) (NA)
+#>   status
+#> 1 stable
 
 # the checked spec itself
 s <- qes_spec("spec")
 s
-#> qesR harmonization spec 4.5.0 (2026-10-01), content hash 42816ecc38259a8deb01cd590d1c6a2b
+#> qesR harmonization spec 4.6.0 (2026-10-01), content hash 910e81120d19001bb1d7c0f9b0b32b3f
 #>   targets: 50
-#>   levels: 166
+#>   levels: 169
 #>   crosswalk: 236
-#>   valuemaps: 1734
+#>   valuemaps: 1754
 #>   waves: 39
 #>   weights: 26
-#>   changes: 16
+#>   changes: 17
 #>   gates: 3209
 #>   expected: 2914
 #>   hashes: 269
 #>   legacy: 102
 #>   pooled: 4
 #>   pooled_members: 14
-#>   relaxed: 32
-#>   relaxed_maps: 60
-#>   rx_expected: 2606
-#>   rx_hashes: 352
+#>   relaxed: 35
+#>   relaxed_maps: 65
+#>   rx_expected: 2712
+#>   rx_hashes: 385
 #> Check: 0 error(s), 0 warning(s), 0 note(s).
 ```

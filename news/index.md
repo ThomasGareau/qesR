@@ -1,5 +1,91 @@
 # Changelog
 
+## qesR 0.9.1
+
+*Upgrading from qesR 0.4.4? See [Upgrading from qesR
+0.4.4](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).*
+
+**In short:** in
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
+`education` now has three groups instead of four, so that the 1998 study
+can be included; the four groups stay as `education4`. Two new columns,
+`union` and `econ_self`, are kept although few studies ask them. The
+legacy functions return the same values as in 0.9.0.
+
+### `qes_decon()`
+
+- `education` is in three groups for every study: no high school
+  diploma, high school to college (CEGEP), and university (in French:
+  sans diplôme d’études secondaires, secondaire au collégial (cégep),
+  université). These are the four groups of 0.9.0 with high school and
+  college joined; trade and vocational diplomas, with college in 0.9.0,
+  are in high school to college. **Code that used the four levels of
+  `education` should use `education4`.**
+- New column `education4`: the four groups of 0.9.0 (no high school
+  diploma, high school, college, university), with the same mappings and
+  values. It is `NA` for `qes1998` (reason `not_mappable`), whose middle
+  group, 10 to 15 years of schooling, spans high school and college. It
+  is not the strict target `education4` of
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  whose lowest group is primary or less.
+- `qes1998` enters `education` from the pooled file’s three groups (1 to
+  9 years, 10 to 15 years, university or more). The match is approximate
+  for the CROP respondents, who gave years of schooling: in Quebec high
+  school ends after 11 years, so a respondent with 10 years has no
+  diploma but counts as high school to college, and some respondents
+  with 14 or 15 years are university students. For the CREATEC
+  respondents the groups recode the highest level completed. The
+  column’s `relaxed` attribute and the row’s notes say so.
+- New column `union` (union membership): whether the respondent belongs
+  to a union (`qes2022`), or whether the respondent or anyone in the
+  household does (`qes2014`, `qes2018`; in 2018, respondents who live
+  with their parents were asked about their family). Three studies.
+- New column `econ_self` (personal financial situation over the past
+  year: better, about the same, worse), the counterpart of cesR’s
+  `econ_self`, asked in `qes2022` only.
+- Both are kept whatever their number of studies (`essential = TRUE` in
+  `relaxed.csv`); their coverage is in their `relaxed` attribute, in
+  [`?qes_decon`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  and in the article’s table of columns.
+- The five new relaxed mappings (education of `qes1998`, `union` in
+  three studies, `econ_self`) were signed off by the same kind of
+  automated double review against the original files and documents as
+  the other 60 (not a human review; their `reviewed_by` and
+  `review_note` say so), and
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  applies them by default.
+- [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  now has 35 columns. `education4` comes before `education` (a column
+  built on another column must come after it), `union` after
+  `employment` and `econ_self` after `econ_retro`.
+
+### Website
+
+- The article *One file for every study: qes_decon()* and its French
+  version explain the choice of three education groups and the 1998
+  match; their table of columns gives each column’s studies, `union` and
+  `econ_self` included; the example across elections uses `education4`,
+  which keeps college apart, and its estimates do not change. The
+  coverage page shows the new columns, and marks a relaxed mapping as in
+  review until it is signed off.
+
+### Harmonization rules (specification 4.6.0)
+
+- `relaxed.csv` gains `education4`, `union` and `econ_self`; `education`
+  takes its values from `education4` (base `column:education4`, a recode
+  that joins high school and college) and a new relaxed row for
+  `qes1998`. New level set `rx_edu3`; 5 new relaxed rows, signed off by
+  an automated double review (65 in all, all stable) and 6 new `rx_`
+  maps (63). The ten former `education` rows are now `education4` rows,
+  unchanged in codes and sign-off.
+- V-R2 has a second exception: the relaxed column `education4` shares
+  the name of the strict target `education4` without extending it, as
+  `religion` does. Engine-Min is 0.9.1.
+- `expected/relaxed_marginals.csv` and `expected/relaxed_hashes.csv` are
+  rebuilt: the values of `education` change, those of `education4` equal
+  the 0.9.0 values of `education`, and no other column changes. MINOR:
+  no strict row, map, marginal or column hash changes.
+
 ## qesR 0.9.0
 
 *Upgrading from qesR 0.4.4? See [Upgrading from qesR

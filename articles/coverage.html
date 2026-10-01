@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1371,9 +1371,11 @@ study, relaxed where the questions differ (<a href="decon.html">One file
 for every study</a>). The grid says where each study’s values come from:
 <em>strict</em> where the column is built from a target or a pooled
 variable of the grid above, <em>relaxed</em> where a relaxed mapping of
-the study’s own question gives them. Relaxed columns carry no grade, and
-a mapping leaves a study’s column missing where its categories straddle
-the column’s.</p>
+the study’s own question gives them, and <em>relaxed (in review)</em>
+where that mapping is not yet signed off, so that
+<code><a href="../reference/qes_decon.html">qes_decon()</a></code> leaves the column missing there for now.
+Relaxed columns carry no grade, and a mapping leaves a study’s column
+missing where its categories straddle the column’s.</p>
 <table class="table">
 <colgroup>
 <col width="8%">
@@ -1468,7 +1470,8 @@ group</td>
 </tr>
 <tr class="odd">
 <td>
-<a href="harmonization-reference.html#relaxed-education"><code>education</code></a><br>Education</td>
+<a href="harmonization-reference.html#relaxed-education4"><code>education4</code></a><br>Education
+(four groups)</td>
 <td>relaxed</td>
 <td>relaxed</td>
 <td>relaxed</td>
@@ -1482,6 +1485,21 @@ group</td>
 <td>relaxed</td>
 </tr>
 <tr class="even">
+<td>
+<a href="harmonization-reference.html#relaxed-education"><code>education</code></a><br>Education</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>—</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>relaxed</td>
+</tr>
+<tr class="odd">
 <td>
 <a href="harmonization-reference.html#relaxed-income_cat"><code>income_cat</code></a><br>Household
 income (thirds)</td>
@@ -1497,7 +1515,7 @@ income (thirds)</td>
 <td>relaxed</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="harmonization-reference.html#relaxed-language"><code>language</code></a><br>Mother
 tongue</td>
@@ -1513,7 +1531,7 @@ tongue</td>
 <td>strict</td>
 <td>relaxed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="harmonization-reference.html#relaxed-language_fr"><code>language_fr</code></a><br>French
 as a mother tongue</td>
@@ -1529,7 +1547,7 @@ as a mother tongue</td>
 <td>strict</td>
 <td>relaxed</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="harmonization-reference.html#relaxed-language_eng"><code>language_eng</code></a><br>English
 as a mother tongue</td>
@@ -1545,7 +1563,7 @@ as a mother tongue</td>
 <td>strict</td>
 <td>relaxed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="harmonization-reference.html#relaxed-religion"><code>religion</code></a><br>Religion</td>
 <td>relaxed</td>
@@ -1560,7 +1578,7 @@ as a mother tongue</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="harmonization-reference.html#relaxed-marital"><code>marital</code></a><br>Marital
 status</td>
@@ -1576,7 +1594,7 @@ status</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="harmonization-reference.html#relaxed-employment"><code>employment</code></a><br>Employment</td>
 <td>relaxed</td>
@@ -1590,6 +1608,22 @@ status</td>
 <td>relaxed</td>
 <td>relaxed</td>
 <td>relaxed</td>
+</tr>
+<tr class="even">
+<td>
+<a href="harmonization-reference.html#relaxed-union"><code>union</code></a><br>Union
+membership</td>
+<td>relaxed</td>
+<td>relaxed</td>
+<td>—</td>
+<td>relaxed</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
 </tr>
 <tr class="odd">
 <td>
@@ -1864,6 +1898,22 @@ economy over the past year</td>
 </tr>
 <tr class="even">
 <td>
+<a href="harmonization-reference.html#relaxed-econ_self"><code>econ_self</code></a><br>Personal
+financial situation over the past year</td>
+<td>relaxed</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
 <a href="harmonization-reference.html#relaxed-identity"><code>identity</code></a><br>Québécois
 and Canadian identity</td>
 <td>strict</td>
@@ -1878,7 +1928,7 @@ and Canadian identity</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>
 <a href="harmonization-reference.html#relaxed-attach_quebec"><code>attach_quebec</code></a><br>Attachment
 to Quebec</td>
@@ -1894,7 +1944,7 @@ to Quebec</td>
 <td>—</td>
 <td>—</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>
 <a href="harmonization-reference.html#relaxed-attach_canada"><code>attach_canada</code></a><br>Attachment
 to Canada</td>

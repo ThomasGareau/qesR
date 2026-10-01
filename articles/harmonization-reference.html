@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -8419,8 +8419,8 @@ gender; the questions differ, the categories do not.</p>
 <p>None: every study’s values come from the base.</p>
 </div>
 <div class="section level3">
-<h3 id="relaxed-education">
-<code>education</code>: Education<a class="anchor" aria-label="anchor" href="#relaxed-education"></a>
+<h3 id="relaxed-education4">
+<code>education4</code>: Education (four groups)<a class="anchor" aria-label="anchor" href="#relaxed-education4"></a>
 </h3>
 <p>The highest level of schooling the respondent completed, in four
 groups.</p>
@@ -8432,7 +8432,11 @@ technical or trade school) and university, including some university;
 the 2007 panel and the CROP polls asked years of schooling, so their
 high school group also holds those who left secondary school without a
 diploma, and their college group may hold some respondents with some
-university but no degree.</p>
+university but no degree. qes1998 is missing (not mappable): the middle
+group of its pooled file, 10 to 15 years of schooling, spans high school
+and college (education, in three groups, includes it). The strict target
+of the same name in qes_harmonize() groups differently: its lowest group
+is primary or less.</p>
 <p><strong>Levels</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -8590,8 +8594,8 @@ or refused (one code) (NA)</td>
 <td>fills the study</td>
 <td>OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and
 university; 10-15 years spans high school and college, and mapping only
-the other two groups would bias every share, so the study is left
-out.</td>
+the other two groups would bias every share, so the study is left out of
+the four groups. The three groups of education include it (OD-R17).</td>
 <td>stable</td>
 </tr>
 <tr class="even">
@@ -8610,6 +8614,92 @@ grouping by years, not by highest level, can also put some university
 <td>stable</td>
 </tr>
 </tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="relaxed-education">
+<code>education</code>: Education<a class="anchor" aria-label="anchor" href="#relaxed-education"></a>
+</h3>
+<p>The highest level of schooling the respondent completed, in three
+groups.</p>
+<p>Base: <code>column:education4</code> ·
+<code>recode:no_diploma=no_diploma,high_school=high_school_college,college=high_school_college,university=university</code>
+· one value per respondent</p>
+<p><strong>How it is relaxed</strong>: Each study’s levels are grouped
+into three: no high school diploma, high school to college (a high
+school diploma, CEGEP, technical or trade school) and university,
+including some university. These are the groups of education4 with high
+school and college joined, which lets qes1998 in. Where a study asked
+years of schooling (the 2007 panel, the CROP polls and the CROP
+respondents of qes1998), the bands do not follow diplomas: some
+respondents without a diploma (10 years in qes1998; 8 to 10 years in the
+others, as Quebec high school ends after 11 years) count as high school
+to college, and some university students (14 or 15 years) are not
+counted in university.</p>
+<p><strong>Levels</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Name</th>
+<th>Label</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>no_diploma</code></td>
+<td>No high school diploma</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>high_school_college</code></td>
+<td>High school to college (CEGEP)</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>university</code></td>
+<td>University</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaxed mappings</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Study</th>
+<th>Source</th>
+<th>Recode</th>
+<th>Use</th>
+<th>Notes</th>
+<th>status</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td>qes1998</td>
+<td>
+<code>scol</code> (pre)</td>
+<td>1 = No high school diploma; 2 = High school to college (CEGEP); 3 =
+University; 9 = Don’t know or refused (one code) (NA)</td>
+<td>replaces the base</td>
+<td>OD-R17: the pooled file’s three groups are labelled 1-9 years, 10-15
+years and university or more, but the two firms built them differently.
+For the CREATEC respondents (firme_post = 1), scol recodes the highest
+level completed (r15: elementary or some secondary; secondary completed
+or technical, college or CEGEP; university, completed or not), so the
+three groups hold. For the CROP respondents (firme_post = 2), it groups
+years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16
+or more), so the match is approximate: Quebec high school ends after 11
+years, so a respondent with 10 years has no diploma but counts as high
+school to college, and some respondents with 14 or 15 years are
+university students who count as high school to college. Code 9 is
+unlabelled and read as don’t know or refused.</td>
+<td>stable</td>
+</tr></tbody>
 </table>
 </div>
 <div class="section level3">
@@ -9477,6 +9567,99 @@ home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused
 <td>fills the study</td>
 <td>Full time and part time are working; at home full time is
 other.</td>
+<td>stable</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="relaxed-union">
+<code>union</code>: Union membership<a class="anchor" aria-label="anchor" href="#relaxed-union"></a>
+</h3>
+<p>Whether the respondent, or in some studies anyone in the household,
+belongs to a union.</p>
+<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
+per respondent</p>
+<p><strong>How it is relaxed</strong>: Whether the respondent belongs to
+a union in 2022, but whether the respondent or anyone in the household
+does in 2014 and 2018 (in 2018, respondents who live with their parents
+were asked about their family: parents, brothers or sisters). Only these
+three studies ask it, and 2022 asks it after the election, so its
+campaign-only respondents are missing; the column is kept whatever its
+number of studies (essential), as decided on 2026-10-01.</p>
+<p><strong>Levels</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Name</th>
+<th>Label</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>yes</code></td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>no</code></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaxed mappings</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Study</th>
+<th>Source</th>
+<th>Recode</th>
+<th>Use</th>
+<th>Notes</th>
+<th>status</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>qes2022</td>
+<td>
+<code>pes_union</code> (pes)</td>
+<td>1 = Yes; 2 = No</td>
+<td>fills the study</td>
+<td>The respondent belongs to a union (not the household). Asked after
+the election: the respondents of the campaign wave only are missing (not
+in this wave).</td>
+<td>stable</td>
+</tr>
+<tr class="even">
+<td>qes2018</td>
+<td>
+<code>q65a</code> (post)</td>
+<td>1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA);
+Inapplicable (routed out) (NA), System missing (NA) pass to q65b: 1 =
+Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA)</td>
+<td>fills the study</td>
+<td>Q65 has two versions, split by QPARENTS: those who do not live with
+their parents (q65a, 2,558 respondents) were asked about their
+household, those who do (q65b, 514) about their family (parents,
+brothers or sisters). The household version is read first, then the
+family version for those who were not asked it. The respondent or anyone
+in the household (or family) belongs to a union.</td>
+<td>stable</td>
+</tr>
+<tr class="odd">
+<td>qes2014</td>
+<td>
+<code>Q61</code> (post)</td>
+<td>1 = Yes; 2 = No; 9 = Refused (NA)</td>
+<td>fills the study</td>
+<td>The respondent or anyone in the household belongs to a union.</td>
 <td>stable</td>
 </tr>
 </tbody>
@@ -10549,6 +10732,79 @@ study asked it.</p>
 </table>
 <p><strong>Relaxed mappings</strong></p>
 <p>None: every study’s values come from the base.</p>
+</div>
+<div class="section level3">
+<h3 id="relaxed-econ_self">
+<code>econ_self</code>: Personal financial situation over the past
+year<a class="anchor" aria-label="anchor" href="#relaxed-econ_self"></a>
+</h3>
+<p>The respondent’s view of their own financial situation over the past
+year.</p>
+<p>Base: relaxed mappings only · <code>relaxed_only</code> · on the wave
+that asked it</p>
+<p><strong>How it is relaxed</strong>: Whether the respondent’s own
+financial situation got better, stayed about the same or got worse over
+the past year. Only qes2022 asks it, during the campaign; the column is
+kept for analyses within that study (essential), as cesR’s econ_self,
+although it has fewer than three studies. The 2012 and 2014 question on
+one’s own finances if Quebec became independent is another question and
+is not used.</p>
+<p><strong>Levels</strong></p>
+<table class="table">
+<thead><tr class="header">
+<th>Code</th>
+<th>Name</th>
+<th>Label</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td><code>better</code></td>
+<td>Better</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td><code>same</code></td>
+<td>About the same</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td><code>worse</code></td>
+<td>Worse</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Relaxed mappings</strong></p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+<col width="16%">
+</colgroup>
+<thead><tr class="header">
+<th>Study</th>
+<th>Source</th>
+<th>Recode</th>
+<th>Use</th>
+<th>Notes</th>
+<th>status</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td>qes2022</td>
+<td>
+<code>cps_ownfin</code> (cps)</td>
+<td>1 = Better; 2 = Worse; 3 = About the same</td>
+<td>fills the study</td>
+<td>Asked during the campaign of every respondent; the file has no
+missing value. Not the 2012 and 2014 question on one’s own finances if
+Quebec became independent (q85, Q47), which asks about another
+situation.</td>
+<td>stable</td>
+</tr></tbody>
+</table>
 </div>
 <div class="section level3">
 <h3 id="relaxed-identity">

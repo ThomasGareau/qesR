@@ -341,9 +341,9 @@ cites qesR with the rules, then each dataset:
 spec_record <- qes_provenance(h, level = "spec")
 spec_record[, c("spec_version", "qesR_version")]
 #>   spec_version qesR_version
-#> 1        4.5.0        0.9.0
+#> 1        4.6.0        0.9.1
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
-#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.9.0, https://github.com/ThomasGareau/qesR; harmonization spec 4.5.0 (content hash 42816ecc38259a8deb01cd590d1c6a2b)
+#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.9.1, https://github.com/ThomasGareau/qesR; harmonization spec 4.6.0 (content hash 910e81120d19001bb1d7c0f9b0b32b3f)
 #> 
 #> Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]
 #> 

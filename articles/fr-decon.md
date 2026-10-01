@@ -21,7 +21,7 @@ ans de données.
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 répond à ce besoin. La fonction renvoie un seul tableau pour les 11
 études harmonisées, avec 47 039 lignes (une par personne et par vague)
-et 32 colonnes de données, une par concept, même lorsque le libellé ou
+et 35 colonnes de données, une par concept, même lorsque le libellé ou
 les choix de réponse changent d’une étude à l’autre. Le prix à payer est
 l’exactitude. Les catégories sont larges, et aucune colonne ne prétend
 que deux études ont posé la même question.
@@ -43,8 +43,8 @@ d[1:4, c("study", "wave", "weight", "gender", "education", "vote_choice", "vote_
 #>     study wave    weight gender                         education vote_choice
 #> 1 qes2022  cps 1.4628887  Homme Sans diplôme d'études secondaires         CAQ
 #> 2 qes2022  pes 1.4407098  Homme Sans diplôme d'études secondaires         CAQ
-#> 3 qes2022  cps 0.1474534  Homme                     Universitaire          QS
-#> 4 qes2022  cps 0.4824134  Homme                     Universitaire        <NA>
+#> 3 qes2022  cps 0.1474534  Homme                        Université          QS
+#> 4 qes2022  cps 0.4824134  Homme                        Université        <NA>
 #>                              vote_type
 #> 1 Intention de vote (indécis relancés)
 #> 2      Vote déclaré (après l'élection)
@@ -85,7 +85,8 @@ qui donne la variable source et la règle de recodage de chaque étude.
 | [`yob`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-yob) | Année de naissance | nombre, 1900-2010 | 6 (2007, 2008, 2012, 2014, 2018, 2022) | L’année de naissance déclarée ; les études qui n’ont demandé qu’un groupe d’âge n’en ont pas (voir age_group). |
 | [`age_group`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-age_group) | Groupe d’âge | 18-34 · 35-54 · 55 et plus | les 11 | Trois groupes d’âge (18-34, 35-54, 55 et plus), tirés des tranches d’âge de l’étude ou de l’âge au début du terrain ; les moins de 18 ans sont manquants. |
 | [`gender`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-gender) | Genre | Homme · Femme · Non binaire · Un autre genre | les 11 | Le genre ou le sexe tel que chaque étude l’a demandé : homme ou femme partout, et en 2022 aussi non binaire ou un autre genre ; les questions diffèrent, pas les catégories. |
-| [`education`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-education) | Scolarité | Sans diplôme d’études secondaires · Diplôme d’études secondaires · Collégial, cégep ou formation professionnelle · Universitaire | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | Les niveaux de chaque étude sont regroupés en quatre : sans diplôme d’études secondaires, secondaire, collégial (cégep, formation technique ou professionnelle) et universitaire, y compris des études universitaires non terminées ; le panel de 2007 et les sondages CROP ont demandé les années d’études, si bien que leur groupe secondaire compte aussi ceux qui ont quitté le secondaire sans diplôme, et leur groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme. |
+| [`education4`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-education4) | Scolarité (quatre groupes) | Sans diplôme d’études secondaires · Diplôme d’études secondaires · Collégial, cégep ou formation professionnelle · Universitaire | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | Les niveaux de chaque étude sont regroupés en quatre : sans diplôme d’études secondaires, secondaire, collégial (cégep, formation technique ou professionnelle) et universitaire, y compris des études universitaires non terminées ; le panel de 2007 et les sondages CROP ont demandé les années d’études, si bien que leur groupe secondaire compte aussi ceux qui ont quitté le secondaire sans diplôme, et leur groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme. qes1998 est manquante (non appariable) : le groupe du milieu de son fichier regroupé, 10 à 15 années d’études, chevauche le secondaire et le collégial (education, en trois groupes, l’inclut). La cible stricte du même nom dans qes_harmonize() regroupe autrement : son groupe le plus bas est primaire ou moins. |
+| [`education`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-education) | Scolarité | Sans diplôme d’études secondaires · Secondaire au collégial (cégep) · Université | 10 (1998, 2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | Les niveaux de chaque étude sont regroupés en trois : sans diplôme d’études secondaires, secondaire au collégial (diplôme d’études secondaires, cégep, formation technique ou professionnelle) et université, y compris des études universitaires non terminées. Ce sont les groupes de education4, secondaire et collégial réunis, ce qui permet d’inclure qes1998. Là où une étude a demandé les années d’études (le panel de 2007, les sondages CROP et les répondants de CROP dans qes1998), les tranches ne suivent pas les diplômes : des personnes sans diplôme (10 ans dans qes1998 ; 8 à 10 ans dans les autres, puisque le secondaire se termine après 11 ans au Québec) sont classées au secondaire au collégial, et des étudiants universitaires (14 ou 15 ans) ne sont pas classés à l’université. |
 | [`income_cat`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-income_cat) | Revenu du ménage (tiers) | Faible (tiers inférieur) · Moyen · Élevé (tiers supérieur) | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | Le revenu du ménage en tiers des répondants de chaque étude : les tranches de revenu ne sont jamais coupées, si bien qu’un tiers réunit les tranches entières dont le point milieu y tombe et compte rarement exactement un tiers ; les seuils en dollars diffèrent d’une étude à l’autre. |
 | [`language`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-language) | Langue maternelle | Français · Anglais · Autre | les 11 | La langue apprise en premier dans l’enfance, en trois groupes ; une personne qui déclare le français et une autre langue est classée au français, et l’anglais et une langue autre que le français, à l’anglais, et les répondants de CREATEC de 1998 sont francophones par la conception de leur échantillon. |
 | [`language_fr`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-language_fr) | Français, langue maternelle | Oui · Non | les 11 | Oui quand le français est parmi les langues maternelles déclarées, si bien qu’une personne qui a deux langues maternelles peut avoir oui à la fois dans language_fr et dans language_eng. |
@@ -93,6 +94,7 @@ qui donne la variable source et la règle de recodage de chaque étude.
 | [`religion`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-religion) | Religion | Catholique · Protestante · Autre chrétienne · Autre religion · Aucune religion | 4 (2012, 2014, 2018, 2022) | La religion d’appartenance, en cinq groupes ; la question de 2022 offre une longue liste, où l’agnosticisme compte comme aucune religion, et les autres études demandent d’abord si la personne appartient à une religion. |
 | [`marital`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-marital) | État matrimonial | Marié(e) ou en couple · Séparé(e) ou divorcé(e) · Veuf ou veuve · Célibataire, jamais marié(e) | 4 (2012, 2014, 2018, 2022) | Marié(e) ou en couple, séparé(e) ou divorcé(e), veuf ou veuve, ou jamais marié(e) ; 2012 et 2014 ont demandé l’état civil officiel, sans union de fait, si bien que des conjoints de fait y sont jamais marié(e)s. |
 | [`employment`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-employment) | Occupation | En emploi (salarié(e) ou à son compte) · Au chômage · Retraité(e) · Étudiant(e) · À la maison, inapte au travail ou autre | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | La situation d’emploi principale en cinq groupes ; une personne qui donne deux situations, comme retraitée et salariée, prend celle qui n’est pas l’emploi, et la personne au foyer, inapte au travail ou dans une autre situation est classée autre. |
+| [`union`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-union) | Appartenance à un syndicat | Oui · Non | 3 (2014, 2018, 2022) | Si la personne est syndiquée en 2022, mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018 (en 2018, les personnes qui vivent chez leurs parents ont été interrogées sur leur famille : parents, frères ou sœurs). Seules ces trois études posent la question, et celle de 2022 la pose après l’élection, si bien que ses répondants de la seule vague de campagne sont manquants ; la colonne est conservée quel que soit son nombre d’études (essentielle), selon la décision du 2026-10-01. |
 | [`region`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-region) | Région | RMR de Montréal · RMR de Québec · Reste du Québec | 9 (2007, panel 2007, 2008, CROP, 2012, panel 2012, 2014, 2018, panel 2018) | La région métropolitaine de recensement de Montréal, celle de Québec ou le reste du Québec, d’après la variable de région ou de sous-région de chaque étude, avec les limites qu’elle a utilisées. |
 | [`region_admin`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-region_admin) | Région administrative | 17 catégories (Bas-Saint-Laurent, Saguenay–Lac-Saint-Jean…) | 5 (2007, panel 2007, 2012, 2014, 2018) | Les 17 régions administratives du Québec, là où une étude les a enregistrées ou des sous-régions qui s’y emboîtent ; les sous-régions de l’étude de 2007 et du panel de 2007 qui divisent une région sont réunies. |
 | [`born_canada`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-born_canada) | Né(e) au Canada | Oui · Non | 4 (2012, 2014, 2018, 2022) | Né(e) au Canada ou non, tel que chaque étude l’a demandé : d’après le lieu de naissance (Québec, ailleurs au Canada ou à l’étranger), ou demandé directement en 2022. |
@@ -110,19 +112,29 @@ qui donne la variable source et la règle de recodage de chaque étude.
 | [`satis_democracy`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-satis_democracy) | Satisfaction envers la démocratie au Québec | Très satisfait(e) · Assez satisfait(e) · Pas très satisfait(e) · Pas du tout satisfait(e) | 6 (2007, 2008, 2012, 2014, 2018, 2022) | La satisfaction envers le fonctionnement de la démocratie au Québec, en quatre points, telle que chaque étude l’a demandée. |
 | [`gov_satisfaction`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-gov_satisfaction) | Satisfaction envers le gouvernement du Québec | Très satisfait(e) · Assez satisfait(e) · Pas très satisfait(e) · Pas du tout satisfait(e) | 6 (1998, panel 2007, 2012, 2014, 2018, 2022) | La satisfaction envers le gouvernement du Québec en place, en quatre points ; la question de 1998 porte sur le gouvernement Bouchard, dans ses propres mots. |
 | [`econ_retro`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-econ_retro) | L’économie du Québec depuis un an | Améliorée · À peu près la même · Détériorée | 6 (2007, 2008, 2012, 2014, 2018, 2022) | Si l’économie du Québec s’est améliorée, est restée à peu près la même ou s’est détériorée depuis un an, tel que chaque étude l’a demandé. |
+| [`econ_self`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-econ_self) | Situation financière personnelle depuis un an | Améliorée · À peu près la même · Détériorée | 1 (2022) | Si la situation financière de la personne s’est améliorée, est restée à peu près la même ou s’est détériorée depuis un an. Seule qes2022 pose la question, pendant la campagne ; la colonne est conservée pour les analyses à l’intérieur de cette étude (essentielle), comme econ_self dans cesR, même si elle compte moins de trois études. La question de 2012 et de 2014 sur sa propre situation financière si le Québec devenait indépendant est une autre question et n’est pas utilisée. |
 | [`identity`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-identity) | Identité québécoise et canadienne | Uniquement québécois(e) · D’abord québécois(e), puis canadien(ne) · Également québécois(e) et canadien(ne) · D’abord canadien(ne), puis québécois(e) · Uniquement canadien(ne) · Autre | 5 (2007, 2008, 2012, 2014, 2022) | Uniquement québécois(e), d’abord québécois(e), les deux également, d’abord canadien(ne) ou uniquement canadien(ne), d’après une question ou les deux ordres d’un questionnaire partagé. |
 | [`attach_quebec`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-attach_quebec) | Attachement au Québec | Très attaché(e) · Assez attaché(e) · Pas très attaché(e) · Pas du tout attaché(e) | 4 (2012, 2014, 2018, 2022) | L’attachement au Québec en quatre points, tel que chaque étude l’a demandé. |
 | [`attach_canada`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-attach_canada) | Attachement au Canada | Très attaché(e) · Assez attaché(e) · Pas très attaché(e) · Pas du tout attaché(e) | 4 (2012, 2014, 2018, 2022) | L’attachement au Canada en quatre points, tel que chaque étude l’a demandé. |
 
-9 colonnes couvrent les 11 études, et 25 en couvrent au moins cinq. Les
-7 autres ont été posées dans 2 à 4 études ; elles sont conservées pour
-les analyses à l’intérieur de ces études. Deux colonnes en accompagnent
-d’autres : `vote_type` indique si `vote_choice` provient du vote déclaré
-ou d’une intention de vote, et `sovereignty_type` de quelle question
-référendaire provient `sovereignty`. La règle est simple. À l’intérieur
-d’une étude, une colonne souple perd du détail, mais pas son sens ;
-d’une étude à l’autre, elle est aussi comparable que le dit la phrase de
-la dernière colonne, et pas davantage.
+9 colonnes couvrent les 11 études, et 26 en couvrent au moins cinq. Les
+9 autres ont été posées dans 1 à 4 études ; elles sont conservées pour
+les analyses à l’intérieur de ces études. Deux colonnes vont plus loin
+et sont conservées même si peu d’études les posent : `union`,
+l’appartenance à un syndicat, posée en 2014, en 2018 et en 2022 (au
+sujet du ménage dans les deux premières, de la personne elle-même en
+2022), et `econ_self`, la situation financière de la personne depuis un
+an, posée en 2022 seulement et nommée d’après son équivalent dans cesR.
+Elles servent aux analyses à l’intérieur de ces études. D’une étude à
+l’autre, notons que `union` compare un ménage à une personne.
+
+Deux colonnes en accompagnent d’autres : `vote_type` indique si
+`vote_choice` provient du vote déclaré ou d’une intention de vote, et
+`sovereignty_type` de quelle question référendaire provient
+`sovereignty`. La règle est simple. À l’intérieur d’une étude, une
+colonne souple perd du détail, mais pas son sens ; d’une étude à
+l’autre, elle est aussi comparable que le dit la phrase de la dernière
+colonne, et pas davantage.
 
 ## Comment chaque colonne a été assouplie
 
@@ -131,29 +143,38 @@ Chaque colonne porte sa règle d’assouplissement et ses sources :
 ``` r
 
 attr(d$education, "relaxed")
-#> [1] "Les niveaux de chaque étude sont regroupés en quatre : sans diplôme d'études secondaires, secondaire, collégial (cégep, formation technique ou professionnelle) et universitaire, y compris des études universitaires non terminées ; le panel de 2007 et les sondages CROP ont demandé les années d'études, si bien que leur groupe secondaire compte aussi ceux qui ont quitté le secondaire sans diplôme, et leur groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme."
+#> [1] "Les niveaux de chaque étude sont regroupés en trois : sans diplôme d'études secondaires, secondaire au collégial (diplôme d'études secondaires, cégep, formation technique ou professionnelle) et université, y compris des études universitaires non terminées. Ce sont les groupes de education4, secondaire et collégial réunis, ce qui permet d'inclure qes1998. Là où une étude a demandé les années d'études (le panel de 2007, les sondages CROP et les répondants de CROP dans qes1998), les tranches ne suivent pas les diplômes : des personnes sans diplôme (10 ans dans qes1998 ; 8 à 10 ans dans les autres, puisque le secondaire se termine après 11 ans au Québec) sont classées au secondaire au collégial, et des étudiants universitaires (14 ou 15 ans) ne sont pas classés à l'université."
 head(attr(d$education, "sources")[, c("study", "wave", "source_var", "recode")], 3)
 #>     study wave source_var
 #> 1 qes2022  cps    cps_edu
 #> 2 qes2018 post      qscol
 #> 3 qes2014 post      QSCOL
-#>                                                                                                                                                                                                   recode
-#> 1 1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA)
-#> 2                                1-7 = Sans diplôme d'études secondaires; 8 = Diplôme d'études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA)
-#> 3                                  1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA)
+#>                                                                                                                                                                                                                                                                                                                                                                                                                                                            recode
+#> 1 1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université
+#> 2                                1-7 = Sans diplôme d'études secondaires; 8 = Diplôme d'études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université
+#> 3                                  1-4 = Sans diplôme d'études secondaires; 5 = Diplôme d'études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA); puis Sans diplôme d'études secondaires = Sans diplôme d'études secondaires; Diplôme d'études secondaires = Secondaire au collégial (cégep); Collégial, cégep ou formation professionnelle = Secondaire au collégial (cégep); Universitaire = Université
 ```
 
 La scolarité illustre bien ce qu’assouplir veut dire. Les études ont
 mesuré la scolarité de plusieurs façons, de listes détaillées de
 diplômes à des tranches d’années d’études, et
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
-regroupe chaque réponse en quatre catégories : sans diplôme d’études
-secondaires, secondaire, collégial (cégep, formation technique ou
-professionnelle) et universitaire. Le regroupement est large à dessein ;
-c’est le plus fin que toutes les études permettent. Lorsque les
-catégories d’une étude chevauchent deux groupes, la colonne reste
-manquante plutôt que de deviner : c’est le cas des Sondages de 1998,
-dont la question ne peut être répartie entre les quatre groupes.
+regroupe chaque réponse en trois catégories : sans diplôme d’études
+secondaires, secondaire au collégial (cégep, formation technique ou
+professionnelle) et université. Trois groupes, c’est le regroupement le
+plus fin que permettent toutes les études qui interrogent sur la
+scolarité, y compris celle de 1998 (le panel de 2012 ne pose pas la
+question). Le fichier de 1998 ne compte en effet que trois tranches, 1 à
+9 ans, 10 à 15 ans et université, et sa tranche du milieu chevauche le
+secondaire et le collégial ; un quatrième groupe laisserait l’étude de
+côté. L’appariement demeure toutefois approximatif. Les répondants de
+CROP en 1998 ont déclaré leurs années d’études, or le secondaire se
+termine après 11 ans au Québec : une personne qui compte 10 ans n’a pas
+de diplôme, mais elle est classée au secondaire au collégial, et
+certaines qui comptent 14 ou 15 ans sont aux études universitaires.
+`education4` garde les quatre groupes, le secondaire et le collégial
+séparés, pour les 9 études dont les questions le permettent.
+
 `attr(d, "decon_sources")` réunit les sources de toutes les colonnes,
 avec le nombre de valeurs et les motifs des valeurs manquantes ;
 `qes_spec("relaxed_maps")` donne les appariements souples eux-mêmes,
@@ -172,24 +193,22 @@ d22 <- subset(d, study == "qes2022" & wave == "pes" & !is.na(vote_choice) & !is.
 d22$caq <- as.numeric(d22$vote_choice == "CAQ")
 des <- survey::svydesign(ids = ~1, weights = ~weight, data = d22)
 survey::svyby(~caq, ~education, des, survey::svymean)
-#>                                                                                   education
-#> Sans diplôme d'études secondaires                         Sans diplôme d'études secondaires
-#> Diplôme d'études secondaires                                   Diplôme d'études secondaires
-#> Collégial, cégep ou formation professionnelle Collégial, cégep ou formation professionnelle
-#> Universitaire                                                                 Universitaire
-#>                                                     caq         se
-#> Sans diplôme d'études secondaires             0.4863666 0.09275489
-#> Diplôme d'études secondaires                  0.4647999 0.04515295
-#> Collégial, cégep ou formation professionnelle 0.3476850 0.03645673
-#> Universitaire                                 0.2072813 0.01808346
+#>                                                           education       caq
+#> Sans diplôme d'études secondaires Sans diplôme d'études secondaires 0.4863666
+#> Secondaire au collégial (cégep)     Secondaire au collégial (cégep) 0.3901245
+#> Université                                               Université 0.2072813
+#>                                           se
+#> Sans diplôme d'études secondaires 0.09275489
+#> Secondaire au collégial (cégep)   0.02867901
+#> Université                        0.01808346
 ```
 
 Le gradient est marqué. En 2022, 49 % des répondants sans diplôme
 d’études secondaires déclarent avoir voté pour la CAQ, contre 21 % des
-diplômés universitaires. Il faut toutefois se garder d’en conclure trop
-vite : la scolarité est liée à la langue maternelle, et les
-non-francophones ont beaucoup moins voté pour la CAQ que les
-francophones. L’exemple suivant tient la langue constante.
+répondants qui ont fait des études universitaires. Il faut toutefois se
+garder d’en conclure trop vite : la scolarité est liée à la langue
+maternelle, et les non-francophones ont beaucoup moins voté pour la CAQ
+que les francophones. L’exemple suivant tient la langue constante.
 
 ## D’une élection à l’autre : un clivage du diplôme ?
 
@@ -199,12 +218,13 @@ diplôme universitaire. Les colonnes souples permettent un test rapide
 sur six élections, chez les francophones seulement. L’ADQ s’est
 présentée en 2007 et en 2008, la CAQ à partir de 2012 ; les deux partis
 restent distincts dans `vote_choice`, et chaque élection compte l’un des
-deux.
+deux. Puisque le test sépare le collégial du secondaire, il utilise
+`education4` et en réunit les deux premiers groupes.
 
 ``` r
 
 elections <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
-d$edu3 <- cut(as.integer(d$education), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
+d$edu3 <- cut(as.integer(d$education4), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
 est <- do.call(rbind, lapply(elections, function(s) {
   x <- subset(d, study == s & wave %in% c("post", "pes") & language %in% c("French", "Français") &
                 !is.na(vote_choice) & !is.na(edu3))
@@ -234,7 +254,7 @@ diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en
 tableau.](fr-decon_files/figure-html/divide-dark.png)
 
 Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague
-postélectorale), education (en trois groupes : sans diplôme et
+postélectorale), education4 (en trois groupes : sans diplôme et
 secondaire réunis) et language (langue maternelle française). Une Étude
 électorale québécoise par élection. L'ADQ et la CAQ sont des partis
 distincts et le restent dans les données ; le trait pointillé marque le
