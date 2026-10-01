@@ -67,8 +67,23 @@ jobs:
       - name: Check EN/FR article pairs
         run: Rscript data-raw/check_vignette_pairs.R .
 
+      # pkgdown fetches its JavaScript and CSS dependencies from cdnjs while
+      # building; a transient CDN error ("SSL connect error") should not fail
+      # the build, so it is retried up to three times.
       - name: Build pkgdown site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          for (i in 1:3) {
+            ok <- tryCatch({
+              pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+              TRUE
+            }, error = function(e) {
+              message("Build attempt ", i, " failed: ", conditionMessage(e))
+              FALSE
+            })
+            if (ok) break
+            if (i == 3) stop("pkgdown build failed after 3 attempts")
+            Sys.sleep(30 * i)
+          }
         shell: Rscript {0}
 
       - name: Check the site
