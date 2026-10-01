@@ -1,7 +1,8 @@
 # The spec validator, rules V-S1 to V-S17, V-S18 (the legacy renderer
 # table, R/legacy.R), V-S19 (a note on the rows the legacy freeze holds),
-# V-F1 to V-F7 (the pooled variables, R/hz-pool.R; spec 4.3.0) and the
-# hash half of V-P2 (design.md section 5.10, slice HZ1).
+# V-F1 to V-F7 (the pooled variables, R/hz-pool.R; spec 4.3.0), V-R1 to
+# V-R12 (the relaxed layer, R/hz-relaxed.R; spec 4.4.0) and the hash half of
+# V-P2 (design.md section 5.10, slice HZ1).
 #
 # One implementation, run in four places: at runtime by qes_spec() (once per
 # session), in the offline tests, in CI (data-raw/spec_check.R, with
@@ -20,9 +21,12 @@
 # Registered functions for rule "fn:<name>" (design.md section 5.6): each is
 # function(src, ctx) returning list(value, na_reason), with a test file
 # tests/testthat/test-hz-fn-<name>.R. multiselect (spec 4.3.0, R/hz-data.R):
-# a select-all-that-apply question stored as one variable per option.
+# a select-all-that-apply question stored as one variable per option;
+# amount_bands (spec 4.4.0, relaxed rows only): an amount in bands, with a
+# bracket follow-up for those who gave no amount.
 .qes_hz_fns <- list(
-  multiselect = function(src, ctx) .qes_hz_fn_multiselect(src, ctx)
+  multiselect = function(src, ctx) .qes_hz_fn_multiselect(src, ctx),
+  amount_bands = function(src, ctx) .qes_hz_fn_amount_bands(src, ctx)
 )
 
 # Name grammar of targets, families, sets and level names (V-S15).
@@ -407,7 +411,9 @@
                          stringsAsFactors = FALSE)
   bad <- unique(map_rows$row[!map_rows$map_id %in% vm$map_id])
   add("V-S4", "crosswalk", bad, xkeys[bad], "map_id (or a map of args then) is not in valuemaps.csv")
+  # the rx_ maps are read by the relaxed rows (V-R8 checks them)
   unused <- setdiff(unique(vm$map_id), map_rows$map_id)
+  unused <- unused[!startsWith(unused, "rx_")]
   add("V-S4", "valuemaps", NA, unused, "map_id is not used by any crosswalk row")
   bad <- which(has(xw$election_ref) & !xw$election_ref %in% elections$election_id)
   add("V-S4", "crosswalk", bad, xkeys[bad], "election_ref is not in catalog/elections.csv")
@@ -896,6 +902,9 @@
 
   # ---- V-F1 to V-F7: pooled variables (pooled.csv, pooled_members.csv) ------------------------
   out <- c(out, list(.qes_pool_check(spec, tg, lv, sets, target_set, enum, study_names)))
+
+  # ---- V-R1 to V-R8, V-R10 to V-R12: the relaxed layer (relaxed.csv, relaxed_maps.csv) ---------
+  out <- c(out, list(.qes_rx_check(spec, sets, enum, study_names, na_reasons)))
 
   # ---- V-P2 (hash half): SPEC records the content hash and the version has a CHANGES row ----
   sev <- if (isTRUE(spec$custom)) "warning" else "error"

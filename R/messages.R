@@ -217,6 +217,10 @@
     en = "The harmonization spec has no rows yet for %1$s. It covers %2$s.",
     fr = "La sp\u00e9cification d'harmonisation n'a encore aucune ligne pour %1$s. Elle couvre %2$s."
   ),
+  input_decon_firm = c(
+    en = "%1$s: the respondents of the 1998 firms' own files are in qes1998, which qes_decon() harmonizes. Use studies = \"qes1998\".",
+    fr = "%1$s\u00a0: les r\u00e9pondants des fichiers propres aux firmes de 1998 sont dans qes1998, que qes_decon() harmonise. Utilisez studies = \"qes1998\"."
+  ),
   input_harmonize_data_names = c(
     en = "`data` gives %1$s, which is not in `studies`.",
     fr = "`data` fournit %1$s, qui ne fait pas partie de `studies`."
@@ -470,6 +474,14 @@
     en = "Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: %1$s. The __type column gives each row's member; qes_provenance(x, level = \"pooled\") counts them.",
     fr = "Les variables regroup\u00e9es prennent les valeurs de chaque \u00e9tude du premier de leurs membres, par ordre de priorit\u00e9, qui a interrog\u00e9 la personne\u00a0: %1$s. La colonne __type donne le membre de chaque ligne\u00a0; qes_provenance(x, level = \"pooled\") les compte."
   ),
+  decon_summary = c(
+    en = "Relaxed harmonization: %1$s columns for %2$s, one concept per column even where the questions differ; relaxed columns carry no grade. Studies with a relaxed mapping of their own: %3$s. attr(x, \"decon_sources\") gives every source and recode; qes_harmonize() keeps the strict, graded versions.",
+    fr = "Harmonisation souple\u00a0: %1$s colonnes pour %2$s, un concept par colonne m\u00eame quand les questions diff\u00e8rent\u00a0; les colonnes souples n'ont pas de niveau de comparabilit\u00e9. \u00c9tudes avec un appariement souple propre\u00a0: %3$s. attr(x, \"decon_sources\") donne chaque source et recodage\u00a0; qes_harmonize() garde les versions strictes, avec leurs niveaux."
+  ),
+  decon_summary_held = c(
+    en = "Relaxed harmonization: %1$s columns for %2$s, one concept per column even where the questions differ; relaxed columns carry no grade. Studies with a relaxed mapping of their own: %3$s. %4$s relaxed mappings are not signed off yet and are not applied (their cells are NA, reason not_reviewed): %5$s. attr(x, \"decon_sources\") gives every source and recode; qes_harmonize() keeps the strict, graded versions.",
+    fr = "Harmonisation souple\u00a0: %1$s colonnes pour %2$s, un concept par colonne m\u00eame quand les questions diff\u00e8rent\u00a0; les colonnes souples n'ont pas de niveau de comparabilit\u00e9. \u00c9tudes avec un appariement souple propre\u00a0: %3$s. %4$s appariements souples ne sont pas encore approuv\u00e9s et ne sont pas appliqu\u00e9s (leurs cellules valent NA, motif not_reviewed)\u00a0: %5$s. attr(x, \"decon_sources\") donne chaque source et recodage\u00a0; qes_harmonize() garde les versions strictes, avec leurs niveaux."
+  ),
   structural_zeros = c(
     en = "Levels a study's question did not offer are structural zeros, not an absence of support: %1$s. qes_provenance(x, level = \"cell\") lists them.",
     fr = "Les niveaux que la question d'une \u00e9tude n'offrait pas sont des z\u00e9ros structurels, pas une absence d'appui\u00a0: %1$s. qes_provenance(x, level = \"cell\") les \u00e9num\u00e8re."
@@ -490,6 +502,10 @@
   splice_wording = c(
     en = "The pooled column %1$s mixes questions with different wordings: %2$s. Column %3$s gives each row's source target.",
     fr = "La colonne regroup\u00e9e %1$s m\u00eale des questions de libell\u00e9s diff\u00e9rents\u00a0: %2$s. La colonne %3$s donne la cible source de chaque ligne."
+  ),
+  decon_data_invalid = c(
+    en = "The relaxed mappings of %1$s do not fit its data (%2$s problem(s)); the spec's relaxed rows must map every code of the file.",
+    fr = "Les appariements souples de %1$s ne correspondent pas \u00e0 ses donn\u00e9es (%2$s probl\u00e8me(s))\u00a0; les lignes souples de la sp\u00e9cification doivent apparier chaque code du fichier."
   ),
   hz_rbind_spec = c(
     en = "Harmonized data built with different specs (content hashes %1$s) cannot be combined with rbind(). Harmonize every study with one spec, in one qes_harmonize() call.",

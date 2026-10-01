@@ -20,6 +20,30 @@ are generated from the rules that ship with qesR.
 cat(qesR:::.spec_coverage_md(lang = params$lang, site = TRUE))
 ```
 
+## Relaxed columns of qes_decon()
+
+`qes_decon()` returns one column per concept for every study, relaxed
+where the questions differ ([One file for every study](decon.html)). The
+grid says where each study's values come from: *strict* where the column
+is built from a target or a pooled variable of the grid above, *relaxed*
+where a relaxed mapping of the study's own question gives them. Relaxed
+columns carry no grade, and a mapping leaves a study's column missing
+where its categories straddle the column's.
+
+```{r relaxed, echo = FALSE, results = "asis"}
+fr <- identical(params$lang, "fr")
+rx <- qesR::qes_spec("relaxed", lang = params$lang)
+studies <- intersect(names(rx), qesR::qes_studies()$study)
+word <- c(strict = if (fr) "stricte" else "strict", relaxed = if (fr) "souple" else "relaxed")
+ref <- if (fr) "fr-reference-harmonisation.html" else "harmonization-reference.html"
+rows <- lapply(seq_len(nrow(rx)), function(j) {
+  v <- unlist(rx[j, studies])
+  cells <- ifelse(is.na(v), "\u2014", ifelse(v %in% names(word), word[v], v))
+  c(sprintf("[`%s`](%s#relaxed-%s)<br>%s", rx$column[j], ref, rx$column[j], rx$label[j]), cells)
+})
+cat(qesR:::.qes_md_table(c(if (fr) "Colonne" else "Column", studies), rows), sep = "\n")
+```
+
 ## The same grid in R
 
 `qes_spec()` returns the grid as a data frame, one row per target and one

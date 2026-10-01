@@ -540,6 +540,7 @@ reference generated from the spec, \code{\link[=qes_provenance]{qes_provenance()
 value came from.
 
 Other harmonization: 
+\code{\link{qes_decon}()},
 \code{\link{qes_design}()},
 \code{\link{qes_party_lineage}()},
 \code{\link{qes_spec}()}

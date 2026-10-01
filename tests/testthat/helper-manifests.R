@@ -45,7 +45,7 @@ legacy_exports <- c(
 canonical_existing_exports <- c("get_qes", "get_qes_master", "qes_codebook")
 new_exports <- c(
   "qes_studies", "qes_search", "qes_missing", "qes_download", "qes_question",
-  "qes_docs", "qes_harmonize", "qes_spec", "qes_design", "qes_party_lineage", "qes_provenance",
+  "qes_docs", "qes_harmonize", "qes_decon", "qes_spec", "qes_design", "qes_party_lineage", "qes_provenance",
   "qes_cite", "qes_cache_info", "qes_cache_clear"
 )
 final_exports <- c(canonical_existing_exports, new_exports, legacy_exports)

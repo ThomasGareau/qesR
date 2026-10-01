@@ -24,6 +24,7 @@ Grouped as in the reference index of the website.\tabular{lll}{
    Codebooks and search \tab \code{\link[=qes_missing]{qes_missing()}} \tab Sets "don't know", "refused" and declared missing codes to \code{NA}. \cr
    Harmonization \tab \code{\link[=qes_spec]{qes_spec()}} \tab The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. \cr
    Harmonization \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab One data frame across studies, one column per target, every missing value with a reason, following the harmonization rules; waves, weights and eligibility of each respondent. \cr
+   Harmonization \tab \code{\link[=qes_decon]{qes_decon()}} \tab One flat data frame of relaxed harmonized variables for every study, with plain names in the style of cesR (\code{education}, \code{income_cat}, \code{vote_choice}, \code{sovereignty}...): one concept per column even where the questions differ, in coarse common categories, with each study's source and recode. \cr
    Harmonization \tab \code{\link[=qes_design]{qes_design()}} \tab Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. \cr
    Harmonization \tab \code{\link[=qes_party_lineage]{qes_party_lineage()}} \tab Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. \cr
    Reproducibility \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. \cr
@@ -35,7 +36,9 @@ Grouped as in the reference index of the website.\tabular{lll}{
 Harmonization across studies is experimental: \code{\link[=qes_spec]{qes_spec()}} shows the
 reviewed spec, \code{\link[=qes_harmonize]{qes_harmonize()}} applies it and \code{\link[=qes_design]{qes_design()}} turns the
 result into a survey design; the reference generated from the spec is
-\code{vignette("harmonization-reference", package = "qesR")}.
+\code{vignette("harmonization-reference", package = "qesR")}. \code{\link[=qes_decon]{qes_decon()}}
+is the relaxed version: one column per concept for every study, in coarse
+common categories and with no grade.
 
 Older function names (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) keep working and will not be

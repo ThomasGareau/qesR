@@ -103,7 +103,9 @@ test_that("the generated reference covers every target, in English and French al
   expect_true(grepl(s$hash, fr, fixed = TRUE))
   # every mapped row appears in a coverage table, qes2022's with its wording
   xw <- s$tables$crosswalk
-  expect_identical(sum(grepl("^\\| qes", lines_en)), sum(xw$rule != "none"))
+  # (the chapter on the relaxed layer, at the end, has tables of its own)
+  targets_part <- lines_en[seq_len(grep("^## Relaxed harmonization", lines_en)[1] - 1L)]
+  expect_identical(sum(grepl("^\\| qes", targets_part)), sum(xw$rule != "none"))
   expect_false(grepl("document 7449514, p.68", en, fixed = TRUE))
   expect_true(grepl("Which party did you vote for?", en, fixed = TRUE))
   # a row with a reference and no wording shows the reference

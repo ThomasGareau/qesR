@@ -23,6 +23,12 @@
 #' has reviewed yet is never read by `get_decon()` or `get_qes_master()`,
 #' even for their columns' targets: the legacy columns stay as they were.
 #'
+#' For one data frame of every study with plain, cesR-style columns,
+#' harmonized in a relaxed way (one concept per column even where the
+#' questions differ, in coarse common categories), see [qes_decon()]. It is
+#' a different dataset: `get_decon()` keeps the 19 columns of qesR 0.4.4,
+#' one study at a time, and its values do not change.
+#'
 #' `get_decon()` returns the data and assigns nothing unless
 #' `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
 #' call in a session that leaves `assign_global` unset prints a one-time note
@@ -78,7 +84,10 @@
 #' `turnout` et `votechoice` sont la participation et le vote déclarés
 #' après l'élection, sauf pour `qes2022`, où ce sont la probabilité de voter
 #' et l'intention de vote pendant la campagne, comme dans qesR 0.4.4 ;
-#' `attr(, "timing")` l'indique (`"post"` ou `"pre"`).
+#' `attr(, "timing")` l'indique (`"post"` ou `"pre"`). Pour un seul tableau
+#' de toutes les études, aux colonnes simples à la manière de cesR et
+#' harmonisées de façon souple, voir [qes_decon()] ; `get_decon()` garde
+#' ses 19 colonnes et ses valeurs.
 #'
 #' @param srvy A qesR survey code. Defaults to `"qes2022"`. Codes are trimmed
 #'   and case-insensitive. The 11 studies of qesR 0.4.4 are available, and
@@ -98,7 +107,9 @@
 #'   (as for [get_qes_master()]) and `qes_provenance` (the file
 #'   read; see [qes_provenance()]).
 #' @family legacy
-#' @seealso [qesR-deprecated] for the legacy functions and their replacements.
+#' @seealso [qes_decon()] for every study in one data frame, harmonized in a
+#'   relaxed way; [qesR-deprecated] for the legacy functions and their
+#'   replacements.
 #' @examples
 #' # the synthetic demonstration study, offline
 #' decon <- get_decon("qes_demo", quiet = TRUE)

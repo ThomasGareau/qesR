@@ -51,7 +51,11 @@ taken from the deposited data files and documents:
     wave gave each answer to a question and to the question that filters
     it) and in
     expected/marginals.csv (how many fall in each harmonized category);
-    expected/hashes.csv holds md5 hashes of the harmonized columns.
+    expected/hashes.csv holds md5 hashes of the harmonized columns. The
+    relaxed layer of qes_decon() quotes them the same way: relaxed_maps.csv
+    (question text, and counts in its evidence),
+    expected/relaxed_marginals.csv (how many fall in each relaxed category)
+    and expected/relaxed_hashes.csv (md5 hashes of the relaxed columns).
 
 CC0 requires no attribution. qesR names the source of each study anyway, as
 the authors ask users to cite the data (qes_cite() gives the full citation):
@@ -123,6 +127,13 @@ licence of qesR:
     each harmonized category;
   - inst/extdata/harmonize/expected/hashes.csv: md5 hashes of the
     harmonized columns, with the number of rows of the file;
+  - inst/extdata/harmonize/relaxed_maps.csv: the question wording quoted
+    from the codebook (wording_en, wording_fr) and unweighted counts of each
+    code (evidence);
+  - inst/extdata/harmonize/expected/relaxed_marginals.csv: unweighted counts
+    of each relaxed category;
+  - inst/extdata/harmonize/expected/relaxed_hashes.csv: md5 hashes of the
+    relaxed columns, with the number of respondents or rows;
   - inst/extdata/harmonize/waves.csv and inst/extdata/harmonize/weights.csv:
     the size of each wave, its fieldwork dates and mode, and the weighting
     method, as the codebook publishes them (pp. 5 and 7);

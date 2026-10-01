@@ -1,0 +1,361 @@
+---
+title: "Un seul fichier pour toutes les études : qes_decon()"
+description: >
+  Un seul tableau pour les 11 études harmonisées, une colonne par concept
+  même lorsque les questions diffèrent : ce que donne qes_decon(), comment
+  chaque colonne a été assouplie, et quand la fonction stricte
+  qes_harmonize() est le meilleur outil.
+params:
+  lang: "fr"
+---
+
+*[English version](decon.html)*
+
+```{r setup, include = FALSE}
+source("_setup.R", encoding = "UTF-8")
+```
+
+```{r data, include = FALSE}
+d <- qes_decon(lang = params$lang, quiet = TRUE)
+
+lead_cols <- c("study", "year", "wave", "qes_id", "weight", "weight_var")
+rx_cols <- setdiff(names(d), lead_cols)
+n_rows <- nrow(d)
+n_resp <- length(unique(d$qes_id))
+n_studies <- length(unique(d$study))
+big <- function(x) formatC(x, format = "d", big.mark = tr(",", " "))
+# "a, b and c" / "a, b et c"
+and_list <- function(x) if (length(x) < 2) as.character(x) else
+  paste0(paste(head(x, -1), collapse = ", "), tr(" and ", " et "), tail(x, 1))
+
+# the weight of each study and wave, and why it is missing where it is
+w <- attr(d, "weights")
+w_ok <- tapply(w$reason, w$study, function(r) all(is.na(r)))
+weighted_studies <- intersect(qz_studies, names(w_ok)[w_ok])
+no_weight <- intersect(qz_studies, unique(w$study[w$reason %in% "no_recommended_weight"]))
+review_weight <- intersect(qz_studies, unique(w$study[w$reason %in% "needs_review"]))
+
+# the studies in which each column has at least one value
+has_value <- sapply(rx_cols, function(v) tapply(!is.na(d[[v]]), d$study, any))
+covered <- lapply(rx_cols, function(v) intersect(qz_studies, rownames(has_value)[has_value[, v]]))
+names(covered) <- rx_cols
+n_cov <- lengths(covered)
+src <- attr(d, "decon_sources")
+```
+
+```{r strings, include = FALSE}
+# French typography in the figure and table text: a non-breaking space
+# before : ; ? ! % and inside « » (a "%s" placeholder is left alone)
+trs <- function(en, fr) tr(en, gsub("« ", "« ", gsub(" (?=[:;?!»]|%(?!s))", " ", fr, perl = TRUE)))
+short_study <- c(qes1998 = "1998", qes2007 = "2007", qes2007_panel = tr("2007 panel", "panel 2007"),
+                 qes2008 = "2008", qes_crop_2007_2010 = "CROP", qes2012 = "2012",
+                 qes2012_panel = tr("2012 panel", "panel 2012"), qes2014 = "2014", qes2018 = "2018",
+                 qes2018_panel = tr("2018 panel", "panel 2018"), qes2022 = "2022")
+reference <- tr("harmonization-reference.html", "fr-reference-harmonisation.html")
+```
+
+Depuis quelques années, l'Étude électorale canadienne dispose d'une porte
+d'entrée simple. La fonction `get_decon()` du package
+[cesR](https://hodgettsp.github.io/cesR/) renvoie un seul tableau de
+l'étude de 2019, avec 21 variables aux noms simples (`education`,
+`income_cat`, `lr`, `econ_retro`...) et aux étiquettes lisibles. Les
+Études électorales québécoises n'avaient pas d'équivalent. Leur
+harmonisation dans qesR, `qes_harmonize()`, est stricte par construction :
+une cible par question, un niveau de comparabilité pour la question de
+chaque étude et un motif pour chaque valeur manquante. C'est le bon outil
+lorsque la différence entre deux questions compte. Or, bien des usages
+n'en demandent pas tant : un tableau descriptif, une variable de contrôle,
+un premier regard sur 25 ans de données. `qes_decon()` répond à ce
+besoin. La fonction renvoie un seul tableau pour les `r n_studies` études
+harmonisées, avec `r big(n_rows)` lignes (une par personne et par vague)
+et `r length(rx_cols)` colonnes de données, une par concept, même lorsque
+le libellé ou les choix de réponse changent d'une étude à l'autre. Le prix
+à payer est l'exactitude. Les catégories sont larges, et aucune colonne ne
+prétend que deux études ont posé la même question.
+
+## Ce que contient le fichier
+
+```{r load, eval = FALSE}
+d <- qes_decon(lang = params$lang)
+```
+
+`lang = "fr"` donne les étiquettes en français (`params$lang` est la
+langue de cette page) ; les noms de colonnes ne changent pas. Les
+premières lignes :
+
+```{r peek}
+d[1:4, c("study", "wave", "weight", "gender", "education", "vote_choice", "vote_type")]
+```
+
+Les premières colonnes identifient la ligne : `study`, `year`, `wave` et
+`qes_id`, l'identifiant de la personne dans l'étude. Le fichier compte
+`r big(n_resp)` répondants, et une personne interrogée par un panel a une
+ligne par vague. Les colonnes sociodémographiques (scolarité, revenu,
+langue, religion, région...) se répètent sur chaque ligne d'une personne,
+alors que le vote, la participation et les attitudes se trouvent sur la
+ligne de la vague qui les a mesurés : l'intention de vote sur la vague de
+campagne, le vote déclaré sur la vague postélectorale. `weight` est la
+pondération recommandée de l'étude et de la vague, ramenée à une moyenne
+de 1 dans chacune, et `weight_var` en donne la variable source. Sur les
+`r n_studies` études, `r length(weighted_studies)` ont une telle
+pondération sur chaque ligne : `r and_list(qz_study_label(weighted_studies))`.
+Les autres ont `NA`. L'`r and_list(qz_study_label(no_weight))` n'a pas de
+pondération recommandée, puisque ses pondérations sont calées sur le vote
+déclaré, et les pondérations des études suivantes sont encore en
+révision : `r and_list(qz_study_label(review_weight))`.
+`attr(d, "weights")` donne le détail, vague par vague.
+
+## Les colonnes
+
+Le tableau ci-dessous est généré à partir de la spécification souple
+livrée avec qesR (`qes_spec("relaxed")`). Une étude est comptée lorsque la
+colonne y a au moins une valeur. Chaque nom renvoie à la section de la
+colonne dans la [référence des variables](fr-reference-harmonisation.html),
+qui donne la variable source et la règle de recodage de chaque étude.
+
+```{r columns, echo = FALSE}
+rx <- as.data.frame(qes_spec("relaxed", lang = params$lang))
+rx <- rx[match(rx_cols, rx$column), ]
+cats <- vapply(seq_len(nrow(rx)), function(j) {
+  v <- d[[rx$column[j]]]
+  if (!is.factor(v)) return(sprintf(tr("number, %s", "nombre, %s"), rx$levels[j]))
+  lv <- levels(v)
+  if (length(lv) > 6) return(sprintf(tr("%d categories (%s...)", "%d catégories (%s...)"), length(lv),
+                                     paste(head(lv, 2), collapse = ", ")))
+  paste(lv, collapse = " · ")
+}, character(1))
+studies_txt <- vapply(rx$column, function(v) {
+  s <- covered[[v]]
+  if (length(s) == length(qz_studies)) return(tr("all 11", "les 11"))
+  paste0(length(s), " (", paste(short_study[s], collapse = ", "), ")")
+}, character(1))
+tab <- data.frame(
+  sprintf("[`%s`](%s#relaxed-%s)", rx$column, reference, rx$column),
+  rx$label, cats, studies_txt, rx$relaxed
+)
+names(tab) <- c(tr("Column", "Colonne"), tr("Concept", "Concept"), tr("Categories", "Catégories"),
+                tr("Studies", "Études"), tr("How it was relaxed", "Comment elle a été assouplie"))
+knitr::kable(tab, row.names = FALSE, escape = FALSE)
+```
+
+`r sum(n_cov == length(qz_studies))` colonnes couvrent les 11 études, et
+`r sum(n_cov >= 5)` en couvrent au moins cinq. Les `r sum(n_cov < 5)`
+autres ont été posées dans `r min(n_cov)` à `r max(n_cov[n_cov < 5])`
+études ; elles sont conservées pour les analyses à l'intérieur de ces
+études. Deux colonnes en accompagnent d'autres : `vote_type` indique si
+`vote_choice` provient du vote déclaré ou d'une intention de vote, et
+`sovereignty_type` de quelle question référendaire provient
+`sovereignty`. La règle est simple. À l'intérieur d'une étude, une colonne
+souple perd du détail, mais pas son sens ; d'une étude à l'autre, elle est
+aussi comparable que le dit la phrase de la dernière colonne, et pas
+davantage.
+
+## Comment chaque colonne a été assouplie
+
+Chaque colonne porte sa règle d'assouplissement et ses sources :
+
+```{r education}
+attr(d$education, "relaxed")
+head(attr(d$education, "sources")[, c("study", "wave", "source_var", "recode")], 3)
+```
+
+```{r education-facts, include = FALSE}
+edu_src <- src[src$column == "education", ]
+edu_empty <- intersect(qz_studies, edu_src$study[edu_src$n_value == 0])
+```
+
+La scolarité illustre bien ce qu'assouplir veut dire. Les études ont
+mesuré la scolarité de plusieurs façons, de listes détaillées de diplômes
+à des tranches d'années d'études, et `qes_decon()` regroupe chaque
+réponse en quatre catégories : sans diplôme d'études secondaires,
+secondaire, collégial (cégep, formation technique ou professionnelle) et
+universitaire. Le regroupement est large à dessein ; c'est le plus fin que
+toutes les études permettent. Lorsque les catégories d'une étude
+chevauchent deux groupes, la colonne reste manquante plutôt que de
+deviner : c'est le cas des `r and_list(qz_study_label(edu_empty))`, dont la
+question ne peut être répartie entre les quatre groupes.
+`attr(d, "decon_sources")` réunit les sources de toutes les colonnes, avec
+le nombre de valeurs et les motifs des valeurs manquantes ;
+`qes_spec("relaxed_maps")` donne les appariements souples eux-mêmes, avec
+leur statut de révision.
+
+## Une estimation pondérée dans une étude
+
+Une estimation se fait à l'intérieur d'une étude et d'une vague, avec la
+pondération de cette vague. Voici le vote déclaré pour la Coalition avenir
+Québec (CAQ) selon la scolarité en 2022, dans la vague postélectorale
+(`pes`) :
+
+```{r one-study}
+d22 <- subset(d, study == "qes2022" & wave == "pes" & !is.na(vote_choice) & !is.na(education))
+d22$caq <- as.numeric(d22$vote_choice == "CAQ")
+des <- survey::svydesign(ids = ~1, weights = ~weight, data = d22)
+survey::svyby(~caq, ~education, des, survey::svymean)
+```
+
+```{r one-study-facts, include = FALSE}
+caq22 <- survey::svyby(~caq, ~education, des, survey::svymean)
+caq_edu <- setNames(100 * caq22$caq, as.integer(caq22$education))
+```
+
+Le gradient est marqué. En 2022, `r qz_pct(caq_edu[["1"]], 0)` des
+répondants sans diplôme d'études secondaires déclarent avoir voté pour la
+CAQ, contre `r qz_pct(caq_edu[["4"]], 0)` des diplômés universitaires. Il
+faut toutefois se garder d'en conclure trop vite : la scolarité est liée à
+la langue maternelle, et les non-francophones ont beaucoup moins voté pour
+la CAQ que les francophones. L'exemple suivant tient la langue constante.
+
+## D'une élection à l'autre : un clivage du diplôme ?
+
+On dit souvent que la CAQ, comme l'Action démocratique du Québec (ADQ)
+avant elle, puise ses appuis chez les électrices et les électeurs sans
+diplôme universitaire. Les colonnes souples permettent un test rapide sur
+six élections, chez les francophones seulement. L'ADQ s'est présentée en
+2007 et en 2008, la CAQ à partir de 2012 ; les deux partis restent
+distincts dans `vote_choice`, et chaque élection compte l'un des deux.
+
+```{r elections}
+elections <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
+d$edu3 <- cut(as.integer(d$education), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
+est <- do.call(rbind, lapply(elections, function(s) {
+  x <- subset(d, study == s & wave %in% c("post", "pes") & language %in% c("French", "Français") &
+                !is.na(vote_choice) & !is.na(edu3))
+  weighted <- !anyNA(x$weight)
+  if (!weighted) x$weight <- 1
+  x$adq_caq <- as.numeric(x$vote_choice %in% c("ADQ", "CAQ"))
+  des <- survey::svydesign(ids = ~1, weights = ~weight, data = x)
+  e <- survey::svyby(~adq_caq, ~edu3, des, survey::svymean)
+  data.frame(study = s, edu3 = e$edu3, pct = 100 * e$adq_caq, se = 100 * e$se,
+             n = as.vector(table(x$edu3)), weighted = weighted)
+}))
+```
+
+```{r elections-facts, include = FALSE}
+est$year <- qz_year(est$study)
+ci <- qz_logit_ci(est$pct / 100, est$se / 100)
+est$lo <- 100 * ci[, "lo"]
+est$hi <- 100 * ci[, "hi"]
+ev <- function(y, g) est$pct[est$year == y & est$edu3 == g]
+gap <- function(y) ev(y, "hs") - ev(y, "university")
+gaps <- sapply(qz_year(elections), gap)
+names(gaps) <- qz_year(elections)
+# the text below reads these patterns off the estimates
+stopifnot(which.max(gaps) == length(gaps), abs(gaps[["2008"]]) < 2, all(abs(gaps[c("2012", "2014")]) < 7),
+          gaps[["2007"]] > 9, gaps[["2018"]] > 12)
+off <- qz_official()
+adq_off <- setNames(off$share_valid[off$party == "ADQ" & off$year %in% c(2007, 2008)],
+                    off$year[off$party == "ADQ" & off$year %in% c(2007, 2008)])
+```
+
+```{r fig-divide, echo = FALSE}
+edu_lab <- c(hs = tr("High school or less", "Secondaire ou moins"),
+             college = tr("College or CEGEP", "Collégial ou cégep"),
+             university = tr("University", "Universitaire"))
+fd <- est
+fd$edu3 <- factor(as.character(fd$edu3), levels = names(edu_lab))
+fd$party <- ifelse(fd$year < 2012, "ADQ", "CAQ")
+fd$x <- fd$year + c(hs = -0.2, college = 0, university = 0.2)[as.character(fd$edu3)]
+fd$line <- paste(fd$party, fd$edu3)
+fd$label <- edu_lab[as.character(fd$edu3)]
+tags <- data.frame(x = c(2007.5, 2017), y = 62, label = c("ADQ", "CAQ"))
+
+fig_divide <- function(mode) {
+  k <- qz_tokens[[mode]]
+  cols <- setNames(k$ord3, names(edu_lab))
+  ggplot(fd, aes(x, pct, colour = edu3, group = line)) +
+    annotate("segment", x = 2010, xend = 2010, y = 0, yend = 64, colour = k$axis, linewidth = 0.35,
+             linetype = "22") +
+    geom_text(data = tags, aes(x, y, label = label), inherit.aes = FALSE, size = 3.3, fontface = "bold",
+              colour = k$ink2, family = qz_font()) +
+    qz_ci(aes(ymin = lo, ymax = hi), show.legend = FALSE) +
+    qz_line(show.legend = FALSE) +
+    qz_dots(mode, fd, aes(x, pct), colour_aes = "edu3", key = FALSE) +
+    qz_end_labels(fd, "x", "pct", "label", "edu3", mode, min_gap = 4, nudge_x = 1.2) +
+    scale_colour_manual(values = cols, guide = "none") +
+    scale_fill_manual(values = cols, breaks = names(edu_lab), labels = edu_lab, guide = "none") +
+    scale_x_continuous(breaks = qz_year(elections), labels = function(x) ifelse(x == 2008, "’08", x),
+                       limits = c(2006.4, 2028.5), expand = expansion(0)) +
+    scale_y_continuous(breaks = seq(0, 60, 20), labels = qz_pct_axis) +
+    coord_cartesian(ylim = c(0, 65), clip = "off") +
+    labs(x = NULL, y = tr("Reported vote for the ADQ or the CAQ", "Vote déclaré pour l'ADQ ou la CAQ")) +
+    theme_qes(mode)
+}
+
+tab <- fd[order(fd$year, fd$edu3), ]
+tab_divide <- setNames(data.frame(
+  tab$year, tab$party, tab$label, qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n,
+  ifelse(tab$weighted, tr("weighted", "pondéré"), tr("unweighted (no recommended weight)", "non pondéré (aucune pondération recommandée)")),
+  row.names = NULL
+), c(tr("Election", "Élection"), tr("Party", "Parti"), tr("Education", "Scolarité"),
+     trs("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
+alt <- sprintf(trs(
+  "Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95%% confidence intervals. The gap between those with high school or less and university graduates is %s points in 2007, %s in 2012, %s in 2018 and %s in 2022. Values in the table view.",
+  "Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %%. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de %s points en 2007, de %s en 2012, de %s en 2018 et de %s en 2022. Valeurs dans la vue en tableau."),
+  qz_num(gap(2007), 0), qz_num(gap(2012), 0), qz_num(gap(2018), 0), qz_num(gap(2022), 0))
+qz_figure(fig_divide, "divide",
+  title = sprintf(trs("Among francophones, the education gap in the CAQ vote went from %s points in 2014 to %s in 2022",
+                      "Chez les francophones, l'écart de scolarité dans le vote caquiste passe de %s points en 2014 à %s en 2022"),
+                  qz_num(gap(2014), 0), qz_num(gap(2022), 0)),
+  subtitle = trs("Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals",
+                 "Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %"),
+  alt = alt, table = tab_divide, height = 4.0,
+  note = trs("Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.",
+             "Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée."))
+```
+
+La croyance populaire ne trouve qu'un appui partiel. En 2007, les
+francophones qui ont au plus un diplôme d'études secondaires étaient
+`r qz_num(gap(2007), 0)` points plus nombreux, en proportion, que les
+diplômés universitaires à déclarer avoir voté pour l'ADQ. L'écart a
+ensuite presque disparu. En 2008, alors que la part du vote de l'ADQ
+passait de `r qz_pct(adq_off[["2007"]], 0)` à
+`r qz_pct(adq_off[["2008"]], 0)`, les diplômés universitaires et les moins
+scolarisés ont voté pour elle dans la même proportion, et l'écart de la
+CAQ était de
+`r if (qz_num(gap(2012), 0) == qz_num(gap(2014), 0)) paste(qz_num(gap(2012), 0), "points en 2012 comme en 2014") else paste(qz_num(gap(2012), 0), "points en 2012 et de", qz_num(gap(2014), 0), "en 2014")`.
+Il s'est rouvert avec la victoire de la CAQ : `r qz_num(gap(2018), 0)`
+points en 2018 et `r qz_num(gap(2022), 0)` en 2022, alors que
+`r qz_pct(ev(2022, "hs"), 0)` des francophones qui ont au plus un diplôme
+d'études secondaires ont voté pour la CAQ, contre
+`r qz_pct(ev(2022, "university"), 0)` des diplômés universitaires.
+Autrement dit, le clivage du diplôme n'est pas une constante du vote de
+ces partis. Il est large aux élections où ils ont fait bonne figure (2007,
+2018 et 2022) et étroit aux autres.
+
+Deux mises en garde s'imposent, et toutes deux tiennent à
+l'assouplissement. D'abord, les groupes de scolarité ne proviennent pas
+de la même question dans chaque étude : un faible changement d'écart
+d'une élection à l'autre peut donc tenir au regroupement plutôt qu'aux
+électeurs ; les changements de 2018 et de 2022 vont bien au-delà.
+Ensuite, le vote déclaré de l'étude de 2008 n'est pas pondéré. Aucune de
+ces mises en garde ne touche la comparaison à l'intérieur d'une élection,
+là où les colonnes souples sont sur leur terrain le plus solide.
+
+## qes_decon() ou qes_harmonize() ?
+
+Les deux fonctions répondent à des besoins différents, et aucune ne
+remplace l'autre. `qes_decon()` convient aux tableaux descriptifs, aux
+variables de contrôle, à l'enseignement et à un premier regard d'une étude
+à l'autre : un seul appel, des noms simples, toutes les études. Ses
+colonnes n'ont pas de niveau de comparabilité, et ses catégories sont
+assez larges pour que chaque étude s'y range. `qes_harmonize()` convient
+aux analyses où la différence entre deux questions compte. Elle garde une
+cible par question, attribue à la question de chaque étude un niveau de
+comparabilité par rapport à une question d'ancrage, donne un motif pour
+chaque valeur manquante sur chaque ligne, et fonctionne avec
+`qes_design()` pour les estimations d'enquête.
+
+Trois cas appellent d'autres fonctions. Premièrement, la tendance d'un
+niveau : la part des personnes qui voteraient Oui à un référendum varie
+selon la question posée (dans les Études électorales québécoises, la
+question de 1995 en 2007 et en 2008, un pays indépendant à partir de
+2012), et `sovereignty` les réunit toutes. `sovereignty_type` indique de
+quelle question provient chaque ligne, et
+`qes_harmonize(targets = "sov_indep")` ne garde qu'un libellé.
+Deuxièmement, une analyse qui doit écarter les études les moins
+comparables : les niveaux de comparabilité et `min_grade` le permettent,
+et les colonnes souples n'ont ni l'un ni l'autre. Troisièmement, le code
+écrit pour qesR 0.4.4 : `get_decon()` renvoie toujours ses colonnes pour
+une étude, sans changement, et `get_qes_master()` le fichier fusionné ;
+`qes_decon()` est une nouvelle fonction, et non leur remplacement.
+`?qes_decon` documente chaque colonne.

@@ -99,7 +99,8 @@
   xw <- spec$tables$crosswalk[spec$tables$crosswalk$study == study, , drop = FALSE]
   wv <- spec$tables$waves[spec$tables$waves$study == study, , drop = FALSE]
   mode_var <- sub("^var:", "", wv$mode[!is.na(wv$mode) & startsWith(wv$mode, "var:")])
-  then <- unlist(lapply(which(xw$rule %in% c("coalesce", "fn:multiselect")), function(i) .qes_hz_row_vars(xw, i)))
+  then <- unlist(lapply(which(xw$rule %in% c("coalesce", "fn:multiselect", "fn:amount_bands")),
+                        function(i) .qes_hz_row_vars(xw, i)))
   vars <- c(xw$source_var, then, xw$gate_var, wv$member_var, wv$date_var, wv$subsample_var,
             wv$strata_var, mode_var)
   unique(vars[!is.na(vars) & nzchar(vars)])
@@ -365,11 +366,13 @@
 }
 
 # Every source variable of crosswalk row `i`, in order (one, except for a
-# coalesce row and a fn:multiselect row).
+# coalesce row, a fn:multiselect row and a fn:amount_bands row).
 .qes_hz_row_vars <- function(xw, i) {
   then <- .qes_hz_coalesce_then(xw, i)
   sel <- if (identical(xw$rule[i], "fn:multiselect")) .qes_hz_multiselect_args(xw$args[i])$var else NULL
-  unique(c(xw$source_var[i], if (!is.null(then)) then$var, sel))
+  amt <- if (identical(xw$rule[i], "fn:amount_bands")) .qes_hz_amount_args(xw$args[i])$then_var else NULL
+  out <- unique(c(xw$source_var[i], if (!is.null(then)) then$var, sel, amt))
+  out[!is.na(out)]
 }
 
 # ---- registered function fn:multiselect ------------------------------------------------
@@ -382,17 +385,22 @@
 # give one level gets that level; options of two or more levels are
 # not_mappable (never assigned to one of them, as a reported second mother
 # tongue elsewhere); no option ticked is no_answer; every variable system
-# missing is sysmis.
+# missing is sysmis. With "first=TRUE" (relaxed rows, spec 4.4.0), the first
+# ticked option in the order of `select` gives the level instead, so that
+# options of two levels are assigned by that priority.
 
-# The parsed args of a fn:multiselect row: list(var, level, selected).
+# The parsed args of a fn:multiselect row: list(var, level, selected, first).
 .qes_hz_multiselect_args <- function(args) {
   kv <- .qes_parse_kv(args) %||% character(0)
   sel <- unname(kv["select"])
-  if (length(sel) == 0L || is.na(sel)) return(list(var = character(0), level = character(0), selected = "1"))
+  first <- identical(unname(kv["first"]), "TRUE")
+  if (length(sel) == 0L || is.na(sel)) {
+    return(list(var = character(0), level = character(0), selected = "1", first = first))
+  }
   parts <- strsplit(sel, ",", fixed = TRUE)[[1]]
   selected <- unname(kv["selected"])
   list(var = sub(":.*$", "", parts), level = sub("^[^:]*:", "", parts),
-       selected = if (length(selected) == 0L || is.na(selected)) "1" else selected)
+       selected = if (length(selected) == 0L || is.na(selected)) "1" else selected, first = first)
 }
 
 .qes_hz_fn_multiselect <- function(src, ctx) {
@@ -410,17 +418,70 @@
     k <- which(r %in% TRUE)
     if (length(k) == 0L) NA_character_ else a$level[k[1]]
   })
-  value <- ifelse(n_levels == 1L, first, NA_character_)
-  reason <- ifelse(n_levels == 1L, NA_character_,
+  one <- if (isTRUE(a$first)) n_levels >= 1L else n_levels == 1L
+  value <- ifelse(one, first, NA_character_)
+  reason <- ifelse(one, NA_character_,
                    ifelse(all_na, "sysmis", ifelse(n_levels == 0L, "no_answer", "not_mappable")))
   list(value = value, na_reason = reason)
 }
 
+# ---- registered function fn:amount_bands (relaxed rows, spec 4.4.0) --------------------
+#
+# An amount asked as a number, with a bracket question for those who gave
+# none (the 2022 household income: cps_income, then cps_income2). args:
+# "breaks=<b1>,<b2>,..." (increasing), "levels=<l1>,<l2>,..." (one more than
+# the breaks) and "then=<variable>:<map_id>" (the bracket question and its
+# value map). An amount that is a number and not in the row's na_codes falls
+# in level k when it is at least the (k-1)th break and below the kth; the
+# codes of na_codes (no amount given) pass to the bracket question, whose
+# map gives the level or the reason; a respondent the bracket question did
+# not ask (system missing) keeps the amount's reason.
+
+.qes_hz_fn_amount_bands <- function(src, ctx) {
+  row <- ctx$row
+  a <- .qes_hz_amount_args(row$args)
+  d <- ctx$data
+  n <- nrow(d)
+  code <- .canon(src)
+  code[is.na(code)] <- "NA"
+  nac <- .qes_parse_kv(row$na_codes) %||% character(0)
+  value <- rep(NA_character_, n)
+  reason <- rep(NA_character_, n)
+  in_nac <- code %in% names(nac)
+  reason[in_nac] <- unname(nac[code[in_nac]])
+  x <- suppressWarnings(as.numeric(code))
+  ok <- !in_nac & !is.na(x) & x > 0
+  k <- 1L + vapply(x[ok], function(z) sum(z >= a$breaks), integer(1))
+  value[ok] <- a$levels[k]
+  reason[!in_nac & code == "NA"] <- "sysmis"
+  reason[!in_nac & code != "NA" & !ok] <- "unmapped"
+  # the bracket question, for the amounts not given
+  vm <- ctx$spec$tables$valuemaps
+  vm <- vm[vm$map_id %in% a$then_map, , drop = FALSE]
+  tg <- ctx$spec$tables$targets
+  set <- .qes_spec_levels(ctx$spec$tables$levels, tg$levels_id[match(row$target, tg$target)])
+  r <- list(rule = "map", na_codes = character(0), map_code = vm$source_code,
+            map_level = set$name[match(vm$target_code, set$code)], map_reason = vm$na_reason)
+  b <- .canon(d[[a$then_var]])
+  b[is.na(b)] <- "NA"
+  open <- which(in_nac)
+  if (length(open) > 0L) {
+    ob <- .qes_hz_outcome(r, b[open])
+    asked <- !(ob$na_reason %in% .qes_coalesce_default_fallthrough)
+    value[open[asked]] <- ob$value[asked]
+    reason[open[asked]] <- ob$na_reason[asked]
+  }
+  reason[!is.na(value)] <- NA_character_
+  list(value = value, na_reason = reason)
+}
+
 # Every value map of crosswalk row `i` (map_id, then the maps of a
-# coalesce row's other variables).
+# coalesce row's other variables and of a fn:amount_bands row's bracket
+# question).
 .qes_hz_row_maps <- function(xw, i) {
   then <- .qes_hz_coalesce_then(xw, i)
-  out <- c(xw$map_id[i], if (!is.null(then)) then$map_id)
+  amt <- if (identical(xw$rule[i], "fn:amount_bands")) .qes_hz_amount_args(xw$args[i])$then_map else NULL
+  out <- c(xw$map_id[i], if (!is.null(then)) then$map_id, amt)
   out[!is.na(out) & nzchar(out)]
 }
 

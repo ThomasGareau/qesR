@@ -174,6 +174,86 @@
 
 # ---- view "crosswalk" ------------------------------------------------------------------
 
+# The relaxed columns of qes_decon() (view "relaxed"): one row per column,
+# then one column per study: "strict" where the base gives the study's
+# values, "relaxed" where a relaxed row of the study does (with its status
+# when it is not signed off), NA where neither. A column built on another
+# column (base "column:<name>") takes that column's source in each study,
+# so that a study whose values of the base column come from a relaxed row
+# is "relaxed" there too.
+.qes_spec_relaxed_view <- function(spec, columns, studies, lang) {
+  t <- .qes_rx_tables(spec)
+  rx <- t$relaxed[order(t$relaxed$position), , drop = FALSE]
+  rm <- t$maps
+  if (!is.null(columns)) rx <- rx[rx$column %in% columns, , drop = FALSE]
+  all_studies <- unique(c(.qes_study_codes(), spec$tables$waves$study, rm$study))
+  source_of <- list()
+  covered <- list()
+  for (k in order(t$relaxed$position)) {
+    col <- t$relaxed$column[k]
+    base <- .qes_rx_base(t$relaxed$base[k])
+    base_studies <- .qes_rx_base_studies(spec, base, covered)
+    parent <- if (!is.null(base) && identical(base$kind, "column")) source_of[[base$name]] else NULL
+    source_of[[col]] <- vapply(all_studies, function(st) {
+      i <- which(rm$column == col & rm$study == st)
+      if (length(i) > 0L) {
+        stt <- unique(rm$status[i])
+        return(if (all(stt %in% "stable")) "relaxed" else paste0("relaxed (", paste(stt, collapse = ", "), ")"))
+      }
+      if (!is.null(parent)) return(unname(parent[st]))
+      if (st %in% base_studies) "strict" else NA_character_
+    }, character(1))
+    covered[[col]] <- all_studies[!is.na(source_of[[col]])]
+  }
+  levels_text <- vapply(seq_len(nrow(rx)), function(j) {
+    if (is.na(rx$levels_id[j])) return(sprintf("%s-%s", .qes_code_chr(rx$valid_min[j]), .qes_code_chr(rx$valid_max[j])))
+    set <- .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
+    paste(paste0(set$name, "=", set[[paste0("label_", lang)]]), collapse = "; ")
+  }, character(1))
+  out <- data.frame(
+    column = rx$column, position = rx$position, label = rx[[paste0("label_", lang)]], type = rx$type,
+    levels = levels_text, base = rx$base, transform = rx$transform, timing = rx$timing,
+    relaxed = rx[[paste0("relax_", lang)]], definition = rx[[paste0("description_", lang)]],
+    essential = rx$essential, status = rx$status, added_in = rx$added_in, stringsAsFactors = FALSE
+  )
+  study_cols <- intersect(.qes_study_codes(), unique(c(spec$tables$waves$study, rm$study)))
+  if (!is.null(studies)) study_cols <- intersect(study_cols, studies)
+  for (st in study_cols) {
+    out[[st]] <- vapply(rx$column, function(col) unname(source_of[[col]][st]), character(1), USE.NAMES = FALSE)
+  }
+  rownames(out) <- NULL
+  out
+}
+
+# The relaxed rows (view "relaxed_maps"), with the recode in words.
+.qes_spec_relaxed_maps_view <- function(spec, columns, studies, lang) {
+  t <- .qes_rx_tables(spec)
+  rm <- t$maps
+  ps <- .qes_rx_pseudo_spec(spec)
+  keep <- rep(TRUE, nrow(rm))
+  if (!is.null(columns)) keep <- keep & rm$column %in% columns
+  if (!is.null(studies)) keep <- keep & rm$study %in% studies
+  idx <- which(keep)
+  rx <- t$relaxed
+  recode <- vapply(idx, function(i) {
+    j <- match(rm$column[i], rx$column)
+    set <- if (is.na(j) || is.na(rx$levels_id[j])) NULL else .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
+    .qes_rx_row_text(ps, ps$tables$crosswalk, i, set, lang)
+  }, character(1))
+  gate <- ifelse(is.na(rm$gate_var[idx]), NA_character_, paste0(rm$gate_var[idx], ": ", rm$gate_to[idx]))
+  out <- data.frame(
+    study = rm$study[idx], wave = rm$wave[idx], column = rm$column[idx], source_var = rm$source_var[idx],
+    rule = rm$rule[idx], map_id = rm$map_id[idx], args = rm$args[idx], na_codes = rm$na_codes[idx],
+    gate = gate, override = rm$override[idx], recode = recode,
+    wording = .qes_pick_lang(rm[idx, , drop = FALSE], "wording", lang), wording_ref = rm$wording_ref[idx],
+    notes = .qes_pick_lang(rm[idx, , drop = FALSE], "notes", lang), evidence = rm$evidence[idx],
+    status = rm$status[idx], reviewed_by = rm$reviewed_by[idx], reviewed_on = rm$reviewed_on[idx],
+    review_note = rm$review_note[idx], added_in = rm$added_in[idx], stringsAsFactors = FALSE
+  )
+  rownames(out) <- NULL
+  out
+}
+
 .qes_spec_crosswalk_view <- function(spec, targets, studies, level, format, lang) {
   all_rows <- spec$tables$crosswalk
   idx <- which((is.null(targets) | all_rows$target %in% targets) & (is.null(studies) | all_rows$study %in% studies))
@@ -450,6 +530,24 @@ print.qes_crosswalk <- function(x, ...) {
     en = "Not harmonized: %s (their respondents are in %s). `get_qes()` reads them.",
     fr = "Non harmonis\u00e9es\u00a0: %s (leurs r\u00e9pondants sont dans %s). `get_qes()` les lit."
   ),
+  # the relaxed layer (.qes_relaxed_reference_md)
+  relaxed_title = c(en = "Relaxed harmonization: qes_decon()", fr = "Harmonisation souple\u00a0: qes_decon()"),
+  relaxed_intro = c(
+    en = "`qes_decon()` puts one concept in one column for every study, even when the wording or the answer options differ, with coarse common categories, under plain column names. It trades exactness for coverage: a relaxed column has no grade and does not claim that two studies asked the same question; the targets above keep the strict, graded versions. A column is built from a strict target or a pooled variable where one exists, recoded into the column's categories where needed, and from relaxed mappings of the studies' own questions where the strict layer has none. A relaxed mapping is applied once a reviewer has signed it off (status `stable`).",
+    fr = "`qes_decon()` met un concept dans une seule colonne pour chaque \u00e9tude, m\u00eame quand le libell\u00e9 ou les choix de r\u00e9ponse diff\u00e8rent, avec des cat\u00e9gories communes larges, sous des noms de colonnes simples. Elle \u00e9change l'exactitude contre la couverture\u00a0: une colonne souple n'a pas de niveau de comparabilit\u00e9 et ne pr\u00e9tend pas que deux \u00e9tudes ont pos\u00e9 la m\u00eame question\u00a0; les cibles ci-dessus gardent les versions strictes, avec leurs niveaux. Une colonne est construite \u00e0 partir d'une cible stricte ou d'une variable regroup\u00e9e quand il en existe une, recod\u00e9e au besoin dans les cat\u00e9gories de la colonne, et d'appariements souples des questions propres aux \u00e9tudes l\u00e0 o\u00f9 la couche stricte n'en a pas. Un appariement souple est appliqu\u00e9 une fois approuv\u00e9 par un r\u00e9viseur (statut `stable`)."
+  ),
+  relaxed_base = c(en = "Base", fr = "Base"),
+  relaxed_only = c(en = "relaxed mappings only", fr = "appariements souples seulement"),
+  relaxed_how = c(en = "How it is relaxed", fr = "Comment elle est assouplie"),
+  relaxed_rows = c(en = "Relaxed mappings", fr = "Appariements souples"),
+  relaxed_none = c(en = "None: every study's values come from the base.", fr = "Aucun\u00a0: les valeurs de chaque \u00e9tude viennent de la base."),
+  relaxed_recode = c(en = "Recode", fr = "Recodage"),
+  relaxed_use = c(en = "Use", fr = "Usage"),
+  relaxed_notes = c(en = "Notes", fr = "Notes"),
+  relaxed_replaces = c(en = "replaces the base", fr = "remplace la base"),
+  relaxed_fills = c(en = "fills the study", fr = "compl\u00e8te l'\u00e9tude"),
+  relaxed_static = c(en = "one value per respondent", fr = "une valeur par personne"),
+  relaxed_wave = c(en = "on the wave that asked it", fr = "sur la vague qui l'a pos\u00e9e"),
   # the coverage grid (.spec_coverage_md)
   cov_note = c(
     en = "This grid is generated from the harmonization spec shipped with qesR: version %s of %s, content hash %s. It is **experimental**. Each cell gives the comparability grade of the study's question for the target, against the target's anchor question; a dash means the study has no question for the target in the spec. A target's name links to its section of the [harmonization reference](%s), which gives the question, its wording, the levels it offered and the reason for its grade. `qes_spec()` returns the same grid as a data frame.",
@@ -713,6 +811,7 @@ print.qes_crosswalk <- function(x, ...) {
   }
   if (isTRUE(header) && is.null(targets)) {
     out <- c(out, .qes_pooled_reference_md(spec, lang, studies, site = site))
+    out <- c(out, .qes_relaxed_reference_md(spec, lang, studies, site = site))
   }
   paste0(paste(out, collapse = "\n"), "\n")
 }
@@ -812,6 +911,58 @@ print.qes_crosswalk <- function(x, ...) {
       }
       out <- c(out, "")
     }
+  }
+  out
+}
+
+# The chapter of the reference on the relaxed layer of qes_decon()
+# (R/hz-relaxed.R), in `lang`: one section per column with its definition,
+# base, transform, relaxation rule, levels and relaxed mappings.
+.qes_relaxed_reference_md <- function(spec, lang, studies = NULL, site = FALSE) {
+  t_ <- function(key) .qes_rt(key, lang)
+  cl <- t_("colon")
+  t <- .qes_rx_tables(spec)
+  rx <- .qes_rx_columns(spec)
+  if (nrow(rx) == 0L) return(character(0))
+  rm <- t$maps
+  if (!is.null(studies)) rm <- rm[rm$study %in% studies, , drop = FALSE]
+  ps <- .qes_rx_pseudo_spec(spec)
+  all_rm <- t$maps
+  out <- c(paste("##", t_("relaxed_title")), "", t_("relaxed_intro"), "")
+  for (j in seq_len(nrow(rx))) {
+    col <- rx$column[j]
+    base <- if (is.na(rx$base[j])) t_("relaxed_only") else paste0("`", rx$base[j], "`")
+    out <- c(out, sprintf("### `%s`%s%s {#relaxed-%s}", col, cl, rx[[paste0("label_", lang)]][j], col), "",
+             rx[[paste0("description_", lang)]][j], "",
+             sprintf("%s%s%s \u00b7 `%s` \u00b7 %s", t_("relaxed_base"), cl, base, rx$transform[j],
+                     t_(if (rx$timing[j] %in% "static") "relaxed_static" else "relaxed_wave")), "",
+             sprintf("**%s**%s%s", t_("relaxed_how"), cl, rx[[paste0("relax_", lang)]][j]), "")
+    if (!is.na(rx$levels_id[j])) {
+      set <- .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
+      out <- c(out, paste0("**", t_("levels"), "**"), "",
+               .qes_md_table(c(t_("code"), t_("name"), t_("label")),
+                             lapply(seq_len(nrow(set)), function(k) c(set$code[k], paste0("`", set$name[k], "`"),
+                                                                      set[[paste0("label_", lang)]][k]))), "")
+    } else {
+      out <- c(out, sprintf("**%s**%s%s-%s", t_("range"), cl, .qes_code_chr(rx$valid_min[j]), .qes_code_chr(rx$valid_max[j])), "")
+    }
+    k <- which(rm$column == col)
+    out <- c(out, paste0("**", t_("relaxed_rows"), "**"), "")
+    if (length(k) == 0L) {
+      out <- c(out, t_("relaxed_none"), "")
+      next
+    }
+    set <- if (is.na(rx$levels_id[j])) NULL else .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
+    cells <- lapply(k, function(i) {
+      ii <- match(paste(rm$study[i], rm$wave[i], rm$column[i]), paste(all_rm$study, all_rm$wave, all_rm$column))
+      notes <- .qes_pick_lang(rm[i, , drop = FALSE], "notes", lang)
+      c(rm$study[i], sprintf("`%s` (%s)", rm$source_var[i], .qes_wave_label(rm$wave[i], lang, rm$study[i], spec)),
+        .qes_rx_row_text(ps, ps$tables$crosswalk, ii, set, lang),
+        t_(if (isTRUE(rm$override[i])) "relaxed_replaces" else "relaxed_fills"),
+        if (is.na(notes)) "" else notes,
+        if (site && rm$status[i] %in% c("draft", "review")) t_("site_pending") else rm$status[i])
+    })
+    out <- c(out, .qes_md_table(c(t_("study"), t_("source"), t_("relaxed_recode"), t_("relaxed_use"), t_("relaxed_notes"), t_("status")), cells), "")
   }
   out
 }

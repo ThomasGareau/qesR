@@ -7,7 +7,10 @@
 qes_party_lineage(x, cols = NULL, lineage = "adq_caq")
 }
 \arguments{
-\item{x}{Harmonized data returned by \code{\link[=qes_harmonize]{qes_harmonize()}}.}
+\item{x}{Harmonized data returned by \code{\link[=qes_harmonize]{qes_harmonize()}}, or the relaxed
+data of \code{\link[=qes_decon]{qes_decon()}} (its party columns are \code{vote_choice}, \code{vote_prev}
+and \code{pid}; relaxed columns carry no grade, so no \verb{__grade} column is
+added).}
 
 \item{cols}{The party columns to join (targets or pooled variables whose
 levels are Quebec parties). \code{NULL} (default) means every such column of
@@ -20,8 +23,9 @@ solidaire, which it joined in December 2017).}
 \value{
 \code{x} with, for each column \verb{<col>} of \code{cols}, the columns
 \verb{<col>_lineage} (a factor, or the ASCII code \code{"ADQ_CAQ"} when \code{x} was
-built with \code{values = "code"}; \code{"labelled"} data get codes as text) and
-\verb{<col>_lineage__grade}, placed at the end.
+built with \code{values = "code"}; \code{"labelled"} data get codes as text)
+and, for data of \code{\link[=qes_harmonize]{qes_harmonize()}}, \verb{<col>_lineage__grade}, placed at
+the end.
 }
 \description{
 \code{qes_party_lineage()} adds, for each party column of harmonized data, a
@@ -50,7 +54,9 @@ Québec (CAQ), avec laquelle l'ADQ a fusionné le 21 janvier 2012, en un
 seul niveau « ADQ/CAQ ». C'est une vue pour les séries chronologiques ;
 les colonnes harmonisées gardent l'ADQ et la CAQ distinctes. Le niveau de
 comparabilité de la nouvelle colonne est \code{approximate} pour les lignes
-recueillies avant la fusion (\code{year} avant 2012).
+recueillies avant la fusion (\code{year} avant 2012). Elle s'applique aussi
+aux données souples de \code{\link[=qes_decon]{qes_decon()}} (\code{vote_choice}, \code{vote_prev}, \code{pid}),
+sans niveau de comparabilité.
 }
 
 \examples{
@@ -62,6 +68,7 @@ table(h$vote_choice_lineage, useNA = "ifany")
 \code{\link[=qes_harmonize]{qes_harmonize()}} and its \code{vote_choice} pooled variable.
 
 Other harmonization: 
+\code{\link{qes_decon}()},
 \code{\link{qes_design}()},
 \code{\link{qes_harmonize}()},
 \code{\link{qes_spec}()}

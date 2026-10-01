@@ -47,6 +47,12 @@ original files and documents (not a human review). A row that nobody
 has reviewed yet is never read by \code{get_decon()} or \code{get_qes_master()},
 even for their columns' targets: the legacy columns stay as they were.
 
+For one data frame of every study with plain, cesR-style columns,
+harmonized in a relaxed way (one concept per column even where the
+questions differ, in coarse common categories), see \code{\link[=qes_decon]{qes_decon()}}. It is
+a different dataset: \code{get_decon()} keeps the 19 columns of qesR 0.4.4,
+one study at a time, and its values do not change.
+
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
 call in a session that leaves \code{assign_global} unset prints a one-time note
@@ -107,7 +113,10 @@ montant du revenu de \code{qes2022} reste un nombre).
 \code{turnout} et \code{votechoice} sont la participation et le vote déclarés
 après l'élection, sauf pour \code{qes2022}, où ce sont la probabilité de voter
 et l'intention de vote pendant la campagne, comme dans qesR 0.4.4 ;
-\code{attr(, "timing")} l'indique (\code{"post"} ou \code{"pre"}).
+\code{attr(, "timing")} l'indique (\code{"post"} ou \code{"pre"}). Pour un seul tableau
+de toutes les études, aux colonnes simples à la manière de cesR et
+harmonisées de façon souple, voir \code{\link[=qes_decon]{qes_decon()}} ; \code{get_decon()} garde
+ses 19 colonnes et ses valeurs.
 }
 
 \examples{
@@ -121,7 +130,9 @@ h <- qes_harmonize("qes_demo", targets = "decon", quiet = TRUE)
 names(h)
 }
 \seealso{
-\link{qesR-deprecated} for the legacy functions and their replacements.
+\code{\link[=qes_decon]{qes_decon()}} for every study in one data frame, harmonized in a
+relaxed way; \link{qesR-deprecated} for the legacy functions and their
+replacements.
 
 Other legacy: 
 \code{\link{download_codebook}()},

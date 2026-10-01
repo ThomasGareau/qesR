@@ -181,6 +181,8 @@ navbar:
       menu:
       - text: How it works
         href: articles/harmonization.html
+      - text: "One file for every study: qes_decon()"
+        href: articles/decon.html
       - text: Coverage by study
         href: articles/coverage.html
       - text: Variable reference
@@ -242,12 +244,15 @@ reference:
     One data frame across the 11 studies: `qes_spec()` shows which studies
     have which harmonized variable and how comparable each study's question
     is; `qes_harmonize()` applies the rules, with a reason for every missing
-    value and each respondent's waves and weights; `qes_design()` turns the
-    result into a survey design. See
+    value and each respondent's waves and weights; `qes_decon()` gives one
+    flat data frame of relaxed harmonized variables, one concept per column
+    even where the questions differ; `qes_design()` turns the result into a
+    survey design. See
     [How harmonization works](../articles/harmonization.html).
   contents:
   - qes_spec
   - qes_harmonize
+  - qes_decon
   - qes_design
   - qes_party_lineage
 - title: Reproducibility
@@ -279,7 +284,7 @@ reference:
     | `download_codebook()` | `qes_download(what = "docs")` |
     | `get_preview()` | `head(get_qes())` |
     | `get_qescodes()` | `qes_studies()` |
-    | `get_decon()` | `qes_harmonize(srvy, targets = "decon")` |
+    | `get_decon()` | `qes_harmonize(srvy, targets = "decon")`, or `qes_decon()` for every study, relaxed |
   contents:
   - qesR-deprecated
   - get_qescodes
@@ -323,6 +328,7 @@ articles:
   navbar: ~
   contents:
   - articles/harmonization
+  - articles/decon
   - articles/coverage
   - harmonization-reference
   - articles/validation
@@ -352,6 +358,7 @@ articles:
   - articles/fr-etudes
   - fr-citations
   - articles/fr-harmonisation
+  - articles/fr-decon
   - articles/fr-couverture
   - fr-reference-harmonisation
   - articles/fr-validation

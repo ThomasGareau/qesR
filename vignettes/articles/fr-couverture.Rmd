@@ -21,6 +21,32 @@ qesR.
 cat(qesR:::.spec_coverage_md(lang = params$lang, site = TRUE))
 ```
 
+## Colonnes souples de qes_decon()
+
+`qes_decon()` renvoie une colonne par concept pour chaque étude, assouplie
+lorsque les questions diffèrent ([Un seul fichier pour toutes les
+études](fr-decon.html)). La grille indique d'où viennent les valeurs de
+chaque étude : *stricte* lorsque la colonne est construite à partir d'une
+cible ou d'une variable regroupée de la grille ci-dessus, *souple*
+lorsqu'un appariement souple de la question propre à l'étude les fournit.
+Les colonnes souples n'ont pas de niveau de comparabilité, et un
+appariement laisse la colonne d'une étude manquante lorsque ses catégories
+chevauchent celles de la colonne.
+
+```{r relaxed, echo = FALSE, results = "asis"}
+fr <- identical(params$lang, "fr")
+rx <- qesR::qes_spec("relaxed", lang = params$lang)
+studies <- intersect(names(rx), qesR::qes_studies()$study)
+word <- c(strict = if (fr) "stricte" else "strict", relaxed = if (fr) "souple" else "relaxed")
+ref <- if (fr) "fr-reference-harmonisation.html" else "harmonization-reference.html"
+rows <- lapply(seq_len(nrow(rx)), function(j) {
+  v <- unlist(rx[j, studies])
+  cells <- ifelse(is.na(v), "\u2014", ifelse(v %in% names(word), word[v], v))
+  c(sprintf("[`%s`](%s#relaxed-%s)<br>%s", rx$column[j], ref, rx$column[j], rx$label[j]), cells)
+})
+cat(qesR:::.qes_md_table(c(if (fr) "Colonne" else "Column", studies), rows), sep = "\n")
+```
+
 ## La même grille dans R
 
 `qes_spec()` renvoie la grille sous forme de tableau, une ligne par cible et

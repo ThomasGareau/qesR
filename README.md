@@ -52,6 +52,9 @@ qes2018 <- get_qes("qes2018")
 
 # the synthetic demonstration study ships with qesR (no download)
 demo <- get_qes("qes_demo")
+
+# every harmonized study in one flat data frame, cesR style (relaxed)
+d <- qes_decon()
 ```
 
 `get_qes()` returns a data frame with the codes and labels of the file
@@ -216,6 +219,27 @@ The [website](https://thomasgareau.github.io/qesR/) has the full grid, with
 each study's waves and weights (*Coverage by study*), and an article that
 goes from `qes_harmonize()` to a weighted estimate.
 
+### Relaxed harmonization
+
+`qes_decon()` returns one flat data frame for every study, in the style of
+cesR: plain column names (`education`, `income_cat`, `religion`,
+`vote_choice`, `sovereignty`, `lr`...) and one concept per column even
+where the wording or the answer options differ, in coarse common
+categories (education in four groups, income in thirds of each study's
+respondents, a referendum vote of yes or no whatever the question). It
+trades exactness for coverage: its columns carry no grade, each says how
+it was relaxed and where each study's values come from, and
+`qes_harmonize()` keeps the strict versions. The relaxed mappings of the
+studies' own questions were signed off by an automated double review
+against the original files and documents (not a human review).
+
+```r
+d <- qes_decon()
+table(d$study, d$sovereignty, useNA = "ifany")
+attr(d$sovereignty, "relaxed")                          # how it was relaxed
+attr(d, "decon_sources")[, c("column", "study", "source_var", "recode")]
+```
+
 ## Messages, errors and the network
 
 - Messages, warnings and errors are in English or French
@@ -304,6 +328,7 @@ qes_codebook("qes2018")            # codebook, sans réseau
 qes_question("qes2018", "q26", lang = "fr")
 qes_search("souverain|sovereign")  # recherche dans toutes les études
 qes2018 <- qes_missing(qes2018)    # « ne sait pas » et « refus » en NA
+d <- qes_decon(lang = "fr")        # toutes les études, un seul tableau (souple)
 ```
 
 L'étude de 2022 est sous licence CC BY-NC 4.0. Ses métadonnées (codebook,
@@ -444,6 +469,29 @@ Le [site web](https://thomasgareau.github.io/qesR/) donne la grille
 complète, avec les vagues et les pondérations de chaque étude (*Couverture
 par étude*), et un article qui va de `qes_harmonize()` à une estimation
 pondérée.
+
+### Harmonisation souple
+
+`qes_decon()` renvoie un seul tableau pour toutes les études, à la manière
+de cesR : des noms de colonnes simples (`education`, `income_cat`,
+`religion`, `vote_choice`, `sovereignty`, `lr`...) et un concept par
+colonne même quand le libellé ou les choix de réponse diffèrent, en
+catégories communes larges (la scolarité en quatre groupes, le revenu en
+tiers des répondants de chaque étude, un vote référendaire oui ou non
+quelle que soit la question). Elle échange l'exactitude contre la
+couverture : ses colonnes n'ont pas de niveau de comparabilité, chacune
+dit comment elle a été assouplie et d'où viennent les valeurs de chaque
+étude, et `qes_harmonize()` garde les versions strictes. Les appariements
+souples des questions propres aux études ont été approuvés par une double
+révision automatisée sur les fichiers et les documents originaux (et non
+par une révision humaine).
+
+```r
+d <- qes_decon(lang = "fr")
+table(d$study, d$sovereignty, useNA = "ifany")
+attr(d$sovereignty, "relaxed")                          # comment elle a été assouplie
+attr(d, "decon_sources")[, c("column", "study", "source_var", "recode")]
+```
 
 ### Messages, erreurs et réseau
 

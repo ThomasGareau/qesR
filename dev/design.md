@@ -141,6 +141,12 @@ Implementation choices that differ from the plan of 2026-09-29: the tables are `
 
 Unchanged binding rules: all 14 current exports keep working; `get_qes()`/`get_qes_master()` keep their signatures; `assign_global` defaults to FALSE and data is always returned visibly; the 11 old helpers are soft-deprecated wrappers kept indefinitely.
 
+### 0.6 Owner request of 2026-10-01: relaxed harmonization (spec 4.4.0, qesR 0.9.0)
+
+Request: "I need more 'relax' harmonization, even if the wording/answer choices are not exactly the same. Refer to cesR (https://hodgettsp.github.io/cesR/). We need a similar level of harmonization."
+
+**Decision.** A new export, `qes_decon(studies = NULL, lang = c("en","fr"), weights = TRUE, quiet = FALSE)`, returns one flat `data.frame` for the 11 harmonizable studies, one row per respondent and wave, with cesR-style plain names and coarse common categories: one column per concept even when the wording or the answer options differ. It is a second layer beside the strict one, not a loosening of it: relaxed columns are not targets (P3 holds), have no crosswalk row and no grade, and never claim that two studies asked the same question; `qes_harmonize()` and its grades are unchanged. The layer is data: `relaxed.csv` (32 columns: 28 concepts and 4 companions) and `relaxed_maps.csv` (60 relaxed rows), with maps in `valuemaps.csv` (prefix `rx_`), validated by V-R1 to V-R12. §5.14 gives the design, §12.5 the owner decisions OD-R1 to OD-R16 and the rejected alternatives. `get_decon()` and `get_qes_master()` do not change (their hash tests are untouched); only the help of `get_decon()` points to `qes_decon()`. 29 exports.
+
 ---
 
 ## 1. Principles and binding constraints
@@ -151,7 +157,7 @@ Unchanged binding rules: all 14 current exports keep working; `get_qes()`/`get_q
 |---|---|---|
 | P1 | Every data read is identified by `(file_id, md5)` and checked against the catalog's `n_rows`/`n_cols`. A mismatch is an error, never a fallback. | [A:D2], [A:D3], [A:D5], [A:D9], [A:D10] |
 | P2 | Nothing is harmonized unless a reviewed spec row says so. There is no name matching, case-insensitive fallback, regex on labels, `eval()` or pass-through of unmapped codes. | [A:H1], [A:H2], [A:H4], [A:H7] |
-| P3 | One target is one stimulus. A different wording, scale, timing, election reference or push/lean format makes a new target. A target name never changes meaning: it is retired and replaced. A pooled variable (§0.5, spec 4.3.0) is not a target: a view that pools targets, recording in `__type` which one each value comes from. | [A:H3], [A:H4] pooling |
+| P3 | One target is one stimulus. A different wording, scale, timing, election reference or push/lean format makes a new target. A target name never changes meaning: it is retired and replaced. A pooled variable (§0.5, spec 4.3.0) is not a target: a view that pools targets, recording in `__type` which one each value comes from. A relaxed column of `qes_decon()` (§5.14, spec 4.4.0) is not a target either: it carries no grade, and its sources say which question each study's values come from. | [A:H3], [A:H4] pooling |
 | P4 | The locale changes what qesR *says* (conditions), never what it *returns*. Returned text depends only on arguments. | [A:D10], locale drift |
 | P5 | Rows are never dropped, whether by deduplication or empty-row removal. IDs are declared, composite where needed, and asserted unique. | [A:H5] |
 | P6 | Every NA carries a reason from a closed vocabulary. | silent missingness |
@@ -225,7 +231,7 @@ Revised by OD17: the three spec views are one function, and splice/join are inte
 | Cache | `qes_cache_info()` | data.frame: `study, file_id, md5, bytes, retrieved, kind (always file since 0.7.1; shard before), path`; attributes `mode` and `dir` | Inspect the cache. |
 | Cache | `qes_cache_clear(studies = NULL, older_than = NULL)` | invisible removed paths | Refuses any root without the `.qesR-cache` marker. It also clears the in-session memo. |
 
-**Canonical surface: 16 functions.** These are the 13 above, plus `get_qes()`, `get_qes_master()` and `qes_codebook()`. The 11 legacy wrappers bring the total to **27 exports** (the 14 current exports keep working: 3 are canonical, 11 are legacy wrappers). qesR 0.8.0 adds `qes_party_lineage()` (OD-P9, §0.5): **28 exports**.
+**Canonical surface: 16 functions.** These are the 13 above, plus `get_qes()`, `get_qes_master()` and `qes_codebook()`. The 11 legacy wrappers bring the total to **27 exports** (the 14 current exports keep working: 3 are canonical, 11 are legacy wrappers). qesR 0.8.0 adds `qes_party_lineage()` (OD-P9, §0.5): **28 exports**. qesR 0.9.0 adds `qes_decon()` (§0.6, §5.14): **29 exports**; `qes_spec()` gains the views `"relaxed"` and `"relaxed_maps"`.
 
 **Internal for now (OD17).** Two harmonization helpers are implemented and tested but not exported, and carry `@keywords internal` with `@noRd`:
 - `.qes_splice(x, family, into = family, prefer = NULL)` adds `<into>`, `<into>__target` and `<into>__grade`, pooling across targets of one family. It refuses different level sets, and it warns and lists wording breaks.
@@ -536,6 +542,9 @@ valuemaps.csv      source code -> level or NA reason
 legacy.csv         get_qes_master / get_decon column renderers
 pooled.csv         pooled variables: type, level set or range, anchor member, EN/FR label and definition, sets (schema 3)
 pooled_members.csv members of each pooled variable: type name, precedence, default, transform, grade cap, EN/FR labels (schema 3)
+relaxed.csv        columns of qes_decon(): type, level set or range, base, transform, timing, essential, same_as, EN/FR label, relaxation rule and definition (schema 4)
+relaxed_maps.csv   relaxed rows: the crosswalk row format without grades, plus override (schema 4)
+expected/relaxed_marginals.csv, expected/relaxed_hashes.csv   recorded results of qes_decon() on the pinned files, every relaxed row applied (schema 4)
 CHANGES.csv        spec changelog (EN/FR), source of the NEWS spec section
 gates.csv          gate code x source code counts among wave members, for every projectable row and every gated weight, date or string row (CC0 studies)
 expected/marginals.csv   projected unweighted harmonized marginals (CC0 studies)
@@ -1000,6 +1009,17 @@ These are followed by the targets, then their companion columns (`__na` with `mi
 | V-F5 | Levels fit: identity members' levels ⊆ the pool's; `recode:` total over the member's levels into the pool's; numeric pools take `identity`/`affine` numeric members whose range maps into the pool's and `score:` ordinal members scored within it | runtime, tests, CI |
 | V-F6 | `grade_cap` is a grade; a transform that merges levels or scores an ordinal scale has `grade_cap = approximate` | runtime, tests, CI |
 | V-F7 | EN **and** FR labels, definitions, type labels (and notes where given) | runtime, tests, CI |
+| V-R1 | (spec 4.4.0) Relaxed tables: required columns, unique `column`, `position` a total order 1..n, one relaxed row per (study, wave, column), type, timing and status enums; a stable relaxed row has a reviewer and date, a row in review or stable has evidence | runtime, tests, CI |
+| V-R2 | Column names match the name grammar, are not leading columns (of `qes_decon()` or of harmonized data) or study codes; a name shared with a target or pooled variable needs `same_as = TRUE` and that base (exception: `religion`, OD-R6) | runtime, tests, CI |
+| V-R3, V-R4 | Bases exist and are live (`target:`, `pooled:`, `pooled:<p>__type`, `column:` placed earlier; empty only with `relaxed_only`); transforms parse, are total over the base's levels and land in the column's level set (`recode:`, `bands:`, `affine:`, `identity`) | runtime, tests, CI |
+| V-R5 | Notes EN **and** FR (or neither); a wording or `wording_ref` (`<file_id>:<ref>`, a catalog file) on every row in review or stable | runtime, tests, CI |
+| V-R6 | A column that is not `essential` covers 3 or more studies (a row whose every code is missing does not count) | runtime, tests, CI |
+| V-R7 | No grade column; no relaxed text claims comparability (`identical`, `strictly comparable`) | runtime, tests, CI |
+| V-R8 | Relaxed rows: study and wave in `waves.csv` (`*` for poll studies or static columns), rule in `map`, `numeric`, `coalesce`, `constant`, `fn:multiselect`, `fn:amount_bands` and fitting the column type, args, `na_codes` and gate well formed, maps named `rx_` and in `valuemaps.csv` with target codes in the column's set; every `rx_` map used, and none by a crosswalk row | runtime, tests, CI |
+| V-R9 | V-D1 to V-D4 on the relaxed rows (shipped dictionary); the bracket question of `fn:amount_bands` mapped; income thirds by the midpoint rule on the dictionary counts. On the data: V-D7 too (runtime), and the amount breaks equal the file's terciles (live) | runtime, tests, CI, live CI |
+| V-R10 | `override = TRUE` exactly where the base covers the study | runtime, tests, CI |
+| V-R11 | `expected/relaxed_marginals.csv` and `expected/relaxed_hashes.csv`: form and keys offline; equal to `qes_decon()` on the originals (every relaxed row applied) | tests, live CI |
+| V-R12 | `legacy.csv` names no relaxed-only column; the legacy renderers never read the relaxed tables | runtime, tests |
 | V-S19 | (spec 4.3.0) A note (never an error) for each row nobody has reviewed yet that a legacy column would read once signed off: the legacy renderers ignore such rows (the legacy freeze, §0.5) | tests, CI |
 | V-F9 | The column hash of each pooled variable (default types, respondent layout) in each study equals `expected/hashes.csv` (wave `*`, `source_var` the member types applied) | live CI |
 | V-D1 | Source and gate variables exist, with exact case and a near-match hint | tests (dict), CI, runtime |
@@ -1142,6 +1162,27 @@ This is followed by the `legacy.csv` renderer (`profile, position, legacy_column
   - separate CC0 and CC BY-NC files, keyed on spec version and hash;
   - read with haven or CSV, never RDS;
   - added as a catalog row with `source = "deposit"`.
+
+### 5.14 Relaxed layer: `qes_decon()` (spec 4.4.0, qesR 0.9.0)
+
+**What it is.** One flat `data.frame` for the harmonizable studies (`studies = NULL` or `"all"`: the 11, in `waves.csv` order; `qes_demo` accepted; the 1998 firms' own files are an input error pointing to `qes1998`), with one row per respondent and wave (the rows of `qes_harmonize(layout = "long")`, so P5 holds), the leading columns `study`, `year` (the poll's year for the CROP polls), `wave`, `qes_id`, then `weight` (the wave's recommended weight, normalized to mean 1 per study and wave; `NA` where none is recommended or it needs review) and `weight_var`, then the 32 relaxed columns of `relaxed.csv` in `position` order. Plain `data.frame`, no class. Column names are English in both languages; `lang` sets factor levels and every text.
+
+**How a column is built** (`R/decon-relaxed.R`, in `position` order):
+1. **Base.** `target:<t>`: the strict target's values from one internal `qes_harmonize()` call (long layout, `values = "code"`, `missing = "reasons"`, `min_grade = "approximate"`, signed-off rows only, `weights = "normalized"`); `pooled:<p>` and `pooled:<p>__type`: a pooled variable and its member type; `column:<c>`: an earlier relaxed column; empty: relaxed rows only.
+2. **Transform** of the base's values: `identity`, `recode:` (a total map of the base's levels; `NA:<reason>` makes a missing value, as `would_not_vote` in `sovereignty`), `bands:` (a 0-1 score in levels: `interest`), `affine:`.
+3. **Relaxed rows** (`relaxed_maps.csv`), applied by the engine's own `.qes_hz_apply_row()` on each study's frame through a pseudo-spec (relaxed columns as targets, relaxed rows as crosswalk rows), after the data checks V-D1 to V-D4 and V-D7 on the frame (an error, `qesR_error_spec`; a frame given as data or the demonstration study skips V-D3 and V-D7, as the engine does). `override = TRUE` replaces the base for the study (static column) or for the study and wave (wave column); `override = FALSE` fills rows the base leaves `not_asked`/`not_in_wave`. Only `stable` rows are applied: an unapplied filling row leaves its cells `NA` with reason `not_reviewed`; an unapplied replacing row leaves the base in place.
+4. **Static columns** (`timing = static`) are spread over a respondent's rows by `qes_id`: the first row with a value, else the first with an answer reason. Wave columns sit on the wave that asked them.
+5. **Encoding.** Factors with every level of the set (ordered for ordinal columns), numbers otherwise. Each column carries `label`, `relaxed` (the one-sentence relaxation rule) and `sources` (`study`, `wave`, `source_var`, `wording_ref`, `recode`).
+
+**Sources.** Each value keeps the key of the source that decided it; `attr(x, "decon_sources")` lists every (column, study, wave) source: `base`, `source_var` (`"q19 > q20"` for a push, `"q102 / q103"` for a gate), `wording_ref`, `recode` (generated in `lang` from the maps and transforms, so it lists every code), `relaxed` (a relaxed row or a collapse was used), `status` and `applied` of the row, `n_value` (respondents of a static column, rows of a wave column) and `na_reasons`. A strict or pooled source that gave no row is left out. `attr(x, "weights")` gives, per study and wave, the weight variable, its registry status and why it is `NA` (`needs_review`, `no_recommended_weight`). One message, `qesR_message_decon`, says which studies have relaxed rows and how many rows are held in review; the engine's own notices are not repeated.
+
+**Spec.** `relaxed.csv` and `relaxed_maps.csv` (schema 4; a schema 2 or 3 directory loads with empty relaxed tables); 10 level sets `rx_*`; 57 maps `rx_*` in `valuemaps.csv` (labels quoted from the dictionary with their origin, so V-D3 compares them with the file); `expected/relaxed_marginals.csv` and `expected/relaxed_hashes.csv`, written by `data-raw/build_relaxed.R --expected` with every relaxed row applied. `data-raw/build_relaxed.R` declares the relaxed rows in a compact form and writes `relaxed_maps.csv` and the `rx_` maps; `relaxed.csv` and the level sets are edited by hand. Two engine additions, used by relaxed rows only: `fn:amount_bands` (an amount in bands, its no-amount codes passed to a bracket question: the 2022 income) and the `first=TRUE` option of `fn:multiselect` (the first option ticked wins). Views: `qes_spec("relaxed")` (one column per study: `strict`, `relaxed`, with the status of a row not signed off, or `NA`) and `qes_spec("relaxed_maps")`; a generated chapter "Relaxed harmonization" in the reference; `?qes_decon` lists the columns from `relaxed.csv` (`.rd_decon_columns()`).
+
+**Coverage** (relaxed rows applied): 11 studies for vote choice, sovereignty, gender and age group; 9 or 10 for education, income, language, employment and region; 3 to 7 for the attitudes, religion, marital status, the administrative region and the birthplace; citizenship 2 (essential). Concepts under 3 studies are left out (union membership, personal finances, the federal economy, sexual orientation); `province_territory` is a constant.
+
+**Legacy freeze.** `get_decon()` and `get_qes_master()` read targets only (V-R12); their outputs and hash tests do not change.
+
+**Documentation.** The website has the article pair *One file for every study: qes_decon()* / *Un seul fichier pour toutes les études : qes_decon()* (`vignettes/articles/decon.Rmd`, `fr-decon.Rmd`; Harmonization menu, after *How it works*). Its column table is generated at build time from `qes_spec("relaxed")` and the data (a study counts as covered where the column has a value), its examples estimate within one study and wave with that wave's weight, and it says when `qes_harmonize()` is the better tool. The coverage page adds a grid of the relaxed columns from the same view. In that view, a column built on another column (`column:<c>`) takes that column's source study by study, so the 1998 polls show `relaxed` for `language_fr` and `language_eng`, as for `language`.
 
 ---
 
@@ -1750,6 +1791,38 @@ Every finding was checked before it was applied. The validity findings were re-r
 | CC-F5 | Version numbering | Accepted. **Chose** 0.5.0 / 0.6.0 / 0.7.0; the reference vignettes move to HZ3. |
 | CC-F6 | S4 depends on owner decisions | Accepted. OD4, OD5, OD8, OD9 and OD15 are listed. |
 | CC-F7 | Insecure code deletion timing | Accepted. S0c. |
+
+### 12.5 Relaxed harmonization (spec 4.4.0): decision record
+
+Owner request of 2026-10-01 (§0.6). The plan (`scratchpad/relaxed/plan.md`) was checked map by map on the pinned files: every code of every relaxed row has an outcome, and the counts recorded in `expected/relaxed_marginals.csv` are those of the plan (the 2007 panel differs by one respondent who is in no wave, `NA` with reason `not_in_wave`). The relaxed rows start in review (`status = review`, not applied by `qes_decon()` until signed off, as crosswalk rows); the decisions below are the plan's recommendations, implemented as written, for the owner to confirm.
+
+**Sign-off (spec 4.5.0, 2026-10-01).** An automated double review checked the 60 relaxed rows against the original files and documents: one pass on the codes and the data, one on the wording, adjudicated where they disagreed. It signed off all 60, which are now `stable` and applied by `qes_decon()` by default; `reviewed_by` and `review_note` say that the review was automated, not human, as for the crosswalk sign-offs. It held none and changed no code: the corrections are notes (education for the 2007 panel and the CROP polls, marital status for 2012 and 2014, employment for `qes2008` and the 2018 panel, the CROP referendum row, three `qes2007` mother tongue maps) and seven wordings or wording references. The sign-offs and corrections live in `data-raw/build_relaxed.R` (`signed_off`, and the arguments `wording_en`, `wording_fr`, `code_notes` and `count_notes` of `rx_row()`), so a rebuild keeps them; a new relaxed row starts in review. When the dictionary has no question for a row's variable, the build puts the variable label in the field of the study's label language (English for `qes2012`, French otherwise), so that an English label never sits in `wording_fr`. Two follow-ups were not taken: a relaxed gate that would turn a placeholder code into `not_asked` (the 2018 panel's `d4` = 9 on the telephone rows, now a documented `dk_refused`), and replacing the short file labels kept as `wording_fr` on some rows (`Sous-région`, `scolarité`) with questionnaire wording.
+
+| # | Question | Implemented (owner to confirm) |
+|---|---|---|
+| OD-R1 | 1998 education: "10-15 years" spans high school and college | `NA` for the whole study (every code `not_mappable`, so the row documents the decision) |
+| OD-R2 | 1998 employment: "not working" mixes several statuses | `NA` for the whole study (as OD-R1) |
+| OD-R3 | 1998 mother tongue by sample design | French for the 1,057 CREATEC rows (`firme_post` = 1; the CREATEC codebook: only French mother tongue); CROP rows `not_mappable` |
+| OD-R4 | qes2008: no recommended weight | `weight` and `weight_var` `NA`, reason `no_recommended_weight` in `attr(, "weights")` |
+| OD-R5 | Several mother tongues | French, then English, then other; the flags `language_fr`/`language_eng` keep both |
+| OD-R6 | `religion` shares the name of the strict string target `religion` | Kept, as the one V-R2 exception (`.qes_rx_shadow_ok`) |
+| OD-R7 | 2012/2014 marital status is the official civil status | Included, with the caveat in the column's rule and the rows' notes |
+| OD-R8 | CROP referendum item: wording not deposited, documented by CROP's reports for 19 of 24 polls | Included; `sovereignty_type = crop_undocumented` |
+| OD-R9 | Two statuses at once | The status that is not work |
+| OD-R10 | DEP (2018) and apprenticeship (2018 panel) | College |
+| OD-R11 | Income thirds | Unweighted counts of the dictionary; the 2022 amount by the terciles of the 1,444 amounts given (V-R9) |
+| OD-R12 | 2018 panel citizenship from the `qa` screener | Included, with a note: constant in the study |
+| OD-R13 | `vote_prov_prev` 2008 `q13` and 2018 `q9` in review | Unchanged: `vote_prev` follows the strict rows (NA, `not_reviewed`, until signed off) |
+| OD-R14 | `pid_strength` now | Not in this release (candidate for 0.10 with the leader ratings, `mip_issue`, `relig_attend`, `lang_home`) |
+| OD-R15 | `year` of the CROP polls | The poll's year (the engine's leading column) |
+| OD-R16 | Interest bands | Low below 0.35, high from 0.75, on `pol_interest` |
+
+Implementation choices that differ from the plan: the recode texts are generated at runtime from the maps (rather than stored as `recode_en`/`recode_fr` columns), so that they always list every code; `relaxed.csv` has `valid_min`/`valid_max` (numeric columns); `interest` is based on `pooled:pol_interest` directly (a `column:` base must come earlier, and `interest` comes before `interest_01`); no rule `design` was needed (OD-R3 is a map of `firme_post`); `decon_sources` adds `status` and `applied`; the validator failure tests edit the shipped tables in memory (as the V-F tests do) rather than reading fixture directories; the expected results are per study and wave (`*` for static columns, counted once per respondent).
+
+**Rejected alternatives.**
+1. Lowering the grades of strict targets, or adding `not_comparable` rows that the engine would apply: it would blur the one thing the strict layer guarantees, and change existing hashes (MAJOR).
+2. Making the relaxed columns pooled variables: pooled variables pool *targets*; most relaxed concepts have no target in some studies (education, religion), and a pooled variable carries grades a relaxed column must not claim.
+3. A `relaxed = TRUE` argument on `qes_harmonize()`: one function would then return graded and ungraded columns under the same names and classes, and its output contract (grades, provenance, `qes_design()`) would hold for one mode only.
 
 ---
 

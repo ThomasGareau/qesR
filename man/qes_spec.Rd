@@ -5,7 +5,7 @@
 \title{The harmonization spec (experimental)}
 \usage{
 qes_spec(
-  view = c("targets", "crosswalk", "spec", "pooled"),
+  view = c("targets", "crosswalk", "spec", "pooled", "relaxed", "relaxed_maps"),
   targets = NULL,
   studies = NULL,
   level = c("row", "code"),
@@ -17,11 +17,14 @@ qes_spec(
 )
 }
 \arguments{
-\item{view}{\code{"targets"}, \code{"crosswalk"}, \code{"spec"} or \code{"pooled"}.}
+\item{view}{\code{"targets"}, \code{"crosswalk"}, \code{"spec"}, \code{"pooled"},
+\code{"relaxed"} or \code{"relaxed_maps"}.}
 
 \item{targets}{Target, family or set names (views \code{"targets"} and
 \code{"crosswalk"}; the set \code{"decon"} holds the targets of the columns of
-\code{\link[=get_decon]{get_decon()}}); \code{NULL} (default) is every target.}
+\code{\link[=get_decon]{get_decon()}}); pooled variables (view \code{"pooled"}); columns of
+\code{\link[=qes_decon]{qes_decon()}} (views \code{"relaxed"} and \code{"relaxed_maps"}); \code{NULL}
+(default) is every one.}
 
 \item{studies}{Study codes (views \code{"targets"} and \code{"crosswalk"}); \code{NULL}
 (default) is every study the spec covers.}
@@ -71,12 +74,22 @@ whichever wave the respondent took part (the 2007 panel).
 or the range of a numeric one), \code{type_name}, \code{type_label}, \code{member},
 \code{precedence}, \code{default}, \code{transform}, \code{grade_cap}, \code{note}, \code{status},
 \code{added_in}, then one column per study.
+\item \code{"relaxed"}: a data frame with columns \code{column}, \code{position},
+\code{label}, \code{type}, \code{levels}, \code{base}, \code{transform}, \code{timing}, \code{relaxed}
+(how the column was relaxed), \code{definition}, \code{essential}, \code{status},
+\code{added_in}, then one column per study.
+\item \code{"relaxed_maps"}: a data frame with columns \code{study}, \code{wave},
+\code{column}, \code{source_var}, \code{rule}, \code{map_id}, \code{args}, \code{na_codes}, \code{gate},
+\code{override}, \code{recode}, \code{wording}, \code{wording_ref}, \code{notes}, \code{evidence},
+\code{status}, \code{reviewed_by}, \code{reviewed_on}, \code{review_note}, \code{added_in}.
 \item \code{"spec"}: an object of class \code{qes_spec}: a list with the spec
 \code{version}, its content \code{hash}, \code{custom} (\code{TRUE} when it is not the
 shipped spec) and \code{tables} (targets, levels, crosswalk, valuemaps,
 waves, weights, changes, gates, expected, hashes, legacy: the renderer of
 \code{\link[=get_qes_master]{get_qes_master()}} and \code{\link[=get_decon]{get_decon()}}, pooled and pooled_members: the
-pooled variables); \code{attr(, "check")}
+pooled variables, relaxed and relaxed_maps: the relaxed layer of
+\code{\link[=qes_decon]{qes_decon()}}, rx_expected and rx_hashes: its recorded results);
+\code{attr(, "check")}
 holds the problems table (\code{rule}, \code{severity}, \code{table}, \code{row}, \code{key},
 \code{detail}).
 }
@@ -108,6 +121,18 @@ tried first is 1), whether it is used by default, the transform of its
 values and its grade cap, and one column per study giving the member's
 grade there (capped; \code{NA}: no question). \code{targets} selects pooled
 variables (or the set \code{"pooled"}).
+\item \code{view = "relaxed"}: one row per column of \code{\link[=qes_decon]{qes_decon()}}, the relaxed
+harmonization: its label, levels, base (the strict target or pooled
+variable it reuses, if any), the transform of the base's values, how it
+was relaxed, and one column per study saying where the study's values
+come from (\code{"strict"}: the base; \code{"relaxed"}: a relaxed mapping of the
+study's own question, with its status when it is not signed off yet;
+\code{NA}: none; a column built on another column takes that column's
+source). \code{targets} selects columns.
+\item \code{view = "relaxed_maps"}: one row per relaxed mapping (study, wave and
+column): the source variable, rule, value map, gate, whether it
+replaces the base, the recode in words, the wording or the document
+that gives it, notes and review status. \code{targets} selects columns.
 \item \code{view = "spec"}: the spec itself, as an object of class \code{qes_spec}
 (tables, version and content hash), checked by the validator and the
 data checks; this is what \verb{spec =} of \code{\link[=qes_harmonize]{qes_harmonize()}} accepts.
@@ -138,11 +163,14 @@ L'ensemble de cibles \code{"decon"} réunit les cibles des colonnes de
 \code{vote_choice}, qui réunit le vote déclaré et les intentions de vote) :
 leurs membres, leur ordre de priorité et le niveau de chaque membre dans
 chaque étude. \code{lang = "fr"} donne les étiquettes, définitions et raisons en français.
+Les vues \code{"relaxed"} et \code{"relaxed_maps"} décrivent l'harmonisation
+souple de \code{\link[=qes_decon]{qes_decon()}} : ses colonnes, leur base et la façon dont elles
+sont assouplies, puis l'appariement souple propre à chaque étude.
 \code{vignette("fr-reference-harmonisation", package = "qesR")} en est la
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 4.3.1)}{
+\section{Targets in the shipped spec (version 4.5.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{
@@ -223,6 +251,11 @@ qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",
 pv <- qes_spec("pooled", targets = "vote_choice")
 pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
 
+# the relaxed columns of qes_decon(), and each study's relaxed mapping
+rx <- qes_spec("relaxed")
+rx[, c("column", "base", "transform", "qes2022", "qes1998")]
+qes_spec("relaxed_maps", targets = "education")[, c("study", "source_var", "recode", "status")]
+
 # the checked spec itself
 s <- qes_spec("spec")
 s
@@ -233,6 +266,7 @@ s
 generated from the spec.
 
 Other harmonization: 
+\code{\link{qes_decon}()},
 \code{\link{qes_design}()},
 \code{\link{qes_harmonize}()},
 \code{\link{qes_party_lineage}()}

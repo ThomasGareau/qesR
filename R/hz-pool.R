@@ -444,9 +444,14 @@
 #' seul niveau « ADQ/CAQ ». C'est une vue pour les séries chronologiques ;
 #' les colonnes harmonisées gardent l'ADQ et la CAQ distinctes. Le niveau de
 #' comparabilité de la nouvelle colonne est `approximate` pour les lignes
-#' recueillies avant la fusion (`year` avant 2012).
+#' recueillies avant la fusion (`year` avant 2012). Elle s'applique aussi
+#' aux données souples de [qes_decon()] (`vote_choice`, `vote_prev`, `pid`),
+#' sans niveau de comparabilité.
 #'
-#' @param x Harmonized data returned by [qes_harmonize()].
+#' @param x Harmonized data returned by [qes_harmonize()], or the relaxed
+#'   data of [qes_decon()] (its party columns are `vote_choice`, `vote_prev`
+#'   and `pid`; relaxed columns carry no grade, so no `__grade` column is
+#'   added).
 #' @param cols The party columns to join (targets or pooled variables whose
 #'   levels are Quebec parties). `NULL` (default) means every such column of
 #'   `x`.
@@ -456,8 +461,9 @@
 #'
 #' @return `x` with, for each column `<col>` of `cols`, the columns
 #'   `<col>_lineage` (a factor, or the ASCII code `"ADQ_CAQ"` when `x` was
-#'   built with `values = "code"`; `"labelled"` data get codes as text) and
-#'   `<col>_lineage__grade`, placed at the end.
+#'   built with `values = "code"`; `"labelled"` data get codes as text)
+#'   and, for data of [qes_harmonize()], `<col>_lineage__grade`, placed at
+#'   the end.
 #' @family harmonization
 #' @seealso [qes_harmonize()] and its `vote_choice` pooled variable.
 #' @examples
@@ -466,7 +472,9 @@
 #' table(h$vote_choice_lineage, useNA = "ifany")
 #' @export
 qes_party_lineage <- function(x, cols = NULL, lineage = "adq_caq") {
-  if (!inherits(x, "qes_harmonized") || !is.data.frame(x)) {
+  # the relaxed data of qes_decon() (a plain data frame with decon_sources)
+  decon <- is.data.frame(x) && !inherits(x, "qes_harmonized") && is.data.frame(attr(x, "decon_sources", exact = TRUE))
+  if ((!inherits(x, "qes_harmonized") && !decon) || !is.data.frame(x)) {
     .qes_abort("input_design_x", class = "qesR_error_input", data = list(arg = "x", value = NULL))
   }
   if (!is.character(lineage) || length(lineage) == 0L || anyNA(lineage) || !all(lineage %in% names(.qes_lineages))) {
@@ -474,13 +482,18 @@ qes_party_lineage <- function(x, cols = NULL, lineage = "adq_caq") {
                data = list(arg = "lineage", value = lineage))
   }
   meta <- attr(x, "qes_spec", exact = TRUE)
-  lang <- meta$options$lang %||% "en"
-  values <- meta$options$values %||% "factor"
+  lang <- if (decon) attr(x, "lang", exact = TRUE) %||% "en" else meta$options$lang %||% "en"
+  values <- if (decon) "factor" else meta$options$values %||% "factor"
   sp <- .qes_spec_get(NULL, "none")
   tg <- sp$tables$targets
   pl <- .qes_pool_tables(sp)$pooled
+  rxc <- .qes_rx_columns(sp)
   party_sets <- c("party_qc", "party_qc_intent", "pid_qc")
   set_of <- function(col) {
+    if (decon) {
+      j <- match(col, rxc$column)
+      return(if (is.na(j)) NA_character_ else rxc$levels_id[j])
+    }
     j <- match(col, tg$target)
     if (!is.na(j)) return(tg$levels_id[j])
     j <- match(col, pl$pooled)
@@ -520,6 +533,11 @@ qes_party_lineage <- function(x, cols = NULL, lineage = "adq_caq") {
       joined
     }
     attr(newv, "label") <- paste(attr(v, "label", exact = TRUE) %||% col, "(lineage)")
+    if (decon) {
+      # relaxed columns carry no grade
+      x[[paste0(col, "_lineage")]] <- newv
+      next
+    }
     g <- if (paste0(col, "__grade") %in% names(x)) as.character(x[[paste0(col, "__grade")]]) else if (!is.null(cell)) {
       cell$grade[match(paste(x$study, col), paste(cell$study, cell$target))]
     } else rep(NA_character_, nrow(x))

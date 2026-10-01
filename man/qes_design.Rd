@@ -142,6 +142,7 @@ if (requireNamespace("survey", quietly = TRUE)) {
 \code{attr(, "qes_weight_guide")}, which says which weight fits each target.
 
 Other harmonization: 
+\code{\link{qes_decon}()},
 \code{\link{qes_harmonize}()},
 \code{\link{qes_party_lineage}()},
 \code{\link{qes_spec}()}

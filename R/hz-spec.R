@@ -33,9 +33,15 @@
 #                  pooled variables (schema 3): one output column that pools
 #                  several targets, with a precedence among them
 #                  (R/hz-pool.R), checked by V-F1 to V-F7.
-# gates.csv, expected/, legacy.csv and the pooled tables are optional: a spec
-# directory without them loads with empty tables. The content hash covers
-# every CSV of the directory.
+#   relaxed.csv, relaxed_maps.csv, expected/relaxed_marginals.csv,
+#   expected/relaxed_hashes.csv
+#                  the relaxed layer of qes_decon() (schema 4): one column
+#                  per concept across the studies, with coarse common
+#                  categories and no grade (R/hz-relaxed.R), checked by V-R1
+#                  to V-R12.
+# gates.csv, expected/, legacy.csv, the pooled and the relaxed tables are
+# optional: a spec directory without them loads with empty tables. The
+# content hash covers every CSV of the directory.
 #
 # .qes_spec_load() reads a directory through the one CSV loader and types it;
 # .qes_spec_check() (R/hz-validate.R) runs the validator V-S1 to V-S17 on the
@@ -48,9 +54,11 @@
 # a spec directory. Schema 2 (spec 4.0.0) adds the crosswalk column
 # review_note; schema 3 (spec 4.3.0) adds the pooled variables (pooled.csv,
 # pooled_members.csv) and the crosswalk rule coalesce. A schema 2 directory
-# reads with empty pooled tables.
-.qes_spec_schema_version <- "3"
-.qes_spec_schema_readable <- c("2", "3")
+# reads with empty pooled tables. Schema 4 (spec 4.4.0) adds the relaxed
+# layer (relaxed.csv, relaxed_maps.csv and their expected results); a schema
+# 2 or 3 directory reads with empty relaxed tables.
+.qes_spec_schema_version <- "4"
+.qes_spec_schema_readable <- c("2", "3", "4")
 .qes_spec_files <- c(
   targets = "targets.csv", levels = "levels.csv", crosswalk = "crosswalk.csv",
   valuemaps = "valuemaps.csv", waves = "waves.csv", weights = "weights.csv",
@@ -59,13 +67,18 @@
 # Optional files (a spec directory may lack them) and their schemas.
 .qes_spec_optional_files <- c(gates = "gates.csv", expected = "expected/marginals.csv",
                               hashes = "expected/hashes.csv", legacy = "legacy.csv",
-                              pooled = "pooled.csv", pooled_members = "pooled_members.csv")
+                              pooled = "pooled.csv", pooled_members = "pooled_members.csv",
+                              relaxed = "relaxed.csv", relaxed_maps = "relaxed_maps.csv",
+                              rx_expected = "expected/relaxed_marginals.csv",
+                              rx_hashes = "expected/relaxed_hashes.csv")
 .qes_spec_table_schema <- c(
   targets = "spec_targets", levels = "spec_levels", crosswalk = "spec_crosswalk",
   valuemaps = "spec_valuemaps", waves = "spec_waves", weights = "spec_weights",
   changes = "spec_changes", gates = "spec_gates", expected = "spec_expected",
   hashes = "spec_hashes", legacy = "spec_legacy", pooled = "spec_pooled",
-  pooled_members = "spec_pooled_members"
+  pooled_members = "spec_pooled_members", relaxed = "spec_relaxed",
+  relaxed_maps = "spec_relaxed_maps", rx_expected = "spec_rx_expected",
+  rx_hashes = "spec_rx_hashes"
 )
 .qes_spec_fields <- c("Spec-Version", "Spec-Date", "Schema-Version", "Engine-Min", "Hash", "Licence")
 
@@ -316,18 +329,22 @@
   obj
 }
 
-# Run the validator and the data checks on the shipped dictionary (R/hz-data.R);
+# Run the validator and the data checks on the shipped dictionary (R/hz-data.R,
+# and V-R9 for the relaxed rows, R/hz-relaxed.R);
 # an unexpected R error inside them (a bug the rules did not foresee) becomes
 # qesR_error_spec rather than a bare error. A custom spec whose gates.csv
 # lacks the cells of a row cannot be checked offline for it: a warning, since
 # its author checks it on the data with qes_spec(data = ).
 .qes_spec_check_safely <- function(spec, where) {
   tryCatch(
-    rbind(
-      .qes_spec_check(spec),
-      .qes_data_check(spec, .qes_hz_sources_shipped(spec),
-                      offline_severity = if (isTRUE(spec$custom)) "warning" else "error")
-    ),
+    {
+      sources <- .qes_hz_sources_shipped(spec)
+      rbind(
+        .qes_spec_check(spec),
+        .qes_data_check(spec, sources, offline_severity = if (isTRUE(spec$custom)) "warning" else "error"),
+        .qes_rx_data_check(spec, sources)
+      )
+    },
     error = function(e) {
       if (inherits(e, "qesR_error")) stop(e)
       .qes_spec_abort(.qes_spec_problems(
@@ -428,6 +445,18 @@
 #'   values and its grade cap, and one column per study giving the member's
 #'   grade there (capped; `NA`: no question). `targets` selects pooled
 #'   variables (or the set `"pooled"`).
+#' * `view = "relaxed"`: one row per column of [qes_decon()], the relaxed
+#'   harmonization: its label, levels, base (the strict target or pooled
+#'   variable it reuses, if any), the transform of the base's values, how it
+#'   was relaxed, and one column per study saying where the study's values
+#'   come from (`"strict"`: the base; `"relaxed"`: a relaxed mapping of the
+#'   study's own question, with its status when it is not signed off yet;
+#'   `NA`: none; a column built on another column takes that column's
+#'   source). `targets` selects columns.
+#' * `view = "relaxed_maps"`: one row per relaxed mapping (study, wave and
+#'   column): the source variable, rule, value map, gate, whether it
+#'   replaces the base, the recode in words, the wording or the document
+#'   that gives it, notes and review status. `targets` selects columns.
 #' * `view = "spec"`: the spec itself, as an object of class `qes_spec`
 #'   (tables, version and content hash), checked by the validator and the
 #'   data checks; this is what `spec =` of [qes_harmonize()] accepts.
@@ -454,13 +483,19 @@
 #' `vote_choice`, qui réunit le vote déclaré et les intentions de vote) :
 #' leurs membres, leur ordre de priorité et le niveau de chaque membre dans
 #' chaque étude. `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+#' Les vues `"relaxed"` et `"relaxed_maps"` décrivent l'harmonisation
+#' souple de [qes_decon()] : ses colonnes, leur base et la façon dont elles
+#' sont assouplies, puis l'appariement souple propre à chaque étude.
 #' `vignette("fr-reference-harmonisation", package = "qesR")` en est la
 #' référence complète.
 #'
-#' @param view `"targets"`, `"crosswalk"`, `"spec"` or `"pooled"`.
+#' @param view `"targets"`, `"crosswalk"`, `"spec"`, `"pooled"`,
+#'   `"relaxed"` or `"relaxed_maps"`.
 #' @param targets Target, family or set names (views `"targets"` and
 #'   `"crosswalk"`; the set `"decon"` holds the targets of the columns of
-#'   [get_decon()]); `NULL` (default) is every target.
+#'   [get_decon()]); pooled variables (view `"pooled"`); columns of
+#'   [qes_decon()] (views `"relaxed"` and `"relaxed_maps"`); `NULL`
+#'   (default) is every one.
 #' @param studies Study codes (views `"targets"` and `"crosswalk"`); `NULL`
 #'   (default) is every study the spec covers.
 #' @param level `"row"` (default) or `"code"` (view `"crosswalk"` only).
@@ -500,12 +535,22 @@
 #'     or the range of a numeric one), `type_name`, `type_label`, `member`,
 #'     `precedence`, `default`, `transform`, `grade_cap`, `note`, `status`,
 #'     `added_in`, then one column per study.
+#'   * `"relaxed"`: a data frame with columns `column`, `position`,
+#'     `label`, `type`, `levels`, `base`, `transform`, `timing`, `relaxed`
+#'     (how the column was relaxed), `definition`, `essential`, `status`,
+#'     `added_in`, then one column per study.
+#'   * `"relaxed_maps"`: a data frame with columns `study`, `wave`,
+#'     `column`, `source_var`, `rule`, `map_id`, `args`, `na_codes`, `gate`,
+#'     `override`, `recode`, `wording`, `wording_ref`, `notes`, `evidence`,
+#'     `status`, `reviewed_by`, `reviewed_on`, `review_note`, `added_in`.
 #'   * `"spec"`: an object of class `qes_spec`: a list with the spec
 #'     `version`, its content `hash`, `custom` (`TRUE` when it is not the
 #'     shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,
 #'     waves, weights, changes, gates, expected, hashes, legacy: the renderer of
 #'     [get_qes_master()] and [get_decon()], pooled and pooled_members: the
-#'     pooled variables); `attr(, "check")`
+#'     pooled variables, relaxed and relaxed_maps: the relaxed layer of
+#'     [qes_decon()], rx_expected and rx_hashes: its recorded results);
+#'     `attr(, "check")`
 #'     holds the problems table (`rule`, `severity`, `table`, `row`, `key`,
 #'     `detail`).
 #'
@@ -530,17 +575,23 @@
 #' pv <- qes_spec("pooled", targets = "vote_choice")
 #' pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
 #'
+#' # the relaxed columns of qes_decon(), and each study's relaxed mapping
+#' rx <- qes_spec("relaxed")
+#' rx[, c("column", "base", "transform", "qes2022", "qes1998")]
+#' qes_spec("relaxed_maps", targets = "education")[, c("study", "source_var", "recode", "status")]
+#'
 #' # the checked spec itself
 #' s <- qes_spec("spec")
 #' s
 #' @export
-qes_spec <- function(view = c("targets", "crosswalk", "spec", "pooled"), targets = NULL, studies = NULL,
+qes_spec <- function(view = c("targets", "crosswalk", "spec", "pooled", "relaxed", "relaxed_maps"),
+                     targets = NULL, studies = NULL,
                      level = c("row", "code"), format = c("qesR", "retroharmonize"),
                      spec = NULL, validate = c("error", "report", "none"), data = NULL,
                      lang = c("en", "fr")) {
   level_given <- !missing(level)
   format_given <- !missing(format)
-  view <- .qes_check_one(view, "view", c("targets", "crosswalk", "spec", "pooled"))
+  view <- .qes_check_one(view, "view", c("targets", "crosswalk", "spec", "pooled", "relaxed", "relaxed_maps"))
   validate <- .qes_check_one(validate, "validate", c("error", "report", "none"))
   lang <- .qes_check_one(lang, "lang", c("en", "fr"))
   level <- .qes_check_one(level, "level", c("row", "code"))
@@ -555,12 +606,28 @@ qes_spec <- function(view = c("targets", "crosswalk", "spec", "pooled"), targets
   }
   if (view != "crosswalk" && level_given) wrong_view("level", "crosswalk")
   if (view != "crosswalk" && format_given) wrong_view("format", "crosswalk")
-  if (view == "spec" && !is.null(targets)) wrong_view("targets", c("targets", "crosswalk", "pooled"))
-  if (view == "spec" && !is.null(studies)) wrong_view("studies", c("targets", "crosswalk", "pooled"))
+  if (view == "spec" && !is.null(targets)) wrong_view("targets", c("targets", "crosswalk", "pooled", "relaxed", "relaxed_maps"))
+  if (view == "spec" && !is.null(studies)) wrong_view("studies", c("targets", "crosswalk", "pooled", "relaxed", "relaxed_maps"))
   if (view != "spec" && !is.null(data)) wrong_view("data", "spec")
   if (identical(format, "retroharmonize") && level_given && identical(level, "row")) {
     .qes_abort("input_spec_retroharmonize", class = "qesR_error_input",
                data = list(arg = "level", value = level))
+  }
+  if (view %in% c("relaxed", "relaxed_maps")) {
+    obj <- .qes_spec_get(spec, validate)
+    cols <- .qes_rx_tables(obj)$relaxed$column
+    if (!is.null(targets) && (!is.character(targets) || !all(targets %in% cols))) {
+      bad <- if (is.character(targets)) setdiff(targets, cols) else targets
+      .qes_abort("input_targets_unknown", class = "qesR_error_input", args = list(.qes_q(bad)),
+                 data = list(arg = "targets", value = targets))
+    }
+    out <- if (view == "relaxed") {
+      .qes_spec_relaxed_view(obj, targets, .qes_view_studies(studies), lang)
+    } else {
+      .qes_spec_relaxed_maps_view(obj, targets, .qes_view_studies(studies), lang)
+    }
+    attr(out, "check") <- attr(obj, "check", exact = TRUE)
+    return(out)
   }
   if (view == "pooled") {
     obj <- .qes_spec_get(spec, validate)

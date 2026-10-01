@@ -28,6 +28,7 @@
 #' | Codebooks et recherche | [qes_missing()] | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
 #' | Harmonisation | [qes_spec()] | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
 #' | Harmonisation | [qes_harmonize()] | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne. |
+#' | Harmonisation | [qes_decon()] | Un seul tableau de variables harmonisées de façon souple pour toutes les études, sous des noms simples à la manière de cesR (`education`, `income_cat`, `vote_choice`, `sovereignty`...) : un concept par colonne même quand les questions diffèrent, en catégories communes larges, avec la source et le recodage de chaque étude. |
 #' | Harmonisation | [qes_design()] | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
 #' | Harmonisation | [qes_party_lineage()] | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 #' | Reproductibilité | [qes_provenance()] | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
@@ -38,7 +39,9 @@
 #' spécification révisée, [qes_harmonize()] l'applique et [qes_design()] en
 #' fait un plan de sondage ; la référence
 #' générée à partir de la spécification est
-#' `vignette("fr-reference-harmonisation", package = "qesR")`.
+#' `vignette("fr-reference-harmonisation", package = "qesR")`. [qes_decon()]
+#' en est la version souple : une colonne par concept pour chaque étude, en
+#' catégories communes larges et sans niveau de comparabilité.
 #'
 #' Les anciens noms de fonctions (`get_codebook()`, `get_question()`,
 #' `get_preview()`, `get_qescodes()`, ...) continuent de fonctionner et ne

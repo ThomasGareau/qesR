@@ -159,6 +159,41 @@
     type_label_en = "chr", type_label_fr = "chr", note_en = "chr",
     note_fr = "chr", added_in = "chr"
   ),
+  # the relaxed layer (schema 4, spec 4.4.0; R/hz-relaxed.R, qes_decon()):
+  # one row per output column of qes_decon(), and the relaxed mappings of the
+  # studies whose question differs from the strict target's (the crosswalk
+  # row format without grades). base is target:<t>, pooled:<p>,
+  # pooled:<p>__type, column:<c> or empty (relaxed rows only); transform is
+  # identity, recode:<from>=<to>,..., bands:<cuts>:<levels>, affine:<a*x+b>
+  # or relaxed_only
+  spec_relaxed = c(
+    column = "chr", position = "int", type = "chr", levels_id = "chr",
+    valid_min = "num", valid_max = "num", base = "chr", transform = "chr",
+    timing = "chr", essential = "lgl", same_as = "lgl", label_en = "chr",
+    label_fr = "chr", relax_en = "chr", relax_fr = "chr",
+    description_en = "chr", description_fr = "chr", status = "chr",
+    added_in = "chr"
+  ),
+  spec_relaxed_maps = c(
+    study = "chr", wave = "chr", column = "chr", rule = "chr",
+    source_var = "chr", map_id = "chr", args = "chr", na_codes = "chr",
+    gate_var = "chr", gate_codes = "chr", gate_to = "chr", override = "lgl",
+    wording_en = "chr", wording_fr = "chr", wording_ref = "chr",
+    notes_en = "chr", notes_fr = "chr", evidence = "chr",
+    reviewed_by = "chr", reviewed_on = "date", review_note = "chr",
+    status = "chr", added_in = "chr"
+  ),
+  # the recorded results of qes_decon() on the pinned files, every relaxed
+  # row applied (data-raw/build_relaxed.R; checked live by V-R11): the
+  # unweighted counts of each column by study and wave (static columns:
+  # one count per respondent, wave "*"), and the md5 of each column
+  spec_rx_expected = c(
+    column = "chr", study = "chr", wave = "chr", value = "chr",
+    na_reason = "chr", n = "int"
+  ),
+  spec_rx_hashes = c(
+    column = "chr", study = "chr", n = "int", md5 = "chr"
+  ),
   # the legacy renderer of get_qes_master() and get_decon() (R/legacy.R)
   spec_legacy = c(
     profile = "chr", position = "int", column = "chr", studies = "chr",

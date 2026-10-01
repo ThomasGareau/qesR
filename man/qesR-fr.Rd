@@ -30,6 +30,7 @@ Les fonctions sont regroupées comme dans la référence du site web.\tabular{ll
    Codebooks et recherche \tab \code{\link[=qes_missing]{qes_missing()}} \tab Remplace par \code{NA} les codes « ne sait pas », « refus » et les codes manquants déclarés. \cr
    Harmonisation \tab \code{\link[=qes_spec]{qes_spec()}} \tab La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. \cr
    Harmonisation \tab \code{\link[=qes_harmonize]{qes_harmonize()}} \tab Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne. \cr
+   Harmonisation \tab \code{\link[=qes_decon]{qes_decon()}} \tab Un seul tableau de variables harmonisées de façon souple pour toutes les études, sous des noms simples à la manière de cesR (\code{education}, \code{income_cat}, \code{vote_choice}, \code{sovereignty}...) : un concept par colonne même quand les questions diffèrent, en catégories communes larges, avec la source et le recodage de chaque étude. \cr
    Harmonisation \tab \code{\link[=qes_design]{qes_design()}} \tab Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. \cr
    Harmonisation \tab \code{\link[=qes_party_lineage]{qes_party_lineage()}} \tab Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. \cr
    Reproductibilité \tab \code{\link[=qes_provenance]{qes_provenance()}} \tab Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. \cr
@@ -42,7 +43,9 @@ L'harmonisation entre études est expérimentale : \code{\link[=qes_spec]{qes_sp
 spécification révisée, \code{\link[=qes_harmonize]{qes_harmonize()}} l'applique et \code{\link[=qes_design]{qes_design()}} en
 fait un plan de sondage ; la référence
 générée à partir de la spécification est
-\code{vignette("fr-reference-harmonisation", package = "qesR")}.
+\code{vignette("fr-reference-harmonisation", package = "qesR")}. \code{\link[=qes_decon]{qes_decon()}}
+en est la version souple : une colonne par concept pour chaque étude, en
+catégories communes larges et sans niveau de comparabilité.
 
 Les anciens noms de fonctions (\code{get_codebook()}, \code{get_question()},
 \code{get_preview()}, \code{get_qescodes()}, ...) continuent de fonctionner et ne

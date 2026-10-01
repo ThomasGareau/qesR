@@ -42,6 +42,7 @@ export_calls <- function() {
       h <- qes_harmonize("qes_demo", targets = "sov_indep", include_draft = TRUE)
       if (requireNamespace("survey", quietly = TRUE)) qes_design(h) else h
     })),
+    qes_decon = quote(with_shipped_catalog(qes_decon("qes_demo"))),
     qes_party_lineage = quote(with_shipped_catalog({
       h <- qes_harmonize("qes_demo", targets = "vote_choice", include_draft = TRUE, quiet = TRUE)
       qes_party_lineage(h)
