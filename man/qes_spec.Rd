@@ -170,7 +170,7 @@ sont assouplies, puis l'appariement souple propre à chaque étude.
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 4.5.0)}{
+\section{Targets in the shipped spec (version 4.6.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{

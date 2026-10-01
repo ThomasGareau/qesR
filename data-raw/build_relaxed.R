@@ -1,7 +1,8 @@
 #!/usr/bin/env Rscript
 
 # The relaxed rows of the harmonization spec (design.md section 5.14, spec
-# 4.4.0): inst/extdata/harmonize/relaxed_maps.csv and the rx_ value maps of
+# 4.4.0; education in three groups, union and econ_self in 4.6.0):
+# inst/extdata/harmonize/relaxed_maps.csv and the rx_ value maps of
 # valuemaps.csv, and, on the pinned files, the recorded results of
 # qes_decon() (expected/relaxed_marginals.csv and expected/relaxed_hashes.csv,
 # checked live by V-R11).
@@ -22,17 +23,21 @@
 # file), the question wording and its document reference, and the counts of
 # the evidence. A row starts in review (status "review"); the rows listed in
 # `signed_off` below are stable, and qes_decon() applies stable rows only.
+# `added_in` is the spec version that added the row (4.4.0 unless given).
 # After a change: bump SPEC (section 5.11), add a CHANGES.csv row and run
 # data-raw/spec_check.R --write-hash.
 #
 # The groups follow the decisions of design.md section 12.5 (OD-R1 to
-# OD-R16): education in four groups (vocational diplomas with college,
+# OD-R18): education4 in four groups (vocational diplomas with college,
 # OD-R10; years of schooling read as diplomas, the 2007 panel and the CROP
-# polls); income in thirds of each study's respondents by the midpoint rule
-# on the unweighted counts (OD-R11; V-R9 checks it); two employment statuses
-# take the one that is not work (OD-R9); several mother tongues: French, then
-# English (OD-R5); qes1998: education and employment are left out (OD-R1,
-# OD-R2), the CREATEC sample is francophone by design (OD-R3).
+# polls), and education in three, its high school and college joined, which
+# lets qes1998 in (OD-R17); income in thirds of each study's respondents by
+# the midpoint rule on the unweighted counts (OD-R11; V-R9 checks it); two
+# employment statuses take the one that is not work (OD-R9); several mother
+# tongues: French, then English (OD-R5); qes1998: education4 and employment
+# are left out (OD-R1, OD-R2), the CREATEC sample is francophone by design
+# (OD-R3); union membership and personal finances are kept although fewer
+# than three studies ask the second (OD-R18).
 
 args <- commandArgs(trailingOnly = TRUE)
 check_only <- "--check" %in% args
@@ -65,12 +70,12 @@ rx_row <- function(study, wave, column, var, map = NULL, rule = "map", args = NA
                    na_codes = NA_character_, gate = NULL, override = FALSE, then = NULL,
                    notes_en = NA_character_, notes_fr = NA_character_, wording_ref = NA_character_,
                    wording_en = NA_character_, wording_fr = NA_character_, code_notes = NULL,
-                   count_notes = NULL) {
+                   count_notes = NULL, added_in = "4.4.0") {
   rows[[length(rows) + 1L]] <<- list(
     study = study, wave = wave, column = column, var = var, map = map, rule = rule, args = args,
     na_codes = na_codes, gate = gate, override = override, then = then, notes_en = notes_en,
     notes_fr = notes_fr, wording_ref = wording_ref, wording_en = wording_en, wording_fr = wording_fr,
-    code_notes = code_notes, count_notes = count_notes
+    code_notes = code_notes, count_notes = count_notes, added_in = added_in
   )
 }
 
@@ -80,50 +85,68 @@ rx_row("qes2018_panel", "pre", "citizenship", "qa",
        notes_en = "OD-R12: the screening question asks whether the respondent may vote in the coming Quebec election, which requires Canadian citizenship; every respondent answered yes, so the column is constant in this study.",
        notes_fr = "OD-R12 : la question de sélection demande si la personne peut voter à la prochaine élection québécoise, ce qui exige la citoyenneté canadienne ; tous les répondants ont répondu oui, si bien que la colonne est constante dans cette étude.")
 
-# -- education
-edu_note_en <- "Vocational diplomas go with college (OD-R10)."
-edu_note_fr <- "Les diplômes professionnels vont avec le collégial (OD-R10)."
-rx_row("qes2007", "post", "education", "q77",
+# -- education4 (four groups; education, in three, is built from it in
+# relaxed.csv, with its own row for qes1998)
+rx_row("qes2007", "post", "education4", "q77",
        list("1,2,3,4" = "no_diploma", "5" = "high_school", "6,7" = "college", "8,9,10,11" = "university",
             "98" = "NA:dk", "99" = "NA:refused"))
-rx_row("qes2008", "post", "education", "q77",
+rx_row("qes2008", "post", "education4", "q77",
        list("1,2,3,4" = "no_diploma", "5" = "high_school", "6,7" = "college", "8,9,10,11" = "university",
             "98" = "NA:dk", "99" = "NA:refused"),
        wording_en = "What is the highest level of education that you have completed?",
        wording_ref = "197296:Q77;196358:Q77")
-rx_row("qes2012", "post", "education", "scol",
+rx_row("qes2012", "post", "education4", "scol",
        list("1,2,3,4" = "no_diploma", "5" = "high_school", "6,7,8" = "college", "9,10,11,12" = "university",
             "98" = "NA:dk", "99" = "NA:refused"),
        notes_en = "Code 8 (post-secondary, not higher education; the French questionnaire's technical course) is college; code 10 (certificate and diploma), in neither questionnaire, is university with code 9 (some higher education).",
        notes_fr = "Le code 8 (postsecondaire non universitaire ; le cours technique du questionnaire français) est collégial ; le code 10 (certificat et diplôme), absent des deux questionnaires, est universitaire, comme le code 9 (études supérieures non terminées).")
-rx_row("qes2014", "post", "education", "QSCOL",
+rx_row("qes2014", "post", "education4", "QSCOL",
        list("1,2,3,4" = "no_diploma", "5" = "high_school", "6,7,8" = "college", "9,10,11" = "university",
             "99" = "NA:refused"))
-rx_row("qes2018", "post", "education", "qscol",
+rx_row("qes2018", "post", "education4", "qscol",
        list("1,2,3,4,5,6,7" = "no_diploma", "8" = "high_school", "9,10,11,12" = "college",
             "13,14,15" = "university", "99" = "NA:refused"),
        notes_en = "Code 9 (secondary 5 with a vocational diploma, DEP) is college (OD-R10); the strict education4 puts it with secondary.",
        notes_fr = "Le code 9 (secondaire 5 avec un diplôme d'études professionnelles, DEP) est collégial (OD-R10) ; la cible stricte education4 le classe au secondaire.")
-rx_row("qes2022", "cps", "education", "cps_edu",
+rx_row("qes2022", "cps", "education4", "cps_edu",
        list("1,2,3,4" = "no_diploma", "5" = "high_school", "6,7" = "college", "8,9,10,11" = "university"),
        na_codes = "-99=no_answer")
-rx_row("qes2018_panel", "pre", "education", "d3",
+rx_row("qes2018_panel", "pre", "education4", "d3",
        list("1,2" = "no_diploma", "3" = "high_school", "4,5" = "college", "6,7,8" = "university",
             "9" = "NA:dk_refused"),
        notes_en = "Code 4 (registered apprenticeship or other trades certificate) is college (OD-R10); code 6 (university certificate below the bachelor's) is university.",
        notes_fr = "Le code 4 (apprentissage enregistré ou autre certificat d'une école de métiers) est collégial (OD-R10) ; le code 6 (certificat universitaire inférieur au baccalauréat) est universitaire.")
-rx_row("qes2007_panel", "*", "education", "scol",
+rx_row("qes2007_panel", "*", "education4", "scol",
        list("1" = "no_diploma", "2" = "high_school", "3" = "college", "4" = "university", "9" = "NA:refused"),
        notes_en = "Years of schooling, in bands named after a level: 7 years or less (primary) is no diploma, 8 to 12 years (secondary) is high school, 13 to 15 years (CEGEP, technical school) is college and 16 years or more is university. The high school group therefore also holds those who left secondary school without a diploma, and the college group may hold respondents with some university but no degree, whom other studies count as university.",
        notes_fr = "Années d'études, en tranches nommées d'après un ordre d'enseignement : 7 ans ou moins (primaire) est sans diplôme, 8 à 12 ans (secondaire) est secondaire, 13 à 15 ans (cégep, école technique) est collégial et 16 ans ou plus est universitaire. Le groupe secondaire compte donc aussi ceux qui ont quitté le secondaire sans diplôme, et le groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme, que les autres études classent à l'universitaire.")
-rx_row("qes_crop_2007_2010", "*", "education", "scol",
+rx_row("qes_crop_2007_2010", "*", "education4", "scol",
        list("1" = "no_diploma", "2" = "high_school", "3" = "college", "4" = "university", "9" = "NA:refused"),
        notes_en = "Years of schooling in CROP's four ranges (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP or technical school; 16 or more, university): 7 or fewer is no diploma and 8 to 12 is high school, so that group also holds those who left secondary school without a diploma; grouping by years, not by highest level, can also put some university (14 or 15 years) in college.",
        notes_fr = "Années d'études selon les quatre intervalles de CROP (7 ou moins, primaire ; 8 à 12, secondaire ; 13 à 15, cégep ou école technique ; 16 ou plus, université) : 7 ou moins est sans diplôme et 8 à 12 est secondaire, si bien que ce groupe compte aussi ceux qui ont quitté le secondaire sans diplôme ; le classement par années, et non par plus haut niveau atteint, peut aussi placer des études universitaires non terminées (14 ou 15 ans) au collégial.")
-rx_row("qes1998", "pre", "education", "scol",
+rx_row("qes1998", "pre", "education4", "scol",
        list("1,2,3" = "NA:not_mappable", "9" = "NA:dk_refused"),
-       notes_en = "OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out.",
-       notes_fr = "OD-R1 : le fichier regroupé classe les années d'études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n'apparier que les deux autres groupes fausserait toutes les proportions, si bien que l'étude est laissée de côté.")
+       notes_en = "OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out of the four groups. The three groups of education include it (OD-R17).",
+       notes_fr = "OD-R1 : le fichier regroupé classe les années d'études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n'apparier que les deux autres groupes fausserait toutes les proportions, si bien que l'étude est laissée de côté des quatre groupes. Les trois groupes de education l'incluent (OD-R17).")
+
+# -- education (three groups): every study but qes1998 takes the four
+# groups of education4 with high school and college joined (relaxed.csv);
+# qes1998 has its own row, which replaces the base (education4, not
+# mappable there)
+rx_row("qes1998", "pre", "education", "scol",
+       list("1" = "no_diploma", "2" = "high_school_college", "3" = "university", "9" = "NA:dk_refused"),
+       override = TRUE, added_in = "4.6.0",
+       wording_fr = "CREATEC (r15) : Quel niveau de scolarite avez-vous termine? CROP (q19) : Combien d\u2019années d\u2019études avez-vous complétées?",
+       wording_ref = "332051:scol;332050:r15;332050:scol;332049:q19",
+       code_notes = list("1" = "CROP (firme_post = 2): 9 years of schooling or fewer (CROP q19 codes 1-2); CREATEC (firme_post = 1): elementary or some secondary (r15 = 1)",
+                         "2" = "CROP: 10 to 15 years (q19 codes 3-4), which includes 10 years without a diploma and some university students; CREATEC: secondary completed or technical, college or CEGEP (r15 = 2-3)",
+                         "3" = "CROP: 16 years or more (q19 code 5); CREATEC: university, completed or not (r15 = 4-7)"),
+       count_notes = list("1" = "CREATEC 224, CROP 97; in the CROP file, q19 codes 1-2 hold 101 of its 450 respondents",
+                          "2" = "CREATEC 560, CROP 229; q19 codes 3-4: 240",
+                          "3" = "CREATEC 188, CROP 95; q19 code 5: 104",
+                          "9" = "CREATEC 6, CROP 5"),
+       notes_en = "OD-R17: the pooled file's three groups are labelled 1-9 years, 10-15 years and university or more, but the two firms built them differently. For the CREATEC respondents (firme_post = 1), scol recodes the highest level completed (r15: elementary or some secondary; secondary completed or technical, college or CEGEP; university, completed or not), so the three groups hold. For the CROP respondents (firme_post = 2), it groups years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16 or more), so the match is approximate: Quebec high school ends after 11 years, so a respondent with 10 years has no diploma but counts as high school to college, and some respondents with 14 or 15 years are university students who count as high school to college. Code 9 is unlabelled and read as don't know or refused.",
+       notes_fr = "OD-R17 : les trois groupes du fichier regroupé portent les étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux firmes les ont construits autrement. Pour les répondants de CREATEC (firme_post = 1), scol recode le plus haut niveau atteint (r15 : primaire ou études secondaires partielles ; secondaire terminé ou formation technique, collégiale ou cégep ; université, terminée ou non), si bien que les trois groupes tiennent. Pour les répondants de CROP (firme_post = 2), il regroupe les années d'études (question 19 de CROP : 7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l'appariement est approximatif : le secondaire se terminant après 11 ans au Québec, une personne qui compte 10 ans n'a pas de diplôme mais est classée au secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont des étudiants universitaires classés au secondaire au collégial. Le code 9, sans étiquette, est lu comme ne sait pas ou refus.")
 
 # -- income (thirds by the midpoint rule on the unweighted counts)
 inc_en <- "Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11)."
@@ -304,6 +327,26 @@ rx_row("qes1998", "pre", "employment", "occup",
        notes_en = "OD-R2: the pooled file has full time, part time and not working; not working joins the unemployed, the retired, students and those at home, so the study is left out.",
        notes_fr = "OD-R2 : le fichier regroupé a temps plein, temps partiel et ne travaille pas ; ne travaille pas réunit chômeurs, retraités, étudiants et personnes au foyer, si bien que l'étude est laissée de côté.")
 
+# -- union membership (OD-R18: kept whatever the number of studies)
+rx_row("qes2014", "post", "union", "Q61",
+       list("1" = "yes", "2" = "no", "9" = "NA:refused"), added_in = "4.6.0",
+       notes_en = "The respondent or anyone in the household belongs to a union.",
+       notes_fr = "La personne ou quelqu'un de son ménage est syndiqué(e).")
+rx_row("qes2018", "post", "union", "q65a", rule = "coalesce",
+       args = "then=q65b:rx_union_qes2018_q65b",
+       map = list("1" = "yes", "2" = "no", "98" = "NA:dk", "99" = "NA:refused"),
+       then = list(var = "q65b", map = list("1" = "yes", "2" = "no", "98" = "NA:dk", "99" = "NA:refused")),
+       added_in = "4.6.0",
+       wording_en = "Do you or anyone in your household belong to a union? (Those who live with their parents: Do you or anyone in your family belong to a union? By family, we mean: your parents, brothers or sisters.)",
+       wording_fr = "Est-ce que vous ou quelqu\u2019un dans votre ménage est syndiqué(e)? (Les personnes qui vivent chez leurs parents : Est-ce que vous ou quelqu\u2019un dans votre famille est syndiqué(e)? Par famille, on veut dire: vos parents, frères ou sœurs.)",
+       wording_ref = "361049:Q65;361050:Q65",
+       notes_en = "Q65 has two versions, split by QPARENTS: those who do not live with their parents (q65a, 2,558 respondents) were asked about their household, those who do (q65b, 514) about their family (parents, brothers or sisters). The household version is read first, then the family version for those who were not asked it. The respondent or anyone in the household (or family) belongs to a union.",
+       notes_fr = "Q65 a deux versions, selon QPARENTS : les personnes qui ne vivent pas chez leurs parents (q65a, 2 558 répondants) ont été interrogées sur leur ménage, celles qui y vivent (q65b, 514) sur leur famille (parents, frères ou sœurs). La version du ménage est lue d'abord, puis celle de la famille pour les personnes à qui la première n'a pas été posée. La personne ou quelqu'un de son ménage (ou de sa famille) est syndiqué(e).")
+rx_row("qes2022", "pes", "union", "pes_union",
+       list("1" = "yes", "2" = "no"), added_in = "4.6.0",
+       notes_en = "The respondent belongs to a union (not the household). Asked after the election: the respondents of the campaign wave only are missing (not in this wave).",
+       notes_fr = "La personne elle-même est syndiquée (et non son ménage). Posée après l'élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague).")
+
 # -- region (2007 panel) and administrative region
 rx_row("qes2007_panel", "*", "region", "reg2",
        list("12,13,14,15,16" = "mtl_cma", "4,20" = "quebec_cma", "1,2,3,5,6,7,8,9,10,11,17,18,19,21,22" = "rest"),
@@ -357,6 +400,13 @@ rx_row("qes1998", "pre", "gov_satisfaction", "satisf",
        notes_en = "Satisfaction with the Bouchard (PQ) government, in the pooled file's words: very satisfied, rather satisfied, rather dissatisfied, very dissatisfied; code 9 is unlabelled and read as don't know or refused.",
        notes_fr = "La satisfaction envers le gouvernement Bouchard (PQ), dans les mots du fichier regroupé : très satisfait, plutôt satisfait, plutôt insatisfait, très insatisfait ; le code 9, sans étiquette, est lu comme ne sait pas ou refus.")
 
+# -- personal financial situation over the past year (OD-R18: kept although
+# only qes2022 asks it)
+rx_row("qes2022", "cps", "econ_self", "cps_ownfin",
+       list("1" = "better", "3" = "same", "2" = "worse"), added_in = "4.6.0",
+       notes_en = "Asked during the campaign of every respondent; the file has no missing value. Not the 2012 and 2014 question on one's own finances if Quebec became independent (q85, Q47), which asks about another situation.",
+       notes_fr = "Posée pendant la campagne à chaque personne ; le fichier n'a aucune valeur manquante. Ce n'est pas la question de 2012 et de 2014 sur sa propre situation financière si le Québec devenait indépendant (q85, Q47), qui porte sur une autre situation.")
+
 # -- sovereignty (CROP polls)
 rx_row("qes_crop_2007_2010", "*", "sovereignty", "intvoterefa", rule = "coalesce",
        args = "then=intvoterefb:rx_sovereignty_qes_crop_2007_2010_intvoterefb;fallthrough=dk",
@@ -376,24 +426,26 @@ rx_row("qes_crop_2007_2010", "*", "sovereignty_type", "intvoterefa", rule = "con
 # coalesce or fn: row by its first variable): the automated double review of
 # 2026-10-01 against the original files and documents (one pass on the codes
 # and the data, one on the wording, adjudicated where they disagreed), with
-# the corrections it asked for applied above (spec 4.5.0). It is not a human
-# review, and the rows say so. A row not listed stays in review, and
-# qes_decon() does not apply it.
+# the corrections it asked for applied above (spec 4.5.0), and the same
+# review of the 5 rows of spec 4.6.0 (the 1998 education, union, econ_self),
+# signed off as they were. It is not a human review, and the rows say so. A
+# row not listed stays in review, and qes_decon() does not apply it.
 review_by <- "automated double review against original files and documents, 2026-10-01 (codes/data + wording; adjudicated where they disagreed); not a human review"
 review_on <- as.Date("2026-10-01")
 review_note <- "automated double review against original files and documents, 2026-10-01; not a human review"
 signed_off <- c(
   "citizenship|qes2018_panel|pre|qa",
-  "education|qes2022|cps|cps_edu",
-  "education|qes2018|post|qscol",
-  "education|qes2014|post|QSCOL",
-  "education|qes2012|post|scol",
-  "education|qes2018_panel|pre|d3",
-  "education|qes2007_panel|*|scol",
-  "education|qes2007|post|q77",
-  "education|qes2008|post|q77",
+  "education4|qes2022|cps|cps_edu",
+  "education4|qes2018|post|qscol",
+  "education4|qes2014|post|QSCOL",
+  "education4|qes2012|post|scol",
+  "education4|qes2018_panel|pre|d3",
+  "education4|qes2007_panel|*|scol",
+  "education4|qes2007|post|q77",
+  "education4|qes2008|post|q77",
+  "education4|qes1998|pre|scol",
+  "education4|qes_crop_2007_2010|*|scol",
   "education|qes1998|pre|scol",
-  "education|qes_crop_2007_2010|*|scol",
   "income_cat|qes2022|cps|cps_income",
   "income_cat|qes2018|post|q61",
   "income_cat|qes2014|post|Q57",
@@ -442,7 +494,11 @@ signed_off <- c(
   "vote_prev|qes_crop_2007_2010|*|QP4",
   "sovereignty|qes_crop_2007_2010|*|intvoterefa",
   "sovereignty_type|qes_crop_2007_2010|*|intvoterefa",
-  "gov_satisfaction|qes1998|pre|satisf"
+  "gov_satisfaction|qes1998|pre|satisf",
+  "union|qes2022|pes|pes_union",
+  "union|qes2018|post|q65a",
+  "union|qes2014|post|Q61",
+  "econ_self|qes2022|cps|cps_ownfin"
 )
 
 # ---- build the tables -----------------------------------------------------------------
@@ -561,7 +617,7 @@ for (r in rows) {
     notes_en = r$notes_en, notes_fr = r$notes_fr, evidence = evidence,
     reviewed_by = if (stable) review_by else NA_character_, reviewed_on = if (stable) review_on else as.Date(NA),
     review_note = if (stable) review_note else NA_character_, status = if (stable) "stable" else "review",
-    added_in = "4.4.0",
+    added_in = r$added_in,
     stringsAsFactors = FALSE
   )
 }

@@ -538,7 +538,7 @@
 #' `income_cat`, `vote_choice`, `sovereignty`, `lr`...). It is a relaxed
 #' harmonization: one concept goes in one column for every study, even when
 #' the wording or the answer options differ, with coarse common categories
-#' (education in four groups, income in thirds of each study's respondents,
+#' (education in three groups, income in thirds of each study's respondents,
 #' interest low, medium or high, a referendum vote of yes or no whatever the
 #' question). It trades exactness for coverage: use [qes_harmonize()] and
 #' its grades when the difference between two questions matters.
@@ -560,10 +560,11 @@
 #' `religion`, `employment`...). The relaxed mappings are reviewed like the
 #' strict ones: a mapping not yet signed off (status `review`) is not
 #' applied, and its cells are `NA` with reason `not_reviewed` (see
-#' `qes_spec("relaxed_maps")`); a message says how many. The 60 mappings of
-#' spec 4.5.0 are signed off (status `stable`) by an automated double review
-#' against the original files and documents, not a human review, as their
-#' `reviewed_by` and `review_note` say.
+#' `qes_spec("relaxed_maps")`); a message says how many. The 65 mappings of
+#' spec 4.6.0, the 5 it adds (the education of `qes1998`, `union` and
+#' `econ_self`) included, are signed off (status `stable`) by an automated
+#' double review against the original files and documents, not a human
+#' review, as their `reviewed_by` and `review_note` say.
 #'
 #' @section Rows, waves and weights:
 #' The rows are those of `qes_harmonize(layout = "long")`: one per respondent
@@ -587,17 +588,23 @@
 #' scale both before and after the election), `religion`, `language`,
 #' `language_eng` and `language_fr` (no study asks about Indigenous
 #' languages), `employment`, `income_cat` (the income amount is not
-#' comparable across studies), `marital` and `econ_retro` (Quebec's economy).
-#' `province_territory` is dropped (every respondent lives in Quebec), and so
-#' are sexual orientation, the federal economy and personal finances (one
-#' study at most).
+#' comparable across studies), `marital`, `econ_retro` (Quebec's economy) and
+#' `econ_self` (personal finances, asked in `qes2022` only, kept by the
+#' owner's decision of 2026-10-01). `province_territory` is dropped (every
+#' respondent lives in Quebec), and so are sexual orientation and the
+#' federal economy (one study at most). `union` (union membership, three
+#' studies, kept by the same decision) and `education4` (the four groups of
+#' education that `education` joins into three) have no counterpart among
+#' cesR's columns.
 #'
 #' @eval .rd_decon_columns()
 #'
 #' @section Experimental:
 #' The relaxed layer is new in qesR 0.9.0 (spec 4.4.0; its mappings signed
 #' off in spec 4.5.0). Its columns, groups and mappings may change, and a new
-#' relaxed mapping starts in review.
+#' relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts `education`
+#' in three groups instead of four, so that `qes1998` can be included, keeps
+#' the four groups as `education4`, and adds `union` and `econ_self`.
 #'
 #' @section En français:
 #' `qes_decon()` renvoie un seul tableau pour toutes les études électorales
@@ -605,7 +612,7 @@
 #' par concept, sous des noms simples à la manière du package cesR. C'est une
 #' harmonisation souple : un concept va dans une seule colonne pour chaque
 #' étude, même quand le libellé ou les choix de réponse diffèrent, avec des
-#' catégories communes larges (la scolarité en quatre groupes, le revenu en
+#' catégories communes larges (la scolarité en trois groupes, le revenu en
 #' tiers des répondants de chaque étude, l'intérêt faible, moyen ou élevé, un
 #' vote référendaire oui ou non quelle que soit la question). Elle échange
 #' l'exactitude contre la couverture : utilisez [qes_harmonize()] et ses
@@ -615,11 +622,15 @@
 #' `attr(x, "decon_sources")` les réunit toutes. Les colonnes souples n'ont
 #' aucun niveau de comparabilité. Les appariements souples sont révisés comme
 #' les autres : un appariement pas encore approuvé (statut `review`) n'est pas
-#' appliqué, et ses cellules valent `NA` (motif `not_reviewed`). Les 60
-#' appariements de la spécification 4.5.0 sont approuvés (statut `stable`)
-#' par une double révision automatisée sur les fichiers et les documents
-#' originaux, et non par une révision humaine, comme le disent leurs champs
-#' `reviewed_by` et `review_note`. Les noms de
+#' appliqué, et ses cellules valent `NA` (motif `not_reviewed`). Des 65
+#' appariements de la spécification 4.6.0, y compris les 5 qu'elle ajoute (la
+#' scolarité de `qes1998`, `union` et `econ_self`), sont approuvés (statut
+#' `stable`) par une double révision automatisée sur les fichiers et les
+#' documents originaux, et non par une révision humaine, comme le disent
+#' leurs champs `reviewed_by` et `review_note`. Depuis qesR 0.9.1, `education` compte trois groupes
+#' (sans diplôme d'études secondaires, secondaire au collégial, université),
+#' ce qui permet d'inclure `qes1998`, et `education4` garde les quatre
+#' groupes. Les noms de
 #' colonnes restent en anglais ; `lang = "fr"` donne les étiquettes, les
 #' règles et les sources en français.
 #'

@@ -225,13 +225,15 @@ goes from `qes_harmonize()` to a weighted estimate.
 cesR: plain column names (`education`, `income_cat`, `religion`,
 `vote_choice`, `sovereignty`, `lr`...) and one concept per column even
 where the wording or the answer options differ, in coarse common
-categories (education in four groups, income in thirds of each study's
+categories (education in three groups, income in thirds of each study's
 respondents, a referendum vote of yes or no whatever the question). It
 trades exactness for coverage: its columns carry no grade, each says how
 it was relaxed and where each study's values come from, and
 `qes_harmonize()` keeps the strict versions. The relaxed mappings of the
 studies' own questions were signed off by an automated double review
-against the original files and documents (not a human review).
+against the original files and documents (not a human review), the five
+added in 0.9.1 (the 1998 education, union membership and personal
+finances) included.
 
 ```r
 d <- qes_decon()
@@ -476,7 +478,7 @@ pondérée.
 de cesR : des noms de colonnes simples (`education`, `income_cat`,
 `religion`, `vote_choice`, `sovereignty`, `lr`...) et un concept par
 colonne même quand le libellé ou les choix de réponse diffèrent, en
-catégories communes larges (la scolarité en quatre groupes, le revenu en
+catégories communes larges (la scolarité en trois groupes, le revenu en
 tiers des répondants de chaque étude, un vote référendaire oui ou non
 quelle que soit la question). Elle échange l'exactitude contre la
 couverture : ses colonnes n'ont pas de niveau de comparabilité, chacune
@@ -484,7 +486,9 @@ dit comment elle a été assouplie et d'où viennent les valeurs de chaque
 étude, et `qes_harmonize()` garde les versions strictes. Les appariements
 souples des questions propres aux études ont été approuvés par une double
 révision automatisée sur les fichiers et les documents originaux (et non
-par une révision humaine).
+par une révision humaine), y compris les cinq ajoutés dans la version
+0.9.1 (la scolarité de 1998, l'appartenance à un syndicat et la situation
+financière personnelle).
 
 ```r
 d <- qes_decon(lang = "fr")

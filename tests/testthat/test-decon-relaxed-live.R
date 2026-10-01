@@ -46,9 +46,22 @@ test_that("the counts of the design record hold on the originals (live)", {
     as.vector(table(factor(res$value[[col]][k], levels = .qes_spec_levels(hz_spec()$tables$levels,
                                                                            res$rx$levels_id[res$rx$column == col])$name)))
   }
-  expect_identical(count("education", "qes2007"), c(195L, 355L, 633L, 975L))
-  expect_identical(count("education", "qes2018"), c(322L, 457L, 1089L, 1181L))
-  expect_identical(count("education", "qes2022"), c(63L, 219L, 493L, 746L))
+  # education4: the four groups of spec 4.5.0; education: high school and
+  # college joined, and qes1998 from its own row (spec 4.6.0)
+  expect_identical(count("education4", "qes2007"), c(195L, 355L, 633L, 975L))
+  expect_identical(count("education4", "qes2018"), c(322L, 457L, 1089L, 1181L))
+  expect_identical(count("education4", "qes2022"), c(63L, 219L, 493L, 746L))
+  expect_identical(count("education4", "qes1998"), c(0L, 0L, 0L, 0L))
+  expect_identical(count("education", "qes2007"), c(195L, 988L, 975L))
+  expect_identical(count("education", "qes2018"), c(322L, 1546L, 1181L))
+  expect_identical(count("education", "qes2022"), c(63L, 712L, 746L))
+  expect_identical(count("education", "qes1998"), c(321L, 789L, 283L))
+  expect_identical(count("union", "qes2014"), c(531L, 964L))
+  expect_identical(count("union", "qes2018"), c(998L, 1924L))
+  expect_identical(count("union", "qes2022"), c(327L, 893L))
+  k <- lead$study == "qes2022" & lead$wave %in% "cps"
+  expect_identical(as.vector(table(factor(res$value$econ_self[k], levels = c("better", "same", "worse")))),
+                   c(214L, 810L, 497L))
   expect_identical(count("income_cat", "qes2022"), c(521L, 493L, 497L))
   expect_identical(count("income_cat", "qes2012"), c(391L, 555L, 411L))
   expect_identical(count("religion", "qes2018"), c(941L, 108L, 59L, 115L, 1737L))
@@ -62,6 +75,50 @@ test_that("the counts of the design record hold on the originals (live)", {
   k <- lead$study == "qes1998" & lead$wave %in% "pre"
   expect_identical(as.vector(table(factor(res$value$gov_satisfaction[k], levels = c("very", "fairly", "not_very", "not_at_all")))),
                    c(134L, 653L, 387L, 170L))
+})
+
+test_that("education and union follow the original files (live)", {
+  local_live_originals()
+  res <- rx_live()
+  lead <- res$lead
+  first <- !duplicated(lead$qes_id)
+  # education joins the groups of education4 in every study but qes1998
+  join <- c(no_diploma = "no_diploma", high_school = "high_school_college", college = "high_school_college",
+            university = "university")
+  k <- lead$study != "qes1998"
+  expect_identical(res$value$education[k], unname(join[res$value$education4[k]]))
+  # qes1998: the pooled scol, by firm (CREATEC: firme_post = 1, CROP: 2)
+  f98 <- get_qes("qes1998", assign_global = FALSE, quiet = TRUE)
+  k98 <- which(lead$study == "qes1998" & first)
+  ids <- paste0("qes1998:", .qes_hz_ids("qes1998", f98)$key)
+  e <- res$value$education[k98][match(ids, lead$qes_id[k98])]
+  firm <- as.numeric(unclass(f98$firme_post))
+  expect_identical(as.vector(table(factor(e[firm %in% 1], levels = c("no_diploma", "high_school_college", "university")))),
+                   c(224L, 560L, 188L))
+  expect_identical(as.vector(table(factor(e[firm %in% 2], levels = c("no_diploma", "high_school_college", "university")))),
+                   c(97L, 229L, 95L))
+  # the 2018 union: the household version, then the family version
+  f18 <- get_qes("qes2018", assign_global = FALSE, quiet = TRUE)
+  k18 <- which(lead$study == "qes2018" & first)
+  u <- res$value$union[k18][match(paste0("qes2018:", .qes_hz_ids("qes2018", f18)$key), lead$qes_id[k18])]
+  a <- as.numeric(unclass(f18$q65a))
+  b <- as.numeric(unclass(f18$q65b))
+  expect_identical(sum(is.na(a) & is.na(b)), 0L)
+  expect_identical(sum(u %in% "yes"), sum(a %in% 1) + sum(b %in% 1))
+  expect_identical(sum(u %in% "yes" & is.na(a)), sum(b %in% 1))
+})
+
+test_that("by default, every relaxed row is applied, as all are signed off (live)", {
+  local_live_originals()
+  d <- qes_decon(quiet = TRUE)
+  res <- rx_live()
+  for (col in c("education", "education4", "union", "econ_self")) {
+    expect_identical(is.na(d[[col]]), is.na(res$value[[col]]), info = col)
+  }
+  expect_false(anyNA(d$econ_self[d$study == "qes2022" & d$wave %in% "cps"]))
+  expect_identical(sum(!is.na(d$education[d$study == "qes1998" & !duplicated(d$qes_id)])), 1393L)
+  src <- attr(d, "decon_sources")
+  expect_true(all(src$applied[src$base == "relaxed"]))
 })
 
 test_that("the income breaks of qes2022 are the terciles of the amounts given (live)", {

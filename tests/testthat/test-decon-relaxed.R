@@ -1,4 +1,5 @@
-# The relaxed layer (R/hz-relaxed.R, spec 4.4.0; signed off in 4.5.0) and qes_decon()
+# The relaxed layer (R/hz-relaxed.R, spec 4.4.0; signed off in 4.5.0;
+# education in three groups, education4, union and econ_self in 4.6.0) and qes_decon()
 # (R/decon-relaxed.R): the spec tables and their validator rules V-R1 to
 # V-R12, the views, and qes_decon() end to end, offline, on the
 # demonstration study and on synthetic data built from the strict and the
@@ -47,27 +48,40 @@ rx_run <- function(data, ..., include_review = TRUE, quiet = TRUE) {
 
 rx_cols <- function() .qes_rx_columns(hz_spec())
 
-test_that("the shipped relaxed layer passes V-R1 to V-R12 and covers 28 concepts", {
+test_that("the shipped relaxed layer passes V-R1 to V-R12 and covers 30 concepts", {
   s <- hz_spec()
   p <- .qes_spec_check(s)
   expect_false(any(grepl("^V-R", p$rule)), info = paste(p$detail[grepl("^V-R", p$rule)], collapse = "; "))
   p9 <- .qes_rx_data_check(s, .qes_hz_sources_shipped(s))
   expect_identical(nrow(p9[p9$severity == "error", ]), 0L, info = paste(p9$detail, collapse = "; "))
   rx <- rx_cols()
-  expect_identical(nrow(rx), 32L)
-  expect_identical(rx$position, seq_len(32L))
-  expect_true(all(c("education", "income_cat", "vote_choice", "sovereignty", "lr", "religion") %in% rx$column))
-  # every relaxed row is signed off (spec 4.5.0), by a review that says it
-  # was automated, not human
+  expect_identical(nrow(rx), 35L)
+  expect_identical(rx$position, seq_len(35L))
+  expect_true(all(c("education", "education4", "income_cat", "vote_choice", "sovereignty", "lr", "religion",
+                    "union", "econ_self") %in% rx$column))
+  # education4 comes before education, which is built on it (V-R3)
+  expect_lt(match("education4", rx$column), match("education", rx$column))
+  expect_identical(rx$base[rx$column == "education"], "column:education4")
+  # union and econ_self are kept whatever their number of studies (OD-R18)
+  expect_true(all(rx$essential[rx$column %in% c("citizenship", "union", "econ_self")]))
+  expect_identical(rx$column[rx$essential %in% TRUE], c("citizenship", "union", "econ_self"))
+  # all 65 rows are signed off, by a review that says it was automated, not
+  # human: the 60 of spec 4.4.0 and the 5 added in 4.6.0
   rm <- .qes_rx_tables(s)$maps
-  expect_true(all(rm$status %in% "stable"))
-  expect_true(all(grepl("not a human review", rm$reviewed_by, fixed = TRUE)))
-  expect_true(all(grepl("not a human review", rm$review_note, fixed = TRUE)))
-  expect_true(all(rm$reviewed_on == as.Date("2026-10-01")))
+  st <- rm[rm$status %in% "stable", ]
+  expect_identical(nrow(st), 65L)
+  expect_identical(nrow(rm), 65L)
+  expect_identical(sum(st$added_in == "4.4.0"), 60L)
+  expect_true(all(grepl("not a human review", st$reviewed_by, fixed = TRUE)))
+  expect_true(all(grepl("not a human review", st$review_note, fixed = TRUE)))
+  expect_true(all(st$reviewed_on == as.Date("2026-10-01")))
+  new <- st[st$added_in == "4.6.0", ]
+  expect_setequal(paste(new$column, new$study),
+                  c("education qes1998", "union qes2014", "union qes2018", "union qes2022", "econ_self qes2022"))
   expect_true(all(startsWith(stats::na.omit(rm$map_id), "rx_")))
-  # schema 4, spec 4.5.0
+  # schema 4, spec 4.6.0
   expect_identical(s$schema_version, "4")
-  expect_identical(s$version, "4.5.0")
+  expect_identical(s$version, "4.6.0")
 })
 
 test_that("a relaxed column is never a target, and carries no grade", {
@@ -77,8 +91,10 @@ test_that("a relaxed column is never a target, and carries no grade", {
   rx <- rx_cols()
   shadow <- rx$column[rx$column %in% s$tables$targets$target]
   # same name as a target: the column extends it, except religion (OD-R6)
-  expect_setequal(shadow, c("gender", "religion", "born_canada", "gov_satisfaction"))
-  expect_true(all(rx$same_as[rx$column %in% setdiff(shadow, "religion")]))
+  # and education4 (OD-R17)
+  expect_setequal(shadow, c("gender", "religion", "born_canada", "gov_satisfaction", "education4"))
+  expect_true(all(rx$same_as[rx$column %in% setdiff(shadow, c("religion", "education4"))]))
+  expect_false(any(rx$same_as[rx$column %in% c("religion", "education4")]))
   expect_false(any(grepl(.qes_rx_claim_en, rx$relax_en, ignore.case = TRUE, perl = TRUE)))
 })
 
@@ -130,6 +146,11 @@ test_that("the validator rejects malformed relaxed tables (V-R1 to V-R12)", {
     t$relaxed$essential[t$relaxed$column == "citizenship"] <- FALSE
     t
   }))
+  # econ_self (one study) is kept only as essential
+  expect_true("V-R6" %in% bad(function(t) {
+    t$relaxed$essential[t$relaxed$column == "econ_self"] <- FALSE
+    t
+  }))
   expect_true("V-R7" %in% bad(function(t) {
     t$relaxed$relax_en[1] <- "The questions are identical in every study."
     t
@@ -139,12 +160,12 @@ test_that("the validator rejects malformed relaxed tables (V-R1 to V-R12)", {
     t
   }))
   expect_true("V-R8" %in% bad(function(t) {
-    k <- which(t$valuemaps$map_id == "rx_education_qes2007_q77")[1]
+    k <- which(t$valuemaps$map_id == "rx_education4_qes2007_q77")[1]
     t$valuemaps$target_code[k] <- 9L
     t
   }))
   expect_true("V-R9" %in% bad(function(t) {
-    t$valuemaps <- t$valuemaps[!(t$valuemaps$map_id == "rx_education_qes2014_qscol" & t$valuemaps$source_code == "5"), ]
+    t$valuemaps <- t$valuemaps[!(t$valuemaps$map_id == "rx_education4_qes2014_qscol" & t$valuemaps$source_code == "5"), ]
     t
   }))
   expect_true("V-R9" %in% bad(function(t) {
@@ -154,7 +175,17 @@ test_that("the validator rejects malformed relaxed tables (V-R1 to V-R12)", {
     t
   }))
   expect_true("V-R10" %in% bad(function(t) {
-    t$relaxed_maps$override[t$relaxed_maps$column == "education"][1] <- TRUE
+    t$relaxed_maps$override[t$relaxed_maps$column == "education4"][1] <- TRUE
+    t
+  }))
+  # the 1998 education row replaces its base (education4 has a row there)
+  expect_true("V-R10" %in% bad(function(t) {
+    t$relaxed_maps$override[t$relaxed_maps$column == "education" & t$relaxed_maps$study == "qes1998"] <- FALSE
+    t
+  }))
+  # education's recode must give levels of rx_edu3
+  expect_true("V-R4" %in% bad(function(t) {
+    t$relaxed$transform[t$relaxed$column == "education"] <- "recode:no_diploma=no_diploma,high_school=high_school,college=high_school_college,university=university"
     t
   }))
   expect_true("V-R10" %in% bad(function(t) {
@@ -176,6 +207,18 @@ test_that("the relaxed views list the columns and each study's relaxed rows", {
   expect_identical(v$column, rx_cols()$column)
   expect_true(all(c("label", "base", "transform", "timing", "relaxed", "qes2022", "qes1998") %in% names(v)))
   expect_identical(v$qes2022[v$column == "education"], "relaxed")
+  expect_identical(v$qes2022[v$column == "education4"], "relaxed")
+  # the rows of spec 4.6.0, signed off: the 1998 education, union, econ_self
+  expect_identical(v$qes1998[v$column == "education"], "relaxed")
+  expect_identical(v$qes1998[v$column == "education4"], "relaxed")
+  expect_identical(v$qes2014[v$column == "union"], "relaxed")
+  expect_identical(v$qes2022[v$column == "econ_self"], "relaxed")
+  # a row not signed off shows its status
+  s_rv <- hz_spec()
+  s_rv$tables$relaxed_maps$status[s_rv$tables$relaxed_maps$column == "union"] <- "review"
+  v_rv <- .qes_spec_relaxed_view(s_rv, NULL, .qes_view_studies(NULL), "en")
+  expect_identical(v_rv$qes2014[v_rv$column == "union"], "relaxed (review)")
+  expect_true(is.na(v$qes2014[v$column == "econ_self"]))
   expect_identical(v$qes2014[v$column == "gender"], "strict")
   expect_true(is.na(v$qes1998[v$column == "religion"]))
   # a column built on another column takes its source study by study: the
@@ -185,11 +228,15 @@ test_that("the relaxed views list the columns and each study's relaxed rows", {
   expect_identical(v$qes2018[v$column == "language_eng"], v$qes2018[v$column == "language"])
   fr <- qes_spec("relaxed", lang = "fr", targets = "education")
   expect_identical(fr$label, "Scolarit\u00e9")
-  m <- qes_spec("relaxed_maps", targets = "education")
-  expect_true(all(m$column == "education"))
+  m <- qes_spec("relaxed_maps", targets = "education4")
+  expect_true(all(m$column == "education4"))
   expect_match(m$recode[m$study == "qes2007"], "1-4 = No high school diploma; 5 = High school diploma", fixed = TRUE)
-  m_fr <- qes_spec("relaxed_maps", targets = "education", studies = "qes2007", lang = "fr")
+  m_fr <- qes_spec("relaxed_maps", targets = "education4", studies = "qes2007", lang = "fr")
   expect_match(m_fr$recode, "Sans dipl\u00f4me", fixed = TRUE)
+  # education has one relaxed row of its own, for qes1998
+  m3 <- qes_spec("relaxed_maps", targets = "education")
+  expect_identical(m3$study, "qes1998")
+  expect_match(m3$recode, "1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University", fixed = TRUE)
   expect_error(qes_spec("relaxed", targets = "no_such_column"), class = "qesR_error_input")
   expect_error(qes_spec("spec", targets = "education"), class = "qesR_error_input")
 })
@@ -205,8 +252,12 @@ test_that("qes_decon() returns the documented columns, in order, offline", {
   expect_null(attr(d0, "weights"))
   # factors with every level, ordered where the column is ordinal; numbers
   expect_s3_class(d$age_group, "ordered")
-  expect_identical(levels(d$education), c("No high school diploma", "High school diploma",
-                                          "College, CEGEP or trade school", "University"))
+  expect_identical(levels(d$education), c("No high school diploma", "High school to college (CEGEP)", "University"))
+  expect_identical(levels(d$education4), c("No high school diploma", "High school diploma",
+                                           "College, CEGEP or trade school", "University"))
+  expect_s3_class(d$education, "ordered")
+  expect_identical(levels(d$union), c("Yes", "No"))
+  expect_identical(levels(d$econ_self), c("Better", "About the same", "Worse"))
   expect_type(d$lr, "double")
   expect_type(d$yob, "double")
   # attributes
@@ -218,7 +269,7 @@ test_that("qes_decon() returns the documented columns, in order, offline", {
   src <- attr(d, "decon_sources")
   expect_identical(names(src), c("column", "study", "wave", "base", "source_var", "wording_ref", "recode", "relaxed",
                                  "status", "applied", "n_value", "na_reasons"))
-  expect_identical(attr(d, "spec_version"), "4.5.0")
+  expect_identical(attr(d, "spec_version"), "4.6.0")
   expect_identical(attr(d, "lang"), "en")
   expect_s3_class(qes_provenance(d), "qes_provenance")
 })
@@ -254,6 +305,9 @@ test_that("labels follow lang; column names do not", {
   expect_identical(names(fr), names(en))
   expect_identical(levels(fr$interest), c("Faible", "Moyen", "\u00c9lev\u00e9"))
   expect_identical(attr(fr$education, "label"), "Scolarit\u00e9")
+  expect_identical(levels(fr$education), c("Sans dipl\u00f4me d'\u00e9tudes secondaires",
+                                           "Secondaire au coll\u00e9gial (c\u00e9gep)", "Universit\u00e9"))
+  expect_match(attr(fr$econ_self, "relaxed"), "Seule qes2022", fixed = TRUE)
   expect_match(attr(fr$sovereignty, "relaxed"), "^Oui ou non")
   expect_identical(attr(fr, "lang"), "fr")
   expect_identical(is.na(fr$gender), is.na(en$gender))
@@ -369,6 +423,76 @@ test_that("end to end on synthetic data: relaxed rows, static columns, sources",
   expect_true(all(c("vote_choice_lineage", "vote_prev_lineage", "pid_lineage") %in% names(l)))
   expect_false(any(grepl("__grade", names(l))))
   expect_true(all(as.character(l$vote_choice_lineage[as.character(d$vote_choice) %in% c("ADQ", "CAQ")]) == "ADQ/CAQ"))
+})
+
+test_that("education joins the four groups of education4 into three, and takes qes1998 from its own row", {
+  syn <- rx_syn(c("qes2022", "qes2014", "qes2007_panel", "qes_crop_2007_2010", "qes1998"))
+  d <- rx_run(syn)
+  e4 <- as.character(d$education4)
+  e3 <- as.character(d$education)
+  join <- c("No high school diploma" = "No high school diploma", "High school diploma" = "High school to college (CEGEP)",
+            "College, CEGEP or trade school" = "High school to college (CEGEP)", "University" = "University")
+  k <- d$study != "qes1998"
+  expect_identical(e3[k], unname(join[e4[k]]))
+  expect_identical(is.na(e3[k]), is.na(e4[k]))
+  # qes1998: not mappable in four groups, mapped in three from scol
+  k98 <- d$study == "qes1998"
+  expect_true(all(is.na(e4[k98])))
+  first <- k98 & !duplicated(d$qes_id)
+  scol <- as.character(unclass(syn$qes1998$scol))
+  ids <- paste0("qes1998:", .qes_hz_ids("qes1998", syn$qes1998)$key)
+  got <- e3[first][match(ids, d$qes_id[first])]
+  want <- c("1" = "No high school diploma", "2" = "High school to college (CEGEP)", "3" = "University")[scol]
+  expect_identical(unname(got), unname(want))
+  src <- attr(d, "decon_sources")
+  s98 <- src[src$column == "education" & src$study == "qes1998" & src$base == "relaxed", ]
+  expect_identical(nrow(s98), 1L)
+  expect_true(s98$applied)
+  expect_identical(s98$status, "stable")
+  # education's other sources come from education4, with the collapse in the recode text
+  s07 <- src[src$column == "education" & src$study == "qes2007_panel", ]
+  expect_identical(s07$base, "column:education4")
+  expect_match(s07$recode, "then", fixed = TRUE)
+  expect_true(s07$relaxed)
+  # the relaxed attribute says why the groups are three, and that 1998 is approximate
+  expect_match(attr(d$education, "relaxed"), "qes1998", fixed = TRUE)
+  expect_match(attr(d$education4, "relaxed"), "qes1998 is missing", fixed = TRUE)
+})
+
+test_that("union and econ_self follow their rows, and are held while in review", {
+  syn <- rx_syn(c("qes2022", "qes2014"))
+  d <- rx_run(syn)
+  k22 <- d$study == "qes2022"
+  # econ_self is a wave column: on the campaign rows of 2022 only
+  expect_true(all(is.na(d$econ_self[k22 & d$wave == "pes"])))
+  ids <- paste0("qes2022:", .qes_hz_ids("qes2022", syn$qes2022)$key)
+  cps <- k22 & d$wave == "cps"
+  got <- as.character(d$econ_self[cps])[match(ids, d$qes_id[cps])]
+  want <- c("1" = "Better", "2" = "Worse", "3" = "About the same")[as.character(unclass(syn$qes2022$cps_ownfin))]
+  expect_identical(unname(got), unname(want))
+  expect_true(all(is.na(d$econ_self[d$study == "qes2014"])))
+  # union is static: the same on both rows of a 2022 respondent; 2014 from Q61
+  by_id <- tapply(as.character(d$union[k22]), d$qes_id[k22], function(x) length(unique(x)))
+  expect_true(all(by_id == 1L))
+  k14 <- d$study == "qes2014" & !duplicated(d$qes_id)
+  q61 <- as.character(unclass(syn$qes2014$Q61))
+  ids14 <- paste0("qes2014:", .qes_hz_ids("qes2014", syn$qes2014)$key)
+  got14 <- as.character(d$union[k14])[match(ids14, d$qes_id[k14])]
+  expect_identical(unname(got14), unname(c("1" = "Yes", "2" = "No", "9" = NA)[q61]))
+  # the rows are signed off, so the default applies them
+  d1 <- rx_run(syn, include_review = FALSE)
+  expect_identical(as.character(d1$union), as.character(d$union))
+  expect_identical(as.character(d1$econ_self), as.character(d$econ_self))
+  # put back in review, they are not applied: both columns empty, reason not_reviewed
+  s_rv <- hz_spec()
+  s_rv$tables$relaxed_maps$status[s_rv$tables$relaxed_maps$column %in% c("union", "econ_self")] <- "review"
+  d0 <- rx_run(syn, include_review = FALSE, spec = s_rv)
+  expect_true(all(is.na(d0$union)) && all(is.na(d0$econ_self)))
+  src <- attr(d0, "decon_sources")
+  u <- src[src$column %in% c("union", "econ_self"), ]
+  expect_false(any(u$applied))
+  expect_true(all(grepl("not_reviewed", u$na_reasons)))
+  expect_true(all(u$n_value == 0L))
 })
 
 test_that("a relaxed row whose codes the data do not map is a spec error", {

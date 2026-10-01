@@ -26,9 +26,11 @@ cat(qesR:::.spec_coverage_md(lang = params$lang, site = TRUE))
 where the questions differ ([One file for every study](decon.html)). The
 grid says where each study's values come from: *strict* where the column
 is built from a target or a pooled variable of the grid above, *relaxed*
-where a relaxed mapping of the study's own question gives them. Relaxed
-columns carry no grade, and a mapping leaves a study's column missing
-where its categories straddle the column's.
+where a relaxed mapping of the study's own question gives them, and
+*relaxed (in review)* where that mapping is not yet signed off, so that
+`qes_decon()` leaves the column missing there for now. Relaxed columns
+carry no grade, and a mapping leaves a study's column missing where its
+categories straddle the column's.
 
 ```{r relaxed, echo = FALSE, results = "asis"}
 fr <- identical(params$lang, "fr")
@@ -38,6 +40,9 @@ word <- c(strict = if (fr) "stricte" else "strict", relaxed = if (fr) "souple" e
 ref <- if (fr) "fr-reference-harmonisation.html" else "harmonization-reference.html"
 rows <- lapply(seq_len(nrow(rx)), function(j) {
   v <- unlist(rx[j, studies])
+  # a relaxed mapping not yet signed off: "relaxed (review)"
+  held <- !is.na(v) & startsWith(v, "relaxed (")
+  v[held] <- paste0(word[["relaxed"]], if (fr) " (en r\u00e9vision)" else " (in review)")
   cells <- ifelse(is.na(v), "\u2014", ifelse(v %in% names(word), word[v], v))
   c(sprintf("[`%s`](%s#relaxed-%s)<br>%s", rx$column[j], ref, rx$column[j], rx$label[j]), cells)
 })

@@ -3,7 +3,7 @@
 #
 # Relaxed harmonization puts one concept in one column for every study, even
 # when the wording or the answer options differ, with coarse common
-# categories (education in four groups, income in study-specific thirds,
+# categories (education in three groups, income in study-specific thirds,
 # interest low, medium or high...). It is not the strict layer: a relaxed
 # column is not a target (rule P3), has no crosswalk row and no grade, and
 # never claims that two studies' questions are comparable. qes_harmonize()
@@ -41,9 +41,12 @@
 .qes_rx_id_columns <- c("study", "year", "wave", "qes_id", "weight", "weight_var")
 
 # Relaxed columns that may share the name of a strict target without
-# extending it (OD-R6): the relaxed religion (five groups) and the strict
-# string target religion (each study's own categories, read by get_decon()).
-.qes_rx_shadow_ok <- c("religion")
+# extending it: the relaxed religion (five groups) and the strict string
+# target religion (each study's own categories, read by get_decon(); OD-R6);
+# the relaxed education4 (the four groups of the relaxed education, spec
+# 4.6.0) and the strict target education4 (lowest group primary or less;
+# OD-R17).
+.qes_rx_shadow_ok <- c("religion", "education4")
 
 # Level sets whose value maps follow the thirds rule (V-R9): household income
 # in thirds of each study's respondents.

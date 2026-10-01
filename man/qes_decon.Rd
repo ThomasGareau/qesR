@@ -46,7 +46,7 @@ under plain names in the style of the cesR package (\code{education},
 \code{income_cat}, \code{vote_choice}, \code{sovereignty}, \code{lr}...). It is a relaxed
 harmonization: one concept goes in one column for every study, even when
 the wording or the answer options differ, with coarse common categories
-(education in four groups, income in thirds of each study's respondents,
+(education in three groups, income in thirds of each study's respondents,
 interest low, medium or high, a referendum vote of yes or no whatever the
 question). It trades exactness for coverage: use \code{\link[=qes_harmonize]{qes_harmonize()}} and
 its grades when the difference between two questions matters.
@@ -69,10 +69,11 @@ strict layer has none or keeps a study out (\code{education}, \code{income_cat},
 \code{religion}, \code{employment}...). The relaxed mappings are reviewed like the
 strict ones: a mapping not yet signed off (status \code{review}) is not
 applied, and its cells are \code{NA} with reason \code{not_reviewed} (see
-\code{qes_spec("relaxed_maps")}); a message says how many. The 60 mappings of
-spec 4.5.0 are signed off (status \code{stable}) by an automated double review
-against the original files and documents, not a human review, as their
-\code{reviewed_by} and \code{review_note} say.
+\code{qes_spec("relaxed_maps")}); a message says how many. The 65 mappings of
+spec 4.6.0, the 5 it adds (the education of \code{qes1998}, \code{union} and
+\code{econ_self}) included, are signed off (status \code{stable}) by an automated
+double review against the original files and documents, not a human
+review, as their \code{reviewed_by} and \code{review_note} say.
 }
 \section{Rows, waves and weights}{
 
@@ -99,21 +100,26 @@ Study. Their counterparts here: \code{citizenship}, \code{yob}, \code{gender},
 scale both before and after the election), \code{religion}, \code{language},
 \code{language_eng} and \code{language_fr} (no study asks about Indigenous
 languages), \code{employment}, \code{income_cat} (the income amount is not
-comparable across studies), \code{marital} and \code{econ_retro} (Quebec's economy).
-\code{province_territory} is dropped (every respondent lives in Quebec), and so
-are sexual orientation, the federal economy and personal finances (one
-study at most).
+comparable across studies), \code{marital}, \code{econ_retro} (Quebec's economy) and
+\code{econ_self} (personal finances, asked in \code{qes2022} only, kept by the
+owner's decision of 2026-10-01). \code{province_territory} is dropped (every
+respondent lives in Quebec), and so are sexual orientation and the
+federal economy (one study at most). \code{union} (union membership, three
+studies, kept by the same decision) and \code{education4} (the four groups of
+education that \code{education} joins into three) have no counterpart among
+cesR's columns.
 }
 
 \section{Columns}{
 
-The relaxed columns of spec 4.5.0, in order (\code{qes_spec("relaxed")} lists them with their French labels):
+The relaxed columns of spec 4.6.0, in order (\code{qes_spec("relaxed")} lists them with their French labels):
 \describe{
 \item{\code{citizenship}}{Citizenship (one value per respondent, target:citizen). Canadian citizenship where a study recorded it: asked directly in 2022, and taken in the 2018 panel from the screening question on the right to vote in the coming Quebec election, so that every respondent of that panel is a citizen. Levels: Canadian citizen; Not a Canadian citizen.}
 \item{\code{yob}}{Year of birth (one value per respondent, target:birth_year). The year of birth as reported; the studies that asked only an age group have none (see age_group). A number from 1900 to 2010.}
 \item{\code{age_group}}{Age group (one value per respondent, target:age_group3). Three age groups (18-34, 35-54, 55 and over), from the study's own age bands or from the age at the start of fieldwork; respondents under 18 are missing. Levels: 18-34; 35-54; 55 and over.}
 \item{\code{gender}}{Gender (one value per respondent, target:gender). Gender or sex as each study asked it: man or woman everywhere, and in 2022 also non-binary or another gender; the questions differ, the categories do not. Levels: Man; Woman; Non-binary; Another gender.}
-\item{\code{education}}{Education (one value per respondent, relaxed mappings only). Each study's levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree. Levels: No high school diploma; High school diploma; College, CEGEP or trade school; University.}
+\item{\code{education4}}{Education (four groups) (one value per respondent, relaxed mappings only). Each study's levels are grouped into four: no high school diploma, high school, college (CEGEP, technical or trade school) and university, including some university; the 2007 panel and the CROP polls asked years of schooling, so their high school group also holds those who left secondary school without a diploma, and their college group may hold some respondents with some university but no degree. qes1998 is missing (not mappable): the middle group of its pooled file, 10 to 15 years of schooling, spans high school and college (education, in three groups, includes it). The strict target of the same name in qes_harmonize() groups differently: its lowest group is primary or less. Levels: No high school diploma; High school diploma; College, CEGEP or trade school; University.}
+\item{\code{education}}{Education (one value per respondent, column:education4). Each study's levels are grouped into three: no high school diploma, high school to college (a high school diploma, CEGEP, technical or trade school) and university, including some university. These are the groups of education4 with high school and college joined, which lets qes1998 in. Where a study asked years of schooling (the 2007 panel, the CROP polls and the CROP respondents of qes1998), the bands do not follow diplomas: some respondents without a diploma (10 years in qes1998; 8 to 10 years in the others, as Quebec high school ends after 11 years) count as high school to college, and some university students (14 or 15 years) are not counted in university. Levels: No high school diploma; High school to college (CEGEP); University.}
 \item{\code{income_cat}}{Household income (thirds) (one value per respondent, relaxed mappings only). Household income in thirds of each study's own respondents: income brackets are never split, so a third holds the whole brackets whose midpoint falls in it and is rarely exactly a third; the dollar limits differ from study to study. Levels: Low (bottom third); Middle; High (top third).}
 \item{\code{language}}{Mother tongue (one value per respondent, target:lang_mother). The language first learned in childhood, in three groups; a respondent who reported French and another language is French, and English and a language other than French is English, and the 1998 CREATEC respondents are French by the design of their sample. Levels: French; English; Other.}
 \item{\code{language_fr}}{French as a mother tongue (one value per respondent, column:language). Yes when French is among the mother tongues reported, so a respondent with two mother tongues can be yes in both language_fr and language_eng. Levels: Yes; No.}
@@ -121,6 +127,7 @@ The relaxed columns of spec 4.5.0, in order (\code{qes_spec("relaxed")} lists th
 \item{\code{religion}}{Religion (one value per respondent, relaxed mappings only). The religion the respondent belongs to, in five groups; the 2022 question offers a long list, where agnostic counts as no religion, and the other studies first ask whether the respondent belongs to a religion at all. Levels: Catholic; Protestant; Other Christian; Other religion; No religion.}
 \item{\code{marital}}{Marital status (one value per respondent, relaxed mappings only). Married or living with a partner, separated or divorced, widowed, or never married; 2012 and 2014 asked the official civil status, with no common-law option, so some partners who live together are never married there. Levels: Married or living with a partner; Separated or divorced; Widowed; Single, never married.}
 \item{\code{employment}}{Employment (one value per respondent, relaxed mappings only). The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. Levels: Working (employee or self-employed); Unemployed; Retired; Student; At home, unable to work or other.}
+\item{\code{union}}{Union membership (one value per respondent, relaxed mappings only). Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing; the column is kept whatever its number of studies (essential), as decided on 2026-10-01. Levels: Yes; No.}
 \item{\code{region}}{Region (one value per respondent, target:region_cma3). The Montreal census metropolitan area, the Quebec City census metropolitan area or the rest of Quebec, from each study's region or sub-region variable, with the boundaries each study used. Levels: Montreal CMA; Quebec CMA; Rest of Quebec.}
 \item{\code{region_admin}}{Administrative region (one value per respondent, relaxed mappings only). The 17 administrative regions of Quebec, where a study recorded them or sub-regions that fit within them; the sub-regions of the 2007 study and the 2007 panel that split a region are joined. Levels: Bas-Saint-Laurent; Saguenay–Lac-Saint-Jean; Capitale-Nationale; Mauricie; Estrie; Montréal; Outaouais; Abitibi-Témiscamingue; Côte-Nord; Nord-du-Québec; Gaspésie–Îles-de-la-Madeleine; Chaudière-Appalaches; Laval; Lanaudière; Laurentides; Montérégie; Centre-du-Québec.}
 \item{\code{born_canada}}{Born in Canada (one value per respondent, target:born_canada). Born in Canada or not, as each study asked it: from the birthplace (Quebec, elsewhere in Canada or abroad), or asked directly in 2022. Levels: Yes; No.}
@@ -138,6 +145,7 @@ The relaxed columns of spec 4.5.0, in order (\code{qes_spec("relaxed")} lists th
 \item{\code{satis_democracy}}{Satisfaction with democracy in Quebec (on the wave that asked it, target:satis_demo_qc). Satisfaction with the way democracy works in Quebec, on four points, as each study asked it. Levels: Very satisfied; Fairly satisfied; Not very satisfied; Not at all satisfied.}
 \item{\code{gov_satisfaction}}{Satisfaction with the Quebec government (on the wave that asked it, target:gov_satisfaction). Satisfaction with the Quebec government of the day, on four points; the 1998 question asks about the Bouchard government, in its own words. Levels: Very satisfied; Fairly satisfied; Not very satisfied; Not at all satisfied.}
 \item{\code{econ_retro}}{Quebec's economy over the past year (on the wave that asked it, target:econ_retro_qc). Whether Quebec's economy got better, stayed about the same or got worse over the past year, as each study asked it. Levels: Better; About the same; Worse.}
+\item{\code{econ_self}}{Personal financial situation over the past year (on the wave that asked it, relaxed mappings only). Whether the respondent's own financial situation got better, stayed about the same or got worse over the past year. Only qes2022 asks it, during the campaign; the column is kept for analyses within that study (essential), as cesR's econ_self, although it has fewer than three studies. The 2012 and 2014 question on one's own finances if Quebec became independent is another question and is not used. Levels: Better; About the same; Worse.}
 \item{\code{identity}}{Québécois and Canadian identity (on the wave that asked it, target:identity_qc_ca). Québécois only, Québécois first, both equally, Canadian first or Canadian only, from one question or from the two orders of a split ballot. Levels: Québécois only; Québécois first, then Canadian; Equally Québécois and Canadian; Canadian first, then Québécois; Canadian only; Other.}
 \item{\code{attach_quebec}}{Attachment to Quebec (on the wave that asked it, target:attach_qc). Attachment to Quebec on four points, as each study asked it. Levels: Very attached; Fairly attached; Not very attached; Not at all attached.}
 \item{\code{attach_canada}}{Attachment to Canada (on the wave that asked it, target:attach_ca). Attachment to Canada on four points, as each study asked it. Levels: Very attached; Fairly attached; Not very attached; Not at all attached.}
@@ -148,7 +156,9 @@ The relaxed columns of spec 4.5.0, in order (\code{qes_spec("relaxed")} lists th
 
 The relaxed layer is new in qesR 0.9.0 (spec 4.4.0; its mappings signed
 off in spec 4.5.0). Its columns, groups and mappings may change, and a new
-relaxed mapping starts in review.
+relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts \code{education}
+in three groups instead of four, so that \code{qes1998} can be included, keeps
+the four groups as \code{education4}, and adds \code{union} and \code{econ_self}.
 }
 
 \section{En français}{
@@ -158,7 +168,7 @@ québécoises harmonisées, une ligne par personne et par vague, une colonne
 par concept, sous des noms simples à la manière du package cesR. C'est une
 harmonisation souple : un concept va dans une seule colonne pour chaque
 étude, même quand le libellé ou les choix de réponse diffèrent, avec des
-catégories communes larges (la scolarité en quatre groupes, le revenu en
+catégories communes larges (la scolarité en trois groupes, le revenu en
 tiers des répondants de chaque étude, l'intérêt faible, moyen ou élevé, un
 vote référendaire oui ou non quelle que soit la question). Elle échange
 l'exactitude contre la couverture : utilisez \code{\link[=qes_harmonize]{qes_harmonize()}} et ses
@@ -168,11 +178,15 @@ d'où viennent les valeurs de chaque étude (\code{attr(, "sources")}) ;
 \code{attr(x, "decon_sources")} les réunit toutes. Les colonnes souples n'ont
 aucun niveau de comparabilité. Les appariements souples sont révisés comme
 les autres : un appariement pas encore approuvé (statut \code{review}) n'est pas
-appliqué, et ses cellules valent \code{NA} (motif \code{not_reviewed}). Les 60
-appariements de la spécification 4.5.0 sont approuvés (statut \code{stable})
-par une double révision automatisée sur les fichiers et les documents
-originaux, et non par une révision humaine, comme le disent leurs champs
-\code{reviewed_by} et \code{review_note}. Les noms de
+appliqué, et ses cellules valent \code{NA} (motif \code{not_reviewed}). Des 65
+appariements de la spécification 4.6.0, y compris les 5 qu'elle ajoute (la
+scolarité de \code{qes1998}, \code{union} et \code{econ_self}), sont approuvés (statut
+\code{stable}) par une double révision automatisée sur les fichiers et les
+documents originaux, et non par une révision humaine, comme le disent
+leurs champs \code{reviewed_by} et \code{review_note}. Depuis qesR 0.9.1, \code{education} compte trois groupes
+(sans diplôme d'études secondaires, secondaire au collégial, université),
+ce qui permet d'inclure \code{qes1998}, et \code{education4} garde les quatre
+groupes. Les noms de
 colonnes restent en anglais ; \code{lang = "fr"} donne les étiquettes, les
 règles et les sources en français.
 }

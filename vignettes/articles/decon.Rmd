@@ -41,6 +41,16 @@ covered <- lapply(rx_cols, function(v) intersect(qz_studies, rownames(has_value)
 names(covered) <- rx_cols
 n_cov <- lengths(covered)
 src <- attr(d, "decon_sources")
+
+# the studies where a column's relaxed mapping is still in review (no value
+# yet), from the relaxed specification
+rx_view <- as.data.frame(qes_spec("relaxed", lang = params$lang))
+held_of <- function(col) {
+  cell <- unlist(rx_view[rx_view$column == col, intersect(qz_studies, names(rx_view))])
+  setdiff(names(cell)[!is.na(cell) & startsWith(cell, "relaxed (")], covered[[col]])
+}
+n_cov_any <- n_cov[n_cov > 0]
+empty_cols <- names(n_cov)[n_cov == 0]
 ```
 
 ```{r strings, include = FALSE}
@@ -122,8 +132,12 @@ cats <- vapply(seq_len(nrow(rx)), function(j) {
 }, character(1))
 studies_txt <- vapply(rx$column, function(v) {
   s <- covered[[v]]
-  if (length(s) == length(qz_studies)) return(tr("all 11", "les 11"))
-  paste0(length(s), " (", paste(short_study[s], collapse = ", "), ")")
+  h <- held_of(v)
+  txt <- if (length(s) == length(qz_studies)) tr("all 11", "les 11") else if (length(s) == 0) {
+    tr("none yet", "aucune pour l'instant")
+  } else paste0(length(s), " (", paste(short_study[s], collapse = ", "), ")")
+  if (length(h) > 0) txt <- paste0(txt, trs("; in review: ", " ; en révision : "), paste(short_study[h], collapse = ", "))
+  txt
 }, character(1))
 tab <- data.frame(
   sprintf("[`%s`](%s#relaxed-%s)", rx$column, reference, rx$column),
@@ -135,9 +149,17 @@ knitr::kable(tab, row.names = FALSE, escape = FALSE)
 ```
 
 `r sum(n_cov == length(qz_studies))` columns cover all 11 studies, and
-`r sum(n_cov >= 5)` cover at least five. The other `r sum(n_cov < 5)`
-were asked in `r min(n_cov)` to `r max(n_cov[n_cov < 5])` studies, and are
-kept for analyses within those studies. Two columns are companions:
+`r sum(n_cov >= 5)` cover at least five. The other `r sum(n_cov_any < 5)`
+were asked in `r min(n_cov_any)` to `r max(n_cov_any[n_cov_any < 5])`
+studies, and are kept for analyses within those studies. Two columns go
+further and are kept even though few studies ask them: `union`, union
+membership, asked in 2014, 2018 and 2022 (of the household in the first
+two, of the respondent in 2022), and `econ_self`, the respondent's own
+financial situation over the past year, asked in 2022 only and named
+after its counterpart in cesR. They serve analyses within those studies.
+Across studies, note that `union` compares a household with a person.
+`r if (length(empty_cols) > 0) sprintf("Their mappings are still in review, so %s %s empty for now.", and_list(paste0("<code>", empty_cols, "</code>")), if (length(empty_cols) > 1) "are" else "is") else ""`
+Two columns are companions:
 `vote_type` says whether `vote_choice` comes from the reported vote or
 from a vote intention, and `sovereignty_type` which referendum question
 `sovereignty` comes from. The rule of thumb is simple. Within one study, a
@@ -154,19 +176,25 @@ head(attr(d$education, "sources")[, c("study", "wave", "source_var", "recode")],
 ```
 
 ```{r education-facts, include = FALSE}
-edu_src <- src[src$column == "education", ]
-edu_empty <- intersect(qz_studies, edu_src$study[edu_src$n_value == 0])
+edu4_cov <- covered[["education4"]]
+edu_held <- !"qes1998" %in% covered[["education"]]
 ```
 
 Education is a good example of what relaxing means. The studies asked
 about schooling in different ways, from detailed lists of diplomas to
 bands of years of schooling, and `qes_decon()` groups every answer into
-four categories: no high school diploma, high school, college (CEGEP,
-technical or trade school) and university. The grouping is coarse on
-purpose; it is the finest one every study supports. Where a study's
-categories straddle two groups, the column stays missing rather than
-guess: this is the case of the `r and_list(qz_study_label(edu_empty))`,
-whose question cannot be split into the four groups.
+three categories: no high school diploma, high school to college (CEGEP,
+technical or trade school) and university. Three groups is the finest
+grouping that every study supports, 1998 included. The 1998 file has only
+three bands, 1 to 9 years, 10 to 15 years and university, and its middle
+band spans high school and college; a fourth group would leave the study
+out. The match is approximate, however. The CROP respondents of 1998 gave
+their years of schooling, and Quebec high school ends after 11 years: a
+respondent with 10 years has no diploma but counts as high school to
+college, and some of those with 14 or 15 years are university students.
+`education4` keeps the four groups, with high school and college apart,
+for the `r length(edu4_cov)` studies whose questions allow them.
+`r if (edu_held) "The 1998 mapping of <code>education</code> is still in review: until it is signed off, 1998 is missing there, as in <code>education4</code>." else ""`
 `attr(d, "decon_sources")` gathers the sources of every column, with the
 number of values and the reasons for missing ones;
 `qes_spec("relaxed_maps")` lists the relaxed mappings themselves, with
@@ -192,7 +220,8 @@ caq_edu <- setNames(100 * caq22$caq, as.integer(caq22$education))
 
 The education gradient is steep. In 2022, `r qz_pct(caq_edu[["1"]], 0)`
 of respondents without a high school diploma report voting for the CAQ,
-against `r qz_pct(caq_edu[["4"]], 0)` of university graduates. Before
+against `r qz_pct(caq_edu[["3"]], 0)` of those with a university
+education. Before
 reading too much into it, note that education is related to mother tongue,
 and that non-francophones voted for the CAQ far less than francophones
 did. The next example holds language constant.
@@ -204,11 +233,12 @@ It is often said that the CAQ, like the Action démocratique du Québec
 degree. The relaxed columns allow a quick test over six elections, among
 francophones only. The ADQ ran in 2007 and 2008, the CAQ from 2012 on;
 the two parties stay separate in `vote_choice`, and each election has one
-of them.
+of them. Since the test sets college apart from high school, it uses
+`education4` and joins its first two groups.
 
 ```{r elections}
 elections <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
-d$edu3 <- cut(as.integer(d$education), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
+d$edu3 <- cut(as.integer(d$education4), c(0, 2, 3, 4), labels = c("hs", "college", "university"))
 est <- do.call(rbind, lapply(elections, function(s) {
   x <- subset(d, study == s & wave %in% c("post", "pes") & language %in% c("French", "Français") &
                 !is.na(vote_choice) & !is.na(edu3))
@@ -291,8 +321,8 @@ qz_figure(fig_divide, "divide",
   subtitle = trs("Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals",
                  "Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_divide, height = 4.0,
-  note = trs("Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.",
-             "Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée."))
+  note = trs("Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.",
+             "Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée."))
 ```
 
 The conventional wisdom finds mixed support. In 2007, francophones with
