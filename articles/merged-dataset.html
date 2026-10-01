@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>The legacy merged file • qesR</title>
+<title>The merged file (get_qes_master) • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,13 +16,62 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="The legacy merged file">
+<meta property="og:title" content="The merged file (get_qes_master)">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -36,59 +85,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -119,7 +143,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>The legacy merged file</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>The merged file (get_qes_master)</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/merged-dataset.Rmd" class="external-link"><code>vignettes/articles/merged-dataset.Rmd</code></a></small>
@@ -130,33 +154,40 @@
     
 <p><em><a href="fr-donnees-fusionnees.html">Version
 française</a></em></p>
-<p><code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> stacks the Quebec Election Studies of
-qesR 0.4.4 in one data frame, with the 30 harmonized columns of 0.4.4:
-same names, order and types. It is the fixed legacy schema, kept stable
-for code written for 0.4.4.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">study</span></span>
-<span><span class="co">#&gt;  [1] "qes2022"            "qes2018"            "qes2018_panel"     </span></span>
-<span><span class="co">#&gt;  [4] "qes2014"            "qes2012"            "qes2012_panel"     </span></span>
-<span><span class="co">#&gt;  [7] "qes_crop_2007_2010" "qes2008"            "qes2007"           </span></span>
-<span><span class="co">#&gt; [10] "qes2007_panel"      "qes1998"            "qes1998_crop"      </span></span>
-<span><span class="co">#&gt; [13] "qes1998_createc"</span></span></code></pre></div>
-<p>By default, and with <code>surveys = "all"</code>,
-<code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> builds the 11 studies of qesR 0.4.4. The
-1998 firm files <code>qes1998_crop</code> and
-<code>qes1998_createc</code> are not in the master (their respondents
-are already in <code>qes1998</code>); read them with
-<code><a href="../reference/get_qes.html">get_qes()</a></code>, as <code><a href="../reference/get_qes_master.html">?get_qes_master</a></code> explains.</p>
+<p><code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> stacks 11 Quebec Election Studies, from
+1998 to 2022, in one data frame: one row per respondent of each study,
+and the same 30 columns for every study (vote choice, turnout,
+sovereignty, party identification, ideology, political interest and the
+usual demographics, with the study’s code, year and identifiers). Its
+layout is fixed: the names, order and types of the 30 columns do not
+change, and columns added later come after them. Code written against it
+keeps working.</p>
 <div class="section level2">
-<h2 id="build-merged-data">Build merged data<a class="anchor" aria-label="anchor" href="#build-merged-data"></a>
+<h2 id="when-to-use-it-and-when-to-prefer-qes_harmonize">When to use it, and when to prefer <code>qes_harmonize()</code><a class="anchor" aria-label="anchor" href="#when-to-use-it-and-when-to-prefer-qes_harmonize"></a>
+</h2>
+<p>The merged file is a quick, flat overview: one call, one data frame,
+one column per concept. To keep that shape, some columns put different
+questions in one column, and it has no column that says how comparable
+each study’s answer is.</p>
+<p>Prefer <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> for an analysis you will publish.
+It keeps apart what the merged file joins (a reported vote and a vote
+intention, the sovereignty wordings, a four-point and a 0-10 interest
+scale), gives each study’s question a comparability grade and each
+missing value a reason, and carries each wave’s weight;
+<code><a href="../reference/qes_design.html">qes_design()</a></code> then makes a survey design of it. <a href="harmonization.html">How harmonization works</a> explains it, and
+the <code>target</code> column of
+<code>attr(master, "legacy_column_map")</code> names the harmonized
+variable behind each column of the merged file.</p>
+<p>Use <code><a href="../reference/get_qes.html">get_qes()</a></code> for the questions of one study that
+neither has.</p>
+</div>
+<div class="section level2">
+<h2 id="build-the-merged-file">Build the merged file<a class="anchor" aria-label="anchor" href="#build-the-merged-file"></a>
 </h2>
 <p>The synthetic demonstration study runs offline:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">demo_master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="st">"qes_demo"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Values changed in qesR 0.7.0: get_qes_master() is now rendered from the harmonization engine (qes_harmonize()), so vote_choice and turnout are the reported vote and turnout in every study that asked them (the CROP polls asked only an intention: vote_intent), and codes the spec does not map are NA (language, the mother tongue, is NA for respondents who gave two first languages); attr(, "legacy_column_map") says what each column holds and NEWS lists the changes. Results of an earlier version are reproducible by installing it (for 0.4.4: remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")). This note is shown once per session.</span></span>
-<span><span class="co">#&gt; get_qes_master() no longer appends the 70 columns that qesR 0.4.4 built by stacking variables that share a name across studies; attr(, "removed_columns") lists them. Read those items from each study with get_qes(). This note is shown once per session.</span></span>
-<span><span class="co">#&gt; get_qes_master() returns its result and no longer assigns it into your workspace by default. Write `qes_master &lt;- get_qes_master(...)`, or pass `assign_global = TRUE`. This note is shown once per session.</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
+<span><span class="va">demo_master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>surveys <span class="op">=</span> <span class="st">"qes_demo"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">demo_master</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 60 42</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">demo_master</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes_code"</span>, <span class="st">"age_group"</span>, <span class="st">"gender"</span>, <span class="st">"turnout"</span>, <span class="st">"vote_choice"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -167,9 +198,8 @@ are already in <code>qes1998</code>); read them with
 <span><span class="co">#&gt; 4 qes_demo       65+    Man       1          PQ</span></span>
 <span><span class="co">#&gt; 5 qes_demo     45-54    Man       1          QS</span></span>
 <span><span class="co">#&gt; 6 qes_demo     35-44  Woman       1         CAQ</span></span></code></pre></div>
-<p>The real studies are read from their pinned original files. This
-chunk runs when the website is built, through qesR’s download cache:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>The real studies are read from their original files:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">master</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">master</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 40987    42</span></span>
@@ -181,18 +211,22 @@ chunk runs when the website is built, through qesR’s download cache:</p>
 <span><span class="co">#&gt;               1151               1505                844               1517 </span></span>
 <span><span class="co">#&gt;            qes2018      qes2018_panel            qes2022 </span></span>
 <span><span class="co">#&gt;               3072               1250               1521</span></span></code></pre></div>
+<p>By default, and with <code>surveys = "all"</code>,
+<code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> builds all 11 studies. The 1998 firm files
+<code>qes1998_crop</code> and <code>qes1998_createc</code> are not in it
+(their respondents are already in <code>qes1998</code>); read them with
+<code><a href="../reference/get_qes.html">get_qes()</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="how-it-is-built">How it is built<a class="anchor" aria-label="anchor" href="#how-it-is-built"></a>
+<h2 id="what-each-column-holds">What each column holds<a class="anchor" aria-label="anchor" href="#what-each-column-holds"></a>
 </h2>
 <ul>
-<li>Since qesR 0.7.0 the master is rendered from the harmonization
-engine: each study is harmonized by <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> and
-each column is rendered from the targets it needs, as the renderer table
-of the spec says (<code>qes_spec("spec")$tables$legacy</code>). A code
-the spec does not map is <code>NA</code>, never passed through.
-<code>attr(master, "source_map")</code> gives, for every column of every
-study, the question read, its target and its comparability grade.</li>
+<li>Each study is harmonized by <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, and each
+column is built from the harmonized variables (“targets”) it needs. A
+code the harmonization rules do not map is <code>NA</code>, never passed
+through. <code>attr(master, "source_map")</code> gives, for every column
+of every study, the question read, its target and its comparability
+grade.</li>
 <li>Every respondent of every file is kept: there is no de-duplication
 and no removal of empty rows. Panel and cross-section respondents stay
 separate rows.</li>
@@ -204,24 +238,18 @@ intentions (in <code>vote_intent</code>).
 country only, and <code>party_best</code> and <code>party_lean</code>
 are <code>NA</code> everywhere.
 <code>attr(master, "legacy_na_columns")</code> lists each column and
-study that is <code>NA</code> throughout, with the reason, the rule
-behind it where there is one (<code>cause</code>:
-<code>reported_vote_only</code>,
-<code>independence_question_only</code>, <code>no_valid_source</code>,
-<code>not_harmonized_yet</code> or <code>legacy_frozen</code>: the
-study’s question is harmonized since spec 4.3.0, in
-<code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, but the column keeps the <code>NA</code>
-of qesR 0.7.1) and, in <code>basis</code>, why in words.</li>
+study that is <code>NA</code> throughout, with the reason and, in
+<code>basis</code>, why in words (<code><a href="../reference/get_qes_master.html">?get_qes_master</a></code> lists the
+causes).</li>
 <li>
 <code>vote_choice_timing</code> and <code>sovereignty_item</code>
 say what <code>vote_choice</code> and <code>sovereignty_support</code>
 hold in each study.</li>
-<li>qesR 0.4.4 also appended 70 columns by stacking variables that share
-a name across studies; they mixed different questions and are no longer
-built (<code>attr(master, "removed_columns")</code>). Read those items
-from each study with <code><a href="../reference/get_qes.html">get_qes()</a></code>.</li>
+<li>Variables that share a name across studies are not stacked: they
+often hold different questions. Read those items from each study with
+<code><a href="../reference/get_qes.html">get_qes()</a></code>.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">demo_master</span>, <span class="st">"source_map"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes_code"</span>, <span class="st">"harmonized_variable"</span>, <span class="st">"source_variable"</span>, <span class="st">"target"</span>, <span class="st">"grade"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   qes_code harmonized_variable source_variable target grade</span></span>
 <span><span class="co">#&gt; 1 qes_demo            qes_code            &lt;NA&gt;   &lt;NA&gt;  &lt;NA&gt;</span></span>
@@ -254,27 +282,29 @@ from each study with <code><a href="../reference/get_qes.html">get_qes()</a></co
 <p><code>attr(master, "legacy_column_map")</code> says what each column
 means and flags the columns that mix instruments
 (<code>political_interest</code>, <code>age_group</code>,
-<code>education</code>). <code>survey_weight</code> is each study’s own
-weight on its own scale: do not pool weighted estimates across studies
-without rescaling.</p>
-<p>Results from qesR 0.4.4 are reproducible only with that version
-(<code>remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")</code>).
-0.5.0 and 0.6.0 were development versions and were never released: a
-result computed with one of them is reproducible by installing the
-commit it was built from, which
-<code>packageDescription("qesR")$RemoteSha</code> records for an
-installation from GitHub
-(<code>remotes::install_github("ThomasGareau/qesR", ref = "&lt;sha&gt;")</code>).</p>
+<code>education</code>).</p>
 </div>
 <div class="section level2">
-<h2 id="save-merged-data">Save merged data<a class="anchor" aria-label="anchor" href="#save-merged-data"></a>
+<h2 id="weights">Weights<a class="anchor" aria-label="anchor" href="#weights"></a>
+</h2>
+<p><code>survey_weight</code> is each study’s own weight, on its own
+scale, and is not reviewed: do not pool weighted estimates across
+studies with it. <code>weight_pre</code> and <code>weight_post</code>
+are the recommended weights of the harmonization rules, <code>NA</code>
+where a study’s weight still needs review. Compute each estimate within
+one study.</p>
+</div>
+<div class="section level2">
+<h2 id="save-the-merged-file">Save the merged file<a class="anchor" aria-label="anchor" href="#save-the-merged-file"></a>
 </h2>
 <p><code>save_path</code> writes a UTF-8 CSV file or an RDS file, and
 next to it <code>&lt;stem&gt;_provenance.csv</code>, the record of the
 file read for each study.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"qes_master.csv"</span><span class="op">)</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get_qes_master.html">get_qes_master</a></span><span class="op">(</span>save_path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"qes_master.rds"</span><span class="op">)</span>, strict <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>For code written for an earlier version of qesR, and to reproduce its
+results, see <a href="migrating-0.7.html">the upgrading guide</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

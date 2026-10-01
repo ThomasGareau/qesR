@@ -13,14 +13,14 @@ What qesR does, its options and its conditions, in English and in French
 
 ## Data
 
-Load a study from its pinned original file, or build the legacy merged
-file of qesR 0.4.4. Data are returned, never written into your workspace
-unless you ask.
+Load a study from its original data file, or stack 11 studies in the
+merged file. Data are returned, never written into your workspace unless
+you ask.
 
 - [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
   : Download and Load a Quebec Election Study
 - [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-  : Build the Legacy Stacked Master QES Dataset
+  : Build the Merged QES File
 
 ## Studies and documents
 
@@ -39,8 +39,7 @@ network request unless you ask for one.
 
 What each variable measures, the exact question asked, in English and
 French, and which codes mean “don’t know” or “refused”. Offline for
-every study (the metadata of the 2022 study keeps its licence, CC BY-NC
-4.0).
+every study.
 
 - [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md)
   : The codebook of a study
@@ -51,30 +50,18 @@ every study (the metadata of the 2022 study keeps its licence, CC BY-NC
 - [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md)
   : Set "don't know", "refused" and other missing codes to NA
 
-## Harmonization (experimental)
+## Harmonization
 
-One data frame across the 11 studies, from a specification checked
-against the original files (rows signed off by a reviewer are applied by
-default, the rows still in review only with `include_draft = TRUE`):
+One data frame across the 11 studies:
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 shows which studies have which harmonized variable and how comparable
 each study’s question is;
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-applies it, with a reason for every missing value and each respondent’s
-waves and weights;
+applies the rules, with a reason for every missing value and each
+respondent’s waves and weights;
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-turns the result into a survey design. Articles, in English and French:
-[Harmonizing across
-studies](https://thomasgareau.github.io/qesR/articles/harmonization.md),
-from
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-to a weighted estimate; [Coverage by
-study](https://thomasgareau.github.io/qesR/articles/coverage.md), the
-grade of every target in every study; [Validation against official
-results](https://thomasgareau.github.io/qesR/articles/validation.md),
-the harmonized studies against the official results and the census; and
-the [Harmonization
-reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
+turns the result into a survey design. See [How harmonization
+works](https://thomasgareau.github.io/qesR/articles/harmonization.md).
 
 - [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
   : The harmonization spec (experimental)
@@ -104,15 +91,15 @@ Where downloaded files are kept, and how to list or delete them.
 - [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md)
   : Delete files from the download cache
 
-## Legacy and deprecated
+## Older function names
 
-Functions from qesR 0.4.4. They keep working, with the same arguments,
-and will not be removed; each prints a one-time notice naming its
-replacement. [Moving from qesR 0.4.4 to
-0.7.0](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
+Earlier names of qesR functions. They keep working, with the same
+arguments, and will not be removed; each prints a one-time notice naming
+its replacement. [The upgrading
+guide](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
 says what changed in their results.
 
-| 0.4.4 | Replacement |
+| Older name | Replacement |
 |----|----|
 | [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md), [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) |
 | [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md) | `qes_codebook(codebook, layout = )` |
@@ -132,17 +119,17 @@ says what changed in their results.
   : Preview a Quebec Election Study
 - [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
   [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
-  : Get a Quebec Election Study codebook (legacy)
+  : Get a Quebec Election Study codebook (older name)
 - [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md)
-  : Reformat a qesR codebook (legacy)
+  : Reformat a qesR codebook (older name)
 - [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md)
-  : Get value labels from a codebook (legacy)
+  : Get value labels from a codebook (older name)
 - [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md)
-  : Get survey question text (legacy)
+  : Get survey question text (older name)
 - [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
   [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md)
-  : Get codebook files (legacy)
+  : Get codebook files (older name)
 - [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
-  : Download codebook files (legacy)
+  : Download codebook files (older name)
 - [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
   : Create a Prepared Non-Exhaustive qesR Dataset

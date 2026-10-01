@@ -15,11 +15,60 @@ Stata), vérifié par sa somme de contrôle md5 avant usage. Le catalogue des
 études, leurs documents, leurs citations et la description de chaque
 variable sont livrés avec le package et s'utilisent sans réseau.
 Cette page est le point d'entrée en français. Les autres pages d'aide sont
-en anglais ; certaines ont une section « En français »."><meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png"></head><body>
+en anglais ; certaines ont une section « En français »."><meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png"><meta property="og:image:alt" content="qesR logo"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -32,58 +81,31 @@ en anglais ; certaines ont une section « En français »."><meta property="og:i
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides"><li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-"><li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies"><li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
   </ul></li>
-<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
+  </ul></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -101,7 +123,7 @@ en anglais ; certaines ont une section « En français »."><meta property="og:i
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>qesR en français</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>qesR en français</h1>
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/R/qesR-fr.R" class="external-link"><code>R/qesR-fr.R</code></a></small>
       <div class="d-none name"><code>qesR-fr.Rd</code></div>
     </div>
@@ -123,15 +145,15 @@ en anglais ; certaines ont une section « En français ».</p>
     <h2 id="fonctions">Fonctions<a class="anchor" aria-label="anchor" href="#fonctions"></a></h2>
 
 
-<p>Les fonctions sont regroupées comme dans la référence du site web.</p><table class="table table"><tr><td>Groupe</td><td>Fonction</td><td>Rôle</td></tr><tr><td>Données</td><td><code><a href="get_qes.html">get_qes()</a></code></td><td>Charge une étude : <code>qes2018 &lt;- get_qes("qes2018")</code>. Les données sont retournées, jamais écrites dans votre espace de travail par défaut.</td></tr><tr><td>Données</td><td><code><a href="get_qes_master.html">get_qes_master()</a></code></td><td>Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir <code>NEWS</code>).</td></tr><tr><td>Études et documents</td><td><code><a href="qes_studies.html">qes_studies()</a></code></td><td>Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; <code>check_updates = TRUE</code> demande à Dataverse si une version plus récente existe.</td></tr><tr><td>Études et documents</td><td><code><a href="qes_docs.html">qes_docs()</a></code></td><td>Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau.</td></tr><tr><td>Études et documents</td><td><code><a href="qes_download.html">qes_download()</a></code></td><td>Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_codebook.html">qes_codebook()</a></code></td><td>Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_question.html">qes_question()</a></code></td><td>Texte exact d'une ou de plusieurs questions, en français ou en anglais.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_search.html">qes_search()</a></code></td><td>Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : <code>qes_search("souverain")</code>.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_missing.html">qes_missing()</a></code></td><td>Remplace par <code>NA</code> les codes « ne sait pas », « refus » et les codes manquants déclarés.</td></tr><tr><td>Harmonisation (expérimental)</td><td><code><a href="qes_spec.html">qes_spec()</a></code></td><td>La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes.</td></tr><tr><td>Harmonisation (expérimental)</td><td><code><a href="qes_harmonize.html">qes_harmonize()</a></code></td><td>Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne.</td></tr><tr><td>Harmonisation (expérimental)</td><td><code><a href="qes_design.html">qes_design()</a></code></td><td>Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles.</td></tr><tr><td>Harmonisation (expérimental)</td><td><code><a href="qes_party_lineage.html">qes_party_lineage()</a></code></td><td>Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois.</td></tr><tr><td>Reproductibilité</td><td><code><a href="qes_provenance.html">qes_provenance()</a></code></td><td>Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule.</td></tr><tr><td>Reproductibilité</td><td><code><a href="qes_cite.html">qes_cite()</a></code></td><td>Citation de qesR et de chaque jeu de données, en texte, BibTeX ou <code>bibentry</code>.</td></tr><tr><td>Cache</td><td><code><a href="qes_cache_info.html">qes_cache_info()</a></code>, <code><a href="qes_cache_clear.html">qes_cache_clear()</a></code></td><td>Liste ou supprime les fichiers gardés dans le cache de téléchargement.</td></tr></table><p>L'harmonisation entre études est expérimentale : <code><a href="qes_spec.html">qes_spec()</a></code> montre la
+<p>Les fonctions sont regroupées comme dans la référence du site web.</p><table class="table table"><tr><td>Groupe</td><td>Fonction</td><td>Rôle</td></tr><tr><td>Données</td><td><code><a href="get_qes.html">get_qes()</a></code></td><td>Charge une étude : <code>qes2018 &lt;- get_qes("qes2018")</code>. Les données sont retournées, jamais écrites dans votre espace de travail par défaut.</td></tr><tr><td>Données</td><td><code><a href="get_qes_master.html">get_qes_master()</a></code></td><td>Le fichier fusionné : 11 études empilées dans un seul tableau, avec 30 colonnes harmonisées dans un format fixe, construit à partir des variables harmonisées.</td></tr><tr><td>Études et documents</td><td><code><a href="qes_studies.html">qes_studies()</a></code></td><td>Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; <code>check_updates = TRUE</code> demande à Dataverse si une version plus récente existe.</td></tr><tr><td>Études et documents</td><td><code><a href="qes_docs.html">qes_docs()</a></code></td><td>Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau.</td></tr><tr><td>Études et documents</td><td><code><a href="qes_download.html">qes_download()</a></code></td><td>Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_codebook.html">qes_codebook()</a></code></td><td>Codebook d'une étude : étiquettes, texte des questions (anglais et français), étiquettes de valeurs, codes manquants.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_question.html">qes_question()</a></code></td><td>Texte exact d'une ou de plusieurs questions, en français ou en anglais.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_search.html">qes_search()</a></code></td><td>Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : <code>qes_search("souverain")</code>.</td></tr><tr><td>Codebooks et recherche</td><td><code><a href="qes_missing.html">qes_missing()</a></code></td><td>Remplace par <code>NA</code> les codes « ne sait pas », « refus » et les codes manquants déclarés.</td></tr><tr><td>Harmonisation</td><td><code><a href="qes_spec.html">qes_spec()</a></code></td><td>La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes.</td></tr><tr><td>Harmonisation</td><td><code><a href="qes_harmonize.html">qes_harmonize()</a></code></td><td>Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne.</td></tr><tr><td>Harmonisation</td><td><code><a href="qes_design.html">qes_design()</a></code></td><td>Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles.</td></tr><tr><td>Harmonisation</td><td><code><a href="qes_party_lineage.html">qes_party_lineage()</a></code></td><td>Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois.</td></tr><tr><td>Reproductibilité</td><td><code><a href="qes_provenance.html">qes_provenance()</a></code></td><td>Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule.</td></tr><tr><td>Reproductibilité</td><td><code><a href="qes_cite.html">qes_cite()</a></code></td><td>Citation de qesR et de chaque jeu de données, en texte, BibTeX ou <code>bibentry</code>.</td></tr><tr><td>Cache</td><td><code><a href="qes_cache_info.html">qes_cache_info()</a></code>, <code><a href="qes_cache_clear.html">qes_cache_clear()</a></code></td><td>Liste ou supprime les fichiers gardés dans le cache de téléchargement.</td></tr></table><p>L'harmonisation entre études est expérimentale : <code><a href="qes_spec.html">qes_spec()</a></code> montre la
 spécification révisée, <code><a href="qes_harmonize.html">qes_harmonize()</a></code> l'applique et <code><a href="qes_design.html">qes_design()</a></code> en
 fait un plan de sondage ; la référence
 générée à partir de la spécification est
 <code><a href="../articles/fr-reference-harmonisation.html">vignette("fr-reference-harmonisation", package = "qesR")</a></code>.</p>
-<p>Les fonctions de qesR 0.4.4 (<code><a href="get_codebook.html">get_codebook()</a></code>, <code><a href="get_question.html">get_question()</a></code>,
+<p>Les anciens noms de fonctions (<code><a href="get_codebook.html">get_codebook()</a></code>, <code><a href="get_question.html">get_question()</a></code>,
 <code><a href="get_preview.html">get_preview()</a></code>, <code><a href="get_qescodes.html">get_qescodes()</a></code>, ...) continuent de fonctionner et ne
-seront pas retirées ; voir <a href="qesR-deprecated.html">qesR-deprecated</a> pour la fonction qui remplace
-chacune.</p>
+seront pas retirés ; voir <a href="qesR-deprecated.html">qesR-deprecated</a> pour la fonction qui remplace
+chacun.</p>
     </div>
     <div class="section level2">
     <h2 id="langue">Langue<a class="anchor" aria-label="anchor" href="#langue"></a></h2>
@@ -170,13 +192,12 @@ valeur ne vient d'un vrai répondant.</p>
 
 <p><code><a href="../articles/fr-demarrage.html">vignette("fr-demarrage", package = "qesR")</a></code> (démarrage : du code d'étude
 à une estimation pondérée), <code><a href="../articles/fr-citations.html">vignette("fr-citations", package = "qesR")</a></code>
-(citations), <code><a href="../articles/fr-migrer-0.7.html">vignette("fr-migrer-0.7", package = "qesR")</a></code> (passer de
-qesR 0.4.4 à 0.7.0) et
+(citations), <code><a href="../articles/fr-migrer-0.7.html">vignette("fr-migrer-0.7", package = "qesR")</a></code> (mettre à jour du
+code ancien) et
 <code><a href="../articles/fr-reference-harmonisation.html">vignette("fr-reference-harmonisation", package = "qesR")</a></code> (référence de
 l'harmonisation, générée à partir de la spécification). Le site web, <a href="https://thomasgareau.github.io/qesR/">https://thomasgareau.github.io/qesR/</a>,
 offre aussi en français le catalogue des études et des exemples
-d'analyse construits à partir des fichiers complets (menu « Guides
-(FR) »).</p>
+d'analyse construits à partir des fichiers complets (bouton FR/EN de la barre de navigation).</p>
     </div>
     <div class="section level2">
     <h2 id="licence">Licence<a class="anchor" aria-label="anchor" href="#licence"></a></h2>

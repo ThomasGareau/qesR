@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>A generation gap that reversed: support for sovereignty, 1998-2022 • qesR</title>
+<title>Are young Quebecers still the most pro-independence? Support for independence by cohort, 2007-2022 • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,18 +16,68 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="A generation gap that reversed: support for sovereignty, 1998-2022">
-<meta name="description" content="The young carried the Yes side in the 2000s; today's youngest voters are the least sovereigntist of all.
+<meta property="og:title" content="Are young Quebecers still the most pro-independence? Support for independence by cohort, 2007-2022">
+<meta name="description" content="In 2007 the youngest francophones were the most likely to vote Yes; in 2022 they were the least likely. Most of the change came from within cohorts, not from one generation replacing another.
 ">
-<meta property="og:description" content="The young carried the Yes side in the 2000s; today's youngest voters are the least sovereigntist of all.
+<meta property="og:description" content="In 2007 the youngest francophones were the most likely to vote Yes; in 2022 they were the least likely. Most of the change came from within cohorts, not from one generation replacing another.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>A generation gap that reversed: support for sovereignty, 1998-2022</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Are young Quebecers still the most pro-independence? Support for independence by cohort, 2007-2022</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/sovereignty-generations.Rmd" class="external-link"><code>vignettes/articles/sovereignty-generations.Rmd</code></a></small>
@@ -135,69 +160,40 @@
     
 <p><em><a href="fr-souverainete-generations.html">Version
 française</a></em></p>
-<p>In 2007 the youngest francophone voters were the most sovereigntist:
-58% of those born from 1975 to 1989 would have voted Yes to the 1995
-question, against 38% of those born in 1944 or before. That question
-offered a partnership with Canada and draws more Yes than the question
-on an independent country asked from 2012 on, so the levels of 2007 and
-2022 cannot be compared; the order of the cohorts can. Within the
-independence question, the order has flipped since 2012: the cohort born
-from 1975 to 1989 fell from 54% Yes to 38% in 2022, and francophones
-born in 1990 or after from 53% to 30%, the lowest of any cohort, while
-the cohort born from 1945 to 1959 stayed between 50% and 54%. The cohort
-that carried the Yes side in the 2000s did not keep its lead. The
-youngest cohort is open-ended, so its make-up changes: born from 1990 to
-1994 (aged 18 to 22) in 2012, from 1990 to 2004 in 2022, and in 2018 it
-includes 16- and 17-year-olds.</p>
+<p>For a long time, the sovereignty project was thought to have time on
+its side. On this older view, the young voted Yes in greater numbers
+than their elders, and each new generation would add to the Yes camp.
+Whether that age gap reflects generations or the life cycle has been
+studied in its own right (Dufresne, Tessier and Montigny 2019). A newer
+view points the other way. Mahéo and Bélanger (2018) showed that the
+decline of the Parti Québécois (PQ) in 2014 was concentrated among
+millennials, who were less inclined to see sovereignty as a priority,
+and Daoust and Gareau-Paquette (2024) note that the shrinking electoral
+weight of the baby boomers could alter the cleavages that structure
+Quebec politics. On this newer view, the young have turned away from
+independence, and generational replacement, the arrival of new cohorts
+as older ones leave the electorate, now works against the Yes side.</p>
+<p>The PQ vote does not tell us whether support for independence itself
+has followed the same path. Nor does it tell us where the change comes
+from: one generation replacing another, or change within the generations
+themselves. The Quebec Election Studies allow us to follow francophone
+birth cohorts from 2007 to 2022 and to ask both questions. Since each
+study interviews new people, we follow cohorts, not individuals.</p>
+<p>In 2007, francophones born from 1975 to 1989 were the cohort most
+likely to vote Yes: 58% would have voted Yes to the 1995 question,
+compared to 38% of those born in 1944 or before. In 2022, francophones
+born in 1990 or after were the least likely: 30% would vote Yes to an
+independent country, compared to 54% of those born from 1945 to 1959,
+roughly the baby boomers. In other words, the generation gap did not
+close; it reversed. The newer view is thus right about the level, but
+less so about the mechanism. Depending on the year whose levels we hold
+fixed, generational replacement accounts for between none and 2.7 of the
+8.5 points lost among francophones since 2012. Most of the decline
+happened within the cohorts.</p>
 <div class="section level2">
-<h2 id="one-variable-several-questions">One variable, several questions<a class="anchor" aria-label="anchor" href="#one-variable-several-questions"></a>
+<h2 id="the-change-of-question-in-2012">The change of question in 2012<a class="anchor" aria-label="anchor" href="#the-change-of-question-in-2012"></a>
 </h2>
-<p><code>sov_support</code> pools the referendum questions of every
-study that asked one. The wording changes between studies, and
-<code>sov_support__type</code> says which question each value
-answers:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
-<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_support"</span>, <span class="st">"birth_year"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
-<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">h</span><span class="op">$</span><span class="va">sov_support__type</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                     </span></span>
-<span><span class="co">#&gt;                      independence sovereign_country partnership_1995_push</span></span>
-<span><span class="co">#&gt;   qes_crop_2007_2010            0                 0                     0</span></span>
-<span><span class="co">#&gt;   qes1998                       0                 0                  1483</span></span>
-<span><span class="co">#&gt;   qes2007                       0                 0                  2175</span></span>
-<span><span class="co">#&gt;   qes2007_panel                 0                 0                  2050</span></span>
-<span><span class="co">#&gt;   qes2008                       0                 0                  1151</span></span>
-<span><span class="co">#&gt;   qes2012                    1505                 0                     0</span></span>
-<span><span class="co">#&gt;   qes2012_panel                 0               844                     0</span></span>
-<span><span class="co">#&gt;   qes2014                    1517                 0                     0</span></span>
-<span><span class="co">#&gt;   qes2018                    3072                 0                     0</span></span>
-<span><span class="co">#&gt;   qes2018_panel                 0                 0                     0</span></span>
-<span><span class="co">#&gt;   qes2022                    1521                 0                     0</span></span>
-<span><span class="co">#&gt;                     </span></span>
-<span><span class="co">#&gt;                      partnership_1995 favour</span></span>
-<span><span class="co">#&gt;   qes_crop_2007_2010                0      0</span></span>
-<span><span class="co">#&gt;   qes1998                           0      0</span></span>
-<span><span class="co">#&gt;   qes2007                           0      0</span></span>
-<span><span class="co">#&gt;   qes2007_panel                     0      0</span></span>
-<span><span class="co">#&gt;   qes2008                           0      0</span></span>
-<span><span class="co">#&gt;   qes2012                           0      0</span></span>
-<span><span class="co">#&gt;   qes2012_panel                     0      0</span></span>
-<span><span class="co">#&gt;   qes2014                           0      0</span></span>
-<span><span class="co">#&gt;   qes2018                           0      0</span></span>
-<span><span class="co">#&gt;   qes2018_panel                     0    842</span></span>
-<span><span class="co">#&gt;   qes2022                           0      0</span></span></code></pre></div>
-<p>Support depends on the wording, so this page compares cohorts within
-one wording and one study, and draws the wordings as separate
-series.</p>
-</div>
-<div class="section level2">
-<h2 id="support-by-study-and-wording">Support by study and wording<a class="anchor" aria-label="anchor" href="#support-by-study-and-wording"></a>
-</h2>
-<figure class="qesr-fig" id="fig-wording"><figcaption><span class="qesr-title">Yes draws fewer votes on independence than on the 1995 question: 34-40% against 43-46%</span><span class="qesr-sub">Would vote Yes in a referendum, among those who would vote Yes or No, by study and wording of the question, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/wording-light.png" alt="Dot chart with confidence intervals of the share who would vote Yes, among those who would vote Yes or No, in each study from 1998 to 2022, the shape of each dot giving the wording of the question. In the Quebec Election Studies, support is 43% to 46% on the 1995 question (2007, 2008) and 34% to 40% on an independent country (2012 to 2022). The 1998 point (francophones only, unweighted) stands apart. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/wording-dark.png" alt="Dot chart with confidence intervals of the share who would vote Yes, among those who would vote Yes or No, in each study from 1998 to 2022, the shape of each dot giving the wording of the question. In the Quebec Election Studies, support is 43% to 46% on the 1995 question (2007, 2008) and 34% to 40% on an independent country (2012 to 2022). The 1998 point (francophones only, unweighted) stands apart. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: qesR, pooled sov_support, every study that asked a referendum question (all respondents). The line joins the independence question in the Quebec Election Studies (just left of each election); the Durand panels are just right of it. The 1998 point is the CROP half of the 1998 polls only (CREATEC did not ask the question): francophones only, unweighted, from a recontact that over-selected undecided voters and refusers, so it is not joined to the others and is not comparable with the 1995 result of all voters. Bars: 95% confidence intervals (logit). Weighted with the weight of the wave that asked; hollow: unweighted, weight under review. Favourable or opposed (2018 panel) is collapsed to yes or no, graded approximate. The x axis is in years, with a break between 1998 and 2007.</p>
+<figure class="qesr-fig" id="fig-levels"><figcaption><span class="qesr-title">The question changed in 2012: 43-46% Yes on the 1995 question, 34-40% on an independent country</span><span class="qesr-sub">Would vote Yes in a referendum, among those who would vote Yes or No, all respondents, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/levels-light.png" alt="Line chart with confidence intervals of the share of all respondents who would vote Yes, among those who would vote Yes or No, in the Quebec Election Studies from 2007 to 2022. Support is 43% to 46% on the 1995 question (2007, 2008) and 34% to 40% on an independent country (2012 to 2022); a grey band marks the change of question. Values in the table view." width="672" height="374" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/levels-dark.png" alt="Line chart with confidence intervals of the share of all respondents who would vote Yes, among those who would vote Yes or No, in the Quebec Election Studies from 2007 to 2022. Support is 43% to 46% on the 1995 question (2007, 2008) and 34% to 40% on an independent country (2012 to 2022); a grey band marks the change of question. Values in the table view." width="672" height="374" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies, 2007 to 2022, all respondents. The 2007 and 2008 studies asked the 1995 referendum question, which offered a partnership with Canada, and asked those who did not know which way they leaned; from 2012 on, the studies asked about an independent country. The 2008 study is unweighted (hollow dot).</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -206,18 +202,8 @@ series.</p>
    <th style="text-align:left;"> Yes, % [95% CI] </th>
    <th style="text-align:right;"> n </th>
    <th style="text-align:left;"> Weighting </th>
-   <th style="text-align:left;"> Grade </th>
   </tr></thead>
 <tbody>
-<tr>
-<td style="text-align:right;"> 1998 </td>
-   <td style="text-align:left;"> 1998 polls (CROP half, francophones) </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> 43.4 [38.5, 48.5] </td>
-   <td style="text-align:right;"> 380 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
-  </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
    <td style="text-align:left;"> QES 2007 </td>
@@ -225,16 +211,6 @@ series.</p>
    <td style="text-align:left;"> 42.5 [39.9, 45.2] </td>
    <td style="text-align:right;"> 2011 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> 2007 panel </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> 44.8 [42.6, 47.1] </td>
-   <td style="text-align:right;"> 1899 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -242,8 +218,7 @@ series.</p>
    <td style="text-align:left;"> The 1995 question (partnership) </td>
    <td style="text-align:left;"> 45.8 [42.7, 48.8] </td>
    <td style="text-align:right;"> 1038 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
+   <td style="text-align:left;"> unweighted </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -252,16 +227,6 @@ series.</p>
    <td style="text-align:left;"> 40.4 [37.5, 43.4] </td>
    <td style="text-align:right;"> 1323 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> 2012 panel </td>
-   <td style="text-align:left;"> A sovereign country </td>
-   <td style="text-align:left;"> 35.1 [31.8, 38.6] </td>
-   <td style="text-align:right;"> 743 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2014 </td>
@@ -270,7 +235,6 @@ series.</p>
    <td style="text-align:left;"> 34.8 [31.8, 37.9] </td>
    <td style="text-align:right;"> 1353 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2018 </td>
@@ -279,16 +243,6 @@ series.</p>
    <td style="text-align:left;"> 34.6 [32.6, 36.7] </td>
    <td style="text-align:right;"> 2558 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> 2018 panel </td>
-   <td style="text-align:left;"> Favourable to independence </td>
-   <td style="text-align:left;"> 31.7 [27.8, 35.8] </td>
-   <td style="text-align:right;"> 780 </td>
-   <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2022 </td>
@@ -297,634 +251,27 @@ series.</p>
    <td style="text-align:left;"> 34.3 [30.8, 37.9] </td>
    <td style="text-align:right;"> 1284 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The 1995 question, which offered a partnership with Canada, draws
-more Yes than a question on an independent country: the two are
-different series, and the grey band marks where the Quebec Election
-Studies changed question.</li>
-<li>On the independence question, support in the Quebec Election Studies
-falls from 40% in 2012 to about 34% from 2014 on.</li>
-<li>The Durand panels asked other wordings; each is a point of its
-own.</li>
-</ul>
+</table></details></figure><p>Before comparing cohorts, a word on the question itself. The 2007 and
+2008 studies asked the question of the 1995 referendum, which offered a
+partnership with Canada, and asked those who did not know which way they
+leaned. From 2012 on, the studies asked about Quebec becoming an
+independent country, with no such follow-up. In these studies, the first
+wording draws more Yes than the second. Wording has long been known to
+move support for sovereignty (Yale and Durand 2011), and here the change
+of wording also coincides with the gap between the 2008 and 2012
+elections, so the levels on each side of the grey band cannot be
+compared. On the independence question, support among all respondents
+fell from 40% in 2012 to 35% in 2014, and has barely moved since (34% in
+2022). For this reason, we compare cohorts within one study and one
+question, and we read the order of the cohorts rather than their
+level.</p>
 </div>
 <div class="section level2">
-<h2 id="cohorts-over-time">Cohorts over time<a class="anchor" aria-label="anchor" href="#cohorts-over-time"></a>
+<h2 id="the-order-of-the-cohorts-reverses">The order of the cohorts reverses<a class="anchor" aria-label="anchor" href="#the-order-of-the-cohorts-reverses"></a>
 </h2>
-<figure class="qesr-fig" id="fig-cohorts"><figcaption><span class="qesr-title">Francophones born in 1990 or after went from 53% to 30% Yes; those born 1945-1959 stayed at 50-54%</span><span class="qesr-sub">Francophones who would vote Yes to an independent country, by birth cohort, 2012 to 2022; two cohorts with 95% confidence bands, the others in grey</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/cohorts-light.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or after are highlighted with confidence bands. Those born in 1990 or after go from 53% to 30%; those born 1945-1959 stay between 50% and 54%. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/cohorts-dark.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or after are highlighted with confidence bands. Those born in 1990 or after go from 53% to 30%; those born 1945-1959 stay between 50% and 54%. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: qesR, pooled sov_support (type independence), birth_year and lang_mother; QES 2012, 2014, 2018 and 2022, francophone respondents, each study weighted with the weight of the wave that asked. Bands: 95% confidence intervals (logit); the intervals of every cohort are in the next figure and the table view, which also gives all respondents and the 2007 and 2008 studies (1995 question). The line of the oldest cohort rests on fewer than 100 respondents in 2012, 2014, 2022. The youngest cohort is open-ended: born 1990-1994 (aged 18 to 22) in 2012, born 1990-2004 in 2022; the 2018 study sampled people aged 16 and over.</p>
-<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
-<thead><tr>
-<th style="text-align:left;"> Respondents </th>
-   <th style="text-align:right;"> Election </th>
-   <th style="text-align:left;"> Study </th>
-   <th style="text-align:left;"> Question </th>
-   <th style="text-align:left;"> Cohort </th>
-   <th style="text-align:left;"> Yes, % [95% CI] </th>
-   <th style="text-align:right;"> n </th>
-   <th style="text-align:left;"> Weighting </th>
-  </tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 35.1 [29.9, 40.8] </td>
-   <td style="text-align:right;"> 381 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 44.7 [40.2, 49.4] </td>
-   <td style="text-align:right;"> 673 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 41.6 [36.4, 46.9] </td>
-   <td style="text-align:right;"> 486 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 47.9 [42.2, 53.7] </td>
-   <td style="text-align:right;"> 438 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 39.7 [33.3, 46.5] </td>
-   <td style="text-align:right;"> 209 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 53.8 [47.8, 59.8] </td>
-   <td style="text-align:right;"> 262 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 43.9 [38.7, 49.3] </td>
-   <td style="text-align:right;"> 330 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 46.0 [39.4, 52.7] </td>
-   <td style="text-align:right;"> 213 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> n &lt; 30 </td>
-   <td style="text-align:right;"> 5 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 24.0 [16.2, 34.1] </td>
-   <td style="text-align:right;"> 91 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 42.8 [36.4, 49.4] </td>
-   <td style="text-align:right;"> 258 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 39.2 [34.2, 44.3] </td>
-   <td style="text-align:right;"> 394 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 46.0 [41.2, 50.9] </td>
-   <td style="text-align:right;"> 439 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 45.4 [36.9, 54.2] </td>
-   <td style="text-align:right;"> 141 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 26.3 [18.2, 36.5] </td>
-   <td style="text-align:right;"> 128 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 43.6 [37.4, 49.9] </td>
-   <td style="text-align:right;"> 354 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 31.4 [26.1, 37.2] </td>
-   <td style="text-align:right;"> 393 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 29.0 [23.6, 35.1] </td>
-   <td style="text-align:right;"> 307 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 41.6 [33.4, 50.2] </td>
-   <td style="text-align:right;"> 171 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 30.3 [25.4, 35.7] </td>
-   <td style="text-align:right;"> 356 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 37.2 [33.4, 41.1] </td>
-   <td style="text-align:right;"> 627 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 36.8 [32.5, 41.3] </td>
-   <td style="text-align:right;"> 498 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 33.9 [29.1, 39.0] </td>
-   <td style="text-align:right;"> 387 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 31.5 [27.4, 36.0] </td>
-   <td style="text-align:right;"> 655 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 40.4 [21.9, 62.2] </td>
-   <td style="text-align:right;"> 60 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 40.7 [34.0, 47.6] </td>
-   <td style="text-align:right;"> 318 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 35.6 [29.4, 42.4] </td>
-   <td style="text-align:right;"> 319 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 31.7 [25.7, 38.3] </td>
-   <td style="text-align:right;"> 303 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> All respondents </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 26.7 [20.8, 33.5] </td>
-   <td style="text-align:right;"> 283 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 38.1 [32.5, 44.0] </td>
-   <td style="text-align:right;"> 343 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 51.2 [46.4, 56.0] </td>
-   <td style="text-align:right;"> 588 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 51.7 [46.0, 57.3] </td>
-   <td style="text-align:right;"> 406 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> QES 2007 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 57.8 [51.8, 63.5] </td>
-   <td style="text-align:right;"> 379 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 45.4 [38.2, 52.9] </td>
-   <td style="text-align:right;"> 174 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 62.1 [55.5, 68.3] </td>
-   <td style="text-align:right;"> 219 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 50.5 [44.7, 56.4] </td>
-   <td style="text-align:right;"> 275 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 52.7 [45.5, 59.9] </td>
-   <td style="text-align:right;"> 182 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2008 </td>
-   <td style="text-align:left;"> QES 2008 </td>
-   <td style="text-align:left;"> The 1995 question (partnership) </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> n &lt; 30 </td>
-   <td style="text-align:right;"> 4 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 37.0 [25.6, 50.0] </td>
-   <td style="text-align:right;"> 62 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 53.6 [46.4, 60.6] </td>
-   <td style="text-align:right;"> 214 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 46.2 [40.6, 51.9] </td>
-   <td style="text-align:right;"> 327 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 54.0 [48.8, 59.2] </td>
-   <td style="text-align:right;"> 374 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> QES 2012 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 53.5 [44.1, 62.6] </td>
-   <td style="text-align:right;"> 120 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 33.2 [23.1, 45.2] </td>
-   <td style="text-align:right;"> 90 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 50.7 [43.9, 57.5] </td>
-   <td style="text-align:right;"> 280 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 40.5 [34.2, 47.2] </td>
-   <td style="text-align:right;"> 288 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 38.1 [31.2, 45.6] </td>
-   <td style="text-align:right;"> 214 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2014 </td>
-   <td style="text-align:left;"> QES 2014 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 50.8 [41.1, 60.4] </td>
-   <td style="text-align:right;"> 124 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 38.2 [32.2, 44.4] </td>
-   <td style="text-align:right;"> 280 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 49.5 [44.9, 54.2] </td>
-   <td style="text-align:right;"> 471 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 49.0 [43.7, 54.3] </td>
-   <td style="text-align:right;"> 362 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 43.5 [37.6, 49.6] </td>
-   <td style="text-align:right;"> 288 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> QES 2018 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 37.4 [32.5, 42.5] </td>
-   <td style="text-align:right;"> 544 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1944 or before </td>
-   <td style="text-align:left;"> 41.2 [26.8, 57.2] </td>
-   <td style="text-align:right;"> 51 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1945-59 </td>
-   <td style="text-align:left;"> 54.2 [47.5, 60.8] </td>
-   <td style="text-align:right;"> 248 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1960-74 </td>
-   <td style="text-align:left;"> 44.4 [37.8, 51.1] </td>
-   <td style="text-align:right;"> 243 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1975-89 </td>
-   <td style="text-align:left;"> 38.1 [31.8, 44.7] </td>
-   <td style="text-align:right;"> 245 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-<tr>
-<td style="text-align:left;"> Francophones </td>
-   <td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> QES 2022 </td>
-   <td style="text-align:left;"> An independent country </td>
-   <td style="text-align:left;"> born 1990+ </td>
-   <td style="text-align:left;"> 30.5 [24.2, 37.6] </td>
-   <td style="text-align:right;"> 215 </td>
-   <td style="text-align:left;"> weighted </td>
-  </tr>
-</tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The youngest cohort (born in 1990 or after) falls from 53% Yes in
-2012 to 30% in 2022.</li>
-<li>The cohort born from 1975 to 1989 falls from 54% to 38%. The oldest
-cohort (born in 1944 or before) does not change detectably: 62
-francophones of that cohort answered in 2012 and 51 in 2022, and the
-cohort also shrinks through mortality.</li>
-<li>The cohort born from 1945 to 1959, who voted in the referendums of
-1980 and 1995, is the most sovereigntist in 2022 (54%).</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="the-gradient-flips">The gradient flips<a class="anchor" aria-label="anchor" href="#the-gradient-flips"></a>
-</h2>
-<figure class="qesr-fig" id="fig-gradient"><figcaption><span class="qesr-title">In 2007 the youngest francophones were the most sovereigntist cohort; in 2022 the youngest were the least</span><span class="qesr-sub">Francophones who would vote Yes, by birth cohort, in each Quebec Election Study, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/gradient-light.png" alt="Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts above the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is −24 pts from the cohort born 1945-1959. Values in the table view." width="672" height="461" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/gradient-dark.png" alt="Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts above the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is −24 pts from the cohort born 1945-1959. Values in the table view." width="672" height="461" loading="lazy"><p class="qesr-note">Source: qesR, pooled sov_support, birth_year and lang_mother; one Quebec Election Study per election, francophone respondents. 2007 and 2008 asked the 1995 question, with the undecided pushed; 2012 to 2022 asked about an independent country, so compare the order of the cohorts within a panel, not the levels across the two questions. Bars: 95% confidence intervals (logit). Weighted; hollow (2008): unweighted, weight under review. Cohorts of fewer than 30 respondents are not drawn.</p>
+<figure class="qesr-fig" id="fig-gradient"><figcaption><span class="qesr-title">In 2007 the youngest francophones were the cohort most likely to vote Yes; in 2022 they were the least likely</span><span class="qesr-sub">Francophones who would vote Yes, by birth cohort, in each Quebec Election Study, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/gradient-light.png" alt="Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is −24 pts from the cohort born 1945-1959. Values in the table view." width="672" height="461" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/gradient-dark.png" alt="Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is −24 pts from the cohort born 1945-1959. Values in the table view." width="672" height="461" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies, 2007 to 2022, respondents whose mother tongue is French. The 2007 and 2008 studies asked the 1995 question, the others about an independent country: compare the order of the cohorts within a panel, not the levels across panels. The 2008 study is unweighted (hollow dots). Cohorts of fewer than 30 respondents are not drawn.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -973,7 +320,7 @@ cohort also shrinks through mortality.</li>
    <td style="text-align:left;"> born 1944 or before </td>
    <td style="text-align:left;"> 45.4 [38.2, 52.9] </td>
    <td style="text-align:right;"> 174 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -981,7 +328,7 @@ cohort also shrinks through mortality.</li>
    <td style="text-align:left;"> born 1945-59 </td>
    <td style="text-align:left;"> 62.1 [55.5, 68.3] </td>
    <td style="text-align:right;"> 219 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -989,7 +336,7 @@ cohort also shrinks through mortality.</li>
    <td style="text-align:left;"> born 1960-74 </td>
    <td style="text-align:left;"> 50.5 [44.7, 56.4] </td>
    <td style="text-align:right;"> 275 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -997,7 +344,15 @@ cohort also shrinks through mortality.</li>
    <td style="text-align:left;"> born 1975-89 </td>
    <td style="text-align:left;"> 52.7 [45.5, 59.9] </td>
    <td style="text-align:right;"> 182 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> born 1990+ </td>
+   <td style="text-align:left;"> n &lt; 30 </td>
+   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:left;"> unweighted </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1160,16 +515,314 @@ cohort also shrinks through mortality.</li>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
+</table></details></figure><p>First, in 2007, on the 1995 question, support falls with age:
+francophones born from 1975 to 1989 are 20 percentage points above those
+born in 1944 or before. This is the pattern the older view has in mind.
+The unweighted 2008 study gives a less tidy picture, as it puts those
+born from 1945 to 1959 first (62%). Second, in 2012 the youngest cohort
+no longer stands out: those born in 1990 or after (53% Yes) are level
+with those born from 1945 to 1959 (54%), and the cohort born from 1960
+to 1974 is 8 points lower (46%). The oldest cohort, at 37%, is lower
+still, although it rests on only 62 respondents. Third, from 2018 on the
+order is reversed. In 2022, the youngest cohort is the least likely to
+vote Yes, 24 points below those born from 1945 to 1959 (54%, n = 248).
+The oldest cohort, born in 1944 or before, is below the 1945-59 cohort
+at every election, but its intervals are among the widest: only 51
+francophones of that cohort answered in 2022.</p>
+</div>
+<div class="section level2">
+<h2 id="which-cohorts-changed">Which cohorts changed<a class="anchor" aria-label="anchor" href="#which-cohorts-changed"></a>
+</h2>
+<figure class="qesr-fig" id="fig-cohorts"><figcaption><span class="qesr-title">Francophones born in 1990 or after went from 53% to 30% Yes; those born 1945-59 stayed between 50% and 54%</span><span class="qesr-sub">Francophones who would vote Yes to an independent country, by birth cohort, 2012 to 2022; two cohorts with 95% confidence bands, the others in grey</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/cohorts-light.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or after are highlighted with confidence bands. Those born in 1990 or after go from 53% to 30%; those born 1945-1959 stay between 50% and 54%. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/cohorts-dark.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or after are highlighted with confidence bands. Those born in 1990 or after go from 53% to 30%; those born 1945-1959 stay between 50% and 54%. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, respondents whose mother tongue is French, weighted. The line of the oldest cohort rests on fewer than 100 respondents in 2012, 2014 and 2022. The youngest cohort grows as new voters come of age: born 1990-1994 (aged 18 to 22) in 2012, born 1990-2004 in 2022.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:right;"> Election </th>
+   <th style="text-align:left;"> Cohort </th>
+   <th style="text-align:left;"> Yes, % [95% CI] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Weighting </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> born 1944 or before </td>
+   <td style="text-align:left;"> 37.0 [25.6, 50.0] </td>
+   <td style="text-align:right;"> 62 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> born 1945-59 </td>
+   <td style="text-align:left;"> 53.6 [46.4, 60.6] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> born 1960-74 </td>
+   <td style="text-align:left;"> 46.2 [40.6, 51.9] </td>
+   <td style="text-align:right;"> 327 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> born 1975-89 </td>
+   <td style="text-align:left;"> 54.0 [48.8, 59.2] </td>
+   <td style="text-align:right;"> 374 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> born 1990+ </td>
+   <td style="text-align:left;"> 53.5 [44.1, 62.6] </td>
+   <td style="text-align:right;"> 120 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> born 1944 or before </td>
+   <td style="text-align:left;"> 33.2 [23.1, 45.2] </td>
+   <td style="text-align:right;"> 90 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> born 1945-59 </td>
+   <td style="text-align:left;"> 50.7 [43.9, 57.5] </td>
+   <td style="text-align:right;"> 280 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> born 1960-74 </td>
+   <td style="text-align:left;"> 40.5 [34.2, 47.2] </td>
+   <td style="text-align:right;"> 288 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> born 1975-89 </td>
+   <td style="text-align:left;"> 38.1 [31.2, 45.6] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> born 1990+ </td>
+   <td style="text-align:left;"> 50.8 [41.1, 60.4] </td>
+   <td style="text-align:right;"> 124 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> born 1944 or before </td>
+   <td style="text-align:left;"> 38.2 [32.2, 44.4] </td>
+   <td style="text-align:right;"> 280 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> born 1945-59 </td>
+   <td style="text-align:left;"> 49.5 [44.9, 54.2] </td>
+   <td style="text-align:right;"> 471 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> born 1960-74 </td>
+   <td style="text-align:left;"> 49.0 [43.7, 54.3] </td>
+   <td style="text-align:right;"> 362 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> born 1975-89 </td>
+   <td style="text-align:left;"> 43.5 [37.6, 49.6] </td>
+   <td style="text-align:right;"> 288 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> born 1990+ </td>
+   <td style="text-align:left;"> 37.4 [32.5, 42.5] </td>
+   <td style="text-align:right;"> 544 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> born 1944 or before </td>
+   <td style="text-align:left;"> 41.2 [26.8, 57.2] </td>
+   <td style="text-align:right;"> 51 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> born 1945-59 </td>
+   <td style="text-align:left;"> 54.2 [47.5, 60.8] </td>
+   <td style="text-align:right;"> 248 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> born 1960-74 </td>
+   <td style="text-align:left;"> 44.4 [37.8, 51.1] </td>
+   <td style="text-align:right;"> 243 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> born 1975-89 </td>
+   <td style="text-align:left;"> 38.1 [31.8, 44.7] </td>
+   <td style="text-align:right;"> 245 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> born 1990+ </td>
+   <td style="text-align:left;"> 30.5 [24.2, 37.6] </td>
+   <td style="text-align:right;"> 215 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Comparing the same cohorts from one study to the next shows where the
+reversal comes from. Those born from 1945 to 1959, who voted in the
+referendums of 1980 and 1995, barely moved: between 50% and 54% would
+vote Yes at each election from 2012 to 2022. By contrast, the cohort
+born from 1975 to 1989 fell from 54% in 2012 to 38% as early as 2014,
+the election in which the PQ vote of millennials fell (Mahéo and
+Bélanger 2018). It stood at 44% in 2018 and 38% in 2022, never close to
+its 2012 level. The youngest cohort broke later. Still at 51% in 2014,
+it was at 37% in 2018 and 30% in 2022.</p>
+<p>One could object that the young did not turn against independence,
+but away from the question, and that the share of Yes among those who
+answered Yes or No hides a rise in indecision. The data offer little
+support for that reading. Among all francophones born in 1990 or after
+who were asked the question, the share who would vote No rose from 41%
+in 2012 to 56% in 2022, while the share who answered neither Yes nor No
+went from 12% to 19%. Indecision grew, but most of the movement went to
+the No side.</p>
+</div>
+<div class="section level2">
+<h2 id="replacement-or-change-within-cohorts">Replacement or change within cohorts?<a class="anchor" aria-label="anchor" href="#replacement-or-change-within-cohorts"></a>
+</h2>
+<p>The reversal could come from two places. The first is replacement:
+the oldest cohorts shrink, new voters come of age, and the weight of
+each generation among those who take a side changes even if no cohort
+changes its answer. The second is change within cohorts: a given cohort
+answers differently from one election to the next. To separate the two,
+we use a simple counterfactual: we apply each cohort’s 2012 level of
+support to the cohort sizes of 2022, and the reverse.</p>
+<figure class="qesr-fig" id="fig-turnover"><figcaption><span class="qesr-title">Most of the decline came from within the cohorts: the 2022 levels alone take support from 50.0% to 44.2%</span><span class="qesr-sub">Francophones who would vote Yes to an independent country, observed in 2012 and 2022 and recombined from the two studies, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="sovereignty-generations_files/figure-html/turnover-light.png" alt="Dot chart with confidence intervals of the share of francophones who would vote Yes to an independent country: 50.0% observed in 2012, 50.6% if each cohort had kept its 2012 level with the cohort sizes of 2022, 44.2% with the 2022 levels and the cohort sizes of 2012, and 41.5% observed in 2022. Values in the table view." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="sovereignty-generations_files/figure-html/turnover-dark.png" alt="Dot chart with confidence intervals of the share of francophones who would vote Yes to an independent country: 50.0% observed in 2012, 50.6% if each cohort had kept its 2012 level with the cohort sizes of 2022, 44.2% with the 2022 levels and the cohort sizes of 2012, and 41.5% observed in 2022. Values in the table view." width="672" height="307" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012 and 2022, respondents whose mother tongue is French, weighted. The recombined estimates weight the share of Yes in each of the five birth cohorts of one study by the size of the cohorts in the other study. Cohort sizes are each cohort's share of the francophones who answered Yes or No in that study (weighted). The youngest cohort (born in 1990 or after) takes its 2012 level, that of voters aged 18 to 22, in the replacement-only row, and its 2022 level, which includes voters born from 1995 to 2004, in the row of change within cohorts.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:left;"> Estimate </th>
+   <th style="text-align:left;"> Yes, % [95% CI] </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;"> 2012, observed </td>
+   <td style="text-align:left;"> 50.0 [46.6, 53.3] </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> 2012 levels, 2022 generations
+(replacement only) </td>
+   <td style="text-align:left;"> 50.6 [47.2, 54.0] </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> 2022 levels, 2012 generations
+(change within cohorts only) </td>
+   <td style="text-align:left;"> 44.2 [40.6, 47.8] </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> 2022, observed </td>
+   <td style="text-align:left;"> 41.5 [38.2, 44.9] </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Among francophones, support for independence fell by 8.5 points
+between 2012 and 2022, from 50.0% to 41.5%. Had each cohort kept its
+2012 level, the new weight of the generations would have left support at
+50.6%, practically unchanged. This is because in 2012 the larger cohorts
+were close to one another, so it made little difference which of them
+grew and which shrank. Conversely, the levels of 2022 applied to the
+cohort sizes of 2012 already give 44.2%. In other words, most of the
+decline happened within the cohorts. The same holds when we follow only
+francophones born from 1990 to 1994, who were 18 to 22 years old in
+2012, a closed group that no newcomer joins: 53% would have voted Yes in
+2012 (n = 120), compared to 32% in 2022 (n = 96). The interval of the
+latter is wide, from 23% to 43%, but it does not overlap that of 2012
+(44% to 63%).</p>
+<p>That said, the two mechanisms are not independent. Now that the young
+are less likely than their elders to vote Yes, replacement works against
+the Yes side, as the caveat of Daoust and Gareau-Paquette (2024)
+suggested: with the levels of 2022, the change in the weight of the
+generations since 2012 lowers support by 2.7 of the 8.5 points on its
+own.</p>
+</div>
+<div class="section level2">
+<h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
+</h2>
+<p>Overall, each of the two views gets part of the story right. The
+older view held in 2007, when the cohort born from 1975 to 1989 was the
+most likely to vote Yes on the 1995 question. It no longer held in 2012,
+when those born in 1990 or after were level with the 1945-59 cohort, and
+by 2022 the order had reversed. The newer view is right about the level:
+support for independence is now lowest among the young and highest among
+those born from 1945 to 1959. It is less right about the mechanism. The
+decline since 2012 came mostly from net change within cohorts: depending
+on the year of reference, replacement accounts for between none and 2.7
+of the 8.5 points lost, and it began to work against the Yes side only
+once the young had changed. Nor do the young form a single block. Daoust
+and Gareau-Paquette (2026) find that generation Z worries more about the
+French language than millennials do, and the youngest cohort on this
+page mixes the two.</p>
+<p>The analysis has three limits. First, the samples are modest. Each
+study counts between 867 and 1,971 francophones who answered Yes or No,
+so a single cohort in a single year rests on at most about 600
+respondents, and the oldest on far fewer. Second, the studies do not
+follow the same people: we observe cohorts, not individuals, changing.
+They are independent samples, drawn at different moments (2022 during
+the campaign, the others after the election) and in different ways (by
+telephone in 2008, online from 2012 on), so change within a cohort also
+carries these differences. The youngest cohort of 2022 also includes
+voters who were not yet adults in 2012, which is why we followed those
+born from 1990 to 1994 on their own. Third, the page describes cohorts;
+it does not explain why they changed. The period since 2014 also saw the
+rise of the Coalition avenir Québec (CAQ) and Québec solidaire and, in
+2022, of the Parti conservateur du Québec, as well as new issues. A
+cohort that turned away from independence in its twenties can come back
+to it, and the next Quebec Election Studies will show whether the
+reversal is a lasting trait of the younger generations or a moment in
+their political life.</p>
+</div>
+<div class="section level2">
+<h2 id="going-further">Going further<a class="anchor" aria-label="anchor" href="#going-further"></a>
+</h2>
 <ul>
-<li>In 2007, on the 1995 question, support falls with age: the cohort
-born from 1975 to 1989 is +20 pts above the oldest.</li>
-<li>In 2018 the youngest and the oldest cohorts are level; in 2022 the
-youngest is the least sovereigntist, −24 pts from the cohort born from
-1945 to 1959 (54%, n = 248).</li>
-<li>The intervals of the oldest cohort (born in 1944 or before) are the
-widest: fewer than 100 francophones of that cohort answered in 2012,
-2014 and 2022.</li>
+<li>Daoust, Jean-François, and Thomas Gareau-Paquette. 2024. “Is Quebec
+independence still key in making sense of Canadian elections? A
+longitudinal analysis (2000–2021).” <em>Regional &amp; Federal
+Studies</em> 34 (5): 781–806. <a href="https://doi.org/10.1080/13597566.2023.2233422" class="external-link uri">https://doi.org/10.1080/13597566.2023.2233422</a>
+</li>
+<li>Daoust, Jean-François, and Thomas Gareau-Paquette. 2026. “De plus en
+plus inquiets : qui sont les Québécois qui considèrent le français comme
+menacé et quelles en sont les conséquences électorales?” <em>Revue
+canadienne de science politique / Canadian Journal of Political
+Science</em> 59 (1): 61–80. <a href="https://doi.org/10.1017/S0008423925100942" class="external-link uri">https://doi.org/10.1017/S0008423925100942</a>
+</li>
+<li>Dufresne, Yannick, Charles Tessier, and Eric Montigny. 2019.
+“Generational and life-cycle effects on support for Quebec
+independence.” <em>French Politics</em> 17 (1): 50–63. <a href="https://doi.org/10.1057/s41253-019-00083-9" class="external-link uri">https://doi.org/10.1057/s41253-019-00083-9</a>
+</li>
+<li>Mahéo, Valérie-Anne, and Éric Bélanger. 2018. “Is the Parti
+Québécois bound to disappear? A study of the current generational
+dynamics of electoral behaviour in Quebec.” <em>Canadian Journal of
+Political Science</em> 51 (2): 335–356. <a href="https://doi.org/10.1017/S0008423917001147" class="external-link uri">https://doi.org/10.1017/S0008423917001147</a>
+</li>
+<li>Yale, François, and Claire Durand. 2011. “What did Quebeckers want?
+Impact of question wording, constitutional proposal and context on
+support for sovereignty, 1976–2008.” <em>American Review of Canadian
+Studies</em> 41 (3): 242–258. <a href="https://doi.org/10.1080/02722011.2011.594517" class="external-link uri">https://doi.org/10.1080/02722011.2011.594517</a>
+</li>
 </ul>
 </div>
 <div class="section level2">
@@ -1177,39 +830,40 @@ widest: fewer than 100 francophones of that cohort answered in 2012,
 </h2>
 <ul>
 <li>
-<strong>Studies.</strong> Every study that asked a referendum
-question: the 1998 polls, the Quebec Election Studies of 2007 to 2022
-and the Durand panels. The CROP polls did not ask one.</li>
+<strong>Studies.</strong> One Quebec Election Study per election,
+2007 to 2022. The 1998 polls did not ask the year of birth, and the
+panels that interviewed at the same elections are left out, so that each
+election counts once.</li>
 <li>
-<strong>Variable.</strong> <code>sov_support</code>, the pooled
-referendum vote, as the share of Yes among those who would vote Yes or
-No; those who would not vote or spoil, did not know or refused are left
-out. <code>sov_support__item</code> names each study’s question, and
-<code>qes_spec("pooled")</code> the precedence of the wordings when a
-study asked several.</li>
+<strong>Question.</strong> The share of Yes among those who would
+vote Yes or No, in a referendum on Quebec becoming an independent
+country (2012 to 2022) or on the 1995 question, which offered a
+partnership with Canada (2007, 2008; those who did not know were asked
+which way they leaned). Those who would not vote, did not know or
+refused are left out of the share, except in the paragraph on
+indecision.</li>
 <li>
-<strong>Wordings.</strong> An independent country (2012 to 2022), a
-sovereign country (2012 panel), the 1995 question on sovereignty with a
-partnership offer, the undecided pushed (1998, 2007, 2007 panel, 2008),
-and favourable or opposed to independence (2018 panel), collapsed to yes
-or no and graded <code>approximate</code>.</li>
+<strong>Cohorts and language.</strong> Birth cohorts come from the
+year of birth. Francophones are respondents whose mother tongue is
+French. In 2007, 2014 and 2022, those who gave two mother tongues are
+left out (the 2012 and 2018 files have no such answer). The 2018 study
+also interviewed people aged 16 and 17; they are kept, in the youngest
+cohort.</li>
 <li>
-<strong>Timing and population.</strong> The 2022 study (campaign
-wave), the 1998 polls and the 2007 and 2012 panels asked the question
-before the election; the other studies after it. Each is weighted with
-the weight of the wave that asked. The 2018 study sampled people aged 16
-and over.</li>
+<strong>Timing and weights.</strong> The 2022 study asked the
+question during the campaign, the others after the election. Each study
+is weighted, except the 2008 study, which is unweighted (hollow
+dots).</li>
 <li>
-<strong>Cohorts.</strong> From <code>birth_year</code>, which the
-2007 to 2022 Quebec Election Studies asked. Francophones are respondents
-whose <code>lang_mother</code> is French; in 2022 those who ticked two
-languages are left out.</li>
-<li>
-<strong>Weights.</strong> The recommended weight of the wave that
-asked, through <code><a href="../reference/qes_design.html">qes_design()</a></code>. The 1998 polls, the 2008 study
-and the 2007 and 2012 Durand panels are unweighted (weights under
-review) and drawn hollow; the 2018 panel uses its reviewed weight.</li>
+<strong>Reproducing the page.</strong> The data come from one
+call:</li>
 </ul>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_support"</span>, <span class="st">"birth_year"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

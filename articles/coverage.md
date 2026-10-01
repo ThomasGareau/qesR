@@ -6,16 +6,12 @@ française](https://thomasgareau.github.io/qesR/articles/fr-couverture.md)*
 Which harmonized variable (“target”) of
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 each study has, and how comparable its question is. The grid and the
-table of studies below are generated from the specification that ships
-with qesR when the site is built; none of it is written by hand.
+table of studies below are generated from the rules that ship with qesR.
 
-This grid is generated from the harmonization spec shipped with qesR:
-version 4.3.0 of 2026-09-29, content hash
-`506f691e420e8d5d5de3657eef556d3d`. It is **experimental**. Each cell
-gives the comparability grade of the study’s question for the target,
-against the target’s anchor question; a dash means the study has no
-question for the target in the spec. A target’s name links to its
-section of the [harmonization
+Each cell gives the comparability grade of the study’s question for the
+target, against the target’s anchor question; a dash means the study has
+no question for the target. A target’s name links to its section of the
+[variable
 reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md),
 which gives the question, its wording, the levels it offered and the
 reason for its grade.
@@ -32,6 +28,9 @@ in parentheses.
 \* The study’s question did not offer every level of the target: the
 levels it did not offer are structural zeros, listed in the reference.
 
+† Awaiting sign-off: applied only if you ask for it
+(`qes_harmonize(include_draft = TRUE)`).
+
 ## Pooled variables by study
 
 [TABLE]
@@ -39,18 +38,6 @@ levels it did not offer are structural zeros, listed in the reference.
 Each cell gives the member type a pooled variable takes a study’s values
 from in the respondent layout, and its grade; a dash means no member of
 its default types has a question in the study.
-
-230 of the 233 cells use crosswalk rows signed off by a reviewer (status
-stable), which
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-applies by default; the crosswalk’s `reviewed_by` says who or what
-reviewed each row (specs 4.0.0 and 4.3.0: an automated double review
-against the original files and documents, not a human review).
-
-3 of the 233 cells use crosswalk rows that are checked against the
-original files and documents but not yet signed off by a reviewer;
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-applies them only with `include_draft = TRUE`.
 
 ## Studies
 
@@ -61,26 +48,23 @@ applies them only with `include_draft = TRUE`.
 | `qes2018_panel` | pre (n = 1,250): `weight`; post (n = 842): `weight_rts` | 13 | 3 | 3 | 7 |
 | `qes2014` | post (n = 1,517): `POND` | 30 | 9 | 20 | 1 |
 | `qes2012` | post (n = 1,505): `pond` | 31 | 27 | 4 | 0 |
-| `qes2012_panel` | pre (n = 844): `pondam1` (needs review, not applied); post (n = 844): `pond_post` (needs review, not applied) | 10 | 1 | 6 | 3 |
-| `qes_crop_2007_2010` | 24 poll waves, poll_2007_06 to poll_2010_01 (n = 1,000 to 1,004 each): `XPOND` (needs review, not applied) | 10 | 1 | 7 | 2 |
+| `qes2012_panel` | pre (n = 844): `pondam1` (not usable yet); post (n = 844): `pond_post` (not usable yet) | 10 | 1 | 6 | 3 |
+| `qes_crop_2007_2010` | 24 poll waves, poll_2007_06 to poll_2010_01 (n = 1,000 to 1,004 each): `XPOND` (not usable yet) | 10 | 1 | 7 | 2 |
 | `qes2008` | post (n = 1,151): no recommended weight | 27 | 0 | 25 | 2 |
 | `qes2007` | post (n = 2,175): `pond` | 25 | 6 | 16 | 3 |
-| `qes2007_panel` | pre (n = 2,050): `pondam1` (needs review, not applied); post (n = 2,054): `pond_tot_am1` (needs review, not applied) | 15 | 3 | 8 | 4 |
-| `qes1998` | pre (n = 1,483): `ponder3` (needs review, not applied); post (n = 1,483): `ponder3` (needs review, not applied) | 8 | 0 | 7 | 1 |
+| `qes2007_panel` | pre (n = 2,050): `pondam1` (not usable yet); post (n = 2,054): `pond_tot_am1` (not usable yet) | 15 | 3 | 8 | 4 |
+| `qes1998` | pre (n = 1,483): `ponder3` (not usable yet); post (n = 1,483): `ponder3` (not usable yet) | 8 | 0 | 7 | 1 |
 
-`n` is the number of respondents of each wave. A weight that needs
-review is not applied:
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-returns `NA` for it until its documentation is checked.
+`n` is the number of respondents of each wave. A weight marked *not
+usable yet* is not documented well enough to use: its weight columns are
+`NA`.
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 uses the weight of the wave each target came from.
 
-Studies of the catalog that are not in the spec yet: `qes1998_crop`,
-`qes1998_createc`.
+Not harmonized: `qes1998_crop`, `qes1998_createc` (their respondents are
+in `qes1998`).
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
-reads them;
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-does not cover them yet.
+reads them.
 
 ## The same grid in R
 
@@ -95,6 +79,6 @@ qes_spec(lang = params$lang)
 ```
 
 A grade compares a study’s question with the target’s anchor question.
-[Harmonizing across
-studies](https://thomasgareau.github.io/qesR/articles/harmonization.md)
+[How harmonization
+works](https://thomasgareau.github.io/qesR/articles/harmonization.md)
 shows how grades, missing values and weights carry into an estimate.

@@ -1,4 +1,4 @@
-# Moving from qesR 0.4.4 to 0.7.0
+# Upgrading from qesR 0.4.4
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md)*
@@ -11,7 +11,7 @@ no longer creates the object for you (first row below). What else
 changes is what some of it produces, which depends on what the code
 uses:
 
-| Your code uses | Under 0.7.0 | What to do |
+| Your code uses | Now | What to do |
 |----|----|----|
 | `get_qes("qes2018")` alone, then the object `qes2018` | error “object ‘qes2018’ not found” | write `qes2018 <- get_qes("qes2018")` ([below](#assign-the-result-yourself)) |
 | raw codes from [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md) ([`as.numeric()`](https://rdrr.io/r/base/numeric.html), ranges of valid codes) | same numbers | nothing |
@@ -21,8 +21,8 @@ uses:
 | the other helpers of 0.4.4 | same results as their replacements; one-time notice | nothing, or [rename them](#old-names-new-names) |
 
 Every chunk on this page runs offline, on the synthetic study
-`qes_demo`. The complete list of changes is in the package NEWS
-(`news(package = "qesR")`), versions 0.5.0 and 0.7.0.
+`qes_demo`. The complete list of changes is in the Changelog
+(`news(package = "qesR")`).
 
 ``` r
 
@@ -31,8 +31,8 @@ library(qesR)
 
 ## Before you upgrade: record the version
 
-A published result should say which qesR produced it. Before installing
-0.7.0, record the version you have, and keep it with the results:
+A published result should say which qesR produced it. Before upgrading,
+record the version you have, and keep it with the results:
 
 ``` r
 
@@ -40,25 +40,24 @@ packageVersion("qesR")
 packageDescription("qesR")$RemoteSha   # the commit, when installed from GitHub
 ```
 
-To reproduce a 0.4.4 result exactly, install 0.4.4, preferably in a
-separate library or an renv project so that new work can use 0.7.0:
+To reproduce a 0.4.4 result, install 0.4.4, preferably in a separate
+library or an renv project so that new work can use the current version:
 
 ``` r
 
 remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")
 ```
 
-0.5.0 and 0.6.0 were development versions and were never released. A
-result computed with one of them is reproducible by installing the
+qesR 0.5.0 and 0.6.0 were development versions and were never released:
+a result computed with one of them is reproduced by installing the
 commit it was built from, which `packageDescription("qesR")$RemoteSha`
 records for an installation from GitHub
-(`remotes::install_github("ThomasGareau/qesR", ref = "<sha>")`).
+(`remotes::install_github("ThomasGareau/qesR", ref = "<commit>")`).
 
 ## Assign the result yourself
 
 In 0.4.4, `get_qes("qes2018")` created an object `qes2018` in your
-workspace. Since 0.5.0 it returns the data and writes nothing: assign
-it.
+workspace. It now returns the data and writes nothing: assign it.
 
 ``` r
 
@@ -95,13 +94,12 @@ f()
 ## `get_qes()`: the same codes, read from the original files
 
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
-reads each study’s original SPSS or Stata file, checked against the md5
-in the catalog. Column names, codes and
-[`is.na()`](https://rdrr.io/r/base/NA.html) counts are those of 0.4.4
-for all 11 studies, so code that works on codes
-([`as.numeric()`](https://rdrr.io/r/base/numeric.html), ranges of valid
-codes, `%in%`) gives the same numbers and the same N. Text changes where
-the old conversion damaged it or took labels from elsewhere:
+reads each study’s original SPSS or Stata file, checked before use.
+Column names, codes and [`is.na()`](https://rdrr.io/r/base/NA.html)
+counts are those of 0.4.4 for all 11 studies, so code that works on
+codes ([`as.numeric()`](https://rdrr.io/r/base/numeric.html), ranges of
+valid codes, `%in%`) gives the same numbers and the same N. Text changes
+where the old conversion damaged it or took labels from elsewhere:
 
 - accents are repaired (1,805 cells in `qes2018`, 2,517 in `qes2022`);
 - `qes2012` labels keep their original case and length (0.4.4 lowercased
@@ -118,8 +116,8 @@ text. The data record which file they came from:
 qes_provenance(qes_demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-30 00:18:07 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
+#> 2026-10-01 01:20:22 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 ```
@@ -128,9 +126,9 @@ qes_provenance(qes_demo)
 
 The master keeps its 30 documented columns, in the same order and with
 the same types; new columns are appended after them and are never
-removed. Its values changed twice.
+removed. Its values changed in two ways.
 
-**In 0.5.0**, mostly by deletion:
+**Nothing is dropped, and nothing is stacked by name:**
 
 - every respondent of every file is kept: 40,987 rows. 0.4.4 dropped 380
   `qes2007_panel` respondents and 1 CROP respondent as duplicates, and,
@@ -150,23 +148,21 @@ removed. Its values changed twice.
   correctly (“20 000 \$ à 39 999 \$”, “Quebec”), and the `qes2022`
   `interview_*` columns lose their trailing `.000`.
 
-**In 0.7.0**, the master is rendered from the harmonization engine
-([`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md))
-for all 11 studies: each column is built from the harmonized variables
-(“targets”) it needs, and a code the specification does not map is `NA`.
+**Each column is built from the harmonized variables.** The master is
+built by
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+for all 11 studies: each column comes from the harmonized variables
+(“targets”) it needs, and a code the harmonization rules do not map is
+`NA`.
 
-Only the specification’s rows signed off by a reviewer are applied; in
-specification 4.1.0 every row is signed off, after an automated double
-review against the original files and documents (not a human review). A
-column whose row were still in review would be `NA`, with the reason
-`not_reviewed` in `attr(master, "legacy_na_columns")`, and a message
-would name it. The recommended weights of `qes1998`, `qes2007_panel`,
-`qes2012_panel` and the CROP polls still need review: their answers are
-filled, but `weight_pre` and `weight_post` are `NA` there (reason
-`not_reviewed`, cause `weight_needs_review`), and `survey_weight` keeps
-each study’s own weight, as in 0.4.4. The columns that change estimates:
+`qes1998`, the Durand panels and the CROP polls have no usable weight
+yet: their answers are filled, but `weight_pre` and `weight_post` are
+`NA` there, and `survey_weight` keeps each study’s own weight, as in
+0.4.4. The [merged
+file](https://thomasgareau.github.io/qesR/articles/merged-dataset.html)
+page describes every column. The columns that change estimates:
 
-| Column | Since 0.7.0 | Changed in |
+| Column | Now | Changed in |
 |----|----|----|
 | `vote_choice` | The vote reported after the election, in every study that asked it (0.4.4 used the campaign intention for `qes2022` and `qes1998`). Non-voters, spoiled ballots, “don’t know” and refusals are `NA`: the categories “Did not vote / None” and “Don’t know / Refused” are gone, and `turnout` says who voted. The CROP polls asked only intentions: `NA`, with the intention in the appended `vote_intent`. | every study |
 | `turnout` | Reported turnout, 1 or 0 (`qes2022` from its post-election wave; the 2018 panel from its turnout question). | `qes2022`, `qes2018`, `qes2018_panel`, `qes2007_panel` |
@@ -225,14 +221,14 @@ unique(master[, c("qes_code", "vote_choice_timing", "sovereignty_item")])
 
 `map$studies_changed` names, for each column, the studies whose values
 differ from 0.4.4, and `attr(master, "source_map")` the question each
-column read in each study. The NEWS of 0.7.0 counts the changed cells,
+column read in each study. The Changelog counts the changed cells,
 column by column and study by study.
 
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
-is soft-deprecated since 0.7.0, rendered from the same targets: its
-categorical columns are factors with English levels, and for `qes2022`
-its `turnout` and `votechoice` stay the campaign-period likelihood and
-intention (`attr(, "timing")` says `"pre"`).
+is soft-deprecated and built from the same targets: its categorical
+columns are factors with English levels, and for `qes2022` its `turnout`
+and `votechoice` stay the campaign-period likelihood and intention
+(`attr(, "timing")` says `"pre"`).
 
 ## From the master to `qes_harmonize()`
 
@@ -275,17 +271,13 @@ round(means, 2)
 #>        5.39        6.70        5.56        2.53        6.00        9.00
 ```
 
-The pooled variable `vote_choice` (qesR 0.8.0) is the closest to the
-master’s `vote_choice` across studies: with
+The pooled variable `vote_choice` is the closest to the master’s
+`vote_choice` across studies: with
 `types = list(vote_choice = "recall")` it is the reported vote, as in
 the master (whose party labels are those of 0.4.4); by default it also
 takes the vote intention of the studies that asked no reported vote, and
 `vote_choice__type` says which.
 
-Every row is signed off but three of those added in specification 4.3.0;
-a row in review is applied only with `include_draft = TRUE`, and the
-`review_note` column of `qes_spec("crosswalk")` says what the review
-corrected in each row, or why it is held.
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 shows which study has which target and how comparable its question is,
 and
@@ -308,7 +300,7 @@ Each prints a one-time notice naming its replacement
 | [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` | `file` now selects documents by name; files are md5-checked |
 | `get_preview(srvy, obs)` | `head(get_qes(srvy), obs)` |  |
 | [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) | the 1998 firm files are added after the 11 old codes |
-| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")` | soft-deprecated since 0.7.0; values changed (above) |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")` | soft-deprecated; values changed (above) |
 
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
@@ -340,13 +332,13 @@ Record what each result was computed from, and cite it:
 
 qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
+#> 1        4.3.1 cd62e566cd051bde5b236c3511555c91        0.8.0
 qes_cite("qes2014")
 #> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 
-`qes_provenance(x)` gives the file of each study (DOI, dataset version,
-md5), and `level = "spec"` the version and content hash of the
-harmonization specification that produced harmonized data. A result is
-reproduced exactly by the same qesR version, which fixes both.
+`qes_provenance(x)` gives the file of each study (DOI, dataset version),
+and `level = "spec"` the version of the harmonization rules that
+produced harmonized data. The same qesR version reproduces a result
+exactly, since it fixes both.

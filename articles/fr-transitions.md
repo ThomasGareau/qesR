@@ -1,80 +1,79 @@
-# Changer d'idée pendant la campagne : les transitions des panels
+# Les élections québécoises se jouent-elles pendant la campagne ?
 
 *[English
 version](https://thomasgareau.github.io/qesR/articles/transitions.md)*
 
-Les enquêtes transversales disent où le vote a abouti ; les panels
-disent qui a bougé. Le panel Durand de 2018 et l’Étude électorale
-québécoise de 2022 ont interrogé les mêmes personnes pendant la campagne
-et après le vote. La plupart des électeurs ont fait ce qu’ils avaient
-dit : 88 % des personnes qui comptaient voter CAQ en 2022, et qui ont
-voté, ont déclaré un vote CAQ. Québec solidaire en a gardé moins, 71 %.
-En 2018, les indécis ont penché vers le parti gagnant : 37 % \[25 ; 51\]
-des 75 indécis du panel ont voté CAQ, et 27 % n’ont pas voté.
+Depuis l’élection fédérale de 1988, on sait que l’opinion peut bouger
+considérablement entre le déclenchement d’une campagne et le jour du
+vote (Johnston et collaborateurs, 1992). On dit souvent que les
+élections québécoises se jouent à la dernière minute, et l’idée revient
+chaque fois que les sondages ratent le résultat, comme en 1998 et en
+2018. En 1998, les sondages donnaient l’avance au Parti québécois (PQ),
+mais le Parti libéral du Québec (PLQ) a obtenu davantage de votes
+valides (43,6 % contre 42,9 %). En 2018, ils annonçaient une lutte
+serrée entre le PLQ et la Coalition avenir Québec (CAQ), qui l’a emporté
+par 13 points. Chaque fois, on a cherché une partie de l’explication du
+côté des électeurs qui ont changé d’idée en fin de campagne et du côté
+des discrets, qui refusaient de révéler leur intention. Durand et Blais
+(1999) rejettent l’hypothèse d’une remontée libérale tardive comme celle
+d’une participation moindre des péquistes, et attribuent l’erreur à
+l’échantillonnage et au comportement des non-répondants ; pour 2018, ils
+concluent que les déplacements de dernière minute et le vote des
+discrets expliquent l’essentiel de l’écart (Durand et Blais, 2020).
 
-## Les données
+Or, une enquête transversale dit comment le vote s’est finalement
+réparti, pas qui s’est déplacé. Les enquêtes par panel le permettent,
+puisqu’elles interrogent les mêmes personnes pendant la campagne et
+après le scrutin. Cinq enquêtes électorales québécoises l’ont fait, des
+sondages CROP et CREATEC de 1998 à l’Étude électorale québécoise (EEQ)
+de 2022, dont les panels menés par Claire Durand en 2007, 2012 et 2018.
+Nous nous en servons pour poser une question simple : combien
+d’électrices et d’électeurs québécois changent d’idée pendant une
+campagne, et qui en profite ? De 72 % à 78 % des votants ont déclaré le
+parti qu’ils avaient nommé pendant la campagne. Les indécis forment un
+petit groupe, de 6 % à 10 % des votants, et ceux qui sont passés d’un
+parti à un autre sont plus nombreux qu’eux dans tous les panels sauf
+celui de 2018, où les deux groupes sont de taille comparable. Ces
+mouvements modifient rarement la part d’un parti de plus de quelques
+points. Le gain le plus important est celui que le bilan de 2018 avait
+relevé : chez les mêmes répondants, la CAQ gagne 6,1 points entre
+l’intention et le vote, et 37 % des indécis de cette année-là ont voté
+CAQ. En somme, une campagne québécoise déplace beaucoup d’électeurs,
+mais, une fois les gains et les pertes additionnés, peu de votes.
 
-La variable regroupée `vote_choice` en disposition longue garde une
-ligne par répondant et par vague : l’intention (avec relance des
-indécis, type `intention_push`) avant l’élection et le vote déclaré
-(`recall`) après.
+## La plupart des électeurs ont fait ce qu’ils avaient dit
 
-``` r
-
-h <- qes_harmonize(
-  studies = c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"),
-  targets = "vote_choice",
-  layout = "long", missing = "reasons", quiet = TRUE
-)
-```
-
-``` r
-
-with(h[h$study == "qes2022", ], table(wave, vote_choice__type))
-#>      vote_choice__type
-#> wave  recall intention_push intention
-#>   cps      0           1521         0
-#>   pes   1220              0         0
-```
-
-Les répondants sont appariés par `qes_id` à l’intérieur d’une étude, et
-chaque transition est pondérée avec la pondération postélectorale du
-répondant.
-
-## Où ont abouti les intentions de vote
-
-![Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont
+![Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont
 l'intention de vote pendant la campagne, avec le nombre de répondants,
 les colonnes le vote déclaré après l'élection, chaque case le
-pourcentage de la rangée. La diagonale domine : en 2022, 83 % des
+pourcentage de la rangée. La diagonale domine : en 2022, 83 % des
 personnes qui comptaient voter CAQ ont déclaré un vote CAQ et 67 % de
-celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas
+celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas
 voté. Valeurs dans la vue en
 tableau.](fr-transitions_files/figure-html/matrix-light.png)![Deux
-cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention
+cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention
 de vote pendant la campagne, avec le nombre de répondants, les colonnes
 le vote déclaré après l'élection, chaque case le pourcentage de la
-rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient
+rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient
 voter CAQ ont déclaré un vote CAQ et 67 % de celles qui comptaient voter
-QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en
+QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en
 tableau.](fr-transitions_files/figure-html/matrix-dark.png)
 
-Source : qesR, variable regroupée vote_choice en disposition longue,
-répondants interrogés aux deux vagues du panel Durand 2018 et de l'EEQ
-2022 (vagues de campagne et postélectorale), pondérés avec la
-pondération postélectorale. Rangées : l'intention avec relance des
-indécis (intention_push), avec le nombre de répondants ; indécis :
-toujours aucun parti après la relance. Les deux blocs ont les mêmes
-rangées et colonnes ; les cases grises n'ont pas de valeur : le panel
-2018 ne proposait pas le PCQ (n.p.), la question de campagne de 2022 n'a
-pas de réponse « aucun / ne voterait pas », et les rangées de moins de
-30 répondants ne sont pas tracées. Les intervalles de confiance à 95 %
-et les panels de 1998, 2007 et 2012 (non pondérés) sont dans la vue en
-tableau.
+Source : qesR. Répondants interrogés pendant la campagne et après
+l'élection, dans le panel Durand 2018 et l'EEQ 2022, pondérés avec la
+pondération postélectorale. Rangées : le parti prévu, avec le nombre de
+répondants ; les indécis n'ont nommé aucun parti, même quand on leur
+demandait (là où le panel le demandait) vers lequel ils penchaient.
+Chaque rangée inclut les personnes qui n'ont pas voté. Les cases grises
+n'ont pas de valeur : le panel 2018 ne proposait pas le PCQ (n.p.), la
+question de campagne de 2022 n'avait pas de réponse « ne voterait pas »,
+et les rangées de moins de 30 répondants ne sont pas tracées. Les
+intervalles de confiance et les panels de 1998, 2007 et 2012 sont dans
+la vue en tableau.
 
 Vue en tableau
 
-| Élection | Étude | Intention | Vote déclaré | % de la rangée \[IC à 95 %\] | n (rangée) | Pondération |
+| Élection | Étude | Intention | Vote déclaré | % de la rangée \[IC à 95 %\] | n (rangée) | Pondération |
 |---:|:---|:---|:---|:---|---:|:---|
 | 1998 | Sondages de 1998 | PLQ | PLQ | 80,1 \[75,3 ; 84,1\] | 311 | non pondéré (pondération en révision) |
 | 1998 | Sondages de 1998 | PLQ | PQ | 5,1 \[3,2 ; 8,2\] | 311 | non pondéré (pondération en révision) |
@@ -349,54 +348,67 @@ Vue en tableau
 | 2022 | EEQ 2022 | Indécis | Autres | 12,3 \[5,4 ; 25,5\] | 79 | pondéré |
 | 2022 | EEQ 2022 | Indécis | N'a pas voté | 23,6 \[14,2 ; 36,6\] | 79 | pondéré |
 
-La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la
+La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la
 CAQ a puisé de tous les côtés, dont 12 % des personnes qui comptaient
 voter PQDe l'intention pendant la campagne (rangées) au vote déclaré
-après l'élection (colonnes) : le pourcentage de chaque rangée
+après l'élection (colonnes) : le pourcentage de chaque rangée
 
-À remarquer :
+La diagonale domine. En 2022, 83 % des personnes qui comptaient voter
+CAQ ont déclaré un vote CAQ (une part qui inclut celles qui n’ont pas
+voté), et les échanges entre partis sont restés modestes. Québec
+solidaire (QS) est le parti qui a le moins bien retenu les personnes qui
+comptaient voter pour lui (67 %) : 11 % d’entre elles ont plutôt voté
+PLQ, et 8 % PQ. En 2018, le portrait est tout autre. La CAQ puise de
+tous les côtés : elle attire 12 % des personnes qui comptaient voter PQ,
+11 % de celles qui comptaient voter QS et 22 % de celles qui disaient ne
+pas vouloir voter. Autrement dit, le parti gagnant de 2018 n’a pas
+seulement conservé ses électeurs ; il a continué d’en recruter pendant
+la campagne.
 
-- La diagonale : la plupart des électeurs ont déclaré le parti pour
-  lequel ils comptaient voter.
-- En 2018, la CAQ a attiré de partout : 12 % des personnes qui
-  comptaient voter PQ, 11 % de celles qui comptaient voter QS, 22 % de
-  celles et ceux qui disaient ne pas vouloir voter et 37 % des indécis.
-- En 2022, les passages d’un parti à l’autre sont faibles, et QS a perdu
-  le plus : 11 % des personnes qui comptaient voter QS ont voté PLQ et
-  8 % PQ.
+Au total, la part des votants qui n’ont pas voté comme ils l’avaient
+annoncé est loin d’être négligeable : elle va de 22 % à 28 % selon le
+panel. Parmi eux, le groupe le plus nombreux est celui des électeurs
+passés d’un parti à un autre, de 10 % à 21 % des votants, les indécis et
+ceux qui disaient ne pas vouloir voter formant le reste. En 2018, les
+deux groupes sont de taille comparable (10 % de changements de parti,
+10 % d’indécis). Ce panel n’a toutefois pas posé la question de relance
+à une partie des indécis interrogés par téléphone ni à ceux qui disaient
+ne pas vouloir voter, de sorte qu’il compte plus d’indécis que les
+autres. En 2007, l’élection s’est jouée en lutte à trois entre le PLQ,
+le PQ et l’Action démocratique du Québec (ADQ), et c’est ce panel qui
+compte le plus de changements de parti (21 %).
 
-## La fidélité : ont voté comme prévu
+## La fidélité : voter comme prévu
 
 ![Graphique à points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une
-rangée par étude par panel de 1998 à 2022 : la part des personnes qui
+rangée par étude par panel de 1998 à 2022 : la part des personnes qui
 comptaient voter pour le parti pendant la campagne qui ont déclaré avoir
 voté pour lui, parmi les votants, avec intervalles de confiance. Le PLQ,
-le PQ et la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a
+le PQ et la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a
 gardé 45 %. En 2022, la CAQ en a gardé 88 % et le PLQ 85 %. Valeurs dans
 la vue en
 tableau.](fr-transitions_files/figure-html/loyal-light.png)![Graphique à
 points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une rangée par
-étude par panel de 1998 à 2022 : la part des personnes qui comptaient
+étude par panel de 1998 à 2022 : la part des personnes qui comptaient
 voter pour le parti pendant la campagne qui ont déclaré avoir voté pour
 lui, parmi les votants, avec intervalles de confiance. Le PLQ, le PQ et
-la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a gardé
+la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a gardé
 45 %. En 2022, la CAQ en a gardé 88 % et le PLQ 85 %. Valeurs dans la
 vue en tableau.](fr-transitions_files/figure-html/loyal-dark.png)
 
-Source : qesR, variable regroupée vote_choice en disposition longue,
-répondants interrogés avant et après l'élection qui ont déclaré un vote.
-Traits : intervalles de confiance à 95 % (logit). Pondéré avec la
-pondération postélectorale (panel 2018, EEQ 2022) ; creux (panels 1998,
-2007 et 2012) : non pondéré, pondération en révision. Les études
-diffèrent par leur plan (l'EEQ 2022 est une enquête de campagne et
-postélectorale, les autres des panels téléphoniques) : comparer à
-l'intérieur d'un parti avec prudence. Les cellules de moins de 30
-répondants ne sont pas tracées ; les autres partis sont dans la vue en
-tableau.
+Source : qesR. Répondants interrogés pendant la campagne et après
+l'élection qui ont déclaré un vote. Traits : intervalles de confiance à
+95 %. Points pleins : pondérés avec la pondération postélectorale (panel
+2018, EEQ 2022) ; points creux (panels 1998, 2007 et 2012) : non
+pondérés ici, leurs pondérations étant en révision. Les études diffèrent
+par leur devis et leur mode de collecte ; les comparaisons entre études
+se font donc de préférence à l'intérieur d'un parti. Les cellules de
+moins de 30 répondants ne sont pas tracées ; les autres partis sont dans
+la vue en tableau.
 
 Vue en tableau
 
-| Élection | Étude | Intention | A voté comme prévu, % \[IC à 95 %\] | n | Pondération |
+| Élection | Étude | Intention | A voté comme prévu, % \[IC à 95 %\] | n | Pondération |
 |---:|:---|:---|:---|---:|:---|
 | 1998 | Sondages de 1998 | PLQ | 88,9 \[84,7 ; 92,1\] | 280 | non pondéré (pondération en révision) |
 | 1998 | Sondages de 1998 | PQ | 92,1 \[89,0 ; 94,3\] | 403 | non pondéré (pondération en révision) |
@@ -425,52 +437,65 @@ Vue en tableau
 | 2022 | EEQ 2022 | Autres | n \< 30 | 24 | pondéré |
 
 Le PLQ, le PQ et la CAQ gardent de 79 % à 96 % des personnes qui
-comptaient voter pour eux ; QS en garde moins, jusqu'à 45 % en 2007Part
+comptaient voter pour eux ; QS en garde moins, jusqu'à 45 % en 2007Part
 des personnes qui comptaient voter pour chaque parti pendant la campagne
 qui ont déclaré avoir voté pour lui, parmi les votants, selon l'étude
-par panel, avec intervalles de confiance à 95 %
+par panel, avec intervalles de confiance à 95 %
 
-À remarquer :
+Deux tendances se dégagent. Premièrement, le PLQ est le parti le plus
+constant dans le temps : il conserve de 85 % à 90 % des personnes qui
+comptaient voter pour lui à chaque élection, alors que le PQ varie de
+81 % à 95 % et la CAQ de 79 % à 96 %. Ces parts excluent les personnes
+qui n’ont pas voté, ce qui explique que la CAQ en conserve ici 88 % en
+2022, contre 83 % dans la matrice. Deuxièmement, ce sont les petits
+partis qui en gardent le moins. L’ADQ en a conservé 65 % en 1998, et QS
+45 % en 2007 et 61 % en 2012. Ce constat est cohérent avec une
+explication bien connue, selon laquelle l’électeur séduit par un petit
+parti pendant la campagne se rabat, le jour du vote, sur un parti qui
+peut gagner. Les panels ne permettent toutefois pas, à eux seuls, de
+distinguer la désertion stratégique d’un simple changement d’idée.
 
-- Les tiers partis gardent le moins : l’ADQ en 1998 (65 %), QS en 2007
-  (45 %) et en 2012 (61 %).
-- Le PLQ garde entre 85 % et 90 % des personnes qui comptaient voter
-  pour lui à chaque élection.
-- La fidélité n’est pas un trait fixe d’un parti : la CAQ a gardé 79 %
-  des personnes qui comptaient voter pour elle en 2012 et 96 % en 2018,
-  l’ADQ 65 % en 1998 et 80 % en 2007. Les études diffèrent : les
-  sondages de 1998 et les panels de 2007 et 2012 sont non pondérés, le
-  panel 2018 est pondéré, et l’EEQ 2022 est une enquête de campagne et
-  postélectorale plutôt qu’un panel téléphonique.
+La fidélité n’est pas pour autant un trait fixe d’un parti. La CAQ a
+conservé 79 % des personnes qui comptaient voter pour elle en 2012, à sa
+première élection, et 96 % en 2018, l’année de sa victoire. L’ADQ est
+passée de 65 % en 1998 à 80 % en 2007, l’année où elle est devenue
+l’opposition officielle. Ces cas suggèrent, sans l’établir, que la
+fidélité suit l’élan d’un parti davantage que sa taille. Le Parti
+conservateur du Québec (PCQ) ne va dans le même sens que si c’est
+l’élan, et non les chances de l’emporter, qui compte : avec 1,5 % des
+voix en 2018, il a conservé 82 % des personnes qui comptaient voter pour
+lui en 2022, sans faire élire de député (sur cette percée, voir Bélanger
+et collaborateurs, 2025).
 
 ## Où sont allés les indécis
 
-![Barres horizontales empilées à 100 %, une par étude par panel de 1998
-à 2022 : ce qu'ont déclaré après l'élection les répondants encore
+![Barres horizontales empilées à 100 %, une par étude par panel de 1998
+à 2022 : ce qu'ont déclaré après l'élection les répondants encore
 indécis pendant la campagne, en commençant par ceux qui n'ont pas voté.
-Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en
+Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en
 2022, 24 % n'ont pas voté et 13 % ont voté CAQ. Valeurs dans la vue en
 tableau.](fr-transitions_files/figure-html/undecided-light.png)![Barres
-horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 :
+horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 :
 ce qu'ont déclaré après l'élection les répondants encore indécis pendant
 la campagne, en commençant par ceux qui n'ont pas voté. Entre 17 % et
-27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont
+27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont
 pas voté et 13 % ont voté CAQ. Valeurs dans la vue en
 tableau.](fr-transitions_files/figure-html/undecided-dark.png)
 
-Source : qesR, variable regroupée vote_choice en disposition longue ;
-les indécis sont les répondants qui n'ont nommé aucun parti pendant la
-campagne, même après la question de relance, et qui ont répondu après
-l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré (panels 1998,
-2007 et 2012 ; pondérations en révision). Segment vide : n'a pas voté.
-Nombres : parts de 8 % ou plus ; les intervalles de confiance à 95 %
-sont dans la vue en tableau, et ils sont larges : chaque rangée repose
-sur moins de 110 répondants. Dans les panels 2007 et 2018, ne sait pas
-et refus forment un seul code.
+Source : qesR. Les indécis sont les répondants qui n'ont nommé aucun
+parti pendant la campagne, même quand on leur demandait (là où le panel
+le demandait) vers lequel ils penchaient, et qui ont répondu après
+l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré ici, les
+pondérations étant en révision (panels 1998, 2007 et 2012). Segment
+vide : n'a pas voté. Nombres : parts de 8 % ou plus. Chaque rangée
+repose sur 104 répondants ou moins : les intervalles de confiance de la
+vue en tableau sont donc larges. Dans les panels 2007 et 2018, « ne sait
+pas » et « refus » ne peuvent être distingués et sont tous deux comptés
+comme indécis.
 
 Vue en tableau
 
-| Élection | Étude | Vote déclaré | Part des indécis, % \[IC à 95 %\] | n | Pondération |
+| Élection | Étude | Vote déclaré | Part des indécis, % \[IC à 95 %\] | n | Pondération |
 |---:|:---|:---|:---|---:|:---|
 | 1998 | Sondages de 1998 | PLQ | 38,3 \[28,4 ; 49,3\] | 81 | non pondéré (pondération en révision) |
 | 1998 | Sondages de 1998 | PQ | 28,4 \[19,7 ; 39,1\] | 81 | non pondéré (pondération en révision) |
@@ -513,36 +538,215 @@ Vue en tableau
 | 2022 | EEQ 2022 | Autres | 12,3 \[5,4 ; 25,5\] | 79 | pondéré |
 | 2022 | EEQ 2022 | N'a pas voté | 23,6 \[14,2 ; 36,6\] | 79 | pondéré |
 
-De 17 % à 27 % des indécis de la campagne n'ont pas voté ; en 2018, 37 %
+De 17 % à 27 % des indécis de la campagne n'ont pas voté ; en 2018, 37 %
 d'entre eux ont voté CAQ, le parti gagnantCe qu'ont déclaré après
 l'élection les répondants encore indécis pendant la campagne, selon
 l'étude par panel
 
-À remarquer :
+Les indécis pèsent moins sur le résultat que sur la participation. De
+17 % à 27 % d’entre eux n’ont pas voté, contre 7 % à 14 % de ceux qui
+avaient nommé un parti. On sait que les électeurs qui se décident
+pendant la campagne sont les plus sensibles à ses effets (Fournier et
+collaborateurs, 2004) ; au Québec, une minorité non négligeable des
+indécis reste tout simplement à la maison. Ceux qui ont voté ne sont pas
+allés dans une seule direction. En 1998, ils penchaient vers le PLQ
+(38 % contre 28 % pour le PQ), mais sur 81 répondants seulement. En
+2018, ils ont basculé vers la CAQ ; en 2022, ils se sont répartis entre
+tous les partis. L’idée selon laquelle les indécis penchent d’un même
+côté ne trouve donc pas d’appui constant ici.
 
-- Entre 17 % et 27 % des indécis n’ont pas voté.
-- Ceux qui ont voté ont penché vers le parti gagnant en 2018 (la CAQ) ;
-  en 2022, ils se sont répartis presque également entre cinq partis.
+## Qui a gagné la campagne
+
+La matrice montre qui s’est déplacé ; elle ne dit pas qui en sort
+gagnant une fois additionnés les mouvements dans les deux sens. Pour
+chaque parti, nous calculons sa part du vote déclaré moins sa part des
+intentions, chez les mêmes répondants. Un écart positif signifie que le
+parti a gagné plus d’électeurs pendant la campagne qu’il n’en a perdu.
+
+![Graphique à points en quatre panneaux, un par étude par panel de 2007
+à 2022, une rangée par parti : la part du vote déclaré moins la part des
+intentions de campagne, chez les mêmes répondants, en points, avec
+intervalles de confiance. La plupart des écarts sont à quelques points
+de zéro. Le plus grand gain est celui de la CAQ en 2018, +6,1 pts, la
+plus grande perte celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à
+−2,9 pts et le PQ à +3,0 pts. Valeurs dans la vue en
+tableau.](fr-transitions_files/figure-html/gains-light.png)![Graphique à
+points en quatre panneaux, un par étude par panel de 2007 à 2022, une
+rangée par parti : la part du vote déclaré moins la part des intentions
+de campagne, chez les mêmes répondants, en points, avec intervalles de
+confiance. La plupart des écarts sont à quelques points de zéro. Le plus
+grand gain est celui de la CAQ en 2018, +6,1 pts, la plus grande perte
+celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à −2,9 pts et le PQ
+à +3,0 pts. Valeurs dans la vue en
+tableau.](fr-transitions_files/figure-html/gains-dark.png)
+
+Source : qesR. Tous les répondants interrogés pendant la campagne et
+après l'élection, y compris les indécis, ceux qui disaient ne pas
+vouloir voter et ceux qui n'ont pas voté, de sorte que les gains des
+partis et de l'abstention s'additionnent. Points pleins : pondérés avec
+la pondération postélectorale (panel 2018, EEQ 2022) ; points creux :
+non pondérés ici, les pondérations étant en révision (panels 2007 et
+2012). Les sondages de 1998 sont omis : leur recontact surreprésente les
+indécis, les discrets et les partisans des tiers partis (ADQ), de sorte
+que leurs gains non pondérés ne peuvent être lus (voir le texte). Les
+partis qui ne se présentaient pas, ou que la question ne proposait pas,
+sont omis.
+
+Vue en tableau
+
+| Élection | Étude | Parti | Gain net, points \[IC à 95 %\] | n | Pondération |
+|---:|:---|:---|:---|---:|:---|
+| 2007 | Panel 2007 | PLQ | -2,4 \[-4,2 ; -0,7\] | 1477 | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | PQ | -0,9 \[-3,0 ; 1,2\] | 1477 | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | ADQ | 1,4 \[-0,6 ; 3,4\] | 1477 | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | QS | -2,1 \[-3,1 ; -1,1\] | 1477 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | PLQ | 1,0 \[-1,2 ; 3,3\] | 689 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | PQ | 4,6 \[2,2 ; 7,1\] | 689 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | QS | -0,4 \[-2,2 ; 1,3\] | 689 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | CAQ | -2,6 \[-5,1 ; -0,2\] | 689 | non pondéré (pondération en révision) |
+| 2018 | Panel 2018 | PLQ | -2,9 \[-5,0 ; -0,8\] | 815 | pondéré |
+| 2018 | Panel 2018 | PQ | -2,2 \[-4,8 ; 0,3\] | 815 | pondéré |
+| 2018 | Panel 2018 | QS | -2,5 \[-4,5 ; -0,5\] | 815 | pondéré |
+| 2018 | Panel 2018 | CAQ | 6,1 \[3,0 ; 9,3\] | 815 | pondéré |
+| 2022 | EEQ 2022 | PLQ | 2,3 \[-0,3 ; 4,8\] | 1156 | pondéré |
+| 2022 | EEQ 2022 | PQ | 3,0 \[1,4 ; 4,7\] | 1156 | pondéré |
+| 2022 | EEQ 2022 | QS | -2,2 \[-5,0 ; 0,7\] | 1156 | pondéré |
+| 2022 | EEQ 2022 | CAQ | -2,9 \[-4,7 ; -1,1\] | 1156 | pondéré |
+| 2022 | EEQ 2022 | PCQ | -3,1 \[-5,2 ; -1,0\] | 1156 | pondéré |
+
+En solde net, la campagne a déplacé quelques points tout au plus : de
+−3,1 pts pour le PCQ en 2022 à +6,1 pts pour la CAQ en 2018Part du vote
+déclaré de chaque parti moins sa part des intentions de campagne, chez
+les mêmes répondants, avec intervalles de confiance à 95 %
+
+La plupart des écarts sont faibles, à quelques points de zéro. C’est ce
+à quoi on peut s’attendre lorsque la majorité des électeurs maintiennent
+leur intention et que les autres mouvements s’annulent en partie. Les
+deux gains les plus importants sont allés à des partis qui ont ensuite
+formé le gouvernement : la CAQ en 2018, avec 6,1 points (intervalle de
+confiance à 95 % : de 3,0 à 9,3), et le PQ en 2012, avec 4,6 points (de
+2,2 à 7,1). Ce gain de 2018 concorde avec l’explication de Durand et
+Blais (2020). Gagner la campagne n’était pas nécessaire pour former le
+gouvernement. Le PLQ en 2007 et la CAQ en 2022 ont formé le gouvernement
+tout en reculant pendant la campagne (de 2,4 et de 2,9 points), et le PQ
+a gagné 3,0 points en 2022 sans le former.
+
+Nous laissons les sondages de 1998 hors de la figure, car leurs gains
+nets ne peuvent être lus tels quels. Le panel de 1998 inclus dans qesR
+réunit deux des trois sondages que Durand et Blais (1999) ont
+recontactés, ceux de CROP et de CREATEC, qui n’ont interrogé que des
+francophones. Le recontact a été tiré de manière à surreprésenter les
+indécis, les discrets et les partisans des tiers partis, et il est
+analysé ici sans pondération (ses pondérations sont en révision). Sans
+pondération, les personnes qui comptaient voter ADQ forment 23 % des
+paires ; avec la pondération que les producteurs ont utilisée pour leurs
+propres tableaux, elles en forment 16 %. Les chiffres non pondérés
+montrent un PLQ et un PQ qui gagnent à peu près autant (2,7 et 2,3
+points) : il n’y a donc pas de remontée libérale au détriment du PQ, et
+l’ADQ recule de 6,2 points. Avec la pondération des producteurs, le gain
+du PLQ est presque nul (0,3 point) et le recul du PQ est faible (1,5
+point), tous deux avec des intervalles de confiance qui incluent zéro,
+tandis que le recul de l’ADQ se réduit à 3,2 points. Dans un cas comme
+dans l’autre, ces chiffres concordent avec ceux de Durand et Blais
+(1999). Cela n’a rien d’étonnant : ils proviennent des mêmes répondants
+et confirment donc l’analyse originale plutôt qu’ils ne la mettent à
+l’épreuve de manière indépendante.
+
+## Portée et limites des résultats
+
+Au final, l’idée selon laquelle les élections québécoises se jouent à la
+dernière minute ne reçoit qu’un appui ambivalent. D’une part, de 22 % à
+28 % des votants n’ont pas voté comme ils l’avaient annoncé, et la CAQ
+de 2018 a gagné du terrain pendant la campagne elle-même. D’autre part,
+la plupart de ces mouvements s’annulent, les indécis sont peu nombreux
+et s’abstiennent plus souvent que les autres électeurs, et l’effet net
+de la campagne sur la part d’un parti se limite généralement à quelques
+points. Deux limites des données invitent toutefois à la prudence.
+
+Premièrement, les panels ne voient que ceux qui sont restés. Les
+répondants qui ont quitté le panel après la campagne ne figurent pas
+dans ces tableaux ; si l’abandon est lié au fait d’avoir changé d’idée,
+les transitions surestiment la stabilité. Deuxièmement, le vote après
+l’élection est un vote déclaré, une fois le gagnant connu. Certains
+électeurs peuvent se rappeler un vote plus proche du résultat que celui
+qu’ils ont réellement exprimé, ce qui gonflerait les gains du gagnant, y
+compris ceux de la CAQ en 2018. Cependant, si le rappel penchait
+simplement vers le gagnant, le parti qui a formé le gouvernement
+gagnerait chaque fois ; or, il a reculé en 2007 et en 2022. Par
+ailleurs, les cinq études diffèrent par leur devis et leur mode de
+collecte, et trois d’entre elles sont analysées sans pondération : les
+comparaisons d’une élection à l’autre se lisent donc comme des ordres de
+grandeur.
+
+Que la plupart des électeurs maintiennent leur intention sur cinq
+élections et plusieurs devis d’enquête constitue en soi un constat. Bien
+entendu, cette stabilité pourrait ne pas résister à des élections plus
+fragmentées, où cinq partis dépassent 10 % des voix comme en 2022 ;
+c’est ce que les prochains panels devront établir.
+
+## Pour aller plus loin
+
+- Durand, Claire, et André Blais. 1999. « Why Did the Polls Go Wrong in
+  the 1998 Quebec Election? The Answer from Post-Election Polls ».
+  *Bulletin of Sociological Methodology / Bulletin de Méthodologie
+  Sociologique* 62 (1) : 43–47.
+  <https://doi.org/10.1177/075910639906200105>
+- Durand, Claire, et André Blais. 2020. « Quebec 2018: A Failure of the
+  Polls? ». *Canadian Journal of Political Science* 53 (1) : 133–150.
+  <https://doi.org/10.1017/S0008423919000787>
+- Fournier, Patrick, Richard Nadeau, André Blais, Elisabeth Gidengil et
+  Neil Nevitte. 2004. « Time-of-Voting Decision and Susceptibility to
+  Campaign Effects ». *Electoral Studies* 23 (4) : 661–681.
+  <https://doi.org/10.1016/j.electstud.2003.09.001>
+- Johnston, Richard, André Blais, Henry E. Brady et Jean Crête. 1992.
+  *Letting the People Decide: Dynamics of a Canadian Election*. Montréal
+  et Kingston : McGill-Queen’s University Press.
+  <https://doi.org/10.1515/9780773563643>
+- Sur les électeurs du PCQ en 2022, à partir de la même Étude électorale
+  québécoise : Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette
+  et Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election ».
+  *Canadian Journal of Political Science* 58 (2) : 277–296.
+  <https://doi.org/10.1017/S0008423924000829>
 
 ## À propos des données
 
-- **Études.** Les études qui ont interrogé les mêmes répondants avant et
-  après l’élection : les sondages de 1998 (CROP et CREATEC), les panels
-  Durand de 2007, 2012 et 2018, et l’EEQ 2022 (vagues de campagne et
-  postélectorale). Seuls les répondants des deux vagues sont utilisés.
-- **Variable.** `vote_choice` en disposition longue, une ligne par
-  vague. Avant l’élection, l’intention avec relance des indécis vers un
-  parti (`intention_push` ; dans le panel 2007, quelques répondants
-  n’avaient pas de question de relance et gardent leur première réponse,
-  type `intention`) ; après, le vote déclaré (`recall`). Ne voterait
-  pas, aucun ou annulerait est le niveau `no_party` de l’intention ; n’a
-  pas voté est le motif de valeur manquante `not_voted` du vote déclaré.
-- **Pondérations.** La pondération postélectorale de chaque répondant,
-  par
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-  en disposition longue (la personne est l’unité d’échantillonnage). Les
-  panels de 1998, 2007 et 2012 sont non pondérés (pondérations en
-  révision) et tracés en creux.
+- **Études.** Les études qui ont interrogé les mêmes répondants pendant
+  la campagne et après l’élection : les sondages CROP et CREATEC de 1998
+  (francophones seulement), les panels menés par Claire Durand en 2007,
+  2012 et 2018, et l’Étude électorale québécoise de 2022. Seuls les
+  répondants des deux vagues sont retenus. L’EEQ 2022 est un panel en
+  ligne, le panel 2018 combinait téléphone et Web, et les études plus
+  anciennes ont été menées par téléphone.
+- **Intention.** Le parti nommé pendant la campagne. On demandait aux
+  répondants qui hésitaient vers quel parti ils penchaient, et cette
+  réponse compte ; ceux qui ne nommaient toujours aucun parti sont les
+  indécis. Dans le panel de 2018, une partie des indécis interrogés par
+  téléphone et ceux qui disaient ne pas vouloir voter n’ont pas reçu la
+  question de relance, de sorte que ce panel compte plus d’indécis. Dans
+  le panel de 2007, quelques répondants gardent leur première réponse,
+  là où la réponse combinée du producteur est inutilisable.
+- **Vote.** Le parti déclaré après l’élection, ou l’abstention.
+- **Pondérations.** La pondération postélectorale de chaque répondant
+  dans le panel 2018 et l’EEQ 2022. Les panels de 1998, 2007 et 2012 ne
+  sont pas pondérés ici, leurs pondérations étant en révision, et sont
+  tracés en points creux. Le recontact de 1998 surreprésente en outre
+  les indécis, les discrets et les partisans des tiers partis (ADQ) :
+  ses gains nets sont donc omis de la dernière figure, et le texte les
+  compare avec et sans la pondération des producteurs.
 - **Attrition.** Les répondants qui ont quitté le panel après la
-  campagne ne sont pas dans ces tableaux ; si le départ est lié au
-  changement d’idée, les transitions sont biaisées vers la stabilité.
+  campagne ne figurent pas dans ces tableaux.
+- **Code.** Toutes les figures partent de la variable regroupée
+  `vote_choice`, en format long (une rangée par répondant et par vague),
+  appariée à l’intérieur de chaque étude.
+
+L’appel qui construit les données
+
+``` r
+
+h <- qes_harmonize(
+  studies = c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"),
+  targets = "vote_choice",
+  layout = "long", missing = "reasons", quiet = TRUE
+)
+```

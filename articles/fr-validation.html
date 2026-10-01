@@ -20,9 +20,58 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -36,59 +85,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -119,7 +143,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Validation par les résultats officiels et le recensement</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Validation par les résultats officiels et le recensement</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-validation.Rmd" class="external-link"><code>vignettes/articles/fr-validation.Rmd</code></a></small>
@@ -143,22 +167,10 @@ scolarité</strong> des répondants au recensement qui précède l’étude
 <li>quelques <strong>relations entre les réponses</strong> que toute
 mesure valide devrait montrer (validité de construit).</li>
 </ol>
-<p>La page est construite à la construction du site : les fichiers de
-données sont téléchargés depuis leurs dépôts Dataverse par le cache de
-qesR et harmonisés avec <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>. Les données de
-référence se trouvent dans <code>inst/extdata/validation/</code> du
-dépôt source de qesR, chaque ligne avec sa source ; les marges du
-recensement sont aussi fournies avec le paquet, les résultats officiels
-d’Élections Québec et le rapport consigné ne le sont pas (leurs
-conditions d’utilisation exigent l’autorisation écrite d’Élections
-Québec, qui est en attente). Les mêmes vérifications tournent chaque
-semaine sur les fichiers épinglés et échouent lorsque l’indice pondéré
-du vote déclaré (vérification V-L2 de la spécification) ou un indice
-pondéré du recensement dépasse de plus de 2 points sa valeur consignée,
-lorsque la surdéclaration de la participation sort de l’intervalle de 0
-à 35 points, ou lorsqu’une direction de validité de construit
-(vérification V-L4) échoue. Un indice qui baisse, ou qui monte moins,
-passe.</p>
+<p>Chaque étude est harmonisée avec <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> à
+partir de son fichier de données original. Les mêmes comparaisons
+tournent automatiquement sur les fichiers originaux : une erreur
+d’appariement qui déplacerait ces chiffres serait détectée.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
@@ -168,7 +180,7 @@ passe.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="va">x</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="va">digits</span>, flag <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">sign</span><span class="op">)</span> <span class="st">"+"</span> <span class="kw">else</span> <span class="st">""</span>,</span>
 <span>          decimal.mark <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"."</span>, <span class="st">","</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co"># every study the specification covers, harmonized from the pinned files,</span></span>
+<span><span class="co"># every study the specification covers, harmonized from the original files,</span></span>
 <span><span class="co"># against the benchmarks that ship with qesR</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_run</span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_gate</span><span class="op">(</span><span class="va">report</span>, <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_recorded</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -177,7 +189,7 @@ passe.</p>
 <span><span class="va">report</span><span class="op">$</span><span class="va">weighting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"unweighted"</span>, <span class="st">"non pondéré"</span><span class="op">)</span>,</span>
 <span>                           <span class="fu">tr</span><span class="op">(</span><span class="st">"weighted"</span>, <span class="st">"pondéré"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># one row per study and check: the weighted value where the study has a</span></span>
-<span><span class="co"># reviewed weight, the unweighted one otherwise</span></span>
+<span><span class="co"># usable weight, the unweighted one otherwise</span></span>
 <span><span class="va">best</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span>, <span class="va">x</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span><span class="op">)</span>, <span class="op">]</span></span>
 <span>  <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -300,16 +312,15 @@ puisque c’est la seule réponse que leurs électeurs pouvaient donner.</p>
 <p>L’indice pondéré utilise la pondération que la spécification
 recommande pour la vague qui a posé la question ; <code>qes2007</code>,
 <code>qes2012</code>, <code>qes2014</code>, <code>qes2018</code>,
-<code>qes2022</code> et le panel de 2018 ont pour l’instant une
-pondération révisée. Les pondérations de <code>qes2007_panel</code>, de
-<code>qes2012_panel</code>, des sondages CROP et de <code>qes1998</code>
-ne sont pas assez documentées pour être utilisées (leurs lignes sont
-<code>needs_review</code>), et les deux pondérations de
-<code>qes2008</code> sont calées sur le vote ou sur la participation :
-leur indice est non pondéré. <code>qes1998</code> n’a interrogé que des
-francophones, une population que les résultats officiels ne décrivent
-pas : l’étude est montrée à titre indicatif, sans être vérifiée.</p>
-<figure class="qesr-fig" id="fig-recall"><figcaption><span class="qesr-title">Les enquêtes sous-estiment le PLQ à chaque élection de 2007 à 2014, de 3 à 7 points, et la CAQ de 8 points en 2022</span><span class="qesr-sub">Part du vote déclaré moins part officielle, en points, selon le parti (rangées) et l'étude (colonnes)</span></figcaption><img class="qesr-img qesr-light" src="fr-validation_files/figure-html/recall-light.png" alt="Carte de chaleur de l'écart en points entre la part de chaque parti dans le vote déclaré et sa part officielle des votes valides, une rangée par parti et une colonne par étude de 2007 à 2022 ; les cases bleues sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, et la CAQ en 2022. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="fr-validation_files/figure-html/recall-dark.png" alt="Carte de chaleur de l'écart en points entre la part de chaque parti dans le vote déclaré et sa part officielle des votes valides, une rangée par parti et une colonne par étude de 2007 à 2022 ; les cases bleues sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, et la CAQ en 2022. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><p class="qesr-note">Pondéré avec la pondération révisée de l'étude lorsqu'elle en a une ; l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés. Une case vide : le parti ne s'est pas présenté, ou l'étude le compte dans Autres. Les sondages de 1998, qui n'ont interrogé que des francophones, sont laissés de côté.</p>
+<code>qes2022</code> et le panel de 2018 en ont une. Les pondérations de
+<code>qes2007_panel</code>, de <code>qes2012_panel</code>, des sondages
+CROP et de <code>qes1998</code> ne sont pas assez documentées pour être
+utilisées, et les deux pondérations de <code>qes2008</code> sont calées
+sur le vote ou sur la participation : leur indice est non pondéré.
+<code>qes1998</code> n’a interrogé que des francophones, une population
+que les résultats officiels ne décrivent pas : l’étude est montrée à
+titre indicatif, sans être vérifiée.</p>
+<figure class="qesr-fig" id="fig-recall"><figcaption><span class="qesr-title">Les enquêtes sous-estiment le PLQ à chaque élection de 2007 à 2014, de 3 à 7 points, et la CAQ de 8 points en 2022</span><span class="qesr-sub">Part du vote déclaré moins part officielle, en points, selon le parti (rangées) et l'étude (colonnes)</span></figcaption><img class="qesr-img qesr-light" src="fr-validation_files/figure-html/recall-light.png" alt="Carte de chaleur de l'écart en points entre la part de chaque parti dans le vote déclaré et sa part officielle des votes valides, une rangée par parti et une colonne par étude de 2007 à 2022 ; les cases bleues sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, et la CAQ en 2022. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="fr-validation_files/figure-html/recall-dark.png" alt="Carte de chaleur de l'écart en points entre la part de chaque parti dans le vote déclaré et sa part officielle des votes valides, une rangée par parti et une colonne par étude de 2007 à 2022 ; les cases bleues sont surestimées, les rouges sous-estimées, et les écarts de 5 points ou plus sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014, et la CAQ en 2022. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><p class="qesr-note">Pondéré avec la pondération de l'étude lorsqu'elle en a une utilisable ; l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés. Une case vide : le parti ne s'est pas présenté, ou l'étude le compte dans Autres. Les sondages de 1998, qui n'ont interrogé que des francophones, sont laissés de côté.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Étude </th>
@@ -1041,7 +1052,7 @@ diplôme ou grade universitaire) ou non.</p>
 concordance parfaite) ; une cellule vide est une marge que l’étude n’a
 pas mesurée, ou que les tableaux du recensement recueillis ne publient
 pas pour cette année (la langue maternelle en 2006).</p>
-<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">Après pondération, les diplômés universitaires restent surreprésentés de 4 à 21 points ; en 2018, les anglophones de 9</span><span class="qesr-sub">Part pondérée de l'enquête moins part au recensement, en points, selon la catégorie et l'étude ; les marges atteintes à moins d'un demi-point, comme le sont les marges de calage, sont marquées cal.</span></figcaption><img class="qesr-img qesr-light" src="fr-validation_files/figure-html/census-light.png" alt="Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude dont la pondération est révisée ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="fr-validation_files/figure-html/census-dark.png" alt="Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude dont la pondération est révisée ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><p class="qesr-note">Études dont la pondération est révisée, pondérées ; le recensement qui précède chaque étude (Statistique Canada). Le genre et la scolarité ont deux catégories : une seule rangée est montrée (femmes ; université), l'autre en est le miroir. Une marge est marquée cal. quand chaque catégorie est à moins d'un demi-point du recensement, comme l'est par construction une marge sur laquelle la pondération est calée ; un bon accord n'y dit rien de la représentativité.</p>
+<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">Après pondération, les diplômés universitaires restent surreprésentés de 4 à 21 points ; en 2018, les anglophones de 9</span><span class="qesr-sub">Part pondérée de l'enquête moins part au recensement, en points, selon la catégorie et l'étude ; les marges atteintes à moins d'un demi-point, comme le sont les marges de calage, sont marquées cal.</span></figcaption><img class="qesr-img qesr-light" src="fr-validation_files/figure-html/census-light.png" alt="Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude qui a une pondération utilisable ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="fr-validation_files/figure-html/census-dark.png" alt="Carte de chaleur de l'écart en points entre la part pondérée de chaque catégorie de scolarité, de langue maternelle, d'âge et de genre et sa part au recensement, une colonne par étude qui a une pondération utilisable ; les cases bleues sont surreprésentées, les rouges sous-représentées, et les cases grises marquées cal. sont des marges sur lesquelles la pondération est calée. Les diplômés universitaires sont surreprésentés dans chaque étude. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><p class="qesr-note">Études qui ont une pondération utilisable, pondérées ; le recensement qui précède chaque étude (Statistique Canada). Le genre et la scolarité ont deux catégories : une seule rangée est montrée (femmes ; université), l'autre en est le miroir. Une marge est marquée cal. quand chaque catégorie est à moins d'un demi-point du recensement, comme l'est par construction une marge sur laquelle la pondération est calée ; un bon accord n'y dit rien de la représentativité.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Marge </th>
@@ -1706,8 +1717,8 @@ moins d’un point l’un de l’autre, si bien qu’une étude qui aurait
 inversé leurs codes concorderait à peu près aussi bien avec les
 résultats officiels. C’est pourquoi l’harmonisation est aussi vérifiée
 par les effectifs exacts de chaque réponse dans les fichiers originaux
-et par les relations de la section 4, et pourquoi chaque ligne de
-correspondance est révisée par rapport au questionnaire.</p>
+et par les relations de la section 4, et pourquoi chaque appariement est
+vérifié par rapport au questionnaire.</p>
 </div>
 <div class="section level2">
 <h2 id="sources">Sources<a class="anchor" aria-label="anchor" href="#sources"></a>
@@ -1725,14 +1736,9 @@ selon le sexe) ; et le tableau de 2006 97-551-XCB2006009 (âge selon le
 sexe ; la copie du fichier de Statistique Canada conservée par
 l’Internet Archive).</li>
 </ul>
-<p>Les tableaux de référence se trouvent dans
-<code>inst/extdata/validation/</code> du dépôt source, avec la source de
-chaque ligne ; le paquet installé
-(<code>system.file("extdata", "validation", package = "qesR")</code>)
-n’a que les marges du recensement. Les résultats consignés de chaque
-étude s’y trouvent dans <code>validation_report.csv</code> ; ceux de
-<code>qes2022</code> gardent la licence de l’étude, CC BY-NC 4.0 (le
-fichier <code>COPYRIGHTS</code> du package).</p>
+<p>Les tableaux de référence, avec la source de chaque ligne, se
+trouvent dans le <a href="https://github.com/ThomasGareau/qesR" class="external-link">dépôt
+source de qesR</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

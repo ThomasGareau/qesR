@@ -1,260 +1,112 @@
-# A generation gap that reversed: support for sovereignty, 1998-2022
+# Are young Quebecers still the most pro-independence? Support for independence by cohort, 2007-2022
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)*
 
-In 2007 the youngest francophone voters were the most sovereigntist: 58%
-of those born from 1975 to 1989 would have voted Yes to the 1995
-question, against 38% of those born in 1944 or before. That question
-offered a partnership with Canada and draws more Yes than the question
-on an independent country asked from 2012 on, so the levels of 2007 and
-2022 cannot be compared; the order of the cohorts can. Within the
-independence question, the order has flipped since 2012: the cohort born
-from 1975 to 1989 fell from 54% Yes to 38% in 2022, and francophones
-born in 1990 or after from 53% to 30%, the lowest of any cohort, while
-the cohort born from 1945 to 1959 stayed between 50% and 54%. The cohort
-that carried the Yes side in the 2000s did not keep its lead. The
-youngest cohort is open-ended, so its make-up changes: born from 1990 to
-1994 (aged 18 to 22) in 2012, from 1990 to 2004 in 2022, and in 2018 it
-includes 16- and 17-year-olds.
+For a long time, the sovereignty project was thought to have time on its
+side. On this older view, the young voted Yes in greater numbers than
+their elders, and each new generation would add to the Yes camp. Whether
+that age gap reflects generations or the life cycle has been studied in
+its own right (Dufresne, Tessier and Montigny 2019). A newer view points
+the other way. Mahéo and Bélanger (2018) showed that the decline of the
+Parti Québécois (PQ) in 2014 was concentrated among millennials, who
+were less inclined to see sovereignty as a priority, and Daoust and
+Gareau-Paquette (2024) note that the shrinking electoral weight of the
+baby boomers could alter the cleavages that structure Quebec politics.
+On this newer view, the young have turned away from independence, and
+generational replacement, the arrival of new cohorts as older ones leave
+the electorate, now works against the Yes side.
 
-## One variable, several questions
+The PQ vote does not tell us whether support for independence itself has
+followed the same path. Nor does it tell us where the change comes from:
+one generation replacing another, or change within the generations
+themselves. The Quebec Election Studies allow us to follow francophone
+birth cohorts from 2007 to 2022 and to ask both questions. Since each
+study interviews new people, we follow cohorts, not individuals.
 
-`sov_support` pools the referendum questions of every study that asked
-one. The wording changes between studies, and `sov_support__type` says
-which question each value answers:
+In 2007, francophones born from 1975 to 1989 were the cohort most likely
+to vote Yes: 58% would have voted Yes to the 1995 question, compared to
+38% of those born in 1944 or before. In 2022, francophones born in 1990
+or after were the least likely: 30% would vote Yes to an independent
+country, compared to 54% of those born from 1945 to 1959, roughly the
+baby boomers. In other words, the generation gap did not close; it
+reversed. The newer view is thus right about the level, but less so
+about the mechanism. Depending on the year whose levels we hold fixed,
+generational replacement accounts for between none and 2.7 of the 8.5
+points lost among francophones since 2012. Most of the decline happened
+within the cohorts.
 
-``` r
+## The change of question in 2012
 
-h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("sov_support", "birth_year", "lang_mother"),
-  missing = "reasons", quiet = TRUE
-)
-```
+![Line chart with confidence intervals of the share of all respondents
+who would vote Yes, among those who would vote Yes or No, in the Quebec
+Election Studies from 2007 to 2022. Support is 43% to 46% on the 1995
+question (2007, 2008) and 34% to 40% on an independent country (2012 to
+2022); a grey band marks the change of question. Values in the table
+view.](sovereignty-generations_files/figure-html/levels-light.png)![Line
+chart with confidence intervals of the share of all respondents who
+would vote Yes, among those who would vote Yes or No, in the Quebec
+Election Studies from 2007 to 2022. Support is 43% to 46% on the 1995
+question (2007, 2008) and 34% to 40% on an independent country (2012 to
+2022); a grey band marks the change of question. Values in the table
+view.](sovereignty-generations_files/figure-html/levels-dark.png)
 
-``` r
-
-table(h$study, h$sov_support__type)
-#>                     
-#>                      independence sovereign_country partnership_1995_push
-#>   qes_crop_2007_2010            0                 0                     0
-#>   qes1998                       0                 0                  1483
-#>   qes2007                       0                 0                  2175
-#>   qes2007_panel                 0                 0                  2050
-#>   qes2008                       0                 0                  1151
-#>   qes2012                    1505                 0                     0
-#>   qes2012_panel                 0               844                     0
-#>   qes2014                    1517                 0                     0
-#>   qes2018                    3072                 0                     0
-#>   qes2018_panel                 0                 0                     0
-#>   qes2022                    1521                 0                     0
-#>                     
-#>                      partnership_1995 favour
-#>   qes_crop_2007_2010                0      0
-#>   qes1998                           0      0
-#>   qes2007                           0      0
-#>   qes2007_panel                     0      0
-#>   qes2008                           0      0
-#>   qes2012                           0      0
-#>   qes2012_panel                     0      0
-#>   qes2014                           0      0
-#>   qes2018                           0      0
-#>   qes2018_panel                     0    842
-#>   qes2022                           0      0
-```
-
-Support depends on the wording, so this page compares cohorts within one
-wording and one study, and draws the wordings as separate series.
-
-## Support by study and wording
-
-![Dot chart with confidence intervals of the share who would vote Yes,
-among those who would vote Yes or No, in each study from 1998 to 2022,
-the shape of each dot giving the wording of the question. In the Quebec
-Election Studies, support is 43% to 46% on the 1995 question (2007,
-2008) and 34% to 40% on an independent country (2012 to 2022). The 1998
-point (francophones only, unweighted) stands apart. Values in the table
-view.](sovereignty-generations_files/figure-html/wording-light.png)![Dot
-chart with confidence intervals of the share who would vote Yes, among
-those who would vote Yes or No, in each study from 1998 to 2022, the
-shape of each dot giving the wording of the question. In the Quebec
-Election Studies, support is 43% to 46% on the 1995 question (2007,
-2008) and 34% to 40% on an independent country (2012 to 2022). The 1998
-point (francophones only, unweighted) stands apart. Values in the table
-view.](sovereignty-generations_files/figure-html/wording-dark.png)
-
-Source: qesR, pooled sov_support, every study that asked a referendum
-question (all respondents). The line joins the independence question in
-the Quebec Election Studies (just left of each election); the Durand
-panels are just right of it. The 1998 point is the CROP half of the 1998
-polls only (CREATEC did not ask the question): francophones only,
-unweighted, from a recontact that over-selected undecided voters and
-refusers, so it is not joined to the others and is not comparable with
-the 1995 result of all voters. Bars: 95% confidence intervals (logit).
-Weighted with the weight of the wave that asked; hollow: unweighted,
-weight under review. Favourable or opposed (2018 panel) is collapsed to
-yes or no, graded approximate. The x axis is in years, with a break
-between 1998 and 2007.
+Source: Quebec Election Studies, 2007 to 2022, all respondents. The 2007
+and 2008 studies asked the 1995 referendum question, which offered a
+partnership with Canada, and asked those who did not know which way they
+leaned; from 2012 on, the studies asked about an independent country.
+The 2008 study is unweighted (hollow dot).
 
 Table view
 
-| Election | Study | Question | Yes, % \[95% CI\] | n | Weighting | Grade |
-|---:|:---|:---|:---|---:|:---|:---|
-| 1998 | 1998 polls (CROP half, francophones) | The 1995 question (partnership) | 43.4 \[38.5, 48.5\] | 380 | unweighted (weight under review) | comparable |
-| 2007 | QES 2007 | The 1995 question (partnership) | 42.5 \[39.9, 45.2\] | 2011 | weighted | identical |
-| 2007 | 2007 panel | The 1995 question (partnership) | 44.8 \[42.6, 47.1\] | 1899 | unweighted (weight under review) | comparable |
-| 2008 | QES 2008 | The 1995 question (partnership) | 45.8 \[42.7, 48.8\] | 1038 | unweighted (weight under review) | comparable |
-| 2012 | QES 2012 | An independent country | 40.4 \[37.5, 43.4\] | 1323 | weighted | identical |
-| 2012 | 2012 panel | A sovereign country | 35.1 \[31.8, 38.6\] | 743 | unweighted (weight under review) | identical |
-| 2014 | QES 2014 | An independent country | 34.8 \[31.8, 37.9\] | 1353 | weighted | identical |
-| 2018 | QES 2018 | An independent country | 34.6 \[32.6, 36.7\] | 2558 | weighted | comparable |
-| 2018 | 2018 panel | Favourable to independence | 31.7 \[27.8, 35.8\] | 780 | weighted | approximate |
-| 2022 | QES 2022 | An independent country | 34.3 \[30.8, 37.9\] | 1284 | weighted | comparable |
+| Election | Study | Question | Yes, % \[95% CI\] | n | Weighting |
+|---:|:---|:---|:---|---:|:---|
+| 2007 | QES 2007 | The 1995 question (partnership) | 42.5 \[39.9, 45.2\] | 2011 | weighted |
+| 2008 | QES 2008 | The 1995 question (partnership) | 45.8 \[42.7, 48.8\] | 1038 | unweighted |
+| 2012 | QES 2012 | An independent country | 40.4 \[37.5, 43.4\] | 1323 | weighted |
+| 2014 | QES 2014 | An independent country | 34.8 \[31.8, 37.9\] | 1353 | weighted |
+| 2018 | QES 2018 | An independent country | 34.6 \[32.6, 36.7\] | 2558 | weighted |
+| 2022 | QES 2022 | An independent country | 34.3 \[30.8, 37.9\] | 1284 | weighted |
 
-Yes draws fewer votes on independence than on the 1995 question: 34-40%
-against 43-46%Would vote Yes in a referendum, among those who would vote
-Yes or No, by study and wording of the question, with 95% confidence
-intervals
+The question changed in 2012: 43-46% Yes on the 1995 question, 34-40% on
+an independent countryWould vote Yes in a referendum, among those who
+would vote Yes or No, all respondents, with 95% confidence intervals
 
-What to notice:
+Before comparing cohorts, a word on the question itself. The 2007 and
+2008 studies asked the question of the 1995 referendum, which offered a
+partnership with Canada, and asked those who did not know which way they
+leaned. From 2012 on, the studies asked about Quebec becoming an
+independent country, with no such follow-up. In these studies, the first
+wording draws more Yes than the second. Wording has long been known to
+move support for sovereignty (Yale and Durand 2011), and here the change
+of wording also coincides with the gap between the 2008 and 2012
+elections, so the levels on each side of the grey band cannot be
+compared. On the independence question, support among all respondents
+fell from 40% in 2012 to 35% in 2014, and has barely moved since (34% in
+2022). For this reason, we compare cohorts within one study and one
+question, and we read the order of the cohorts rather than their level.
 
-- The 1995 question, which offered a partnership with Canada, draws more
-  Yes than a question on an independent country: the two are different
-  series, and the grey band marks where the Quebec Election Studies
-  changed question.
-- On the independence question, support in the Quebec Election Studies
-  falls from 40% in 2012 to about 34% from 2014 on.
-- The Durand panels asked other wordings; each is a point of its own.
-
-## Cohorts over time
-
-![Line chart of the share of francophones who would vote Yes to Quebec
-becoming an independent country, for five birth cohorts, at the
-elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and
-in 1990 or after are highlighted with confidence bands. Those born in
-1990 or after go from 53% to 30%; those born 1945-1959 stay between 50%
-and 54%. Values in the table
-view.](sovereignty-generations_files/figure-html/cohorts-light.png)![Line
-chart of the share of francophones who would vote Yes to Quebec becoming
-an independent country, for five birth cohorts, at the elections of
-2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or
-after are highlighted with confidence bands. Those born in 1990 or after
-go from 53% to 30%; those born 1945-1959 stay between 50% and 54%.
-Values in the table
-view.](sovereignty-generations_files/figure-html/cohorts-dark.png)
-
-Source: qesR, pooled sov_support (type independence), birth_year and
-lang_mother; QES 2012, 2014, 2018 and 2022, francophone respondents,
-each study weighted with the weight of the wave that asked. Bands: 95%
-confidence intervals (logit); the intervals of every cohort are in the
-next figure and the table view, which also gives all respondents and the
-2007 and 2008 studies (1995 question). The line of the oldest cohort
-rests on fewer than 100 respondents in 2012, 2014, 2022. The youngest
-cohort is open-ended: born 1990-1994 (aged 18 to 22) in 2012, born
-1990-2004 in 2022; the 2018 study sampled people aged 16 and over.
-
-Table view
-
-| Respondents | Election | Study | Question | Cohort | Yes, % \[95% CI\] | n | Weighting |
-|:---|---:|:---|:---|:---|:---|---:|:---|
-| All respondents | 2007 | QES 2007 | The 1995 question (partnership) | born 1944 or before | 35.1 \[29.9, 40.8\] | 381 | weighted |
-| All respondents | 2007 | QES 2007 | The 1995 question (partnership) | born 1945-59 | 44.7 \[40.2, 49.4\] | 673 | weighted |
-| All respondents | 2007 | QES 2007 | The 1995 question (partnership) | born 1960-74 | 41.6 \[36.4, 46.9\] | 486 | weighted |
-| All respondents | 2007 | QES 2007 | The 1995 question (partnership) | born 1975-89 | 47.9 \[42.2, 53.7\] | 438 | weighted |
-| All respondents | 2008 | QES 2008 | The 1995 question (partnership) | born 1944 or before | 39.7 \[33.3, 46.5\] | 209 | unweighted (weight under review) |
-| All respondents | 2008 | QES 2008 | The 1995 question (partnership) | born 1945-59 | 53.8 \[47.8, 59.8\] | 262 | unweighted (weight under review) |
-| All respondents | 2008 | QES 2008 | The 1995 question (partnership) | born 1960-74 | 43.9 \[38.7, 49.3\] | 330 | unweighted (weight under review) |
-| All respondents | 2008 | QES 2008 | The 1995 question (partnership) | born 1975-89 | 46.0 \[39.4, 52.7\] | 213 | unweighted (weight under review) |
-| All respondents | 2008 | QES 2008 | The 1995 question (partnership) | born 1990+ | n \< 30 | 5 | unweighted (weight under review) |
-| All respondents | 2012 | QES 2012 | An independent country | born 1944 or before | 24.0 \[16.2, 34.1\] | 91 | weighted |
-| All respondents | 2012 | QES 2012 | An independent country | born 1945-59 | 42.8 \[36.4, 49.4\] | 258 | weighted |
-| All respondents | 2012 | QES 2012 | An independent country | born 1960-74 | 39.2 \[34.2, 44.3\] | 394 | weighted |
-| All respondents | 2012 | QES 2012 | An independent country | born 1975-89 | 46.0 \[41.2, 50.9\] | 439 | weighted |
-| All respondents | 2012 | QES 2012 | An independent country | born 1990+ | 45.4 \[36.9, 54.2\] | 141 | weighted |
-| All respondents | 2014 | QES 2014 | An independent country | born 1944 or before | 26.3 \[18.2, 36.5\] | 128 | weighted |
-| All respondents | 2014 | QES 2014 | An independent country | born 1945-59 | 43.6 \[37.4, 49.9\] | 354 | weighted |
-| All respondents | 2014 | QES 2014 | An independent country | born 1960-74 | 31.4 \[26.1, 37.2\] | 393 | weighted |
-| All respondents | 2014 | QES 2014 | An independent country | born 1975-89 | 29.0 \[23.6, 35.1\] | 307 | weighted |
-| All respondents | 2014 | QES 2014 | An independent country | born 1990+ | 41.6 \[33.4, 50.2\] | 171 | weighted |
-| All respondents | 2018 | QES 2018 | An independent country | born 1944 or before | 30.3 \[25.4, 35.7\] | 356 | weighted |
-| All respondents | 2018 | QES 2018 | An independent country | born 1945-59 | 37.2 \[33.4, 41.1\] | 627 | weighted |
-| All respondents | 2018 | QES 2018 | An independent country | born 1960-74 | 36.8 \[32.5, 41.3\] | 498 | weighted |
-| All respondents | 2018 | QES 2018 | An independent country | born 1975-89 | 33.9 \[29.1, 39.0\] | 387 | weighted |
-| All respondents | 2018 | QES 2018 | An independent country | born 1990+ | 31.5 \[27.4, 36.0\] | 655 | weighted |
-| All respondents | 2022 | QES 2022 | An independent country | born 1944 or before | 40.4 \[21.9, 62.2\] | 60 | weighted |
-| All respondents | 2022 | QES 2022 | An independent country | born 1945-59 | 40.7 \[34.0, 47.6\] | 318 | weighted |
-| All respondents | 2022 | QES 2022 | An independent country | born 1960-74 | 35.6 \[29.4, 42.4\] | 319 | weighted |
-| All respondents | 2022 | QES 2022 | An independent country | born 1975-89 | 31.7 \[25.7, 38.3\] | 303 | weighted |
-| All respondents | 2022 | QES 2022 | An independent country | born 1990+ | 26.7 \[20.8, 33.5\] | 283 | weighted |
-| Francophones | 2007 | QES 2007 | The 1995 question (partnership) | born 1944 or before | 38.1 \[32.5, 44.0\] | 343 | weighted |
-| Francophones | 2007 | QES 2007 | The 1995 question (partnership) | born 1945-59 | 51.2 \[46.4, 56.0\] | 588 | weighted |
-| Francophones | 2007 | QES 2007 | The 1995 question (partnership) | born 1960-74 | 51.7 \[46.0, 57.3\] | 406 | weighted |
-| Francophones | 2007 | QES 2007 | The 1995 question (partnership) | born 1975-89 | 57.8 \[51.8, 63.5\] | 379 | weighted |
-| Francophones | 2008 | QES 2008 | The 1995 question (partnership) | born 1944 or before | 45.4 \[38.2, 52.9\] | 174 | unweighted (weight under review) |
-| Francophones | 2008 | QES 2008 | The 1995 question (partnership) | born 1945-59 | 62.1 \[55.5, 68.3\] | 219 | unweighted (weight under review) |
-| Francophones | 2008 | QES 2008 | The 1995 question (partnership) | born 1960-74 | 50.5 \[44.7, 56.4\] | 275 | unweighted (weight under review) |
-| Francophones | 2008 | QES 2008 | The 1995 question (partnership) | born 1975-89 | 52.7 \[45.5, 59.9\] | 182 | unweighted (weight under review) |
-| Francophones | 2008 | QES 2008 | The 1995 question (partnership) | born 1990+ | n \< 30 | 4 | unweighted (weight under review) |
-| Francophones | 2012 | QES 2012 | An independent country | born 1944 or before | 37.0 \[25.6, 50.0\] | 62 | weighted |
-| Francophones | 2012 | QES 2012 | An independent country | born 1945-59 | 53.6 \[46.4, 60.6\] | 214 | weighted |
-| Francophones | 2012 | QES 2012 | An independent country | born 1960-74 | 46.2 \[40.6, 51.9\] | 327 | weighted |
-| Francophones | 2012 | QES 2012 | An independent country | born 1975-89 | 54.0 \[48.8, 59.2\] | 374 | weighted |
-| Francophones | 2012 | QES 2012 | An independent country | born 1990+ | 53.5 \[44.1, 62.6\] | 120 | weighted |
-| Francophones | 2014 | QES 2014 | An independent country | born 1944 or before | 33.2 \[23.1, 45.2\] | 90 | weighted |
-| Francophones | 2014 | QES 2014 | An independent country | born 1945-59 | 50.7 \[43.9, 57.5\] | 280 | weighted |
-| Francophones | 2014 | QES 2014 | An independent country | born 1960-74 | 40.5 \[34.2, 47.2\] | 288 | weighted |
-| Francophones | 2014 | QES 2014 | An independent country | born 1975-89 | 38.1 \[31.2, 45.6\] | 214 | weighted |
-| Francophones | 2014 | QES 2014 | An independent country | born 1990+ | 50.8 \[41.1, 60.4\] | 124 | weighted |
-| Francophones | 2018 | QES 2018 | An independent country | born 1944 or before | 38.2 \[32.2, 44.4\] | 280 | weighted |
-| Francophones | 2018 | QES 2018 | An independent country | born 1945-59 | 49.5 \[44.9, 54.2\] | 471 | weighted |
-| Francophones | 2018 | QES 2018 | An independent country | born 1960-74 | 49.0 \[43.7, 54.3\] | 362 | weighted |
-| Francophones | 2018 | QES 2018 | An independent country | born 1975-89 | 43.5 \[37.6, 49.6\] | 288 | weighted |
-| Francophones | 2018 | QES 2018 | An independent country | born 1990+ | 37.4 \[32.5, 42.5\] | 544 | weighted |
-| Francophones | 2022 | QES 2022 | An independent country | born 1944 or before | 41.2 \[26.8, 57.2\] | 51 | weighted |
-| Francophones | 2022 | QES 2022 | An independent country | born 1945-59 | 54.2 \[47.5, 60.8\] | 248 | weighted |
-| Francophones | 2022 | QES 2022 | An independent country | born 1960-74 | 44.4 \[37.8, 51.1\] | 243 | weighted |
-| Francophones | 2022 | QES 2022 | An independent country | born 1975-89 | 38.1 \[31.8, 44.7\] | 245 | weighted |
-| Francophones | 2022 | QES 2022 | An independent country | born 1990+ | 30.5 \[24.2, 37.6\] | 215 | weighted |
-
-Francophones born in 1990 or after went from 53% to 30% Yes; those born
-1945-1959 stayed at 50-54%Francophones who would vote Yes to an
-independent country, by birth cohort, 2012 to 2022; two cohorts with 95%
-confidence bands, the others in grey
-
-What to notice:
-
-- The youngest cohort (born in 1990 or after) falls from 53% Yes in 2012
-  to 30% in 2022.
-- The cohort born from 1975 to 1989 falls from 54% to 38%. The oldest
-  cohort (born in 1944 or before) does not change detectably: 62
-  francophones of that cohort answered in 2012 and 51 in 2022, and the
-  cohort also shrinks through mortality.
-- The cohort born from 1945 to 1959, who voted in the referendums of
-  1980 and 1995, is the most sovereigntist in 2022 (54%).
-
-## The gradient flips
+## The order of the cohorts reverses
 
 ![Dot charts with confidence intervals in six panels, one per study from
 2007 to 2022: the share of francophones who would vote Yes in each birth
-cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts above
-the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
+cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the
+cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
 after) is −24 pts from the cohort born 1945-1959. Values in the table
 view.](sovereignty-generations_files/figure-html/gradient-light.png)![Dot
 charts with confidence intervals in six panels, one per study from 2007
 to 2022: the share of francophones who would vote Yes in each birth
-cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts above
-the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
+cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the
+cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
 after) is −24 pts from the cohort born 1945-1959. Values in the table
 view.](sovereignty-generations_files/figure-html/gradient-dark.png)
 
-Source: qesR, pooled sov_support, birth_year and lang_mother; one Quebec
-Election Study per election, francophone respondents. 2007 and 2008
-asked the 1995 question, with the undecided pushed; 2012 to 2022 asked
-about an independent country, so compare the order of the cohorts within
-a panel, not the levels across the two questions. Bars: 95% confidence
-intervals (logit). Weighted; hollow (2008): unweighted, weight under
-review. Cohorts of fewer than 30 respondents are not drawn.
+Source: Quebec Election Studies, 2007 to 2022, respondents whose mother
+tongue is French. The 2007 and 2008 studies asked the 1995 question, the
+others about an independent country: compare the order of the cohorts
+within a panel, not the levels across panels. The 2008 study is
+unweighted (hollow dots). Cohorts of fewer than 30 respondents are not
+drawn.
 
 Table view
 
@@ -264,10 +116,11 @@ Table view
 | 2007 | The 1995 question (partnership) | born 1945-59 | 51.2 \[46.4, 56.0\] | 588 | weighted |
 | 2007 | The 1995 question (partnership) | born 1960-74 | 51.7 \[46.0, 57.3\] | 406 | weighted |
 | 2007 | The 1995 question (partnership) | born 1975-89 | 57.8 \[51.8, 63.5\] | 379 | weighted |
-| 2008 | The 1995 question (partnership) | born 1944 or before | 45.4 \[38.2, 52.9\] | 174 | unweighted (weight under review) |
-| 2008 | The 1995 question (partnership) | born 1945-59 | 62.1 \[55.5, 68.3\] | 219 | unweighted (weight under review) |
-| 2008 | The 1995 question (partnership) | born 1960-74 | 50.5 \[44.7, 56.4\] | 275 | unweighted (weight under review) |
-| 2008 | The 1995 question (partnership) | born 1975-89 | 52.7 \[45.5, 59.9\] | 182 | unweighted (weight under review) |
+| 2008 | The 1995 question (partnership) | born 1944 or before | 45.4 \[38.2, 52.9\] | 174 | unweighted |
+| 2008 | The 1995 question (partnership) | born 1945-59 | 62.1 \[55.5, 68.3\] | 219 | unweighted |
+| 2008 | The 1995 question (partnership) | born 1960-74 | 50.5 \[44.7, 56.4\] | 275 | unweighted |
+| 2008 | The 1995 question (partnership) | born 1975-89 | 52.7 \[45.5, 59.9\] | 182 | unweighted |
+| 2008 | The 1995 question (partnership) | born 1990+ | n \< 30 | 4 | unweighted |
 | 2012 | An independent country | born 1944 or before | 37.0 \[25.6, 50.0\] | 62 | weighted |
 | 2012 | An independent country | born 1945-59 | 53.6 \[46.4, 60.6\] | 214 | weighted |
 | 2012 | An independent country | born 1960-74 | 46.2 \[40.6, 51.9\] | 327 | weighted |
@@ -289,47 +142,255 @@ Table view
 | 2022 | An independent country | born 1975-89 | 38.1 \[31.8, 44.7\] | 245 | weighted |
 | 2022 | An independent country | born 1990+ | 30.5 \[24.2, 37.6\] | 215 | weighted |
 
-In 2007 the youngest francophones were the most sovereigntist cohort; in
-2022 the youngest were the leastFrancophones who would vote Yes, by
-birth cohort, in each Quebec Election Study, with 95% confidence
+In 2007 the youngest francophones were the cohort most likely to vote
+Yes; in 2022 they were the least likelyFrancophones who would vote Yes,
+by birth cohort, in each Quebec Election Study, with 95% confidence
 intervals
 
-What to notice:
+First, in 2007, on the 1995 question, support falls with age:
+francophones born from 1975 to 1989 are 20 percentage points above those
+born in 1944 or before. This is the pattern the older view has in mind.
+The unweighted 2008 study gives a less tidy picture, as it puts those
+born from 1945 to 1959 first (62%). Second, in 2012 the youngest cohort
+no longer stands out: those born in 1990 or after (53% Yes) are level
+with those born from 1945 to 1959 (54%), and the cohort born from 1960
+to 1974 is 8 points lower (46%). The oldest cohort, at 37%, is lower
+still, although it rests on only 62 respondents. Third, from 2018 on the
+order is reversed. In 2022, the youngest cohort is the least likely to
+vote Yes, 24 points below those born from 1945 to 1959 (54%, n = 248).
+The oldest cohort, born in 1944 or before, is below the 1945-59 cohort
+at every election, but its intervals are among the widest: only 51
+francophones of that cohort answered in 2022.
 
-- In 2007, on the 1995 question, support falls with age: the cohort born
-  from 1975 to 1989 is +20 pts above the oldest.
-- In 2018 the youngest and the oldest cohorts are level; in 2022 the
-  youngest is the least sovereigntist, −24 pts from the cohort born from
-  1945 to 1959 (54%, n = 248).
-- The intervals of the oldest cohort (born in 1944 or before) are the
-  widest: fewer than 100 francophones of that cohort answered in 2012,
-  2014 and 2022.
+## Which cohorts changed
+
+![Line chart of the share of francophones who would vote Yes to Quebec
+becoming an independent country, for five birth cohorts, at the
+elections of 2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and
+in 1990 or after are highlighted with confidence bands. Those born in
+1990 or after go from 53% to 30%; those born 1945-1959 stay between 50%
+and 54%. Values in the table
+view.](sovereignty-generations_files/figure-html/cohorts-light.png)![Line
+chart of the share of francophones who would vote Yes to Quebec becoming
+an independent country, for five birth cohorts, at the elections of
+2012, 2014, 2018 and 2022; the cohorts born 1945-1959 and in 1990 or
+after are highlighted with confidence bands. Those born in 1990 or after
+go from 53% to 30%; those born 1945-1959 stay between 50% and 54%.
+Values in the table
+view.](sovereignty-generations_files/figure-html/cohorts-dark.png)
+
+Source: Quebec Election Studies 2012, 2014, 2018 and 2022, respondents
+whose mother tongue is French, weighted. The line of the oldest cohort
+rests on fewer than 100 respondents in 2012, 2014 and 2022. The youngest
+cohort grows as new voters come of age: born 1990-1994 (aged 18 to 22)
+in 2012, born 1990-2004 in 2022.
+
+Table view
+
+| Election | Cohort              | Yes, % \[95% CI\]   |   n | Weighting |
+|---------:|:--------------------|:--------------------|----:|:----------|
+|     2012 | born 1944 or before | 37.0 \[25.6, 50.0\] |  62 | weighted  |
+|     2012 | born 1945-59        | 53.6 \[46.4, 60.6\] | 214 | weighted  |
+|     2012 | born 1960-74        | 46.2 \[40.6, 51.9\] | 327 | weighted  |
+|     2012 | born 1975-89        | 54.0 \[48.8, 59.2\] | 374 | weighted  |
+|     2012 | born 1990+          | 53.5 \[44.1, 62.6\] | 120 | weighted  |
+|     2014 | born 1944 or before | 33.2 \[23.1, 45.2\] |  90 | weighted  |
+|     2014 | born 1945-59        | 50.7 \[43.9, 57.5\] | 280 | weighted  |
+|     2014 | born 1960-74        | 40.5 \[34.2, 47.2\] | 288 | weighted  |
+|     2014 | born 1975-89        | 38.1 \[31.2, 45.6\] | 214 | weighted  |
+|     2014 | born 1990+          | 50.8 \[41.1, 60.4\] | 124 | weighted  |
+|     2018 | born 1944 or before | 38.2 \[32.2, 44.4\] | 280 | weighted  |
+|     2018 | born 1945-59        | 49.5 \[44.9, 54.2\] | 471 | weighted  |
+|     2018 | born 1960-74        | 49.0 \[43.7, 54.3\] | 362 | weighted  |
+|     2018 | born 1975-89        | 43.5 \[37.6, 49.6\] | 288 | weighted  |
+|     2018 | born 1990+          | 37.4 \[32.5, 42.5\] | 544 | weighted  |
+|     2022 | born 1944 or before | 41.2 \[26.8, 57.2\] |  51 | weighted  |
+|     2022 | born 1945-59        | 54.2 \[47.5, 60.8\] | 248 | weighted  |
+|     2022 | born 1960-74        | 44.4 \[37.8, 51.1\] | 243 | weighted  |
+|     2022 | born 1975-89        | 38.1 \[31.8, 44.7\] | 245 | weighted  |
+|     2022 | born 1990+          | 30.5 \[24.2, 37.6\] | 215 | weighted  |
+
+Francophones born in 1990 or after went from 53% to 30% Yes; those born
+1945-59 stayed between 50% and 54%Francophones who would vote Yes to an
+independent country, by birth cohort, 2012 to 2022; two cohorts with 95%
+confidence bands, the others in grey
+
+Comparing the same cohorts from one study to the next shows where the
+reversal comes from. Those born from 1945 to 1959, who voted in the
+referendums of 1980 and 1995, barely moved: between 50% and 54% would
+vote Yes at each election from 2012 to 2022. By contrast, the cohort
+born from 1975 to 1989 fell from 54% in 2012 to 38% as early as 2014,
+the election in which the PQ vote of millennials fell (Mahéo and
+Bélanger 2018). It stood at 44% in 2018 and 38% in 2022, never close to
+its 2012 level. The youngest cohort broke later. Still at 51% in 2014,
+it was at 37% in 2018 and 30% in 2022.
+
+One could object that the young did not turn against independence, but
+away from the question, and that the share of Yes among those who
+answered Yes or No hides a rise in indecision. The data offer little
+support for that reading. Among all francophones born in 1990 or after
+who were asked the question, the share who would vote No rose from 41%
+in 2012 to 56% in 2022, while the share who answered neither Yes nor No
+went from 12% to 19%. Indecision grew, but most of the movement went to
+the No side.
+
+## Replacement or change within cohorts?
+
+The reversal could come from two places. The first is replacement: the
+oldest cohorts shrink, new voters come of age, and the weight of each
+generation among those who take a side changes even if no cohort changes
+its answer. The second is change within cohorts: a given cohort answers
+differently from one election to the next. To separate the two, we use a
+simple counterfactual: we apply each cohort’s 2012 level of support to
+the cohort sizes of 2022, and the reverse.
+
+![Dot chart with confidence intervals of the share of francophones who
+would vote Yes to an independent country: 50.0% observed in 2012, 50.6%
+if each cohort had kept its 2012 level with the cohort sizes of 2022,
+44.2% with the 2022 levels and the cohort sizes of 2012, and 41.5%
+observed in 2022. Values in the table
+view.](sovereignty-generations_files/figure-html/turnover-light.png)![Dot
+chart with confidence intervals of the share of francophones who would
+vote Yes to an independent country: 50.0% observed in 2012, 50.6% if
+each cohort had kept its 2012 level with the cohort sizes of 2022, 44.2%
+with the 2022 levels and the cohort sizes of 2012, and 41.5% observed in
+2022. Values in the table
+view.](sovereignty-generations_files/figure-html/turnover-dark.png)
+
+Source: Quebec Election Studies 2012 and 2022, respondents whose mother
+tongue is French, weighted. The recombined estimates weight the share of
+Yes in each of the five birth cohorts of one study by the size of the
+cohorts in the other study. Cohort sizes are each cohort's share of the
+francophones who answered Yes or No in that study (weighted). The
+youngest cohort (born in 1990 or after) takes its 2012 level, that of
+voters aged 18 to 22, in the replacement-only row, and its 2022 level,
+which includes voters born from 1995 to 2004, in the row of change
+within cohorts.
+
+Table view
+
+| Estimate | Yes, % \[95% CI\] |
+|:---|:---|
+| 2012, observed | 50.0 \[46.6, 53.3\] |
+| 2012 levels, 2022 generations (replacement only) | 50.6 \[47.2, 54.0\] |
+| 2022 levels, 2012 generations (change within cohorts only) | 44.2 \[40.6, 47.8\] |
+| 2022, observed | 41.5 \[38.2, 44.9\] |
+
+Most of the decline came from within the cohorts: the 2022 levels alone
+take support from 50.0% to 44.2%Francophones who would vote Yes to an
+independent country, observed in 2012 and 2022 and recombined from the
+two studies, with 95% confidence intervals
+
+Among francophones, support for independence fell by 8.5 points between
+2012 and 2022, from 50.0% to 41.5%. Had each cohort kept its 2012 level,
+the new weight of the generations would have left support at 50.6%,
+practically unchanged. This is because in 2012 the larger cohorts were
+close to one another, so it made little difference which of them grew
+and which shrank. Conversely, the levels of 2022 applied to the cohort
+sizes of 2012 already give 44.2%. In other words, most of the decline
+happened within the cohorts. The same holds when we follow only
+francophones born from 1990 to 1994, who were 18 to 22 years old in
+2012, a closed group that no newcomer joins: 53% would have voted Yes in
+2012 (n = 120), compared to 32% in 2022 (n = 96). The interval of the
+latter is wide, from 23% to 43%, but it does not overlap that of 2012
+(44% to 63%).
+
+That said, the two mechanisms are not independent. Now that the young
+are less likely than their elders to vote Yes, replacement works against
+the Yes side, as the caveat of Daoust and Gareau-Paquette (2024)
+suggested: with the levels of 2022, the change in the weight of the
+generations since 2012 lowers support by 2.7 of the 8.5 points on its
+own.
+
+## Conclusion
+
+Overall, each of the two views gets part of the story right. The older
+view held in 2007, when the cohort born from 1975 to 1989 was the most
+likely to vote Yes on the 1995 question. It no longer held in 2012, when
+those born in 1990 or after were level with the 1945-59 cohort, and by
+2022 the order had reversed. The newer view is right about the level:
+support for independence is now lowest among the young and highest among
+those born from 1945 to 1959. It is less right about the mechanism. The
+decline since 2012 came mostly from net change within cohorts: depending
+on the year of reference, replacement accounts for between none and 2.7
+of the 8.5 points lost, and it began to work against the Yes side only
+once the young had changed. Nor do the young form a single block. Daoust
+and Gareau-Paquette (2026) find that generation Z worries more about the
+French language than millennials do, and the youngest cohort on this
+page mixes the two.
+
+The analysis has three limits. First, the samples are modest. Each study
+counts between 867 and 1,971 francophones who answered Yes or No, so a
+single cohort in a single year rests on at most about 600 respondents,
+and the oldest on far fewer. Second, the studies do not follow the same
+people: we observe cohorts, not individuals, changing. They are
+independent samples, drawn at different moments (2022 during the
+campaign, the others after the election) and in different ways (by
+telephone in 2008, online from 2012 on), so change within a cohort also
+carries these differences. The youngest cohort of 2022 also includes
+voters who were not yet adults in 2012, which is why we followed those
+born from 1990 to 1994 on their own. Third, the page describes cohorts;
+it does not explain why they changed. The period since 2014 also saw the
+rise of the Coalition avenir Québec (CAQ) and Québec solidaire and, in
+2022, of the Parti conservateur du Québec, as well as new issues. A
+cohort that turned away from independence in its twenties can come back
+to it, and the next Quebec Election Studies will show whether the
+reversal is a lasting trait of the younger generations or a moment in
+their political life.
+
+## Going further
+
+- Daoust, Jean-François, and Thomas Gareau-Paquette. 2024. “Is Quebec
+  independence still key in making sense of Canadian elections? A
+  longitudinal analysis (2000–2021).” *Regional & Federal Studies* 34
+  (5): 781–806. <https://doi.org/10.1080/13597566.2023.2233422>
+- Daoust, Jean-François, and Thomas Gareau-Paquette. 2026. “De plus en
+  plus inquiets : qui sont les Québécois qui considèrent le français
+  comme menacé et quelles en sont les conséquences électorales?” *Revue
+  canadienne de science politique / Canadian Journal of Political
+  Science* 59 (1): 61–80. <https://doi.org/10.1017/S0008423925100942>
+- Dufresne, Yannick, Charles Tessier, and Eric Montigny. 2019.
+  “Generational and life-cycle effects on support for Quebec
+  independence.” *French Politics* 17 (1): 50–63.
+  <https://doi.org/10.1057/s41253-019-00083-9>
+- Mahéo, Valérie-Anne, and Éric Bélanger. 2018. “Is the Parti Québécois
+  bound to disappear? A study of the current generational dynamics of
+  electoral behaviour in Quebec.” *Canadian Journal of Political
+  Science* 51 (2): 335–356. <https://doi.org/10.1017/S0008423917001147>
+- Yale, François, and Claire Durand. 2011. “What did Quebeckers want?
+  Impact of question wording, constitutional proposal and context on
+  support for sovereignty, 1976–2008.” *American Review of Canadian
+  Studies* 41 (3): 242–258.
+  <https://doi.org/10.1080/02722011.2011.594517>
 
 ## About the data
 
-- **Studies.** Every study that asked a referendum question: the 1998
-  polls, the Quebec Election Studies of 2007 to 2022 and the Durand
-  panels. The CROP polls did not ask one.
-- **Variable.** `sov_support`, the pooled referendum vote, as the share
-  of Yes among those who would vote Yes or No; those who would not vote
-  or spoil, did not know or refused are left out. `sov_support__item`
-  names each study’s question, and `qes_spec("pooled")` the precedence
-  of the wordings when a study asked several.
-- **Wordings.** An independent country (2012 to 2022), a sovereign
-  country (2012 panel), the 1995 question on sovereignty with a
-  partnership offer, the undecided pushed (1998, 2007, 2007 panel,
-  2008), and favourable or opposed to independence (2018 panel),
-  collapsed to yes or no and graded `approximate`.
-- **Timing and population.** The 2022 study (campaign wave), the 1998
-  polls and the 2007 and 2012 panels asked the question before the
-  election; the other studies after it. Each is weighted with the weight
-  of the wave that asked. The 2018 study sampled people aged 16 and
-  over.
-- **Cohorts.** From `birth_year`, which the 2007 to 2022 Quebec Election
-  Studies asked. Francophones are respondents whose `lang_mother` is
-  French; in 2022 those who ticked two languages are left out.
-- **Weights.** The recommended weight of the wave that asked, through
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md).
-  The 1998 polls, the 2008 study and the 2007 and 2012 Durand panels are
-  unweighted (weights under review) and drawn hollow; the 2018 panel
-  uses its reviewed weight.
+- **Studies.** One Quebec Election Study per election, 2007 to 2022. The
+  1998 polls did not ask the year of birth, and the panels that
+  interviewed at the same elections are left out, so that each election
+  counts once.
+- **Question.** The share of Yes among those who would vote Yes or No,
+  in a referendum on Quebec becoming an independent country (2012
+  to 2022) or on the 1995 question, which offered a partnership with
+  Canada (2007, 2008; those who did not know were asked which way they
+  leaned). Those who would not vote, did not know or refused are left
+  out of the share, except in the paragraph on indecision.
+- **Cohorts and language.** Birth cohorts come from the year of birth.
+  Francophones are respondents whose mother tongue is French. In 2007,
+  2014 and 2022, those who gave two mother tongues are left out (the
+  2012 and 2018 files have no such answer). The 2018 study also
+  interviewed people aged 16 and 17; they are kept, in the youngest
+  cohort.
+- **Timing and weights.** The 2022 study asked the question during the
+  campaign, the others after the election. Each study is weighted,
+  except the 2008 study, which is unweighted (hollow dots).
+- **Reproducing the page.** The data come from one call:
+
+``` r
+
+h <- qes_harmonize(
+  studies = qz_studies,
+  targets = c("sov_support", "birth_year", "lang_mother"),
+  missing = "reasons", quiet = TRUE
+)
+```

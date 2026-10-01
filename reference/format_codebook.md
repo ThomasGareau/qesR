@@ -1,4 +1,4 @@
-# Reformat a qesR codebook (legacy)
+# Reformat a qesR codebook (older name)
 
 Soft-deprecated: use `qes_codebook(codebook, layout = )`, which lays a
 codebook out again. `format_codebook()` keeps working and will not be

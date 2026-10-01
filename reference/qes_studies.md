@@ -72,9 +72,9 @@ colonnes. Un sous-ensemble de ses colonnes est un data frame ordinaire.
 Studies that are not Quebec Election Studies (the three Durand panels,
 the CROP polls and the 1998 polls) are listed under their own titles and
 authors. The 1998 deposit holds three surveys, each with its own code:
-`qes1998` (the combined CROP-CREATEC panel file, as in qesR 0.4.4),
-`qes1998_crop` and `qes1998_createc`. All three cover francophones only,
-each with its own definition (see `notes_en`).
+`qes1998` (the combined CROP-CREATEC panel file), `qes1998_crop` and
+`qes1998_createc`. All three cover francophones only, each with its own
+definition (see `notes_en`).
 
 ## See also
 

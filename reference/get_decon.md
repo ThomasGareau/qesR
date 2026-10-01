@@ -54,11 +54,10 @@ is in a row still in review is `NA` (reason `not_reviewed` in
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applies those rows too. The rows were signed off after an automated
 double review against the original files and documents (not a human
-review); since spec 4.1.0 every reviewed row is signed off. The rows
-added in spec 4.3.0, not reviewed yet, are never read by `get_decon()`
-or
+review). A row that nobody has reviewed yet is never read by
+`get_decon()` or
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
-even with their columns' targets: the legacy columns stay as they were.
+even for their columns' targets: the legacy columns stay as they were.
 
 `get_decon()` returns the data and assigns nothing unless
 `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
@@ -112,12 +111,11 @@ pourquoi la ligne est retenue), et `include_draft = TRUE` dans
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applique aussi ces lignes. Les lignes ont été approuvées après une
 double révision automatisée sur les fichiers et documents originaux (et
-non une révision humaine) ; toutes les lignes révisées le sont depuis la
-spécification 4.1.0, et les lignes ajoutées dans la 4.3.0, pas encore
-révisées, ne sont jamais lues. Chaque colonne est rendue à partir d'une
-cible du moteur d'harmonisation : facteurs aux niveaux anglais des
-cibles, nombres, et texte pour `income` et `religion` (le montant du
-revenu de `qes2022` reste un nombre). `turnout` et `votechoice` sont la
+non une révision humaine) ; une ligne que personne n'a encore révisée
+n'est jamais lue. Chaque colonne est rendue à partir d'une cible du
+moteur d'harmonisation : facteurs aux niveaux anglais des cibles,
+nombres, et texte pour `income` et `religion` (le montant du revenu de
+`qes2022` reste un nombre). `turnout` et `votechoice` sont la
 participation et le vote déclarés après l'élection, sauf pour `qes2022`,
 où ce sont la probabilité de voter et l'intention de vote pendant la
 campagne, comme dans qesR 0.4.4 ; `attr(, "timing")` l'indique (`"post"`

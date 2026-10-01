@@ -1,4 +1,4 @@
-# Harmoniser entre études
+# Comment fonctionne l'harmonisation
 
 *[English
 version](https://thomasgareau.github.io/qesR/articles/harmonization.md)*
@@ -9,20 +9,17 @@ jusqu’à une estimation pondérée, étude par étude, et montre ce que qesR
 consigne en chemin : le niveau de comparabilité de la question de chaque
 étude, le motif de chaque valeur manquante, la pondération qui convient
 à chaque question et la provenance de chaque cellule. Elle est
-construite à la construction du site, à partir des fichiers de données
-complets, que qesR télécharge de leurs dépôts Dataverse par son cache.
+construite sur les fichiers de données complets.
 
-Le moteur d’harmonisation est **expérimental**. Sa spécification
-indique, pour chaque étude et chaque variable harmonisée (« cible »),
-quelle question alimente la cible et comment chacun de ses codes
-correspond aux niveaux de la cible ; rien n’est apparié par le nom. Dans
-la spécification 4.3.0, toutes les lignes sauf trois sont approuvées,
-après une double révision automatisée sur les fichiers et documents
-originaux (et non une révision humaine), et
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-les applique par défaut. Les pondérations recommandées de `qes1998`,
-`qes2007_panel`, `qes2012_panel` et des sondages CROP restent à réviser
-et valent donc `NA` ; leurs réponses sont harmonisées comme les autres.
+L’harmonisation est **expérimentale** : les cibles, les niveaux de
+comparabilité et les appariements peuvent encore changer d’une version
+de qesR à l’autre. Pour chaque étude et chaque variable harmonisée («
+cible »), les règles livrées avec qesR indiquent quelle question
+alimente la cible et comment chacun de ses codes correspond aux niveaux
+de la cible ; rien n’est apparié par le nom. `qes1998`, les panels
+Durand et les sondages CROP n’ont pas encore de pondération utilisable :
+leurs colonnes de pondération valent donc `NA`, et leurs réponses sont
+harmonisées comme les autres.
 
 ``` r
 
@@ -73,8 +70,8 @@ knitr::kable(xw[, c("study", "wave", "source_var", "grade", "grade_reason")])
 `identical` signifie la même question, les mêmes options et le même
 univers que la question d’ancrage ; `comparable`, le même stimulus avec
 des différences qui ne devraient pas modifier les proportions ;
-`approximate`, une différence qui peut les modifier. La [référence de
-l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
+`approximate`, une différence qui peut les modifier. La [référence des
+variables](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 donne le libellé et les niveaux de la question de chaque étude.
 
 ## Harmoniser
@@ -313,30 +310,30 @@ comparez-les côte à côte, comme ci-dessus, avant de les regrouper.
 ## Provenance
 
 `qes_provenance(level = "cell")` donne, pour chaque étude et chaque
-cible, la ligne de correspondance appliquée, son niveau et son statut de
-révision, la pondération, les niveaux non offerts et le nombre de
-valeurs valides et de chaque motif de valeur manquante :
+cible, la question appliquée, son niveau, la pondération, les niveaux
+non offerts et le nombre de valeurs valides et de chaque motif de valeur
+manquante :
 
 ``` r
 
-knitr::kable(cells[, c("study", "target", "source_var", "grade", "status", "weight_var",
+knitr::kable(cells[, c("study", "target", "source_var", "grade", "weight_var",
                        "levels_not_offered", "n_valid", "n_dk", "n_not_in_wave")])
 ```
 
-| study | target | source_var | grade | status | weight_var | levels_not_offered | n_valid | n_dk | n_not_in_wave |
-|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|
-| qes2022 | vote_prov_recall | pes_votechoice | comparable | stable | pes_weight_general | PVQ;ON;ADQ | 1101 | 2 | 301 |
-| qes2022 | sov_indep | cps_qc_referendum | comparable | stable | cps_weight_general | would_not_vote | 1284 | 237 | 0 |
-| qes2018 | vote_prov_recall | q6 | comparable | stable | pond | PVQ;PCQ;ON;ADQ | 2016 | 0 | 0 |
-| qes2018 | sov_indep | q26 | comparable | stable | pond | would_not_vote | 2558 | 463 | 0 |
-| qes2014 | vote_prov_recall | Q3 | comparable | stable | POND | PCQ;ADQ | 1283 | 0 | 0 |
-| qes2014 | sov_indep | Q19 | identical | stable | POND | would_not_vote | 1353 | 148 | 0 |
-| qes2012 | vote_prov_recall | q25 | identical | stable | pond | PCQ;ADQ | 1274 | 0 | 0 |
-| qes2012 | sov_indep | q52 | identical | stable | pond | would_not_vote | 1323 | 156 | 0 |
-| qes2008 | vote_prov_recall | q12a | comparable | stable | NA | CAQ;PCQ;ON | 898 | 2 | 0 |
-| qes2008 | sov_indep | NA | NA | NA | NA | NA | 0 | 0 | 0 |
-| qes2007 | vote_prov_recall | q12 | comparable | stable | pond | CAQ;PCQ;ON | 1727 | 8 | 0 |
-| qes2007 | sov_indep | NA | NA | NA | NA | NA | 0 | 0 | 0 |
+| study | target | source_var | grade | weight_var | levels_not_offered | n_valid | n_dk | n_not_in_wave |
+|:---|:---|:---|:---|:---|:---|---:|---:|---:|
+| qes2022 | vote_prov_recall | pes_votechoice | comparable | pes_weight_general | PVQ;ON;ADQ | 1101 | 2 | 301 |
+| qes2022 | sov_indep | cps_qc_referendum | comparable | cps_weight_general | would_not_vote | 1284 | 237 | 0 |
+| qes2018 | vote_prov_recall | q6 | comparable | pond | PVQ;PCQ;ON;ADQ | 2016 | 0 | 0 |
+| qes2018 | sov_indep | q26 | comparable | pond | would_not_vote | 2558 | 463 | 0 |
+| qes2014 | vote_prov_recall | Q3 | comparable | POND | PCQ;ADQ | 1283 | 0 | 0 |
+| qes2014 | sov_indep | Q19 | identical | POND | would_not_vote | 1353 | 148 | 0 |
+| qes2012 | vote_prov_recall | q25 | identical | pond | PCQ;ADQ | 1274 | 0 | 0 |
+| qes2012 | sov_indep | q52 | identical | pond | would_not_vote | 1323 | 156 | 0 |
+| qes2008 | vote_prov_recall | q12a | comparable | NA | CAQ;PCQ;ON | 898 | 2 | 0 |
+| qes2008 | sov_indep | NA | NA | NA | NA | 0 | 0 | 0 |
+| qes2007 | vote_prov_recall | q12 | comparable | pond | CAQ;PCQ;ON | 1727 | 8 | 0 |
+| qes2007 | sov_indep | NA | NA | NA | NA | 0 | 0 | 0 |
 
 Ces comptes portent sur les répondants de l’étude, comme dans la
 disposition par répondant : `n_valid` et les comptes des motifs
@@ -347,21 +344,21 @@ vague de campagne : aucun n’est donc `not_in_wave` pour `sov_indep`,
 alors que 301 n’ont pas participé à la vague postélectorale et sont
 `not_in_wave` pour `vote_prov_recall`.
 
-`level = "study"` nomme le fichier fixé de chaque étude, et
-`level = "spec"` la version de la spécification et l’empreinte de son
-contenu ; la même spécification, les mêmes fichiers et la même version
-de qesR donnent les mêmes valeurs.
+qesR consigne quels fichiers et quelle version des règles ont produit
+chaque cellule : `level = "study"` nomme le fichier de données de chaque
+étude, et `level = "spec"` la version des règles. Les mêmes fichiers et
+la même version de qesR donnent les mêmes valeurs.
 [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
-cite qesR avec la spécification, puis chaque jeu de données :
+cite qesR avec les règles, puis chaque jeu de données :
 
 ``` r
 
 spec_record <- qes_provenance(h, level = "spec")
-spec_record[, c("spec_version", "spec_hash", "qesR_version")]
-#>   spec_version                        spec_hash qesR_version
-#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
+spec_record[, c("spec_version", "qesR_version")]
+#>   spec_version qesR_version
+#> 1        4.3.1        0.8.0
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
-#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.8.0, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.3.0 (empreinte du contenu 506f691e420e8d5d5de3657eef556d3d)
+#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.8.0, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.3.1 (empreinte du contenu cd62e566cd051bde5b236c3511555c91)
 #> 
 #> Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence : CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]
 #> 
@@ -412,14 +409,13 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 (`qes2018_panel`) et `sov_partnership_1995` reprend la question du
 référendum de 1995, la souveraineté assortie d’une offre de partenariat
 au reste du Canada (`qes2007`, `qes2008`, `qes2007_panel` et les
-répondants CROP de `qes1998`). Parmi ces études, seules `qes2007` et
-`qes2018_panel` ont une pondération révisée ; `qes2008` n’en a aucune à
-recommander et les pondérations des autres sont encore à réviser :
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-renvoie `NA` pour celles-ci et
-[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-laisse ces répondants de côté, avec un message. Placez les cibles côte à
-côte et lisez chacune à la lumière de sa propre question.
+répondants CROP de `qes1998`). Parmi ces études, seuls `qes2007` et le
+panel de 2018 ont une pondération utilisable pour ces questions : les
+deux pondérations de `qes2008` sont calées sur le vote ou sur la
+participation, et celles des autres ne sont pas assez documentées pour
+être utilisées. Les lignes des autres études sont écartées des
+estimations pondérées, avec un message. Placez les cibles côte à côte et
+lisez chacune à la lumière de sa propre question.
 
 Pour suivre l’appui dans toutes les études malgré tout, la variable
 regroupée `sov_support` prend la question référendaire de chaque étude,

@@ -1,51 +1,50 @@
-# Deux dimensions de la concurrence : souveraineté et gauche-droite
+# Deux dimensions de la concurrence : souveraineté et gauche-droite
 
 *[English
 version](https://thomasgareau.github.io/qesR/articles/dimensions.md)*
 
-Pendant quarante ans, le PQ et le PLQ ont divisé le Québec sur la
-question nationale. Les Études électorales québécoises montrent que cet
-axe ne classe plus les partis comme avant. En 2012, 84 % des électeurs
-du PQ auraient voté Oui à un pays indépendant, contre 1 % de ceux du
-PLQ. En 2022, le vote pour le Oui était divisé : le PQ en a obtenu 35 %,
-Québec solidaire 20 % et la CAQ 34 %, alors qu’en 2012 le PQ seul en
-obtenait 73 %. Sur l’axe gauche-droite, les électeurs de Québec
-solidaire sont les plus à gauche (3,7 sur 10 en 2022) et ceux des
-conservateurs les plus à droite (6,7).
+Pendant une quarantaine d’années, la question nationale a structuré la
+concurrence partisane au Québec. Le Parti québécois (PQ) portait le
+projet souverainiste, le Parti libéral du Québec (PLQ) défendait le
+fédéralisme, et la position d’un électeur sur l’indépendance permettait
+de prévoir en bonne partie son vote (Bélanger et al., 2018). La montée
+de la Coalition avenir Québec (CAQ) et de Québec solidaire (QS), puis la
+victoire de la CAQ en 2018, ont brouillé ce portrait. Selon une croyance
+désormais répandue, dont témoignent les travaux récents sur le nouveau
+système partisan (Bélanger et Mahéo, 2020 ; Bélanger et al., 2022),
+l’axe souverainiste s’est estompé et un axe gauche-droite a pris sa
+place, le PQ se trouvant coincé entre un parti nationaliste qui a mis le
+référendum de côté et un parti souverainiste de gauche. Dans cette page,
+nous examinons si les Études électorales québécoises confirment cette
+lecture. La question nationale a-t-elle cessé de structurer le vote des
+électrices et des électeurs du Québec, et l’axe gauche-droite a-t-il
+pris le relais ?
 
-## Les données
+Notre verdict est ambivalent. D’une part, la question nationale
+structure beaucoup moins le vote. En 2012, le choix partisan était lié à
+57 % de la variation du vote référendaire (savoir pour quel parti un
+répondant avait voté nous apprenait 57 % de ce qu’il y avait à savoir de
+son vote référendaire) ; en 2022, à 25 %. D’autre part, l’axe
+gauche-droite n’a pas pris le relais : le choix partisan était lié à
+26 % de la variation de l’autopositionnement gauche-droite en 2012 et à
+23 % en 2022. Si l’on met de côté les électeurs du Parti conservateur du
+Québec (PCQ), qui est passé de 1,5 % des votes en 2018 à 12,9 % en 2022,
+cette part tombe à 14 %. Autrement dit, la question nationale a perdu du
+terrain sans être remplacée. Elle sépare pourtant toujours aussi
+nettement les deux partis historiques : en 2022, 82 % des électeurs du
+PQ auraient voté Oui, contre 2 % de ceux du PLQ.
 
-Trois variables harmonisées : le vote déclaré regroupé, le vote
-référendaire regroupé (`sov_support`) et l’autopositionnement sur l’axe
-gauche-droite (`lr_self`, de 0 à 10) :
+Nous utilisons trois questions posées, sous une forme semblable, dans
+chaque Étude électorale québécoise de 2012 à 2022 : le vote déclaré
+après l’élection, le vote à un référendum sur l’indépendance et
+l’autopositionnement de la personne sur une échelle gauche-droite, de 0
+(gauche) à 10 (droite). La langue maternelle permet d’examiner les
+francophones séparément. Dans les Études électorales québécoises
+utilisées ici, la question référendaire remonte à 2007 ; la deuxième
+figure commence donc à cette date. La fin de la page montre comment
+reproduire les figures.
 
-``` r
-
-h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("vote_choice", "sov_support", "lr_self"),
-  types = list(vote_choice = "recall"),
-  missing = "reasons", quiet = TRUE
-)
-```
-
-`lr_self` a été demandé dans les Études électorales québécoises de 2012
-à 2022 ; en 2022, lui et la question référendaire ont été posés pendant
-la campagne, le vote déclaré après l’élection : la page garde donc les
-répondants des deux vagues et les pondère avec la pondération
-postélectorale. Pour un parti dans une étude :
-
-``` r
-
-d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
-svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
-      svymean, na.rm = TRUE)
-#>     vote_choice  lr_self         se
-#> CAQ         CAQ 5.549020 0.09808683
-#> QS           QS 3.658518 0.19725417
-```
-
-## Les électorats sur deux axes, de 2012 à 2022
+## Les pôles ont tenu, les nouveaux venus se sont rapprochés
 
 ![Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ,
 PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs
@@ -66,12 +65,11 @@ gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022.
 Valeurs dans la vue en
 tableau.](fr-dimensions_files/figure-html/paths-dark.png)
 
-Source : qesR, variables regroupées vote_choice (vote déclaré) et
-sov_support (indépendance), lr_self ; EEQ 2012, 2014, 2018 et 2022,
-pondérées avec la pondération postélectorale de chaque étude. Les partis
-sont côte à côte à chaque élection. Traits : intervalles de confiance à
-95 % (logit pour la part, Wald pour la moyenne). Les deux panneaux ont
-leur propre échelle. Le PCQ n'était proposé qu'en 2022.
+Source : Études électorales québécoises de 2012, 2014, 2018 et 2022,
+pondérées. Vote déclaré après l'élection ; vote référendaire parmi les
+répondants qui ont choisi Oui ou Non. Les partis sont côte à côte à
+chaque élection, et les deux panneaux ont leur propre échelle. Le PCQ
+n'était proposé comme réponse qu'en 2022.
 
 Vue en tableau
 
@@ -101,22 +99,37 @@ gaucheOù se situent les électeurs de chaque parti sur la souveraineté et
 sur l'axe gauche-droite, de 2012 à 2022, avec intervalles de confiance à
 95 %
 
-À remarquer :
+Deux constats s’imposent. D’abord, les deux pôles historiques n’ont pas
+bougé sur la question nationale. Les électeurs du PQ demeurent
+massivement souverainistes (84 % voteraient Oui en 2012, 82 % en 2022)
+et ceux du PLQ, presque unanimement fédéralistes (1 % et 2 %). Ensuite,
+les deux partis plus récents se sont rapprochés l’un de l’autre. La part
+de Oui chez les électeurs de la CAQ passe de 19 % en 2012 à 38 % en
+2022, et celle des électeurs de QS, de 63 % à 44 %. La CAQ tire
+maintenant une bonne partie de ses appuis de souverainistes. Fait
+étonnant pour un parti souverainiste, une majorité des électeurs de QS
+(56 %) voteraient désormais Non. Précisons que l’estimation de 2012 ne
+repose que sur 87 répondants et que son intervalle est large (de 49 % à
+74 %).
 
-- Les électeurs du PQ et de QS sont les souverainistes ; ceux du PLQ
-  sont presque tous fédéralistes à chaque élection (2 % de Oui en 2022).
-- Les deux partis les plus récents se sont rapprochés sur la
-  souveraineté : les électeurs de la CAQ passent de 19 % de Oui en 2012
-  à 38 % en 2022, ceux de QS de 63 % à 44 %.
-- Les électeurs du PLQ se sont déplacés vers la gauche, de 6,5 à 4,8 ;
-  les électeurs à droite du centre sont maintenant ceux de la CAQ et du
-  PCQ.
-- Les électeurs du PQ et de QS sont proches sur l’axe gauche-droite (1,3
-  point d’écart en 2012, 0,9 en 2022), mais leur écart sur la
-  souveraineté est passé de 22 à 38 points : la question nationale les
-  sépare maintenant plus que l’axe gauche-droite.
+Sur l’axe gauche-droite, les mouvements sont plus modestes, à une
+exception près. Les électeurs de QS sont les plus à gauche à chaque
+élection (3,7 sur 10 en 2022) et ceux du PCQ, les plus à droite (6,7).
+L’exception est le PLQ : ses électeurs passent de 6,5 en 2012 à 4,8 en
+2022. En 2022, ils se situent à gauche des électeurs de la CAQ (5,5),
+près de ceux du PQ (4,5). Cette estimation repose sur 140 répondants, et
+la question de 2022 avait un autre libellé (voir [À propos des
+données](#%C3%A0-propos-des-donn%C3%A9es)) ; l’ampleur du déplacement
+est donc à prendre avec prudence. La droite de l’échiquier revient
+désormais à la CAQ et au PCQ. Notons cependant ce qui s’est passé entre
+les deux partis souverainistes. Leurs électeurs sont proches sur l’axe
+gauche-droite (un écart de 1,3 sur l’échelle de 0 à 10 en 2012, de 0,8
+en 2022), alors que leur écart sur la souveraineté est passé de 21 à 38
+points de pourcentage. Ce qui distingue aujourd’hui l’électorat du PQ de
+celui de QS, c’est davantage la question nationale que l’axe
+gauche-droite.
 
-## Pour qui votent souverainistes et fédéralistes
+## Les électeurs du Oui se partagent désormais entre trois partis
 
 ![Graphiques linéaires en deux panneaux, les répondants qui voteraient
 Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la
@@ -133,14 +146,11 @@ monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non
 passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en
 tableau.](fr-dimensions_files/figure-html/where-dark.png)
 
-Source : qesR, variables regroupées vote_choice (vote déclaré) et
-sov_support ; EEQ 2007 à 2022, pondérées avec la pondération
-postélectorale de chaque étude sauf 2008 (creux : non pondérée,
-pondération en révision). 2007 et 2008 ont posé la question de 1995,
-2012 à 2022 la question sur un pays indépendant : les lignes
-s'interrompent au changement. Traits : intervalles de confiance à 95 %
-(logit). Les autres partis (PV, ON et autres) sont dans la vue en
-tableau.
+Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf
+2008 (creux : non pondérée). 2007 et 2008 ont posé la question
+référendaire de 1995, 2012 à 2022 une question sur un pays indépendant :
+les lignes s'interrompent au changement. Les autres partis (Parti vert,
+Option nationale et autres) sont dans la vue en tableau.
 
 Vue en tableau
 
@@ -232,43 +242,270 @@ Vue en tableau
 | 2022 | EEQ 2022 | Non | Autres | 5,4 \[2,9 ; 10,0\] | 590 | pondéré |
 
 La part du PQ chez les électeurs du Oui est passée de 73 % à 35 % au
-profit de QS et de la CAQ ; le vote pour le Non s'est fragmentéComment
-ont voté les répondants qui voteraient Oui et Non à un référendum : la
-part de chaque parti dans le vote déclaré du camp, avec intervalles de
-confiance à 95 %
+profit de QS et de la CAQ ; les électeurs du Non se sont dispersés entre
+davantage de partisComment ont voté les répondants qui voteraient Oui et
+Non à un référendum : la part de chaque parti dans le vote déclaré du
+camp, avec intervalles de confiance à 95 %
 
-À remarquer :
+Nous passons maintenant de la position des électeurs de chaque parti au
+choix des électeurs de chaque camp. En 2012, le PQ obtenait 73 % du vote
+déclaré des répondants qui voteraient Oui ; en 2022, il en obtenait
+35 %, à peu près autant que la CAQ (34 %), et QS, 20 %. Autrement dit,
+le PQ ne recueille plus qu’environ le tiers du vote du Oui. Le vote des
+électeurs du Non s’est lui aussi dispersé. La part du PLQ est passée de
+46 % en 2012 à 29 % en 2022, alors que la CAQ en a conservé une large
+part tout au long de la période (36 % en 2012, 30 % en 2022) et que le
+PCQ en a obtenu 18 % en 2022. Sans surprise, la CAQ, qui s’est engagée à
+ne pas tenir de référendum, est la seule formation à recueillir environ
+le tiers de chaque camp en 2022 (34 % des électeurs du Oui et 30 % de
+ceux du Non).
 
-- En 2007 et en 2012, le PQ détenait la majeure partie du vote pour le
-  Oui ; en 2018, il en avait moins de la moitié, Québec solidaire et la
-  CAQ en prenant leur part.
-- Le vote pour le Non s’est fragmenté : la part du PLQ est passée de
-  46 % en 2012 à 29 % en 2022 ; la CAQ en a obtenu 36 % en 2012, 37 % en
-  2018 et 30 % en 2022, et le PCQ 18 % en 2022. En 2007, l’ADQ en
-  obtenait déjà 36 %. L’EEQ 2022 sous-estime la CAQ d’environ 8 points
-  (voir [Les enquêtes et les résultats
-  officiels](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)),
-  ce qui touche les parts de 2022.
-- La CAQ est le seul parti qui obtient une grande part des deux camps.
+Deux nuances s’imposent. D’une part, les études de 2007 et de 2008 ont
+posé la question référendaire de 1995, et les suivantes une question sur
+un pays indépendant. Or, on sait que le libellé de la question influe
+sur l’appui à la souveraineté (Yale et Durand, 2011) ; c’est pourquoi
+les lignes s’interrompent au changement. D’autre part, l’étude de 2022
+sous-estime le vote pour la CAQ d’environ 8 points par rapport au
+résultat officiel (voir la page sur [les enquêtes et les résultats
+officiels](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)),
+ce qui réduit la part de la CAQ dans les deux camps cette année-là. La
+quasi-égalité entre le PQ et la CAQ chez les électeurs du Oui avantage
+donc plutôt le PQ.
+
+## La souveraineté structure beaucoup moins le vote, sans que l’axe gauche-droite prenne le relais
+
+Les deux premières figures montrent des positions. Elles ne disent pas
+dans quelle mesure chaque axe sépare les électorats, ce qui est pourtant
+au cœur de la croyance populaire. Pour le savoir, nous appliquons la
+même mesure à chaque étude : de toute la variation du vote référendaire
+des répondants, ou de leur autopositionnement gauche-droite, quelle part
+se situe entre les électorats des partis plutôt qu’à l’intérieur de
+chacun d’eux ? Il s’agit de la part de la variance liée au choix
+partisan (un êta carré). À 100 %, connaître le vote d’une personne
+suffirait à connaître sa réponse ; à 0 %, cela n’en dirait rien. Les
+deux parts sont calculées sur les mêmes répondants, soit ceux qui ont
+répondu aux deux questions et voté pour l’un des partis présentés plus
+haut.
+
+![Graphiques linéaires en deux panneaux, tous les électeurs (à gauche)
+et les électeurs francophones (à droite), de 2012 à 2022 : la part de la
+variance du vote référendaire et du positionnement gauche-droite liée au
+choix partisan, avec intervalles de confiance. Pour le vote
+référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble
+des électeurs, et de 55 % à 18 % chez les francophones ; pour le
+positionnement gauche-droite, de 26 % à 23 % chez l'ensemble des
+électeurs, et 14 % en 2022 sans le PCQ. Valeurs dans la vue en
+tableau.](fr-dimensions_files/figure-html/sorting-light.png)![Graphiques
+linéaires en deux panneaux, tous les électeurs (à gauche) et les
+électeurs francophones (à droite), de 2012 à 2022 : la part de la
+variance du vote référendaire et du positionnement gauche-droite liée au
+choix partisan, avec intervalles de confiance. Pour le vote
+référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble
+des électeurs, et de 55 % à 18 % chez les francophones ; pour le
+positionnement gauche-droite, de 26 % à 23 % chez l'ensemble des
+électeurs, et 14 % en 2022 sans le PCQ. Valeurs dans la vue en
+tableau.](fr-dimensions_files/figure-html/sorting-dark.png)
+
+Source : Études électorales québécoises de 2012, 2014, 2018 et 2022,
+pondérées. Répondants qui ont répondu aux deux questions et déclaré un
+vote pour le PLQ, le PQ, la CAQ, QS ou (2022) le PCQ ; les francophones
+sont les répondants de langue maternelle française. Losange : la part
+gauche-droite de 2022 sans les électeurs du PCQ. Intervalles tirés de
+500 répliques bootstrap de chaque étude.
+
+Vue en tableau
+
+| Électeurs | Partis | Question | Élection | Étude | Part de la variance, % \[IC à 95 %\] | n | Pondération |
+|:---|:---|:---|---:|:---|:---|---:|:---|
+| Tous les électeurs | tous les partis montrés | Vote référendaire (Oui ou Non) | 2012 | EEQ 2012 | 56,7 \[51,0 ; 62,4\] | 918 | pondéré |
+| Tous les électeurs | tous les partis montrés | Vote référendaire (Oui ou Non) | 2014 | EEQ 2014 | 56,5 \[49,1 ; 63,8\] | 950 | pondéré |
+| Tous les électeurs | tous les partis montrés | Vote référendaire (Oui ou Non) | 2018 | EEQ 2018 | 40,1 \[35,5 ; 44,6\] | 1474 | pondéré |
+| Tous les électeurs | tous les partis montrés | Vote référendaire (Oui ou Non) | 2022 | EEQ 2022 | 25,5 \[20,0 ; 30,9\] | 903 | pondéré |
+| Tous les électeurs | tous les partis montrés | Positionnement gauche-droite | 2012 | EEQ 2012 | 25,6 \[20,1 ; 31,2\] | 918 | pondéré |
+| Tous les électeurs | tous les partis montrés | Positionnement gauche-droite | 2014 | EEQ 2014 | 15,6 \[10,3 ; 20,8\] | 950 | pondéré |
+| Tous les électeurs | tous les partis montrés | Positionnement gauche-droite | 2018 | EEQ 2018 | 15,8 \[11,8 ; 19,7\] | 1474 | pondéré |
+| Tous les électeurs | tous les partis montrés | Positionnement gauche-droite | 2022 | EEQ 2022 | 22,6 \[15,8 ; 29,3\] | 903 | pondéré |
+| Tous les électeurs | sans le PCQ | Vote référendaire (Oui ou Non) | 2012 | EEQ 2012 | 56,7 \[51,0 ; 62,4\] | 918 | pondéré |
+| Tous les électeurs | sans le PCQ | Vote référendaire (Oui ou Non) | 2014 | EEQ 2014 | 56,5 \[49,1 ; 63,8\] | 950 | pondéré |
+| Tous les électeurs | sans le PCQ | Vote référendaire (Oui ou Non) | 2018 | EEQ 2018 | 40,1 \[35,5 ; 44,6\] | 1474 | pondéré |
+| Tous les électeurs | sans le PCQ | Vote référendaire (Oui ou Non) | 2022 | EEQ 2022 | 27,3 \[21,5 ; 33,1\] | 768 | pondéré |
+| Tous les électeurs | sans le PCQ | Positionnement gauche-droite | 2012 | EEQ 2012 | 25,6 \[20,1 ; 31,2\] | 918 | pondéré |
+| Tous les électeurs | sans le PCQ | Positionnement gauche-droite | 2014 | EEQ 2014 | 15,6 \[10,3 ; 20,8\] | 950 | pondéré |
+| Tous les électeurs | sans le PCQ | Positionnement gauche-droite | 2018 | EEQ 2018 | 15,8 \[11,8 ; 19,7\] | 1474 | pondéré |
+| Tous les électeurs | sans le PCQ | Positionnement gauche-droite | 2022 | EEQ 2022 | 14,2 \[7,8 ; 20,7\] | 768 | pondéré |
+| Francophones | tous les partis montrés | Vote référendaire (Oui ou Non) | 2012 | EEQ 2012 | 54,6 \[48,0 ; 61,1\] | 776 | pondéré |
+| Francophones | tous les partis montrés | Vote référendaire (Oui ou Non) | 2014 | EEQ 2014 | 55,3 \[47,5 ; 63,0\] | 718 | pondéré |
+| Francophones | tous les partis montrés | Vote référendaire (Oui ou Non) | 2018 | EEQ 2018 | 33,9 \[29,2 ; 38,6\] | 1187 | pondéré |
+| Francophones | tous les partis montrés | Vote référendaire (Oui ou Non) | 2022 | EEQ 2022 | 18,4 \[12,4 ; 24,3\] | 724 | pondéré |
+| Francophones | tous les partis montrés | Positionnement gauche-droite | 2012 | EEQ 2012 | 31,7 \[25,2 ; 38,1\] | 776 | pondéré |
+| Francophones | tous les partis montrés | Positionnement gauche-droite | 2014 | EEQ 2014 | 19,2 \[12,4 ; 26,1\] | 718 | pondéré |
+| Francophones | tous les partis montrés | Positionnement gauche-droite | 2018 | EEQ 2018 | 19,4 \[14,8 ; 24,0\] | 1187 | pondéré |
+| Francophones | tous les partis montrés | Positionnement gauche-droite | 2022 | EEQ 2022 | 22,1 \[15,4 ; 28,7\] | 724 | pondéré |
+| Francophones | sans le PCQ | Vote référendaire (Oui ou Non) | 2012 | EEQ 2012 | 54,6 \[48,0 ; 61,1\] | 776 | pondéré |
+| Francophones | sans le PCQ | Vote référendaire (Oui ou Non) | 2014 | EEQ 2014 | 55,3 \[47,5 ; 63,0\] | 718 | pondéré |
+| Francophones | sans le PCQ | Vote référendaire (Oui ou Non) | 2018 | EEQ 2018 | 33,9 \[29,2 ; 38,6\] | 1187 | pondéré |
+| Francophones | sans le PCQ | Vote référendaire (Oui ou Non) | 2022 | EEQ 2022 | 19,0 \[13,0 ; 25,0\] | 618 | pondéré |
+| Francophones | sans le PCQ | Positionnement gauche-droite | 2012 | EEQ 2012 | 31,7 \[25,2 ; 38,1\] | 776 | pondéré |
+| Francophones | sans le PCQ | Positionnement gauche-droite | 2014 | EEQ 2014 | 19,2 \[12,4 ; 26,1\] | 718 | pondéré |
+| Francophones | sans le PCQ | Positionnement gauche-droite | 2018 | EEQ 2018 | 19,4 \[14,8 ; 24,0\] | 1187 | pondéré |
+| Francophones | sans le PCQ | Positionnement gauche-droite | 2022 | EEQ 2022 | 14,6 \[8,2 ; 21,0\] | 618 | pondéré |
+
+Le choix partisan est lié à 25 % de la variance du vote référendaire en
+2022, contre 57 % en 2012 ; l'axe gauche-droite n'a pas progresséQuelle
+part de la variation de chaque question se situe entre les électorats
+des partis, de 2012 à 2022, avec intervalles de confiance à 95 %
+
+Le constat est net pour la souveraineté. En 2012 et en 2014, le choix
+partisan était lié à plus de la moitié de la variation du vote
+référendaire (57 % et 56 %), contre 26 % et 16 % pour
+l’autopositionnement gauche-droite. Cette part est ensuite tombée à 40 %
+en 2018, puis à 25 % en 2022. Le recul est plus prononcé chez les
+francophones : de 55 % en 2012 à 18 % en 2022. Chez eux, les deux axes
+sont désormais à peu près aussi liés au choix partisan (22 % pour l’axe
+gauche-droite, 18 % pour la souveraineté ; les intervalles se
+chevauchent), et la part gauche-droite tient pour beaucoup aux électeurs
+du PCQ : sans eux, elle est de 15 %.
+
+Contrairement à la croyance populaire, l’axe gauche-droite ne s’est pas
+imposé à la place de la souveraineté. Sa part est passée de 26 % en 2012
+à 16 % en 2018, et elle n’est remontée à 23 % en 2022 qu’avec l’arrivée
+du PCQ, dont les électeurs sont les plus à droite. Sans eux, la part de
+2022 est de 14 %. C’est à la base du PCQ, qui traversait le clivage
+linguistique et devait peu à la souveraineté (Bélanger et al., 2025),
+que tient la remontée de 2022. En somme, le vote de 2022 est beaucoup
+moins structuré par la question nationale, sans pour autant l’être
+davantage par l’axe gauche-droite.
+
+Ces mesures ne sont toutefois pas sans limite. Premièrement, une réponse
+Oui ou Non et un positionnement sur une échelle de 0 à 10 ne se mesurent
+pas de la même façon ; la comparaison porte donc sur les tendances et
+les ordres de grandeur, et non sur l’écart exact entre les deux courbes
+une année donnée. Deuxièmement, une part de variance dépend aussi du
+nombre de partis et de leur taille : l’arrivée du PCQ en 2022 montre à
+quel point un seul parti situé à l’extrémité de l’échelle peut la faire
+varier. Troisièmement, la question gauche-droite de 2022 diffère des
+précédentes (voir [À propos des
+données](#%C3%A0-propos-des-donn%C3%A9es)) ; les chiffres gauche-droite
+de 2022, sur lesquels repose le principal constat, ne se comparent donc
+qu’approximativement aux années précédentes. Enfin, il s’agit de coupes
+transversales. Elles montrent comment les électorats se répartissent, et
+non pourquoi les électeurs ont choisi leur parti.
+
+## Ce qu’il faut en retenir
+
+Au final, la question nationale n’organise plus à elle seule le système
+partisan québécois, mais aucun autre axe ne l’a remplacée. Elle divise
+toujours le PQ et le PLQ aussi nettement qu’en 2012. Ce qui a changé,
+c’est que le vote souverainiste se partage maintenant entre trois partis
+et que la CAQ puise dans les deux camps. Connaître la position d’un
+électeur sur l’indépendance en dit donc beaucoup moins sur son vote
+qu’il y a une dizaine d’années. Ce constat diffère de ce qu’observent
+Daoust et Gareau-Paquette (2024), avec une autre mesure, aux élections
+fédérales, où le poids de la souveraineté dans le vote pour le Bloc
+québécois a diminué entre 2004 et 2006, puis est demeuré remarquablement
+stable de 2006 à 2021. À l’échelle provinciale, le recul s’est amorcé
+entre 2014 et 2018, pendant la montée de la CAQ, et ne s’était pas
+encore stabilisé en 2022. Bien entendu, les choses pourraient évoluer
+autrement à mesure que les cohortes plus jeunes, moins enclines à voter
+pour le PQ (Mahéo et Bélanger, 2018), occuperont une plus grande place
+dans l’électorat. La page sur [l’appui à la souveraineté selon les
+générations](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)
+se penche sur cette question.
 
 ## À propos des données
 
 - **Études.** Les Études électorales québécoises de 2012 à 2022 pour
   l’autopositionnement gauche-droite, et de 2007 à 2022 pour le vote
-  référendaire ; les panels Durand sont exclus, puisqu’ils ont posé
-  d’autres libellés de la question référendaire.
-- **Variables.** `vote_choice` restreint au vote déclaré, `sov_support`
-  en part de Oui parmi Oui et Non, et `lr_self`, l’autopositionnement de
-  la personne de 0 (gauche) à 10 (droite). Les études de 2007 et de 2008
-  ont posé la question de 1995, les autres la question sur un pays
-  indépendant : les rangées du graphique à barres ne forment pas une
-  seule série.
+  référendaire. Les panels menés par Claire Durand et ses collègues lors
+  des mêmes élections sont exclus, afin de garder une étude par
+  élection ; en 2012 et en 2018, ils ont en outre posé d’autres libellés
+  de la question référendaire. Les sondages de 1998 sont aussi exclus :
+  ils ne sont pas pondérés, et un seul des deux a posé la question
+  référendaire.
+- **Questions.** Le vote déclaré après l’élection ; le vote
+  référendaire, en part de Oui parmi les répondants qui ont choisi Oui
+  ou Non (ceux qui restent indécis sont mis de côté) ;
+  l’autopositionnement de la personne de 0 (gauche) à 10 (droite). Les
+  francophones sont les répondants de langue maternelle française. Les
+  études de 2007 et de 2008 ont posé la question référendaire de 1995,
+  avec une relance demandant aux indécis de quel côté ils penchaient ;
+  les autres, une question sur un pays indépendant. En 2022, la question
+  gauche-droite avait un autre libellé, était posée seule plutôt
+  qu’après le positionnement des partis, et n’offrait pas de réponse
+  « ne sais pas » ; presque tous les répondants y ont répondu (98 %,
+  contre environ 80 % auparavant), de sorte que les chiffres
+  gauche-droite de 2022 ne se comparent qu’approximativement aux années
+  précédentes.
 - **Moment.** En 2022, les questions référendaire et gauche-droite ont
-  été posées pendant la campagne et le vote déclaré après l’élection ;
-  les estimations gardent les répondants des deux vagues, pondérés avec
-  la pondération postélectorale.
-- **Pondérations.** La pondération postélectorale recommandée de chaque
-  étude, par
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-  ; 2008 est non pondérée (ses pondérations sont calées sur le vote et
-  en révision).
+  été posées pendant la campagne, et la question sur le vote après
+  l’élection ; les estimations portent sur les répondants qui ont
+  participé aux deux vagues, avec la pondération postélectorale.
+- **Pondérations.** La pondération postélectorale de chaque étude.
+  L’étude de 2008 est présentée sans pondération : ses pondérations ont
+  été calées sur le résultat de l’élection, ce qui les rend peu adaptées
+  à l’étude du vote.
+- **Part de la variance.** Calculée dans chaque étude sur les répondants
+  qui ont répondu aux deux questions et voté pour l’un des partis
+  présentés, avec des intervalles à 95 % tirés de 500 répliques
+  bootstrap du plan de sondage de chaque étude.
+
+## Reproduire cette page
+
+Les données proviennent d’un seul appel à
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+qui regroupe le vote déclaré (`vote_choice`), le vote référendaire
+(`sov_support`), l’autopositionnement gauche-droite (`lr_self`) et la
+langue maternelle (`lang_mother`) des différentes études :
+
+``` r
+
+h <- qes_harmonize(
+  studies = qz_studies,
+  targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
+  types = list(vote_choice = "recall"),
+  missing = "reasons", quiet = TRUE
+)
+```
+
+Une moyenne pondérée par parti, dans une étude :
+
+``` r
+
+d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
+svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
+      svymean, na.rm = TRUE)
+#>     vote_choice  lr_self         se
+#> CAQ         CAQ 5.549020 0.09808683
+#> QS           QS 3.658518 0.19725417
+```
+
+## Pour aller plus loin
+
+- Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo et Richard
+  Nadeau. 2022. *Le nouvel électeur québécois*. Montréal : Presses de
+  l’Université de Montréal. <https://doi.org/10.1515/9782760645929>
+- Bélanger, Éric, et Valérie-Anne Mahéo. 2020. « Le Parti québécois dans
+  le nouveau système multipartite ». *Politique et Sociétés* 39 (3) :
+  19–55. <https://doi.org/10.7202/1072084ar>
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+  Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election ».
+  *Canadian Journal of Political Science* 58 (2) : 277–296.
+  <https://doi.org/10.1017/S0008423924000829>
+- Bélanger, Éric, Richard Nadeau, Ailsa Henderson et Eve Hepburn. 2018.
+  *The National Question and Electoral Politics in Quebec and Scotland*.
+  Montréal et Kingston : McGill-Queen’s University Press.
+  <https://doi.org/10.1515/9780773554139>
+- Daoust, Jean-François, et Thomas Gareau-Paquette. 2024. « Is Quebec
+  independence still key in making sense of Canadian elections? A
+  longitudinal analysis (2000–2021) ». *Regional & Federal Studies* 34
+  (5) : 781–806. <https://doi.org/10.1080/13597566.2023.2233422>
+- Mahéo, Valérie-Anne, et Éric Bélanger. 2018. « Is the Parti Québécois
+  Bound to Disappear? A Study of the Current Generational Dynamics of
+  Electoral Behaviour in Quebec ». *Canadian Journal of Political
+  Science* 51 (2) : 335–356. <https://doi.org/10.1017/S0008423917001147>
+- Yale, François, et Claire Durand. 2011. « What did Quebeckers Want?
+  Impact of Question Wording, Constitutional Proposal and Context on
+  Support for Sovereignty, 1976–2008 ». *American Review of Canadian
+  Studies* 41 (3) : 242–258.
+  <https://doi.org/10.1080/02722011.2011.594517>

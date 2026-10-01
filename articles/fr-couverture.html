@@ -20,9 +20,58 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -36,59 +85,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -119,7 +143,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Couverture par étude</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Couverture par étude</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-couverture.Rmd" class="external-link"><code>vignettes/articles/fr-couverture.Rmd</code></a></small>
@@ -132,19 +156,14 @@
 <p>Quelles variables harmonisées (« cibles ») de
 <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> chaque étude possède, et à quel point sa
 question est comparable. La grille et le tableau des études ci-dessous
-sont générés à partir de la spécification fournie avec qesR, à la
-construction du site ; rien n’y est écrit à la main.</p>
-<p>Cette grille est générée à partir de la spécification d’harmonisation
-fournie avec qesR : version 4.3.0 du 2026-09-29, empreinte du contenu
-<code>506f691e420e8d5d5de3657eef556d3d</code>. Elle est
-<strong>expérimentale</strong>. Chaque cellule donne le niveau de
-comparabilité de la question de l’étude pour la cible, par rapport à la
-question d’ancrage de la cible ; un tiret signifie que l’étude n’a pas
-de question pour la cible dans la spécification. Le nom d’une cible mène
-à sa section de la <a href="fr-reference-harmonisation.html">référence
-de l’harmonisation</a>, qui donne la question, son libellé, les niveaux
-offerts et la raison de son niveau. <code><a href="../reference/qes_spec.html">qes_spec()</a></code> renvoie la
-même grille sous forme de tableau.</p>
+sont générés à partir des règles livrées avec qesR.</p>
+<p>Chaque cellule donne le niveau de comparabilité de la question de
+l’étude pour la cible, par rapport à la question d’ancrage de la cible ;
+un tiret signifie que l’étude n’a pas de question pour la cible. Le nom
+d’une cible mène à sa section de la <a href="fr-reference-harmonisation.html">référence des variables</a>, qui
+donne la question, son libellé, les niveaux offerts et la raison de son
+niveau. <code><a href="../reference/qes_spec.html">qes_spec()</a></code> renvoie la même grille sous forme de
+tableau.</p>
 <div class="section level2">
 <h2 id="cibles-par-étude">Cibles par étude<a class="anchor" aria-label="anchor" href="#cibles-par-%C3%A9tude"></a>
 </h2>
@@ -323,13 +342,13 @@ de vote provinciale : autre parti (texte)</td>
 <a href="fr-reference-harmonisation.html#target-vote_prov_prev"><code>vote_prov_prev</code></a><br>Vote
 provincial à l’élection précédente (rappel)</td>
 <td>Comparable (cps) *</td>
-<td>Comparable *</td>
+<td>Comparable * †</td>
 <td>—</td>
 <td>Identique *</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
-<td>Comparable *</td>
+<td>Comparable * †</td>
 <td>—</td>
 <td>—</td>
 <td>—</td>
@@ -400,7 +419,7 @@ partisane fédérale</td>
 <td>
 <a href="fr-reference-harmonisation.html#target-pid_prov_strength"><code>pid_prov_strength</code></a><br>Force
 de l’identification partisane provinciale</td>
-<td>Approximatif (cps)</td>
+<td>Approximatif (cps) †</td>
 <td>Comparable</td>
 <td>—</td>
 <td>Identique</td>
@@ -1068,6 +1087,8 @@ est entre parenthèses.</p>
 <p>* La question de l’étude n’offrait pas tous les niveaux de la cible :
 les niveaux non offerts sont des zéros structurels, listés dans la
 référence.</p>
+<p>† En attente d’approbation : appliquée seulement si vous la demandez
+(<code>qes_harmonize(include_draft = TRUE)</code>).</p>
 </div>
 <div class="section level2">
 <h2 id="variables-regroupées-par-étude">Variables regroupées par étude<a class="anchor" aria-label="anchor" href="#variables-regroup%C3%A9es-par-%C3%A9tude"></a>
@@ -1210,17 +1231,6 @@ pour la politique (regroupé, 0-1)</td>
 tire les valeurs d’une étude en disposition par répondant, et son
 niveau ; un tiret signifie qu’aucun membre de ses types par défaut n’a
 de question dans l’étude.</p>
-<p>230 des 233 cellules utilisent des lignes de correspondance
-approuvées par un réviseur (statut stable), que
-<code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applique par défaut ; la colonne
-<code>reviewed_by</code> de la table de correspondance dit qui ou quoi a
-révisé chaque ligne (spécifications 4.0.0 et 4.3.0 : une double révision
-automatisée sur les fichiers et documents originaux, et non une révision
-humaine).</p>
-<p>3 des 233 cellules utilisent des lignes de correspondance vérifiées
-sur les fichiers et documents originaux, mais pas encore approuvées par
-un réviseur ; <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> ne les applique qu’avec
-<code>include_draft = TRUE</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="études">Études<a class="anchor" aria-label="anchor" href="#%C3%A9tudes"></a>
@@ -1292,8 +1302,8 @@ un réviseur ; <code><a href="../reference/qes_harmonize.html">qes_harmonize()<
 </tr>
 <tr class="even">
 <td><code>qes2012_panel</code></td>
-<td>pre (n = 844) : <code>pondam1</code> (à réviser, non appliquée) ;
-post (n = 844) : <code>pond_post</code> (à réviser, non appliquée)</td>
+<td>pre (n = 844) : <code>pondam1</code> (pas encore utilisable) ; post
+(n = 844) : <code>pond_post</code> (pas encore utilisable)</td>
 <td>10</td>
 <td>1</td>
 <td>6</td>
@@ -1302,7 +1312,7 @@ post (n = 844) : <code>pond_post</code> (à réviser, non appliquée)</td>
 <tr class="odd">
 <td><code>qes_crop_2007_2010</code></td>
 <td>24 vagues de sondage, de poll_2007_06 à poll_2010_01 (n = 1 000 à
-1 004 chacune) : <code>XPOND</code> (à réviser, non appliquée)</td>
+1 004 chacune) : <code>XPOND</code> (pas encore utilisable)</td>
 <td>10</td>
 <td>1</td>
 <td>7</td>
@@ -1327,9 +1337,9 @@ post (n = 844) : <code>pond_post</code> (à réviser, non appliquée)</td>
 </tr>
 <tr class="even">
 <td><code>qes2007_panel</code></td>
-<td>pre (n = 2 050) : <code>pondam1</code> (à réviser, non appliquée) ;
-post (n = 2 054) : <code>pond_tot_am1</code> (à réviser, non
-appliquée)</td>
+<td>pre (n = 2 050) : <code>pondam1</code> (pas encore utilisable) ;
+post (n = 2 054) : <code>pond_tot_am1</code> (pas encore
+utilisable)</td>
 <td>15</td>
 <td>3</td>
 <td>8</td>
@@ -1337,8 +1347,8 @@ appliquée)</td>
 </tr>
 <tr class="odd">
 <td><code>qes1998</code></td>
-<td>pre (n = 1 483) : <code>ponder3</code> (à réviser, non appliquée) ;
-post (n = 1 483) : <code>ponder3</code> (à réviser, non appliquée)</td>
+<td>pre (n = 1 483) : <code>ponder3</code> (pas encore utilisable) ;
+post (n = 1 483) : <code>ponder3</code> (pas encore utilisable)</td>
 <td>8</td>
 <td>0</td>
 <td>7</td>
@@ -1347,14 +1357,13 @@ post (n = 1 483) : <code>ponder3</code> (à réviser, non appliquée)</td>
 </tbody>
 </table>
 <p><code>n</code> est le nombre de répondants de chaque vague. Une
-pondération à réviser n’est pas appliquée : <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>
-renvoie <code>NA</code> pour cette pondération tant que sa documentation
-n’est pas vérifiée. <code><a href="../reference/qes_design.html">qes_design()</a></code> utilise la pondération de
-la vague d’où vient chaque cible.</p>
-<p>Études du catalogue qui ne sont pas encore dans la spécification :
-<code>qes1998_crop</code>, <code>qes1998_createc</code>.
-<code><a href="../reference/get_qes.html">get_qes()</a></code> les lit ; <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> ne les
-couvre pas encore.</p>
+pondération marquée <em>pas encore utilisable</em> n’est pas assez
+documentée pour être utilisée : ses colonnes de pondération valent
+<code>NA</code>. <code><a href="../reference/qes_design.html">qes_design()</a></code> utilise la pondération de la
+vague d’où vient chaque cible.</p>
+<p>Non harmonisées : <code>qes1998_crop</code>,
+<code>qes1998_createc</code> (leurs répondants sont dans
+<code>qes1998</code>). <code><a href="../reference/get_qes.html">get_qes()</a></code> les lit.</p>
 </div>
 <div class="section level2">
 <h2 id="la-même-grille-dans-r">La même grille dans R<a class="anchor" aria-label="anchor" href="#la-m%C3%AAme-grille-dans-r"></a>
@@ -1366,9 +1375,9 @@ niveau de comparabilité de la question de cette étude :</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span>lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span></code></pre></div>
 <p>Un niveau compare la question d’une étude à la question d’ancrage de
-la cible. <a href="fr-harmonisation.html">Harmoniser entre études</a>
-montre comment les niveaux, les valeurs manquantes et les pondérations
-se rendent jusqu’à une estimation.</p>
+la cible. <a href="fr-harmonisation.html">Comment fonctionne
+l’harmonisation</a> montre comment les niveaux, les valeurs manquantes
+et les pondérations se rendent jusqu’à une estimation.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

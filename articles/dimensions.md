@@ -3,48 +3,43 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md)*
 
-For forty years the PQ and the PLQ split Quebec on the national
-question. The Quebec Election Studies show that this axis no longer
-sorts the parties the way it did. In 2012, 84% of PQ voters would have
-voted Yes to an independent country, against 1% of PLQ voters. By 2022
-the Yes vote was split: the PQ took 35% of it, Québec solidaire 20% and
-the CAQ 34%, while in 2012 the PQ alone took 73%. On the left-right
-scale, Québec solidaire’s voters are the furthest left (3.7 out of 10 in
-2022) and the Conservatives’ the furthest right (6.7).
+For four decades, the national question organized party competition in
+Quebec. The Parti Québécois (PQ) stood for sovereignty, the Parti
+libéral du Québec (PLQ) for federalism, and a voter’s position on
+independence went a long way toward predicting their vote (Bélanger et
+al. 2018). The rise of the Coalition avenir Québec (CAQ) and of Québec
+solidaire (QS), and the CAQ’s victory in 2018, have changed that
+picture. The conventional wisdom, reflected in recent work on the new
+party system (Bélanger and Mahéo 2020; Bélanger et al. 2022), is now
+that the sovereignty axis has faded and that a left-right axis has taken
+its place, with the PQ squeezed between a nationalist party that set the
+referendum aside and a sovereigntist party on the left. On this page, we
+examine whether the Quebec Election Studies bear this out: has the
+national question stopped structuring the Quebec vote, and has the
+left-right scale taken over?
 
-## The data
+Overall, we find mixed support for the conventional wisdom. The first
+half holds. In 2012, party choice accounted for 57% of the variation in
+the referendum vote (knowing which party a respondent voted for told us
+57% of what there was to know about their referendum vote); in 2022, it
+accounted for 25%. The second half does not hold. The left-right scale
+did not fill the gap: party choice accounted for 26% of the variation in
+left-right placement in 2012 and 23% in 2022. Leaving aside the voters
+of the Parti conservateur du Québec (PCQ), which went from 1.5% of the
+vote in 2018 to 12.9% in 2022, the figure falls to 14%. In other words,
+the national question lost ground without being replaced. It still
+separates the two historic parties as sharply as ever: in 2022, 82% of
+PQ voters would have voted Yes, against 2% of PLQ voters.
 
-Three harmonized variables: the pooled reported vote, the pooled
-referendum vote (`sov_support`) and the self-placement on the left-right
-scale (`lr_self`, 0 to 10):
+We use three questions asked, in similar form, in every Quebec Election
+Study from 2012 to 2022: the vote reported after the election, the vote
+in a referendum on independence, and the respondent’s own placement on a
+left-right scale from 0 (left) to 10 (right). Mother tongue lets us look
+at francophones on their own. In the Quebec Election Studies used here,
+the referendum question goes back to 2007, so the second figure starts
+then. The end of the page shows how to reproduce the figures.
 
-``` r
-
-h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("vote_choice", "sov_support", "lr_self"),
-  types = list(vote_choice = "recall"),
-  missing = "reasons", quiet = TRUE
-)
-```
-
-`lr_self` was asked in the Quebec Election Studies of 2012 to 2022; in
-2022 it and the referendum question were asked during the campaign, the
-reported vote after the election, so the page keeps the respondents of
-both waves and weights them with the post-election weight. For one party
-in one study:
-
-``` r
-
-d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
-svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
-      svymean, na.rm = TRUE)
-#>     vote_choice  lr_self         se
-#> CAQ         CAQ 5.549020 0.09808683
-#> QS           QS 3.658518 0.19725417
-```
-
-## Party electorates on two axes, 2012 to 2022
+## The poles held; the newcomers converged
 
 ![Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS;
 the PCQ in 2022 only): on the left the share of the party's voters who
@@ -63,12 +58,11 @@ on the left-right scale; QS voters stay the furthest left, at 3.7 in
 2022. Values in the table
 view.](dimensions_files/figure-html/paths-dark.png)
 
-Source: qesR, pooled vote_choice (reported vote) and sov_support
-(independence), lr_self; QES 2012, 2014, 2018 and 2022, weighted with
-each study's post-election weight. The parties are set side by side at
-each election. Lines: 95% confidence intervals (logit for the share,
-Wald for the mean). The two panels have their own scales. The PCQ was
-listed in 2022 only.
+Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted.
+Reported vote after the election; referendum vote among respondents who
+chose Yes or No. The parties are set side by side at each election, and
+the two panels have their own scales. The PCQ was offered as an answer
+in 2022 only.
 
 Table view
 
@@ -97,20 +91,32 @@ while PLQ voters moved leftWhere each party's voters stand on
 sovereignty and on the left-right scale, 2012 to 2022, with 95%
 confidence intervals
 
-What to notice:
+Two results stand out. First, the two historic poles did not move on the
+national question. PQ voters remain overwhelmingly sovereigntist (84%
+would vote Yes in 2012, 82% in 2022) and PLQ voters almost unanimously
+federalist (1% and 2%). Second, the two newer parties moved toward each
+other. CAQ voters went from 19% Yes in 2012 to 38% in 2022, and QS
+voters from 63% to 44%. The CAQ now draws a good share of its vote from
+sovereigntists. Contrary to what one might expect of a sovereigntist
+party, a majority of QS voters (56%) would now vote No. The 2012
+estimate rests on only 87 respondents, however, and its interval is wide
+(49% to 74%).
 
-- PQ and QS voters are the sovereigntist ones; PLQ voters are almost all
-  federalists at every election (2% Yes in 2022).
-- The two newer parties moved toward each other on sovereignty: CAQ
-  voters from 19% Yes in 2012 to 38% in 2022, QS voters from 63% to 44%.
-- PLQ voters moved left, from 6.5 to 4.8; the voters right of centre are
-  now those of the CAQ and the PCQ.
-- PQ and QS voters are close on left-right (1.3 points apart in 2012,
-  0.9 in 2022), but their gap on sovereignty grew from 22 to 38 points:
-  the national question now separates them more than the left-right
-  scale.
+Movements on the left-right scale are smaller, with one exception. QS
+voters are the furthest left at every election (3.7 out of 10 in 2022)
+and PCQ voters the furthest right (6.7). The exception is the PLQ: its
+voters went from 6.5 in 2012 to 4.8 in 2022. In 2022, they stood to the
+left of CAQ voters (5.5), close to PQ voters (4.5). This estimate rests
+on 140 respondents, and the 2022 question was worded differently (see
+[About the data](#about-the-data)), so the size of the shift should be
+read with caution. The right of the scale now belongs to the CAQ and the
+PCQ. Note, however, what happened between the two sovereigntist parties.
+PQ and QS voters are close on left-right (1.3 points apart on the 0-10
+scale in 2012, 0.8 in 2022), while their gap on sovereignty grew from 21
+to 38 percentage points. What separates their electorates today is the
+national question more than the left-right scale.
 
-## Where sovereigntists and federalists vote
+## Yes voters now split among three parties
 
 ![Line charts in two panels, the respondents who would vote Yes (left)
 and No (right) in a referendum, from 2007 to 2022: the share of each
@@ -126,12 +132,11 @@ that went to each party. The PQ's share of the Yes vote goes from 73% in
 share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the
 table view.](dimensions_files/figure-html/where-dark.png)
 
-Source: qesR, pooled vote_choice (reported vote) and sov_support; QES
-2007 to 2022, weighted with each study's post-election weight except
-2008 (hollow: unweighted, weight under review). 2007 and 2008 asked the
-1995 question, 2012 to 2022 about an independent country, so the lines
-break at the change. Lines: 95% confidence intervals (logit). The other
-parties (PV, ON and others) are in the table view.
+Source: Quebec Election Studies 2007 to 2022, weighted, except 2008
+(hollow: unweighted). 2007 and 2008 asked the 1995 referendum question,
+2012 to 2022 a question on an independent country, so the lines break at
+the change. The other parties (Green Party, Option nationale and others)
+are in the table view.
 
 Table view
 
@@ -223,39 +228,252 @@ Table view
 | 2022 | QES 2022 | No | Other | 5.4 \[2.9, 10.0\] | 590 | weighted |
 
 The PQ's share of the Yes vote fell from 73% to 35% as QS and the CAQ
-took it; the No vote fragmentedHow the respondents who would vote Yes
-and No in a referendum voted: each party's share of the side's reported
-vote, with 95% confidence intervals
+took it; No voters spread across more partiesHow the respondents who
+would vote Yes and No in a referendum voted: each party's share of the
+side's reported vote, with 95% confidence intervals
 
-What to notice:
+We now turn from where each party’s voters stand to where each camp’s
+voters go. In 2012, the PQ took 73% of the reported vote of respondents
+who would vote Yes; in 2022, it took 35%, about as much as the CAQ
+(34%), with QS at 20%. In other words, the PQ now holds about a third of
+the Yes vote. The party vote of No voters spread out as well. The PLQ’s
+share fell from 46% in 2012 to 29% in 2022, while the CAQ held a large
+share throughout (36% in 2012, 30% in 2022) and the PCQ took 18% in
+2022. Unsurprisingly for a party that promised not to hold a referendum,
+the CAQ is the only party that took about a third of each camp in 2022
+(34% of Yes voters and 30% of No voters).
 
-- In 2007 and 2012 the PQ held most of the Yes vote; by 2018 it had less
-  than half of it, as Québec solidaire and the CAQ took their shares.
-- The No vote fragmented: the PLQ’s share fell from 46% in 2012 to 29%
-  in 2022; the CAQ took 36% of it in 2012, 37% in 2018 and 30% in 2022,
-  and the PCQ 18% in 2022. In 2007 the ADQ already took 36% of it. The
-  QES 2022 under-reports the CAQ by about 8 points (see [Survey vs
-  official
-  results](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md)),
-  which affects the 2022 shares.
-- The CAQ is the one party with a large share of both sides.
+Two caveats apply. First, the 2007 and 2008 studies asked the 1995
+referendum question and the later ones a question on an independent
+country, and the wording of the question is known to move support for
+sovereignty (Yale and Durand 2011); the lines break at the change for
+that reason. Second, the 2022 study under-reports the CAQ vote by about
+8 points compared to the official result (see [Survey vs official
+results](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md)),
+which lowers the CAQ’s share of both camps that year. The near-tie
+between the PQ and the CAQ among Yes voters is therefore, if anything,
+favourable to the PQ.
+
+## Sovereignty divides the vote much less; left-right did not take over
+
+The first two figures show positions. They do not tell us how much each
+axis separates the electorates, which is the heart of the conventional
+wisdom. To answer that, we apply the same measure to each study: of all
+the variation in respondents’ referendum vote, or in their left-right
+placement, how much lies between the parties’ electorates rather than
+within them? This is the share of the variance accounted for by party
+choice (an eta squared). At 100%, knowing someone’s vote would tell us
+their answer exactly; at 0%, it would tell us nothing. Both shares are
+computed on the same respondents, those who answered both questions and
+voted for one of the parties shown above.
+
+![Line charts in two panels, all voters (left) and francophone voters
+(right), 2012 to 2022: the share of the variance in the referendum vote
+and in left-right placement accounted for by party choice, with
+confidence intervals. For the referendum vote it goes from 57% in 2012
+to 25% in 2022 among all voters, and from 55% to 18% among francophones;
+for left-right placement from 26% to 23% among all voters, and 14% in
+2022 without the PCQ. Values in the table
+view.](dimensions_files/figure-html/sorting-light.png)![Line charts in
+two panels, all voters (left) and francophone voters (right), 2012 to
+2022: the share of the variance in the referendum vote and in left-right
+placement accounted for by party choice, with confidence intervals. For
+the referendum vote it goes from 57% in 2012 to 25% in 2022 among all
+voters, and from 55% to 18% among francophones; for left-right placement
+from 26% to 23% among all voters, and 14% in 2022 without the PCQ.
+Values in the table
+view.](dimensions_files/figure-html/sorting-dark.png)
+
+Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted.
+Respondents who answered both questions and reported a vote for the PLQ,
+the PQ, the CAQ, QS or (2022) the PCQ; francophones are respondents
+whose mother tongue is French. Diamond: the 2022 left-right share
+without the PCQ's voters. Intervals from 500 bootstrap replicates of
+each study.
+
+Table view
+
+| Voters | Parties | Question | Election | Study | Share of variance, % \[95% CI\] | n | Weighting |
+|:---|:---|:---|---:|:---|:---|---:|:---|
+| All voters | all parties shown | Referendum vote (Yes or No) | 2012 | QES 2012 | 56.7 \[51.0, 62.4\] | 918 | weighted |
+| All voters | all parties shown | Referendum vote (Yes or No) | 2014 | QES 2014 | 56.5 \[49.1, 63.8\] | 950 | weighted |
+| All voters | all parties shown | Referendum vote (Yes or No) | 2018 | QES 2018 | 40.1 \[35.5, 44.6\] | 1474 | weighted |
+| All voters | all parties shown | Referendum vote (Yes or No) | 2022 | QES 2022 | 25.5 \[20.0, 30.9\] | 903 | weighted |
+| All voters | all parties shown | Left-right placement | 2012 | QES 2012 | 25.6 \[20.1, 31.2\] | 918 | weighted |
+| All voters | all parties shown | Left-right placement | 2014 | QES 2014 | 15.6 \[10.3, 20.8\] | 950 | weighted |
+| All voters | all parties shown | Left-right placement | 2018 | QES 2018 | 15.8 \[11.8, 19.7\] | 1474 | weighted |
+| All voters | all parties shown | Left-right placement | 2022 | QES 2022 | 22.6 \[15.8, 29.3\] | 903 | weighted |
+| All voters | without the PCQ | Referendum vote (Yes or No) | 2012 | QES 2012 | 56.7 \[51.0, 62.4\] | 918 | weighted |
+| All voters | without the PCQ | Referendum vote (Yes or No) | 2014 | QES 2014 | 56.5 \[49.1, 63.8\] | 950 | weighted |
+| All voters | without the PCQ | Referendum vote (Yes or No) | 2018 | QES 2018 | 40.1 \[35.5, 44.6\] | 1474 | weighted |
+| All voters | without the PCQ | Referendum vote (Yes or No) | 2022 | QES 2022 | 27.3 \[21.5, 33.1\] | 768 | weighted |
+| All voters | without the PCQ | Left-right placement | 2012 | QES 2012 | 25.6 \[20.1, 31.2\] | 918 | weighted |
+| All voters | without the PCQ | Left-right placement | 2014 | QES 2014 | 15.6 \[10.3, 20.8\] | 950 | weighted |
+| All voters | without the PCQ | Left-right placement | 2018 | QES 2018 | 15.8 \[11.8, 19.7\] | 1474 | weighted |
+| All voters | without the PCQ | Left-right placement | 2022 | QES 2022 | 14.2 \[7.8, 20.7\] | 768 | weighted |
+| Francophones | all parties shown | Referendum vote (Yes or No) | 2012 | QES 2012 | 54.6 \[48.0, 61.1\] | 776 | weighted |
+| Francophones | all parties shown | Referendum vote (Yes or No) | 2014 | QES 2014 | 55.3 \[47.5, 63.0\] | 718 | weighted |
+| Francophones | all parties shown | Referendum vote (Yes or No) | 2018 | QES 2018 | 33.9 \[29.2, 38.6\] | 1187 | weighted |
+| Francophones | all parties shown | Referendum vote (Yes or No) | 2022 | QES 2022 | 18.4 \[12.4, 24.3\] | 724 | weighted |
+| Francophones | all parties shown | Left-right placement | 2012 | QES 2012 | 31.7 \[25.2, 38.1\] | 776 | weighted |
+| Francophones | all parties shown | Left-right placement | 2014 | QES 2014 | 19.2 \[12.4, 26.1\] | 718 | weighted |
+| Francophones | all parties shown | Left-right placement | 2018 | QES 2018 | 19.4 \[14.8, 24.0\] | 1187 | weighted |
+| Francophones | all parties shown | Left-right placement | 2022 | QES 2022 | 22.1 \[15.4, 28.7\] | 724 | weighted |
+| Francophones | without the PCQ | Referendum vote (Yes or No) | 2012 | QES 2012 | 54.6 \[48.0, 61.1\] | 776 | weighted |
+| Francophones | without the PCQ | Referendum vote (Yes or No) | 2014 | QES 2014 | 55.3 \[47.5, 63.0\] | 718 | weighted |
+| Francophones | without the PCQ | Referendum vote (Yes or No) | 2018 | QES 2018 | 33.9 \[29.2, 38.6\] | 1187 | weighted |
+| Francophones | without the PCQ | Referendum vote (Yes or No) | 2022 | QES 2022 | 19.0 \[13.0, 25.0\] | 618 | weighted |
+| Francophones | without the PCQ | Left-right placement | 2012 | QES 2012 | 31.7 \[25.2, 38.1\] | 776 | weighted |
+| Francophones | without the PCQ | Left-right placement | 2014 | QES 2014 | 19.2 \[12.4, 26.1\] | 718 | weighted |
+| Francophones | without the PCQ | Left-right placement | 2018 | QES 2018 | 19.4 \[14.8, 24.0\] | 1187 | weighted |
+| Francophones | without the PCQ | Left-right placement | 2022 | QES 2022 | 14.6 \[8.2, 21.0\] | 618 | weighted |
+
+Party choice accounts for 25% of the variance in the referendum vote in
+2022, down from 57% in 2012; left-right did not gainHow much of the
+variation in each question lies between the parties' electorates, 2012
+to 2022, with 95% confidence intervals
+
+The result is clear on sovereignty. In 2012 and 2014, party choice
+accounted for more than half of the variation in the referendum vote
+(57% and 56%), against 26% and 16% for left-right placement. The share
+for sovereignty then fell to 40% in 2018 and to 25% in 2022. The decline
+is steeper among francophones: from 55% in 2012 to 18% in 2022. Among
+them, the two axes are now about equally tied to party choice (22% for
+left-right, 18% for sovereignty; the intervals overlap), and the
+left-right figure owes much to the PCQ’s voters: without them, it is
+15%.
+
+Contrary to the conventional wisdom, the left-right axis did not rise to
+take the place of sovereignty. Its share went from 26% in 2012 to 16% in
+2018, and came back to 23% in 2022 only with the arrival of the PCQ,
+whose voters stand furthest to the right. Without them, the 2022 share
+is 14%. It is the PCQ’s base, which crossed the language divide and owed
+little to sovereignty (Bélanger et al. 2025), that accounts for the rise
+in 2022. In short, the 2022 vote is much less structured by the national
+question, without being more structured by the left-right scale.
+
+These shares have limits. First, a Yes or No answer and a placement on a
+scale from 0 to 10 are not measured the same way, so the comparison is
+about trends and orders of magnitude, not about the exact gap between
+the two lines in a given year. Second, a share of variance also depends
+on the number of parties and on their size: the arrival of the PCQ in
+2022 shows how much one party at the edge of the scale can move it.
+Third, the 2022 left-right question differs from the earlier ones (see
+[About the data](#about-the-data)), so the 2022 left-right figures, on
+which the main finding rests, compare only approximately with earlier
+years. Finally, these are cross-sections. They show how the electorates
+divide, not why voters chose their party.
+
+## What this means
+
+All in all, the national question no longer organizes Quebec’s party
+system on its own, but no other single axis has replaced it. It still
+divides the PQ and the PLQ as sharply as it did in 2012. What changed is
+that the sovereigntist vote is now shared by three parties and that the
+CAQ draws from both camps, so that knowing a voter’s position on
+independence tells us much less about their vote than it did a decade
+ago. This differs from what Daoust and Gareau-Paquette (2024) found,
+with a different measure, for federal elections, where the weight of
+sovereignty in the Bloc québécois vote declined between 2004 and 2006
+and then remained remarkably stable from 2006 to 2021. At the provincial
+level, the decline began between 2014 and 2018, during the CAQ’s rise,
+and had not levelled off by 2022. Of course, things might evolve
+differently as younger cohorts, less inclined to vote PQ (Mahéo and
+Bélanger 2018), make up a larger share of the electorate. The page on
+[support for sovereignty across
+generations](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)
+takes up that question.
 
 ## About the data
 
 - **Studies.** The Quebec Election Studies of 2012 to 2022 for the
-  left-right placement, and of 2007 to 2022 for the referendum vote; the
-  Durand panels are left out, since they asked other referendum
-  wordings.
-- **Variables.** `vote_choice` restricted to the reported vote,
-  `sov_support` as the share of Yes among Yes and No, and `lr_self`, the
-  respondent’s own placement from 0 (left) to 10 (right). The 2007 and
-  2008 studies asked the 1995 question, the others the question on an
-  independent country: the rows of the bar chart are not one series.
+  left-right placement, and of 2007 to 2022 for the referendum vote. The
+  panels run by Claire Durand and colleagues at the same elections are
+  left out, so that the series has one study per election; in 2012 and
+  2018 they also asked other wordings of the referendum question. The
+  1998 polls are left out as well: they are unweighted, and only one of
+  the two asked the referendum question.
+- **Questions.** The vote reported after the election; the referendum
+  vote as the share of Yes among respondents who chose Yes or No (those
+  who remain undecided are set aside); the respondent’s own placement
+  from 0 (left) to 10 (right). Francophones are respondents whose mother
+  tongue is French. The 2007 and 2008 studies asked the 1995 referendum
+  question, with a follow-up that asked the undecided which way they
+  leaned; the others asked a question on an independent country. In 2022
+  the left-right question was worded differently, was asked on its own
+  rather than after the respondent placed the parties, and offered no
+  “don’t know”; almost every respondent answered it (98%, against about
+  80% before), so 2022 left-right figures compare only approximately
+  with earlier years.
 - **Timing.** In 2022 the referendum and left-right questions were asked
-  during the campaign and the reported vote after the election; the
-  estimates keep the respondents of both waves, weighted with the
-  post-election weight.
-- **Weights.** Each study’s recommended post-election weight, through
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md);
-  2008 is unweighted (its weights are calibrated on the vote and are
-  under review).
+  during the campaign and the vote after the election; the estimates use
+  the respondents who took part in both waves, with the post-election
+  weight.
+- **Weights.** Each study’s post-election weight. The 2008 study is
+  shown unweighted: its weights were adjusted to the election result,
+  which makes them unsuited to a study of the vote.
+- **Share of variance.** Computed within each study on the respondents
+  who answered both questions and voted for one of the parties shown,
+  with 95% intervals from 500 bootstrap replicates of the study’s
+  design.
+
+## Reproduce this page
+
+The data come from one call to
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+which pools the reported vote (`vote_choice`), the referendum vote
+(`sov_support`), left-right placement (`lr_self`) and mother tongue
+(`lang_mother`) across the studies:
+
+``` r
+
+h <- qes_harmonize(
+  studies = qz_studies,
+  targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
+  types = list(vote_choice = "recall"),
+  missing = "reasons", quiet = TRUE
+)
+```
+
+A weighted mean by party, within one study:
+
+``` r
+
+d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
+svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
+      svymean, na.rm = TRUE)
+#>     vote_choice  lr_self         se
+#> CAQ         CAQ 5.549020 0.09808683
+#> QS           QS 3.658518 0.19725417
+```
+
+## Going further
+
+- Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo and Richard
+  Nadeau. 2022. *Le nouvel électeur québécois*. Montréal: Presses de
+  l’Université de Montréal. <https://doi.org/10.1515/9782760645929>
+- Bélanger, Éric, and Valérie-Anne Mahéo. 2020. “Le Parti québécois dans
+  le nouveau système multipartite.” *Politique et Sociétés* 39 (3):
+  19–55. <https://doi.org/10.7202/1072084ar>
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette and
+  Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election.”
+  *Canadian Journal of Political Science* 58 (2): 277–296.
+  <https://doi.org/10.1017/S0008423924000829>
+- Bélanger, Éric, Richard Nadeau, Ailsa Henderson and Eve Hepburn. 2018.
+  *The National Question and Electoral Politics in Quebec and Scotland*.
+  Montreal and Kingston: McGill-Queen’s University Press.
+  <https://doi.org/10.1515/9780773554139>
+- Daoust, Jean-François, and Thomas Gareau-Paquette. 2024. “Is Quebec
+  independence still key in making sense of Canadian elections? A
+  longitudinal analysis (2000–2021).” *Regional & Federal Studies* 34
+  (5): 781–806. <https://doi.org/10.1080/13597566.2023.2233422>
+- Mahéo, Valérie-Anne, and Éric Bélanger. 2018. “Is the Parti Québécois
+  Bound to Disappear? A Study of the Current Generational Dynamics of
+  Electoral Behaviour in Quebec.” *Canadian Journal of Political
+  Science* 51 (2): 335–356. <https://doi.org/10.1017/S0008423917001147>
+- Yale, François, and Claire Durand. 2011. “What did Quebeckers Want?
+  Impact of Question Wording, Constitutional Proposal and Context on
+  Support for Sovereignty, 1976–2008.” *American Review of Canadian
+  Studies* 41 (3): 242–258.
+  <https://doi.org/10.1080/02722011.2011.594517>

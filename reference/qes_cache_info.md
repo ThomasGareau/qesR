@@ -13,15 +13,13 @@ qes_cache_info()
 ## Value
 
 A data frame with one row per cached file: `study`, `file_id`, `md5`,
-`bytes`, `retrieved` (modification time), `kind` (always `"file"`: qesR
-0.5.0 to 0.7.0 also listed the `qes2022` metadata they built, `"shard"`,
-which now ships with the package) and `path`. Attributes `mode` (the
-cache mode) and `dir` (the cache directory, `NA` in mode `"none"`). The
-data frame has class `c("qes_cache_info", "data.frame")` and prints
-compactly: the mode, directory and total size once, then each file with
-its size and its path relative to the cache directory; the `path` column
-itself is absolute, and
-[`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) gives
+`bytes`, `retrieved` (modification time), `kind` (always `"file"`) and
+`path`. Attributes `mode` (the cache mode) and `dir` (the cache
+directory, `NA` in mode `"none"`). The data frame has class
+`c("qes_cache_info", "data.frame")` and prints compactly: the mode,
+directory and total size once, then each file with its size and its path
+relative to the cache directory; the `path` column itself is absolute,
+and [`as.data.frame()`](https://rdrr.io/r/base/as.data.frame.html) gives
 every column. A subset of its columns is a plain data frame.
 
 *En français* : une ligne par fichier en cache, de classe

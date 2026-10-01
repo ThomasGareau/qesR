@@ -5,11 +5,10 @@ version](https://thomasgareau.github.io/qesR/articles/get-started.md)*
 
 qesR charge dans R les Études électorales québécoises et d’autres
 enquêtes électorales québécoises à partir d’un code d’étude. Chaque code
-désigne un dépôt Dataverse, fixé à une version du jeu de données et à un
-fichier de données original dont la somme de contrôle md5 est vérifiée
-avant usage. Le catalogue des études, leurs documents, leurs citations
-et la description de chaque variable de chaque étude sont livrés avec le
-package.
+d’étude lit le fichier de données original de l’étude, toujours la même
+version, vérifié avant usage. Le catalogue des études, leurs documents,
+leurs citations et la description de chaque variable de chaque étude
+sont livrés avec le package.
 
 Cette page va d’un code d’étude à une estimation pondérée. Tous ses
 blocs de code s’exécutent sans connexion réseau : ils utilisent le
@@ -19,15 +18,12 @@ synthétique fournie avec qesR. Les blocs qui téléchargeraient une vraie
 
 ## Installation
 
-Installez qesR depuis GitHub ; une fois le paquet accepté sur le CRAN,
-`install.packages("qesR")` suffira.
+Installez qesR depuis GitHub :
 
 ``` r
 
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
-# une fois le paquet accepté sur le CRAN :
-# install.packages("qesR")
 ```
 
 ``` r
@@ -39,8 +35,8 @@ library(qesR)
 
 [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
 énumère les études, avec leur année, leur famille, leur devis, leur
-population cible, leur licence, leur DOI et la version du jeu de données
-à laquelle chacune est fixée.
+population cible, leur licence, leur DOI et la version de ses données
+que qesR lit.
 
 ``` r
 
@@ -205,19 +201,9 @@ head(hits[, c("study", "variable", "label")])
 #> 6 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
 ```
 
-L’étude de 2022 est sous licence CC BY-NC 4.0. Son codebook est lui
-aussi livré avec qesR, sous cette licence (attribution, pas d’usage
-commercial), et non sous la licence MIT de qesR, qui ne couvre que le
-code du package. Il est tiré de Mahéo, Bélanger, Stephenson et Harell
-(2023), *2022 Quebec Election Study*, Harvard Dataverse,
-<https://doi.org/10.7910/DVN/PAQBDR> ; le codebook imprimé de `qes2022`
-rappelle cette mention, que les codebooks et les résultats de
-[`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
-et de
-[`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
-qui incluent `qes2022` gardent aussi dans leur attribut
-`licence_notice`, et `system.file("COPYRIGHTS", package = "qesR")` donne
-la liste des fichiers.
+Le codebook de l’étude de 2022 est sous licence CC BY-NC 4.0
+(attribution, pas d’usage commercial) ; voir
+[`vignette("fr-citations", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-citations.md).
 
 ## Une estimation pondérée
 
@@ -299,12 +285,11 @@ Calculez chaque estimation dans une seule étude : les études diffèrent
 par leur devis, leur population et le libellé de leurs questions, et
 leurs pondérations sont chacune sur leur propre échelle.
 
-## Données harmonisées entre études (expérimental)
+## Données harmonisées entre études
 
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 construit un seul tableau à partir de plusieurs études, une colonne par
-variable harmonisée (« cible »), selon la spécification révisée
-seulement.
+variable harmonisée (« cible »), selon des règles livrées avec qesR.
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 montre quelle question de chaque étude alimente une cible et à quel
 point elle est comparable à la question d’ancrage de la cible :
@@ -320,14 +305,11 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #> 4 qes2022  cps cps_qc_referendum comparable cps_weight_general
 ```
 
-Une ligne est appliquée une fois approuvée par un réviseur. Dans la
-spécification 4.3.0, toutes les lignes sauf trois sont approuvées, après
-une double révision automatisée sur les fichiers et documents originaux
-(et non une révision humaine) ; une ligne encore en révision donne `NA`
-avec le motif `not_reviewed`, sauf avec `include_draft = TRUE`. Les
-pondérations recommandées de `qes1998`, `qes2007_panel`, `qes2012_panel`
-et des sondages CROP restent à réviser, et valent donc `NA`. Sur l’étude
-de démonstration, qui tient lieu de `qes2014` :
+Certaines études n’ont pas encore de pondération utilisable ; leurs
+colonnes de pondération valent `NA`, et
+[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+vous prévient quand il écarte des lignes. Sur l’étude de démonstration,
+qui tient lieu de `qes2014` :
 
 ``` r
 
@@ -394,9 +376,9 @@ cite qesR et les jeux de données utilisés (voir
 qes_provenance(demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-09-30 00:15:25 UTC (local_demo). Lu avec
+#> Obtenu le 2026-10-01 01:15:27 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
-#> qesR 2.4.0.
+#> qesR 2.4.1.
 #> 
 #> as.data.frame() donne toutes les colonnes.
 qes_cite("qes2014")
@@ -406,7 +388,7 @@ qes_cite("qes2014")
 
 [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md)
 enregistre les fichiers originaux eux-mêmes (fichier de données et
-documents), vérifiés par somme md5, dans un dossier de votre choix :
+documents), vérifiés, dans un dossier de votre choix :
 
 ``` r
 
@@ -431,11 +413,7 @@ tryCatch(
 #> [1] "qes2014"
 ```
 
-## Si vous utilisiez qesR 0.4.4
+## Du code écrit pour une version antérieure
 
-[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-et les autres fonctions de qesR 0.4.4 continuent de fonctionner ; depuis
-qesR 0.7.0, le fichier fusionné est produit par le moteur
-d’harmonisation. Ce qui a changé, et comment garder des résultats
-reproductibles, est expliqué dans
+Voir *Passer de qesR 0.4.4 à la version actuelle*,
 [`vignette("fr-migrer-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md).

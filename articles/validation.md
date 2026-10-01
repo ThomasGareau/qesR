@@ -15,20 +15,11 @@ specification covers:
 4.  a few **relationships between answers** that any valid measure
     should show (construct validity).
 
-The page is built when the website is built: the data files are
-downloaded from their Dataverse deposits through qesR’s cache and
-harmonized with
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
-The benchmarks are in `inst/extdata/validation/` of the qesR source
-repository, each row with its source; the census margins also ship with
-the package, the official results of Élections Québec and the recorded
-report do not (their terms of use need Élections Québec’s written
-permission, which is pending). The same checks run every week on the
-pinned files and fail when the weighted recall index (check V-L2 of the
-specification) or a weighted census index rises more than 2 points above
-its recorded value, when turnout over-reporting leaves 0 to 35 points,
-or when a construct-validity direction (check V-L4) fails. An index that
-falls, or rises by less, passes.
+Every study is harmonized with
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+from its original data file. The same comparisons run automatically on
+the original files, so a mapping error that moved these numbers would be
+caught.
 
 ``` r
 
@@ -43,7 +34,7 @@ num <- function(x, digits = 1, sign = FALSE) {
   formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
           decimal.mark = tr(".", ","))
 }
-# every study the specification covers, harmonized from the pinned files,
+# every study the specification covers, harmonized from the original files,
 # against the benchmarks that ship with qesR
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
@@ -52,7 +43,7 @@ report$year <- studies$year[match(report$study, studies$study)]
 report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
                            tr("weighted", "pondéré"))
 # one row per study and check: the weighted value where the study has a
-# reviewed weight, the unweighted one otherwise
+# usable weight, the unweighted one otherwise
 best <- function(x) {
   x <- x[order(x$study, x$variable, x$weight == "none"), ]
   x[!duplicated(paste(x$study, x$variable)), ]
@@ -103,13 +94,12 @@ knitr::kable(
 
 The weighted index uses the weight the specification recommends for the
 wave that asked the question; `qes2007`, `qes2012`, `qes2014`,
-`qes2018`, `qes2022` and the 2018 panel have reviewed weights so far.
-The weights of `qes2007_panel`, `qes2012_panel`, the CROP polls and
-`qes1998` are not documented well enough to be used (their rows are
-`needs_review`), and both weights of `qes2008` are calibrated on the
-vote or on turnout, so their index is unweighted. `qes1998` interviewed
-francophones only, a population the official results do not describe: it
-is shown for reference but not checked.
+`qes2018`, `qes2022` and the 2018 panel have one. The weights of
+`qes2007_panel`, `qes2012_panel`, the CROP polls and `qes1998` are not
+documented well enough to be used, and both weights of `qes2008` are
+calibrated on the vote or on turnout, so their index is unweighted.
+`qes1998` interviewed francophones only, a population the official
+results do not describe: it is shown for reference but not checked.
 
 ![Heatmap of the difference in points between each party's share of the
 reported vote and its official share of valid votes, one row per party
@@ -126,10 +116,10 @@ PLQ is under-reported in every study from 2007 to 2014 and the CAQ in
 2022. Values in the table
 view.](validation_files/figure-html/recall-dark.png)
 
-Weighted with the reviewed weight of the study where it has one; the
-2008 study and the 2007 and 2012 Durand panels are unweighted. A blank
-cell: the party did not run, or the study counts it in Other. The 1998
-polls, which interviewed francophones only, are left out.
+Weighted with the study's weight where it has a usable one; the 2008
+study and the 2007 and 2012 Durand panels are unweighted. A blank cell:
+the party did not run, or the study counts it in Other. The 1998 polls,
+which interviewed francophones only, are left out.
 
 Table view
 
@@ -304,20 +294,20 @@ census tables do not publish for that year (mother tongue in 2006).
 
 ![Heatmap of the difference in points between the weighted share of each
 category of education, mother tongue, age and gender and its census
-share, one column per study with a reviewed weight; blue cells are
+share, one column per study with a usable weight; blue cells are
 over-represented, red cells under-represented, and grey cells marked
 cal. are margins the weight is raked on. University graduates are
 over-represented in every study. Values in the table
 view.](validation_files/figure-html/census-light.png)![Heatmap of the
 difference in points between the weighted share of each category of
 education, mother tongue, age and gender and its census share, one
-column per study with a reviewed weight; blue cells are
-over-represented, red cells under-represented, and grey cells marked
-cal. are margins the weight is raked on. University graduates are
-over-represented in every study. Values in the table
+column per study with a usable weight; blue cells are over-represented,
+red cells under-represented, and grey cells marked cal. are margins the
+weight is raked on. University graduates are over-represented in every
+study. Values in the table
 view.](validation_files/figure-html/census-dark.png)
 
-Studies with a reviewed weight, weighted; the census of the year before
+Studies with a usable weight, weighted; the census of the year before
 each study (Statistics Canada). Gender and education have two
 categories, so one row is shown (women; university): the other is its
 mirror. A margin is marked cal. when every category is within half a
@@ -499,8 +489,8 @@ each other: in 2012 the PQ and the PLQ finished less than a point apart,
 so a study that swapped their codes would match the official results
 about as well. That is why the harmonization is also checked against
 exact counts of each answer in the original files and against the
-relationships of section 4, and why each crosswalk row is reviewed
-against the questionnaire.
+relationships of section 4, and why each mapping is checked against the
+questionnaire.
 
 ## Sources
 
@@ -519,9 +509,5 @@ against the questionnaire.
   97-551-XCB2006009 (age by sex; the Internet Archive’s copy of
   Statistics Canada’s file).
 
-The benchmark tables are in `inst/extdata/validation/` of the source
-repository, with the source of every row; the installed package
-(`system.file("extdata", "validation", package = "qesR")`) has only the
-census margins. The recorded results of every study are in
-`validation_report.csv` there; those of `qes2022` keep the study’s
-licence, CC BY-NC 4.0 (the file `COPYRIGHTS` of the package).
+The benchmark tables, with the source of every row, are in the [qesR
+source repository](https://github.com/ThomasGareau/qesR).

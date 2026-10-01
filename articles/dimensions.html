@@ -17,17 +17,67 @@
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Two dimensions of competition: sovereignty and left-right">
-<meta name="description" content="Where each party's voters stand on sovereignty and on the left-right scale, and where sovereigntists and federalists cast their vote.
+<meta name="description" content="Has the left-right scale replaced the national question in Quebec elections? Where each party's voters stand on both axes, where the Yes and No camps vote, and how much each axis still structures the vote.
 ">
-<meta property="og:description" content="Where each party's voters stand on sovereignty and on the left-right scale, and where sovereigntists and federalists cast their vote.
+<meta property="og:description" content="Has the left-right scale replaced the national question in Quebec elections? Where each party's voters stand on both axes, where the Yes and No camps vote, and how much each axis still structures the vote.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Two dimensions of competition: sovereignty and left-right</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Two dimensions of competition: sovereignty and left-right</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/dimensions.Rmd" class="external-link"><code>vignettes/articles/dimensions.Rmd</code></a></small>
@@ -134,44 +159,44 @@
     
     
 <p><em><a href="fr-dimensions.html">Version française</a></em></p>
-<p>For forty years the PQ and the PLQ split Quebec on the national
-question. The Quebec Election Studies show that this axis no longer
-sorts the parties the way it did. In 2012, 84% of PQ voters would have
-voted Yes to an independent country, against 1% of PLQ voters. By 2022
-the Yes vote was split: the PQ took 35% of it, Québec solidaire 20% and
-the CAQ 34%, while in 2012 the PQ alone took 73%. On the left-right
-scale, Québec solidaire’s voters are the furthest left (3.7 out of 10 in
-2022) and the Conservatives’ the furthest right (6.7).</p>
+<p>For four decades, the national question organized party competition
+in Quebec. The Parti Québécois (PQ) stood for sovereignty, the Parti
+libéral du Québec (PLQ) for federalism, and a voter’s position on
+independence went a long way toward predicting their vote (Bélanger et
+al. 2018). The rise of the Coalition avenir Québec (CAQ) and of Québec
+solidaire (QS), and the CAQ’s victory in 2018, have changed that
+picture. The conventional wisdom, reflected in recent work on the new
+party system (Bélanger and Mahéo 2020; Bélanger et al. 2022), is now
+that the sovereignty axis has faded and that a left-right axis has taken
+its place, with the PQ squeezed between a nationalist party that set the
+referendum aside and a sovereigntist party on the left. On this page, we
+examine whether the Quebec Election Studies bear this out: has the
+national question stopped structuring the Quebec vote, and has the
+left-right scale taken over?</p>
+<p>Overall, we find mixed support for the conventional wisdom. The first
+half holds. In 2012, party choice accounted for 57% of the variation in
+the referendum vote (knowing which party a respondent voted for told us
+57% of what there was to know about their referendum vote); in 2022, it
+accounted for 25%. The second half does not hold. The left-right scale
+did not fill the gap: party choice accounted for 26% of the variation in
+left-right placement in 2012 and 23% in 2022. Leaving aside the voters
+of the Parti conservateur du Québec (PCQ), which went from 1.5% of the
+vote in 2018 to 12.9% in 2022, the figure falls to 14%. In other words,
+the national question lost ground without being replaced. It still
+separates the two historic parties as sharply as ever: in 2022, 82% of
+PQ voters would have voted Yes, against 2% of PLQ voters.</p>
+<p>We use three questions asked, in similar form, in every Quebec
+Election Study from 2012 to 2022: the vote reported after the election,
+the vote in a referendum on independence, and the respondent’s own
+placement on a left-right scale from 0 (left) to 10 (right). Mother
+tongue lets us look at francophones on their own. In the Quebec Election
+Studies used here, the referendum question goes back to 2007, so the
+second figure starts then. The end of the page shows how to reproduce
+the figures.</p>
 <div class="section level2">
-<h2 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<h2 id="the-poles-held-the-newcomers-converged">The poles held; the newcomers converged<a class="anchor" aria-label="anchor" href="#the-poles-held-the-newcomers-converged"></a>
 </h2>
-<p>Three harmonized variables: the pooled reported vote, the pooled
-referendum vote (<code>sov_support</code>) and the self-placement on the
-left-right scale (<code>lr_self</code>, 0 to 10):</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
-<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"sov_support"</span>, <span class="st">"lr_self"</span><span class="op">)</span>,</span>
-<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
-<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><code>lr_self</code> was asked in the Quebec Election Studies of 2012
-to 2022; in 2022 it and the referendum question were asked during the
-campaign, the reported vote after the election, so the page keeps the
-respondents of both waves and weights them with the post-election
-weight. For one party in one study:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
-<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      <span class="va">svymean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     vote_choice  lr_self         se</span></span>
-<span><span class="co">#&gt; CAQ         CAQ 5.549020 0.09808683</span></span>
-<span><span class="co">#&gt; QS           QS 3.658518 0.19725417</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="party-electorates-on-two-axes-2012-to-2022">Party electorates on two axes, 2012 to 2022<a class="anchor" aria-label="anchor" href="#party-electorates-on-two-axes-2012-to-2022"></a>
-</h2>
-<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">CAQ and QS voters converged on sovereignty (38% and 44% Yes in 2022), while PLQ voters moved left</span><span class="qesr-sub">Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/paths-light.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/paths-dark.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and sov_support (independence), lr_self; QES 2012, 2014, 2018 and 2022, weighted with each study's post-election weight. The parties are set side by side at each election. Lines: 95% confidence intervals (logit for the share, Wald for the mean). The two panels have their own scales. The PCQ was listed in 2022 only.</p>
+<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">CAQ and QS voters converged on sovereignty (38% and 44% Yes in 2022), while PLQ voters moved left</span><span class="qesr-sub">Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/paths-light.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/paths-dark.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Reported vote after the election; referendum vote among respondents who chose Yes or No. The parties are set side by side at each election, and the two panels have their own scales. The PCQ was offered as an answer in 2022 only.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Party </th>
@@ -355,25 +380,34 @@ weight. For one party in one study:</p>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>PQ and QS voters are the sovereigntist ones; PLQ voters are almost
-all federalists at every election (2% Yes in 2022).</li>
-<li>The two newer parties moved toward each other on sovereignty: CAQ
-voters from 19% Yes in 2012 to 38% in 2022, QS voters from 63% to
-44%.</li>
-<li>PLQ voters moved left, from 6.5 to 4.8; the voters right of centre
-are now those of the CAQ and the PCQ.</li>
-<li>PQ and QS voters are close on left-right (1.3 points apart in 2012,
-0.9 in 2022), but their gap on sovereignty grew from 22 to 38 points:
-the national question now separates them more than the left-right
-scale.</li>
-</ul>
+</table></details></figure><p>Two results stand out. First, the two historic poles did not move on
+the national question. PQ voters remain overwhelmingly sovereigntist
+(84% would vote Yes in 2012, 82% in 2022) and PLQ voters almost
+unanimously federalist (1% and 2%). Second, the two newer parties moved
+toward each other. CAQ voters went from 19% Yes in 2012 to 38% in 2022,
+and QS voters from 63% to 44%. The CAQ now draws a good share of its
+vote from sovereigntists. Contrary to what one might expect of a
+sovereigntist party, a majority of QS voters (56%) would now vote
+No. The 2012 estimate rests on only 87 respondents, however, and its
+interval is wide (49% to 74%).</p>
+<p>Movements on the left-right scale are smaller, with one exception. QS
+voters are the furthest left at every election (3.7 out of 10 in 2022)
+and PCQ voters the furthest right (6.7). The exception is the PLQ: its
+voters went from 6.5 in 2012 to 4.8 in 2022. In 2022, they stood to the
+left of CAQ voters (5.5), close to PQ voters (4.5). This estimate rests
+on 140 respondents, and the 2022 question was worded differently (see <a href="#about-the-data">About the data</a>), so the size of the shift
+should be read with caution. The right of the scale now belongs to the
+CAQ and the PCQ. Note, however, what happened between the two
+sovereigntist parties. PQ and QS voters are close on left-right (1.3
+points apart on the 0-10 scale in 2012, 0.8 in 2022), while their gap on
+sovereignty grew from 21 to 38 percentage points. What separates their
+electorates today is the national question more than the left-right
+scale.</p>
 </div>
 <div class="section level2">
-<h2 id="where-sovereigntists-and-federalists-vote">Where sovereigntists and federalists vote<a class="anchor" aria-label="anchor" href="#where-sovereigntists-and-federalists-vote"></a>
+<h2 id="yes-voters-now-split-among-three-parties">Yes voters now split among three parties<a class="anchor" aria-label="anchor" href="#yes-voters-now-split-among-three-parties"></a>
 </h2>
-<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">The PQ's share of the Yes vote fell from 73% to 35% as QS and the CAQ took it; the No vote fragmented</span><span class="qesr-sub">How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/where-light.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/where-dark.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and sov_support; QES 2007 to 2022, weighted with each study's post-election weight except 2008 (hollow: unweighted, weight under review). 2007 and 2008 asked the 1995 question, 2012 to 2022 about an independent country, so the lines break at the change. Lines: 95% confidence intervals (logit). The other parties (PV, ON and others) are in the table view.</p>
+<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">The PQ's share of the Yes vote fell from 73% to 35% as QS and the CAQ took it; No voters spread across more parties</span><span class="qesr-sub">How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/where-light.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/where-dark.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -1142,18 +1176,421 @@ scale.</li>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>In 2007 and 2012 the PQ held most of the Yes vote; by 2018 it had
-less than half of it, as Québec solidaire and the CAQ took their
-shares.</li>
-<li>The No vote fragmented: the PLQ’s share fell from 46% in 2012 to 29%
-in 2022; the CAQ took 36% of it in 2012, 37% in 2018 and 30% in 2022,
-and the PCQ 18% in 2022. In 2007 the ADQ already took 36% of it. The QES
-2022 under-reports the CAQ by about 8 points (see <a href="survey-vs-official.html">Survey vs official results</a>), which
-affects the 2022 shares.</li>
-<li>The CAQ is the one party with a large share of both sides.</li>
-</ul>
+</table></details></figure><p>We now turn from where each party’s voters stand to where each camp’s
+voters go. In 2012, the PQ took 73% of the reported vote of respondents
+who would vote Yes; in 2022, it took 35%, about as much as the CAQ
+(34%), with QS at 20%. In other words, the PQ now holds about a third of
+the Yes vote. The party vote of No voters spread out as well. The PLQ’s
+share fell from 46% in 2012 to 29% in 2022, while the CAQ held a large
+share throughout (36% in 2012, 30% in 2022) and the PCQ took 18% in
+2022. Unsurprisingly for a party that promised not to hold a referendum,
+the CAQ is the only party that took about a third of each camp in 2022
+(34% of Yes voters and 30% of No voters).</p>
+<p>Two caveats apply. First, the 2007 and 2008 studies asked the 1995
+referendum question and the later ones a question on an independent
+country, and the wording of the question is known to move support for
+sovereignty (Yale and Durand 2011); the lines break at the change for
+that reason. Second, the 2022 study under-reports the CAQ vote by about
+8 points compared to the official result (see <a href="survey-vs-official.html">Survey vs official results</a>), which
+lowers the CAQ’s share of both camps that year. The near-tie between the
+PQ and the CAQ among Yes voters is therefore, if anything, favourable to
+the PQ.</p>
+</div>
+<div class="section level2">
+<h2 id="sovereignty-divides-the-vote-much-less-left-right-did-not-take-over">Sovereignty divides the vote much less; left-right did not take
+over<a class="anchor" aria-label="anchor" href="#sovereignty-divides-the-vote-much-less-left-right-did-not-take-over"></a>
+</h2>
+<p>The first two figures show positions. They do not tell us how much
+each axis separates the electorates, which is the heart of the
+conventional wisdom. To answer that, we apply the same measure to each
+study: of all the variation in respondents’ referendum vote, or in their
+left-right placement, how much lies between the parties’ electorates
+rather than within them? This is the share of the variance accounted for
+by party choice (an eta squared). At 100%, knowing someone’s vote would
+tell us their answer exactly; at 0%, it would tell us nothing. Both
+shares are computed on the same respondents, those who answered both
+questions and voted for one of the parties shown above.</p>
+<figure class="qesr-fig" id="fig-sorting"><figcaption><span class="qesr-title">Party choice accounts for 25% of the variance in the referendum vote in 2022, down from 57% in 2012; left-right did not gain</span><span class="qesr-sub">How much of the variation in each question lies between the parties' electorates, 2012 to 2022, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/sorting-light.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/sorting-dark.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Respondents who answered both questions and reported a vote for the PLQ, the PQ, the CAQ, QS or (2022) the PCQ; francophones are respondents whose mother tongue is French. Diamond: the 2022 left-right share without the PCQ's voters. Intervals from 500 bootstrap replicates of each study.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:left;"> Voters </th>
+   <th style="text-align:left;"> Parties </th>
+   <th style="text-align:left;"> Question </th>
+   <th style="text-align:right;"> Election </th>
+   <th style="text-align:left;"> Study </th>
+   <th style="text-align:left;"> Share of variance, % [95% CI] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Weighting </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 56.7 [51.0, 62.4] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 56.5 [49.1, 63.8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 40.1 [35.5, 44.6] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 25.5 [20.0, 30.9] </td>
+   <td style="text-align:right;"> 903 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 25.6 [20.1, 31.2] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 15.6 [10.3, 20.8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 15.8 [11.8, 19.7] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 22.6 [15.8, 29.3] </td>
+   <td style="text-align:right;"> 903 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 56.7 [51.0, 62.4] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 56.5 [49.1, 63.8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 40.1 [35.5, 44.6] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 27.3 [21.5, 33.1] </td>
+   <td style="text-align:right;"> 768 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 25.6 [20.1, 31.2] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 15.6 [10.3, 20.8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 15.8 [11.8, 19.7] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> All voters </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 14.2 [7.8, 20.7] </td>
+   <td style="text-align:right;"> 768 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 54.6 [48.0, 61.1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 55.3 [47.5, 63.0] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 33.9 [29.2, 38.6] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 18.4 [12.4, 24.3] </td>
+   <td style="text-align:right;"> 724 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 31.7 [25.2, 38.1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 19.2 [12.4, 26.1] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 19.4 [14.8, 24.0] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> all parties shown </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 22.1 [15.4, 28.7] </td>
+   <td style="text-align:right;"> 724 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 54.6 [48.0, 61.1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 55.3 [47.5, 63.0] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 33.9 [29.2, 38.6] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Referendum vote (Yes or No) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 19.0 [13.0, 25.0] </td>
+   <td style="text-align:right;"> 618 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 31.7 [25.2, 38.1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 19.2 [12.4, 26.1] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 19.4 [14.8, 24.0] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> without the PCQ </td>
+   <td style="text-align:left;"> Left-right placement </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 14.6 [8.2, 21.0] </td>
+   <td style="text-align:right;"> 618 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+</tbody>
+</table></details></figure><p>The result is clear on sovereignty. In 2012 and 2014, party choice
+accounted for more than half of the variation in the referendum vote
+(57% and 56%), against 26% and 16% for left-right placement. The share
+for sovereignty then fell to 40% in 2018 and to 25% in 2022. The decline
+is steeper among francophones: from 55% in 2012 to 18% in 2022. Among
+them, the two axes are now about equally tied to party choice (22% for
+left-right, 18% for sovereignty; the intervals overlap), and the
+left-right figure owes much to the PCQ’s voters: without them, it is
+15%.</p>
+<p>Contrary to the conventional wisdom, the left-right axis did not rise
+to take the place of sovereignty. Its share went from 26% in 2012 to 16%
+in 2018, and came back to 23% in 2022 only with the arrival of the PCQ,
+whose voters stand furthest to the right. Without them, the 2022 share
+is 14%. It is the PCQ’s base, which crossed the language divide and owed
+little to sovereignty (Bélanger et al. 2025), that accounts for the rise
+in 2022. In short, the 2022 vote is much less structured by the national
+question, without being more structured by the left-right scale.</p>
+<p>These shares have limits. First, a Yes or No answer and a placement
+on a scale from 0 to 10 are not measured the same way, so the comparison
+is about trends and orders of magnitude, not about the exact gap between
+the two lines in a given year. Second, a share of variance also depends
+on the number of parties and on their size: the arrival of the PCQ in
+2022 shows how much one party at the edge of the scale can move it.
+Third, the 2022 left-right question differs from the earlier ones (see
+<a href="#about-the-data">About the data</a>), so the 2022 left-right
+figures, on which the main finding rests, compare only approximately
+with earlier years. Finally, these are cross-sections. They show how the
+electorates divide, not why voters chose their party.</p>
+</div>
+<div class="section level2">
+<h2 id="what-this-means">What this means<a class="anchor" aria-label="anchor" href="#what-this-means"></a>
+</h2>
+<p>All in all, the national question no longer organizes Quebec’s party
+system on its own, but no other single axis has replaced it. It still
+divides the PQ and the PLQ as sharply as it did in 2012. What changed is
+that the sovereigntist vote is now shared by three parties and that the
+CAQ draws from both camps, so that knowing a voter’s position on
+independence tells us much less about their vote than it did a decade
+ago. This differs from what Daoust and Gareau-Paquette (2024) found,
+with a different measure, for federal elections, where the weight of
+sovereignty in the Bloc québécois vote declined between 2004 and 2006
+and then remained remarkably stable from 2006 to 2021. At the provincial
+level, the decline began between 2014 and 2018, during the CAQ’s rise,
+and had not levelled off by 2022. Of course, things might evolve
+differently as younger cohorts, less inclined to vote PQ (Mahéo and
+Bélanger 2018), make up a larger share of the electorate. The page on <a href="sovereignty-generations.html">support for sovereignty across
+generations</a> takes up that question.</p>
 </div>
 <div class="section level2">
 <h2 id="about-the-data">About the data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
@@ -1162,24 +1599,100 @@ affects the 2022 shares.</li>
 <li>
 <strong>Studies.</strong> The Quebec Election Studies of 2012 to
 2022 for the left-right placement, and of 2007 to 2022 for the
-referendum vote; the Durand panels are left out, since they asked other
-referendum wordings.</li>
+referendum vote. The panels run by Claire Durand and colleagues at the
+same elections are left out, so that the series has one study per
+election; in 2012 and 2018 they also asked other wordings of the
+referendum question. The 1998 polls are left out as well: they are
+unweighted, and only one of the two asked the referendum question.</li>
 <li>
-<strong>Variables.</strong> <code>vote_choice</code> restricted to
-the reported vote, <code>sov_support</code> as the share of Yes among
-Yes and No, and <code>lr_self</code>, the respondent’s own placement
-from 0 (left) to 10 (right). The 2007 and 2008 studies asked the 1995
-question, the others the question on an independent country: the rows of
-the bar chart are not one series.</li>
+<strong>Questions.</strong> The vote reported after the election;
+the referendum vote as the share of Yes among respondents who chose Yes
+or No (those who remain undecided are set aside); the respondent’s own
+placement from 0 (left) to 10 (right). Francophones are respondents
+whose mother tongue is French. The 2007 and 2008 studies asked the 1995
+referendum question, with a follow-up that asked the undecided which way
+they leaned; the others asked a question on an independent country. In
+2022 the left-right question was worded differently, was asked on its
+own rather than after the respondent placed the parties, and offered no
+“don’t know”; almost every respondent answered it (98%, against about
+80% before), so 2022 left-right figures compare only approximately with
+earlier years.</li>
 <li>
 <strong>Timing.</strong> In 2022 the referendum and left-right
-questions were asked during the campaign and the reported vote after the
-election; the estimates keep the respondents of both waves, weighted
+questions were asked during the campaign and the vote after the
+election; the estimates use the respondents who took part in both waves,
 with the post-election weight.</li>
 <li>
-<strong>Weights.</strong> Each study’s recommended post-election
-weight, through <code><a href="../reference/qes_design.html">qes_design()</a></code>; 2008 is unweighted (its
-weights are calibrated on the vote and are under review).</li>
+<strong>Weights.</strong> Each study’s post-election weight. The
+2008 study is shown unweighted: its weights were adjusted to the
+election result, which makes them unsuited to a study of the vote.</li>
+<li>
+<strong>Share of variance.</strong> Computed within each study on
+the respondents who answered both questions and voted for one of the
+parties shown, with 95% intervals from 500 bootstrap replicates of the
+study’s design.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="reproduce-this-page">Reproduce this page<a class="anchor" aria-label="anchor" href="#reproduce-this-page"></a>
+</h2>
+<p>The data come from one call to <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, which
+pools the reported vote (<code>vote_choice</code>), the referendum vote
+(<code>sov_support</code>), left-right placement (<code>lr_self</code>)
+and mother tongue (<code>lang_mother</code>) across the studies:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"sov_support"</span>, <span class="st">"lr_self"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
+<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>A weighted mean by party, within one study:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      <span class="va">svymean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     vote_choice  lr_self         se</span></span>
+<span><span class="co">#&gt; CAQ         CAQ 5.549020 0.09808683</span></span>
+<span><span class="co">#&gt; QS           QS 3.658518 0.19725417</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="going-further">Going further<a class="anchor" aria-label="anchor" href="#going-further"></a>
+</h2>
+<ul>
+<li>Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo and Richard
+Nadeau. 2022. <em>Le nouvel électeur québécois</em>. Montréal: Presses
+de l’Université de Montréal. <a href="https://doi.org/10.1515/9782760645929" class="external-link uri">https://doi.org/10.1515/9782760645929</a>
+</li>
+<li>Bélanger, Éric, and Valérie-Anne Mahéo. 2020. “Le Parti québécois
+dans le nouveau système multipartite.” <em>Politique et Sociétés</em> 39
+(3): 19–55. <a href="https://doi.org/10.7202/1072084ar" class="external-link uri">https://doi.org/10.7202/1072084ar</a>
+</li>
+<li>Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette and
+Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election.”
+<em>Canadian Journal of Political Science</em> 58 (2): 277–296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link uri">https://doi.org/10.1017/S0008423924000829</a>
+</li>
+<li>Bélanger, Éric, Richard Nadeau, Ailsa Henderson and Eve Hepburn.
+2018. <em>The National Question and Electoral Politics in Quebec and
+Scotland</em>. Montreal and Kingston: McGill-Queen’s University Press.
+<a href="https://doi.org/10.1515/9780773554139" class="external-link uri">https://doi.org/10.1515/9780773554139</a>
+</li>
+<li>Daoust, Jean-François, and Thomas Gareau-Paquette. 2024. “Is Quebec
+independence still key in making sense of Canadian elections? A
+longitudinal analysis (2000–2021).” <em>Regional &amp; Federal
+Studies</em> 34 (5): 781–806. <a href="https://doi.org/10.1080/13597566.2023.2233422" class="external-link uri">https://doi.org/10.1080/13597566.2023.2233422</a>
+</li>
+<li>Mahéo, Valérie-Anne, and Éric Bélanger. 2018. “Is the Parti
+Québécois Bound to Disappear? A Study of the Current Generational
+Dynamics of Electoral Behaviour in Quebec.” <em>Canadian Journal of
+Political Science</em> 51 (2): 335–356. <a href="https://doi.org/10.1017/S0008423917001147" class="external-link uri">https://doi.org/10.1017/S0008423917001147</a>
+</li>
+<li>Yale, François, and Claire Durand. 2011. “What did Quebeckers Want?
+Impact of Question Wording, Constitutional Proposal and Context on
+Support for Sovereignty, 1976–2008.” <em>American Review of Canadian
+Studies</em> 41 (3): 242–258. <a href="https://doi.org/10.1080/02722011.2011.594517" class="external-link uri">https://doi.org/10.1080/02722011.2011.594517</a>
+</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

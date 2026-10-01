@@ -1,4 +1,4 @@
-# Get value labels from a codebook (legacy)
+# Get value labels from a codebook (older name)
 
 Soft-deprecated: use `qes_codebook(layout = "long")`, which has one row
 per value with its label and missing type. `get_value_labels()` keeps

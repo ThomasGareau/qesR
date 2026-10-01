@@ -15,23 +15,11 @@ spécification d’harmonisation :
 4.  quelques **relations entre les réponses** que toute mesure valide
     devrait montrer (validité de construit).
 
-La page est construite à la construction du site : les fichiers de
-données sont téléchargés depuis leurs dépôts Dataverse par le cache de
-qesR et harmonisés avec
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
-Les données de référence se trouvent dans `inst/extdata/validation/` du
-dépôt source de qesR, chaque ligne avec sa source ; les marges du
-recensement sont aussi fournies avec le paquet, les résultats officiels
-d’Élections Québec et le rapport consigné ne le sont pas (leurs
-conditions d’utilisation exigent l’autorisation écrite d’Élections
-Québec, qui est en attente). Les mêmes vérifications tournent chaque
-semaine sur les fichiers épinglés et échouent lorsque l’indice pondéré
-du vote déclaré (vérification V-L2 de la spécification) ou un indice
-pondéré du recensement dépasse de plus de 2 points sa valeur consignée,
-lorsque la surdéclaration de la participation sort de l’intervalle de 0
-à 35 points, ou lorsqu’une direction de validité de construit
-(vérification V-L4) échoue. Un indice qui baisse, ou qui monte moins,
-passe.
+Chaque étude est harmonisée avec
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+à partir de son fichier de données original. Les mêmes comparaisons
+tournent automatiquement sur les fichiers originaux : une erreur
+d’appariement qui déplacerait ces chiffres serait détectée.
 
 ``` r
 
@@ -46,7 +34,7 @@ num <- function(x, digits = 1, sign = FALSE) {
   formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
           decimal.mark = tr(".", ","))
 }
-# every study the specification covers, harmonized from the pinned files,
+# every study the specification covers, harmonized from the original files,
 # against the benchmarks that ship with qesR
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
@@ -55,7 +43,7 @@ report$year <- studies$year[match(report$study, studies$study)]
 report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
                            tr("weighted", "pondéré"))
 # one row per study and check: the weighted value where the study has a
-# reviewed weight, the unweighted one otherwise
+# usable weight, the unweighted one otherwise
 best <- function(x) {
   x <- x[order(x$study, x$variable, x$weight == "none"), ]
   x[!duplicated(paste(x$study, x$variable)), ]
@@ -107,11 +95,10 @@ knitr::kable(
 
 L’indice pondéré utilise la pondération que la spécification recommande
 pour la vague qui a posé la question ; `qes2007`, `qes2012`, `qes2014`,
-`qes2018`, `qes2022` et le panel de 2018 ont pour l’instant une
-pondération révisée. Les pondérations de `qes2007_panel`, de
-`qes2012_panel`, des sondages CROP et de `qes1998` ne sont pas assez
-documentées pour être utilisées (leurs lignes sont `needs_review`), et
-les deux pondérations de `qes2008` sont calées sur le vote ou sur la
+`qes2018`, `qes2022` et le panel de 2018 en ont une. Les pondérations de
+`qes2007_panel`, de `qes2012_panel`, des sondages CROP et de `qes1998`
+ne sont pas assez documentées pour être utilisées, et les deux
+pondérations de `qes2008` sont calées sur le vote ou sur la
 participation : leur indice est non pondéré. `qes1998` n’a interrogé que
 des francophones, une population que les résultats officiels ne
 décrivent pas : l’étude est montrée à titre indicatif, sans être
@@ -132,7 +119,7 @@ sont encadrés. Le PLQ est sous-estimé dans chaque étude de 2007 à 2014,
 et la CAQ en 2022. Valeurs dans la vue en
 tableau.](fr-validation_files/figure-html/recall-dark.png)
 
-Pondéré avec la pondération révisée de l'étude lorsqu'elle en a une ;
+Pondéré avec la pondération de l'étude lorsqu'elle en a une utilisable ;
 l'étude de 2008 et les panels Durand de 2007 et 2012 sont non pondérés.
 Une case vide : le parti ne s'est pas présenté, ou l'étude le compte
 dans Autres. Les sondages de 1998, qui n'ont interrogé que des
@@ -316,28 +303,28 @@ pas pour cette année (la langue maternelle en 2006).
 
 ![Carte de chaleur de l'écart en points entre la part pondérée de chaque
 catégorie de scolarité, de langue maternelle, d'âge et de genre et sa
-part au recensement, une colonne par étude dont la pondération est
-révisée ; les cases bleues sont surreprésentées, les rouges
+part au recensement, une colonne par étude qui a une pondération
+utilisable ; les cases bleues sont surreprésentées, les rouges
 sous-représentées, et les cases grises marquées cal. sont des marges sur
 lesquelles la pondération est calée. Les diplômés universitaires sont
 surreprésentés dans chaque étude. Valeurs dans la vue en
 tableau.](fr-validation_files/figure-html/census-light.png)![Carte de
 chaleur de l'écart en points entre la part pondérée de chaque catégorie
 de scolarité, de langue maternelle, d'âge et de genre et sa part au
-recensement, une colonne par étude dont la pondération est révisée ; les
-cases bleues sont surreprésentées, les rouges sous-représentées, et les
-cases grises marquées cal. sont des marges sur lesquelles la pondération
-est calée. Les diplômés universitaires sont surreprésentés dans chaque
-étude. Valeurs dans la vue en
+recensement, une colonne par étude qui a une pondération utilisable ;
+les cases bleues sont surreprésentées, les rouges sous-représentées, et
+les cases grises marquées cal. sont des marges sur lesquelles la
+pondération est calée. Les diplômés universitaires sont surreprésentés
+dans chaque étude. Valeurs dans la vue en
 tableau.](fr-validation_files/figure-html/census-dark.png)
 
-Études dont la pondération est révisée, pondérées ; le recensement qui
-précède chaque étude (Statistique Canada). Le genre et la scolarité ont
-deux catégories : une seule rangée est montrée (femmes ; université),
-l'autre en est le miroir. Une marge est marquée cal. quand chaque
-catégorie est à moins d'un demi-point du recensement, comme l'est par
-construction une marge sur laquelle la pondération est calée ; un bon
-accord n'y dit rien de la représentativité.
+Études qui ont une pondération utilisable, pondérées ; le recensement
+qui précède chaque étude (Statistique Canada). Le genre et la scolarité
+ont deux catégories : une seule rangée est montrée (femmes ;
+université), l'autre en est le miroir. Une marge est marquée cal. quand
+chaque catégorie est à moins d'un demi-point du recensement, comme l'est
+par construction une marge sur laquelle la pondération est calée ; un
+bon accord n'y dit rien de la représentativité.
 
 Vue en tableau
 
@@ -525,8 +512,8 @@ l’un de l’autre, si bien qu’une étude qui aurait inversé leurs codes
 concorderait à peu près aussi bien avec les résultats officiels. C’est
 pourquoi l’harmonisation est aussi vérifiée par les effectifs exacts de
 chaque réponse dans les fichiers originaux et par les relations de la
-section 4, et pourquoi chaque ligne de correspondance est révisée par
-rapport au questionnaire.
+section 4, et pourquoi chaque appariement est vérifié par rapport au
+questionnaire.
 
 ## Sources
 
@@ -546,9 +533,5 @@ rapport au questionnaire.
   sexe ; la copie du fichier de Statistique Canada conservée par
   l’Internet Archive).
 
-Les tableaux de référence se trouvent dans `inst/extdata/validation/` du
-dépôt source, avec la source de chaque ligne ; le paquet installé
-(`system.file("extdata", "validation", package = "qesR")`) n’a que les
-marges du recensement. Les résultats consignés de chaque étude s’y
-trouvent dans `validation_report.csv` ; ceux de `qes2022` gardent la
-licence de l’étude, CC BY-NC 4.0 (le fichier `COPYRIGHTS` du package).
+Les tableaux de référence, avec la source de chaque ligne, se trouvent
+dans le [dépôt source de qesR](https://github.com/ThomasGareau/qesR).

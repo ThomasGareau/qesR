@@ -79,8 +79,8 @@ session, or kept between sessions with `options(qesR.cache = "disk")`
 (see
 [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)).
 The first call in a session that leaves `assign_global` unset prints a
-one-time note about this change from qesR 0.4.4; passing `assign_global`
-explicitly (TRUE or FALSE) avoids it.
+one-time note about it; passing `assign_global` explicitly (TRUE or
+FALSE) avoids it.
 
 ## Which file is read
 
@@ -100,12 +100,10 @@ call makes no request (`options(qesR.memo = FALSE)` turns this off).
 
 The data is returned as deposited: column names, codes and missing
 values (`NA`) are those of the file, and no row is dropped or recoded.
-For qesR 0.4.4 users, names, codes and
-[`is.na()`](https://rdrr.io/r/base/NA.html) counts are unchanged; three
-columns of `qes2007_panel` keep their 0.4.4 names (`AFFGÉN`, `PROPRIÉ`,
-`PROPGÉN`). Compared with 0.4.4, accented text is no longer damaged,
-`qes2022` dates are date-times, and labels are those of the file
-(below).
+The one exception: three columns of `qes2007_panel` are named `AFFGÉN`,
+`PROPRIÉ` and `PROPGÉN` (`AffGénérale`, `propriété` and `PropGénérale`
+in the file), the names Dataverse gives them. `qes2022` dates are
+date-times, and labels are those of the file (below).
 
 ## Labels and missing values
 
@@ -115,19 +113,19 @@ vectors; convert one with
 [`haven::as_factor()`](https://forcats.tidyverse.org/reference/as_factor.html).
 Variable and value labels come from the data file itself, never from
 Dataverse's metadata or from a variable name. For `qes2012`, whose Stata
-file (the one qesR 0.4.4 read, with its lowercase names) has labels that
-Stata lowercased and cut at 80 characters, the complete labels of the
-SPSS twin of the same data are used. A few labels of the CROP files
-typed in another character set are corrected (for example "RESTE DU
-QUÉBEC"). `qes2018`'s data file has value labels for only a few
-variables; the codebook (see
+file (the one read, with its lowercase names) has labels that Stata
+lowercased and cut at 80 characters, the complete labels of the SPSS
+twin of the same data are used. A few labels of the CROP files typed in
+another character set are corrected (for example "RESTE DU QUÉBEC").
+`qes2018`'s data file has value labels for only a few variables; the
+codebook (see
 [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md))
 gives the others, from the study's questionnaire, without changing the
 data.
 
 Codes that an SPSS file declares as user-missing (such as 8 or 9 for
-"Don't know") are kept as values, as in qesR 0.4.4; the declaration is
-kept in the column attributes `qes_na_values` and `qes_na_range`.
+"Don't know") are kept as values; the declaration is kept in the column
+attributes `qes_na_values` and `qes_na_range`.
 [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md)
 sets these codes, and the "don't know" and "refused" codes the codebook
 types, to `NA`.

@@ -144,8 +144,8 @@ demo <- get_qes("qes_demo", assign_global = FALSE, quiet = TRUE)
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-30 00:14:43 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
+#> 2026-10-01 01:14:30 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 
@@ -159,12 +159,12 @@ qes_provenance(c("qes2018", "qes2014"))
 #> qes2018: file 425914 (Quebec Election Study 2018.dta) of the Dataverse
 #> dataset https://doi.org/10.5683/SP3/NWTGWS, version 1.0. Expected md5
 #> d24f5b0be727d688ad305b8eb61f0d30 (not yet checked). 3072 rows, 254 columns.
-#> Licence: CC0 1.0. qesR catalog 2.4.0.
+#> Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> qes2014: file 425916 (Quebec Election Study 2014.sav) of the Dataverse
 #> dataset https://doi.org/10.5683/SP3/64F7WR, version 1.0. Expected md5
 #> 9549423b32526a2f11a3d954a87c6861 (not yet checked). 1517 rows, 140 columns.
-#> Licence: CC0 1.0. qesR catalog 2.4.0.
+#> Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 

@@ -20,9 +20,58 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -36,59 +85,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -119,7 +143,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Catalogue des études</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Catalogue des études</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-etudes.Rmd" class="external-link"><code>vignettes/articles/fr-etudes.Rmd</code></a></small>
@@ -129,13 +153,10 @@
     
     
 <p><em><a href="studies.html">English version</a></em></p>
-<p>Toutes les études que qesR peut charger, avec ce que qesR fixe pour
-chacune : le dépôt et sa version, le fichier de données et sa somme de
-contrôle md5, et les documents. Cette page est produite à la
-construction du site à partir du catalogue livré avec le package
-(<code>inst/extdata/catalog/</code>) : ce sont les mêmes données que
-<code><a href="../reference/qes_studies.html">qes_studies()</a></code> et <code><a href="../reference/qes_docs.html">qes_docs()</a></code>. Rien n’y est
-recopié à la main.</p>
+<p>Toutes les études que qesR peut charger : leur devis, leur
+population, leur taille, leur licence et leurs documents.
+<code><a href="../reference/qes_studies.html">qes_studies()</a></code> et <code><a href="../reference/qes_docs.html">qes_docs()</a></code> renvoient les
+mêmes informations.</p>
 <table style="width:100%;" class="table">
 <colgroup>
 <col width="6%">
@@ -323,24 +344,20 @@ CREATEC</a></td>
 </tr>
 </tbody>
 </table>
-<p><code>n</code> est le nombre de lignes du fichier de données fixé.
-Les études des familles Sondage panel électoral de Durand, Sondages CROP
-d’intentions de vote et Sondages électoraux de 1998 ne sont pas des
-Études électorales québécoises : elles figurent sous leur propre titre,
-et leurs devis et leurs populations diffèrent ; vérifiez les deux avant
-de comparer des études. Codes qui partagent un même dépôt :
-<code>qes1998</code>, <code>qes1998_crop</code> et
-<code>qes1998_createc</code>. Études qui ne sont pas dans le domaine
-public : <code>qes2022</code> (CC BY-NC 4.0) ; les métadonnées que qesR
-en livre gardent leur licence (le fichier <code>COPYRIGHTS</code> du
-package en donne la liste). Études dont qesR ne livre pas les
-métadonnées : aucune.</p>
+<p><code>n</code> est le nombre de répondants du fichier de données.
+Toutes les études ne sont pas des Études électorales québécoises :
+celles des familles Sondage panel électoral de Durand, Sondages CROP
+d’intentions de vote et Sondages électoraux de 1998 figurent sous leur
+propre titre, et leurs devis et leurs populations diffèrent ; vérifiez
+les deux avant de comparer des études. Les licences, et l’attribution
+que demande l’étude de 2022, sont dans <a href="fr-citations.html">Citer
+qesR et les études</a>.</p>
 <div class="section level2">
 <h2 id="par-étude">Par étude<a class="anchor" aria-label="anchor" href="#par-%C3%A9tude"></a>
 </h2>
 <p>La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents
 téléchargent le fichier depuis Dataverse ; <code><a href="../reference/qes_download.html">qes_download()</a></code>
-les enregistre, vérifiés par md5, dans un dossier de votre choix.</p>
+les enregistre dans un dossier de votre choix.</p>
 <div class="section level3">
 <h3 id="qes2022">
 <code>qes2022</code> : Étude électorale québécoise 2022<a class="anchor" aria-label="anchor" href="#qes2022"></a>
@@ -356,11 +373,9 @@ Harvard Dataverse, version 1.1 ; licence <a href="http://creativecommons.org/li
 d’utilisation commerciale 4.0 (CC BY-NC 4.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>2022 Quebec Election Study v1.dta</code> (Fichier de données
-Stata), 1 521 lignes × 718 colonnes, md5
-<code>c51bafed57776ffa8d4c6f301f5c945b</code>
-</li>
+Stata), 1 521 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>), sous la
@@ -397,11 +412,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Quebec Election Study 2018.dta</code> (Fichier de données Stata),
-3 072 lignes × 254 colonnes, md5
-<code>d24f5b0be727d688ad305b8eb61f0d30</code>
-</li>
+3 072 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -447,11 +460,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>IPsos_oct_2018_17-057727_V.SAV</code> (Fichier système SPSS),
-1 250 lignes × 72 colonnes, md5
-<code>b6fc93f2918ae4a56de3d19e80d0bd15</code>
-</li>
+1 250 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -487,11 +498,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Quebec Election Study 2014.sav</code> (Fichier système SPSS),
-1 517 lignes × 140 colonnes, md5
-<code>9549423b32526a2f11a3d954a87c6861</code>
-</li>
+1 517 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -533,11 +542,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Quebec Election Study 2012 (STATA).dta</code> (Fichier de données
-Stata), 1 505 lignes × 177 colonnes, md5
-<code>e5ec063d9b1b03b48f458be4d8ec3d7b</code>
-</li>
+Stata), 1 505 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -580,10 +587,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
-<code>repondants_post_2012.sav</code> (Fichier système SPSS), 844 lignes
-× 79 colonnes, md5 <code>8f90a9f97a33e01eff3748f05612e26c</code>
-</li>
+<strong>Fichier de données</strong> :
+<code>repondants_post_2012.sav</code> (Fichier système SPSS), 844
+lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -627,11 +633,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>intvotetotal_juin2007_jan2010.sav</code> (Fichier système SPSS),
-24 027 lignes × 19 colonnes, md5
-<code>534514c7414d462259de4421bb4579e5</code>
-</li>
+24 027 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -668,18 +672,16 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Quebec Election Study 2008 (SPSS).sav</code> (Fichier système
-SPSS), 1 151 lignes × 63 colonnes, md5
-<code>6a69b00b943bb357c3ed10091d936ba9</code>
-</li>
+SPSS), 1 151 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
 <li>
 <strong>Note</strong> : Sondage postélectoral téléphonique
 (métadonnées du dépôt). Les fichiers SPSS et Stata ont des UNF
-différents ; le fichier SPSS lu par qesR 0.4.4 est retenu.</li>
+différents ; le fichier SPSS est retenu.</li>
 <li>
 <strong>Documents</strong> (<code>qes_docs("qes2008")</code>) :
 <ul>
@@ -710,11 +712,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Quebec Election Study 2007 (SPSS).sav</code> (Fichier système
-SPSS), 2 175 lignes × 93 colonnes, md5
-<code>e1324bbb582cf6bc01eb9949ecb8b132</code>
-</li>
+SPSS), 2 175 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -723,8 +723,8 @@ SPSS), 2 175 lignes × 93 colonnes, md5
 (métadonnées du dépôt). Les fichiers SPSS et Stata contiennent les mêmes
 données (leurs UNF diffèrent) ; le fichier SPSS, dont les étiquettes
 sont complètes, est retenu. Les deux stockent la plupart des codes de
-réponse sous forme de texte (« 01 ») ; qesR les lit comme des nombres,
-comme qesR 0.4.4.</li>
+réponse sous forme de texte (« 01 ») ; qesR les lit comme des
+nombres.</li>
 <li>
 <strong>Documents</strong> (<code>qes_docs("qes2007")</code>) :
 <ul>
@@ -756,11 +756,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>complet_tous_repondants_2007.sav</code> (Fichier système SPSS),
-2 442 lignes × 270 colonnes, md5
-<code>20f8c6fd4211744340f76293d18e5b6d</code>
-</li>
+2 442 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -804,11 +802,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Total_panel_election_QC1998.sav</code> (Fichier système SPSS),
-1 483 lignes × 42 colonnes, md5
-<code>a2a2b2fef6a2edb202beae0e63e59f0c</code>
-</li>
+1 483 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -848,11 +844,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Total_sondages_election_CROP1998.sav</code> (Fichier système
-SPSS), 450 lignes × 37 colonnes, md5
-<code>ceec0332eaa0eab117e4bcf5c4d8d672</code>
-</li>
+SPSS), 450 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -891,11 +885,9 @@ Borealis, version 1.0 ; licence <a href="http://creativecommons.org/publicdomai
 le domaine public (CC0 1.0)</a>
 </li>
 <li>
-<strong>Fichier de données fixé</strong> :
+<strong>Fichier de données</strong> :
 <code>Total_sondages_election_CREATEC1998.sav</code> (Fichier système
-SPSS), 1 057 lignes × 49 colonnes, md5
-<code>1aba610f71f1b5c46e03da2036e83330</code>
-</li>
+SPSS), 1 057 lignes</li>
 <li>
 <strong>Livre de codes hors ligne</strong> : oui, livré avec qesR
 (<code><a href="../reference/qes_codebook.html">qes_codebook()</a></code>, <code><a href="../reference/qes_search.html">qes_search()</a></code>)</li>
@@ -924,7 +916,7 @@ Livre de codes, Français, PDF</li>
 <div class="section level2">
 <h2 id="citer">Citer<a class="anchor" aria-label="anchor" href="#citer"></a>
 </h2>
-<p><code><a href="../reference/qes_cite.html">qes_cite()</a></code> donne la citation de chaque étude ; voir <a href="fr-citations.html">Citations des études</a>.</p>
+<p><code><a href="../reference/qes_cite.html">qes_cite()</a></code> donne la citation de chaque étude ; voir <a href="fr-citations.html">Citer qesR et les études</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

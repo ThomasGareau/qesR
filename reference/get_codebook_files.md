@@ -1,4 +1,4 @@
-# Get codebook files (legacy)
+# Get codebook files (older name)
 
 Returns the documentation files (codebooks, questionnaires and reports)
 deposited with a study.

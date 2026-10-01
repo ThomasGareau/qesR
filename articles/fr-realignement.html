@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>De deux partis à quatre : le réalignement du système partisan québécois, 1998-2022 • qesR</title>
+<title>De deux partis à quatre : le système partisan québécois, 1998-2022 • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,18 +16,68 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="De deux partis à quatre : le réalignement du système partisan québécois, 1998-2022">
-<meta name="description" content="Qui a bougé quand le duopole PQ-PLQ est devenu un système à quatre partis : les francophones et les autres, les jeunes et les aînés.
+<meta property="og:title" content="De deux partis à quatre : le système partisan québécois, 1998-2022">
+<meta name="description" content="Chez qui le vote québécois s'est fragmenté de 1998 à 2022, et si la question de la souveraineté l'organise encore.
 ">
-<meta property="og:description" content="Qui a bougé quand le duopole PQ-PLQ est devenu un système à quatre partis : les francophones et les autres, les jeunes et les aînés.
+<meta property="og:description" content="Chez qui le vote québécois s'est fragmenté de 1998 à 2022, et si la question de la souveraineté l'organise encore.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>De deux partis à quatre : le réalignement du système partisan québécois, 1998-2022</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>De deux partis à quatre : le système partisan québécois, 1998-2022</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-realignement.Rmd" class="external-link"><code>vignettes/articles/fr-realignement.Rmd</code></a></small>
@@ -134,58 +159,56 @@
     
     
 <p><em><a href="realignment.html">English version</a></em></p>
-<p>En 1998, le PQ et le PLQ ont obtenu 86 % des votes valides. En 2022,
-cinq partis ont obtenu chacun plus de 12 %, et le nombre effectif de
-partis (résultats officiels) est passé de 2,6 à 4,0. Les enquêtes
-montrent où cela s’est produit : chez les francophones. Leur nombre
-effectif de partis est passé de 2,8 en 1998 (les sondages CROP et
-CREATEC, qui n’ont interrogé que des francophones et sont non pondérés)
-à 3,9 dans l’Étude électorale québécoise de 2022, leur vote se divisant
-entre le PQ, la CAQ, Québec solidaire et le PLQ. Les non-francophones
-ont continué de voter PLQ : 72 % d’entre eux en 2018, contre 12 % des
-francophones. La CAQ a gagné cette année-là avec 41 % du vote
-francophone et 12 % du vote des autres électeurs.</p>
+<p>Pendant une trentaine d’années, le système partisan québécois a
+reposé sur la question de la souveraineté. À partir des années 1970, le
+Parti québécois (PQ) et le Parti libéral du Québec (PLQ) se sont succédé
+au pouvoir, et la position des Québécois sur l’indépendance expliquait
+pour une bonne part leur vote. En 1998, les deux partis obtenaient
+encore 86 % des votes valides. Or, après la percée de l’Action
+démocratique du Québec (ADQ) en 2007, Bélanger et Nadeau (2009) se
+demandaient si le récent changement de comportement des électeurs
+relevait d’un incident de parcours ou d’une transformation durable du
+paysage politique québécois. La montée de Québec solidaire (QS) et de la
+Coalition avenir Québec (CAQ) a depuis tranché cette question en partie.
+En 2022, cinq partis ont chacun obtenu plus de 12 % des voix, et le
+nombre effectif de partis (Laakso et Taagepera, 1979) est passé de 2,6
+en 1998 à 4,0, soit l’équivalent de quatre partis de taille égale. Il
+est désormais courant d’affirmer que le système s’est fragmenté, et
+l’élection de 2018, qui a mis fin à l’alternance du PQ et du PLQ au
+pouvoir, sert de point de départ aux travaux récents sur le « nouvel
+électeur québécois » (Bélanger et collaborateurs, 2022). Les résultats
+officiels nous disent dans quelle mesure le système s’est fragmenté. Ils
+ne nous disent toutefois pas chez qui, ni si la question de la
+souveraineté structure encore le vote.</p>
+<p>Les Études électorales québécoises apportent une réponse assez nette
+à ces deux questions. Premier constat : la fragmentation touche d’abord
+le vote francophone. Chez les francophones, le nombre effectif de partis
+passe de 2,8 en 1998 à 3,9 en 2022. L’estimation de 1998 provient
+toutefois des sondages CROP et CREATEC, qui n’ont interrogé que des
+francophones et ne sont pas pondérés ; depuis la première Étude
+électorale québécoise, en 2007, la hausse est plus modeste, de 3,5 à
+3,9. Les non-francophones, eux, ont continué de voter libéral jusqu’en
+2018 : cette année-là, 72 % d’entre eux ont appuyé le PLQ, contre 12 %
+des francophones. Deuxième constat : la question de la souveraineté
+divise toujours le vote francophone, mais elle ne le canalise plus vers
+deux partis. Depuis 2012, les souverainistes ne votent presque jamais
+pour le PLQ et les fédéralistes votent rarement pour le PQ ; pourtant,
+la part des francophones qui ont voté pour le parti de leur propre camp
+est passée de 55 % en 2012 à 22 % en 2022. Autrement dit, savoir où un
+électeur francophone se situe sur l’indépendance nous renseigne
+désormais davantage sur le parti qu’il écartera que sur celui qu’il
+choisira. L’idée selon laquelle la question de la souveraineté se serait
+effacée des élections québécoises ne trouve donc qu’un appui mitigé.</p>
 <div class="section level2">
-<h2 id="les-données">Les données<a class="anchor" aria-label="anchor" href="#les-donn%C3%A9es"></a>
+<h2 id="le-vote-francophone-sest-fragmenté-le-premier">Le vote francophone s’est fragmenté le premier<a class="anchor" aria-label="anchor" href="#le-vote-francophone-sest-fragment%C3%A9-le-premier"></a>
 </h2>
-<p>Toutes les figures de cette page utilisent une seule variable
-regroupée, <code>vote_choice</code>, restreinte au vote déclaré après
-l’élection (<code>types</code>) :</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
-<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"lang_mother"</span>, <span class="st">"age_group3"</span><span class="op">)</span>,</span>
-<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
-<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Une part pondérée et son intervalle de confiance, à l’intérieur d’une
-étude, c’est un <code><a href="../reference/qes_design.html">qes_design()</a></code> et un appel au package survey
-:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2018"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
-<span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d18</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lang_mother</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">vote_choice</span> <span class="op">==</span> <span class="st">"CAQ"</span><span class="op">)</span>, <span class="op">~</span><span class="va">lang_mother</span>, <span class="va">d18</span>, <span class="va">svyciprop</span>,</span>
-<span>      method <span class="op">=</span> <span class="st">"logit"</span>, vartype <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         lang_mother I(vote_choice == "CAQ")       ci_l      ci_u</span></span>
-<span><span class="co">#&gt; French       French               0.4114613 0.38603333 0.4373710</span></span>
-<span><span class="co">#&gt; English     English               0.1101960 0.07564846 0.1578270</span></span>
-<span><span class="co">#&gt; Other         Other               0.1717929 0.10011622 0.2788822</span></span></code></pre></div>
-<p>Les figures répètent ce calcul pour chaque étude, avec les fonctions
-de <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/_data.R" class="external-link"><code>_data.R</code></a>.
-Les estimations de chaque étude sont faites à l’intérieur de cette
-étude, jamais en regroupant des études.</p>
-</div>
-<div class="section level2">
-<h2 id="les-francophones-se-sont-fragmentés-les-non-francophones-sont-restés-au-plq">Les francophones se sont fragmentés ; les non-francophones sont
-restés au PLQ<a class="anchor" aria-label="anchor" href="#les-francophones-se-sont-fragment%C3%A9s-les-non-francophones-sont-rest%C3%A9s-au-plq"></a>
-</h2>
-<figure class="qesr-fig" id="fig-enp"><figcaption><span class="qesr-title">Le vote francophone s'est fragmenté, de 2,8 à 3,9 partis effectifs ; le vote non francophone est resté concentré jusqu'en 2018</span><span class="qesr-sub">Nombre effectif de partis à chaque élection : résultat officiel et vote déclaré selon la langue maternelle, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/enp-light.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/enp-dark.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : qesR, variable regroupée vote_choice (vote déclaré) d'une Étude électorale québécoise par élection et des sondages de 1998 (CROP et CREATEC, francophones seulement, non pondérés ; leur recontact a surreprésenté les indécis et les refus) ; résultats officiels d'Élections Québec. Nombre effectif de partis = 1 / somme des carrés des parts, le PV, ON et les autres partis comptant pour un. Bandes : intervalles de confiance à 95 %. Pondéré avec la pondération postélectorale de chaque étude ; points creux (1998, 2008) : non pondéré, pondération en révision. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. Les panels Durand sont dans la vue en tableau.</p>
+<figure class="qesr-fig" id="fig-enp"><figcaption><span class="qesr-title">Le vote francophone s'est fragmenté, de 2,8 à 3,9 partis effectifs ; le vote non francophone est resté beaucoup plus concentré</span><span class="qesr-sub">Nombre effectif de partis à chaque élection : résultat officiel et vote déclaré selon la langue maternelle, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/enp-light.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/enp-dark.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC, qui n'ont interrogé que des francophones, chacun selon sa propre définition (la langue maternelle pour CREATEC, la langue parlée le plus souvent à la maison pour CROP) ; résultats officiels d'Élections Québec. Le nombre effectif de partis (Laakso et Taagepera, 1979) est 1 divisé par la somme des carrés des parts de vote ; les petits partis sont regroupés en une seule catégorie, « autres ». Bandes : intervalles de confiance à 95 %. Points creux (1998, 2008) : données non pondérées. L'axe horizontal est en années, avec une coupure entre 1998 et 2007.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
    <th style="text-align:left;"> Étude </th>
    <th style="text-align:left;"> Groupe </th>
-   <th style="text-align:left;"> Nombre effectif [IC à 95 %] </th>
+   <th style="text-align:left;"> Nombre effectif [IC à 95 %] </th>
    <th style="text-align:right;"> n </th>
    <th style="text-align:left;"> Officiel, tous les électeurs </th>
    <th style="text-align:left;"> Pondération </th>
@@ -372,40 +395,44 @@ restés au PLQ<a class="anchor" aria-label="anchor" href="#les-francophones-se-s
    <td style="text-align:left;"> pondéré </td>
   </tr>
 </tbody>
-</table></details></figure><p>À remarquer :</p>
-<ul>
-<li>Sur l’ensemble de la période, les deux lignes montent, la ligne
-officielle de 2,6 à 4,0 et celle des francophones de 2,8 à 3,9, mais pas
-d’une élection à l’autre : de 2008 à 2012, le nombre officiel monte (3,0
-à 3,6) alors que celui des francophones reste à 3,1, et en 2014 le
-nombre officiel baisse (3,4) alors que celui des francophones monte
-(3,7). Le premier sommet, en 2007, est la lutte à trois du PQ, du PLQ et
-de l’ADQ.</li>
-<li>Chez les non-francophones, le vote reste concentré, avec un nombre
-effectif entre 1,3 et 2,5 de 2007 à 2018. Il atteint 2,9 en 2022, quand
-le PLQ tombe à 54 % de leur vote, mais l’intervalle va de 1,9 à 3,9 :
-seuls 121 votants non francophones ont répondu, et l’ampleur du saut est
-incertaine.</li>
-<li>La ligne des enquêtes suit de près la ligne officielle, sans se
-confondre avec elle : les enquêtes surestiment certains partis (voir <a href="fr-enquetes-resultats.html">Les enquêtes et les résultats
-officiels</a>).</li>
-</ul>
+</table></details></figure><p>Les deux courbes tirées des enquêtes ne dessinent pas du tout le même
+portrait. Chez les francophones, le nombre effectif de partis a augmenté
+sur l’ensemble de la période, mais pas de façon continue. Il atteint un
+premier sommet en 2007 (3,5), l’année de la percée adéquiste, redescend
+à 3,1 en 2012 et ne passe plus sous 3,6 depuis 2014. Chez les
+non-francophones, il était de 2,5 en 2007, alors que le PLQ recueillait
+58 % de leurs voix, puis il s’est maintenu entre 1,3 et 2,1 de 2008 à
+2018 : un vote largement dominé par le PLQ. Il atteint 2,9 en 2022,
+alors que le PLQ ne recueille plus que 54 % de leurs voix. Cela dit,
+seuls 121 électeurs non francophones ont répondu cette année-là, et
+l’intervalle va de 1,9 à 3,9, ce qui inclut la valeur de 2007. La hausse
+est nette par rapport aux élections de 2008 à 2018 ; son ampleur l’est
+beaucoup moins.</p>
+<p>Les courbes des enquêtes suivent de près la courbe officielle, sans
+toutefois s’y superposer. Les enquêtes surestiment certains partis et en
+sous-estiment d’autres (voir <a href="fr-enquetes-resultats.html">Les
+enquêtes face aux résultats officiels</a>). En 2022, par exemple, 33 %
+des répondants déclarent avoir voté pour la CAQ, alors que le parti a
+obtenu 41 % des votes valides. L’enquête fait donc paraître le vote de
+2022 plus fragmenté qu’il ne l’était (4,7 partis effectifs chez
+l’ensemble des répondants, contre 4,0 selon les résultats officiels).
+Ces courbes renseignent ainsi davantage sur l’écart entre les deux
+groupes et son évolution que sur leur niveau.</p>
 </div>
 <div class="section level2">
-<h2 id="le-vote-de-chaque-parti-chez-les-francophones-et-les-autres">Le vote de chaque parti, chez les francophones et les autres<a class="anchor" aria-label="anchor" href="#le-vote-de-chaque-parti-chez-les-francophones-et-les-autres"></a>
+<h2 id="parti-par-parti-le-clivage-linguistique-a-tenu">Parti par parti, le clivage linguistique a tenu<a class="anchor" aria-label="anchor" href="#parti-par-parti-le-clivage-linguistique-a-tenu"></a>
 </h2>
-<figure class="qesr-fig" id="fig-lang"><figcaption><span class="qesr-title">Les non-francophones votent PLQ (72 % en 2018) ; les victoires de la CAQ sont francophones (41 % des francophones, 12 % des autres)</span><span class="qesr-sub">Part du vote déclaré chez les francophones et les non-francophones, selon le parti, avec intervalles de confiance à 95 % et résultat officiel</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/lang-light.png" alt="Cinq petits graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ, CAQ), de la part du vote déclaré chez les francophones et chez les non-francophones à chaque élection de 1998 à 2022, avec le résultat officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018 contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones et 12 % des autres. Valeurs dans la vue en tableau." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/lang-dark.png" alt="Cinq petits graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ, CAQ), de la part du vote déclaré chez les francophones et chez les non-francophones à chaque élection de 1998 à 2022, avec le résultat officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018 contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones et 12 % des autres. Valeurs dans la vue en tableau." width="672" height="499" loading="lazy"><p class="qesr-note">Source : qesR, variable regroupée vote_choice (vote déclaré), une Étude électorale québécoise par élection et les sondages de 1998 (francophones seulement). Trait : part officielle des votes valides, tous les électeurs. Barres : intervalles de confiance à 95 % (logit). Pondéré ; points creux (1998, 2008) : non pondéré, pondération en révision. Les cellules de moins de 30 répondants ne sont pas tracées. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. L'ADQ a fusionné avec la CAQ en 2012 ; les deux restent des partis distincts ici. Le PCQ, les panels Durand et les autres partis sont dans la vue en tableau.</p>
+<figure class="qesr-fig" id="fig-lang"><figcaption><span class="qesr-title">Les victoires de la CAQ sont francophones : en 2018, elle a obtenu 41 % des francophones et 12 % des autres électeurs</span><span class="qesr-sub">Part du vote déclaré chez les francophones et les non-francophones, selon le parti, avec intervalles de confiance à 95 % et résultat officiel</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/lang-light.png" alt="Cinq petits graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ, CAQ), de la part du vote déclaré chez les francophones et chez les non-francophones à chaque élection de 1998 à 2022, avec le résultat officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018 contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones et 12 % des autres. Valeurs dans la vue en tableau." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/lang-dark.png" alt="Cinq petits graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ, CAQ), de la part du vote déclaré chez les francophones et chez les non-francophones à chaque élection de 1998 à 2022, avec le résultat officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018 contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones et 12 % des autres. Valeurs dans la vue en tableau." width="672" height="499" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC (francophones seulement). Trait : part officielle des votes valides, tous les électeurs. Barres : intervalles de confiance à 95 %. Points creux (1998, 2008) : données non pondérées. Les groupes de moins de 30 répondants ne sont pas tracés. L'ADQ a fusionné avec la CAQ en 2012 ; les deux restent distincts ici. Le PCQ et les petits partis sont dans la vue en tableau.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Parti </th>
    <th style="text-align:right;"> Élection </th>
    <th style="text-align:left;"> Étude </th>
    <th style="text-align:left;"> Groupe </th>
-   <th style="text-align:left;"> Part du vote déclaré [IC à 95 %] </th>
+   <th style="text-align:left;"> Part du vote déclaré [IC à 95 %] </th>
    <th style="text-align:right;"> n </th>
    <th style="text-align:left;"> Officiel, tous les électeurs </th>
    <th style="text-align:left;"> Pondération </th>
-   <th style="text-align:left;"> Niveau </th>
   </tr></thead>
 <tbody>
 <tr>
@@ -417,7 +444,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 43,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -428,7 +454,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 33,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -439,7 +464,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 33,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -450,7 +474,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 33,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -461,7 +484,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 33,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -472,7 +494,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 42,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -483,7 +504,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 42,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -494,7 +514,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 31,2 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -505,7 +524,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 31,2 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -516,7 +534,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 31,2 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -527,7 +544,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 31,2 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -538,7 +554,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 41,5 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -549,7 +564,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 41,5 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -560,7 +574,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 24,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -571,7 +584,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 24,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -582,7 +594,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 24,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -593,7 +604,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 24,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -604,7 +614,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 14,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -615,7 +624,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 14,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -626,7 +634,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 42,9 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -637,7 +644,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 28,3 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -648,7 +654,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 28,3 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -659,7 +664,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 28,3 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -670,7 +674,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 28,3 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -681,7 +684,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 35,2 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -692,7 +694,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 35,2 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -703,7 +704,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 31,9 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -714,7 +714,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 31,9 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -725,7 +724,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 31,9 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -736,7 +734,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 31,9 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -747,7 +744,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 25,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -758,7 +754,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 25,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -769,7 +764,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 17,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -780,7 +774,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 17,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -791,7 +784,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 17,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -802,7 +794,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 17,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -813,7 +804,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 14,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -824,7 +814,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 14,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -835,7 +824,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 11,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -846,7 +834,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 30,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -857,7 +844,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 30,8 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -868,7 +854,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 30,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -879,7 +864,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 30,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -890,7 +874,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 16,4 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -901,7 +884,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 16,4 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -912,7 +894,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -923,7 +904,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -934,7 +914,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -945,7 +924,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -956,7 +934,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 3,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -967,7 +944,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 3,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -978,7 +954,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 6,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -989,7 +964,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 6,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1000,7 +974,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 6,0 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1011,7 +984,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 6,0 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1022,7 +994,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 7,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1033,7 +1004,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 7,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1044,7 +1014,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 16,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1055,7 +1024,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 16,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1066,7 +1034,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 16,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1077,7 +1044,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 16,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1088,7 +1054,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 15,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1099,7 +1064,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 15,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1110,7 +1074,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 27,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1121,7 +1084,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 27,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1132,7 +1094,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 27,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1143,7 +1104,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 27,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1154,7 +1114,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 23,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1165,7 +1124,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 23,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1176,7 +1134,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 37,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1187,7 +1144,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 37,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1198,7 +1154,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 37,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1209,7 +1164,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 37,4 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1220,7 +1174,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 41,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1231,7 +1184,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 41,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PCQ </td>
@@ -1242,7 +1194,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 12,9 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PCQ </td>
@@ -1253,7 +1204,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 12,9 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1264,7 +1214,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 1,8 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1275,7 +1224,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 4,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1286,7 +1234,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 4,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1297,7 +1244,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 4,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1308,7 +1254,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 4,1 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1319,7 +1264,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 2,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1330,7 +1274,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 2,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1341,7 +1284,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1352,7 +1294,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> identique </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1363,7 +1304,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1374,7 +1314,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 3,6 </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-   <td style="text-align:left;"> approximatif </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1385,7 +1324,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 2,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1396,7 +1334,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 2,0 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1407,7 +1344,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 3,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1418,7 +1354,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 3,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1429,7 +1364,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 3,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1440,7 +1374,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 3,1 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1451,7 +1384,6 @@ officiels</a>).</li>
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 1,7 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Autres </td>
@@ -1462,27 +1394,1083 @@ officiels</a>).</li>
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 1,7 </td>
    <td style="text-align:left;"> pondéré </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 </tbody>
-</table></details></figure><p>À remarquer :</p>
-<ul>
-<li>Le PLQ est resté le parti des non-francophones : 58 % de leur vote
-en 2007, 86 % en 2014, tandis que son vote francophone passait de 34 %
-en 1998 (les sondages de 1998) à 6 % en 2022, bien sous sa part
-officielle.</li>
-<li>Le PQ a perdu les quelques électeurs non francophones qu’il avait
-(15 % en 2007, 2 % en 2022). Québec solidaire a progressé d’abord chez
-les francophones, puis chez les autres en 2022.</li>
-<li>Les victoires de la CAQ sont des victoires francophones ; comme
-l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
-2022).</li>
-</ul>
+</table></details></figure><p>Le PLQ est demeuré le parti des non-francophones. Il a obtenu 58 % de
+leurs voix en 2007, 86 % en 2014 et encore 54 % en 2022, sa part la plus
+faible de la période. Chez les francophones, en revanche, sa part est
+passée de 34 % en 1998 à 6 % en 2022, bien en deçà de son résultat
+officiel de 14 % cette année-là. Le PQ, lui, n’a jamais compté beaucoup
+d’électeurs non francophones (15 % en 2007) et n’en conserve presque
+plus (2 % en 2022).</p>
+<p>Les victoires de la CAQ sont, quant à elles, des victoires
+francophones. En 2018, elle a obtenu 41 % du vote francophone et 12 % de
+celui des autres électrices et électeurs ; en 2022, 39 % et 12 %. Comme
+l’ADQ avant elle, elle rejoint à peine les non-francophones. Les deux
+partis qui ont le mieux transcendé le clivage linguistique en 2022 sont
+ceux dont la percée est la plus récente. Québec solidaire, qui a d’abord
+progressé chez les francophones (19 % en 2018), a obtenu 19 % des
+francophones et 12 % des autres ; le Parti conservateur du Québec (PCQ),
+15 % et 9 %. Avec si peu de répondants non francophones, ces écarts
+demeurent incertains. À partir de la même enquête de 2022, Bélanger et
+collaborateurs (2025) montrent que, contrairement à la plupart des
+autres partis, le PCQ puisait autant chez les non-francophones que chez
+les francophones, toutes choses égales par ailleurs ; les parts brutes
+présentées ici ne tiennent pas compte de ces autres facteurs. Les
+nouveaux partis ont donc d’abord divisé le vote francophone. Chez les
+non-francophones, la rupture n’est venue qu’en 2022, et elle repose sur
+121 répondants.</p>
 </div>
 <div class="section level2">
-<h2 id="lécart-dâge-parti-par-parti">L’écart d’âge, parti par parti<a class="anchor" aria-label="anchor" href="#l%C3%A9cart-d%C3%A2ge-parti-par-parti"></a>
+<h2 id="la-souveraineté-divise-encore-le-vote-francophone-mais-ne-le-canalise-plus">La souveraineté divise encore le vote francophone, mais ne le
+canalise plus<a class="anchor" aria-label="anchor" href="#la-souverainet%C3%A9-divise-encore-le-vote-francophone-mais-ne-le-canalise-plus"></a>
 </h2>
-<figure class="qesr-fig" id="fig-age"><figcaption><span class="qesr-title">En 2022, Québec solidaire a gagné les jeunes et la CAQ les aînés : des écarts d'âge de +31 pts et −34 pts</span><span class="qesr-sub">Part du vote déclaré de chaque parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/age-light.png" alt="Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points, à chaque élection de 1998 à 2022, avec intervalles de confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec solidaire est à +31 pts et la CAQ à −34 pts. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/age-dark.png" alt="Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points, à chaque élection de 1998 à 2022, avec intervalles de confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec solidaire est à +31 pts et la CAQ à −34 pts. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><p class="qesr-note">Source : qesR, variables regroupées vote_choice (vote déclaré) et age_group3 ; une Étude électorale québécoise par élection et les sondages de 1998 (francophones seulement). Au-dessus de zéro : le parti fait mieux chez les jeunes. Barres : intervalles de confiance à 95 % de la différence, à partir de la covariance des estimations des deux groupes d'âge. Pondéré avec la pondération postélectorale de chaque étude ; creux (1998, 2008) : non pondéré, pondération en révision. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. Les parts de chaque groupe d'âge et les panels Durand sont dans la vue en tableau.</p>
+<figure class="qesr-fig" id="fig-sov"><figcaption><span class="qesr-title">Chaque camp a délaissé son parti traditionnel : de 2012 à 2022, le PQ est passé de 75 % à 38 % chez les souverainistes francophones</span><span class="qesr-sub">Vote déclaré des francophones, selon le camp qu'ils prendraient à un référendum sur la souveraineté. Chez les fédéralistes, le PLQ est passé de 34 % en 2012 à 10 % en 2022</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/sov-light.png" alt="Deux panneaux de barres horizontales empilées, une barre par élection de 1998 à 2022 : comment les francophones qui voteraient Oui et ceux qui voteraient Non à un référendum répartissent leur vote déclaré entre les partis. Chez ceux qui voteraient Oui, le PQ obtient 75 % en 2012 et 38 % en 2022 ; chez ceux qui voteraient Non, le PLQ obtient 34 % en 2012 et 10 % en 2022, et la CAQ 43 % en 2022. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/sov-dark.png" alt="Deux panneaux de barres horizontales empilées, une barre par élection de 1998 à 2022 : comment les francophones qui voteraient Oui et ceux qui voteraient Non à un référendum répartissent leur vote déclaré entre les partis. Chez ceux qui voteraient Oui, le PQ obtient 75 % en 2012 et 38 % en 2022 ; chez ceux qui voteraient Non, le PLQ obtient 34 % en 2012 et 10 % en 2022, et la CAQ 43 % en 2022. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises (une par élection) et, pour 1998, le sondage CROP ; répondants francophones qui ont déclaré un vote et choisi un camp. De 1998 à 2008, la question est celle du référendum de 1995, qui proposait un partenariat avec le Canada, et les indécis sont relancés ; à partir de 2012, elle porte sur un pays indépendant. Le camp du Oui est à peu près aussi grand chez ces francophones en 2008 (52 %) qu'en 2012 (52 %), mais les deux questions n'attirent pas forcément les mêmes électeurs : il faut comparer les rangées à l'intérieur de chaque période. Les étiquettes indiquent les parts de 10 % ou plus ; les intervalles de confiance à 95 % et les panels Durand sont dans la vue en tableau. 1998 et 2008 : données non pondérées.</p>
+<details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:right;"> Élection </th>
+   <th style="text-align:left;"> Étude </th>
+   <th style="text-align:left;"> Question </th>
+   <th style="text-align:left;"> Camp </th>
+   <th style="text-align:left;"> Parti </th>
+   <th style="text-align:left;"> Part du vote déclaré [IC à 95 %] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Pondération </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1,4 [0,4 ; 5,5] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 83,7 [76,6 ; 88,9] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 14,2 [9,3 ; 21,0] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 0,7 [0,1 ; 4,9] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 52,1 [44,5 ; 59,5] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 24,9 [18,9 ; 31,9] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 20,7 [15,3 ; 27,5] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> Sondages de 1998 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 2,4 [0,9 ; 6,1] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 2,8 [1,7 ; 4,7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 58,7 [54,3 ; 63,0] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 25,7 [22,0 ; 29,7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 7,8 [5,7 ; 10,7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 5,0 [3,4 ; 7,1] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 40,0 [35,8 ; 44,2] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 8,7 [6,6 ; 11,4] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 42,4 [38,2 ; 46,7] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 2,5 [1,3 ; 4,5] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> EEQ 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 6,4 [4,5 ; 9,1] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 5,0 [3,4 ; 7,2] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 56,0 [51,8 ; 60,1] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 28,1 [24,5 ; 32,0] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 6,3 [4,5 ; 8,7] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 4,6 [3,1 ; 6,7] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 44,9 [40,6 ; 49,2] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 9,9 [7,6 ; 12,8] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 39,1 [35,0 ; 43,3] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 1,4 [0,6 ; 2,8] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> Panel 2007 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 4,8 [3,3 ; 7,1] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 9,6 [7,0 ; 13,0] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 73,7 [69,0 ; 77,9] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 6,9 [4,7 ; 10,0] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 7,2 [5,0 ; 10,3] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 2,7 [1,4 ; 4,9] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 60,5 [55,2 ; 65,6] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 9,4 [6,7 ; 12,9] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 27,2 [22,7 ; 32,2] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 1,5 [0,6 ; 3,5] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> EEQ 2008 </td>
+   <td style="text-align:left;"> La question de 1995 (partenariat) </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 1,5 [0,6 ; 3,5] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 0,5 [0,1 ; 1,9] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 74,8 [70,5 ; 78,7] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 8,9 [6,5 ; 12,0] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 10,5 [7,9 ; 13,8] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 5,3 [3,7 ; 7,5] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 33,7 [29,1 ; 38,6] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 13,0 [10,0 ; 16,7] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 4,1 [2,6 ; 6,4] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 45,7 [40,8 ; 50,7] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 3,5 [2,2 ; 5,6] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1,4 [0,5 ; 4,3] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 72,4 [66,1 ; 78,0] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 12,1 [8,4 ; 17,3] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 9,3 [6,1 ; 14,0] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 4,7 [2,5 ; 8,5] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 39,7 [34,4 ; 45,2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 19,4 [15,4 ; 24,1] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 2,9 [1,5 ; 5,4] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 34,6 [29,6 ; 40,0] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> Panel 2012 </td>
+   <td style="text-align:left;"> Un pays souverain </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 3,5 [1,9 ; 6,2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1,9 [0,9 ; 4,2] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 68,7 [63,4 ; 73,6] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 13,0 [10,1 ; 16,6] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 12,6 [9,3 ; 16,9] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 3,7 [2,0 ; 6,8] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 46,4 [41,3 ; 51,5] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 7,6 [5,2 ; 10,9] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 4,6 [2,9 ; 7,1] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 38,9 [34,0 ; 44,1] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 2,6 [1,5 ; 4,4] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1,0 [0,5 ; 2,0] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 45,7 [41,6 ; 49,9] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 23,5 [20,2 ; 27,2] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 28,6 [24,9 ; 32,6] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 1,2 [0,5 ; 2,6] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 24,2 [21,2 ; 27,5] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 5,8 [4,2 ; 7,8] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 13,7 [11,3 ; 16,6] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 48,7 [44,9 ; 52,5] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 7,6 [5,7 ; 10,1] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 3,5 [1,6 ; 7,2] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 34,5 [27,3 ; 42,4] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 19,6 [14,2 ; 26,6] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 39,2 [31,2 ; 47,8] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 3,3 [1,3 ; 8,0] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 25,4 [20,3 ; 31,3] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 6,3 [3,6 ; 10,6] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 12,8 [8,4 ; 19,2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 46,9 [40,1 ; 53,7] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> Panel 2018 </td>
+   <td style="text-align:left;"> Favorable à l'indépendance </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 8,6 [5,3 ; 13,6] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1,3 [0,5 ; 3,3] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 37,9 [32,4 ; 43,7] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 17,8 [13,8 ; 22,7] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 32,6 [27,1 ; 38,6] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> PCQ </td>
+   <td style="text-align:left;"> 9,8 [6,7 ; 14,2] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Oui (souverainistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 0,6 [0,1 ; 2,6] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 10,4 [7,3 ; 14,7] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 6,2 [4,1 ; 9,2] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 17,4 [13,9 ; 21,6] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 43,4 [38,1 ; 48,8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> PCQ </td>
+   <td style="text-align:left;"> 21,0 [16,9 ; 25,8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> Un pays indépendant </td>
+   <td style="text-align:left;"> Voteraient Non (fédéralistes) </td>
+   <td style="text-align:left;"> Autres </td>
+   <td style="text-align:left;"> 1,5 [0,6 ; 3,8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Deux constats s’imposent. D’abord, le mur entre les deux anciens
+camps tient toujours. À partir de 2012, le PLQ n’a jamais recueilli plus
+de 2 % du vote souverainiste francophone, et le PQ jamais plus de 13 %
+du vote fédéraliste. Ensuite, à l’intérieur de chaque camp, le parti
+traditionnel a perdu son emprise, et pas au même rythme. Les
+fédéralistes francophones sont partis les premiers, mais pas de façon
+linéaire. En 2007, l’ADQ en attirait déjà à peu près autant que le PLQ
+(42 % contre 40 %) ; après un bref retour vers le PLQ en 2008 (61 %), la
+CAQ en a obtenu 46 % en 2012. De 2012 à 2022, la part du PLQ chez les
+fédéralistes francophones est passée de 34 % à 10 %, derrière la CAQ, le
+PCQ et même QS. Les souverainistes francophones sont restés plus
+longtemps fidèles au PQ. Sa part de leur vote est passée de 75 % en 2012
+à 38 % en 2022, et l’essentiel de ce recul est survenu en 2018, lorsque
+Québec solidaire et la CAQ se les sont partagés. Il en découle que la
+part des francophones ayant voté pour le parti de leur camp est passée
+de 55 % en 2012 à 22 % en 2022 (la vue en tableau donne chaque
+élection).</p>
+<p>Le parti qui a le plus gagné est celui qui ne se range dans aucun des
+deux camps. En 2022, la CAQ a obtenu 43 % du vote fédéraliste
+francophone et 33 % du vote souverainiste. La question de la
+souveraineté n’a donc pas disparu des élections québécoises ; ce qui a
+disparu, c’est le bipartisme qui la traduisait en votes. Ce résultat
+rejoint celui de Daoust et Gareau-Paquette (2024), qui montrent qu’aux
+élections fédérales, l’appui à l’indépendance demeure un déterminant clé
+du vote, son poids étant stable depuis 2006 après avoir diminué par
+rapport aux élections de 2000 et de 2004. Ici, en revanche, c’est la
+façon dont ce clivage se traduit en partis qui a changé.</p>
+</div>
+<div class="section level2">
+<h2 id="lâge-recoupe-la-langue-et-la-souveraineté">L’âge recoupe la langue et la souveraineté<a class="anchor" aria-label="anchor" href="#l%C3%A2ge-recoupe-la-langue-et-la-souverainet%C3%A9"></a>
+</h2>
+<figure class="qesr-fig" id="fig-age"><figcaption><span class="qesr-title">En 2022, Québec solidaire menait chez les jeunes et la CAQ chez les aînés (écarts d'âge de +31 points et de −34 points)</span><span class="qesr-sub">Part du vote déclaré de chaque parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de pourcentage, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/age-light.png" alt="Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de pourcentage, à chaque élection de 1998 à 2022, avec intervalles de confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec solidaire est à +31 points et la CAQ à −34 points. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/age-dark.png" alt="Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de pourcentage, à chaque élection de 1998 à 2022, avec intervalles de confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec solidaire est à +31 points et la CAQ à −34 points. Valeurs dans la vue en tableau." width="672" height="442" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC (francophones seulement). Au-dessus de zéro : le parti fait mieux chez les jeunes. Barres : intervalles de confiance à 95 % de la différence. Points creux (1998, 2008) : données non pondérées. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. Les parts de chaque groupe d'âge sont dans la vue en tableau.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Parti </th>
@@ -1490,7 +2478,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <th style="text-align:left;"> Étude </th>
    <th style="text-align:left;"> 18 à 34 ans, % </th>
    <th style="text-align:left;"> 55 ans et plus, % </th>
-   <th style="text-align:left;"> Écart, 18-34 moins 55+ [IC à 95 %] </th>
+   <th style="text-align:left;"> Écart, 18-34 moins 55+ [IC à 95 %] </th>
    <th style="text-align:left;"> Pondération </th>
   </tr></thead>
 <tbody>
@@ -1500,7 +2488,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Sondages de 1998 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −30,1 pts [-37,7 ; -22,6] </td>
+   <td style="text-align:left;"> −30,1 pts [-37,7 ; -22,6] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1509,7 +2497,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −20,3 pts [-26,8 ; -13,9] </td>
+   <td style="text-align:left;"> −20,3 pts [-26,8 ; -13,9] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1518,7 +2506,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −25,7 pts [-31,6 ; -19,8] </td>
+   <td style="text-align:left;"> −25,7 pts [-31,6 ; -19,8] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1527,7 +2515,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2008 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −20,0 pts [-28,3 ; -11,7] </td>
+   <td style="text-align:left;"> −20,0 pts [-28,3 ; -11,7] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1536,7 +2524,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −14,9 pts [-21,7 ; -8,0] </td>
+   <td style="text-align:left;"> −14,9 pts [-21,7 ; -8,0] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1545,7 +2533,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −25,1 pts [-33,0 ; -17,2] </td>
+   <td style="text-align:left;"> −25,1 pts [-33,0 ; -17,2] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1554,7 +2542,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2014 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −5,0 pts [-13,0 ; 3,0] </td>
+   <td style="text-align:left;"> −5,0 pts [-13,0 ; 3,0] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1563,7 +2551,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −12,0 pts [-16,6 ; -7,5] </td>
+   <td style="text-align:left;"> −12,0 pts [-16,6 ; -7,5] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1572,7 +2560,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −17,5 pts [-27,1 ; -7,9] </td>
+   <td style="text-align:left;"> −17,5 pts [-27,1 ; -7,9] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1581,7 +2569,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2022 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −4,8 pts [-14,8 ; 5,1] </td>
+   <td style="text-align:left;"> −4,8 pts [-14,8 ; 5,1] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1590,7 +2578,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Sondages de 1998 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +9,8 pts [1,9 ; 17,7] </td>
+   <td style="text-align:left;"> +9,8 pts [1,9 ; 17,7] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1599,7 +2587,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +6,8 pts [-0,1 ; 13,8] </td>
+   <td style="text-align:left;"> +6,8 pts [-0,1 ; 13,8] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1608,7 +2596,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +3,4 pts [-3,2 ; 10,0] </td>
+   <td style="text-align:left;"> +3,4 pts [-3,2 ; 10,0] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1617,7 +2605,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2008 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −0,2 pts [-8,7 ; 8,2] </td>
+   <td style="text-align:left;"> −0,2 pts [-8,7 ; 8,2] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1626,7 +2614,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +2,8 pts [-4,9 ; 10,4] </td>
+   <td style="text-align:left;"> +2,8 pts [-4,9 ; 10,4] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1635,7 +2623,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −7,3 pts [-18,2 ; 3,5] </td>
+   <td style="text-align:left;"> −7,3 pts [-18,2 ; 3,5] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1644,7 +2632,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2014 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −13,9 pts [-21,5 ; -6,3] </td>
+   <td style="text-align:left;"> −13,9 pts [-21,5 ; -6,3] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1653,7 +2641,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −8,2 pts [-12,4 ; -3,9] </td>
+   <td style="text-align:left;"> −8,2 pts [-12,4 ; -3,9] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1662,7 +2650,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −6,4 pts [-13,7 ; 0,8] </td>
+   <td style="text-align:left;"> −6,4 pts [-13,7 ; 0,8] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1671,7 +2659,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2022 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −4,4 pts [-10,6 ; 1,9] </td>
+   <td style="text-align:left;"> −4,4 pts [-10,6 ; 1,9] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1680,7 +2668,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Sondages de 1998 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +19,6 pts [13,4 ; 25,8] </td>
+   <td style="text-align:left;"> +19,6 pts [13,4 ; 25,8] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1689,7 +2677,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +3,5 pts [-2,9 ; 9,8] </td>
+   <td style="text-align:left;"> +3,5 pts [-2,9 ; 9,8] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1698,7 +2686,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +13,0 pts [6,4 ; 19,5] </td>
+   <td style="text-align:left;"> +13,0 pts [6,4 ; 19,5] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1707,7 +2695,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2008 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +11,0 pts [4,4 ; 17,6] </td>
+   <td style="text-align:left;"> +11,0 pts [4,4 ; 17,6] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1716,7 +2704,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +3,2 pts [0,2 ; 6,2] </td>
+   <td style="text-align:left;"> +3,2 pts [0,2 ; 6,2] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1725,7 +2713,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2007 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +3,9 pts [1,0 ; 6,7] </td>
+   <td style="text-align:left;"> +3,9 pts [1,0 ; 6,7] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1734,7 +2722,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2008 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +5,3 pts [1,3 ; 9,4] </td>
+   <td style="text-align:left;"> +5,3 pts [1,3 ; 9,4] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1743,7 +2731,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +7,4 pts [3,2 ; 11,5] </td>
+   <td style="text-align:left;"> +7,4 pts [3,2 ; 11,5] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1752,7 +2740,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +11,0 pts [3,7 ; 18,2] </td>
+   <td style="text-align:left;"> +11,0 pts [3,7 ; 18,2] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1761,7 +2749,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2014 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +12,0 pts [7,3 ; 16,8] </td>
+   <td style="text-align:left;"> +12,0 pts [7,3 ; 16,8] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1770,7 +2758,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +22,7 pts [17,6 ; 27,7] </td>
+   <td style="text-align:left;"> +22,7 pts [17,6 ; 27,7] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1779,7 +2767,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +19,8 pts [9,6 ; 30,0] </td>
+   <td style="text-align:left;"> +19,8 pts [9,6 ; 30,0] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1788,7 +2776,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2022 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +30,6 pts [22,7 ; 38,6] </td>
+   <td style="text-align:left;"> +30,6 pts [22,7 ; 38,6] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1797,7 +2785,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −1,2 pts [-7,7 ; 5,4] </td>
+   <td style="text-align:left;"> −1,2 pts [-7,7 ; 5,4] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1806,7 +2794,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2012 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +11,1 pts [1,1 ; 21,1] </td>
+   <td style="text-align:left;"> +11,1 pts [1,1 ; 21,1] </td>
    <td style="text-align:left;"> non pondéré (pondération en révision) </td>
   </tr>
 <tr>
@@ -1815,7 +2803,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2014 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +3,2 pts [-4,3 ; 10,8] </td>
+   <td style="text-align:left;"> +3,2 pts [-4,3 ; 10,8] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1824,7 +2812,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −9,4 pts [-14,9 ; -3,9] </td>
+   <td style="text-align:left;"> −9,4 pts [-14,9 ; -3,9] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1833,7 +2821,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> Panel 2018 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −2,1 pts [-14,8 ; 10,6] </td>
+   <td style="text-align:left;"> −2,1 pts [-14,8 ; 10,6] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1842,7 +2830,7 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2022 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> −33,8 pts [-42,1 ; -25,5] </td>
+   <td style="text-align:left;"> −33,8 pts [-42,1 ; -25,5] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 <tr>
@@ -1851,21 +2839,115 @@ l’ADQ avant elle, elle rejoint à peine les autres électeurs (12 % en
    <td style="text-align:left;"> EEQ 2022 </td>
    <td style="text-align:left;"> 25,0 </td>
    <td style="text-align:left;"> 55,1 </td>
-   <td style="text-align:left;"> +9,6 pts [3,9 ; 15,3] </td>
+   <td style="text-align:left;"> +9,6 pts [3,9 ; 15,3] </td>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 </tbody>
-</table></details></figure><p>À remarquer :</p>
+</table></details></figure><p>Chaque écart de la figure correspond à la part d’un parti chez les 18
+à 34 ans moins sa part chez les 55 ans et plus, en points de
+pourcentage. En 2007, les jeunes votaient PQ (36 % des 18 à 34 ans) et
+ADQ (30 %). En 2018 et en 2022, leur premier choix était Québec
+solidaire (37 % en 2022), un parti qui attire peu les électeurs de 55
+ans et plus (6 %). La CAQ, pour sa part, est devenue le parti des
+électeurs plus âgés. En 2012, elle puisait à peu près également dans les
+deux groupes d’âge (un écart de −1 point) ; en 2022, 48 % des 55 ans et
+plus ont voté pour elle, contre 15 % des 18 à 34 ans. Le PLQ fait mieux
+chez les aînés à chaque élection, bien qu’en 2014 et en 2022 l’écart se
+situe à l’intérieur de la marge d’erreur.</p>
+<p>Le profil du PQ, lui, s’est inversé. Il faisait aussi bien ou mieux
+chez les jeunes jusqu’en 2012 (de +10 points en 1998 à +3 en 2012), puis
+mieux chez les aînés à partir de 2014 (de −14 points en 2014 à −4 en
+2022, un écart alors à l’intérieur de la marge d’erreur). Le
+renversement survient en 2014, l’élection lors de laquelle Mahéo et
+Bélanger (2018) constatent que les pertes du PQ se sont concentrées chez
+les millénariaux, moins enclins à voir la souveraineté comme une
+priorité. Il s’agit toutefois d’enquêtes transversales distinctes, et un
+écart d’âge observé à une seule élection ne permet pas, à lui seul, de
+distinguer un changement générationnel d’un effet de cycle de vie.</p>
+</div>
+<div class="section level2">
+<h2 id="ce-quil-faut-en-retenir">Ce qu’il faut en retenir<a class="anchor" aria-label="anchor" href="#ce-quil-faut-en-retenir"></a>
+</h2>
+<p>En somme, le système partisan québécois ne s’est pas fragmenté de
+manière uniforme. Les nouveaux partis ont divisé le vote francophone, et
+ils l’ont fait à l’intérieur de chaque camp sur la souveraineté : le mur
+entre les camps a tenu, alors que le PQ et le PLQ perdaient leur emprise
+sur leur propre camp. L’âge pèse aussi davantage qu’aux élections de
+2007 à 2014. En 2022, l’écart d’âge de la CAQ atteignait 34 points,
+alors que le plus grand écart, tous partis confondus, était de 20 points
+de 2007 à 2014. Notre portrait n’est toutefois pas sans limites. D’une
+part, il s’agit de votes déclarés dans des enquêtes distinctes : ils
+montrent comment des groupes d’électeurs se répartissent à chaque
+élection, et non si les mêmes personnes ont changé de parti (la page sur
+les <a href="fr-transitions.html">transitions des panels</a> suit les
+mêmes répondants au fil d’une campagne). D’autre part, les échantillons
+non francophones sont petits, entre 121 et 359 électeurs par élection,
+de sorte que leurs estimations varient beaucoup d’une élection à l’autre
+et que la rupture de 2022 reste à confirmer. Reste à savoir si le vote
+francophone se recomposera autour de nouveaux pôles, ou si le
+remplacement générationnel le maintiendra divisé.</p>
+</div>
+<div class="section level2">
+<h2 id="comment-les-figures-sont-produites">Comment les figures sont produites<a class="anchor" aria-label="anchor" href="#comment-les-figures-sont-produites"></a>
+</h2>
+<p>Toutes les figures de cette page reposent sur une seule variable
+harmonisée, <code>vote_choice</code>, limitée au vote déclaré après
+l’élection, à laquelle s’ajoutent la langue maternelle, le groupe d’âge
+et la question référendaire :</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"lang_mother"</span>, <span class="st">"age_group3"</span>, <span class="st">"sov_support"</span><span class="op">)</span>,</span>
+<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>À l’intérieur d’une étude, une part pondérée et son intervalle de
+confiance s’obtiennent avec <code><a href="../reference/qes_design.html">qes_design()</a></code> et un appel à
+l’extension survey :</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2018"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d18</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lang_mother</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">vote_choice</span> <span class="op">==</span> <span class="st">"CAQ"</span><span class="op">)</span>, <span class="op">~</span><span class="va">lang_mother</span>, <span class="va">d18</span>, <span class="va">svyciprop</span>,</span>
+<span>      method <span class="op">=</span> <span class="st">"logit"</span>, vartype <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         lang_mother I(vote_choice == "CAQ")       ci_l      ci_u</span></span>
+<span><span class="co">#&gt; French       French               0.4114613 0.38603333 0.4373710</span></span>
+<span><span class="co">#&gt; English     English               0.1101960 0.07564846 0.1578270</span></span>
+<span><span class="co">#&gt; Other         Other               0.1717929 0.10011622 0.2788822</span></span></code></pre></div>
+<p>Les figures répètent cette opération pour chaque étude. Chaque
+estimation est produite à l’intérieur d’une seule étude ; aucune n’est
+regroupée d’une étude à l’autre.</p>
+</div>
+<div class="section level2">
+<h2 id="pour-aller-plus-loin">Pour aller plus loin<a class="anchor" aria-label="anchor" href="#pour-aller-plus-loin"></a>
+</h2>
 <ul>
-<li>En 2007, les jeunes votaient PQ (36 %) et ADQ (30 %) ; en 2018 et en
-2022, leur premier choix était Québec solidaire (37 % en 2022), qui
-attire peu les électeurs de 55 ans et plus (6 %).</li>
-<li>La CAQ est devenue le parti des aînés : 48 % du vote des 55 ans et
-plus en 2022, contre 15 % de celui des 18 à 34 ans.</li>
-<li>Jusqu’en 2012, le PQ faisait aussi bien ou mieux chez les jeunes (de
-+10 pts en 1998 et de +7 pts en 2007) ; à partir de 2014, il fait mieux
-chez les aînés (−14 pts en 2014). Le PLQ fait mieux chez les aînés à
-chaque élection.</li>
+<li>Bélanger, Éric et Richard Nadeau. 2009. <em>Le comportement
+électoral des Québécois</em>. Montréal : Presses de l’Université de
+Montréal. <a href="https://doi.org/10.4000/books.pum.9772" class="external-link uri">https://doi.org/10.4000/books.pum.9772</a>
+</li>
+<li>Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo et Richard
+Nadeau. 2022. <em>Le nouvel électeur québécois</em>. Montréal : Presses
+de l’Université de Montréal. <a href="https://doi.org/10.1515/9782760645929" class="external-link uri">https://doi.org/10.1515/9782760645929</a>
+</li>
+<li>Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election ».
+<em>Revue canadienne de science politique</em> 58 (2) : 277-296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link uri">https://doi.org/10.1017/S0008423924000829</a>
+</li>
+<li>Daoust, Jean-François et Thomas Gareau-Paquette. 2024. « Is Quebec
+Independence Still Key in Making Sense of Canadian Elections? A
+Longitudinal Analysis (2000-2021) ». <em>Regional &amp; Federal
+Studies</em> 34 (5) : 781-806. <a href="https://doi.org/10.1080/13597566.2023.2233422" class="external-link uri">https://doi.org/10.1080/13597566.2023.2233422</a>
+</li>
+<li>Laakso, Markku et Rein Taagepera. 1979. « “Effective” Number of
+Parties: A Measure with Application to West Europe ». <em>Comparative
+Political Studies</em> 12 (1) : 3-27. <a href="https://doi.org/10.1177/001041407901200101" class="external-link uri">https://doi.org/10.1177/001041407901200101</a>
+</li>
+<li>Mahéo, Valérie-Anne et Éric Bélanger. 2018. « Is the Parti Québécois
+Bound to Disappear? A Study of the Current Generational Dynamics of
+Electoral Behaviour in Quebec ». <em>Revue canadienne de science
+politique</em> 51 (2) : 335-356. <a href="https://doi.org/10.1017/S0008423917001147" class="external-link uri">https://doi.org/10.1017/S0008423917001147</a>
+</li>
 </ul>
 </div>
 <div class="section level2">
@@ -1874,41 +2956,42 @@ chaque élection.</li>
 <ul>
 <li>
 <strong>Études.</strong> Une Étude électorale québécoise par
-élection (2007, 2008, 2012, 2014, 2018, 2022) et les sondages de 1998,
-qui n’ont interrogé que des francophones. Les panels Durand de 2007,
-2012 et 2018 sont dans les vues en tableau. Les sondages CROP n’ont pas
-demandé le vote déclaré.</li>
+élection (2007, 2008, 2012, 2014, 2018, 2022) et, pour 1998, les
+sondages CROP et CREATEC, qui n’ont interrogé que des francophones. Les
+vues en tableau comprennent aussi les panels Durand de 2007, 2012 et
+2018, qui ont interrogé les mêmes répondants pendant la campagne et
+après l’élection ; ils ne sont pas tracés. Les sondages CROP de 2007 à
+2010 ne demandaient pas le vote passé et ne sont pas utilisés.</li>
 <li>
-<strong>Variable.</strong> <code>vote_choice</code> avec
-<code>types = list(vote_choice = "recall")</code> : le vote déclaré
-après l’élection, dans toutes les études. La question source de chaque
-étude est <code>vote_choice__item</code> (par exemple qes2018:post:q6).
-Les répondants qui n’ont pas voté, ont annulé leur bulletin, ne savent
-pas ou refusent sont <code>NA</code>, avec un motif dans
-<code>vote_choice__na</code>, et sont exclus du dénominateur.</li>
+<strong>Vote.</strong> Le parti pour lequel les répondants disent
+avoir voté, demandé après l’élection. Les personnes qui n’ont pas voté,
+qui ont annulé leur bulletin, qui ne savent pas ou qui refusent de
+répondre sont exclues. Un parti qu’une étude ne proposait pas, ou qui ne
+se présentait pas, n’est pas tracé. L’ADQ et la CAQ restent distinctes,
+bien qu’elles aient fusionné en 2012.</li>
 <li>
-<strong>Niveaux de comparabilité.</strong> La question du vote
-déclaré a le niveau <code>identical</code> en 2012,
-<code>approximate</code> dans les panels 2007 et 2012,
-<code>comparable</code> ailleurs : les listes de partis diffèrent
-(<code>qes_spec("crosswalk", targets = "vote_prov_recall")</code>). Un
-parti qu’une étude ne proposait pas, ou qui ne se présentait pas, n’est
-pas tracé.</li>
+<strong>Langue.</strong> La langue maternelle, le français contre
+toute autre réponse. En 2022, la question portait sur toutes les langues
+apprises dans l’enfance, et les 146 répondants qui en ont nommé plus
+d’une sont exclus de la répartition selon la langue, tout comme 115
+répondants de 2014 dont la réponse ne pouvait être classée.</li>
 <li>
-<strong>Langue maternelle.</strong> <code>lang_mother</code>, «
-français » contre toute autre réponse. En 2022, elle vient d’une
-question à choix multiples (les langues apprises dans l’enfance et
-encore comprises), de niveau <code>approximate</code> : les 146
-répondants qui ont coché deux langues ou plus (dont 117 le français et
-l’anglais) n’y ont pas de langue maternelle et sont exclus de la
-répartition selon la langue.</li>
+<strong>Souveraineté.</strong> Le camp qu’un répondant prendrait
+lors d’un référendum, parmi ceux qui en choisissent un. De 1998 à 2008,
+les études posaient la question du référendum de 1995, et l’on demandait
+aux hésitants de quel côté ils penchaient ; à partir de 2012, la
+question porte sur un pays indépendant. En 1998, seul le sondage CROP
+l’a posée. Les panels Durand des vues en tableau emploient leur propre
+formulation (voir la colonne Question).</li>
 <li>
-<strong>Pondérations.</strong> La pondération postélectorale
-recommandée de chaque étude, par <code><a href="../reference/qes_design.html">qes_design()</a></code>. Les sondages
-de 1998, l’étude de 2008 et les panels Durand de 2007 et 2012 sont non
-pondérés (pondérations en révision) et tracés en creux ; le panel 2018
-utilise sa pondération postélectorale révisée. Le recontact des sondages
-de 1998 a aussi surreprésenté les indécis et les refus.</li>
+<strong>Pondération.</strong> La pondération postélectorale de
+chaque étude. Les sondages de 1998 et l’étude de 2008 sont utilisés sans
+pondération et sont représentés par des points creux ; les panels Durand
+de 2007 et de 2012 ne sont pas pondérés non plus. Les répondants de 1998
+avaient d’abord participé à des sondages préélectoraux et ont été
+interrogés de nouveau après l’élection ; ce second passage a
+surreprésenté les indécis et les personnes qui refusaient de dévoiler
+leur vote.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

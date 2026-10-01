@@ -13,11 +13,60 @@ target, one question of that study, its codes mapped one by one to the
 target's levels, and a reason for every missing value. Nothing is matched
 by name or guessed, and a code the spec does not map is an error, never
 passed through. qes_spec() shows the spec: which studies have which
-target, how comparable each study's question is, and the exact mapping."><meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png"></head><body>
+target, how comparable each study's question is, and the exact mapping."><meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png"><meta property="og:image:alt" content="qesR logo"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -30,56 +79,29 @@ target, how comparable each study's question is, and the exact mapping."><meta p
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides"><li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-"><li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies"><li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -99,7 +121,7 @@ target, how comparable each study's question is, and the exact mapping."><meta p
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Harmonize variables across studies (experimental)</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Harmonize variables across studies (experimental)</h1>
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/R/hz-engine.R" class="external-link"><code>R/hz-engine.R</code></a></small>
       <div class="d-none name"><code>qes_harmonize.Rd</code></div>
     </div>
@@ -282,13 +304,13 @@ reviewed study by study and may still change. A crosswalk row is applied
 only once a reviewer has signed it off (status <code>"stable"</code>); rows checked
 against the files but not yet signed off (status <code>"review"</code> or <code>"draft"</code>)
 are applied only with <code>include_draft = TRUE</code>, and a message says so. In
-spec 4.1.0 every row is signed off, after an automated double review
-against the original files and documents (not a human review; the
-crosswalk's <code>reviewed_by</code> says so, and <code>review_note</code> what the review
-corrected). The rows added in spec 4.3.0 (the push of 2022, the new
-targets such as satisfaction with democracy or the leader ratings) are
-checked against the files but not reviewed yet: they are in review, and
-applied only with <code>include_draft = TRUE</code>. A row's sign-off is about its content: the recommended
+the shipped spec every row but three is signed off, after an automated
+double review against the original files and documents (not a human
+review; the crosswalk's <code>reviewed_by</code> says so, and <code>review_note</code> what the
+review corrected). The three others (the strength of provincial party
+identification of <code>qes2022</code> and the previous provincial vote of
+<code>qes2008</code> and <code>qes2018</code>) are in review, and applied only with
+<code>include_draft = TRUE</code>. A row's sign-off is about its content: the recommended
 weights that still need review (those of <code>qes1998</code>, <code>qes2007_panel</code>,
 <code>qes2012_panel</code> and the CROP polls) do not hold the rows of their waves,
 but are themselves <code>NA</code> until they are reviewed (see <em>Weights</em>). A row
@@ -620,9 +642,12 @@ colonnes (sinon, une erreur de classe <code>qesR_error_input</code>). Une ligne 
 correspondance n'est appliquée qu'une fois approuvée par un réviseur
 (statut <code>"stable"</code>) ; <code>include_draft = TRUE</code> applique aussi les lignes
 vérifiées mais pas encore approuvées (statut <code>"review"</code> ou <code>"draft"</code>).
-Dans la spécification 4.1.0, toutes les lignes sont approuvées, après
-une double révision automatisée sur les fichiers et documents originaux
-(et non une révision humaine ; la colonne <code>reviewed_by</code> le dit).
+Dans la spécification livrée, toutes les lignes sauf trois sont
+approuvées, après une double révision automatisée sur les fichiers et
+documents originaux (et non une révision humaine ; la colonne
+<code>reviewed_by</code> le dit) ; les trois autres (la force de l'identification
+partisane provinciale de <code>qes2022</code> et le vote provincial précédent de
+<code>qes2008</code> et de <code>qes2018</code>) sont en révision.
 L'approbation d'une ligne porte sur son contenu : les pondérations
 recommandées encore à réviser (celles de <code>qes1998</code>, <code>qes2007_panel</code>,
 <code>qes2012_panel</code> et des sondages CROP) ne retiennent pas les lignes de
@@ -674,7 +699,7 @@ value came from.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.</span>
 <span class="r-in"><span><span class="va">h</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.1 (content hash cd62e566cd051bde5b236c3511555c91).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Approximate cells: qes_demo age_group3, qes_demo age_group6.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).</span>
@@ -801,6 +826,10 @@ value came from.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># one row per respondent and wave</span></span></span>
 <span class="r-in"><span><span class="va">l</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"sov_indep"</span>, layout <span class="op">=</span> <span class="st">"long"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">wave</span>, <span class="va">l</span><span class="op">$</span><span class="va">wave_timing</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        post</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   post   60</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># one vote choice for every study: here the reported vote of the</span></span></span>
 <span class="r-in"><span><span class="co"># demonstration study (a qes2014 stand-in)</span></span></span>
@@ -828,31 +857,17 @@ value came from.</p>
 <span class="r-in"><span><span class="va">v2</span> <span class="op">&lt;-</span> <span class="fu">qes_harmonize</span><span class="op">(</span><span class="st">"qes_demo"</span>, targets <span class="op">=</span> <span class="st">"vote_choice"</span>,</span></span>
 <span class="r-in"><span>                    types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"intention"</span><span class="op">)</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># what the review corrected in each row, and which rows are in review</span></span></span>
+<span class="r-in"><span><span class="co"># which rows are signed off (stable), and which are still in review</span></span></span>
 <span class="r-in"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">xw</span><span class="op">$</span><span class="va">status</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> review stable </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      3    233 </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">xw</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">xw</span><span class="op">$</span><span class="va">review_note</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"target"</span>, <span class="st">"review_note"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            study                target</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21       qes2022      vote_prov_intent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22       qes2022               lr_self</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26 qes2018_panel      vote_prov_intent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 qes2018_panel vote_prov_intent_push</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33 qes2007_panel      vote_prov_intent</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34 qes2007_panel vote_prov_intent_push</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                                                                                                                                                                                                                                                            review_note</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                                                                                                                            Corrected in this review (spec 4.0.0): the routing of cps_turnout codes 3 to 6 in the evidence and grade reasons (code 4 was asked no vote-choice item).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                                                                                                                                  Corrected in this review (spec 4.0.0): the codebook page of the -99 convention (p. 7); the undocumented slider claim removed (instrument lr_0_10).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26                                                                                                                                                                                                                                                               Corrected in this review (spec 4.0.0): the stem's second sentence on advance voting (Ipsos report of the same poll); grade comparable to approximate.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27 Corrected in this review (spec 4.0.0): the push filter is narrower than the anchor's (would-not-vote answers not pushed); grade comparable to approximate. Corrected in spec 4.3.0 (text only): the stem's second sentence on advance voting; the codebook label (file 341538) leaves it out, and it comes from the Ipsos report cited on the rv1a row (rapport_la_presse_global_news_29_septembre_2018.pdf, p. 4).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">l</span><span class="op">$</span><span class="va">wave</span>, <span class="va">l</span><span class="op">$</span><span class="va">wave_timing</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        post</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   post   60</span>
+<span class="r-in"><span><span class="va">xw</span><span class="op">[</span><span class="va">xw</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"review"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"target"</span>, <span class="st">"source_var"</span>, <span class="st">"grade"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       study            target     source_var       grade</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 171 qes2022 pid_prov_strength cps_provpidstr approximate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 175 qes2008    vote_prov_prev            q13  comparable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 176 qes2018    vote_prov_prev             q9  comparable</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

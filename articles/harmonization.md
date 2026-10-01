@@ -1,4 +1,4 @@
-# Harmonizing across studies
+# How harmonization works
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md)*
@@ -8,21 +8,15 @@ This page goes from
 to a weighted estimate, study by study, and shows what qesR records on
 the way: the comparability grade of each study’s question, the reason
 for every missing value, the weight that fits each question, and the
-provenance of each cell. It is built when the website is built, from the
-full data files, which qesR downloads from their Dataverse deposits
-through its cache.
+provenance of each cell. It is built on the full data files.
 
-The harmonization engine is **experimental**. Its specification says,
-for each study and harmonized variable (“target”), which question feeds
-the target and how each of its codes maps to the target’s levels;
-nothing is matched by name. In specification 4.3.0 every row but three
-is signed off, after an automated double review against the original
-files and documents (not a human review), and
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-applies them by default. The recommended weights of `qes1998`,
-`qes2007_panel`, `qes2012_panel` and the CROP polls still need review,
-so their weights are `NA`; their answers are harmonized like the
-others’.
+The harmonization is **experimental**: targets, grades and mappings may
+still change from one version of qesR to the next. For each study and
+harmonized variable (“target”), the rules that ship with qesR say which
+question feeds the target and how each of its codes maps to the target’s
+levels; nothing is matched by name. `qes1998`, the Durand panels and the
+CROP polls have no usable weight yet, so their weight columns are `NA`;
+their answers are harmonized like the others’.
 
 ``` r
 
@@ -70,7 +64,7 @@ knitr::kable(xw[, c("study", "wave", "source_var", "grade", "grade_reason")])
 
 `identical` means the same question, options and universe as the anchor;
 `comparable` the same stimulus with differences that should not move the
-shares; `approximate` a difference that can. The [harmonization
+shares; `approximate` a difference that can. The [variable
 reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md)
 gives the wording and levels of every study’s question.
 
@@ -303,30 +297,29 @@ side, as above, before pooling.
 ## Provenance
 
 `qes_provenance(level = "cell")` gives, for each study and target, the
-crosswalk row applied, its grade and review status, the weight, the
-levels not offered and the count of valid values and of each missing
-reason:
+question applied, its grade, the weight, the levels not offered and the
+count of valid values and of each missing reason:
 
 ``` r
 
-knitr::kable(cells[, c("study", "target", "source_var", "grade", "status", "weight_var",
+knitr::kable(cells[, c("study", "target", "source_var", "grade", "weight_var",
                        "levels_not_offered", "n_valid", "n_dk", "n_not_in_wave")])
 ```
 
-| study | target | source_var | grade | status | weight_var | levels_not_offered | n_valid | n_dk | n_not_in_wave |
-|:---|:---|:---|:---|:---|:---|:---|---:|---:|---:|
-| qes2022 | vote_prov_recall | pes_votechoice | comparable | stable | pes_weight_general | PVQ;ON;ADQ | 1101 | 2 | 301 |
-| qes2022 | sov_indep | cps_qc_referendum | comparable | stable | cps_weight_general | would_not_vote | 1284 | 237 | 0 |
-| qes2018 | vote_prov_recall | q6 | comparable | stable | pond | PVQ;PCQ;ON;ADQ | 2016 | 0 | 0 |
-| qes2018 | sov_indep | q26 | comparable | stable | pond | would_not_vote | 2558 | 463 | 0 |
-| qes2014 | vote_prov_recall | Q3 | comparable | stable | POND | PCQ;ADQ | 1283 | 0 | 0 |
-| qes2014 | sov_indep | Q19 | identical | stable | POND | would_not_vote | 1353 | 148 | 0 |
-| qes2012 | vote_prov_recall | q25 | identical | stable | pond | PCQ;ADQ | 1274 | 0 | 0 |
-| qes2012 | sov_indep | q52 | identical | stable | pond | would_not_vote | 1323 | 156 | 0 |
-| qes2008 | vote_prov_recall | q12a | comparable | stable | NA | CAQ;PCQ;ON | 898 | 2 | 0 |
-| qes2008 | sov_indep | NA | NA | NA | NA | NA | 0 | 0 | 0 |
-| qes2007 | vote_prov_recall | q12 | comparable | stable | pond | CAQ;PCQ;ON | 1727 | 8 | 0 |
-| qes2007 | sov_indep | NA | NA | NA | NA | NA | 0 | 0 | 0 |
+| study | target | source_var | grade | weight_var | levels_not_offered | n_valid | n_dk | n_not_in_wave |
+|:---|:---|:---|:---|:---|:---|---:|---:|---:|
+| qes2022 | vote_prov_recall | pes_votechoice | comparable | pes_weight_general | PVQ;ON;ADQ | 1101 | 2 | 301 |
+| qes2022 | sov_indep | cps_qc_referendum | comparable | cps_weight_general | would_not_vote | 1284 | 237 | 0 |
+| qes2018 | vote_prov_recall | q6 | comparable | pond | PVQ;PCQ;ON;ADQ | 2016 | 0 | 0 |
+| qes2018 | sov_indep | q26 | comparable | pond | would_not_vote | 2558 | 463 | 0 |
+| qes2014 | vote_prov_recall | Q3 | comparable | POND | PCQ;ADQ | 1283 | 0 | 0 |
+| qes2014 | sov_indep | Q19 | identical | POND | would_not_vote | 1353 | 148 | 0 |
+| qes2012 | vote_prov_recall | q25 | identical | pond | PCQ;ADQ | 1274 | 0 | 0 |
+| qes2012 | sov_indep | q52 | identical | pond | would_not_vote | 1323 | 156 | 0 |
+| qes2008 | vote_prov_recall | q12a | comparable | NA | CAQ;PCQ;ON | 898 | 2 | 0 |
+| qes2008 | sov_indep | NA | NA | NA | NA | 0 | 0 | 0 |
+| qes2007 | vote_prov_recall | q12 | comparable | pond | CAQ;PCQ;ON | 1727 | 8 | 0 |
+| qes2007 | sov_indep | NA | NA | NA | NA | 0 | 0 | 0 |
 
 These counts are per respondent of the study, as in the respondent
 layout, so `n_valid` and the counts of the reasons add up to the study’s
@@ -336,21 +329,21 @@ campaign wave, so none is `not_in_wave` for `sov_indep`, while 301 did
 not take part in the post-election wave and are `not_in_wave` for
 `vote_prov_recall`.
 
-`level = "study"` names the pinned file of each study, and
-`level = "spec"` the specification version and its content hash; the
-same specification, the same files and the same qesR version give the
-same values.
+qesR records which files and which version of the rules produced every
+cell: `level = "study"` names the data file of each study, and
+`level = "spec"` the version of the rules. The same files and the same
+qesR version give the same values.
 [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
-cites qesR with the specification, then each dataset:
+cites qesR with the rules, then each dataset:
 
 ``` r
 
 spec_record <- qes_provenance(h, level = "spec")
-spec_record[, c("spec_version", "spec_hash", "qesR_version")]
-#>   spec_version                        spec_hash qesR_version
-#> 1        4.3.0 506f691e420e8d5d5de3657eef556d3d        0.8.0
+spec_record[, c("spec_version", "qesR_version")]
+#>   spec_version qesR_version
+#> 1        4.3.1        0.8.0
 cat(qes_cite(h, lang = params$lang), sep = "\n\n")
-#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.8.0, https://github.com/ThomasGareau/qesR; harmonization spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d)
+#> Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", R package version 0.8.0, https://github.com/ThomasGareau/qesR; harmonization spec 4.3.1 (content hash cd62e566cd051bde5b236c3511555c91)
 #> 
 #> Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]
 #> 
@@ -401,14 +394,12 @@ knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
 (`qes2018_panel`), and `sov_partnership_1995` repeats the question of
 the 1995 referendum, sovereignty with an offer of partnership to the
 rest of Canada (`qes2007`, `qes2008`, `qes2007_panel` and the CROP
-respondents of `qes1998`). Only `qes2007` and `qes2018_panel` among them
-have reviewed weights; `qes2008` has none to recommend and the others’
-weights still need review, so
-[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-returns `NA` for them and
-[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-leaves these respondents out, with a message. Put the targets side by
-side and read each one against its own question.
+respondents of `qes1998`). Only `qes2007` and the 2018 panel have a
+usable weight for these questions: both weights of `qes2008` are
+calibrated on the vote or on turnout, and the others’ weights are not
+documented well enough to use. The other studies’ rows are left out of
+weighted estimates, with a message. Put the targets side by side and
+read each one against its own question.
 
 To follow support across every study anyway, the pooled variable
 `sov_support` takes each study’s referendum question, whatever its

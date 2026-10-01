@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Changing minds during the campaign: panel transitions • qesR</title>
+<title>Are Quebec elections decided during the campaign? • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,18 +16,68 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Changing minds during the campaign: panel transitions">
-<meta name="description" content="The same respondents interviewed before and after the election: how many voted as they intended, and where the undecided went.
+<meta property="og:title" content="Are Quebec elections decided during the campaign?">
+<meta name="description" content="The same respondents interviewed before and after the election: how many voted as they intended, where the undecided went, and which party won the campaign.
 ">
-<meta property="og:description" content="The same respondents interviewed before and after the election: how many voted as they intended, and where the undecided went.
+<meta property="og:description" content="The same respondents interviewed before and after the election: how many voted as they intended, where the undecided went, and which party won the campaign.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Changing minds during the campaign: panel transitions</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Are Quebec elections decided during the campaign?</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/transitions.Rmd" class="external-link"><code>vignettes/articles/transitions.Rmd</code></a></small>
@@ -134,40 +159,41 @@
     
     
 <p><em><a href="fr-transitions.html">Version française</a></em></p>
-<p>Cross-sections tell us how the vote ended up; panels tell us who
-moved. The 2018 Durand panel and the 2022 Quebec Election Study
-interviewed the same people during the campaign and after the vote. Most
-voters did what they said: 88% of those who intended to vote CAQ in
-2022, and voted, reported a CAQ vote. Québec solidaire kept fewer, 71%.
-In 2018 the undecided broke toward the winner: 37% [25, 51] of the
-panel’s 75 undecided voted CAQ, and 27% did not vote.</p>
+<p>Since the 1988 federal election, Canadian election studies have shown
+that opinion can move a great deal between the start of a campaign and
+the vote (Johnston et al. 1992). It is often said that Quebec elections
+are decided at the last minute, a claim that returns whenever the polls
+miss the result, as they did in 1998 and 2018. In 1998 the polls had the
+Parti Québécois (PQ) ahead, yet the Parti libéral du Québec (PLQ) took
+more of the valid votes (43.6% compared to 42.9%). In 2018 they forecast
+a close race between the PLQ and the Coalition avenir Québec (CAQ),
+which won by 13 points. Each time, part of the explanation was sought
+among voters who changed their minds at the end of the campaign and
+among non-disclosers, who would not reveal their intention. Durand and
+Blais (1999) reject both a late Liberal rise and a lower PQ turnout in
+1998, and trace the error to sampling and to how non-respondents
+behaved; for 2018, they conclude that last-minute shifts and the vote of
+non-disclosers explain most of the gap (Durand and Blais 2020).</p>
+<p>However, a cross-section tells us how the vote ended up, not who
+moved. Panels can, because they interview the same people during the
+campaign and after the vote. Five Quebec election surveys did so, from
+the 1998 CROP and CREATEC polls to the 2022 Quebec Election Study,
+including the panels Claire Durand ran in 2007, 2012 and 2018. We use
+them to ask a simple question: how many Quebec voters change their minds
+during a campaign, and who gains from it? Between 72% and 78% of those
+who voted reported the party they had named during the campaign. The
+undecided were a small group, from 6% to 10% of voters, and voters who
+switched from one party to another outnumbered them in every panel
+except 2018, where the two groups were about the same size. On net,
+these moves rarely changed a party’s share by more than a few points.
+The largest gain is the one the 2018 post-mortem pointed to: among the
+same respondents, the CAQ gained 6.1 points between intention and vote,
+and 37% of that year’s undecided voted CAQ. In short, a Quebec campaign
+moves many voters but, on net, few votes.</p>
 <div class="section level2">
-<h2 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<h2 id="most-voters-did-what-they-said">Most voters did what they said<a class="anchor" aria-label="anchor" href="#most-voters-did-what-they-said"></a>
 </h2>
-<p>The pooled <code>vote_choice</code> in the long layout keeps one row
-per respondent and wave: the intention (with the push of the undecided,
-type <code>intention_push</code>) before the election and the reported
-vote (<code>recall</code>) after it.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes1998"</span>, <span class="st">"qes2007_panel"</span>, <span class="st">"qes2012_panel"</span>, <span class="st">"qes2018_panel"</span>, <span class="st">"qes2022"</span><span class="op">)</span>,</span>
-<span>  targets <span class="op">=</span> <span class="st">"vote_choice"</span>,</span>
-<span>  layout <span class="op">=</span> <span class="st">"long"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">wave</span>, <span class="va">vote_choice__type</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      vote_choice__type</span></span>
-<span><span class="co">#&gt; wave  recall intention_push intention</span></span>
-<span><span class="co">#&gt;   cps      0           1521         0</span></span>
-<span><span class="co">#&gt;   pes   1220              0         0</span></span></code></pre></div>
-<p>Respondents are matched on <code>qes_id</code> within a study, and
-each transition is weighted with the post-election weight of the
-respondent.</p>
-</div>
-<div class="section level2">
-<h2 id="where-each-group-of-intenders-ended-up">Where each group of intenders ended up<a class="anchor" aria-label="anchor" href="#where-each-group-of-intenders-ended-up"></a>
-</h2>
-<figure class="qesr-fig" id="fig-matrix"><figcaption><span class="qesr-title">Most voters did what they said; in 2018 the CAQ drew from every side, including 12% of PQ intenders</span><span class="qesr-sub">From the intention during the campaign (rows) to the vote reported after the election (columns): the percentage of each row</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/matrix-light.png" alt="Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, 83% of CAQ intenders reported a CAQ vote and 67% of QS intenders a QS vote; 24% of the undecided did not vote. Values in the table view." width="672" height="595" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/matrix-dark.png" alt="Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, 83% of CAQ intenders reported a CAQ vote and 67% of QS intenders a QS vote; 24% of the undecided did not vote. Values in the table view." width="672" height="595" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice in the long layout, respondents interviewed in both waves of the 2018 Durand panel and of the QES 2022 (campaign and post-election waves), weighted with the post-election weight. Rows: the intention with the undecided pushed (intention_push), with the number of respondents; undecided: still no party after the push. The two blocks have the same rows and columns; grey cells have no value: the 2018 panel did not list the PCQ (n.l.), the 2022 campaign question has no 'none / would not vote' answer, and rows of fewer than 30 respondents are not drawn. The 95% confidence intervals and the panels of 1998, 2007 and 2012 (unweighted) are in the table view.</p>
+<figure class="qesr-fig" id="fig-matrix"><figcaption><span class="qesr-title">Most voters did what they said; in 2018 the CAQ drew from every side, including 12% of those who intended to vote PQ</span><span class="qesr-sub">From the intention during the campaign (rows) to the vote reported after the election (columns): the percentage of each row</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/matrix-light.png" alt="Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, 83% of those who intended to vote CAQ reported a CAQ vote and 67% of those who intended to vote QS a QS vote; 24% of the undecided did not vote. Values in the table view." width="672" height="595" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/matrix-dark.png" alt="Two heatmaps (2018 panel, QES 2022): rows are the vote intention during the campaign, with the number of respondents, columns the vote reported after the election, each cell the percentage of the row. The diagonal dominates: in 2022, 83% of those who intended to vote CAQ reported a CAQ vote and 67% of those who intended to vote QS a QS vote; 24% of the undecided did not vote. Values in the table view." width="672" height="595" loading="lazy"><p class="qesr-note">Source: qesR. Respondents interviewed during the campaign and after the election, in the 2018 Durand panel and the QES 2022, weighted with the post-election weight. Rows: the party intended, with the number of respondents; the undecided named no party, even when asked (where the panel asked) which party they leaned to. Each row includes those who did not vote. Grey cells have no value: the 2018 panel did not list the PCQ (n.l.), the 2022 campaign question had no 'would not vote' answer, and rows of fewer than 30 respondents are not drawn. Confidence intervals and the 1998, 2007 and 2012 panels are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -2628,21 +2654,31 @@ respondent.</p>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The diagonal: most voters reported the party they intended to vote
-for.</li>
-<li>In 2018 the CAQ drew from every side: 12% of PQ intenders, 11% of QS
-intenders, 22% of those who said they would not vote and 37% of the
-undecided.</li>
-<li>In 2022 the flows between parties are small, and QS lost the most:
-11% of its intenders voted PLQ and 8% PQ.</li>
-</ul>
+</table></details></figure><p>The diagonal dominates. In 2022, 83% of those who intended to vote
+CAQ reported a CAQ vote (a share that counts those who did not vote),
+and the flows between parties were small. Québec solidaire (QS) kept the
+smallest share of its campaign supporters, 67%: 11% of them voted PLQ
+and 8% PQ. In 2018, the picture is quite different. The CAQ drew from
+every side, with 12% of those who intended to vote PQ, 11% of those who
+intended to vote QS and 22% of those who had said they would not vote.
+In other words, the winner of 2018 did not only hold its voters; it kept
+recruiting during the campaign.</p>
+<p>Taken together, the share of voters who did not vote as they had said
+is far from trivial: it ranges from 22% to 28% across the five panels.
+The largest group among them switched from one party to another, from
+10% to 21% of voters, while the undecided and those who had said they
+would not vote made up the rest. In 2018 the two groups were about the
+same size (10% switchers, 10% undecided). That panel, however, did not
+ask the follow-up question of some undecided respondents interviewed by
+telephone, nor of those who said they would not vote, so it counts more
+undecided than the others. The 2007 election, a three-way race between
+the PLQ, the PQ and the Action démocratique du Québec (ADQ), produced
+the most switchers, 21%.</p>
 </div>
 <div class="section level2">
 <h2 id="loyalty-voted-as-they-intended">Loyalty: voted as they intended<a class="anchor" aria-label="anchor" href="#loyalty-voted-as-they-intended"></a>
 </h2>
-<figure class="qesr-fig" id="fig-loyal"><figcaption><span class="qesr-title">The PLQ, the PQ and the CAQ keep 79% to 96% of their intenders; QS keeps fewer, down to 45% in 2007</span><span class="qesr-sub">Share of each party's campaign intenders who reported voting for it, among those who voted, by panel study, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/loyal-light.png" alt="Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of the party's campaign intenders who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ 85%. Values in the table view." width="672" height="518" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/loyal-dark.png" alt="Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of the party's campaign intenders who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ 85%. Values in the table view." width="672" height="518" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice in the long layout, respondents interviewed before and after the election who reported a vote. Lines: 95% confidence intervals (logit). Weighted with the post-election weight (2018 panel, QES 2022); hollow (1998, 2007 and 2012 panels): unweighted, weight under review. The studies differ in design (the QES 2022 is a campaign and post-election survey, the others telephone panels): compare within a party with care. Cells of fewer than 30 respondents are not drawn; the other parties are in the table view.</p>
+<figure class="qesr-fig" id="fig-loyal"><figcaption><span class="qesr-title">The PLQ, the PQ and the CAQ keep 79% to 96% of their campaign supporters; QS keeps fewer, down to 45% in 2007</span><span class="qesr-sub">Share of those who intended to vote for each party during the campaign who reported voting for it, among those who voted, by panel study, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/loyal-light.png" alt="Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of those who intended to vote for the party during the campaign who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ 85%. Values in the table view." width="672" height="518" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/loyal-dark.png" alt="Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998 to 2022: the share of those who intended to vote for the party during the campaign who reported voting for it, among those who voted, with confidence intervals. The PLQ, the PQ and the CAQ are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ 85%. Values in the table view." width="672" height="518" loading="lazy"><p class="qesr-note">Source: qesR. Respondents interviewed during the campaign and after the election who reported a vote. Lines: 95% confidence intervals. Filled dots are weighted with the post-election weight (2018 panel, QES 2022); hollow dots (1998, 2007 and 2012 panels) are not weighted here, because their weights are under review. The studies differ in design and mode, so comparisons across studies are best made within a party. Cells of fewer than 30 respondents are not drawn; the other parties are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -2854,23 +2890,30 @@ undecided.</li>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The third parties keep the fewest: the ADQ in 1998 (65%), QS in 2007
-(45%) and 2012 (61%).</li>
-<li>The PLQ keeps between 85% and 90% of its intenders at every
-election.</li>
-<li>Loyalty is not a fixed trait of a party: the CAQ kept 79% of its
-intenders in 2012 and 96% in 2018, the ADQ 65% in 1998 and 80% in 2007.
-The studies differ: the 1998 polls and the 2007 and 2012 panels are
-unweighted, the 2018 panel is weighted, and the QES 2022 is a campaign
-and post-election survey rather than a telephone panel.</li>
-</ul>
+</table></details></figure><p>Two patterns stand out. First, the PLQ is the most consistent party
+over time: it keeps from 85% to 90% of its campaign supporters at every
+election, whereas the PQ ranges from 81% to 95% and the CAQ from 79% to
+96%. These shares leave out those who did not vote, which is why the CAQ
+keeps 88% here in 2022, compared to 83% in the matrix above. Second, the
+smaller parties keep the fewest. The ADQ kept 65% in 1998, and QS kept
+45% in 2007 and 61% in 2012. This is consistent with a familiar account
+in which a voter who likes a small party during the campaign returns to
+a party that can win on election day, although the panels alone cannot
+tell strategic desertion from a simple change of mind.</p>
+<p>Loyalty is not a fixed trait of a party, however. The CAQ kept 79% of
+its campaign supporters in 2012, its first election, and 96% in 2018,
+when it went on to win. The ADQ went from 65% in 1998 to 80% in 2007,
+the year it became the official opposition. These cases suggest, without
+establishing it, that loyalty follows a party’s momentum more than its
+size. The Parti conservateur du Québec (PCQ) points the same way only if
+momentum, rather than the chance of winning, is what matters: with 1.5%
+of the vote in 2018, it kept 82% of its campaign supporters in 2022 and
+won no seat (on that surge, see Bélanger et al. 2025).</p>
 </div>
 <div class="section level2">
 <h2 id="where-the-undecided-went">Where the undecided went<a class="anchor" aria-label="anchor" href="#where-the-undecided-went"></a>
 </h2>
-<figure class="qesr-fig" id="fig-undecided"><figcaption><span class="qesr-title">17% to 27% of the campaign's undecided did not vote; in 2018, 37% of them voted CAQ, the winner</span><span class="qesr-sub">What the respondents still undecided during the campaign reported after the election, by panel study</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/undecided-light.png" alt="100% stacked horizontal bars, one per panel study from 1998 to 2022: what the respondents who were still undecided during the campaign reported after the election, with those who did not vote first. Between 17% and 27% did not vote; in 2018, 37% voted CAQ; in 2022, 24% did not vote and 13% voted CAQ. Values in the table view." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/undecided-dark.png" alt="100% stacked horizontal bars, one per panel study from 1998 to 2022: what the respondents who were still undecided during the campaign reported after the election, with those who did not vote first. Between 17% and 27% did not vote; in 2018, 37% voted CAQ; in 2022, 24% did not vote and 13% voted CAQ. Values in the table view." width="672" height="307" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice in the long layout; the undecided are respondents who named no party during the campaign, even after the push question, and answered after the election. Weighted (2018 panel, QES 2022) or unweighted (1998, 2007 and 2012 panels; weights under review). Outlined segment: did not vote. Numbers: shares of 8% or more; the 95% confidence intervals are in the table view, and they are wide: each row rests on fewer than 110 respondents. In the 2007 and 2018 panels don't know and refused are one code.</p>
+<figure class="qesr-fig" id="fig-undecided"><figcaption><span class="qesr-title">17% to 27% of the campaign's undecided did not vote; in 2018, 37% of them voted CAQ, the winner</span><span class="qesr-sub">What the respondents still undecided during the campaign reported after the election, by panel study</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/undecided-light.png" alt="100% stacked horizontal bars, one per panel study from 1998 to 2022: what the respondents who were still undecided during the campaign reported after the election, with those who did not vote first. Between 17% and 27% did not vote; in 2018, 37% voted CAQ; in 2022, 24% did not vote and 13% voted CAQ. Values in the table view." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/undecided-dark.png" alt="100% stacked horizontal bars, one per panel study from 1998 to 2022: what the respondents who were still undecided during the campaign reported after the election, with those who did not vote first. Between 17% and 27% did not vote; in 2018, 37% voted CAQ; in 2022, 24% did not vote and 13% voted CAQ. Values in the table view." width="672" height="307" loading="lazy"><p class="qesr-note">Source: qesR. The undecided are respondents who named no party during the campaign, even when asked (where the panel asked) which party they leaned to, and who answered after the election. Weighted (2018 panel, QES 2022) or not weighted here, because their weights are under review (1998, 2007 and 2012 panels). Outlined segment: did not vote. Numbers: shares of 8% or more. Each row rests on 104 respondents or fewer, so the confidence intervals in the table view are wide. In the 2007 and 2018 panels, 'don't know' and 'refused' cannot be told apart and are both counted as undecided.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -3202,11 +3245,256 @@ and post-election survey rather than a telephone panel.</li>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
+</table></details></figure><p>The undecided matter less for the result than for turnout. Between
+17% and 27% of them did not vote, compared to 7% to 14% of those who had
+named a party. Voters who decide during the campaign are known to be the
+most open to its effects (Fournier et al. 2004); in Quebec, a sizeable
+minority of the undecided simply stay home. Those who did vote went in
+no single direction. In 1998 they leaned to the PLQ (38% versus 28% for
+the PQ), but on only 81 respondents. In 2018 they broke for the CAQ, and
+in 2022 they split across all the parties. The idea that the undecided
+lean toward one party finds no steady support here.</p>
+</div>
+<div class="section level2">
+<h2 id="who-won-the-campaign">Who won the campaign<a class="anchor" aria-label="anchor" href="#who-won-the-campaign"></a>
+</h2>
+<p>The matrix shows who moved; it does not show who came out ahead once
+the moves in both directions are added up. We take, for each party, its
+share of the reported vote minus its share of the intentions, among the
+same respondents. A positive gap means the party won more voters during
+the campaign than it lost.</p>
+<figure class="qesr-fig" id="fig-gains"><figcaption><span class="qesr-title">On net, the campaign moved a few points at most: from −3.1 pts for the PCQ in 2022 to +6.1 pts for the CAQ in 2018</span><span class="qesr-sub">Each party's share of the reported vote minus its share of the campaign intentions, among the same respondents, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="transitions_files/figure-html/gains-light.png" alt="Dot chart in four panels, one per panel study from 2007 to 2022, one row per party: the party's share of the reported vote minus its share of the campaign intentions, among the same respondents, in points, with confidence intervals. Most gaps are within a few points of zero. The largest gain is that of the CAQ in 2018, +6.1 pts, the largest loss that of the PCQ in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ at +3.0 pts. Values in the table view." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="transitions_files/figure-html/gains-dark.png" alt="Dot chart in four panels, one per panel study from 2007 to 2022, one row per party: the party's share of the reported vote minus its share of the campaign intentions, among the same respondents, in points, with confidence intervals. Most gaps are within a few points of zero. The largest gain is that of the CAQ in 2018, +6.1 pts, the largest loss that of the PCQ in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ at +3.0 pts. Values in the table view." width="672" height="480" loading="lazy"><p class="qesr-note">Source: qesR. All respondents interviewed during the campaign and after the election, including the undecided, those who said they would not vote and those who did not vote, so that the gains of the parties and of abstention add up. Filled dots: weighted with the post-election weight (2018 panel, QES 2022); hollow dots: not weighted here, because their weights are under review (2007 and 2012 panels). The 1998 polls are left out: their recontact over-represents the undecided, non-disclosers and third-party (ADQ) supporters, so their unweighted gains cannot be read (see the text). Parties that did not run, or that the question did not list, are left out.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:right;"> Election </th>
+   <th style="text-align:left;"> Study </th>
+   <th style="text-align:left;"> Party </th>
+   <th style="text-align:left;"> Net gain, points [95% CI] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Weighting </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> -2.4 [-4.2, -0.7] </td>
+   <td style="text-align:right;"> 1477 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> -0.9 [-3.0, 1.2] </td>
+   <td style="text-align:right;"> 1477 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 1.4 [-0.6, 3.4] </td>
+   <td style="text-align:right;"> 1477 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> -2.1 [-3.1, -1.1] </td>
+   <td style="text-align:right;"> 1477 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.0 [-1.2, 3.3] </td>
+   <td style="text-align:right;"> 689 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 4.6 [2.2, 7.1] </td>
+   <td style="text-align:right;"> 689 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> -0.4 [-2.2, 1.3] </td>
+   <td style="text-align:right;"> 689 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> -2.6 [-5.1, -0.2] </td>
+   <td style="text-align:right;"> 689 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> -2.9 [-5.0, -0.8] </td>
+   <td style="text-align:right;"> 815 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> -2.2 [-4.8, 0.3] </td>
+   <td style="text-align:right;"> 815 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> -2.5 [-4.5, -0.5] </td>
+   <td style="text-align:right;"> 815 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 6.1 [3.0, 9.3] </td>
+   <td style="text-align:right;"> 815 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 2.3 [-0.3, 4.8] </td>
+   <td style="text-align:right;"> 1156 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 3.0 [1.4, 4.7] </td>
+   <td style="text-align:right;"> 1156 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> -2.2 [-5.0, 0.7] </td>
+   <td style="text-align:right;"> 1156 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> -2.9 [-4.7, -1.1] </td>
+   <td style="text-align:right;"> 1156 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> PCQ </td>
+   <td style="text-align:left;"> -3.1 [-5.2, -1.0] </td>
+   <td style="text-align:right;"> 1156 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Most gaps are small, within a few points of zero. This is what one
+would expect when most voters keep their intention and the remaining
+moves partly cancel out. The two largest gains went to parties that went
+on to form the government: the CAQ in 2018, with 6.1 points (95%
+confidence interval: 3.0 to 9.3), and the PQ in 2012, with 4.6 points
+(2.2 to 7.1). The 2018 gain fits Durand and Blais’s (2020) account.
+Winning the government did not require winning the campaign. The PLQ in
+2007 and the CAQ in 2022 formed the government while losing ground
+during the campaign (by 2.4 and 2.9 points), and the PQ gained 3.0
+points in 2022 without forming it.</p>
+<p>We leave the 1998 polls out of the figure, because their net gains
+cannot be read as they stand. The 1998 panel in qesR is made of two of
+the three polls that Durand and Blais (1999) recontacted, those of CROP
+and CREATEC, which interviewed francophones only. The recontact was
+drawn to over-represent the undecided, non-disclosers and supporters of
+third parties, and it is analysed here without weights (its weights are
+under review). Unweighted, those who intended to vote ADQ make up 23% of
+the pairs; with the weight the producers used for their own published
+tables, they make up 16%. The unweighted numbers show the PLQ and the PQ
+gaining about as much (2.7 and 2.3 points), so there is no Liberal swing
+at the PQ’s expense, and the ADQ losing 6.2 points. With the producers’
+weight, the PLQ’s gain is close to zero (0.3 points) and the PQ’s loss
+is small (1.5 points), both with confidence intervals that include zero,
+while the ADQ’s loss shrinks to 3.2 points. Either way, these numbers
+are consistent with Durand and Blais (1999). This is hardly surprising:
+they come from the same respondents, so they confirm the original
+analysis rather than test it independently.</p>
+</div>
+<div class="section level2">
+<h2 id="what-the-numbers-mean-and-their-limits">What the numbers mean and their limits<a class="anchor" aria-label="anchor" href="#what-the-numbers-mean-and-their-limits"></a>
+</h2>
+<p>Overall, we find mixed support for the view that Quebec elections are
+decided at the last minute. On the one hand, from 22% to 28% of voters
+did not vote as they had said, and the CAQ of 2018 gained ground during
+the campaign itself. On the other hand, most of these moves cancel out,
+the undecided are few and abstain more often than the other voters, and
+the net effect of the campaign on a party’s share is usually a few
+points. Two limits of these data call for caution.</p>
+<p>First, the panels see only those who stayed. Respondents who dropped
+out after the campaign are not in these tables, and if leaving the panel
+is related to changing one’s mind, the transitions lean toward
+stability. Second, the vote after the election is a vote that
+respondents report once the winner is known. Some voters may recall a
+vote closer to the result than the one they cast, which would inflate
+the gains of the winner, the CAQ in 2018 included. If recall simply
+leaned toward the winner, though, the party that formed the government
+would gain every time, and it lost ground in 2007 and 2022. The five
+studies also differ in design and mode, and three of them are analysed
+without weights, so comparisons across elections are best read as orders
+of magnitude.</p>
+<p>That most voters keep their intention across five elections and
+several survey designs is itself a finding. Of course, this stability
+may not survive more fragmented elections, with five parties above 10%
+of the vote as in 2022; that is a question the next panels will have to
+answer.</p>
+</div>
+<div class="section level2">
+<h2 id="going-further">Going further<a class="anchor" aria-label="anchor" href="#going-further"></a>
+</h2>
 <ul>
-<li>Between 17% and 27% of the undecided did not vote.</li>
-<li>Those who voted broke for the winner in 2018 (the CAQ); in 2022 they
-split almost evenly among five parties.</li>
+<li>Durand, Claire, and André Blais. 1999. “Why Did the Polls Go Wrong
+in the 1998 Quebec Election? The Answer from Post-Election Polls.”
+<em>Bulletin of Sociological Methodology / Bulletin de Méthodologie
+Sociologique</em> 62 (1): 43–47. <a href="https://doi.org/10.1177/075910639906200105" class="external-link uri">https://doi.org/10.1177/075910639906200105</a>
+</li>
+<li>Durand, Claire, and André Blais. 2020. “Quebec 2018: A Failure of
+the Polls?” <em>Canadian Journal of Political Science</em> 53 (1):
+133–150. <a href="https://doi.org/10.1017/S0008423919000787" class="external-link uri">https://doi.org/10.1017/S0008423919000787</a>
+</li>
+<li>Fournier, Patrick, Richard Nadeau, André Blais, Elisabeth Gidengil,
+and Neil Nevitte. 2004. “Time-of-Voting Decision and Susceptibility to
+Campaign Effects.” <em>Electoral Studies</em> 23 (4): 661–681. <a href="https://doi.org/10.1016/j.electstud.2003.09.001" class="external-link uri">https://doi.org/10.1016/j.electstud.2003.09.001</a>
+</li>
+<li>Johnston, Richard, André Blais, Henry E. Brady, and Jean Crête.
+1992. <em>Letting the People Decide: Dynamics of a Canadian
+Election</em>. Montreal and Kingston: McGill-Queen’s University Press.
+<a href="https://doi.org/10.1515/9780773563643" class="external-link uri">https://doi.org/10.1515/9780773563643</a>
+</li>
+<li>On the PCQ voters of 2022, from the same Quebec Election Study:
+Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election.”
+<em>Canadian Journal of Political Science</em> 58 (2): 277–296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link uri">https://doi.org/10.1017/S0008423924000829</a>
+</li>
 </ul>
 </div>
 <div class="section level2">
@@ -3215,29 +3503,49 @@ split almost evenly among five parties.</li>
 <ul>
 <li>
 <strong>Studies.</strong> The studies that interviewed the same
-respondents before and after the election: the 1998 polls (CROP and
-CREATEC), the Durand panels of 2007, 2012 and 2018, and the QES 2022
-(campaign and post-election waves). Only respondents of both waves are
+respondents during the campaign and after the election: the 1998 CROP
+and CREATEC polls (francophones only), the panels Claire Durand ran in
+2007, 2012 and 2018, and the 2022 Quebec Election Study. Only
+respondents of both waves are used. The 2022 study was an online panel,
+the 2018 panel mixed telephone and web, and the older studies were by
+telephone.</li>
+<li>
+<strong>Intention.</strong> The party named during the campaign.
+Respondents who hesitated were asked which party they leaned to, and
+that answer counts; those who still named no party are the undecided. In
+the 2018 panel, some undecided respondents interviewed by telephone and
+those who said they would not vote were not asked the follow-up, so that
+panel counts more undecided. In the 2007 panel, a few respondents keep
+their first answer, where the producer’s combined answer cannot be
 used.</li>
 <li>
-<strong>Variable.</strong> <code>vote_choice</code> in the long
-layout, one row per wave. Before the election, the intention with the
-undecided pushed toward a party (<code>intention_push</code>; in the
-2007 panel, a few respondents had no push question and keep their first
-answer, type <code>intention</code>); after it, the reported vote
-(<code>recall</code>). Would not vote, none or would spoil is the level
-<code>no_party</code> of the intention; did not vote is the missing
-reason <code>not_voted</code> of the reported vote.</li>
+<strong>Vote.</strong> The party reported after the election, or did
+not vote.</li>
 <li>
 <strong>Weights.</strong> The post-election weight of each
-respondent, through <code><a href="../reference/qes_design.html">qes_design()</a></code> in the long layout (the
-respondent is the sampling unit). The 1998, 2007 and 2012 panels are
-unweighted (weights under review) and drawn hollow.</li>
+respondent in the 2018 panel and the 2022 study. The 1998, 2007 and 2012
+panels are not weighted here, because their weights are under review,
+and they are drawn hollow. The 1998 recontact also over-represents the
+undecided, non-disclosers and third-party (ADQ) supporters, so its net
+gains are left out of the last figure; the text compares them with and
+without the weight the producers used.</li>
 <li>
 <strong>Attrition.</strong> Respondents who left the panel after the
-campaign are not in these tables; if leaving is related to changing
-one’s mind, the transitions are biased toward stability.</li>
+campaign are not in these tables.</li>
+<li>
+<strong>Code.</strong> Every figure starts from the pooled
+<code>vote_choice</code>, in the long layout (one row per respondent and
+wave), matched within each study.</li>
 </ul>
+<details><summary>
+The call that builds the data
+</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes1998"</span>, <span class="st">"qes2007_panel"</span>, <span class="st">"qes2012_panel"</span>, <span class="st">"qes2018_panel"</span>, <span class="st">"qes2022"</span><span class="op">)</span>,</span>
+<span>  targets <span class="op">=</span> <span class="st">"vote_choice"</span>,</span>
+<span>  layout <span class="op">=</span> <span class="st">"long"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</details>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

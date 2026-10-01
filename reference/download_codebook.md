@@ -1,4 +1,4 @@
-# Download codebook files (legacy)
+# Download codebook files (older name)
 
 Downloads a study's documentation files (codebooks, questionnaires and
 reports) into a local directory.

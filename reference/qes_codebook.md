@@ -92,10 +92,10 @@ qes_codebook(
 A data frame of class `qes_codebook`, returned visibly.
 
 With `layout = "compact"`, one row per variable: `variable`, `label`
-(the file's variable label), `question`, `n_value_labels` (the columns
-of qesR 0.4.4, first and in that order), then `study`, `position` (in
-the data), `type` (`numeric`, `character`, `date`, `datetime` or
-`logical`), `question_lang`, `question_truncated`, `value_labels`
+(the file's variable label), `question`, `n_value_labels` (always first
+and in that order), then `study`, `position` (in the data), `type`
+(`numeric`, `character`, `date`, `datetime` or `logical`),
+`question_lang`, `question_truncated`, `value_labels`
 (`"1=Oui | 2=Non"`), `missing_codes` (`"8=dk | 9=refused"`), `targets`
 (the harmonized targets the variable feeds in
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
@@ -111,8 +111,8 @@ variable with no value labels keeps one row whose `value` is `NA`.
 
 Every layout has the attributes `survey_code`, `doi`, `doi_url`,
 `selected_data_file` (the Dataverse name of the data file described: for
-an ingested file, the `.tab` copy, as in qesR 0.4.4; the header printed
-by the codebook also names the original `.sav` or `.dta` that
+an ingested file, the `.tab` copy; the header printed by the codebook
+also names the original `.sav` or `.dta` that
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
 reads and
 [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)
@@ -172,8 +172,8 @@ codebook imprimé de `qes2022` rappelle cette licence et l'attribution
 qu'elle exige, que garde aussi son attribut `licence_notice` (à
 conserver avec le codebook enregistré). L'attribut `selected_data_file`
 garde le nom Dataverse du fichier décrit (la copie `.tab` d'un fichier
-ingéré, comme dans qesR 0.4.4) ; l'en-tête affiché nomme aussi le
-fichier original (`.sav` ou `.dta`) que
+ingéré) ; l'en-tête affiché nomme aussi le fichier original (`.sav` ou
+`.dta`) que
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
 lit et que
 [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)

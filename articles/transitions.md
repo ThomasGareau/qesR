@@ -1,70 +1,67 @@
-# Changing minds during the campaign: panel transitions
+# Are Quebec elections decided during the campaign?
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-transitions.md)*
 
-Cross-sections tell us how the vote ended up; panels tell us who moved.
-The 2018 Durand panel and the 2022 Quebec Election Study interviewed the
-same people during the campaign and after the vote. Most voters did what
-they said: 88% of those who intended to vote CAQ in 2022, and voted,
-reported a CAQ vote. Québec solidaire kept fewer, 71%. In 2018 the
-undecided broke toward the winner: 37% \[25, 51\] of the panel’s 75
-undecided voted CAQ, and 27% did not vote.
+Since the 1988 federal election, Canadian election studies have shown
+that opinion can move a great deal between the start of a campaign and
+the vote (Johnston et al. 1992). It is often said that Quebec elections
+are decided at the last minute, a claim that returns whenever the polls
+miss the result, as they did in 1998 and 2018. In 1998 the polls had the
+Parti Québécois (PQ) ahead, yet the Parti libéral du Québec (PLQ) took
+more of the valid votes (43.6% compared to 42.9%). In 2018 they forecast
+a close race between the PLQ and the Coalition avenir Québec (CAQ),
+which won by 13 points. Each time, part of the explanation was sought
+among voters who changed their minds at the end of the campaign and
+among non-disclosers, who would not reveal their intention. Durand and
+Blais (1999) reject both a late Liberal rise and a lower PQ turnout in
+1998, and trace the error to sampling and to how non-respondents
+behaved; for 2018, they conclude that last-minute shifts and the vote of
+non-disclosers explain most of the gap (Durand and Blais 2020).
 
-## The data
+However, a cross-section tells us how the vote ended up, not who moved.
+Panels can, because they interview the same people during the campaign
+and after the vote. Five Quebec election surveys did so, from the 1998
+CROP and CREATEC polls to the 2022 Quebec Election Study, including the
+panels Claire Durand ran in 2007, 2012 and 2018. We use them to ask a
+simple question: how many Quebec voters change their minds during a
+campaign, and who gains from it? Between 72% and 78% of those who voted
+reported the party they had named during the campaign. The undecided
+were a small group, from 6% to 10% of voters, and voters who switched
+from one party to another outnumbered them in every panel except 2018,
+where the two groups were about the same size. On net, these moves
+rarely changed a party’s share by more than a few points. The largest
+gain is the one the 2018 post-mortem pointed to: among the same
+respondents, the CAQ gained 6.1 points between intention and vote, and
+37% of that year’s undecided voted CAQ. In short, a Quebec campaign
+moves many voters but, on net, few votes.
 
-The pooled `vote_choice` in the long layout keeps one row per respondent
-and wave: the intention (with the push of the undecided, type
-`intention_push`) before the election and the reported vote (`recall`)
-after it.
-
-``` r
-
-h <- qes_harmonize(
-  studies = c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"),
-  targets = "vote_choice",
-  layout = "long", missing = "reasons", quiet = TRUE
-)
-```
-
-``` r
-
-with(h[h$study == "qes2022", ], table(wave, vote_choice__type))
-#>      vote_choice__type
-#> wave  recall intention_push intention
-#>   cps      0           1521         0
-#>   pes   1220              0         0
-```
-
-Respondents are matched on `qes_id` within a study, and each transition
-is weighted with the post-election weight of the respondent.
-
-## Where each group of intenders ended up
+## Most voters did what they said
 
 ![Two heatmaps (2018 panel, QES 2022): rows are the vote intention
 during the campaign, with the number of respondents, columns the vote
 reported after the election, each cell the percentage of the row. The
-diagonal dominates: in 2022, 83% of CAQ intenders reported a CAQ vote
-and 67% of QS intenders a QS vote; 24% of the undecided did not vote.
-Values in the table
+diagonal dominates: in 2022, 83% of those who intended to vote CAQ
+reported a CAQ vote and 67% of those who intended to vote QS a QS vote;
+24% of the undecided did not vote. Values in the table
 view.](transitions_files/figure-html/matrix-light.png)![Two heatmaps
 (2018 panel, QES 2022): rows are the vote intention during the campaign,
 with the number of respondents, columns the vote reported after the
 election, each cell the percentage of the row. The diagonal dominates:
-in 2022, 83% of CAQ intenders reported a CAQ vote and 67% of QS
-intenders a QS vote; 24% of the undecided did not vote. Values in the
-table view.](transitions_files/figure-html/matrix-dark.png)
+in 2022, 83% of those who intended to vote CAQ reported a CAQ vote and
+67% of those who intended to vote QS a QS vote; 24% of the undecided did
+not vote. Values in the table
+view.](transitions_files/figure-html/matrix-dark.png)
 
-Source: qesR, pooled vote_choice in the long layout, respondents
-interviewed in both waves of the 2018 Durand panel and of the QES 2022
-(campaign and post-election waves), weighted with the post-election
-weight. Rows: the intention with the undecided pushed (intention_push),
-with the number of respondents; undecided: still no party after the
-push. The two blocks have the same rows and columns; grey cells have no
-value: the 2018 panel did not list the PCQ (n.l.), the 2022 campaign
-question has no 'none / would not vote' answer, and rows of fewer than
-30 respondents are not drawn. The 95% confidence intervals and the
-panels of 1998, 2007 and 2012 (unweighted) are in the table view.
+Source: qesR. Respondents interviewed during the campaign and after the
+election, in the 2018 Durand panel and the QES 2022, weighted with the
+post-election weight. Rows: the party intended, with the number of
+respondents; the undecided named no party, even when asked (where the
+panel asked) which party they leaned to. Each row includes those who did
+not vote. Grey cells have no value: the 2018 panel did not list the PCQ
+(n.l.), the 2022 campaign question had no 'would not vote' answer, and
+rows of fewer than 30 respondents are not drawn. Confidence intervals
+and the 1998, 2007 and 2012 panels are in the table view.
 
 Table view
 
@@ -344,44 +341,57 @@ Table view
 | 2022 | QES 2022 | Undecided | Did not vote | 23.6 \[14.2, 36.6\] | 79 | weighted |
 
 Most voters did what they said; in 2018 the CAQ drew from every side,
-including 12% of PQ intendersFrom the intention during the campaign
-(rows) to the vote reported after the election (columns): the percentage
-of each row
+including 12% of those who intended to vote PQFrom the intention during
+the campaign (rows) to the vote reported after the election (columns):
+the percentage of each row
 
-What to notice:
+The diagonal dominates. In 2022, 83% of those who intended to vote CAQ
+reported a CAQ vote (a share that counts those who did not vote), and
+the flows between parties were small. Québec solidaire (QS) kept the
+smallest share of its campaign supporters, 67%: 11% of them voted PLQ
+and 8% PQ. In 2018, the picture is quite different. The CAQ drew from
+every side, with 12% of those who intended to vote PQ, 11% of those who
+intended to vote QS and 22% of those who had said they would not vote.
+In other words, the winner of 2018 did not only hold its voters; it kept
+recruiting during the campaign.
 
-- The diagonal: most voters reported the party they intended to vote
-  for.
-- In 2018 the CAQ drew from every side: 12% of PQ intenders, 11% of QS
-  intenders, 22% of those who said they would not vote and 37% of the
-  undecided.
-- In 2022 the flows between parties are small, and QS lost the most: 11%
-  of its intenders voted PLQ and 8% PQ.
+Taken together, the share of voters who did not vote as they had said is
+far from trivial: it ranges from 22% to 28% across the five panels. The
+largest group among them switched from one party to another, from 10% to
+21% of voters, while the undecided and those who had said they would not
+vote made up the rest. In 2018 the two groups were about the same size
+(10% switchers, 10% undecided). That panel, however, did not ask the
+follow-up question of some undecided respondents interviewed by
+telephone, nor of those who said they would not vote, so it counts more
+undecided than the others. The 2007 election, a three-way race between
+the PLQ, the PQ and the Action démocratique du Québec (ADQ), produced
+the most switchers, 21%.
 
 ## Loyalty: voted as they intended
 
 ![Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per
-panel study from 1998 to 2022: the share of the party's campaign
-intenders who reported voting for it, among those who voted, with
+panel study from 1998 to 2022: the share of those who intended to vote
+for the party during the campaign who reported voting for it, among
+those who voted, with confidence intervals. The PLQ, the PQ and the CAQ
+are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ
+kept 88% and the PLQ 85%. Values in the table
+view.](transitions_files/figure-html/loyal-light.png)![Dot chart grouped
+by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998
+to 2022: the share of those who intended to vote for the party during
+the campaign who reported voting for it, among those who voted, with
 confidence intervals. The PLQ, the PQ and the CAQ are between 79% and
 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ
 85%. Values in the table
-view.](transitions_files/figure-html/loyal-light.png)![Dot chart grouped
-by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998
-to 2022: the share of the party's campaign intenders who reported voting
-for it, among those who voted, with confidence intervals. The PLQ, the
-PQ and the CAQ are between 79% and 96%; QS in the 2007 panel kept 45%.
-In 2022 the CAQ kept 88% and the PLQ 85%. Values in the table
 view.](transitions_files/figure-html/loyal-dark.png)
 
-Source: qesR, pooled vote_choice in the long layout, respondents
-interviewed before and after the election who reported a vote. Lines:
-95% confidence intervals (logit). Weighted with the post-election weight
-(2018 panel, QES 2022); hollow (1998, 2007 and 2012 panels): unweighted,
-weight under review. The studies differ in design (the QES 2022 is a
-campaign and post-election survey, the others telephone panels): compare
-within a party with care. Cells of fewer than 30 respondents are not
-drawn; the other parties are in the table view.
+Source: qesR. Respondents interviewed during the campaign and after the
+election who reported a vote. Lines: 95% confidence intervals. Filled
+dots are weighted with the post-election weight (2018 panel, QES 2022);
+hollow dots (1998, 2007 and 2012 panels) are not weighted here, because
+their weights are under review. The studies differ in design and mode,
+so comparisons across studies are best made within a party. Cells of
+fewer than 30 respondents are not drawn; the other parties are in the
+table view.
 
 Table view
 
@@ -413,21 +423,32 @@ Table view
 | 2022 | QES 2022 | PCQ | 82.3 \[73.9, 88.5\] | 159 | weighted |
 | 2022 | QES 2022 | Other | n \< 30 | 24 | weighted |
 
-The PLQ, the PQ and the CAQ keep 79% to 96% of their intenders; QS keeps
-fewer, down to 45% in 2007Share of each party's campaign intenders who
-reported voting for it, among those who voted, by panel study, with 95%
-confidence intervals
+The PLQ, the PQ and the CAQ keep 79% to 96% of their campaign
+supporters; QS keeps fewer, down to 45% in 2007Share of those who
+intended to vote for each party during the campaign who reported voting
+for it, among those who voted, by panel study, with 95% confidence
+intervals
 
-What to notice:
+Two patterns stand out. First, the PLQ is the most consistent party over
+time: it keeps from 85% to 90% of its campaign supporters at every
+election, whereas the PQ ranges from 81% to 95% and the CAQ from 79% to
+96%. These shares leave out those who did not vote, which is why the CAQ
+keeps 88% here in 2022, compared to 83% in the matrix above. Second, the
+smaller parties keep the fewest. The ADQ kept 65% in 1998, and QS kept
+45% in 2007 and 61% in 2012. This is consistent with a familiar account
+in which a voter who likes a small party during the campaign returns to
+a party that can win on election day, although the panels alone cannot
+tell strategic desertion from a simple change of mind.
 
-- The third parties keep the fewest: the ADQ in 1998 (65%), QS in 2007
-  (45%) and 2012 (61%).
-- The PLQ keeps between 85% and 90% of its intenders at every election.
-- Loyalty is not a fixed trait of a party: the CAQ kept 79% of its
-  intenders in 2012 and 96% in 2018, the ADQ 65% in 1998 and 80%
-  in 2007. The studies differ: the 1998 polls and the 2007 and 2012
-  panels are unweighted, the 2018 panel is weighted, and the QES 2022 is
-  a campaign and post-election survey rather than a telephone panel.
+Loyalty is not a fixed trait of a party, however. The CAQ kept 79% of
+its campaign supporters in 2012, its first election, and 96% in 2018,
+when it went on to win. The ADQ went from 65% in 1998 to 80% in 2007,
+the year it became the official opposition. These cases suggest, without
+establishing it, that loyalty follows a party’s momentum more than its
+size. The Parti conservateur du Québec (PCQ) points the same way only if
+momentum, rather than the chance of winning, is what matters: with 1.5%
+of the vote in 2018, it kept 82% of its campaign supporters in 2022 and
+won no seat (on that surge, see Bélanger et al. 2025).
 
 ## Where the undecided went
 
@@ -444,14 +465,15 @@ not vote; in 2018, 37% voted CAQ; in 2022, 24% did not vote and 13%
 voted CAQ. Values in the table
 view.](transitions_files/figure-html/undecided-dark.png)
 
-Source: qesR, pooled vote_choice in the long layout; the undecided are
-respondents who named no party during the campaign, even after the push
-question, and answered after the election. Weighted (2018 panel, QES
-2022) or unweighted (1998, 2007 and 2012 panels; weights under review).
-Outlined segment: did not vote. Numbers: shares of 8% or more; the 95%
-confidence intervals are in the table view, and they are wide: each row
-rests on fewer than 110 respondents. In the 2007 and 2018 panels don't
-know and refused are one code.
+Source: qesR. The undecided are respondents who named no party during
+the campaign, even when asked (where the panel asked) which party they
+leaned to, and who answered after the election. Weighted (2018 panel,
+QES 2022) or not weighted here, because their weights are under review
+(1998, 2007 and 2012 panels). Outlined segment: did not vote. Numbers:
+shares of 8% or more. Each row rests on 104 respondents or fewer, so the
+confidence intervals in the table view are wide. In the 2007 and 2018
+panels, 'don't know' and 'refused' cannot be told apart and are both
+counted as undecided.
 
 Table view
 
@@ -502,30 +524,197 @@ Table view
 them voted CAQ, the winnerWhat the respondents still undecided during
 the campaign reported after the election, by panel study
 
-What to notice:
+The undecided matter less for the result than for turnout. Between 17%
+and 27% of them did not vote, compared to 7% to 14% of those who had
+named a party. Voters who decide during the campaign are known to be the
+most open to its effects (Fournier et al. 2004); in Quebec, a sizeable
+minority of the undecided simply stay home. Those who did vote went in
+no single direction. In 1998 they leaned to the PLQ (38% versus 28% for
+the PQ), but on only 81 respondents. In 2018 they broke for the CAQ, and
+in 2022 they split across all the parties. The idea that the undecided
+lean toward one party finds no steady support here.
 
-- Between 17% and 27% of the undecided did not vote.
-- Those who voted broke for the winner in 2018 (the CAQ); in 2022 they
-  split almost evenly among five parties.
+## Who won the campaign
+
+The matrix shows who moved; it does not show who came out ahead once the
+moves in both directions are added up. We take, for each party, its
+share of the reported vote minus its share of the intentions, among the
+same respondents. A positive gap means the party won more voters during
+the campaign than it lost.
+
+![Dot chart in four panels, one per panel study from 2007 to 2022, one
+row per party: the party's share of the reported vote minus its share of
+the campaign intentions, among the same respondents, in points, with
+confidence intervals. Most gaps are within a few points of zero. The
+largest gain is that of the CAQ in 2018, +6.1 pts, the largest loss that
+of the PCQ in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ
+at +3.0 pts. Values in the table
+view.](transitions_files/figure-html/gains-light.png)![Dot chart in four
+panels, one per panel study from 2007 to 2022, one row per party: the
+party's share of the reported vote minus its share of the campaign
+intentions, among the same respondents, in points, with confidence
+intervals. Most gaps are within a few points of zero. The largest gain
+is that of the CAQ in 2018, +6.1 pts, the largest loss that of the PCQ
+in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ at +3.0
+pts. Values in the table
+view.](transitions_files/figure-html/gains-dark.png)
+
+Source: qesR. All respondents interviewed during the campaign and after
+the election, including the undecided, those who said they would not
+vote and those who did not vote, so that the gains of the parties and of
+abstention add up. Filled dots: weighted with the post-election weight
+(2018 panel, QES 2022); hollow dots: not weighted here, because their
+weights are under review (2007 and 2012 panels). The 1998 polls are left
+out: their recontact over-represents the undecided, non-disclosers and
+third-party (ADQ) supporters, so their unweighted gains cannot be read
+(see the text). Parties that did not run, or that the question did not
+list, are left out.
+
+Table view
+
+| Election | Study | Party | Net gain, points \[95% CI\] | n | Weighting |
+|---:|:---|:---|:---|---:|:---|
+| 2007 | 2007 panel | PLQ | -2.4 \[-4.2, -0.7\] | 1477 | unweighted (weight under review) |
+| 2007 | 2007 panel | PQ | -0.9 \[-3.0, 1.2\] | 1477 | unweighted (weight under review) |
+| 2007 | 2007 panel | ADQ | 1.4 \[-0.6, 3.4\] | 1477 | unweighted (weight under review) |
+| 2007 | 2007 panel | QS | -2.1 \[-3.1, -1.1\] | 1477 | unweighted (weight under review) |
+| 2012 | 2012 panel | PLQ | 1.0 \[-1.2, 3.3\] | 689 | unweighted (weight under review) |
+| 2012 | 2012 panel | PQ | 4.6 \[2.2, 7.1\] | 689 | unweighted (weight under review) |
+| 2012 | 2012 panel | QS | -0.4 \[-2.2, 1.3\] | 689 | unweighted (weight under review) |
+| 2012 | 2012 panel | CAQ | -2.6 \[-5.1, -0.2\] | 689 | unweighted (weight under review) |
+| 2018 | 2018 panel | PLQ | -2.9 \[-5.0, -0.8\] | 815 | weighted |
+| 2018 | 2018 panel | PQ | -2.2 \[-4.8, 0.3\] | 815 | weighted |
+| 2018 | 2018 panel | QS | -2.5 \[-4.5, -0.5\] | 815 | weighted |
+| 2018 | 2018 panel | CAQ | 6.1 \[3.0, 9.3\] | 815 | weighted |
+| 2022 | QES 2022 | PLQ | 2.3 \[-0.3, 4.8\] | 1156 | weighted |
+| 2022 | QES 2022 | PQ | 3.0 \[1.4, 4.7\] | 1156 | weighted |
+| 2022 | QES 2022 | QS | -2.2 \[-5.0, 0.7\] | 1156 | weighted |
+| 2022 | QES 2022 | CAQ | -2.9 \[-4.7, -1.1\] | 1156 | weighted |
+| 2022 | QES 2022 | PCQ | -3.1 \[-5.2, -1.0\] | 1156 | weighted |
+
+On net, the campaign moved a few points at most: from −3.1 pts for the
+PCQ in 2022 to +6.1 pts for the CAQ in 2018Each party's share of the
+reported vote minus its share of the campaign intentions, among the same
+respondents, with 95% confidence intervals
+
+Most gaps are small, within a few points of zero. This is what one would
+expect when most voters keep their intention and the remaining moves
+partly cancel out. The two largest gains went to parties that went on to
+form the government: the CAQ in 2018, with 6.1 points (95% confidence
+interval: 3.0 to 9.3), and the PQ in 2012, with 4.6 points (2.2 to 7.1).
+The 2018 gain fits Durand and Blais’s (2020) account. Winning the
+government did not require winning the campaign. The PLQ in 2007 and the
+CAQ in 2022 formed the government while losing ground during the
+campaign (by 2.4 and 2.9 points), and the PQ gained 3.0 points in 2022
+without forming it.
+
+We leave the 1998 polls out of the figure, because their net gains
+cannot be read as they stand. The 1998 panel in qesR is made of two of
+the three polls that Durand and Blais (1999) recontacted, those of CROP
+and CREATEC, which interviewed francophones only. The recontact was
+drawn to over-represent the undecided, non-disclosers and supporters of
+third parties, and it is analysed here without weights (its weights are
+under review). Unweighted, those who intended to vote ADQ make up 23% of
+the pairs; with the weight the producers used for their own published
+tables, they make up 16%. The unweighted numbers show the PLQ and the PQ
+gaining about as much (2.7 and 2.3 points), so there is no Liberal swing
+at the PQ’s expense, and the ADQ losing 6.2 points. With the producers’
+weight, the PLQ’s gain is close to zero (0.3 points) and the PQ’s loss
+is small (1.5 points), both with confidence intervals that include zero,
+while the ADQ’s loss shrinks to 3.2 points. Either way, these numbers
+are consistent with Durand and Blais (1999). This is hardly surprising:
+they come from the same respondents, so they confirm the original
+analysis rather than test it independently.
+
+## What the numbers mean and their limits
+
+Overall, we find mixed support for the view that Quebec elections are
+decided at the last minute. On the one hand, from 22% to 28% of voters
+did not vote as they had said, and the CAQ of 2018 gained ground during
+the campaign itself. On the other hand, most of these moves cancel out,
+the undecided are few and abstain more often than the other voters, and
+the net effect of the campaign on a party’s share is usually a few
+points. Two limits of these data call for caution.
+
+First, the panels see only those who stayed. Respondents who dropped out
+after the campaign are not in these tables, and if leaving the panel is
+related to changing one’s mind, the transitions lean toward stability.
+Second, the vote after the election is a vote that respondents report
+once the winner is known. Some voters may recall a vote closer to the
+result than the one they cast, which would inflate the gains of the
+winner, the CAQ in 2018 included. If recall simply leaned toward the
+winner, though, the party that formed the government would gain every
+time, and it lost ground in 2007 and 2022. The five studies also differ
+in design and mode, and three of them are analysed without weights, so
+comparisons across elections are best read as orders of magnitude.
+
+That most voters keep their intention across five elections and several
+survey designs is itself a finding. Of course, this stability may not
+survive more fragmented elections, with five parties above 10% of the
+vote as in 2022; that is a question the next panels will have to answer.
+
+## Going further
+
+- Durand, Claire, and André Blais. 1999. “Why Did the Polls Go Wrong in
+  the 1998 Quebec Election? The Answer from Post-Election Polls.”
+  *Bulletin of Sociological Methodology / Bulletin de Méthodologie
+  Sociologique* 62 (1): 43–47.
+  <https://doi.org/10.1177/075910639906200105>
+- Durand, Claire, and André Blais. 2020. “Quebec 2018: A Failure of the
+  Polls?” *Canadian Journal of Political Science* 53 (1): 133–150.
+  <https://doi.org/10.1017/S0008423919000787>
+- Fournier, Patrick, Richard Nadeau, André Blais, Elisabeth Gidengil,
+  and Neil Nevitte. 2004. “Time-of-Voting Decision and Susceptibility to
+  Campaign Effects.” *Electoral Studies* 23 (4): 661–681.
+  <https://doi.org/10.1016/j.electstud.2003.09.001>
+- Johnston, Richard, André Blais, Henry E. Brady, and Jean Crête. 1992.
+  *Letting the People Decide: Dynamics of a Canadian Election*. Montreal
+  and Kingston: McGill-Queen’s University Press.
+  <https://doi.org/10.1515/9780773563643>
+- On the PCQ voters of 2022, from the same Quebec Election Study:
+  Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+  Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election.”
+  *Canadian Journal of Political Science* 58 (2): 277–296.
+  <https://doi.org/10.1017/S0008423924000829>
 
 ## About the data
 
-- **Studies.** The studies that interviewed the same respondents before
-  and after the election: the 1998 polls (CROP and CREATEC), the Durand
-  panels of 2007, 2012 and 2018, and the QES 2022 (campaign and
-  post-election waves). Only respondents of both waves are used.
-- **Variable.** `vote_choice` in the long layout, one row per wave.
-  Before the election, the intention with the undecided pushed toward a
-  party (`intention_push`; in the 2007 panel, a few respondents had no
-  push question and keep their first answer, type `intention`); after
-  it, the reported vote (`recall`). Would not vote, none or would spoil
-  is the level `no_party` of the intention; did not vote is the missing
-  reason `not_voted` of the reported vote.
-- **Weights.** The post-election weight of each respondent, through
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-  in the long layout (the respondent is the sampling unit). The 1998,
-  2007 and 2012 panels are unweighted (weights under review) and drawn
-  hollow.
+- **Studies.** The studies that interviewed the same respondents during
+  the campaign and after the election: the 1998 CROP and CREATEC polls
+  (francophones only), the panels Claire Durand ran in 2007, 2012 and
+  2018, and the 2022 Quebec Election Study. Only respondents of both
+  waves are used. The 2022 study was an online panel, the 2018 panel
+  mixed telephone and web, and the older studies were by telephone.
+- **Intention.** The party named during the campaign. Respondents who
+  hesitated were asked which party they leaned to, and that answer
+  counts; those who still named no party are the undecided. In the 2018
+  panel, some undecided respondents interviewed by telephone and those
+  who said they would not vote were not asked the follow-up, so that
+  panel counts more undecided. In the 2007 panel, a few respondents keep
+  their first answer, where the producer’s combined answer cannot be
+  used.
+- **Vote.** The party reported after the election, or did not vote.
+- **Weights.** The post-election weight of each respondent in the 2018
+  panel and the 2022 study. The 1998, 2007 and 2012 panels are not
+  weighted here, because their weights are under review, and they are
+  drawn hollow. The 1998 recontact also over-represents the undecided,
+  non-disclosers and third-party (ADQ) supporters, so its net gains are
+  left out of the last figure; the text compares them with and without
+  the weight the producers used.
 - **Attrition.** Respondents who left the panel after the campaign are
-  not in these tables; if leaving is related to changing one’s mind, the
-  transitions are biased toward stability.
+  not in these tables.
+- **Code.** Every figure starts from the pooled `vote_choice`, in the
+  long layout (one row per respondent and wave), matched within each
+  study.
+
+The call that builds the data
+
+``` r
+
+h <- qes_harmonize(
+  studies = c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"),
+  targets = "vote_choice",
+  layout = "long", missing = "reasons", quiet = TRUE
+)
+```

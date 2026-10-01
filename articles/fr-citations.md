@@ -1,4 +1,4 @@
-# Citations des études
+# Citer qesR et les études
 
 *[English
 version](https://thomasgareau.github.io/qesR/articles/citations.md)*
@@ -7,9 +7,8 @@ Lorsque vous publiez des résultats obtenus avec qesR, citez le package
 et chacun des jeux de données utilisés.
 [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
 produit ces citations à partir du catalogue fourni avec qesR : cette
-page n’a donc besoin d’aucun accès au réseau. La version anglaise de
-cette page est
-[`vignette("citations", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/citations.md).
+page n’a donc besoin d’aucun accès au réseau. La dernière section donne
+la licence de chaque étude et l’attribution que demande l’étude de 2022.
 
 ``` r
 
@@ -28,11 +27,11 @@ qes_cite()
 
 ## Citer les jeux de données
 
-Chaque code d’étude renvoie à un dépôt Dataverse, fixé à une version
-précise. La citation donne les auteurs, l’année, le titre du dépôt tel
-que publié, le DOI, le dépôt, la version et l’UNF du jeu de données (une
-somme de contrôle de ses données). Les trois sondages de 1998 partagent
-un même dépôt : leur citation nomme donc aussi le fichier de données.
+Chaque code d’étude lit une version d’un dépôt Dataverse. La citation
+donne les auteurs, l’année, le titre du dépôt tel que publié, le DOI, le
+dépôt, la version et l’UNF du jeu de données (une somme de contrôle de
+ses données). Les trois sondages de 1998 partagent un même dépôt : leur
+citation nomme donc aussi le fichier de données.
 
 | Code | Année | Étude | Licence | Citation |
 |:---|:---|:---|:---|:---|
@@ -49,14 +48,6 @@ un même dépôt : leur citation nomme donc aussi le fichier de données.
 | `qes1998` | 1998 | Sondages électoraux sur les élections générales québécoises de 1998 : panel CROP-CREATEC | CC0 1.0 | Durand, Claire, 2023, “Sondages électoraux sur les élections générales québécoises de 1998”, <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== \[fichier : Total_panel_election_QC1998.sav\] |
 | `qes1998_crop` | 1998 | Sondages électoraux sur les élections générales québécoises de 1998 : CROP | CC0 1.0 | Durand, Claire, 2023, “Sondages électoraux sur les élections générales québécoises de 1998”, <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== \[fichier : Total_sondages_election_CROP1998.sav\] |
 | `qes1998_createc` | 1998 | Sondages électoraux sur les élections générales québécoises de 1998 : CREATEC | CC0 1.0 | Durand, Claire, 2023, “Sondages électoraux sur les élections générales québécoises de 1998”, <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, V1, UNF:6:zeXNn+A0b1j0DtgUq2cYjg== \[fichier : Total_sondages_election_CREATEC1998.sav\] |
-
-L’étude de 2022 est diffusée sous licence CC BY-NC 4.0, qui exige
-l’attribution et exclut l’usage commercial ; les autres études sont sous
-CC0 (domaine public). La licence de chaque étude figure dans
-`qes_studies()$licence`. Les métadonnées de l’étude de 2022 que qesR
-livre (son codebook, le texte des questions, les étiquettes de valeurs
-et les effectifs) sont sous la même licence et demandent la même
-citation.
 
 ## Citer seulement ce que vous avez utilisé
 
@@ -102,3 +93,34 @@ cat(qes_cite("qes2018", style = "bibtex"), sep = "\n\n")
 #>   note = {UNF:6:luhys2QSLNTONPOXO4LYpg==},
 #> }
 ```
+
+## Licences et attribution
+
+Les données ne font pas partie de qesR : il les télécharge de Borealis
+et du Harvard Dataverse. La plupart des études sont diffusées sous CC0
+1.0 (domaine public). L’étude de 2022 est diffusée sous licence CC BY-NC
+4.0, qui exige l’attribution et exclut l’usage commercial.
+`qes_studies()$licence` donne la licence de chaque étude.
+
+La licence MIT de qesR couvre le code du package seulement. Les
+métadonnées de l’étude de 2022 que qesR livre (étiquettes, texte des
+questions, effectifs, et les libellés, étiquettes et effectifs de
+l’harmonisation qui en sont tirés) sont tirées de Mahéo, Bélanger,
+Stephenson et Harell (2023), *2022 Quebec Election Study*, Harvard
+Dataverse, V1.1, <https://doi.org/10.7910/DVN/PAQBDR>, et gardent sa
+licence, [CC BY-NC
+4.0](https://creativecommons.org/licenses/by-nc/4.0/deed.fr) :
+attribution, pas d’usage commercial. Cela n’implique aucune approbation
+de qesR par les auteurs. Citez l’étude quand vous utilisez ces
+métadonnées, comme quand vous utilisez ses données. Le codebook imprimé
+de `qes2022` rappelle cette mention, et les codebooks et les résultats
+de
+[`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
+et de
+[`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
+qui incluent `qes2022` la gardent dans leur attribut `licence_notice`.
+
+Les métadonnées des autres études sont sous CC0 1.0, et les effectifs du
+recensement viennent de Statistique Canada (Licence ouverte de
+Statistique Canada). `system.file("COPYRIGHTS", package = "qesR")` donne
+chaque fichier du package, sa source et sa licence.

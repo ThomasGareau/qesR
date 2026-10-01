@@ -1,9 +1,11 @@
-/* qesR site styles. Colours come from the logo: blue #0468b9, gold #ffe542,
-   slate #3e4b63. Everything else is Bootstrap 5, set in _pkgdown.yml, so the
-   light and dark themes both work. No custom JavaScript. */
+/* qesR site styles. Colours come from the logo (man/figures/logo.svg):
+   navy #0B3D91 and gold #F2B632; the contrast of each is computed in the
+   comment of template.bslib in _pkgdown.yml. Everything else is Bootstrap
+   5, set in _pkgdown.yml, so the light and dark themes both work. The only script is the FR/EN button of
+   the navbar (template.includes.before_body of _pkgdown.yml). */
 
 :root {
-  --qesr-gold: #f2c200;
+  --qesr-gold: #f2b632;
 }
 
 .navbar {
@@ -23,21 +25,22 @@
 .navbar-brand::before {
   content: "";
   display: inline-block;
-  width: 1.6rem;
+  width: 1.64rem;
   height: 1.9rem;
   margin-right: 0.45rem;
-  background: url("logo.png") center / contain no-repeat;
+  background: url("logo.svg") center / contain no-repeat;
 }
 
 /* A visible keyboard focus everywhere, in both themes (WCAG 1.4.11 asks
-   for 3:1 against the background): link blue on the light theme (7.3:1 on
-   white; gold would be 1.7:1), gold on the dark theme (9.2:1 on #212529). */
+   for 3:1 against the background): the logo navy on the light theme
+   (10.0:1 on white; gold would be 1.8:1), the logo gold on the dark theme
+   (8.5:1 on #212529). */
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible,
 .nav-link:focus-visible,
 .dropdown-item:focus-visible {
-  outline: 3px solid #0357a0;
+  outline: 3px solid #0b3d91;
   outline-offset: 2px;
 }
 
@@ -47,6 +50,49 @@ summary:focus-visible,
 [data-bs-theme="dark"] .nav-link:focus-visible,
 [data-bs-theme="dark"] .dropdown-item:focus-visible {
   outline-color: var(--qesr-gold);
+}
+
+/* The FR/EN button of the navbar: a pill in the link colour, which
+   Bootstrap sets per theme (#0B3D91 on the light theme, 10.0:1 on white;
+   #93B4EC on the dark theme, 7.3:1 on #212529), so it reads in both. On a
+   phone it sits before the menu button, always visible; on a wide screen
+   it moves after the menus. */
+.qesr-lang-switch-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 0.5rem;
+}
+
+@media (min-width: 992px) {
+  .qesr-lang-switch-wrap {
+    order: 10;
+    margin-left: 0.75rem;
+    margin-right: 0;
+  }
+}
+
+.qesr-lang-switch {
+  display: inline-block;
+  min-width: 2.6rem;
+  border: 1.5px solid var(--bs-link-color);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--bs-link-color);
+  background: var(--bs-body-bg);
+  text-decoration: none;
+}
+
+.qesr-lang-switch:hover,
+.qesr-lang-switch:focus-visible {
+  background: var(--bs-link-color);
+  color: var(--bs-body-bg);
+  text-decoration: none;
 }
 
 /* Section headings inside the navbar menus ("Examples"). */
@@ -72,6 +118,11 @@ main table th {
   border-bottom: 2px solid var(--bs-primary);
 }
 
+/* the navy rule would be 1.5:1 on the dark background */
+[data-bs-theme="dark"] main table th {
+  border-bottom-color: var(--bs-link-color);
+}
+
 main table td {
   vertical-align: top;
   hyphens: manual;
@@ -79,35 +130,6 @@ main table td {
 
 main table td code {
   white-space: nowrap;
-}
-
-/* The coverage grid of the home page (11 studies): compact, so that every
-   study fits in the column on a laptop; the study codes of the header wrap
-   only where the generated grid allows it (after "qes" and at "_"). */
-.qesr-grid table {
-  font-size: 0.8rem;
-}
-
-.qesr-grid th,
-.qesr-grid td {
-  padding: 0.25rem 0.3rem;
-  text-align: center;
-  hyphens: none;
-}
-
-.qesr-grid th {
-  white-space: normal;
-  vertical-align: bottom;
-}
-
-.qesr-grid th code {
-  white-space: normal;
-  padding: 0;
-  background: none;
-}
-
-.qesr-grid td:first-child {
-  text-align: left;
 }
 
 /* The EN/FR link at the top of each guide. */
@@ -119,7 +141,7 @@ main .contents > p:first-of-type > em:only-child > a {
 /* Ordinary plots (drawn for a white page) keep a light background in the
    dark theme, so that their axis text stays readable. The figures of the
    example pages are drawn twice instead, for each theme (below). */
-[data-bs-theme="dark"] main img:not(.logo):not([src$="logo.png"]):not(.qesr-img) {
+[data-bs-theme="dark"] main img:not(.logo):not([src$="logo.png"]):not([src$="logo.svg"]):not(.qesr-img) {
   background-color: #fff;
   border-radius: var(--bs-border-radius);
 }

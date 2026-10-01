@@ -187,23 +187,22 @@ are reviewed study by study and may still change. A crosswalk row is
 applied only once a reviewer has signed it off (status `"stable"`); rows
 checked against the files but not yet signed off (status `"review"` or
 `"draft"`) are applied only with `include_draft = TRUE`, and a message
-says so. In spec 4.1.0 every row is signed off, after an automated
-double review against the original files and documents (not a human
-review; the crosswalk's `reviewed_by` says so, and `review_note` what
-the review corrected). The rows added in spec 4.3.0 (the push of 2022,
-the new targets such as satisfaction with democracy or the leader
-ratings) are checked against the files but not reviewed yet: they are in
-review, and applied only with `include_draft = TRUE`. A row's sign-off
-is about its content: the recommended weights that still need review
-(those of `qes1998`, `qes2007_panel`, `qes2012_panel` and the CROP
-polls) do not hold the rows of their waves, but are themselves `NA`
-until they are reviewed (see *Weights*). A row in review has its values
-missing by default (reason `not_reviewed`), and
-`qes_spec("crosswalk")$review_note` says why it is held. When no cell of
-the result is applied for that reason, a warning of class
-`qesR_warning_all_unreviewed` gives the number of values left `NA` and
-names `include_draft = TRUE`; otherwise a message counts the cells
-(study and target) and values left out.
+says so. In the shipped spec every row but three is signed off, after an
+automated double review against the original files and documents (not a
+human review; the crosswalk's `reviewed_by` says so, and `review_note`
+what the review corrected). The three others (the strength of provincial
+party identification of `qes2022` and the previous provincial vote of
+`qes2008` and `qes2018`) are in review, and applied only with
+`include_draft = TRUE`. A row's sign-off is about its content: the
+recommended weights that still need review (those of `qes1998`,
+`qes2007_panel`, `qes2012_panel` and the CROP polls) do not hold the
+rows of their waves, but are themselves `NA` until they are reviewed
+(see *Weights*). A row in review has its values missing by default
+(reason `not_reviewed`), and `qes_spec("crosswalk")$review_note` says
+why it is held. When no cell of the result is applied for that reason, a
+warning of class `qesR_warning_all_unreviewed` gives the number of
+values left `NA` and names `include_draft = TRUE`; otherwise a message
+counts the cells (study and target) and values left out.
 
 Every result records the spec version and content hash
 (`attr(, "qes_spec")`). The same spec version and hash, the same pinned
@@ -567,14 +566,17 @@ classe `qesR_error_input`). Une ligne de correspondance n'est appliquée
 qu'une fois approuvée par un réviseur (statut `"stable"`) ;
 `include_draft = TRUE` applique aussi les lignes vérifiées mais pas
 encore approuvées (statut `"review"` ou `"draft"`). Dans la
-spécification 4.1.0, toutes les lignes sont approuvées, après une double
-révision automatisée sur les fichiers et documents originaux (et non une
-révision humaine ; la colonne `reviewed_by` le dit). L'approbation d'une
-ligne porte sur son contenu : les pondérations recommandées encore à
-réviser (celles de `qes1998`, `qes2007_panel`, `qes2012_panel` et des
-sondages CROP) ne retiennent pas les lignes de leurs vagues, mais valent
-elles-mêmes NA jusqu'à leur révision. Sans `include_draft = TRUE`, les
-valeurs d'une ligne en révision sont NA (motif `not_reviewed`),
+spécification livrée, toutes les lignes sauf trois sont approuvées,
+après une double révision automatisée sur les fichiers et documents
+originaux (et non une révision humaine ; la colonne `reviewed_by` le
+dit) ; les trois autres (la force de l'identification partisane
+provinciale de `qes2022` et le vote provincial précédent de `qes2008` et
+de `qes2018`) sont en révision. L'approbation d'une ligne porte sur son
+contenu : les pondérations recommandées encore à réviser (celles de
+`qes1998`, `qes2007_panel`, `qes2012_panel` et des sondages CROP) ne
+retiennent pas les lignes de leurs vagues, mais valent elles-mêmes NA
+jusqu'à leur révision. Sans `include_draft = TRUE`, les valeurs d'une
+ligne en révision sont NA (motif `not_reviewed`),
 `qes_spec("crosswalk")$review_note` dit pourquoi elle est retenue, et un
 avertissement de classe `qesR_warning_all_unreviewed` le signale quand
 tout le résultat est NA. Les autres conditions ont des classes (section
@@ -628,7 +630,7 @@ h <- qes_harmonize("qes_demo")
 #> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.
 #> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.
 h
-#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.0 (content hash 506f691e420e8d5d5de3657eef556d3d).
+#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.1 (content hash cd62e566cd051bde5b236c3511555c91).
 #> Approximate cells: qes_demo age_group3, qes_demo age_group6.
 #> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).
 #> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).
@@ -755,6 +757,10 @@ attr(h, "qes_weight_guide")
 
 # one row per respondent and wave
 l <- qes_harmonize("qes_demo", targets = "sov_indep", layout = "long", quiet = TRUE)
+table(l$wave, l$wave_timing)
+#>       
+#>        post
+#>   post   60
 
 # one vote choice for every study: here the reported vote of the
 # demonstration study (a qes2014 stand-in)
@@ -782,29 +788,15 @@ qes_provenance(v, level = "pooled")[, c("study", "type", "member", "grade", "n_v
 v2 <- qes_harmonize("qes_demo", targets = "vote_choice",
                     types = list(vote_choice = "intention"), quiet = TRUE)
 
-# what the review corrected in each row, and which rows are in review
+# which rows are signed off (stable), and which are still in review
 xw <- qes_spec("crosswalk")
 table(xw$status)
 #> 
 #> review stable 
 #>      3    233 
-head(xw[!is.na(xw$review_note), c("study", "target", "review_note")])
-#>            study                target
-#> 21       qes2022      vote_prov_intent
-#> 22       qes2022               lr_self
-#> 26 qes2018_panel      vote_prov_intent
-#> 27 qes2018_panel vote_prov_intent_push
-#> 33 qes2007_panel      vote_prov_intent
-#> 34 qes2007_panel vote_prov_intent_push
-#>                                                                                                                                                                                                                                                                                                                                                                                                            review_note
-#> 21                                                                                                                                                                                                                                                            Corrected in this review (spec 4.0.0): the routing of cps_turnout codes 3 to 6 in the evidence and grade reasons (code 4 was asked no vote-choice item).
-#> 22                                                                                                                                                                                                                                                                  Corrected in this review (spec 4.0.0): the codebook page of the -99 convention (p. 7); the undocumented slider claim removed (instrument lr_0_10).
-#> 26                                                                                                                                                                                                                                                               Corrected in this review (spec 4.0.0): the stem's second sentence on advance voting (Ipsos report of the same poll); grade comparable to approximate.
-#> 27 Corrected in this review (spec 4.0.0): the push filter is narrower than the anchor's (would-not-vote answers not pushed); grade comparable to approximate. Corrected in spec 4.3.0 (text only): the stem's second sentence on advance voting; the codebook label (file 341538) leaves it out, and it comes from the Ipsos report cited on the rv1a row (rapport_la_presse_global_news_29_septembre_2018.pdf, p. 4).
-#> 33                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.
-#> 34                                                                   Signed off on content by the automated double review (not a human review); stable from spec 4.1.0. The recommended weights pondam1 (pre) and pond_tot_am1 (post) still need review, which is tracked apart from the content (dev/open-questions.md Q1 and D1) and does not hold the row; until then the harmonized weights of these waves are NA.
-table(l$wave, l$wave_timing)
-#>       
-#>        post
-#>   post   60
+xw[xw$status == "review", c("study", "target", "source_var", "grade")]
+#>       study            target     source_var       grade
+#> 171 qes2022 pid_prov_strength cps_provpidstr approximate
+#> 175 qes2008    vote_prov_prev            q13  comparable
+#> 176 qes2018    vote_prov_prev             q9  comparable
 ```

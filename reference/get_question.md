@@ -1,4 +1,4 @@
-# Get survey question text (legacy)
+# Get survey question text (older name)
 
 Soft-deprecated: use
 [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md).

@@ -20,9 +20,58 @@
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -36,59 +85,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -119,7 +143,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Validation against official results and the census</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Validation against official results and the census</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/validation.Rmd" class="external-link"><code>vignettes/articles/validation.Rmd</code></a></small>
@@ -143,19 +167,10 @@ Canada);</li>
 <li>a few <strong>relationships between answers</strong> that any valid
 measure should show (construct validity).</li>
 </ol>
-<p>The page is built when the website is built: the data files are
-downloaded from their Dataverse deposits through qesR’s cache and
-harmonized with <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>. The benchmarks are in
-<code>inst/extdata/validation/</code> of the qesR source repository,
-each row with its source; the census margins also ship with the package,
-the official results of Élections Québec and the recorded report do not
-(their terms of use need Élections Québec’s written permission, which is
-pending). The same checks run every week on the pinned files and fail
-when the weighted recall index (check V-L2 of the specification) or a
-weighted census index rises more than 2 points above its recorded value,
-when turnout over-reporting leaves 0 to 35 points, or when a
-construct-validity direction (check V-L4) fails. An index that falls, or
-rises by less, passes.</p>
+<p>Every study is harmonized with <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> from its
+original data file. The same comparisons run automatically on the
+original files, so a mapping error that moved these numbers would be
+caught.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
@@ -165,7 +180,7 @@ rises by less, passes.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="va">x</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="va">digits</span>, flag <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">sign</span><span class="op">)</span> <span class="st">"+"</span> <span class="kw">else</span> <span class="st">""</span>,</span>
 <span>          decimal.mark <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"."</span>, <span class="st">","</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co"># every study the specification covers, harmonized from the pinned files,</span></span>
+<span><span class="co"># every study the specification covers, harmonized from the original files,</span></span>
 <span><span class="co"># against the benchmarks that ship with qesR</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_run</span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_gate</span><span class="op">(</span><span class="va">report</span>, <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_recorded</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -174,7 +189,7 @@ rises by less, passes.</p>
 <span><span class="va">report</span><span class="op">$</span><span class="va">weighting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"unweighted"</span>, <span class="st">"non pondéré"</span><span class="op">)</span>,</span>
 <span>                           <span class="fu">tr</span><span class="op">(</span><span class="st">"weighted"</span>, <span class="st">"pondéré"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co"># one row per study and check: the weighted value where the study has a</span></span>
-<span><span class="co"># reviewed weight, the unweighted one otherwise</span></span>
+<span><span class="co"># usable weight, the unweighted one otherwise</span></span>
 <span><span class="va">best</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span>, <span class="va">x</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span><span class="op">)</span>, <span class="op">]</span></span>
 <span>  <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
@@ -297,15 +312,14 @@ voters could give.</p>
 <p>The weighted index uses the weight the specification recommends for
 the wave that asked the question; <code>qes2007</code>,
 <code>qes2012</code>, <code>qes2014</code>, <code>qes2018</code>,
-<code>qes2022</code> and the 2018 panel have reviewed weights so far.
-The weights of <code>qes2007_panel</code>, <code>qes2012_panel</code>,
-the CROP polls and <code>qes1998</code> are not documented well enough
-to be used (their rows are <code>needs_review</code>), and both weights
-of <code>qes2008</code> are calibrated on the vote or on turnout, so
-their index is unweighted. <code>qes1998</code> interviewed francophones
-only, a population the official results do not describe: it is shown for
-reference but not checked.</p>
-<figure class="qesr-fig" id="fig-recall"><figcaption><span class="qesr-title">Surveys under-report the PLQ at every election from 2007 to 2014, by 3 to 7 points, and the CAQ by 8 points in 2022</span><span class="qesr-sub">Reported minus official vote share, in points, by party (rows) and study (columns)</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/recall-light.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/recall-dark.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><p class="qesr-note">Weighted with the reviewed weight of the study where it has one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.</p>
+<code>qes2022</code> and the 2018 panel have one. The weights of
+<code>qes2007_panel</code>, <code>qes2012_panel</code>, the CROP polls
+and <code>qes1998</code> are not documented well enough to be used, and
+both weights of <code>qes2008</code> are calibrated on the vote or on
+turnout, so their index is unweighted. <code>qes1998</code> interviewed
+francophones only, a population the official results do not describe: it
+is shown for reference but not checked.</p>
+<figure class="qesr-fig" id="fig-recall"><figcaption><span class="qesr-title">Surveys under-report the PLQ at every election from 2007 to 2014, by 3 to 7 points, and the CAQ by 8 points in 2022</span><span class="qesr-sub">Reported minus official vote share, in points, by party (rows) and study (columns)</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/recall-light.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/recall-dark.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><p class="qesr-note">Weighted with the study's weight where it has a usable one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Study </th>
@@ -1031,7 +1045,7 @@ or below.</p>
 <p>Each cell is a dissimilarity index in points (0 is a perfect match);
 a blank cell is a margin the study did not ask, or one the collected
 census tables do not publish for that year (mother tongue in 2006).</p>
-<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">After weighting, university graduates are still over-represented by 4 to 21 points; in 2018, English speakers by 9</span><span class="qesr-sub">Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/census-light.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a reviewed weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/census-dark.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a reviewed weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><p class="qesr-note">Studies with a reviewed weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.</p>
+<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">After weighting, university graduates are still over-represented by 4 to 21 points; in 2018, English speakers by 9</span><span class="qesr-sub">Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/census-light.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/census-dark.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><p class="qesr-note">Studies with a usable weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Margin </th>
@@ -1684,8 +1698,8 @@ errors that offset each other: in 2012 the PQ and the PLQ finished less
 than a point apart, so a study that swapped their codes would match the
 official results about as well. That is why the harmonization is also
 checked against exact counts of each answer in the original files and
-against the relationships of section 4, and why each crosswalk row is
-reviewed against the questionnaire.</p>
+against the relationships of section 4, and why each mapping is checked
+against the questionnaire.</p>
 </div>
 <div class="section level2">
 <h2 id="sources">Sources<a class="anchor" aria-label="anchor" href="#sources"></a>
@@ -1702,14 +1716,8 @@ Profile (catalogue 98-316-XWE2011001: age by sex); and the 2006 table
 97-551-XCB2006009 (age by sex; the Internet Archive’s copy of Statistics
 Canada’s file).</li>
 </ul>
-<p>The benchmark tables are in <code>inst/extdata/validation/</code> of
-the source repository, with the source of every row; the installed
-package
-(<code>system.file("extdata", "validation", package = "qesR")</code>)
-has only the census margins. The recorded results of every study are in
-<code>validation_report.csv</code> there; those of <code>qes2022</code>
-keep the study’s licence, CC BY-NC 4.0 (the file <code>COPYRIGHTS</code>
-of the package).</p>
+<p>The benchmark tables, with the source of every row, are in the <a href="https://github.com/ThomasGareau/qesR" class="external-link">qesR source
+repository</a>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

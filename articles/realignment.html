@@ -17,17 +17,67 @@
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="From two parties to four: Quebec's party system, 1998-2022">
-<meta name="description" content="Who moved when the PQ-PLQ duopoly became a four-party system: francophones and the others, young and old voters.
+<meta name="description" content="Among whom the Quebec vote fragmented from 1998 to 2022, and whether the sovereignty question still organizes it.
 ">
-<meta property="og:description" content="Who moved when the PQ-PLQ duopoly became a four-party system: francophones and the others, young and old voters.
+<meta property="og:description" content="Among whom the Quebec vote fragmented from 1998 to 2022, and whether the sovereignty question still organizes it.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>From two parties to four: Quebec's party system, 1998-2022</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>From two parties to four: Quebec's party system, 1998-2022</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/realignment.Rmd" class="external-link"><code>vignettes/articles/realignment.Rmd</code></a></small>
@@ -134,48 +159,46 @@
     
     
 <p><em><a href="fr-realignement.html">Version française</a></em></p>
-<p>In 1998 the PQ and the PLQ took 86% of the valid votes. In 2022 five
-parties took more than 12% each, and the effective number of parties
-(official results) rose from 2.6 to 4.0. The surveys show where this
-happened: among francophones. Their effective number of parties went
-from 2.8 in 1998 (the CROP and CREATEC polls, which interviewed
-francophones only and are unweighted) to 3.9 in the 2022 Quebec Election
-Study, as their vote split among the PQ, the CAQ, Québec solidaire and
-the PLQ. Non-francophones kept voting PLQ: 72% of them in 2018, against
-12% of francophones. The CAQ won that year with 41% of the francophone
-vote and 12% of the other voters.</p>
+<p>For about three decades, Quebec’s party system rested on the
+sovereignty question. From the 1970s on, the Parti Québécois (PQ) and
+the Parti libéral du Québec (PLQ) alternated in power, and where
+Quebecers stood on independence went a long way toward explaining how
+they voted. In 1998 the two parties still took 86% of the valid votes.
+However, after the breakthrough of the Action démocratique du Québec
+(ADQ) in 2007, Bélanger and Nadeau (2009) asked whether the recent
+change in voters’ behaviour was a passing incident or a lasting
+transformation of Quebec’s political landscape. The rise of Québec
+solidaire (QS) and of the Coalition avenir Québec (CAQ) has since
+settled part of that question. In 2022 five parties each took more than
+12% of the vote, and the effective number of parties (Laakso and
+Taagepera 1979) rose from 2.6 in 1998 to 4.0, the equivalent of four
+parties of equal size. It is now commonplace to say that the system has
+fragmented, and the 2018 election, which ended the alternation of the PQ
+and the PLQ in power, is the starting point of recent work on the “new”
+Quebec voter (Bélanger et al. 2022). The official results tell us how
+much the system fragmented. They do not tell us among whom, nor whether
+the sovereignty question still organizes the vote.</p>
+<p>The Quebec Election Studies give a fairly clear answer to both
+questions. First, the fragmentation is concentrated among francophones.
+Their effective number of parties went from 2.8 in 1998 to 3.9 in 2022.
+The 1998 estimate comes from the CROP and CREATEC polls, which
+interviewed francophones only and are unweighted; from the first Quebec
+Election Study, in 2007, the rise is smaller, from 3.5 to 3.9.
+Non-francophones, by contrast, kept voting Liberal until 2018: 72% of
+them supported the PLQ that year, compared to 12% of francophones.
+Second, the sovereignty question still divides the francophone vote, but
+it no longer channels it into two parties. Since 2012 sovereigntists
+have almost never voted PLQ and federalists have rarely voted PQ, yet
+the share of francophones who voted for the party of their own camp fell
+from 55% in 2012 to 22% in 2022. In other words, knowing where a
+francophone voter stands on independence now tells us more about the
+party they will not choose than about the one they will. The idea that
+the sovereignty question has faded from Quebec elections therefore finds
+only mixed support.</p>
 <div class="section level2">
-<h2 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<h2 id="the-francophone-vote-fragmented-first">The francophone vote fragmented first<a class="anchor" aria-label="anchor" href="#the-francophone-vote-fragmented-first"></a>
 </h2>
-<p>Every figure on this page uses one pooled variable,
-<code>vote_choice</code>, restricted to the vote reported after the
-election (<code>types</code>):</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
-<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"lang_mother"</span>, <span class="st">"age_group3"</span><span class="op">)</span>,</span>
-<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
-<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>A weighted share with its confidence interval, within one study, is a
-<code><a href="../reference/qes_design.html">qes_design()</a></code> and a call to the survey package:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2018"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
-<span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d18</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lang_mother</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">vote_choice</span> <span class="op">==</span> <span class="st">"CAQ"</span><span class="op">)</span>, <span class="op">~</span><span class="va">lang_mother</span>, <span class="va">d18</span>, <span class="va">svyciprop</span>,</span>
-<span>      method <span class="op">=</span> <span class="st">"logit"</span>, vartype <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         lang_mother I(vote_choice == "CAQ")       ci_l      ci_u</span></span>
-<span><span class="co">#&gt; French       French               0.4114613 0.38603333 0.4373710</span></span>
-<span><span class="co">#&gt; English     English               0.1101960 0.07564846 0.1578270</span></span>
-<span><span class="co">#&gt; Other         Other               0.1717929 0.10011622 0.2788822</span></span></code></pre></div>
-<p>The figures repeat this for every study, with the helpers of <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/_data.R" class="external-link"><code>_data.R</code></a>.
-The estimates of each study are made within that study and never pooled
-across studies.</p>
-</div>
-<div class="section level2">
-<h2 id="francophones-fragmented-non-francophones-stayed-with-the-plq">Francophones fragmented; non-francophones stayed with the PLQ<a class="anchor" aria-label="anchor" href="#francophones-fragmented-non-francophones-stayed-with-the-plq"></a>
-</h2>
-<figure class="qesr-fig" id="fig-enp"><figcaption><span class="qesr-title">The francophone vote fragmented, from 2.8 to 3.9 effective parties; the non-francophone vote stayed concentrated until 2018</span><span class="qesr-sub">Effective number of parties at each election: official result and reported vote by mother tongue, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/enp-light.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/enp-dark.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) of one Quebec Election Study per election and the 1998 polls (CROP and CREATEC, francophones only, unweighted; their recontact over-selected undecided voters and refusers); official results of Élections Québec. Effective number of parties = 1 / sum of squared shares, with the PV, ON and other parties counted as one. Bands: 95% confidence intervals. Weighted with each study's post-election weight; hollow dots (1998, 2008): unweighted, weight under review. The x axis is in years, with a break between 1998 and 2007. The Durand panels are in the table view.</p>
+<figure class="qesr-fig" id="fig-enp"><figcaption><span class="qesr-title">The francophone vote fragmented, from 2.8 to 3.9 effective parties; the non-francophone vote stayed far more concentrated</span><span class="qesr-sub">Effective number of parties at each election: official result and reported vote by mother tongue, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/enp-light.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/enp-dark.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls, which interviewed francophones only, each by its own definition (mother tongue for CREATEC, the language spoken most often at home for CROP); official results of Élections Québec. The effective number of parties (Laakso and Taagepera 1979) is 1 divided by the sum of the squared vote shares; the smaller parties are grouped into a single category, other parties. Bands: 95% confidence intervals. Hollow dots (1998, 2008): unweighted. The x axis is in years, with a break between 1998 and 2007.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -368,27 +391,29 @@ across studies.</p>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>Over the whole period both lines rise, the official one from 2.6 to
-4.0 and the francophone one from 2.8 to 3.9, but not election by
-election: from 2008 to 2012 the official number rises (3.0 to 3.6) while
-the francophone one stays at 3.1, and in 2014 the official number falls
-(3.4) while the francophone one rises (3.7). The first peak, in 2007, is
-the three-way race of the PQ, the PLQ and the ADQ.</li>
-<li>Among non-francophones the vote stays concentrated, with an
-effective number between 1.3 and 2.5 from 2007 to 2018. It reaches 2.9
-in 2022, when the PLQ fell to 54% of their vote, but the interval runs
-from 1.9 to 3.9: only 121 non-francophone voters answered, so the size
-of the jump is uncertain.</li>
-<li>The survey line runs close to the official one, but not on it:
-surveys over-report some parties (see <a href="survey-vs-official.html">Survey vs official results</a>).</li>
-</ul>
+</table></details></figure><p>The two survey lines do not follow the same path. Among francophones
+the effective number of parties rose over the period, though not
+steadily. It reached a first peak in 2007 (3.5), the year of the ADQ’s
+breakthrough, fell back to 3.1 in 2012, and has been no lower than 3.6
+since 2014. Among non-francophones it was 2.5 in 2007, when the PLQ took
+58% of their vote, and from 2008 to 2018 it stayed between 1.3 and 2.1,
+a vote largely dominated by the PLQ. It reached 2.9 in 2022, when the
+PLQ fell to 54% of their vote. That said, only 121 non-francophone
+voters answered that year, and the interval runs from 1.9 to 3.9, wide
+enough to include the 2007 value. The rise is clear against the 2008 to
+2018 elections; its size is not.</p>
+<p>The survey lines run close to the official one, but not on it.
+Surveys over-report some parties and under-report others (see <a href="survey-vs-official.html">Survey vs official results</a>). In 2022,
+for instance, 33% of respondents reported a vote for the CAQ, against
+41% of the ballots, so the survey makes the 2022 vote look more
+fragmented than it was (4.7 effective parties among all respondents, 4.0
+officially). The survey lines therefore say more about the gap between
+the two groups, and how it changed, than about the level of either.</p>
 </div>
 <div class="section level2">
-<h2 id="each-partys-vote-francophones-and-the-rest">Each party’s vote, francophones and the rest<a class="anchor" aria-label="anchor" href="#each-partys-vote-francophones-and-the-rest"></a>
+<h2 id="party-by-party-the-language-divide-held">Party by party, the language divide held<a class="anchor" aria-label="anchor" href="#party-by-party-the-language-divide-held"></a>
 </h2>
-<figure class="qesr-fig" id="fig-lang"><figcaption><span class="qesr-title">Non-francophones vote PLQ (72% in 2018); the CAQ's wins are francophone wins (41% of francophones, 12% of the others)</span><span class="qesr-sub">Share of the reported vote among francophones and non-francophones, by party, with 95% confidence intervals and the official result</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/lang-light.png" alt="Five small line charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the share of the reported vote among francophones and among non-francophones at each election from 1998 to 2022, with the official result as a tick. The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the francophone vote; the CAQ takes 41% of francophones and 12% of the others. Values in the table view." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/lang-dark.png" alt="Five small line charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the share of the reported vote among francophones and among non-francophones at each election from 1998 to 2022, with the official result as a tick. The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the francophone vote; the CAQ takes 41% of francophones and 12% of the others. Values in the table view." width="672" height="499" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote), one Quebec Election Study per election and the 1998 polls (francophones only). Tick: official share of valid votes, all voters. Bars: 95% confidence intervals (logit). Weighted; hollow dots (1998, 2008): unweighted, weight under review. Cells of fewer than 30 respondents are not drawn. The x axis is in years, with a break between 1998 and 2007. The ADQ merged into the CAQ in 2012; the two stay separate parties here. The PCQ, the Durand panels and the other parties are in the table view.</p>
+<figure class="qesr-fig" id="fig-lang"><figcaption><span class="qesr-title">The CAQ's wins are francophone wins: in 2018 it took 41% of francophones and 12% of other voters</span><span class="qesr-sub">Share of the reported vote among francophones and non-francophones, by party, with 95% confidence intervals and the official result</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/lang-light.png" alt="Five small line charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the share of the reported vote among francophones and among non-francophones at each election from 1998 to 2022, with the official result as a tick. The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the francophone vote; the CAQ takes 41% of francophones and 12% of the others. Values in the table view." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/lang-dark.png" alt="Five small line charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the share of the reported vote among francophones and among non-francophones at each election from 1998 to 2022, with the official result as a tick. The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the francophone vote; the CAQ takes 41% of francophones and 12% of the others. Values in the table view." width="672" height="499" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls (francophones only). Tick: official share of valid votes, all voters. Bars: 95% confidence intervals. Hollow dots (1998, 2008): unweighted. Groups of fewer than 30 respondents are not drawn. The ADQ merged into the CAQ in 2012; the two are kept apart here. The PCQ and the smaller parties are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Party </th>
@@ -399,7 +424,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <th style="text-align:right;"> n </th>
    <th style="text-align:left;"> Official, all voters </th>
    <th style="text-align:left;"> Weighting </th>
-   <th style="text-align:left;"> Grade </th>
   </tr></thead>
 <tbody>
 <tr>
@@ -411,7 +435,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 43.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -422,7 +445,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 33.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -433,7 +455,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 33.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -444,7 +465,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 33.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -455,7 +475,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 33.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -466,7 +485,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 42.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -477,7 +495,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 42.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -488,7 +505,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 31.2 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -499,7 +515,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 31.2 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -510,7 +525,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 31.2 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -521,7 +535,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 31.2 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -532,7 +545,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 41.5 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -543,7 +555,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 41.5 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -554,7 +565,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 24.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -565,7 +575,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 24.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -576,7 +585,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 24.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -587,7 +595,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 24.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -598,7 +605,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 14.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PLQ </td>
@@ -609,7 +615,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 14.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -620,7 +625,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 42.9 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -631,7 +635,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 28.3 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -642,7 +645,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 28.3 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -653,7 +655,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 28.3 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -664,7 +665,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 28.3 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -675,7 +675,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 35.2 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -686,7 +685,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 35.2 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -697,7 +695,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 31.9 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -708,7 +705,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 31.9 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -719,7 +715,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 31.9 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -730,7 +725,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 31.9 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -741,7 +735,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 25.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -752,7 +745,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 25.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -763,7 +755,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 17.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -774,7 +765,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 17.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -785,7 +775,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 17.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -796,7 +785,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 17.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -807,7 +795,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 14.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PQ </td>
@@ -818,7 +805,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 14.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -829,7 +815,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 11.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -840,7 +825,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 30.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -851,7 +835,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 30.8 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -862,7 +845,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 30.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -873,7 +855,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 30.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -884,7 +865,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 16.4 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> ADQ </td>
@@ -895,7 +875,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 16.4 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -906,7 +885,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -917,7 +895,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -928,7 +905,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -939,7 +915,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -950,7 +925,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 3.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -961,7 +935,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 3.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -972,7 +945,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 6.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -983,7 +955,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 6.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -994,7 +965,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 6.0 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1005,7 +975,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 6.0 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1016,7 +985,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 7.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1027,7 +995,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 7.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1038,7 +1005,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 16.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1049,7 +1015,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 16.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1060,7 +1025,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 16.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1071,7 +1035,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 16.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1082,7 +1045,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 15.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> QS </td>
@@ -1093,7 +1055,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 15.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1104,7 +1065,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 27.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1115,7 +1075,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 27.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1126,7 +1085,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 27.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1137,7 +1095,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 27.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1148,7 +1105,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 23.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1159,7 +1115,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 23.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1170,7 +1125,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 37.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1181,7 +1135,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 37.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1192,7 +1145,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 37.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1203,7 +1155,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 37.4 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1214,7 +1165,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 41.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> CAQ </td>
@@ -1225,7 +1175,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 41.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PCQ </td>
@@ -1236,7 +1185,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 12.9 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> PCQ </td>
@@ -1247,7 +1195,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 12.9 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1258,7 +1205,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1126 </td>
    <td style="text-align:left;"> 1.8 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1269,7 +1215,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1525 </td>
    <td style="text-align:left;"> 4.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1280,7 +1225,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 163 </td>
    <td style="text-align:left;"> 4.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1291,7 +1235,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1337 </td>
    <td style="text-align:left;"> 4.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1302,7 +1245,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 155 </td>
    <td style="text-align:left;"> 4.1 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1313,7 +1255,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:left;"> 2.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1324,7 +1265,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 127 </td>
    <td style="text-align:left;"> 2.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1335,7 +1275,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1094 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1346,7 +1285,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 180 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> identical </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1357,7 +1295,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 576 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1368,7 +1305,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 57 </td>
    <td style="text-align:left;"> 3.6 </td>
    <td style="text-align:left;"> unweighted (weight under review) </td>
-   <td style="text-align:left;"> approximate </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1379,7 +1315,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 981 </td>
    <td style="text-align:left;"> 2.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1390,7 +1325,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 201 </td>
    <td style="text-align:left;"> 2.0 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1401,7 +1335,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 1656 </td>
    <td style="text-align:left;"> 3.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1412,7 +1345,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 359 </td>
    <td style="text-align:left;"> 3.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1423,7 +1355,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 560 </td>
    <td style="text-align:left;"> 3.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1434,7 +1365,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 143 </td>
    <td style="text-align:left;"> 3.1 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1445,7 +1375,6 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 883 </td>
    <td style="text-align:left;"> 1.7 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 <tr>
 <td style="text-align:left;"> Other </td>
@@ -1456,25 +1385,1077 @@ surveys over-report some parties (see <a href="survey-vs-official.html">Survey v
    <td style="text-align:right;"> 121 </td>
    <td style="text-align:left;"> 1.7 </td>
    <td style="text-align:left;"> weighted </td>
-   <td style="text-align:left;"> comparable </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The PLQ remained the party of non-francophones: 58% of their vote in
-2007, 86% in 2014, while its francophone vote fell from 34% in 1998 (the
-1998 polls) to 6% in 2022, far below its official share.</li>
-<li>The PQ lost the few non-francophone voters it had (15% in 2007, 2%
-in 2022). Québec solidaire grew among francophones first, and among the
-others in 2022.</li>
-<li>The CAQ’s wins are francophone wins; like the ADQ before it, it
-barely reaches the other voters (12% in 2022).</li>
-</ul>
+</table></details></figure><p>The PLQ remained the party of non-francophones. It took 58% of their
+vote in 2007, 86% in 2014 and still 54% in 2022, its lowest share over
+the period. Among francophones, however, its share fell from 34% in 1998
+to 6% in 2022, well below its official result of 14% that year. The PQ
+never had many non-francophone voters (15% in 2007) and kept almost none
+(2% in 2022).</p>
+<p>The CAQ’s victories, for their part, are francophone victories. In
+2018 it won 41% of the francophone vote and 12% of the others, and in
+2022 39% and 12%. Like the ADQ before it, it barely reaches
+non-francophones. The two parties that came closest to crossing the
+language divide in 2022 are the two whose breakthrough is most recent.
+Québec solidaire, which grew among francophones first (19% in 2018),
+took 19% of francophones and 12% of the others; the Parti conservateur
+du Québec (PCQ) took 15% and 9%. With so few non-francophone respondents
+these gaps are uncertain. Using the same 2022 study, Bélanger et
+al. (2025) find that, unlike most other parties, the PCQ drew as much
+from non-francophones as from francophones once other factors are held
+constant; the raw shares shown here do not hold those factors constant.
+The new parties thus divided the francophone vote first. Among
+non-francophones the break came only in 2022, and it rests on 121
+respondents.</p>
 </div>
 <div class="section level2">
-<h2 id="the-age-gap-party-by-party">The age gap, party by party<a class="anchor" aria-label="anchor" href="#the-age-gap-party-by-party"></a>
+<h2 id="sovereignty-still-divides-the-francophone-vote-but-no-longer-channels-it">Sovereignty still divides the francophone vote, but no longer
+channels it<a class="anchor" aria-label="anchor" href="#sovereignty-still-divides-the-francophone-vote-but-no-longer-channels-it"></a>
 </h2>
-<figure class="qesr-fig" id="fig-age"><figcaption><span class="qesr-title">In 2022 Québec solidaire won the young and the CAQ the old: age gaps of +31 pts and −34 pts</span><span class="qesr-sub">Each party's share of the reported vote among the 18 to 34 minus its share among the 55 and over, in points, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/age-light.png" alt="Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among voters aged 18 to 34 minus its share among voters aged 55 and over, in points, at each election from 1998 to 2022, with confidence intervals. The PLQ is below zero at every election. In 2022 Québec solidaire is at +31 pts and the CAQ at −34 pts. Values in the table view." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/age-dark.png" alt="Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among voters aged 18 to 34 minus its share among voters aged 55 and over, in points, at each election from 1998 to 2022, with confidence intervals. The PLQ is below zero at every election. In 2022 Québec solidaire is at +31 pts and the CAQ at −34 pts. Values in the table view." width="672" height="442" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and age_group3; one Quebec Election Study per election and the 1998 polls (francophones only). Above zero: the party does better among the young. Bars: 95% confidence intervals of the difference, from the covariance of the two age groups' estimates. Weighted with each study's post-election weight; hollow (1998, 2008): unweighted, weight under review. The x axis is in years, with a break between 1998 and 2007. The shares of each age group and the Durand panels are in the table view.</p>
+<figure class="qesr-fig" id="fig-sov"><figcaption><span class="qesr-title">Each camp's old party lost its hold: from 2012 to 2022 the PQ fell from 75% to 38% of francophone sovereigntists</span><span class="qesr-sub">Reported vote of francophones, by the side they would take in a referendum on sovereignty. Among federalists, the PLQ went from 34% in 2012 to 10% in 2022</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/sov-light.png" alt="Two panels of stacked horizontal bars, one bar per election from 1998 to 2022: how francophones who would vote Yes and those who would vote No in a referendum split their reported vote among the parties. Among those who would vote Yes, the PQ takes 75% in 2012 and 38% in 2022; among those who would vote No, the PLQ takes 34% in 2012 and 10% in 2022, and the CAQ 43% in 2022. Values in the table view." width="672" height="374" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/sov-dark.png" alt="Two panels of stacked horizontal bars, one bar per election from 1998 to 2022: how francophones who would vote Yes and those who would vote No in a referendum split their reported vote among the parties. Among those who would vote Yes, the PQ takes 75% in 2012 and 38% in 2022; among those who would vote No, the PLQ takes 34% in 2012 and 10% in 2022, and the CAQ 43% in 2022. Values in the table view." width="672" height="374" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies (one per election) and, for 1998, the CROP poll; francophone respondents who reported a vote and chose a side. From 1998 to 2008 the question is the one of the 1995 referendum, which offered a partnership with Canada, with the undecided asked which way they lean; from 2012 on, it asks about an independent country. The Yes side is about as large among these francophones in 2008 (52%) as in 2012 (52%), but the two questions may not draw the same voters, so compare the rows within each period. Labels show shares of 10% or more; the 95% confidence intervals and the Durand panels are in the table view. 1998 and 2008: unweighted.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:right;"> Election </th>
+   <th style="text-align:left;"> Study </th>
+   <th style="text-align:left;"> Question </th>
+   <th style="text-align:left;"> Side </th>
+   <th style="text-align:left;"> Party </th>
+   <th style="text-align:left;"> Share of reported vote [95% CI] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Weighting </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.4 [0.4, 5.5] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 83.7 [76.6, 88.9] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 14.2 [9.3, 21.0] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 0.7 [0.1, 4.9] </td>
+   <td style="text-align:right;"> 141 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 52.1 [44.5, 59.5] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 24.9 [18.9, 31.9] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 20.7 [15.3, 27.5] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 1998 </td>
+   <td style="text-align:left;"> 1998 polls </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 2.4 [0.9, 6.1] </td>
+   <td style="text-align:right;"> 169 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 2.8 [1.7, 4.7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 58.7 [54.3, 63.0] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 25.7 [22.0, 29.7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 7.8 [5.7, 10.7] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 5.0 [3.4, 7.1] </td>
+   <td style="text-align:right;"> 715 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 40.0 [35.8, 44.2] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 8.7 [6.6, 11.4] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 42.4 [38.2, 46.7] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 2.5 [1.3, 4.5] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 6.4 [4.5, 9.1] </td>
+   <td style="text-align:right;"> 741 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 5.0 [3.4, 7.2] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 56.0 [51.8, 60.1] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 28.1 [24.5, 32.0] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 6.3 [4.5, 8.7] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 4.6 [3.1, 6.7] </td>
+   <td style="text-align:right;"> 541 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 44.9 [40.6, 49.2] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 9.9 [7.6, 12.8] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 39.1 [35.0, 43.3] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 1.4 [0.6, 2.8] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2007 </td>
+   <td style="text-align:left;"> 2007 panel </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 4.8 [3.3, 7.1] </td>
+   <td style="text-align:right;"> 517 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 9.6 [7.0, 13.0] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 73.7 [69.0, 77.9] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 6.9 [4.7, 10.0] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 7.2 [5.0, 10.3] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 2.7 [1.4, 4.9] </td>
+   <td style="text-align:right;"> 376 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 60.5 [55.2, 65.6] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 9.4 [6.7, 12.9] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> ADQ </td>
+   <td style="text-align:left;"> 27.2 [22.7, 32.2] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 1.5 [0.6, 3.5] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2008 </td>
+   <td style="text-align:left;"> QES 2008 </td>
+   <td style="text-align:left;"> The 1995 question (partnership) </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 1.5 [0.6, 3.5] </td>
+   <td style="text-align:right;"> 342 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 0.5 [0.1, 1.9] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 74.8 [70.5, 78.7] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 8.9 [6.5, 12.0] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 10.5 [7.9, 13.8] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 5.3 [3.7, 7.5] </td>
+   <td style="text-align:right;"> 514 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 33.7 [29.1, 38.6] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 13.0 [10.0, 16.7] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 4.1 [2.6, 6.4] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 45.7 [40.8, 50.7] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 3.5 [2.2, 5.6] </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.4 [0.5, 4.3] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 72.4 [66.1, 78.0] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 12.1 [8.4, 17.3] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 9.3 [6.1, 14.0] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 4.7 [2.5, 8.5] </td>
+   <td style="text-align:right;"> 214 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 39.7 [34.4, 45.2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 19.4 [15.4, 24.1] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 2.9 [1.5, 5.4] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 34.6 [29.6, 40.0] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> 2012 panel </td>
+   <td style="text-align:left;"> A sovereign country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 3.5 [1.9, 6.2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> unweighted (weight under review) </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.9 [0.9, 4.2] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 68.7 [63.4, 73.6] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 13.0 [10.1, 16.6] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 12.6 [9.3, 16.9] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 3.7 [2.0, 6.8] </td>
+   <td style="text-align:right;"> 397 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 46.4 [41.3, 51.5] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 7.6 [5.2, 10.9] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 4.6 [2.9, 7.1] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 38.9 [34.0, 44.1] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 2.6 [1.5, 4.4] </td>
+   <td style="text-align:right;"> 480 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.0 [0.5, 2.0] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 45.7 [41.6, 49.9] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 23.5 [20.2, 27.2] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 28.6 [24.9, 32.6] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 1.2 [0.5, 2.6] </td>
+   <td style="text-align:right;"> 639 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 24.2 [21.2, 27.5] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 5.8 [4.2, 7.8] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 13.7 [11.3, 16.6] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 48.7 [44.9, 52.5] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 7.6 [5.7, 10.1] </td>
+   <td style="text-align:right;"> 773 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 3.5 [1.6, 7.2] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 34.5 [27.3, 42.4] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 19.6 [14.2, 26.6] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 39.2 [31.2, 47.8] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 3.3 [1.3, 8.0] </td>
+   <td style="text-align:right;"> 200 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 25.4 [20.3, 31.3] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 6.3 [3.6, 10.6] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 12.8 [8.4, 19.2] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 46.9 [40.1, 53.7] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> 2018 panel </td>
+   <td style="text-align:left;"> Favourable to independence </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 8.6 [5.3, 13.6] </td>
+   <td style="text-align:right;"> 315 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 1.3 [0.5, 3.3] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 37.9 [32.4, 43.7] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 17.8 [13.8, 22.7] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 32.6 [27.1, 38.6] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> PCQ </td>
+   <td style="text-align:left;"> 9.8 [6.7, 14.2] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote Yes (sovereigntists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 0.6 [0.1, 2.6] </td>
+   <td style="text-align:right;"> 335 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> 10.4 [7.3, 14.7] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> 6.2 [4.1, 9.2] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> QS </td>
+   <td style="text-align:left;"> 17.4 [13.9, 21.6] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> CAQ </td>
+   <td style="text-align:left;"> 43.4 [38.1, 48.8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> PCQ </td>
+   <td style="text-align:left;"> 21.0 [16.9, 25.8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+<tr>
+<td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> An independent country </td>
+   <td style="text-align:left;"> Would vote No (federalists) </td>
+   <td style="text-align:left;"> Other </td>
+   <td style="text-align:left;"> 1.5 [0.6, 3.8] </td>
+   <td style="text-align:right;"> 411 </td>
+   <td style="text-align:left;"> weighted </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Two things stand out. First, the wall between the two old camps
+holds. From 2012 on, the PLQ never took more than 2% of the francophone
+sovereigntist vote, and the PQ never more than 13% of the federalist
+vote. Second, within each camp the old party lost its hold, and not at
+the same pace. Federalist francophones were the first to leave, though
+not in a straight line. In 2007 the ADQ already took about as many of
+them as the PLQ (42% against 40%), and after a brief return to the PLQ
+in 2008 (61%), the CAQ took 46% of them in 2012. From 2012 to 2022 the
+PLQ’s share of federalist francophones fell from 34% to 10%, behind the
+CAQ, the PCQ and even QS. Sovereigntist francophones stayed with the PQ
+longer. Its share of their vote went from 75% in 2012 to 38% in 2022,
+and most of that loss came in 2018, when Québec solidaire and the CAQ
+divided them. As a result, the share of francophones who voted for the
+party of their camp fell from 55% in 2012 to 22% in 2022 (the table view
+gives every election).</p>
+<p>The party that gained most is the one that sits on neither side of
+the question. In 2022 the CAQ drew 43% of the federalist francophone
+vote and 33% of the sovereigntist one. The sovereignty question has
+therefore not disappeared from Quebec elections; what disappeared is the
+two-party system that translated it into votes. This echoes Daoust and
+Gareau-Paquette (2024), who find that in federal elections support for
+independence remains a key predictor of the vote, its weight stable
+since 2006 after a fall from the 2000 and 2004 elections. Here, by
+contrast, what changed is how that division maps onto parties.</p>
+</div>
+<div class="section level2">
+<h2 id="age-cuts-across-language-and-sovereignty">Age cuts across language and sovereignty<a class="anchor" aria-label="anchor" href="#age-cuts-across-language-and-sovereignty"></a>
+</h2>
+<figure class="qesr-fig" id="fig-age"><figcaption><span class="qesr-title">In 2022 Québec solidaire led among younger voters and the CAQ among older ones (age gaps of +31 points and −34 points)</span><span class="qesr-sub">Each party's share of the reported vote among voters aged 18 to 34 minus its share among voters aged 55 and over, in percentage points, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="realignment_files/figure-html/age-light.png" alt="Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among voters aged 18 to 34 minus its share among voters aged 55 and over, in percentage points, at each election from 1998 to 2022, with confidence intervals. The PLQ is below zero at every election. In 2022 Québec solidaire is at +31 points and the CAQ at −34 points. Values in the table view." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="realignment_files/figure-html/age-dark.png" alt="Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among voters aged 18 to 34 minus its share among voters aged 55 and over, in percentage points, at each election from 1998 to 2022, with confidence intervals. The PLQ is below zero at every election. In 2022 Québec solidaire is at +31 points and the CAQ at −34 points. Values in the table view." width="672" height="442" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls (francophones only). Above zero: the party does better among younger voters. Bars: 95% confidence intervals of the difference. Hollow dots (1998, 2008): unweighted. The x axis is in years, with a break between 1998 and 2007. The shares of each age group are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Party </th>
@@ -1847,17 +2828,103 @@ barely reaches the other voters (12% in 2022).</li>
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
+</table></details></figure><p>Each gap in the figure is a party’s share among voters aged 18 to 34
+minus its share among voters aged 55 and over, in percentage points. In
+2007 younger voters chose the PQ (36% of those aged 18 to 34) and the
+ADQ (30%). In 2018 and 2022 their first choice was Québec solidaire (37%
+in 2022), a party that draws little from voters aged 55 and over (6%).
+The CAQ, for its part, became the party of older voters. In 2012 it drew
+about equally from both age groups (a gap of −1 point); in 2022, 48% of
+voters aged 55 and over voted for it, against 15% of those aged 18 to
+34. The PLQ does better among older voters at every election, although
+in 2014 and 2022 the gap is within the margin of error.</p>
+<p>The PQ’s profile reversed. It did as well or better among younger
+voters until 2012 (from +10 points in 1998 to +3 in 2012) and better
+among older voters from 2014 on (from −14 points in 2014 to −4 in 2022,
+by then within the margin of error). The reversal comes in 2014, the
+election in which Mahéo and Bélanger (2018) find that the PQ’s losses
+were concentrated among millennials, who were less inclined to see
+sovereignty as a priority. These are, however, separate cross-sections,
+and an age gap at one election cannot by itself tell a generational
+change from a life-cycle effect.</p>
+</div>
+<div class="section level2">
+<h2 id="what-this-means">What this means<a class="anchor" aria-label="anchor" href="#what-this-means"></a>
+</h2>
+<p>Overall, the Quebec party system did not fragment evenly. The new
+parties divided the francophone vote, and they did so within each
+sovereignty camp: the wall between the camps held while the PQ and the
+PLQ lost their hold on their own side. Age now weighs more than it did
+in the 2007 to 2014 elections. In 2022 the CAQ’s age gap reached 34
+points, whereas the largest gap of any party from 2007 to 2014 was 20
+points. Two limits deserve mention. First, these are reported votes in
+separate surveys: they show how groups of voters split at each election,
+not whether the same people changed parties (the <a href="transitions.html">Transitions</a> page follows the same
+respondents through a campaign). Second, the non-francophone samples are
+small, between 121 and 359 voters per election, so their estimates move
+a lot from one election to the next, and the 2022 break among them
+remains to be confirmed. The next question is whether the francophone
+vote will settle again around new poles, or whether generational
+replacement will keep it divided.</p>
+</div>
+<div class="section level2">
+<h2 id="how-the-figures-are-made">How the figures are made<a class="anchor" aria-label="anchor" href="#how-the-figures-are-made"></a>
+</h2>
+<p>Every figure on this page uses one harmonized variable,
+<code>vote_choice</code>, restricted to the vote reported after the
+election, with mother tongue, age group and the referendum question:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"lang_mother"</span>, <span class="st">"age_group3"</span>, <span class="st">"sov_support"</span><span class="op">)</span>,</span>
+<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Within one study, a weighted share and its confidence interval take
+one <code><a href="../reference/qes_design.html">qes_design()</a></code> and one call to the survey package:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2018"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span><span class="va">d18</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d18</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">vote_choice</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">lang_mother</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">vote_choice</span> <span class="op">==</span> <span class="st">"CAQ"</span><span class="op">)</span>, <span class="op">~</span><span class="va">lang_mother</span>, <span class="va">d18</span>, <span class="va">svyciprop</span>,</span>
+<span>      method <span class="op">=</span> <span class="st">"logit"</span>, vartype <span class="op">=</span> <span class="st">"ci"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         lang_mother I(vote_choice == "CAQ")       ci_l      ci_u</span></span>
+<span><span class="co">#&gt; French       French               0.4114613 0.38603333 0.4373710</span></span>
+<span><span class="co">#&gt; English     English               0.1101960 0.07564846 0.1578270</span></span>
+<span><span class="co">#&gt; Other         Other               0.1717929 0.10011622 0.2788822</span></span></code></pre></div>
+<p>The figures repeat this for every study. Each estimate is made within
+one study and never pooled across studies.</p>
+</div>
+<div class="section level2">
+<h2 id="going-further">Going further<a class="anchor" aria-label="anchor" href="#going-further"></a>
+</h2>
 <ul>
-<li>In 2007 the young voted PQ (36%) and ADQ (30%); in 2018 and 2022
-their first choice was Québec solidaire (37% in 2022), which draws
-little from voters aged 55 and over (6%).</li>
-<li>The CAQ became the party of the old: 48% of the vote of the 55 and
-over in 2022, against 15% of the 18 to 34.</li>
-<li>Until 2012 the PQ did as well or better among the young (by +10 pts
-in 1998 and +7 pts in 2007); from 2014 on it does better among the old
-(−14 pts in 2014). The PLQ does better among the old at every
-election.</li>
+<li>Bélanger, Éric, and Richard Nadeau. 2009. <em>Le comportement
+électoral des Québécois</em>. Montréal: Presses de l’Université de
+Montréal. <a href="https://doi.org/10.4000/books.pum.9772" class="external-link uri">https://doi.org/10.4000/books.pum.9772</a>
+</li>
+<li>Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo, and
+Richard Nadeau. 2022. <em>Le nouvel électeur québécois</em>. Montréal:
+Presses de l’Université de Montréal. <a href="https://doi.org/10.1515/9782760645929" class="external-link uri">https://doi.org/10.1515/9782760645929</a>
+</li>
+<li>Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election.”
+<em>Canadian Journal of Political Science</em> 58 (2): 277-296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link uri">https://doi.org/10.1017/S0008423924000829</a>
+</li>
+<li>Daoust, Jean-François, and Thomas Gareau-Paquette. 2024. “Is Quebec
+Independence Still Key in Making Sense of Canadian Elections? A
+Longitudinal Analysis (2000-2021).” <em>Regional &amp; Federal
+Studies</em> 34 (5): 781-806. <a href="https://doi.org/10.1080/13597566.2023.2233422" class="external-link uri">https://doi.org/10.1080/13597566.2023.2233422</a>
+</li>
+<li>Laakso, Markku, and Rein Taagepera. 1979. “‘Effective’ Number of
+Parties: A Measure with Application to West Europe.” <em>Comparative
+Political Studies</em> 12 (1): 3-27. <a href="https://doi.org/10.1177/001041407901200101" class="external-link uri">https://doi.org/10.1177/001041407901200101</a>
+</li>
+<li>Mahéo, Valérie-Anne, and Éric Bélanger. 2018. “Is the Parti
+Québécois Bound to Disappear? A Study of the Current Generational
+Dynamics of Electoral Behaviour in Quebec.” <em>Canadian Journal of
+Political Science</em> 51 (2): 335-356. <a href="https://doi.org/10.1017/S0008423917001147" class="external-link uri">https://doi.org/10.1017/S0008423917001147</a>
+</li>
 </ul>
 </div>
 <div class="section level2">
@@ -1866,38 +2933,40 @@ election.</li>
 <ul>
 <li>
 <strong>Studies.</strong> One Quebec Election Study per election
-(2007, 2008, 2012, 2014, 2018, 2022) and the 1998 polls, which
-interviewed francophones only. The Durand panels of 2007, 2012 and 2018
-are in the table views. The CROP polls asked no reported vote.</li>
+(2007, 2008, 2012, 2014, 2018, 2022) and, for 1998, the CROP and CREATEC
+polls, which interviewed francophones only. The table views also include
+the Durand panel surveys of 2007, 2012 and 2018, which interviewed the
+same respondents during the campaign and after the election; they are
+not drawn. The CROP polls of 2007 to 2010 asked no reported vote and are
+not used.</li>
 <li>
-<strong>Variable.</strong> <code>vote_choice</code> with
-<code>types = list(vote_choice = "recall")</code>: the vote reported
-after the election, in every study. The source item of each study is
-<code>vote_choice__item</code> (for example qes2018:post:q6).
-Respondents who did not vote, spoiled their ballot, did not know or
-refused are <code>NA</code> with a reason in
-<code>vote_choice__na</code>, and are left out of the denominator.</li>
+<strong>Vote.</strong> The party respondents said they voted for,
+asked after the election. Those who did not vote, spoiled their ballot,
+did not know or refused are left out. A party that a study did not list,
+or that did not run, is not drawn. The ADQ and the CAQ are kept apart,
+although they merged in 2012.</li>
 <li>
-<strong>Grades.</strong> The reported-vote question is graded
-<code>identical</code> in 2012, <code>approximate</code> in the 2007 and
-2012 panels, <code>comparable</code> elsewhere: the lists of parties
-differ
-(<code>qes_spec("crosswalk", targets = "vote_prov_recall")</code>). A
-party a study did not list, or that did not run, is not drawn.</li>
+<strong>Language.</strong> Mother tongue, French against every other
+answer. In 2022 the question asked for all the languages learned in
+childhood, and the 146 respondents who named more than one are left out
+of the language split, as are 115 respondents in 2014 whose answer could
+not be classed.</li>
 <li>
-<strong>Mother tongue.</strong> <code>lang_mother</code>, “French”
-against every other answer. In 2022 it comes from a select-all question
-(the languages learned in childhood and still understood), graded
-<code>approximate</code>: the 146 respondents who ticked two or more
-languages (117 of them French and English) have no mother tongue there
-and are left out of the language split.</li>
+<strong>Sovereignty.</strong> The side a respondent would take in a
+referendum, among those who chose one. From 1998 to 2008 the studies
+asked the 1995 referendum question, and those who hesitated were asked
+which way they leaned; from 2012 on, the question is about an
+independent country. In 1998 only the CROP poll asked it. The Durand
+panels in the table views use their own wordings (see the Question
+column).</li>
 <li>
-<strong>Weights.</strong> Each study’s recommended post-election
-weight, through <code><a href="../reference/qes_design.html">qes_design()</a></code>. The 1998 polls, the 2008
-study and the 2007 and 2012 Durand panels are unweighted (weights under
-review) and drawn hollow; the 2018 panel uses its reviewed post-election
-weight. The recontact of the 1998 polls also over-selected undecided
-voters and refusers.</li>
+<strong>Weights.</strong> Each study’s post-election weight. The
+1998 polls and the 2008 study are used without weights and are drawn as
+hollow dots; the 2007 and 2012 Durand panels are unweighted too. The
+1998 respondents had first answered pre-election polls and were
+interviewed again after the election, and that second round
+over-selected undecided voters and those who would not say how they
+would vote.</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

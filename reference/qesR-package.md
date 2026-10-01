@@ -11,7 +11,7 @@ Grouped as in the reference index of the website.
 |----|----|----|
 | Group | Function | What it does |
 | Data | [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md) | Loads a study: `qes2018 <- get_qes("qes2018")`. The data are returned, never written into your workspace by default. |
-| Data | [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md) | The legacy merged file of qesR 0.4.4: 30 harmonized columns, 11 studies, rendered from the harmonization engine since qesR 0.7.0 (see `NEWS`). |
+| Data | [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md) | The merged file: 11 studies stacked in one data frame with 30 harmonized columns in a fixed layout, built from the harmonized variables. |
 | Studies and documents | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) | Lists the studies: code, title, authors, year, design, population, DOI, pinned version, licence. Offline; `check_updates = TRUE` asks Dataverse whether a newer version exists. |
 | Studies and documents | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) | Lists the codebooks, questionnaires and reports of each study, offline. |
 | Studies and documents | [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md) | Saves the original files (data and documents), md5-checked, in a folder you choose. |
@@ -19,10 +19,10 @@ Grouped as in the reference index of the website.
 | Codebooks and search | [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md) | The exact wording of one or more questions, in English or French. |
 | Codebooks and search | [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md) | Searches variables across every study, ignoring case and accents: `qes_search("souverain")`. |
 | Codebooks and search | [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md) | Sets "don't know", "refused" and declared missing codes to `NA`. |
-| Harmonization (experimental) | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
-| Harmonization (experimental) | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | One data frame across studies, one column per target, every missing value with a reason, from the reviewed spec only; waves, weights and eligibility of each respondent. |
-| Harmonization (experimental) | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
-| Harmonization (experimental) | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
+| Harmonization | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
+| Harmonization | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | One data frame across studies, one column per target, every missing value with a reason, following the harmonization rules; waves, weights and eligibility of each respondent. |
+| Harmonization | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
+| Harmonization | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
 | Reproducibility | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
 | Reproducibility | [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md) | Citation of qesR and of each dataset, as text, BibTeX or `bibentry`. |
 | Cache | [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md), [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md) | Lists or deletes the files kept in the download cache. |
@@ -37,7 +37,7 @@ turns the result into a survey design; the reference generated from the
 spec is
 [`vignette("harmonization-reference", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
 
-The functions of qesR 0.4.4
+Older function names
 ([`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md),
 [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md),
 [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md),
@@ -51,7 +51,7 @@ Guides:
 (from a study code to a weighted estimate),
 [`vignette("citations", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/citations.md),
 [`vignette("migrating-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
-and
+(upgrading older code) and
 [`vignette("harmonization-reference", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md)
 (the reference generated from the harmonization spec). The website,
 <https://thomasgareau.github.io/qesR/>, also has the study catalog and
@@ -75,8 +75,8 @@ environment only when called at top level).
 
 - `qesR.quiet_deprecated`:
 
-  `TRUE` hides the one-time notices of the soft-deprecated legacy
-  functions (see
+  `TRUE` hides the one-time notices of the soft-deprecated functions
+  (see
   [qesR-deprecated](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)).
   Default `FALSE`.
 
@@ -256,15 +256,15 @@ once per session and are not silenced by `quiet`:
 or
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
 is called without `assign_global`; `qesR_message_arg_ignored`, shown
-when a legacy argument that no longer changes the result is used; and
+when an argument that no longer changes the result is used; and
 `qesR_message_values_changed` and `qesR_message_legacy_columns`, shown
 by
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
 and
-[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md),
-whose values changed in qesR 0.5.0 and 0.7.0. Every condition carries
-the fields `id` (its message key) and `lang` (the language of its
-message).
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+to say how their values and columns differ from those of earlier
+versions. Every condition carries the fields `id` (its message key) and
+`lang` (the language of its message).
 
 ## Study catalog
 
@@ -369,7 +369,7 @@ change jamais les données ni le texte retournés, et ne fixe jamais
 l'argument `lang` des fonctions : voir la section *Langue* de
 [qesR-fr](https://thomasgareau.github.io/qesR/reference/qesR-fr.md), qui
 donne son rôle dans chaque fonction. `qesR.quiet_deprecated = TRUE`
-masque les notes uniques des fonctions héritées (voir
+masque les notes uniques des fonctions obsolètes (voir
 [qesR-deprecated](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)).
 `qesR.cache` (`QESR_CACHE`) fixe où sont gardés les fichiers téléchargés
 : `"session"` (par défaut ; un dossier de
@@ -445,15 +445,16 @@ compte les variables laissées inchangées dans un
 de progression (`qesR_message_download`, `qesR_message_cached`) et le
 conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
 masqués par `quiet = TRUE`. `qesR_message_deprecated`,
-`qesR_message_assign_default`, `qesR_message_arg_ignored` (argument
-hérité qui ne change plus le résultat), `qesR_message_values_changed` et
-`qesR_message_legacy_columns` (valeurs de
+`qesR_message_assign_default`, `qesR_message_arg_ignored` (argument qui
+ne change plus le résultat), `qesR_message_values_changed` et
+`qesR_message_legacy_columns` (en quoi les valeurs et les colonnes de
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-et
+et de
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
-modifiées dans qesR 0.5.0 et 0.7.0) s'affichent au plus une fois par
-session et ne sont pas masqués par `quiet`. Chaque condition porte les
-champs `id` (sa clé de message) et `lang` (la langue de son message).
+diffèrent de celles des versions antérieures) s'affichent au plus une
+fois par session et ne sont pas masqués par `quiet`. Chaque condition
+porte les champs `id` (sa clé de message) et `lang` (la langue de son
+message).
 
 **Catalogue.** qesR fournit un catalogue des études qu'il peut charger :
 [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
@@ -599,8 +600,8 @@ demo <- get_qes("qes_demo", quiet = TRUE)
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-30 00:14:38 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
+#> 2026-10-01 01:14:24 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 ```

@@ -1,4 +1,4 @@
-# Get a Quebec Election Study codebook (legacy)
+# Get a Quebec Election Study codebook (older name)
 
 Soft-deprecated: use
 [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),

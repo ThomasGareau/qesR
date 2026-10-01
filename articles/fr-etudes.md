@@ -3,15 +3,12 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/studies.md)*
 
-Toutes les études que qesR peut charger, avec ce que qesR fixe pour
-chacune : le dépôt et sa version, le fichier de données et sa somme de
-contrôle md5, et les documents. Cette page est produite à la
-construction du site à partir du catalogue livré avec le package
-(`inst/extdata/catalog/`) : ce sont les mêmes données que
+Toutes les études que qesR peut charger : leur devis, leur population,
+leur taille, leur licence et leurs documents.
 [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
 et
-[`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md).
-Rien n’y est recopié à la main.
+[`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md)
+renvoient les mêmes informations.
 
 | Code | Année | Famille | Étude (DOI) | Devis | Population | n | Licence | Livre de codes hors ligne |
 |:---|:---|:---|:---|:---|:---|---:|:---|:---|
@@ -29,23 +26,21 @@ Rien n’y est recopié à la main.
 | [`qes1998_crop`](#qes1998_crop) | 1998 | Sondages électoraux de 1998 | [Sondages électoraux sur les élections générales québécoises de 1998 : CROP](https://doi.org/10.5683/SP2/QFUAWG) | Panel | Adultes du Québec interviewés en français | 450 | CC0 1.0 | oui |
 | [`qes1998_createc`](#qes1998_createc) | 1998 | Sondages électoraux de 1998 | [Sondages électoraux sur les élections générales québécoises de 1998 : CREATEC](https://doi.org/10.5683/SP2/QFUAWG) | Panel | Adultes du Québec de langue maternelle française | 1 057 | CC0 1.0 | oui |
 
-`n` est le nombre de lignes du fichier de données fixé. Les études des
-familles Sondage panel électoral de Durand, Sondages CROP d’intentions
-de vote et Sondages électoraux de 1998 ne sont pas des Études
-électorales québécoises : elles figurent sous leur propre titre, et
-leurs devis et leurs populations diffèrent ; vérifiez les deux avant de
-comparer des études. Codes qui partagent un même dépôt : `qes1998`,
-`qes1998_crop` et `qes1998_createc`. Études qui ne sont pas dans le
-domaine public : `qes2022` (CC BY-NC 4.0) ; les métadonnées que qesR en
-livre gardent leur licence (le fichier `COPYRIGHTS` du package en donne
-la liste). Études dont qesR ne livre pas les métadonnées : aucune.
+`n` est le nombre de répondants du fichier de données. Toutes les études
+ne sont pas des Études électorales québécoises : celles des familles
+Sondage panel électoral de Durand, Sondages CROP d’intentions de vote et
+Sondages électoraux de 1998 figurent sous leur propre titre, et leurs
+devis et leurs populations diffèrent ; vérifiez les deux avant de
+comparer des études. Les licences, et l’attribution que demande l’étude
+de 2022, sont dans [Citer qesR et les
+études](https://thomasgareau.github.io/qesR/articles/fr-citations.md).
 
 ## Par étude
 
 La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents
 téléchargent le fichier depuis Dataverse ;
 [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md)
-les enregistre, vérifiés par md5, dans un dossier de votre choix.
+les enregistre dans un dossier de votre choix.
 
 ### `qes2022` : Étude électorale québécoise 2022
 
@@ -55,9 +50,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.7910/DVN/PAQBDR>, Harvard Dataverse,
   version 1.1 ; licence [Attribution - Pas d’utilisation commerciale 4.0
   (CC BY-NC 4.0)](http://creativecommons.org/licenses/by-nc/4.0)
-- **Fichier de données fixé** : `2022 Quebec Election Study v1.dta`
-  (Fichier de données Stata), 1 521 lignes × 718 colonnes, md5
-  `c51bafed57776ffa8d4c6f301f5c945b`
+- **Fichier de données** : `2022 Quebec Election Study v1.dta` (Fichier
+  de données Stata), 1 521 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)),
@@ -78,9 +72,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/NWTGWS>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Quebec Election Study 2018.dta`
-  (Fichier de données Stata), 3 072 lignes × 254 colonnes, md5
-  `d24f5b0be727d688ad305b8eb61f0d30`
+- **Fichier de données** : `Quebec Election Study 2018.dta` (Fichier de
+  données Stata), 3 072 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -108,9 +101,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/XDDMMR>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `IPsos_oct_2018_17-057727_V.SAV`
-  (Fichier système SPSS), 1 250 lignes × 72 colonnes, md5
-  `b6fc93f2918ae4a56de3d19e80d0bd15`
+- **Fichier de données** : `IPsos_oct_2018_17-057727_V.SAV` (Fichier
+  système SPSS), 1 250 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -128,9 +120,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/64F7WR>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Quebec Election Study 2014.sav`
-  (Fichier système SPSS), 1 517 lignes × 140 colonnes, md5
-  `9549423b32526a2f11a3d954a87c6861`
+- **Fichier de données** : `Quebec Election Study 2014.sav` (Fichier
+  système SPSS), 1 517 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -155,9 +146,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/WXUPXT>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Quebec Election Study 2012 (STATA).dta`
-  (Fichier de données Stata), 1 505 lignes × 177 colonnes, md5
-  `e5ec063d9b1b03b48f458be4d8ec3d7b`
+- **Fichier de données** : `Quebec Election Study 2012 (STATA).dta`
+  (Fichier de données Stata), 1 505 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -183,9 +173,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/RKHPVL>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `repondants_post_2012.sav` (Fichier
-  système SPSS), 844 lignes × 79 colonnes, md5
-  `8f90a9f97a33e01eff3748f05612e26c`
+- **Fichier de données** : `repondants_post_2012.sav` (Fichier système
+  SPSS), 844 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -209,9 +198,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/IRZ1PF>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `intvotetotal_juin2007_jan2010.sav`
-  (Fichier système SPSS), 24 027 lignes × 19 colonnes, md5
-  `534514c7414d462259de4421bb4579e5`
+- **Fichier de données** : `intvotetotal_juin2007_jan2010.sav` (Fichier
+  système SPSS), 24 027 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -230,15 +218,14 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/8KEYU3>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Quebec Election Study 2008 (SPSS).sav`
-  (Fichier système SPSS), 1 151 lignes × 63 colonnes, md5
-  `6a69b00b943bb357c3ed10091d936ba9`
+- **Fichier de données** : `Quebec Election Study 2008 (SPSS).sav`
+  (Fichier système SPSS), 1 151 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
 - **Note** : Sondage postélectoral téléphonique (métadonnées du dépôt).
-  Les fichiers SPSS et Stata ont des UNF différents ; le fichier SPSS lu
-  par qesR 0.4.4 est retenu.
+  Les fichiers SPSS et Stata ont des UNF différents ; le fichier SPSS
+  est retenu.
 - **Documents** (`qes_docs("qes2008")`) :
   - [Quebec Election Study 2008
     FR.doc](https://borealisdata.ca/api/access/datafile/196358) :
@@ -255,9 +242,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/6XGOKA>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Quebec Election Study 2007 (SPSS).sav`
-  (Fichier système SPSS), 2 175 lignes × 93 colonnes, md5
-  `e1324bbb582cf6bc01eb9949ecb8b132`
+- **Fichier de données** : `Quebec Election Study 2007 (SPSS).sav`
+  (Fichier système SPSS), 2 175 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -265,8 +251,7 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
   dépôt). Les fichiers SPSS et Stata contiennent les mêmes données
   (leurs UNF diffèrent) ; le fichier SPSS, dont les étiquettes sont
   complètes, est retenu. Les deux stockent la plupart des codes de
-  réponse sous forme de texte (« 01 ») ; qesR les lit comme des nombres,
-  comme qesR 0.4.4.
+  réponse sous forme de texte (« 01 ») ; qesR les lit comme des nombres.
 - **Documents** (`qes_docs("qes2007")`) :
   - [Quebec Election Study 2007
     ENG.doc](https://borealisdata.ca/api/access/datafile/192423) :
@@ -283,9 +268,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP3/NDS6VT>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `complet_tous_repondants_2007.sav`
-  (Fichier système SPSS), 2 442 lignes × 270 colonnes, md5
-  `20f8c6fd4211744340f76293d18e5b6d`
+- **Fichier de données** : `complet_tous_repondants_2007.sav` (Fichier
+  système SPSS), 2 442 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -309,9 +293,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Total_panel_election_QC1998.sav`
-  (Fichier système SPSS), 1 483 lignes × 42 colonnes, md5
-  `a2a2b2fef6a2edb202beae0e63e59f0c`
+- **Fichier de données** : `Total_panel_election_QC1998.sav` (Fichier
+  système SPSS), 1 483 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -334,9 +317,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** : `Total_sondages_election_CROP1998.sav`
-  (Fichier système SPSS), 450 lignes × 37 colonnes, md5
-  `ceec0332eaa0eab117e4bcf5c4d8d672`
+- **Fichier de données** : `Total_sondages_election_CROP1998.sav`
+  (Fichier système SPSS), 450 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -358,9 +340,8 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 - **Dépôt** : <https://doi.org/10.5683/SP2/QFUAWG>, Borealis, version
   1.0 ; licence [Transfert dans le domaine public (CC0
   1.0)](http://creativecommons.org/publicdomain/zero/1.0)
-- **Fichier de données fixé** :
-  `Total_sondages_election_CREATEC1998.sav` (Fichier système SPSS),
-  1 057 lignes × 49 colonnes, md5 `1aba610f71f1b5c46e03da2036e83330`
+- **Fichier de données** : `Total_sondages_election_CREATEC1998.sav`
+  (Fichier système SPSS), 1 057 lignes
 - **Livre de codes hors ligne** : oui, livré avec qesR
   ([`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md),
   [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md))
@@ -377,5 +358,5 @@ les enregistre, vérifiés par md5, dans un dossier de votre choix.
 ## Citer
 
 [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md)
-donne la citation de chaque étude ; voir [Citations des
+donne la citation de chaque étude ; voir [Citer qesR et les
 études](https://thomasgareau.github.io/qesR/articles/fr-citations.md).

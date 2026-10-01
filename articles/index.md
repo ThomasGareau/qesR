@@ -1,168 +1,177 @@
 # Articles
 
-### Guides
+### Get started
 
 - [Getting Started with
   qesR](https://thomasgareau.github.io/qesR/articles/get-started.md):
-- [Study
-  catalog](https://thomasgareau.github.io/qesR/articles/studies.md):
-- [Study
-  Citations](https://thomasgareau.github.io/qesR/articles/citations.md):
-- [Moving from qesR 0.4.4 to
-  0.7.0](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md):
-- [The legacy merged
-  file](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
-
-### Harmonization (experimental)
-
-Built from the specification that ships with qesR. The first article and
-the validation read the full data files through qesR’s cache when the
-site is built; the coverage grid and the reference are generated from
-the specification alone.
-
-- [Harmonizing across
-  studies](https://thomasgareau.github.io/qesR/articles/harmonization.md):
-- [Coverage by
-  study](https://thomasgareau.github.io/qesR/articles/coverage.md):
-- [Harmonization
-  Reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md):
-- [Validation against official results and the
-  census](https://thomasgareau.github.io/qesR/articles/validation.md):
 
 ### Examples
 
-Built on the pooled harmonized variables (`vote_choice`, `sov_support`,
-`pol_interest`, `turnout`) when the site is built, from the full data
-files downloaded through qesR’s cache, with weighted estimates and 95%
-confidence intervals; each estimate is within one study and wave, with
-that study’s reviewed weight.
+Analyses of 25 years of Quebec elections, built on the pooled variables,
+with weighted estimates and 95% confidence intervals, each within one
+study.
 
 - [From two parties to four: Quebec's party system,
   1998-2022](https://thomasgareau.github.io/qesR/articles/realignment.md):
 
-  Who moved when the PQ-PLQ duopoly became a four-party system:
-  francophones and the others, young and old voters.
+  Among whom the Quebec vote fragmented from 1998 to 2022, and whether
+  the sovereignty question still organizes it.
 
-- [A generation gap that reversed: support for sovereignty,
-  1998-2022](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md):
+- [Are young Quebecers still the most pro-independence? Support for
+  independence by cohort,
+  2007-2022](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md):
 
-  The young carried the Yes side in the 2000s; today’s youngest voters
-  are the least sovereigntist of all.
+  In 2007 the youngest francophones were the most likely to vote Yes; in
+  2022 they were the least likely. Most of the change came from within
+  cohorts, not from one generation replacing another.
 
 - [Two dimensions of competition: sovereignty and
   left-right](https://thomasgareau.github.io/qesR/articles/dimensions.md):
 
-  Where each party’s voters stand on sovereignty and on the left-right
-  scale, and where sovereigntists and federalists cast their vote.
+  Has the left-right scale replaced the national question in Quebec
+  elections? Where each party’s voters stand on both axes, where the Yes
+  and No camps vote, and how much each axis still structures the vote.
 
-- [Who votes? The age gap in turnout, and what surveys
-  overstate](https://thomasgareau.github.io/qesR/articles/turnout.md):
+- [Who votes? Age, interest in politics and turnout in
+  Quebec](https://thomasgareau.github.io/qesR/articles/turnout.md):
 
-  Reported turnout against the official turnout of each election, the
-  turnout gap between young and old, and the role of political interest.
+  The age gap in reported turnout at every Quebec election since 1998,
+  and how much of it interest in politics accounts for.
 
-- [Changing minds during the campaign: panel
-  transitions](https://thomasgareau.github.io/qesR/articles/transitions.md):
+- [Are Quebec elections decided during the
+  campaign?](https://thomasgareau.github.io/qesR/articles/transitions.md):
 
   The same respondents interviewed before and after the election: how
-  many voted as they intended, and where the undecided went.
+  many voted as they intended, where the undecided went, and which party
+  won the campaign.
 
-- [How far off are surveys? Reported vote and intentions against the
-  official
+- [Do surveys miss the Liberals? The reported vote against the official
   results](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md):
 
-  The reported vote of every study against the official results, what
-  weighting changes, and two and a half years of CROP polls around the
-  2008 election.
+  Six Quebec Election Studies and three panels set against the results
+  of Élections Québec: the Liberal gap, the over-reported PQ, what
+  language and weighting explain, and how far vote intentions move
+  before an election.
 
-- [Recipes: pooled variables in five
-  minutes](https://thomasgareau.github.io/qesR/articles/recipes.md):
+- [Recipes: the language divide in the Liberal vote, step by
+  step](https://thomasgareau.github.io/qesR/articles/recipes.md):
 
-  Short, copyable code for the pooled harmonized variables: one variable
-  for all studies, its types and sources, weighted estimates by study.
+  Copyable code for the pooled harmonized variables, worked through one
+  question: did the language divide in the Liberal vote narrow as the
+  sovereignty question receded?
 
-### Guides en français
+### Studies
+
+- [Study
+  catalog](https://thomasgareau.github.io/qesR/articles/studies.md):
+- [Citing qesR and the
+  studies](https://thomasgareau.github.io/qesR/articles/citations.md):
+
+### Harmonization
+
+- [How harmonization
+  works](https://thomasgareau.github.io/qesR/articles/harmonization.md):
+- [Coverage by
+  study](https://thomasgareau.github.io/qesR/articles/coverage.md):
+- [Variable
+  reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md):
+- [Validation against official results and the
+  census](https://thomasgareau.github.io/qesR/articles/validation.md):
+- [The merged file
+  (get_qes_master)](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
+
+### Upgrading from qesR 0.4.4
+
+- [Upgrading from qesR
+  0.4.4](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md):
+
+### En français
+
+Toutes les pages en français, dans l’ordre des sections anglaises :
+démarrage, exemples (des analyses de 25 ans d’élections québécoises,
+construites sur les variables regroupées, avec des estimations pondérées
+et des intervalles de confiance à 95 %, chacune dans une seule étude),
+études, harmonisation et passage de qesR 0.4.4.
+
+- [qesR en
+  français](https://thomasgareau.github.io/qesR/articles/fr-accueil.md):
 
 - [Démarrage avec
   qesR](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md):
+
+- [De deux partis à quatre : le système partisan québécois,
+  1998-2022](https://thomasgareau.github.io/qesR/articles/fr-realignement.md):
+
+  Chez qui le vote québécois s’est fragmenté de 1998 à 2022, et si la
+  question de la souveraineté l’organise encore.
+
+- [Les jeunes sont-ils encore les plus souverainistes ? L'appui à la
+  souveraineté selon la cohorte,
+  2007-2022](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md):
+
+  En 2007, les plus jeunes francophones étaient les plus
+  souverainistes ; en 2022, ils étaient les moins souverainistes.
+  L’essentiel du changement s’est produit à l’intérieur des cohortes, et
+  non par le remplacement d’une génération par une autre.
+
+- [Deux dimensions de la concurrence : souveraineté et
+  gauche-droite](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md):
+
+  L’axe gauche-droite a-t-il remplacé la question nationale dans les
+  élections québécoises ? Où se situent les électeurs de chaque parti
+  sur les deux axes, pour qui votent les camps du Oui et du Non, et dans
+  quelle mesure chaque axe structure encore le vote.
+
+- [Qui vote ? L'âge, l'intérêt pour la politique et la participation au
+  Québec](https://thomasgareau.github.io/qesR/articles/fr-participation.md):
+
+  L’écart d’âge dans la participation déclarée à chaque élection
+  québécoise depuis 1998, et la part de cet écart qui tient à l’intérêt
+  pour la politique.
+
+- [Les élections québécoises se jouent-elles pendant la
+  campagne ?](https://thomasgareau.github.io/qesR/articles/fr-transitions.md):
+
+  Les mêmes répondants interrogés avant et après l’élection : combien
+  ont voté comme prévu, où sont allés les indécis et quel parti a gagné
+  la campagne.
+
+- [Les enquêtes sous-estiment-elles les libéraux ? Le vote déclaré face
+  aux résultats
+  officiels](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md):
+
+  Six Études électorales québécoises et trois panels confrontés aux
+  résultats d’Élections Québec : l’écart libéral, le PQ surestimé, ce
+  qu’expliquent la langue et la pondération, et l’ampleur des mouvements
+  d’intention de vote avant une élection.
+
+- [Recettes : le clivage linguistique du vote libéral, pas à
+  pas](https://thomasgareau.github.io/qesR/articles/fr-recettes.md):
+
+  Du code à copier pour les variables harmonisées regroupées, appliqué à
+  une question : le clivage linguistique du vote libéral s’est-il
+  resserré à mesure que la souveraineté reculait ?
+
 - [Catalogue des
   études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md):
-- [Citations des
+
+- [Citer qesR et les
   études](https://thomasgareau.github.io/qesR/articles/fr-citations.md):
-- [Passer de qesR 0.4.4 à
-  0.7.0](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md):
-- [Le fichier fusionné
-  hérité](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
 
-### Harmonisation en français (expérimental)
+- [Comment fonctionne
+  l'harmonisation](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md):
 
-Construits à partir de la spécification fournie avec qesR. Le premier
-article et la validation lisent les fichiers de données complets par le
-cache de qesR à la construction du site ; la grille de couverture et la
-référence sont générées à partir de la spécification seule.
-
-- [Harmoniser entre
-  études](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md):
 - [Couverture par
   étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md):
-- [Référence de
-  l'harmonisation](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md):
+
+- [Référence des
+  variables](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md):
+
 - [Validation par les résultats officiels et le
   recensement](https://thomasgareau.github.io/qesR/articles/fr-validation.md):
 
-### Exemples en français
+- [Le fichier fusionné
+  (get_qes_master)](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md):
 
-Construits sur les variables harmonisées regroupées (`vote_choice`,
-`sov_support`, `pol_interest`, `turnout`) à la construction du site, à
-partir des fichiers de données complets téléchargés par le cache de
-qesR, avec des estimations pondérées et des intervalles de confiance à
-95 % ; chaque estimation est faite dans une seule étude et une seule
-vague, avec la pondération révisée de cette étude.
-
-- [De deux partis à quatre : le réalignement du système partisan
-  québécois,
-  1998-2022](https://thomasgareau.github.io/qesR/articles/fr-realignement.md):
-
-  Qui a bougé quand le duopole PQ-PLQ est devenu un système à quatre
-  partis : les francophones et les autres, les jeunes et les aînés.
-
-- [Un écart générationnel inversé : l'appui à la souveraineté,
-  1998-2022](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md):
-
-  Les jeunes portaient le Oui dans les années 2000 ; les plus jeunes
-  électeurs d’aujourd’hui sont les moins souverainistes de tous.
-
-- [Deux dimensions de la concurrence : souveraineté et
-  gauche-droite](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md):
-
-  Où se situent les électeurs de chaque parti sur la souveraineté et sur
-  l’axe gauche-droite, et pour qui votent souverainistes et
-  fédéralistes.
-
-- [Qui vote ? L'écart d'âge et ce que les enquêtes
-  surestiment](https://thomasgareau.github.io/qesR/articles/fr-participation.md):
-
-  La participation déclarée et la participation officielle de chaque
-  élection, l’écart de participation entre jeunes et aînés, et le rôle
-  de l’intérêt pour la politique.
-
-- [Changer d'idée pendant la campagne : les transitions des
-  panels](https://thomasgareau.github.io/qesR/articles/fr-transitions.md):
-
-  Les mêmes répondants interrogés avant et après l’élection : combien
-  ont voté comme prévu, et où sont allés les indécis.
-
-- [Les enquêtes se trompent-elles ? Vote déclaré et intentions face aux
-  résultats
-  officiels](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md):
-
-  Le vote déclaré de chaque étude et les résultats officiels, ce que la
-  pondération change, et deux ans et demi de sondages CROP autour de
-  l’élection de 2008.
-
-- [Recettes : les variables regroupées en cinq
-  minutes](https://thomasgareau.github.io/qesR/articles/fr-recettes.md):
-
-  Du code court, à copier, pour les variables harmonisées regroupées :
-  une variable pour toutes les études, ses types et ses sources, des
-  estimations pondérées par étude.
+- [Passer de qesR 0.4.4 à la version
+  actuelle](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md):

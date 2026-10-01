@@ -2,26 +2,30 @@
 
 ## qesR 0.8.0
 
-qesR 0.8.0 answers a request of the package’s owner (2026-09-29): “all
-vote choice questions should be in the same variable (even if the
-wording is a little different)”. The harmonization engine gains **pooled
-variables**: one column for every study that pools several targets, with
-the question each value comes from recorded row by row. `vote_choice` is
-the provincial vote choice of all 11 harmonized studies; `sov_support`,
-`pol_interest` and `turnout` do the same for support for sovereignty,
-interest in politics and turnout. The specification (4.3.0) also adds 20
+*Upgrading from qesR 0.4.4? See [Upgrading from qesR
+0.4.4](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).*
+
+**In short:** one column per concept across all 11 harmonized studies
+(`vote_choice`, `sov_support`, `pol_interest`, `turnout`), 20 new
+harmonized variables, and new example pages on the website. The legacy
+functions return the same values as in 0.7.1.
+
+The harmonization engine gains **pooled variables**: one column for
+every study that pools several targets, with the question each value
+comes from recorded row by row. `vote_choice` is the provincial vote
+choice of all 11 harmonized studies; `sov_support`, `pol_interest` and
+`turnout` do the same for support for sovereignty, interest in politics
+and turnout. The harmonization rules (specification 4.3.0) also add 20
 targets, from satisfaction with democracy to leader ratings, and every
-study now has an age group. An automated double review against the
-original files and documents (not a human review) signed off 101 of the
-104 new crosswalk rows, so
+study now has an age group. 101 of the 104 new rows are signed off, so
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
-applies them by default; three stay in review for the owner.
+applies them by default; three are not signed off yet.
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
 and
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
-return the values of 0.7.1, and no marginal or column hash recorded in
-0.7.1 changed; the columns of 0.7.1 gain values only where a new row
-fills a study that had none, as noted below.
+return the values of 0.7.1, and no count recorded in 0.7.1 changed; the
+columns of 0.7.1 gain values only where a new row fills a study that had
+none, as noted below.
 
 ### Pooled variables
 
@@ -92,12 +96,11 @@ fills a study that had none, as noted below.
   and the CAQ (into which it merged on 2012-01-21) as “ADQ/CAQ”, and
   optionally Option nationale and Quebec solidaire, for time series of
   the Quebec parties; rows fielded before 2012 are graded approximate
-  there. The harmonized columns keep the parties apart (OD11).
+  there. The harmonized columns keep the parties apart.
 
 ### Example pages of the website
 
-The owner also asked for better example pages: the graphs were “ugly and
-not interesting”. The three example pages and their French versions
+The three example pages and their French versions
 (`analysis-descriptive`, `analysis-sovereignty`, `analysis-vote-choice`)
 are replaced by six analyses and a page of recipes, in English and
 French, each built on the pooled variables with
@@ -162,31 +165,29 @@ build); nothing changes in the package.
   (`sov_partnership_1995_push`, 4). The new sets `"attitudes"` and
   `"socio"` name them; `"vote"` gains `vote_prov_prev` and
   `vote_fed_recall`.
-- 104 crosswalk rows, checked against the pinned files (the data checks
-  V-D1 to V-D8 and every code and filter count) and then by an automated
-  double review against the original files and documents (codes and
-  data, wording and comparability; adjudicated where the two reviewers
-  disagreed; not a human review). 101 are signed off (`stable`,
-  `reviewed_by` says by what), 45 of them corrected or completed, mostly
-  in their text: English wordings and questionnaire citations
-  (`qes2008`, `qes2014`), grade reasons that name the option wordings
-  that differ from the anchor, don’t-know offers (`dk_offered`), and
-  counts in the evidence. Among them, three rows on existing targets:
-  the pushed vote intention of `qes2022` (the first question, the “if
-  you decide to vote” question of those unlikely to vote, and the lean
-  question of the undecided), the federal party identification of
-  `qes2012`, and the mother tongue and home language of `qes2022`, two
-  select-all questions. Results change: these fill cells that were `NA`
-  (reason `not_asked`) in 0.7.1.
+- 104 crosswalk rows, checked against the pinned files (every code and
+  filter count) and then by an automated double review against the
+  original files and documents (codes and data, wording and
+  comparability; adjudicated where the two reviewers disagreed; not a
+  human review). 101 are signed off (`stable`, `reviewed_by` says by
+  what), 45 of them corrected or completed, mostly in their text:
+  English wordings and questionnaire citations (`qes2008`, `qes2014`),
+  grade reasons that name the option wordings that differ from the
+  anchor, don’t-know offers (`dk_offered`), and counts in the evidence.
+  Among them, three rows on existing targets: the pushed vote intention
+  of `qes2022` (the first question, the “if you decide to vote” question
+  of those unlikely to vote, and the lean question of the undecided),
+  the federal party identification of `qes2012`, and the mother tongue
+  and home language of `qes2022`, two select-all questions. Results
+  change: these fill cells that were `NA` (reason `not_asked`) in 0.7.1.
 - The leader ratings of `qes2022` read -99 as don’t know (`dk`, the
   “Don’t know leader” option of the codebook), not `no_answer`: the
   reason changes, no value.
-- Three rows stay in review for the owner (`dev/open-questions.md` D13):
-  the strength of provincial party identification of `qes2022`, graded
-  approximate because its French version asks closeness, and the
-  previous provincial vote of `qes2008` and `qes2018`, whose respondents
-  under 18 at that election were asked (the spec has no rule that sets
-  an answer to ineligible by age).
+- Three rows are not signed off yet: the strength of provincial party
+  identification of `qes2022`, graded approximate because its French
+  version asks closeness, and the previous provincial vote of `qes2008`
+  and `qes2018`, whose respondents under 18 at that election were asked
+  (the spec has no rule that sets an answer to ineligible by age).
 - A new crosswalk rule, `coalesce`, reads a question across several
   variables (a question and its push, the two halves of a split ballot),
   each with its own value map; a new registered function,
@@ -206,8 +207,12 @@ build); nothing changes in the package.
   every existing row, map, gate and grade. The definitions of the
   targets that said “never pooled” now name the pooled variable that
   uses them.
-- The catalog version is now 2.4.0: the vocabulary of crosswalk rules
-  gains `coalesce`.
+- Specification 4.3.1 (text only) rewords a grade reason and a note of
+  the crosswalk, the description of `pol_interest` and two notes of
+  pooled members; no row, code, grade or count changed.
+- The catalog version is now 2.4.1: the vocabulary of crosswalk rules
+  gains `coalesce`, and the notes of `qes2007` and `qes2008` are
+  reworded (text only).
 - The dictionary version is now 1.1.1 (text only): the question text of
   the 2018 panel’s `rv1ab` gains the stem’s sentence on advance voting,
   as `rv1a` has it.
@@ -218,11 +223,11 @@ build); nothing changes in the package.
   and
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
   never read a crosswalk row that nobody has reviewed yet, nor a derived
-  cell: their columns are those of 0.7.1. A validator note (V-S19) lists
-  the rows that a legacy column would read once signed off. Two such
-  rows are signed off in 0.8.0, the `qes2012` federal party
-  identification and the `qes2022` mother tongue: the legacy columns
-  `federal_pid` (and `fed_pid` of
+  cell: their columns are those of 0.7.1. A validator note lists the
+  rows that a legacy column would read once signed off. Two such rows
+  are signed off in 0.8.0, the `qes2012` federal party identification
+  and the `qes2022` mother tongue: the legacy columns `federal_pid` (and
+  `fed_pid` of
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md))
   of `qes2012` and `language` of `qes2022` keep the `NA` of 0.7.1, with
   the new cause `legacy_frozen` in `attr(, "legacy_na_columns")` (the
@@ -242,19 +247,19 @@ build); nothing changes in the package.
   month of birth (weighted index 8.32 to 7.91). No other recorded value
   moved.
 
-### Specification format
+### For developers: specification format
 
 - Schema 3: the optional tables `pooled.csv` and `pooled_members.csv`,
   and the rule `coalesce`; qesR still reads a schema 2 directory (with
   no pooled variables). `Engine-Min` is 0.8.0.
-- The validator adds V-F1 to V-F7 on the pooled tables (keys and a
-  strict precedence, names disjoint from targets, families, sets, study
-  codes and the leading columns of harmonized data, members that are
-  live targets, a default member, level sets or ranges that fit, a grade
-  cap of approximate on every lossy transform, English and French), and
-  V-S15 now also forbids a target named like a leading column.
+- The validator adds checks on the pooled tables (keys and a strict
+  precedence, names disjoint from targets, families, sets, study codes
+  and the leading columns of harmonized data, members that are live
+  targets, a default member, level sets or ranges that fit, a grade cap
+  of approximate on every lossy transform, English and French), and now
+  also forbids a target named like a leading column.
   `expected/hashes.csv` gains the column hash of each pooled variable in
-  each study (V-F9, wave `*`, the member types applied as `source_var`).
+  each study (wave `*`, the member types applied as `source_var`).
 
 ### Documentation
 
@@ -270,19 +275,20 @@ build); nothing changes in the package.
   `vote_choice` relates to the master’s column of the same name
   (`types = list(vote_choice = "recall")` is the reported vote, as in
   the master).
-- `dev/design.md` records the design of pooled variables and the owner
-  decisions it needs (OD-P1 to OD-P9).
 
 ## qesR 0.7.1
+
+**In short:** the codebook of the 2022 study now ships with qesR and
+works offline, like those of the other studies; the data and the
+harmonized results are unchanged.
 
 qesR 0.7.1 ships the metadata of the 2022 Quebec Election Study
 (`qes2022`), as it does for the other studies: its codebook, question
 text, value labels and missing codes work offline, with no download.
 Until now qesR shipped none of it, because the study is licensed CC
-BY-NC 4.0 (design decision OD3), and built it at runtime from the user’s
-own copy of the data file. The package’s owner lifted OD3 on 2026-09-28.
-These files keep the study’s licence: the `qes2022` content of the files
-listed in `inst/COPYRIGHTS` (section 2) is CC BY-NC 4.0, with the
+BY-NC 4.0, and built it at runtime from the user’s own copy of the data
+file. These files keep the study’s licence: the `qes2022` content of the
+files listed in `inst/COPYRIGHTS` (section 2) is CC BY-NC 4.0, with the
 attribution given there, and is not covered by the MIT licence of qesR,
 which covers the package code only.
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
@@ -402,12 +408,12 @@ and failed the live check of 0.7.0 on Linux.
   (`source_label`) instead of the md5 hashes of those labels.
   `qes_spec("crosswalk")` and the harmonization reference show them.
 - `gates.csv` and `expected/marginals.csv` gain the counts of `qes2022`
-  (252 gate cells, 225 marginal cells), which the offline checks V-D and
-  V-P1 now run on with the other studies, in the tests and in CI. They
-  are the counts the build-ignored folder `data-raw/nc/` of the source
-  repository held until now, recomputed on the pinned file (identical).
-- The release check V-S11 no longer forbids wording and labels for a
-  study whose metadata does not ship. MINOR: keys are only added to
+  (252 gate cells, 225 marginal cells), which the offline checks now run
+  on with the other studies, in the tests and in CI. They are the counts
+  the build-ignored folder `data-raw/nc/` of the source repository held
+  until now, recomputed on the pinned file (identical).
+- The release check no longer forbids wording and labels for a study
+  whose metadata does not ship. MINOR: keys are only added to
   `expected/`.
 
 ### Validation
@@ -416,10 +422,9 @@ and failed the live check of 0.7.0 on Linux.
   (`inst/extdata/validation/validation_report.csv`, in the source
   repository only, with the official results it is computed from) now
   holds the rows of `qes2022`, and the weekly live test gates them like
-  those of the other studies: its weighted V-L2 index is 7.96, the
-  baseline of 8.0 of design.md section 8.3. The weekly job uploads
-  `inst/COPYRIGHTS` with the report, as the licence notice of its
-  `qes2022` rows.
+  those of the other studies: its weighted recall index is 7.96. The
+  weekly job uploads `inst/COPYRIGHTS` with the report, as the licence
+  notice of its `qes2022` rows.
 - The test fixture of the columns of qesR 0.4.4
   (`tests/testthat/fixtures/v044-get-qes-names.csv`) gives the `NA`
   count of each `qes2022` column, as it does for the other studies. The
@@ -492,6 +497,14 @@ and failed the live check of 0.7.0 on Linux.
   “refused” codes.
 
 ## qesR 0.7.0
+
+**In short:**
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+and
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+are now built from the harmonized variables, so some of their values
+change; the harmonization covers all 11 studies and is checked against
+the official results and the census.
 
 qesR 0.7.0 switches the legacy functions to the harmonization engine:
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
@@ -680,11 +693,13 @@ Columns and studies not listed are unchanged since 0.5.0.
 | `vote_choice` | `qes1998` | 1,483 | 0 | 1,126 | The reported vote of the post-election recontact (q3post) |
 | `vote_choice_timing` | `qes1998` |  | 0 | 1,483 | vote_choice now holds the reported vote in this study |
 
-`dev/legacy-diff.md` in the source repository, generated by
-`data-raw/compare_legacy.R`, gives every difference from qesR 0.4.4 and
-0.5.0, cell counts by column and study for both functions, and its
-cause; the gate of this release is that each one is explained. Results
-of the released 0.4.4 are reproducible by installing it
+[The comparison with qesR
+0.4.4](https://github.com/ThomasGareau/qesR/blob/main/dev/legacy-diff.md)
+in the source repository, generated by `data-raw/compare_legacy.R`,
+gives every difference from qesR 0.4.4 and 0.5.0, cell counts by column
+and study for both functions, and its cause; the gate of this release is
+that each one is explained. Results of the released 0.4.4 are
+reproducible by installing it
 (`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`); 0.5.0
 and 0.6.0 were development versions and were never released, so a result
 computed with one of them is reproducible by installing the commit it
@@ -705,12 +720,12 @@ installation from GitHub).
   still says the review was automated, not human, and that the weight is
   tracked apart. No value map, gate, level set or column hash changed
   (MINOR: rows are only added to the default output).
-- The release check V-S13 no longer fails a stable row on a study-wave
-  whose recommended weight needs review: the sign-off of a row is about
-  its content, and the weight is reviewed on its own. V-S13 still
-  requires that a recommended weight is never calibrated on vote or
-  turnout, and that each study-wave has exactly one (none where every
-  weight is calibrated).
+- The release check no longer fails a stable row on a study-wave whose
+  recommended weight needs review: the sign-off of a row is about its
+  content, and the weight is reviewed on its own. It still requires that
+  a recommended weight is never calibrated on vote or turnout, and that
+  each study-wave has exactly one (none where every weight is
+  calibrated).
 - The weights that still need review are still not applied: `weight_pre`
   and `weight_post` of
   [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
@@ -770,11 +785,11 @@ installation from GitHub).
   applies them by default. 39 stay in review, applied only with
   `include_draft = TRUE`: the 38 rows of `qes1998`, `qes2007_panel`,
   `qes2012_panel` and the CROP polls, whose recommended weights still
-  need review (a stable row on such a study failed the release check
-  V-S13 of spec 4.0.0), and the `qes2014` gender row, whose grade the
-  review raised to `identical`, which needs a second reviewer. Spec
-  4.1.0 (above) signs off all 39. The validator (V-S11) requires a
-  `review_note` on a reviewed row left in review.
+  need review (a stable row on such a study failed the release check of
+  spec 4.0.0), and the `qes2014` gender row, whose grade the review
+  raised to `identical`, which needs a second reviewer. Spec 4.1.0
+  (above) signs off all 39. The validator requires a `review_note` on a
+  reviewed row left in review.
 - [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
   and
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
@@ -829,8 +844,8 @@ installation from GitHub).
   its weights are calibrated on vote or turnout, and its harmonized
   weights (`weight_post`, and `weight_post` of
   [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md))
-  stay `NA`. The validator’s rule V-S13 now allows a study-wave with no
-  recommended weight in that case only.
+  stay `NA`. The validator now allows a study-wave with no recommended
+  weight in that case only.
 - Reviewed weights, so
   [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
   and
@@ -898,11 +913,10 @@ installation from GitHub).
   `independence_question_only` (the study did not ask the referendum
   question on an independent country), `no_valid_source` (`party_best`,
   `party_lean`, `partylean`) and `not_harmonized_yet`
-  (`vote_choice_text`), instead of the internal decision ids of the
-  design (`OD4`, `OD5`, …), which were not documented anywhere a user
-  could look them up. The definitions and notes of
-  `attr(, "legacy_column_map")` and the text of the spec say each
-  decision in words as well.
+  (`vote_choice_text`), instead of internal decision ids, which were not
+  documented anywhere a user could look them up. The definitions and
+  notes of `attr(, "legacy_column_map")` and the text of the spec say
+  each decision in words as well.
 - The reason `sovereignty_support` and `sovereignty` are `NA` is
   corrected for two studies: `qes2007_panel` asked the 1995 question
   (sovereignty with an offer of partnership, in `sov_partnership_1995`),
@@ -927,9 +941,9 @@ installation from GitHub).
   are unchanged (their `religion` is `NA` for these respondents, as
   before). A gate now applies to rules `weight`, `date` and `string` as
   it does to `map` and `numeric` (it was ignored there), and a gate on a
-  rule that cannot apply it (`constant`, `fn:`) is a validation error
-  (V-S1); `gates.csv` counts the cells of these gated rows for the
-  universe check V-D7.
+  rule that cannot apply it (`constant`, `fn:`) is a validation error;
+  `gates.csv` counts the cells of these gated rows for the universe
+  check.
 - The reported turnout of `qes2007_panel` reads the post-election
   turnout question itself (`voteoui`: yes on election day, yes in
   advance, no), in place of the producer’s recode `avote`, which gives
@@ -982,11 +996,11 @@ installation from GitHub).
   and
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md))
   is part of the specification and of its content hash, checked by the
-  new validator rule V-S18. `Engine-Min` is 0.7.0.
+  validator. `Engine-Min` is 0.7.0.
 - The check that a row graded `identical` matches its target’s anchor
-  (V-S17) now finds the anchor when two targets read the same question
-  (the three and six age bands of one question); it skipped those
-  targets before.
+  now finds the anchor when two targets read the same question (the
+  three and six age bands of one question); it skipped those targets
+  before.
 
 ### New: validation against official results and the census
 
@@ -1019,35 +1033,35 @@ installation from GitHub).
   (`inst/extdata/validation/validation_report.csv`, written by
   `data-raw/build_validation.R`) records, for every study the spec
   covers whose metadata ships: the dissimilarity index between the
-  reported vote and the official results (check V-L2), the reported
-  minus the official turnout, the dissimilarity index of each census
-  margin, and the construct-validity directions of check V-L4, weighted
-  with the recommended weight where it is reviewed (`qes2012`,
-  `qes2014`, `qes2018`, and from specification 3.0.0 `qes2007` and
-  `qes2018_panel`) and unweighted otherwise. The weighted V-L2 indices
-  are 8.0 points (`qes2012`), 5.6 (`qes2014`) and 3.2 (`qes2018`), the
-  provisional values of the design now confirmed on the official
-  figures; `qes1998` (francophones only) is not checked. Turnout is
-  over-reported in every study, by 14 to 30 points. The rows of
-  `qes2022` (CC BY-NC) do not ship; they are kept with the build-ignored
-  aggregates in `data-raw/nc/`.
+  reported vote and the official results, the reported minus the
+  official turnout, the dissimilarity index of each census margin, and
+  the construct-validity directions, weighted with the recommended
+  weight where it is reviewed (`qes2012`, `qes2014`, `qes2018`, and from
+  specification 3.0.0 `qes2007` and `qes2018_panel`) and unweighted
+  otherwise. The weighted recall indices are 8.0 points (`qes2012`), 5.6
+  (`qes2014`) and 3.2 (`qes2018`), the provisional values of the design
+  now confirmed on the official figures; `qes1998` (francophones only)
+  is not checked. Turnout is over-reported in every study, by 14 to 30
+  points. The rows of `qes2022` (CC BY-NC) do not ship; they are kept
+  with the build-ignored aggregates in `data-raw/nc/`.
 - Live checks (never on CRAN; `QESR_TEST_DATA_DIR` or `QESR_LIVE=true`):
   `tests/testthat/test-validation-live.R` fails when a weighted recall
   or census index rises more than 2.0 points above its recorded value,
-  when turnout over-reporting leaves 0 to 35 points, when a V-L4
-  direction fails (voters more interested than nonvoters; QS voters left
-  of CAQ voters; independence support of PQ voters more than 40 points
-  above PLQ voters; at least 55% of partisans voting for their party),
-  or when a deposit has a new version or a changed data file on
-  Dataverse (V-L5). A weekly workflow (`.github/workflows/live.yml`)
-  runs every live test on the pinned originals, restored from the
-  Actions cache, and uploads an aggregates-only report; its `qes2022`
-  rows (CC BY-NC 4.0) go with their licence and attribution notice,
-  `data-raw/nc/README.md`, which also covers the build-ignored `qes2022`
-  aggregates of the repository (`inst/COPYRIGHTS`, section 2). A
-  recorded value moves only through `data-raw/build_validation.R`, which
-  refuses to record a gated row more than 2.0 points above the value it
-  replaces unless run with `--accept-regressions`.
+  when turnout over-reporting leaves 0 to 35 points, when a
+  construct-validity direction fails (voters more interested than
+  nonvoters; QS voters left of CAQ voters; independence support of PQ
+  voters more than 40 points above PLQ voters; at least 55% of partisans
+  voting for their party), or when a deposit has a new version or a
+  changed data file on Dataverse. A weekly workflow
+  (`.github/workflows/live.yml`) runs every live test on the pinned
+  originals, restored from the Actions cache, and uploads an
+  aggregates-only report; its `qes2022` rows (CC BY-NC 4.0) go with
+  their licence and attribution notice, `data-raw/nc/README.md`, which
+  also covers the build-ignored `qes2022` aggregates of the repository
+  (`inst/COPYRIGHTS`, section 2). A recorded value moves only through
+  `data-raw/build_validation.R`, which refuses to record a gated row
+  more than 2.0 points above the value it replaces unless run with
+  `--accept-regressions`.
 - New website article “Validation against official results and the
   census” (French: “Validation par les résultats officiels et le
   recensement”), built from the downloaded files: the tables and figures
@@ -1531,7 +1545,8 @@ that the old reader damaged is repaired; and
 and
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
 keep every respondent and set values verified to be wrong to `NA`.
-`vignette("migrating-0.5", package = "qesR")` walks through the changes.
+[`vignette("migrating-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
+walks through the changes.
 
 ### Breaking default: workspace assignment
 
@@ -1610,14 +1625,16 @@ changes depends on what they use:
   DDI: labels and question text differ where 0.4.4 used the variable
   name, a lowercased label or a question guessed from a PDF.
 
-`dev/legacy-diff.md` in the source repository (generated by
-`data-raw/compare_legacy.R` against a clean 0.4.4 build) gives, column
-by column and study by study, how many cells changed and why; every
-difference is an intended deletion, a blanked value or one of the reader
-changes listed here. To reproduce a 0.4.4 result exactly, install that
-version, for example in a separate library or an renv project:
+[The comparison with qesR
+0.4.4](https://github.com/ThomasGareau/qesR/blob/main/dev/legacy-diff.md)
+in the source repository (generated by `data-raw/compare_legacy.R`
+against a clean 0.4.4 build) gives, column by column and study by study,
+how many cells changed and why; every difference is an intended
+deletion, a blanked value or one of the reader changes listed here. To
+reproduce a 0.4.4 result exactly, install that version, for example in a
+separate library or an renv project:
 `remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")` (the same
-code as the v0.4.4 baseline of `dev/legacy-diff.md`), and record
+code as the 0.4.4 baseline of that comparison), and record
 `packageDescription("qesR")$RemoteSha` with the results.
 
 ### Changed outputs: legacy master and `get_decon()`
@@ -1633,9 +1650,11 @@ converted as 0.4.4 converted it, and values verified to be wrong are set
 to `NA`. A message says so once per session (classes
 `qesR_message_values_changed` and `qesR_message_legacy_columns`).
 Results from 0.4.4 can be reproduced only by installing it
-(`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`).
-`dev/legacy-diff.md` in the source repository gives the counts, column
-by column and study by study, against a clean 0.4.4 build.
+(`remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")`). [The
+comparison with qesR
+0.4.4](https://github.com/ThomasGareau/qesR/blob/main/dev/legacy-diff.md)
+in the source repository gives the counts, column by column and study by
+study, against a clean 0.4.4 build.
 
 - **Frozen sources.** The source variable of every column of every study
   is the one qesR 0.4.4 chose, frozen from a clean 0.4.4 build

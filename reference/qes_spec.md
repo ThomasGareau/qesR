@@ -179,7 +179,7 @@ leur ordre de priorité et le niveau de chaque membre dans chaque étude.
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 en est la référence complète.
 
-## Targets in the shipped spec (version 4.3.0)
+## Targets in the shipped spec (version 4.3.1)
 
 Generated from the spec by roxygen; `qes_spec()` gives the same list
 with each study's grade.
@@ -884,51 +884,6 @@ xw[, c("study", "source_var", "grade", "levels_not_offered")]
 #> 8        qes2008           q12a  comparable         CAQ;PCQ;ON
 #> 9  qes2012_panel       voteprov approximate            PCQ;ADQ
 #> 10       qes1998         q3post  comparable  CAQ;QS;PVQ;PCQ;ON
-xw # prints the target's section of the reference
-#> ## `vote_prov_recall`: Provincial vote (recall)
-#> 
-#> Party the respondent reports having voted for in the Quebec general election of the study, asked after that election. Nonvoters, spoiled ballots and respondents not eligible or not registered are missing values with a reason, never a party.
-#> 
-#> Family `vote_prov` · type Categorical · timing Post-election · status Experimental · added in spec 0.1.0
-#> 
-#> **Levels**
-#> 
-#> | Code | Name | Label |
-#> |---|---|---|
-#> | 1 | `PLQ` | PLQ |
-#> | 2 | `PQ` | PQ |
-#> | 3 | `CAQ` | CAQ |
-#> | 4 | `QS` | QS |
-#> | 5 | `PVQ` | PVQ |
-#> | 6 | `PCQ` | PCQ |
-#> | 7 | `ON` | ON |
-#> | 8 | `ADQ` | ADQ |
-#> | 90 | `other` | Other party |
-#> 
-#> **Coverage**
-#> 
-#> | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don't know |
-#> |---|---|---|---|---|---|---|---|---|---|
-#> | qes2022 | `pes_votechoice` (pes) | `comparable` | Lists the four main parties and the Conservatives but not the Green party or Option nationale, no don't-know option, spoiling is an option, and it follows a face-saving turnout question. | vote_recall_list | PLQ, PQ, CAQ, QS, PCQ, other; not offered: PVQ, ON, ADQ | Which party did you vote for? | pes_turnout: 2 = not_voted, 3 = not_voted, 4 = not_voted, 5 = not_registered, 6 = dk | `pes_weight_general` | Not offered |
-#> | qes2018 | `q6` (post) | `comparable` | Only the four main parties are listed (no Green or Option nationale), there is no don't-know option, spoiling is an option, and the item follows a face-saving turnout question. | vote_recall_list | PLQ, PQ, CAQ, QS, other; not offered: PVQ, PCQ, ON, ADQ | Which party did you vote for? | q5: 1 = not_voted, 2 = not_voted, 3 = not_voted, 5 = ineligible, 99 = refused, NA = inapplicable | `pond` | Not offered |
-#> | qes2018_panel | `rts_q2` (post) | `comparable` | Party list with the leaders' names, mixed telephone and web mode; the anchor is a web list without leaders. | vote_recall_list_leaders | PLQ, PQ, CAQ, QS, other; not offered: PVQ, PCQ, ON, ADQ | Et pour qui avez-vous voté? | rts_q1: 1 = not_voted, 2 = not_voted, 4 = dk_refused | `weight_rts` | Not documented |
-#> | qes2014 | `Q3` (post) | `comparable` | Same party list as the anchor, but the stem does not name the election date and no don't-know option is offered. | vote_recall_list | PLQ, PQ, CAQ, QS, PVQ, ON, other; not offered: PCQ, ADQ | Which party did you vote for? | Q2: 2 = not_voted, 9 = refused | `POND` | Not offered |
-#> | qes2012 | `q25` (post) | `identical` (anchor) | Anchor row of the target. | vote_recall_list | PLQ, PQ, CAQ, QS, PVQ, ON, other; not offered: PCQ, ADQ | How did you vote in the last Quebec provincial election of September 4th, 2012? | q21: 2 = not_voted, 8 = dk, 9 = refused | `pond` | Offered explicitly |
-#> | qes2012_panel | `voteprov` (post) | `approximate` | Unprompted telephone recall (the options are not read) after a turnout question that probes election day or advance poll; the anchor is a web list. | vote_recall_unprompted | CAQ, PLQ, PQ, QS, PVQ, ON, other; not offered: PCQ, ADQ | For which party did you vote for? (DO NOT READ) |  | `pond_post` (needs review, not applied) | Not offered |
-#> | qes2008 | `q12a` (post) | `comparable` | Same question (party voted for); the list names the ADQ and not the CAQ or ON, which did not exist; the turnout question has no don't-know code; telephone by the deposit metadata, the anchor is web. | vote_recall_list | PLQ, PQ, ADQ, QS, PVQ, other; not offered: CAQ, PCQ, ON | Which party did you vote for? | q11: 2 = not_voted, 9 = refused |  | Not documented |
-#> | qes2007 | `q12` (post) | `comparable` | Same question (party voted for, the parties named in the stem); the list names the ADQ and not the CAQ or ON, which did not exist; the study mixes telephone and web interviews (only the telephone script is deposited), the anchor is web. | vote_recall_list | PLQ, PQ, ADQ, QS, PVQ, other; not offered: CAQ, PCQ, ON | Which party did you vote for? The Liberal Party, Parti Québécois, ADQ, Québec solidaire, the Green Party or another party? | q11: 2 = not_voted, 8 = dk, 9 = refused | `pond` | Not documented |
-#> | qes2007_panel | `vote` (post) | `approximate` | Unprompted telephone recall (options not read) after a two-step turnout question; the anchor is a web list. | vote_recall_unprompted | ADQ, PLQ, PQ, QS, PVQ, other; not offered: CAQ, PCQ, ON | Whom did you vote for? |  | `pond_tot_am1` (needs review, not applied) | Not offered |
-#> | qes1998 | `q3post` (post) | `comparable` | Same question (party voted for, from a list read) by telephone, with the same stem in both firms' questionnaires; CREATEC's own Q3 uses other codes (1 PLQ, 2 PQ, 3 ADQ, 4 another party) with no Parti Égalité, and the pooled file puts them on CROP's codes, where the Parti Égalité is starred (not read) and never chosen; the list names the ADQ, not the CAQ; the anchor is web. | vote_recall_list | ADQ, PLQ, PQ, other; not offered: CAQ, QS, PVQ, PCQ, ON | 3. Pour lequel des partis suivants avez-vous voté? |  | `ponder3` (needs review, not applied) | Not offered |
-#> 
-#> **History**
-#> 
-#> - 0.1.0 (2026-09-27): First spec: 11 core targets with rows checked against the original files, in review, for qes2012, qes2014, qes2018, qes2022, qes2007_panel, qes2012_panel and qes2018_panel, their level sets, waves and weights.
-#> - 0.1.1 (2026-09-27): Offline checks: gates.csv, the joint counts of gate code and source code among wave members for the 28 projectable rows of the studies whose metadata ships, and expected/marginals.csv, the projected unweighted marginals of the 28 projectable rows of the studies whose metadata ships. No row, code or grade changed.
-#> - 0.1.2 (2026-09-27): Engine column hashes: expected/hashes.csv, the md5 of each harmonized column (study, target) that qes_harmonize() gives on the pinned files, for the 35 mapped rows, checked on the original files by the live tests (V-L1). No row, code or grade changed.
-#> - 4.0.0 (2026-09-28): Review sign-off. An automated double review checked the 132 crosswalk rows against the original files and documents (one pass on codes and data, one on wording and comparability, adjudicated where they disagreed); it is not a human review, and reviewed_by says so. reviewed_on is 2026-09-27, and the new crosswalk column review_note says what the review corrected and why a row stays in review (V-S11 requires it on a reviewed row left in review). 93 rows are signed off (status stable) and applied by qes_harmonize() by default. 39 stay in review: the 38 rows of qes1998, qes2007_panel, qes2012_panel and qes_crop_2007_2010, whose recommended weights need review (a stable row there fails the release check V-S13), and the qes2014 gender row, whose grade was raised to identical and needs a second reviewer. get_qes_master() and get_decon() now apply signed-off rows only (include_draft = FALSE): a column whose question is in a row still in review is NA, reason not_reviewed in attr(, "legacy_na_columns"), and attr(, "source_map") gains the status of each row. MAJOR (changed column hashes): the qes2022 income amount 0, a blank that the survey sent to the bracket follow-up cps_income2, is a missing value (no_answer); the qes2022 typed other-party text is gated on cps_turnout as its parent row (3 to 5 inapplicable, 6 ineligible). Grades and metadata: qes2018_panel rv1a and rv1ab comparable to approximate (the stem also asks those who voted in advance for their vote; a push filter narrower than the anchor's); qes2014 QSEXE comparable to identical (the anchor's stems in both languages); qes2014 QSCOL dk_offered none; qes2022 cps_ideoself_1 instrument lr_0_10 (no slider is documented); the CROP intentions dk_offered volunteered, with their French wording from CROP's reports. Text only: the wording, grade reasons, evidence and notes of 36 rows corrected (each named in its review_note), among them the qes2007_panel counts of wave members and where its time-invariant items were asked. In gates.csv, typed text is counted as one token and an empty text as system missing.
-#> - 4.1.0 (2026-09-28): Content sign-off apart from the weights. The 38 crosswalk rows of qes1998, qes2007_panel, qes2012_panel and qes_crop_2007_2010 that the automated double review of spec 4.0.0 signed off on their content are stable, and applied by qes_harmonize(), get_qes_master() and get_decon() by default; they were held in review only because the recommended weights of their waves need review. Their review_note still says the review was automated, not human, and says that the weight is tracked apart (dev/open-questions.md Q1). The release check V-S13 no longer fails a stable row on a study-wave whose recommended weight needs review; it still requires that a recommended weight is never calibrated on vote or turnout, and one recommended weight per study-wave (none where every weight is calibrated). The weights that need review stay unapplied: weight_pre and weight_post are NA there, with the message qesR_message_weight_review, and in get_qes_master() the reason not_reviewed with the cause weight_needs_review. qes2014 QSEXE (gender) is stable at comparable, the grade it had before the review (the English stem the review filled is kept); identical waits for a human second reviewer. Text only: the two documentation-only rows (rule none), qes2012_panel interetrec and qes1998 intvote2, have a wording_ref to their codebook entry, which V-S11 requires of a stable row; in legacy.csv, the note of each study's survey_weight row names the weight and its registry status (the CROP XPOND and the qes2012_panel pond need review, the qes2008 pond is calibrated on the vote, the qes2007_panel pond is not registered), the weight_pre and weight_post definitions say NA where the weight needs review, and the intended blanks of get_qes_master() have a row of their own with a cause and a note (qes1998 education, qes2018 income and religion: invalid_044_source; qes2012_panel political_interest: not_comparable_source; qes2022 language: not_harmonized_yet). No value map, gate, level set, expected marginal or column hash changed: MINOR, rows are only added to the default output.
-#> - 4.2.0 (2026-09-28): The metadata of qes2022 ships (decision OD3 lifted by the owner on 2026-09-28; it carries the study's licence, CC BY-NC 4.0, inst/COPYRIGHTS section 2). The 18 qes2022 crosswalk rows get their wording_en and wording_fr, quoted from the study's bilingual codebook (file 7449514; for the typed other-party text, the stem of cps_votechoice1 with its option), and its 65 value-map rows the value label of the pinned file (source_label) in place of the md5 of that label (source_label_hash). gates.csv gains the 252 cells of the 16 projectable or gated qes2022 rows and expected/marginals.csv the 225 marginal cells of its 15 projectable rows, the counts the build-ignored data-raw/nc/ held until now for CI (identical, rebuilt from the pinned file by data-raw/build_sources.R and data-raw/project_marginals.R). The release check V-S11 no longer forbids wording and labels for a study whose metadata does not ship (every study's does). No row, map, gate, grade, level set, recorded marginal or column hash changed: MINOR, keys are only added to expected/.
-#> 
 
 # code by code, in French
 qes_spec("crosswalk", targets = "sov_indep", studies = "qes2014",
@@ -955,14 +910,14 @@ pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
 # the checked spec itself
 s <- qes_spec("spec")
 s
-#> qesR harmonization spec 4.3.0 (2026-09-29), content hash 506f691e420e8d5d5de3657eef556d3d
+#> qesR harmonization spec 4.3.1 (2026-09-30), content hash cd62e566cd051bde5b236c3511555c91
 #>   targets: 50
 #>   levels: 115
 #>   crosswalk: 236
 #>   valuemaps: 1175
 #>   waves: 39
 #>   weights: 26
-#>   changes: 13
+#>   changes: 14
 #>   gates: 3209
 #>   expected: 2914
 #>   hashes: 269

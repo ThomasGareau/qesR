@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>How far off are surveys? Reported vote and intentions against the official results • qesR</title>
+<title>Do surveys miss the Liberals? The reported vote against the official results • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,18 +16,68 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="How far off are surveys? Reported vote and intentions against the official results">
-<meta name="description" content="The reported vote of every study against the official results, what weighting changes, and two and a half years of CROP polls around the 2008 election.
+<meta property="og:title" content="Do surveys miss the Liberals? The reported vote against the official results">
+<meta name="description" content="Six Quebec Election Studies and three panels set against the results of Élections Québec: the Liberal gap, the over-reported PQ, what language and weighting explain, and how far vote intentions move before an election.
 ">
-<meta property="og:description" content="The reported vote of every study against the official results, what weighting changes, and two and a half years of CROP polls around the 2008 election.
+<meta property="og:description" content="Six Quebec Election Studies and three panels set against the results of Élections Québec: the Liberal gap, the over-reported PQ, what language and weighting explain, and how far vote intentions move before an election.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>How far off are surveys? Reported vote and intentions against the official results</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Do surveys miss the Liberals? The reported vote against the official results</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/survey-vs-official.Rmd" class="external-link"><code>vignettes/articles/survey-vs-official.Rmd</code></a></small>
@@ -135,42 +160,32 @@
     
 <p><em><a href="fr-enquetes-resultats.html">Version
 française</a></em></p>
-<p>Survey estimates of the vote come close to the official results, but
-rarely onto them. In 2022 the Quebec Election Study had the CAQ at 33%
-of the reported vote, weighted; the CAQ took 41% of the valid votes. The
-PQ is over-reported in most studies, and the PLQ under-reported until
-2014. Weighting to census margins brings some studies closer and not
-others: the index of dissimilarity between the reported and the official
-vote of the 2012 study goes from 11.0 points unweighted to 8.0 weighted,
-and that of 2014 from 4.9 to 5.6.</p>
+<p>In Quebec, it is almost a reflex to say that surveys underestimate
+the Parti libéral du Québec (PLQ). The polls of the 1998 election, which
+overestimated the Parti Québécois (PQ) and underestimated the Liberals,
+are the textbook case (Durand and Blais 1999). Studies in the United
+States point to a second and quite different bias: after the vote, more
+respondents say they voted for the winner than the result allows
+(Atkeson 1999, on the presidential primaries). Both beliefs are about
+polls and surveys in general. Individual studies have been checked
+against the result (Bélanger et al. 2025 for 2022). However, the Quebec
+Election Studies, which ask respondents how they voted once the election
+is over, have rarely been compared with the official results across
+several elections. We do so for six elections, from 2007 to 2022, with
+the six studies and the three panels that Claire Durand and her
+colleagues ran in 2007, 2012 and 2018. Overall, the first belief holds
+only in part and the second not at all. The PLQ is under-reported in all
+six studies and panels from 2007 to 2014, by 3 to 7 percentage points of
+the valid vote, and the PQ is over-reported in every Quebec Election
+Study, though sometimes by as little as 1 point. But the Liberal gap
+narrows in 2018 and is slightly reversed in 2022, within the margin of
+error. Nor is the winner over-reported: it falls short in five of the
+six elections. In 2022, the Coalition avenir Québec (CAQ) falls 8 points
+short.</p>
 <div class="section level2">
-<h2 id="the-data">The data<a class="anchor" aria-label="anchor" href="#the-data"></a>
+<h2 id="the-reported-vote-party-by-party">The reported vote, party by party<a class="anchor" aria-label="anchor" href="#the-reported-vote-party-by-party"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>studies <span class="op">=</span> <span class="va">qz_studies</span>, targets <span class="op">=</span> <span class="st">"vote_choice"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code>vote_choice</code> with its default precedence: the reported
-vote where a study asked it, else the intention (the CROP polls), as
-<code>vote_choice__type</code> records:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">h</span><span class="op">$</span><span class="va">vote_choice__type</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                     </span></span>
-<span><span class="co">#&gt;                      recall intention_push intention</span></span>
-<span><span class="co">#&gt;   qes_crop_2007_2010      0          22848      1179</span></span>
-<span><span class="co">#&gt;   qes1998              1483              0         0</span></span>
-<span><span class="co">#&gt;   qes2007              2175              0         0</span></span>
-<span><span class="co">#&gt;   qes2007_panel        2054              0         0</span></span>
-<span><span class="co">#&gt;   qes2008              1151              0         0</span></span>
-<span><span class="co">#&gt;   qes2012              1505              0         0</span></span>
-<span><span class="co">#&gt;   qes2012_panel         844              0         0</span></span>
-<span><span class="co">#&gt;   qes2014              1517              0         0</span></span>
-<span><span class="co">#&gt;   qes2018              3072              0         0</span></span>
-<span><span class="co">#&gt;   qes2018_panel         842              0         0</span></span>
-<span><span class="co">#&gt;   qes2022              1220              0         0</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="reported-vote-against-the-official-result-party-by-party">Reported vote against the official result, party by party<a class="anchor" aria-label="anchor" href="#reported-vote-against-the-official-result-party-by-party"></a>
-</h2>
-<figure class="qesr-fig" id="fig-parties"><figcaption><span class="qesr-title">Surveys under-report the PLQ from 2007 to 2014, and the CAQ by 8 points in 2022</span><span class="qesr-sub">Reported vote in each study (dot, 95% CI) against the official share of valid votes (line and tick), by party</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/parties-light.png" alt="Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). In 2022 the QES has the CAQ at 33% against 41% officially, and QS at 17% against 15%. Values in the table view." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/parties-dark.png" alt="Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). In 2022 the QES has the CAQ at 33% against 41% officially, and QS at 17% against 15%. Values in the table view." width="672" height="499" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) of the Quebec Election Studies (circles, just left of each election) and the Durand panels (squares, just right); official results of Élections Québec. Dots: weighted with each study's post-election weight, 95% confidence intervals (logit). Hollow: unweighted, weight under review (the 2008 study and the 2007 and 2012 panels); the 2018 panel uses its reviewed post-election weight. The 1998 polls interviewed francophones only and are left out. The table view gives every party, with the unweighted estimates.</p>
+<figure class="qesr-fig" id="fig-parties"><figcaption><span class="qesr-title">The PLQ is under-reported in every study from 2007 to 2014, the PQ over-reported, and the CAQ 8 points below its result in 2022</span><span class="qesr-sub">Reported vote in each study (dot, 95% CI) against the official share of valid votes (line and tick), by party</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/parties-light.png" alt="Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). The PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it. In 2022 the Quebec Election Study has the CAQ at 33% against 41% officially. Values in the table view." width="672" height="499" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/parties-dark.png" alt="Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share of valid votes at each election from 2007 to 2022 as a line with a tick, and each study's reported vote as a dot with its confidence interval (circles: Quebec Election Studies; squares: Durand panels). The PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it. In 2022 the Quebec Election Study has the CAQ at 33% against 41% officially. Values in the table view." width="672" height="499" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies (circles, just left of each election) and Durand panels (squares, just right), reported vote among respondents who named a party; official results of Élections Québec. Dots are weighted, with 95% confidence intervals. Hollow dots: unweighted. The table view gives every party, with the unweighted estimates.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Party </th>
@@ -1044,20 +1059,229 @@ vote where a study asked it, else the intention (the CROP polls), as
    <td style="text-align:left;"> weighted </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>The PQ is over-reported in most studies: +7 pts in 2012, +4 pts in
-2014.</li>
-<li>The PLQ is under-reported at every election from 2007 to 2014, by −6
-pts in 2014, the year it won.</li>
-<li>The winner is not always over-reported: in 2022 the CAQ is 8 points
-short of its result.</li>
-</ul>
+</table></details></figure><p>First, the Liberals. From 2007 to 2014 the PLQ is under-reported in
+all six studies and panels, by as much as 7 points in 2007 and 6 points
+in 2014, the year it returned to power with 42% of the vote. The pattern
+then fades. The 2018 study puts the PLQ 2 points below its result, and
+the 2022 study puts it 3 points above. Second, the PQ is over-reported
+in every Quebec Election Study, by as little as 1 point in 2022 and as
+much as 7 points in 2012 (39% reported against 32% official). Taken one
+at a time, several of these gaps are within the margin of error: the
+PQ’s in 2007, 2008 and 2022, and the PLQ’s in 2008, 2018 and 2022.</p>
+<p>Third, and contrary to what the literature on post-election surveys
+would lead us to expect, the winner is rarely over-reported. The only
+exception is 2012, when the PQ won. In 2008 and 2018, the winner’s
+shortfall is within the margin of error. Not so in 2022: the CAQ took
+41% of the vote, but only 33% of the study’s respondents say they voted
+for it, a shortfall Bélanger et al. (2025) also report with the same
+study (33.7% against 41%). Not every 2022 party is off, however: the
+Parti conservateur du Québec (PCQ) is close to its result (14% against
+13%), as they also find. What stands out is the direction of the errors.
+From 2007 to 2014 at least, they are not random noise around the result:
+they lean the same way for the same parties.</p>
+</div>
+<div class="section level2">
+<h2 id="is-the-liberal-gap-a-language-gap">Is the Liberal gap a language gap?<a class="anchor" aria-label="anchor" href="#is-the-liberal-gap-a-language-gap"></a>
+</h2>
+<p>The most familiar explanation for the Liberal gap is language.
+Non-francophones vote Liberal in very large numbers: in 2014, 87% of the
+non-francophones who reported a vote chose the PLQ, against 25% of
+francophones. A survey that reaches too few of them will under-report
+the party. The studies are weighted, among other things, on language, so
+non-francophones should make up roughly their share of the census
+population among all respondents. Among those who report a vote,
+however, they are fewer: 17% in 2014, against 19% of all respondents. We
+therefore examine what happens when non-francophones among voters are
+given back the share they have among all respondents. This is a generous
+test, since it assumes they name a party as often as francophones
+do.</p>
+<figure class="qesr-fig" id="fig-language"><figcaption><span class="qesr-title">Giving non-francophones their full weight closes 1.0 to 1.4 points of a Liberal gap of 6 to 7</span><span class="qesr-sub">Reported vote minus the official result, as reported and with non-francophones among voters given their share of all respondents, in the weighted Quebec Election Studies</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/language-light.png" alt="Two dot charts side by side, one row per Quebec Election Study from 2007 to 2022: the PLQ's and the PQ's reported vote minus the official result, as reported (coloured dot) and once non-francophones among voters are given their share of all respondents (grey diamond). For the PLQ in 2014 the gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the rebalancing also closes little of the gap. Values in the table view." width="672" height="326" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/language-dark.png" alt="Two dot charts side by side, one row per Quebec Election Study from 2007 to 2022: the PLQ's and the PQ's reported vote minus the official result, as reported (coloured dot) and once non-francophones among voters are given their share of all respondents (grey diamond). For the PLQ in 2014 the gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the rebalancing also closes little of the gap. Values in the table view." width="672" height="326" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies, weighted, respondents whose mother tongue (or, where it is missing or mixed, home language) is known; official results of Élections Québec. Francophones: French mother tongue. Rebalanced: the respondents who reported a vote are weighted again so that non-francophones make up the same share as among all respondents; the vote of each language group is unchanged. The 2008 study, whose weights are calibrated on the vote, is left out. The table view gives the vote of each group and the share of non-francophones among voters that would have matched the PLQ's result.</p>
+<details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:left;"> Party </th>
+   <th style="text-align:left;"> Study </th>
+   <th style="text-align:left;"> Reported, % </th>
+   <th style="text-align:left;"> Rebalanced, % </th>
+   <th style="text-align:left;"> Official, % </th>
+   <th style="text-align:left;"> Gap as reported </th>
+   <th style="text-align:left;"> Gap rebalanced </th>
+   <th style="text-align:left;"> Among francophones, % </th>
+   <th style="text-align:left;"> Among non-francophones, % </th>
+   <th style="text-align:left;"> Non-francophones among voters, % </th>
+   <th style="text-align:left;"> Non-francophones among all respondents, % </th>
+   <th style="text-align:left;"> Non-francophone share that would match the PLQ result, % </th>
+   <th style="text-align:right;"> n </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> 25.8 </td>
+   <td style="text-align:left;"> 26.9 </td>
+   <td style="text-align:left;"> 33.1 </td>
+   <td style="text-align:left;"> −7.3 pts </td>
+   <td style="text-align:left;"> −6.2 pts </td>
+   <td style="text-align:left;"> 20.3 </td>
+   <td style="text-align:left;"> 58.1 </td>
+   <td style="text-align:left;"> 14.5 </td>
+   <td style="text-align:left;"> 17.6 </td>
+   <td style="text-align:left;"> 33.9 </td>
+   <td style="text-align:right;"> 1726 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 24.9 </td>
+   <td style="text-align:left;"> 25.9 </td>
+   <td style="text-align:left;"> 31.2 </td>
+   <td style="text-align:left;"> −6.3 pts </td>
+   <td style="text-align:left;"> −5.3 pts </td>
+   <td style="text-align:left;"> 15.5 </td>
+   <td style="text-align:left;"> 65.5 </td>
+   <td style="text-align:left;"> 18.8 </td>
+   <td style="text-align:left;"> 20.9 </td>
+   <td style="text-align:left;"> 31.4 </td>
+   <td style="text-align:right;"> 1274 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 35.8 </td>
+   <td style="text-align:left;"> 37.2 </td>
+   <td style="text-align:left;"> 41.5 </td>
+   <td style="text-align:left;"> −5.7 pts </td>
+   <td style="text-align:left;"> −4.3 pts </td>
+   <td style="text-align:left;"> 25.2 </td>
+   <td style="text-align:left;"> 87.3 </td>
+   <td style="text-align:left;"> 17.1 </td>
+   <td style="text-align:left;"> 19.3 </td>
+   <td style="text-align:left;"> 26.3 </td>
+   <td style="text-align:right;"> 1282 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 23.3 </td>
+   <td style="text-align:left;"> 25.8 </td>
+   <td style="text-align:left;"> 24.8 </td>
+   <td style="text-align:left;"> −1.6 pts </td>
+   <td style="text-align:left;"> +1.0 pts </td>
+   <td style="text-align:left;"> 12.2 </td>
+   <td style="text-align:left;"> 71.6 </td>
+   <td style="text-align:left;"> 18.6 </td>
+   <td style="text-align:left;"> 22.9 </td>
+   <td style="text-align:left;"> 21.2 </td>
+   <td style="text-align:right;"> 2016 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PLQ </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 16.8 </td>
+   <td style="text-align:left;"> 17.2 </td>
+   <td style="text-align:left;"> 14.4 </td>
+   <td style="text-align:left;"> +2.4 pts </td>
+   <td style="text-align:left;"> +2.9 pts </td>
+   <td style="text-align:left;"> 6.1 </td>
+   <td style="text-align:left;"> 54.5 </td>
+   <td style="text-align:left;"> 22.1 </td>
+   <td style="text-align:left;"> 23.0 </td>
+   <td style="text-align:left;"> 17.1 </td>
+   <td style="text-align:right;"> 1056 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> QES 2007 </td>
+   <td style="text-align:left;"> 30.8 </td>
+   <td style="text-align:left;"> 30.2 </td>
+   <td style="text-align:left;"> 28.3 </td>
+   <td style="text-align:left;"> +2.5 pts </td>
+   <td style="text-align:left;"> +1.9 pts </td>
+   <td style="text-align:left;"> 33.8 </td>
+   <td style="text-align:left;"> 13.4 </td>
+   <td style="text-align:left;"> 14.5 </td>
+   <td style="text-align:left;"> 17.6 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;"> 1726 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> QES 2012 </td>
+   <td style="text-align:left;"> 38.8 </td>
+   <td style="text-align:left;"> 38.0 </td>
+   <td style="text-align:left;"> 31.9 </td>
+   <td style="text-align:left;"> +6.9 pts </td>
+   <td style="text-align:left;"> +6.0 pts </td>
+   <td style="text-align:left;"> 46.4 </td>
+   <td style="text-align:left;"> 6.0 </td>
+   <td style="text-align:left;"> 18.8 </td>
+   <td style="text-align:left;"> 20.9 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;"> 1274 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> QES 2014 </td>
+   <td style="text-align:left;"> 29.8 </td>
+   <td style="text-align:left;"> 29.1 </td>
+   <td style="text-align:left;"> 25.4 </td>
+   <td style="text-align:left;"> +4.5 pts </td>
+   <td style="text-align:left;"> +3.8 pts </td>
+   <td style="text-align:left;"> 35.3 </td>
+   <td style="text-align:left;"> 3.2 </td>
+   <td style="text-align:left;"> 17.1 </td>
+   <td style="text-align:left;"> 19.3 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;"> 1282 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> QES 2018 </td>
+   <td style="text-align:left;"> 19.6 </td>
+   <td style="text-align:left;"> 18.7 </td>
+   <td style="text-align:left;"> 17.1 </td>
+   <td style="text-align:left;"> +2.5 pts </td>
+   <td style="text-align:left;"> +1.6 pts </td>
+   <td style="text-align:left;"> 23.4 </td>
+   <td style="text-align:left;"> 2.6 </td>
+   <td style="text-align:left;"> 18.6 </td>
+   <td style="text-align:left;"> 22.9 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;"> 2016 </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> PQ </td>
+   <td style="text-align:left;"> QES 2022 </td>
+   <td style="text-align:left;"> 15.7 </td>
+   <td style="text-align:left;"> 15.6 </td>
+   <td style="text-align:left;"> 14.6 </td>
+   <td style="text-align:left;"> +1.1 pts </td>
+   <td style="text-align:left;"> +0.9 pts </td>
+   <td style="text-align:left;"> 19.7 </td>
+   <td style="text-align:left;"> 1.7 </td>
+   <td style="text-align:left;"> 22.1 </td>
+   <td style="text-align:left;"> 23.0 </td>
+   <td style="text-align:left;">  </td>
+   <td style="text-align:right;"> 1056 </td>
+  </tr>
+</tbody>
+</table></details></figure><p>The answer is fairly clear: language accounts for a small part of the
+gap. In the three weighted Quebec Election Studies of 2007, 2012 and
+2014, where the Liberal gap is 6 to 7 points, rebalancing closes 1.0 to
+1.4 points of it, and trims the PQ’s excess by 0.6 to 0.8 points. To
+close the PLQ gap through language alone, non-francophones would have
+had to make up 26% to 34% of voters, against 18% to 21% of all
+respondents. In other words, the Liberal gap is not only a matter of too
+few non-francophones. This suggests that it is also a gap within
+language groups, most likely among francophones: in these studies,
+either Liberal voters are missing from the samples, or they do not say
+they voted Liberal. In 2018, by contrast, the same correction takes the
+PLQ slightly past its result (+1.0 point). The gap was small that year,
+and language composition may account for most of it.</p>
 </div>
 <div class="section level2">
 <h2 id="does-weighting-help">Does weighting help?<a class="anchor" aria-label="anchor" href="#does-weighting-help"></a>
 </h2>
-<figure class="qesr-fig" id="fig-dissim"><figcaption><span class="qesr-title">Weighting cuts the 2012 error from 11 to 8 points, but does not bring every study closer to the result</span><span class="qesr-sub">Index of dissimilarity between the reported and the official vote, unweighted and weighted, for the studies with a reviewed weight</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/dissim-light.png" alt="Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from 11.0 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from 4.9 to 5.6. Values in the table view, with the studies that have no reviewed weight." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/dissim-dark.png" alt="Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from 11.0 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from 4.9 to 5.6. Values in the table view, with the studies that have no reviewed weight." width="672" height="307" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote); official results of Élections Québec. Index of dissimilarity: half the sum over parties of the absolute difference between the reported and the official share, in points (0: identical; the share of voters that would have to change party). A party a study did not list counts in its Other. The 2008 study and the 2007 and 2012 panels have no reviewed weight: their unweighted index is in the table view.</p>
+<figure class="qesr-fig" id="fig-dissim"><figcaption><span class="qesr-title">Weighting cuts the 2012 error from 11 to 8 points, but does not bring every study closer to the result</span><span class="qesr-sub">Index of dissimilarity between the reported and the official vote, unweighted and weighted</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/dissim-light.png" alt="Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from 11.0 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from 4.9 to 5.6. Values in the table view, with the unweighted studies." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/dissim-dark.png" alt="Dumbbell chart, one row per study with both estimates (2007 to 2022): the index of dissimilarity between the reported and the official vote, unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012 from 11.0 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from 4.9 to 5.6. Values in the table view, with the unweighted studies." width="672" height="307" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies and Durand panels, reported vote; official results of Élections Québec. Index of dissimilarity: half the sum, over parties, of the absolute difference between the reported and the official share, in points. It is the share of respondents who would have to change party for the survey to match the result (0: identical). A party a study did not list counts in its Other. The unweighted studies (2008, and the 2007 and 2012 panels) are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -1157,21 +1381,21 @@ short of its result.</li>
    <td style="text-align:left;"> 8.0 </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
-<ul>
-<li>Weighting brings 2012 and 2022 closer to the official result, by 3.0
-and 1.1 points, and moves 2014 slightly away: it adjusts the sample to
-census margins, not to the vote.</li>
-<li>The unweighted 2008 study and 2007 panel, at 3.2 and 4.4 points, are
-closer to the official result than most weighted studies (from 5.5 to
-8.0; only 2018 matches them, at 3.2): weighting to census margins does
-not guarantee a closer vote.</li>
-</ul>
+</table></details></figure><p>If language explains little, weighting cannot be expected to do much
+either, since it adjusts the sample to the census and not to the vote.
+The index of dissimilarity lets us check: it is the share of respondents
+who would have to change party for the survey to match the result.
+Weighting brings 2012 and 2022 closer to the result, by 3.0 and 1.1
+points, and moves 2014 slightly away. Note, however, that the index
+stays between 3.2 and 8.0 points in the weighted studies, and that two
+unweighted studies, the 2008 study and the 2007 panel, come closer than
+most of them (3.2 and 4.4 points). A weight based on census totals,
+then, does not by itself make a study’s reported vote more accurate.</p>
 </div>
 <div class="section level2">
-<h2 id="two-and-a-half-years-of-crop-polls-around-the-2008-election">Two and a half years of CROP polls around the 2008 election<a class="anchor" aria-label="anchor" href="#two-and-a-half-years-of-crop-polls-around-the-2008-election"></a>
+<h2 id="before-the-vote-how-far-intentions-move">Before the vote: how far intentions move<a class="anchor" aria-label="anchor" href="#before-the-vote-how-far-intentions-move"></a>
 </h2>
-<figure class="qesr-fig" id="fig-crop"><figcaption><span class="qesr-title">The ADQ fell from 29% to 14% before the 2008 election; the PLQ led from August 2008, and the PQ passed it in 2009</span><span class="qesr-sub">Monthly vote intentions in the CROP polls, June 2007 to January 2010: three-month means over the monthly values, and the official result</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/crop-light.png" alt="Line chart of monthly CROP vote intentions from June 2007 to January 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 December 2008 and the official results as diamonds. The ADQ falls from 29% in June 2007 to 14% in November 2008; the PLQ is at 41% in the last poll before the election and took 42%; the PQ leads in March to May and in October 2009. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/crop-dark.png" alt="Line chart of monthly CROP vote intentions from June 2007 to January 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 December 2008 and the official results as diamonds. The ADQ falls from 29% in June 2007 to 14% in November 2008; the PLQ is at 41% in the last poll before the election and took 42%; the PQ leads in March to May and in October 2009. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice of the CROP polls (the intention, with the undecided pushed where the poll pushed them), about 1,000 respondents a month, among those who named a party. Unweighted: the polls' weight (XPOND) is under review. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95% confidence intervals (logit) of every poll are in the table view. Diamonds: official results of 8 December 2008.</p>
+<figure class="qesr-fig" id="fig-crop"><figcaption><span class="qesr-title">The ADQ fell from 29% to 14% before the 2008 election; the last poll had the PLQ at 41%, and it took 42%</span><span class="qesr-sub">Monthly vote intentions in the CROP polls, June 2007 to Jan. 2010: three-month means over the monthly values, and the official result</span></figcaption><img class="qesr-img qesr-light" src="survey-vs-official_files/figure-html/crop-light.png" alt="Line chart of monthly CROP vote intentions from June 2007 to Jan. 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 Dec. 2008 and the official results as diamonds. The ADQ falls from 29% in the first poll to 14% in the last poll before the election; the PLQ is at 41% in that poll and took 42%. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="survey-vs-official_files/figure-html/crop-dark.png" alt="Line chart of monthly CROP vote intentions from June 2007 to Jan. 2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly values, with a line at the election of 8 Dec. 2008 and the official results as diamonds. The ADQ falls from 29% in the first poll to 14% in the last poll before the election; the PLQ is at 41% in that poll and took 42%. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: CROP polls, vote intention (with the undecided asked which party they lean towards, where the poll asked it), about 850 respondents a month, among those who named a party; official results of Élections Québec (diamonds). Unweighted. By design, the polls over-sampled the Québec City area (20% of respondents, about twice its share of the population), so these shares give it too much weight. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95% confidence intervals of every poll are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Poll (month) </th>
@@ -2189,46 +2413,111 @@ not guarantee a closer vote.</li>
    <td style="text-align:left;"> 784 </td>
   </tr>
 </tbody>
-</table></details></figure><p>What to notice:</p>
+</table></details></figure><p>A post-election study has one advantage over a poll: the vote it asks
+about has already happened. Durand and Blais (2020) make the distinction
+between a polling miss, when voters move after the last poll or the
+undecided break unevenly, and a poll failure, when the method is at
+fault. The monthly CROP polls show why the distinction matters. Between
+June 2007 and November 2008, the Action démocratique du Québec (ADQ),
+then the official opposition, went from 29% to 14% of vote intentions,
+and the PQ was back ahead of the PLQ in June 2008 (35% against 33%). The
+last poll before the election, in November 2008, had the PLQ at 41%; it
+took 42%, within the poll’s margin of error. The 2008 study, which asked
+respondents how they voted after the election and is also unweighted,
+puts the PLQ at 39%, further from the result than the last poll. Since
+it was fielded after the vote, late movement cannot explain that gap,
+small as it is. It comes from who answers and from what they say.</p>
+</div>
+<div class="section level2">
+<h2 id="in-sum">In sum<a class="anchor" aria-label="anchor" href="#in-sum"></a>
+</h2>
+<p>The belief that surveys underestimate the Liberals holds for the
+Quebec Election Studies from 2007 to 2014, but not after, and language,
+the usual suspect, accounts for 1.0 to 1.4 points of it. The PQ is
+over-reported in most studies, and the winner is more often
+under-reported than over-reported. Our analysis is not without limits.
+First, the reported vote is a recall, measured among respondents who
+named a party. Second, a study of 1,278 voters (the median of the six
+studies) has a margin of error of up to 2.7 points on each party before
+weighting, and close to 4 once the weights are taken into account, as
+the intervals in the table views show. More importantly, the comparison
+with official results cannot tell apart the two sources of error: voters
+who do not take part in the survey, and respondents who do not report
+their vote as cast. In Britain, the main cause of the 2015 polling error
+was unrepresentative samples (Sturgis et al. 2018), as it was in Quebec
+in 1998 (Durand and Blais 1999); nothing here allows us to say whether
+it still is. The open question is whether the CAQ’s shortfall in 2022 is
+a one-off, or whether its voters now play the part that Liberal voters
+long played: that of an electorate less inclined to answer surveys.</p>
+</div>
+<div class="section level2">
+<h2 id="further-reading">Further reading<a class="anchor" aria-label="anchor" href="#further-reading"></a>
+</h2>
 <ul>
-<li>The ADQ, official opposition after March 2007, falls through 2008
-and ends near its election score.</li>
-<li>The PLQ leads from August 2008 to the election, and its November
-2008 poll (41%) is close to its result (42%). In June 2008 the PQ was
-still ahead (35% against 33%).</li>
-<li>In 2009 the PQ overtakes the PLQ in the spring (March to May) and in
-October, and the two are level in January 2010.</li>
+<li>Atkeson, Lonna Rae. 1999. “‘Sure, I Voted for the Winner!’
+Overreport of the Primary Vote for the Party Nominee in the National
+Election Studies.” <em>Political Behavior</em> 21 (3): 197–215. <a href="https://doi.org/10.1023/A:1022031432535" class="external-link">doi:10.1023/A:1022031432535</a>
+</li>
+<li>Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election.”
+<em>Canadian Journal of Political Science</em> 58 (2): 277–296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link">doi:10.1017/S0008423924000829</a>
+(the 2022 study: the CAQ under-represented, the PCQ close to its
+result)</li>
+<li>Durand, Claire, and André Blais. 1999. “Why Did the Polls Go Wrong
+in the 1998 Quebec Election? The Answer from Post-Election Polls.”
+<em>Bulletin of Sociological Methodology</em> 62 (1): 43–47. <a href="https://doi.org/10.1177/075910639906200105" class="external-link">doi:10.1177/075910639906200105</a>
+</li>
+<li>Durand, Claire, and André Blais. 2020. “Quebec 2018: A Failure of
+the Polls?” <em>Canadian Journal of Political Science</em> 53 (1):
+133–150. <a href="https://doi.org/10.1017/S0008423919000787" class="external-link">doi:10.1017/S0008423919000787</a>
+</li>
+<li>Sturgis, Patrick, Jouni Kuha, Nick Baker, Mario Callegaro, Stephen
+Fisher, Jane Green, Will Jennings, Benjamin E. Lauderdale, and Patten
+Smith. 2018. “An Assessment of the Causes of the Errors in the 2015 UK
+General Election Opinion Polls.” <em>Journal of the Royal Statistical
+Society: Series A</em> 181 (3): 757–781. <a href="https://doi.org/10.1111/rssa.12329" class="external-link">doi:10.1111/rssa.12329</a>
+</li>
 </ul>
+<p>On this site, <a href="realignment.html">From two parties to four</a>
+follows the vote of francophones and non-francophones since 1998, and <a href="validation.html">Validation against official results</a> runs
+these comparisons for every study.</p>
 </div>
 <div class="section level2">
 <h2 id="about-the-data">About the data<a class="anchor" aria-label="anchor" href="#about-the-data"></a>
 </h2>
 <ul>
 <li>
-<strong>Studies.</strong> Every study that asked the reported vote
-after the election, except the 1998 polls, which interviewed
-francophones only; the CROP polls for intentions.</li>
+<strong>Studies.</strong> The six Quebec Election Studies (2007 to
+2022) and the three Durand panels (2007, 2012, 2018), which asked
+respondents how they voted after the election. The 1998 polls
+interviewed francophones only and are left out. The 24 CROP polls,
+conducted almost every month from June 2007 to January 2010, measure
+vote intention instead.</li>
 <li>
-<strong>Variable.</strong> <code>vote_choice</code>, the reported
-vote (<code>recall</code>) in every study but the CROP polls, whose
-values are intentions (<code>intention_push</code>, or
-<code>intention</code> where no push was asked). Shares are among
-respondents who named a party; would not vote, did not vote, don’t know
-and refused are left out.</li>
+<strong>Shares.</strong> Among respondents who named a party. Those
+who did not vote, did not know or refused to answer are left out. The
+Green Party, Option nationale and the smaller parties count as “Other”,
+and so does a party a study did not list.</li>
 <li>
-<strong>Official results.</strong> The share of valid votes of each
-party, from Élections Québec, kept in the qesR source repository
-(<code>inst/extdata/validation/official_results.csv</code>). The PV, ON
-and other parties are “Other”; a party a study did not list counts in
-its Other.</li>
+<strong>Official results.</strong> Each party’s share of valid
+votes, from Élections Québec.</li>
 <li>
-<strong>Weights.</strong> Each study’s recommended post-election
-weight, through <code><a href="../reference/qes_design.html">qes_design()</a></code>; the unweighted estimate is
-shown next to it. The 2008 study, the 2007 and 2012 Durand panels and
-the CROP polls are unweighted (weights under review); the 2018 panel
-uses its reviewed post-election weight. <a href="validation.html">Validation against official results</a> runs
-these checks on every study every week.</li>
+<strong>Weights.</strong> Each study’s post-election weight, which
+adjusts the sample to the census on age, sex and language, and,
+depending on the study, on region or education. The 2008 study, the 2007
+and 2012 panels and the CROP polls are shown unweighted (hollow dots in
+the charts). The 2008 study’s weights are calibrated on the vote itself,
+so they cannot be used to test the reported vote.</li>
+<li>
+<strong>Language.</strong> Francophones are respondents whose mother
+tongue is French. Where the mother tongue is missing or mixed, the
+language spoken at home is used instead.</li>
 </ul>
+<p>The data on this page come from one call:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>studies <span class="op">=</span> <span class="va">qz_studies</span>, targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"lang_mother"</span>, <span class="st">"lang_home"</span><span class="op">)</span>,</span>
+<span>                   missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

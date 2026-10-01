@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Deux dimensions de la concurrence : souveraineté et gauche-droite • qesR</title>
+<title>Deux dimensions de la concurrence : souveraineté et gauche-droite • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,18 +16,68 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Deux dimensions de la concurrence : souveraineté et gauche-droite">
-<meta name="description" content="Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, et pour qui votent souverainistes et fédéralistes.
+<meta property="og:title" content="Deux dimensions de la concurrence : souveraineté et gauche-droite">
+<meta name="description" content="L'axe gauche-droite a-t-il remplacé la question nationale dans les élections québécoises ? Où se situent les électeurs de chaque parti sur les deux axes, pour qui votent les camps du Oui et du Non, et dans quelle mesure chaque axe structure encore le vote.
 ">
-<meta property="og:description" content="Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, et pour qui votent souverainistes et fédéralistes.
+<meta property="og:description" content="L'axe gauche-droite a-t-il remplacé la question nationale dans les élections québécoises ? Où se situent les électeurs de chaque parti sur les deux axes, pour qui votent les camps du Oui et du Non, et dans quelle mesure chaque axe structure encore le vote.
 ">
-<meta property="og:image" content="https://thomasgareau.github.io/qesR/logo.png">
+<meta property="og:image" content="https://thomasgareau.github.io/qesR/reference/figures/logo.png">
+<meta property="og:image:alt" content="qesR logo">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-
-
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <script>
+(function () {
+  var fallback = {
+    "index.html": "articles/fr-accueil.html",
+    "reference/index.html": "reference/qesR-fr.html",
+    "reference/qesR-package.html": "reference/qesR-fr.html",
+    "reference/qesR-fr.html": "reference/qesR-package.html"
+  };
+  var french = ["reference/qesR-fr.html"];
+  document.addEventListener("DOMContentLoaded", function () {
+    var container = document.querySelector(".navbar .container") ||
+      document.querySelector(".navbar .container-fluid");
+    var brand = document.querySelector(".navbar .navbar-brand");
+    if (!container || !brand) return;
+    // the site root, from the brand link (pkgdown writes it relative)
+    var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
+    root = root.href.slice(0, root.href.lastIndexOf("/") + 1);
+    var here = window.location.href.split("#")[0].split("?")[0];
+    var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
+    if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
+    var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    // the page's own link to its translation
+    var target = null;
+    var links = document.querySelectorAll("main a[href]");
+    for (var i = 0; i < links.length; i++) {
+      var text = links[i].textContent.replace(/\s+/g, " ").trim();
+      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+        target = new URL(links[i].getAttribute("href"), window.location.href).href;
+        break;
+      }
+    }
+    if (!target) {
+      target = root + (fallback[rel] || (isFrench ? "index.html" : "articles/fr-accueil.html"));
+    }
+    var wrap = document.createElement("div");
+    wrap.className = "qesr-lang-switch-wrap";
+    var link = document.createElement("a");
+    link.className = "qesr-lang-switch";
+    link.href = target;
+    link.textContent = isFrench ? "EN" : "FR";
+    link.lang = isFrench ? "en" : "fr";
+    link.hreflang = isFrench ? "en" : "fr";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
+    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    wrap.appendChild(link);
+    // before the menu button, so that it stays visible on a phone;
+    // extra.css moves it after the menus on a wide screen
+    var toggler = container.querySelector(".navbar-toggler");
+    if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
+  });
+})();
+</script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
@@ -41,59 +91,34 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
-<li class="nav-item"><a class="nav-link" href="../articles/studies.html">Studies</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides">
-<li><a class="dropdown-item" href="../articles/get-started.html">Getting started</a></li>
-    <li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
-    <li><a class="dropdown-item" href="../articles/citations.html">Study citations</a></li>
-    <li><a class="dropdown-item" href="../articles/migrating-0.7.html">Moving from qesR 0.4.4 to 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/merged-dataset.html">Legacy merged file</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonization (experimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/harmonization.html">Harmonizing across studies</a></li>
-    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
-    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Harmonization reference</a></li>
-    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Examples (built from the full data files)</h6></li>
-    <li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Sovereignty across generations</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
     <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
     <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
     <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Surveys against the official results</a></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-package.html">Function overview</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
   </ul>
 </li>
-<li class="active nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-guides-fr-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Guides (FR)</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-guides-fr-">
-<li><a class="dropdown-item" href="../articles/fr-demarrage.html">Démarrage</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-etudes.html">Catalogue des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-citations.html">Citations des études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-migrer-0.7.html">Passer de qesR 0.4.4 à 0.7.0</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-donnees-fusionnees.html">Fichier fusionné hérité</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Harmonisation (expérimental)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-harmonisation.html">Harmoniser entre études</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-couverture.html">Couverture par étude</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-reference-harmonisation.html">Référence de l'harmonisation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-validation.html">Validation par les résultats officiels</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><h6 class="dropdown-header" data-toc-skip>Exemples (construits à partir des fichiers complets)</h6></li>
-    <li><a class="dropdown-item" href="../articles/fr-realignement.html">De deux partis à quatre : le réalignement</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-souverainete-generations.html">La souveraineté selon les générations</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-dimensions.html">Deux dimensions : souveraineté et gauche-droite</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-participation.html">Qui vote ? La participation</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-transitions.html">Changer d'idée pendant la campagne</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-enquetes-resultats.html">Les enquêtes et les résultats officiels</a></li>
-    <li><a class="dropdown-item" href="../articles/fr-recettes.html">Recettes : les variables regroupées</a></li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../reference/qesR-fr.html">Aperçu des fonctions</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-studies">
+<li><a class="dropdown-item" href="../articles/studies.html">Study catalog</a></li>
+    <li><a class="dropdown-item" href="../articles/citations.html">Citing qesR and the studies</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
+<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
+    <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
+    <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
+    <li><a class="dropdown-item" href="../articles/merged-dataset.html">The merged file (get_qes_master)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
@@ -124,7 +149,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Deux dimensions de la concurrence : souveraineté et gauche-droite</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Deux dimensions de la concurrence : souveraineté et gauche-droite</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/vignettes/articles/fr-dimensions.Rmd" class="external-link"><code>vignettes/articles/fr-dimensions.Rmd</code></a></small>
@@ -134,45 +159,48 @@
     
     
 <p><em><a href="dimensions.html">English version</a></em></p>
-<p>Pendant quarante ans, le PQ et le PLQ ont divisé le Québec sur la
-question nationale. Les Études électorales québécoises montrent que cet
-axe ne classe plus les partis comme avant. En 2012, 84 % des électeurs
-du PQ auraient voté Oui à un pays indépendant, contre 1 % de ceux du
-PLQ. En 2022, le vote pour le Oui était divisé : le PQ en a obtenu 35 %,
-Québec solidaire 20 % et la CAQ 34 %, alors qu’en 2012 le PQ seul en
-obtenait 73 %. Sur l’axe gauche-droite, les électeurs de Québec
-solidaire sont les plus à gauche (3,7 sur 10 en 2022) et ceux des
-conservateurs les plus à droite (6,7).</p>
+<p>Pendant une quarantaine d’années, la question nationale a structuré
+la concurrence partisane au Québec. Le Parti québécois (PQ) portait le
+projet souverainiste, le Parti libéral du Québec (PLQ) défendait le
+fédéralisme, et la position d’un électeur sur l’indépendance permettait
+de prévoir en bonne partie son vote (Bélanger et al., 2018). La montée
+de la Coalition avenir Québec (CAQ) et de Québec solidaire (QS), puis la
+victoire de la CAQ en 2018, ont brouillé ce portrait. Selon une croyance
+désormais répandue, dont témoignent les travaux récents sur le nouveau
+système partisan (Bélanger et Mahéo, 2020 ; Bélanger et al., 2022),
+l’axe souverainiste s’est estompé et un axe gauche-droite a pris sa
+place, le PQ se trouvant coincé entre un parti nationaliste qui a mis le
+référendum de côté et un parti souverainiste de gauche. Dans cette page,
+nous examinons si les Études électorales québécoises confirment cette
+lecture. La question nationale a-t-elle cessé de structurer le vote des
+électrices et des électeurs du Québec, et l’axe gauche-droite a-t-il
+pris le relais ?</p>
+<p>Notre verdict est ambivalent. D’une part, la question nationale
+structure beaucoup moins le vote. En 2012, le choix partisan était lié à
+57 % de la variation du vote référendaire (savoir pour quel parti un
+répondant avait voté nous apprenait 57 % de ce qu’il y avait à savoir de
+son vote référendaire) ; en 2022, à 25 %. D’autre part, l’axe
+gauche-droite n’a pas pris le relais : le choix partisan était lié à
+26 % de la variation de l’autopositionnement gauche-droite en 2012 et à
+23 % en 2022. Si l’on met de côté les électeurs du Parti conservateur du
+Québec (PCQ), qui est passé de 1,5 % des votes en 2018 à 12,9 % en 2022,
+cette part tombe à 14 %. Autrement dit, la question nationale a perdu du
+terrain sans être remplacée. Elle sépare pourtant toujours aussi
+nettement les deux partis historiques : en 2022, 82 % des électeurs du
+PQ auraient voté Oui, contre 2 % de ceux du PLQ.</p>
+<p>Nous utilisons trois questions posées, sous une forme semblable, dans
+chaque Étude électorale québécoise de 2012 à 2022 : le vote déclaré
+après l’élection, le vote à un référendum sur l’indépendance et
+l’autopositionnement de la personne sur une échelle gauche-droite, de 0
+(gauche) à 10 (droite). La langue maternelle permet d’examiner les
+francophones séparément. Dans les Études électorales québécoises
+utilisées ici, la question référendaire remonte à 2007 ; la deuxième
+figure commence donc à cette date. La fin de la page montre comment
+reproduire les figures.</p>
 <div class="section level2">
-<h2 id="les-données">Les données<a class="anchor" aria-label="anchor" href="#les-donn%C3%A9es"></a>
+<h2 id="les-pôles-ont-tenu-les-nouveaux-venus-se-sont-rapprochés">Les pôles ont tenu, les nouveaux venus se sont rapprochés<a class="anchor" aria-label="anchor" href="#les-p%C3%B4les-ont-tenu-les-nouveaux-venus-se-sont-rapproch%C3%A9s"></a>
 </h2>
-<p>Trois variables harmonisées : le vote déclaré regroupé, le vote
-référendaire regroupé (<code>sov_support</code>) et l’autopositionnement
-sur l’axe gauche-droite (<code>lr_self</code>, de 0 à 10) :</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
-<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"sov_support"</span>, <span class="st">"lr_self"</span><span class="op">)</span>,</span>
-<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
-<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><code>lr_self</code> a été demandé dans les Études électorales
-québécoises de 2012 à 2022 ; en 2022, lui et la question référendaire
-ont été posés pendant la campagne, le vote déclaré après l’élection : la
-page garde donc les répondants des deux vagues et les pondère avec la
-pondération postélectorale. Pour un parti dans une étude :</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
-<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>      <span class="va">svymean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     vote_choice  lr_self         se</span></span>
-<span><span class="co">#&gt; CAQ         CAQ 5.549020 0.09808683</span></span>
-<span><span class="co">#&gt; QS           QS 3.658518 0.19725417</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="les-électorats-sur-deux-axes-de-2012-à-2022">Les électorats sur deux axes, de 2012 à 2022<a class="anchor" aria-label="anchor" href="#les-%C3%A9lectorats-sur-deux-axes-de-2012-%C3%A0-2022"></a>
-</h2>
-<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">Les électeurs de la CAQ et de QS se sont rapprochés sur la souveraineté (38 % et 44 % de Oui en 2022), et ceux du PLQ se sont déplacés vers la gauche</span><span class="qesr-sub">Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, de 2012 à 2022, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/paths-light.png" alt="Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti qui voteraient Oui à l'indépendance, à droite leur autopositionnement gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de 19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/paths-dark.png" alt="Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti qui voteraient Oui à l'indépendance, à droite leur autopositionnement gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de 19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><p class="qesr-note">Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support (indépendance), lr_self ; EEQ 2012, 2014, 2018 et 2022, pondérées avec la pondération postélectorale de chaque étude. Les partis sont côte à côte à chaque élection. Traits : intervalles de confiance à 95 % (logit pour la part, Wald pour la moyenne). Les deux panneaux ont leur propre échelle. Le PCQ n'était proposé qu'en 2022.</p>
+<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">Les électeurs de la CAQ et de QS se sont rapprochés sur la souveraineté (38 % et 44 % de Oui en 2022), et ceux du PLQ se sont déplacés vers la gauche</span><span class="qesr-sub">Où se situent les électeurs de chaque parti sur la souveraineté et sur l'axe gauche-droite, de 2012 à 2022, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/paths-light.png" alt="Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti qui voteraient Oui à l'indépendance, à droite leur autopositionnement gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de 19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/paths-dark.png" alt="Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti qui voteraient Oui à l'indépendance, à droite leur autopositionnement gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de 19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises de 2012, 2014, 2018 et 2022, pondérées. Vote déclaré après l'élection ; vote référendaire parmi les répondants qui ont choisi Oui ou Non. Les partis sont côte à côte à chaque élection, et les deux panneaux ont leur propre échelle. Le PCQ n'était proposé comme réponse qu'en 2022.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Parti </th>
@@ -356,27 +384,38 @@ pondération postélectorale. Pour un parti dans une étude :</p>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 </tbody>
-</table></details></figure><p>À remarquer :</p>
-<ul>
-<li>Les électeurs du PQ et de QS sont les souverainistes ; ceux du PLQ
-sont presque tous fédéralistes à chaque élection (2 % de Oui en
-2022).</li>
-<li>Les deux partis les plus récents se sont rapprochés sur la
-souveraineté : les électeurs de la CAQ passent de 19 % de Oui en 2012 à
-38 % en 2022, ceux de QS de 63 % à 44 %.</li>
-<li>Les électeurs du PLQ se sont déplacés vers la gauche, de 6,5 à 4,8 ;
-les électeurs à droite du centre sont maintenant ceux de la CAQ et du
-PCQ.</li>
-<li>Les électeurs du PQ et de QS sont proches sur l’axe gauche-droite
-(1,3 point d’écart en 2012, 0,9 en 2022), mais leur écart sur la
-souveraineté est passé de 22 à 38 points : la question nationale les
-sépare maintenant plus que l’axe gauche-droite.</li>
-</ul>
+</table></details></figure><p>Deux constats s’imposent. D’abord, les deux pôles historiques n’ont
+pas bougé sur la question nationale. Les électeurs du PQ demeurent
+massivement souverainistes (84 % voteraient Oui en 2012, 82 % en 2022)
+et ceux du PLQ, presque unanimement fédéralistes (1 % et 2 %). Ensuite,
+les deux partis plus récents se sont rapprochés l’un de l’autre. La part
+de Oui chez les électeurs de la CAQ passe de 19 % en 2012 à 38 % en
+2022, et celle des électeurs de QS, de 63 % à 44 %. La CAQ tire
+maintenant une bonne partie de ses appuis de souverainistes. Fait
+étonnant pour un parti souverainiste, une majorité des électeurs de QS
+(56 %) voteraient désormais Non. Précisons que l’estimation de 2012 ne
+repose que sur 87 répondants et que son intervalle est large (de 49 % à
+74 %).</p>
+<p>Sur l’axe gauche-droite, les mouvements sont plus modestes, à une
+exception près. Les électeurs de QS sont les plus à gauche à chaque
+élection (3,7 sur 10 en 2022) et ceux du PCQ, les plus à droite (6,7).
+L’exception est le PLQ : ses électeurs passent de 6,5 en 2012 à 4,8 en
+2022. En 2022, ils se situent à gauche des électeurs de la CAQ (5,5),
+près de ceux du PQ (4,5). Cette estimation repose sur 140 répondants, et
+la question de 2022 avait un autre libellé (voir <a href="#%C3%A0-propos-des-donn%C3%A9es">À propos des données</a>) ;
+l’ampleur du déplacement est donc à prendre avec prudence. La droite de
+l’échiquier revient désormais à la CAQ et au PCQ. Notons cependant ce
+qui s’est passé entre les deux partis souverainistes. Leurs électeurs
+sont proches sur l’axe gauche-droite (un écart de 1,3 sur l’échelle de 0
+à 10 en 2012, de 0,8 en 2022), alors que leur écart sur la souveraineté
+est passé de 21 à 38 points de pourcentage. Ce qui distingue aujourd’hui
+l’électorat du PQ de celui de QS, c’est davantage la question nationale
+que l’axe gauche-droite.</p>
 </div>
 <div class="section level2">
-<h2 id="pour-qui-votent-souverainistes-et-fédéralistes">Pour qui votent souverainistes et fédéralistes<a class="anchor" aria-label="anchor" href="#pour-qui-votent-souverainistes-et-f%C3%A9d%C3%A9ralistes"></a>
+<h2 id="les-électeurs-du-oui-se-partagent-désormais-entre-trois-partis">Les électeurs du Oui se partagent désormais entre trois partis<a class="anchor" aria-label="anchor" href="#les-%C3%A9lecteurs-du-oui-se-partagent-d%C3%A9sormais-entre-trois-partis"></a>
 </h2>
-<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">La part du PQ chez les électeurs du Oui est passée de 73 % à 35 % au profit de QS et de la CAQ ; le vote pour le Non s'est fragmenté</span><span class="qesr-sub">Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/where-light.png" alt="Graphiques linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote déclaré de chaque camp allée à chaque parti. La part du PQ chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/where-dark.png" alt="Graphiques linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote déclaré de chaque camp allée à chaque parti. La part du PQ chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><p class="qesr-note">Source : qesR, variables regroupées vote_choice (vote déclaré) et sov_support ; EEQ 2007 à 2022, pondérées avec la pondération postélectorale de chaque étude sauf 2008 (creux : non pondérée, pondération en révision). 2007 et 2008 ont posé la question de 1995, 2012 à 2022 la question sur un pays indépendant : les lignes s'interrompent au changement. Traits : intervalles de confiance à 95 % (logit). Les autres partis (PV, ON et autres) sont dans la vue en tableau.</p>
+<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">La part du PQ chez les électeurs du Oui est passée de 73 % à 35 % au profit de QS et de la CAQ ; les électeurs du Non se sont dispersés entre davantage de partis</span><span class="qesr-sub">Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/where-light.png" alt="Graphiques linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote déclaré de chaque camp allée à chaque parti. La part du PQ chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/where-dark.png" alt="Graphiques linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote déclaré de chaque camp allée à chaque parti. La part du PQ chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -1145,19 +1184,433 @@ sépare maintenant plus que l’axe gauche-droite.</li>
    <td style="text-align:left;"> pondéré </td>
   </tr>
 </tbody>
-</table></details></figure><p>À remarquer :</p>
-<ul>
-<li>En 2007 et en 2012, le PQ détenait la majeure partie du vote pour le
-Oui ; en 2018, il en avait moins de la moitié, Québec solidaire et la
-CAQ en prenant leur part.</li>
-<li>Le vote pour le Non s’est fragmenté : la part du PLQ est passée de
-46 % en 2012 à 29 % en 2022 ; la CAQ en a obtenu 36 % en 2012, 37 % en
-2018 et 30 % en 2022, et le PCQ 18 % en 2022. En 2007, l’ADQ en obtenait
-déjà 36 %. L’EEQ 2022 sous-estime la CAQ d’environ 8 points (voir <a href="fr-enquetes-resultats.html">Les enquêtes et les résultats
-officiels</a>), ce qui touche les parts de 2022.</li>
-<li>La CAQ est le seul parti qui obtient une grande part des deux
-camps.</li>
-</ul>
+</table></details></figure><p>Nous passons maintenant de la position des électeurs de chaque parti
+au choix des électeurs de chaque camp. En 2012, le PQ obtenait 73 % du
+vote déclaré des répondants qui voteraient Oui ; en 2022, il en obtenait
+35 %, à peu près autant que la CAQ (34 %), et QS, 20 %. Autrement dit,
+le PQ ne recueille plus qu’environ le tiers du vote du Oui. Le vote des
+électeurs du Non s’est lui aussi dispersé. La part du PLQ est passée de
+46 % en 2012 à 29 % en 2022, alors que la CAQ en a conservé une large
+part tout au long de la période (36 % en 2012, 30 % en 2022) et que le
+PCQ en a obtenu 18 % en 2022. Sans surprise, la CAQ, qui s’est engagée à
+ne pas tenir de référendum, est la seule formation à recueillir environ
+le tiers de chaque camp en 2022 (34 % des électeurs du Oui et 30 % de
+ceux du Non).</p>
+<p>Deux nuances s’imposent. D’une part, les études de 2007 et de 2008
+ont posé la question référendaire de 1995, et les suivantes une question
+sur un pays indépendant. Or, on sait que le libellé de la question
+influe sur l’appui à la souveraineté (Yale et Durand, 2011) ; c’est
+pourquoi les lignes s’interrompent au changement. D’autre part, l’étude
+de 2022 sous-estime le vote pour la CAQ d’environ 8 points par rapport
+au résultat officiel (voir la page sur <a href="fr-enquetes-resultats.html">les enquêtes et les résultats
+officiels</a>), ce qui réduit la part de la CAQ dans les deux camps
+cette année-là. La quasi-égalité entre le PQ et la CAQ chez les
+électeurs du Oui avantage donc plutôt le PQ.</p>
+</div>
+<div class="section level2">
+<h2 id="la-souveraineté-structure-beaucoup-moins-le-vote-sans-que-laxe-gauche-droite-prenne-le-relais">La souveraineté structure beaucoup moins le vote, sans que l’axe
+gauche-droite prenne le relais<a class="anchor" aria-label="anchor" href="#la-souverainet%C3%A9-structure-beaucoup-moins-le-vote-sans-que-laxe-gauche-droite-prenne-le-relais"></a>
+</h2>
+<p>Les deux premières figures montrent des positions. Elles ne disent
+pas dans quelle mesure chaque axe sépare les électorats, ce qui est
+pourtant au cœur de la croyance populaire. Pour le savoir, nous
+appliquons la même mesure à chaque étude : de toute la variation du vote
+référendaire des répondants, ou de leur autopositionnement
+gauche-droite, quelle part se situe entre les électorats des partis
+plutôt qu’à l’intérieur de chacun d’eux ? Il s’agit de la part de la
+variance liée au choix partisan (un êta carré). À 100 %, connaître le
+vote d’une personne suffirait à connaître sa réponse ; à 0 %, cela n’en
+dirait rien. Les deux parts sont calculées sur les mêmes répondants,
+soit ceux qui ont répondu aux deux questions et voté pour l’un des
+partis présentés plus haut.</p>
+<figure class="qesr-fig" id="fig-sorting"><figcaption><span class="qesr-title">Le choix partisan est lié à 25 % de la variance du vote référendaire en 2022, contre 57 % en 2012 ; l'axe gauche-droite n'a pas progressé</span><span class="qesr-sub">Quelle part de la variation de chaque question se situe entre les électorats des partis, de 2012 à 2022, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/sorting-light.png" alt="Graphiques linéaires en deux panneaux, tous les électeurs (à gauche) et les électeurs francophones (à droite), de 2012 à 2022 : la part de la variance du vote référendaire et du positionnement gauche-droite liée au choix partisan, avec intervalles de confiance. Pour le vote référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble des électeurs, et de 55 % à 18 % chez les francophones ; pour le positionnement gauche-droite, de 26 % à 23 % chez l'ensemble des électeurs, et 14 % en 2022 sans le PCQ. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/sorting-dark.png" alt="Graphiques linéaires en deux panneaux, tous les électeurs (à gauche) et les électeurs francophones (à droite), de 2012 à 2022 : la part de la variance du vote référendaire et du positionnement gauche-droite liée au choix partisan, avec intervalles de confiance. Pour le vote référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble des électeurs, et de 55 % à 18 % chez les francophones ; pour le positionnement gauche-droite, de 26 % à 23 % chez l'ensemble des électeurs, et 14 % en 2022 sans le PCQ. Valeurs dans la vue en tableau." width="672" height="403" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises de 2012, 2014, 2018 et 2022, pondérées. Répondants qui ont répondu aux deux questions et déclaré un vote pour le PLQ, le PQ, la CAQ, QS ou (2022) le PCQ ; les francophones sont les répondants de langue maternelle française. Losange : la part gauche-droite de 2022 sans les électeurs du PCQ. Intervalles tirés de 500 répliques bootstrap de chaque étude.</p>
+<details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
+<thead><tr>
+<th style="text-align:left;"> Électeurs </th>
+   <th style="text-align:left;"> Partis </th>
+   <th style="text-align:left;"> Question </th>
+   <th style="text-align:right;"> Élection </th>
+   <th style="text-align:left;"> Étude </th>
+   <th style="text-align:left;"> Part de la variance, % [IC à 95 %] </th>
+   <th style="text-align:right;"> n </th>
+   <th style="text-align:left;"> Pondération </th>
+  </tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 56,7 [51,0 ; 62,4] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 56,5 [49,1 ; 63,8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 40,1 [35,5 ; 44,6] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 25,5 [20,0 ; 30,9] </td>
+   <td style="text-align:right;"> 903 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 25,6 [20,1 ; 31,2] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 15,6 [10,3 ; 20,8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 15,8 [11,8 ; 19,7] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 22,6 [15,8 ; 29,3] </td>
+   <td style="text-align:right;"> 903 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 56,7 [51,0 ; 62,4] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 56,5 [49,1 ; 63,8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 40,1 [35,5 ; 44,6] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 27,3 [21,5 ; 33,1] </td>
+   <td style="text-align:right;"> 768 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 25,6 [20,1 ; 31,2] </td>
+   <td style="text-align:right;"> 918 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 15,6 [10,3 ; 20,8] </td>
+   <td style="text-align:right;"> 950 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 15,8 [11,8 ; 19,7] </td>
+   <td style="text-align:right;"> 1474 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Tous les électeurs </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 14,2 [7,8 ; 20,7] </td>
+   <td style="text-align:right;"> 768 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 54,6 [48,0 ; 61,1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 55,3 [47,5 ; 63,0] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 33,9 [29,2 ; 38,6] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 18,4 [12,4 ; 24,3] </td>
+   <td style="text-align:right;"> 724 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 31,7 [25,2 ; 38,1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 19,2 [12,4 ; 26,1] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 19,4 [14,8 ; 24,0] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> tous les partis montrés </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 22,1 [15,4 ; 28,7] </td>
+   <td style="text-align:right;"> 724 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 54,6 [48,0 ; 61,1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 55,3 [47,5 ; 63,0] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 33,9 [29,2 ; 38,6] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Vote référendaire (Oui ou Non) </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 19,0 [13,0 ; 25,0] </td>
+   <td style="text-align:right;"> 618 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2012 </td>
+   <td style="text-align:left;"> EEQ 2012 </td>
+   <td style="text-align:left;"> 31,7 [25,2 ; 38,1] </td>
+   <td style="text-align:right;"> 776 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2014 </td>
+   <td style="text-align:left;"> EEQ 2014 </td>
+   <td style="text-align:left;"> 19,2 [12,4 ; 26,1] </td>
+   <td style="text-align:right;"> 718 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2018 </td>
+   <td style="text-align:left;"> EEQ 2018 </td>
+   <td style="text-align:left;"> 19,4 [14,8 ; 24,0] </td>
+   <td style="text-align:right;"> 1187 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+<tr>
+<td style="text-align:left;"> Francophones </td>
+   <td style="text-align:left;"> sans le PCQ </td>
+   <td style="text-align:left;"> Positionnement gauche-droite </td>
+   <td style="text-align:right;"> 2022 </td>
+   <td style="text-align:left;"> EEQ 2022 </td>
+   <td style="text-align:left;"> 14,6 [8,2 ; 21,0] </td>
+   <td style="text-align:right;"> 618 </td>
+   <td style="text-align:left;"> pondéré </td>
+  </tr>
+</tbody>
+</table></details></figure><p>Le constat est net pour la souveraineté. En 2012 et en 2014, le choix
+partisan était lié à plus de la moitié de la variation du vote
+référendaire (57 % et 56 %), contre 26 % et 16 % pour
+l’autopositionnement gauche-droite. Cette part est ensuite tombée à 40 %
+en 2018, puis à 25 % en 2022. Le recul est plus prononcé chez les
+francophones : de 55 % en 2012 à 18 % en 2022. Chez eux, les deux axes
+sont désormais à peu près aussi liés au choix partisan (22 % pour l’axe
+gauche-droite, 18 % pour la souveraineté ; les intervalles se
+chevauchent), et la part gauche-droite tient pour beaucoup aux électeurs
+du PCQ : sans eux, elle est de 15 %.</p>
+<p>Contrairement à la croyance populaire, l’axe gauche-droite ne s’est
+pas imposé à la place de la souveraineté. Sa part est passée de 26 % en
+2012 à 16 % en 2018, et elle n’est remontée à 23 % en 2022 qu’avec
+l’arrivée du PCQ, dont les électeurs sont les plus à droite. Sans eux,
+la part de 2022 est de 14 %. C’est à la base du PCQ, qui traversait le
+clivage linguistique et devait peu à la souveraineté (Bélanger et al.,
+2025), que tient la remontée de 2022. En somme, le vote de 2022 est
+beaucoup moins structuré par la question nationale, sans pour autant
+l’être davantage par l’axe gauche-droite.</p>
+<p>Ces mesures ne sont toutefois pas sans limite. Premièrement, une
+réponse Oui ou Non et un positionnement sur une échelle de 0 à 10 ne se
+mesurent pas de la même façon ; la comparaison porte donc sur les
+tendances et les ordres de grandeur, et non sur l’écart exact entre les
+deux courbes une année donnée. Deuxièmement, une part de variance dépend
+aussi du nombre de partis et de leur taille : l’arrivée du PCQ en 2022
+montre à quel point un seul parti situé à l’extrémité de l’échelle peut
+la faire varier. Troisièmement, la question gauche-droite de 2022
+diffère des précédentes (voir <a href="#%C3%A0-propos-des-donn%C3%A9es">À propos des données</a>) ; les
+chiffres gauche-droite de 2022, sur lesquels repose le principal
+constat, ne se comparent donc qu’approximativement aux années
+précédentes. Enfin, il s’agit de coupes transversales. Elles montrent
+comment les électorats se répartissent, et non pourquoi les électeurs
+ont choisi leur parti.</p>
+</div>
+<div class="section level2">
+<h2 id="ce-quil-faut-en-retenir">Ce qu’il faut en retenir<a class="anchor" aria-label="anchor" href="#ce-quil-faut-en-retenir"></a>
+</h2>
+<p>Au final, la question nationale n’organise plus à elle seule le
+système partisan québécois, mais aucun autre axe ne l’a remplacée. Elle
+divise toujours le PQ et le PLQ aussi nettement qu’en 2012. Ce qui a
+changé, c’est que le vote souverainiste se partage maintenant entre
+trois partis et que la CAQ puise dans les deux camps. Connaître la
+position d’un électeur sur l’indépendance en dit donc beaucoup moins sur
+son vote qu’il y a une dizaine d’années. Ce constat diffère de ce
+qu’observent Daoust et Gareau-Paquette (2024), avec une autre mesure,
+aux élections fédérales, où le poids de la souveraineté dans le vote
+pour le Bloc québécois a diminué entre 2004 et 2006, puis est demeuré
+remarquablement stable de 2006 à 2021. À l’échelle provinciale, le recul
+s’est amorcé entre 2014 et 2018, pendant la montée de la CAQ, et ne
+s’était pas encore stabilisé en 2022. Bien entendu, les choses
+pourraient évoluer autrement à mesure que les cohortes plus jeunes,
+moins enclines à voter pour le PQ (Mahéo et Bélanger, 2018), occuperont
+une plus grande place dans l’électorat. La page sur <a href="fr-souverainete-generations.html">l’appui à la souveraineté selon
+les générations</a> se penche sur cette question.</p>
 </div>
 <div class="section level2">
 <h2 id="à-propos-des-données">À propos des données<a class="anchor" aria-label="anchor" href="#%C3%A0-propos-des-donn%C3%A9es"></a>
@@ -1166,25 +1619,105 @@ camps.</li>
 <li>
 <strong>Études.</strong> Les Études électorales québécoises de 2012
 à 2022 pour l’autopositionnement gauche-droite, et de 2007 à 2022 pour
-le vote référendaire ; les panels Durand sont exclus, puisqu’ils ont
-posé d’autres libellés de la question référendaire.</li>
+le vote référendaire. Les panels menés par Claire Durand et ses
+collègues lors des mêmes élections sont exclus, afin de garder une étude
+par élection ; en 2012 et en 2018, ils ont en outre posé d’autres
+libellés de la question référendaire. Les sondages de 1998 sont aussi
+exclus : ils ne sont pas pondérés, et un seul des deux a posé la
+question référendaire.</li>
 <li>
-<strong>Variables.</strong> <code>vote_choice</code> restreint au
-vote déclaré, <code>sov_support</code> en part de Oui parmi Oui et Non,
-et <code>lr_self</code>, l’autopositionnement de la personne de 0
-(gauche) à 10 (droite). Les études de 2007 et de 2008 ont posé la
-question de 1995, les autres la question sur un pays indépendant : les
-rangées du graphique à barres ne forment pas une seule série.</li>
+<strong>Questions.</strong> Le vote déclaré après l’élection ; le
+vote référendaire, en part de Oui parmi les répondants qui ont choisi
+Oui ou Non (ceux qui restent indécis sont mis de côté) ;
+l’autopositionnement de la personne de 0 (gauche) à 10 (droite). Les
+francophones sont les répondants de langue maternelle française. Les
+études de 2007 et de 2008 ont posé la question référendaire de 1995,
+avec une relance demandant aux indécis de quel côté ils penchaient ; les
+autres, une question sur un pays indépendant. En 2022, la question
+gauche-droite avait un autre libellé, était posée seule plutôt qu’après
+le positionnement des partis, et n’offrait pas de réponse « ne sais
+pas » ; presque tous les répondants y ont répondu (98 %, contre environ
+80 % auparavant), de sorte que les chiffres gauche-droite de 2022 ne se
+comparent qu’approximativement aux années précédentes.</li>
 <li>
 <strong>Moment.</strong> En 2022, les questions référendaire et
-gauche-droite ont été posées pendant la campagne et le vote déclaré
-après l’élection ; les estimations gardent les répondants des deux
-vagues, pondérés avec la pondération postélectorale.</li>
+gauche-droite ont été posées pendant la campagne, et la question sur le
+vote après l’élection ; les estimations portent sur les répondants qui
+ont participé aux deux vagues, avec la pondération postélectorale.</li>
 <li>
-<strong>Pondérations.</strong> La pondération postélectorale
-recommandée de chaque étude, par <code><a href="../reference/qes_design.html">qes_design()</a></code> ; 2008 est
-non pondérée (ses pondérations sont calées sur le vote et en
-révision).</li>
+<strong>Pondérations.</strong> La pondération postélectorale de
+chaque étude. L’étude de 2008 est présentée sans pondération : ses
+pondérations ont été calées sur le résultat de l’élection, ce qui les
+rend peu adaptées à l’étude du vote.</li>
+<li>
+<strong>Part de la variance.</strong> Calculée dans chaque étude sur
+les répondants qui ont répondu aux deux questions et voté pour l’un des
+partis présentés, avec des intervalles à 95 % tirés de 500 répliques
+bootstrap du plan de sondage de chaque étude.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="reproduire-cette-page">Reproduire cette page<a class="anchor" aria-label="anchor" href="#reproduire-cette-page"></a>
+</h2>
+<p>Les données proviennent d’un seul appel à
+<code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, qui regroupe le vote déclaré
+(<code>vote_choice</code>), le vote référendaire
+(<code>sov_support</code>), l’autopositionnement gauche-droite
+(<code>lr_self</code>) et la langue maternelle
+(<code>lang_mother</code>) des différentes études :</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
+<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"sov_support"</span>, <span class="st">"lr_self"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
+<span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
+<span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Une moyenne pondérée par parti, dans une étude :</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>      <span class="va">svymean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     vote_choice  lr_self         se</span></span>
+<span><span class="co">#&gt; CAQ         CAQ 5.549020 0.09808683</span></span>
+<span><span class="co">#&gt; QS           QS 3.658518 0.19725417</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="pour-aller-plus-loin">Pour aller plus loin<a class="anchor" aria-label="anchor" href="#pour-aller-plus-loin"></a>
+</h2>
+<ul>
+<li>Bélanger, Éric, Jean-François Daoust, Valérie-Anne Mahéo et Richard
+Nadeau. 2022. <em>Le nouvel électeur québécois</em>. Montréal : Presses
+de l’Université de Montréal. <a href="https://doi.org/10.1515/9782760645929" class="external-link uri">https://doi.org/10.1515/9782760645929</a>
+</li>
+<li>Bélanger, Éric, et Valérie-Anne Mahéo. 2020. « Le Parti québécois
+dans le nouveau système multipartite ». <em>Politique et Sociétés</em>
+39 (3) : 19–55. <a href="https://doi.org/10.7202/1072084ar" class="external-link uri">https://doi.org/10.7202/1072084ar</a>
+</li>
+<li>Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette et
+Valérie-Anne Mahéo. 2025. « A Party that Went Viral? The Drivers of
+Support for the Parti Conservateur du Québec in the 2022 Election ».
+<em>Canadian Journal of Political Science</em> 58 (2) : 277–296. <a href="https://doi.org/10.1017/S0008423924000829" class="external-link uri">https://doi.org/10.1017/S0008423924000829</a>
+</li>
+<li>Bélanger, Éric, Richard Nadeau, Ailsa Henderson et Eve Hepburn.
+2018. <em>The National Question and Electoral Politics in Quebec and
+Scotland</em>. Montréal et Kingston : McGill-Queen’s University Press.
+<a href="https://doi.org/10.1515/9780773554139" class="external-link uri">https://doi.org/10.1515/9780773554139</a>
+</li>
+<li>Daoust, Jean-François, et Thomas Gareau-Paquette. 2024. « Is Quebec
+independence still key in making sense of Canadian elections? A
+longitudinal analysis (2000–2021) ». <em>Regional &amp; Federal
+Studies</em> 34 (5) : 781–806. <a href="https://doi.org/10.1080/13597566.2023.2233422" class="external-link uri">https://doi.org/10.1080/13597566.2023.2233422</a>
+</li>
+<li>Mahéo, Valérie-Anne, et Éric Bélanger. 2018. « Is the Parti
+Québécois Bound to Disappear? A Study of the Current Generational
+Dynamics of Electoral Behaviour in Quebec ». <em>Canadian Journal of
+Political Science</em> 51 (2) : 335–356. <a href="https://doi.org/10.1017/S0008423917001147" class="external-link uri">https://doi.org/10.1017/S0008423917001147</a>
+</li>
+<li>Yale, François, et Claire Durand. 2011. « What did Quebeckers Want?
+Impact of Question Wording, Constitutional Proposal and Context on
+Support for Sovereignty, 1976–2008 ». <em>American Review of Canadian
+Studies</em> 41 (3) : 242–258. <a href="https://doi.org/10.1080/02722011.2011.594517" class="external-link uri">https://doi.org/10.1080/02722011.2011.594517</a>
+</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

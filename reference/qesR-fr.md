@@ -20,7 +20,7 @@ Les fonctions sont regroupées comme dans la référence du site web.
 |----|----|----|
 | Groupe | Fonction | Rôle |
 | Données | [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md) | Charge une étude : `qes2018 <- get_qes("qes2018")`. Les données sont retournées, jamais écrites dans votre espace de travail par défaut. |
-| Données | [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md) | Fichier fusionné hérité de qesR 0.4.4 : 30 colonnes harmonisées, 11 études, produit par le moteur d'harmonisation depuis qesR 0.7.0 (voir `NEWS`). |
+| Données | [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md) | Le fichier fusionné : 11 études empilées dans un seul tableau, avec 30 colonnes harmonisées dans un format fixe, construit à partir des variables harmonisées. |
 | Études et documents | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) | Liste les études : code, titre, auteurs, année, devis, population, DOI, version fixée, licence. Sans réseau ; `check_updates = TRUE` demande à Dataverse si une version plus récente existe. |
 | Études et documents | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) | Liste les livres de codes, questionnaires et rapports de chaque étude, sans réseau. |
 | Études et documents | [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md) | Enregistre les fichiers originaux (données et documents), vérifiés par md5, dans un dossier de votre choix. |
@@ -28,10 +28,10 @@ Les fonctions sont regroupées comme dans la référence du site web.
 | Codebooks et recherche | [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md) | Texte exact d'une ou de plusieurs questions, en français ou en anglais. |
 | Codebooks et recherche | [`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md) | Cherche des variables dans toutes les études, sans tenir compte de la casse ni des accents : `qes_search("souverain")`. |
 | Codebooks et recherche | [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md) | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
-| Harmonisation (expérimental) | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
-| Harmonisation (expérimental) | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon la spécification révisée seulement ; vagues, pondérations et admissibilité de chaque personne. |
-| Harmonisation (expérimental) | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
-| Harmonisation (expérimental) | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
+| Harmonisation | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
+| Harmonisation | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne. |
+| Harmonisation | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
+| Harmonisation | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 | Reproductibilité | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
 | Reproductibilité | [`qes_cite()`](https://thomasgareau.github.io/qesR/reference/qes_cite.md) | Citation de qesR et de chaque jeu de données, en texte, BibTeX ou `bibentry`. |
 | Cache | [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md), [`qes_cache_clear()`](https://thomasgareau.github.io/qesR/reference/qes_cache_clear.md) | Liste ou supprime les fichiers gardés dans le cache de téléchargement. |
@@ -46,14 +46,14 @@ en fait un plan de sondage ; la référence générée à partir de la
 spécification est
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md).
 
-Les fonctions de qesR 0.4.4
+Les anciens noms de fonctions
 ([`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md),
 [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md),
 [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md),
 [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md),
-...) continuent de fonctionner et ne seront pas retirées ; voir
+...) continuent de fonctionner et ne seront pas retirés ; voir
 [qesR-deprecated](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
-pour la fonction qui remplace chacune.
+pour la fonction qui remplace chacun.
 
 ## Langue
 
@@ -105,12 +105,12 @@ tirés au hasard ; aucune valeur ne vient d'un vrai répondant.
 [`vignette("fr-citations", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-citations.md)
 (citations),
 [`vignette("fr-migrer-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md)
-(passer de qesR 0.4.4 à 0.7.0) et
+(mettre à jour du code ancien) et
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 (référence de l'harmonisation, générée à partir de la spécification). Le
 site web, <https://thomasgareau.github.io/qesR/>, offre aussi en
 français le catalogue des études et des exemples d'analyse construits à
-partir des fichiers complets (menu « Guides (FR) »).
+partir des fichiers complets (bouton FR/EN de la barre de navigation).
 
 ## Licence
 

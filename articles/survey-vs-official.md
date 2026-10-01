@@ -1,72 +1,55 @@
-# How far off are surveys? Reported vote and intentions against the official results
+# Do surveys miss the Liberals? The reported vote against the official results
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)*
 
-Survey estimates of the vote come close to the official results, but
-rarely onto them. In 2022 the Quebec Election Study had the CAQ at 33%
-of the reported vote, weighted; the CAQ took 41% of the valid votes. The
-PQ is over-reported in most studies, and the PLQ under-reported until
-2014. Weighting to census margins brings some studies closer and not
-others: the index of dissimilarity between the reported and the official
-vote of the 2012 study goes from 11.0 points unweighted to 8.0 weighted,
-and that of 2014 from 4.9 to 5.6.
+In Quebec, it is almost a reflex to say that surveys underestimate the
+Parti libéral du Québec (PLQ). The polls of the 1998 election, which
+overestimated the Parti Québécois (PQ) and underestimated the Liberals,
+are the textbook case (Durand and Blais 1999). Studies in the United
+States point to a second and quite different bias: after the vote, more
+respondents say they voted for the winner than the result allows
+(Atkeson 1999, on the presidential primaries). Both beliefs are about
+polls and surveys in general. Individual studies have been checked
+against the result (Bélanger et al. 2025 for 2022). However, the Quebec
+Election Studies, which ask respondents how they voted once the election
+is over, have rarely been compared with the official results across
+several elections. We do so for six elections, from 2007 to 2022, with
+the six studies and the three panels that Claire Durand and her
+colleagues ran in 2007, 2012 and 2018. Overall, the first belief holds
+only in part and the second not at all. The PLQ is under-reported in all
+six studies and panels from 2007 to 2014, by 3 to 7 percentage points of
+the valid vote, and the PQ is over-reported in every Quebec Election
+Study, though sometimes by as little as 1 point. But the Liberal gap
+narrows in 2018 and is slightly reversed in 2022, within the margin of
+error. Nor is the winner over-reported: it falls short in five of the
+six elections. In 2022, the Coalition avenir Québec (CAQ) falls 8 points
+short.
 
-## The data
-
-``` r
-
-h <- qes_harmonize(studies = qz_studies, targets = "vote_choice", missing = "reasons", quiet = TRUE)
-```
-
-`vote_choice` with its default precedence: the reported vote where a
-study asked it, else the intention (the CROP polls), as
-`vote_choice__type` records:
-
-``` r
-
-table(h$study, h$vote_choice__type)
-#>                     
-#>                      recall intention_push intention
-#>   qes_crop_2007_2010      0          22848      1179
-#>   qes1998              1483              0         0
-#>   qes2007              2175              0         0
-#>   qes2007_panel        2054              0         0
-#>   qes2008              1151              0         0
-#>   qes2012              1505              0         0
-#>   qes2012_panel         844              0         0
-#>   qes2014              1517              0         0
-#>   qes2018              3072              0         0
-#>   qes2018_panel         842              0         0
-#>   qes2022              1220              0         0
-```
-
-## Reported vote against the official result, party by party
+## The reported vote, party by party
 
 ![Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official
 share of valid votes at each election from 2007 to 2022 as a line with a
 tick, and each study's reported vote as a dot with its confidence
-interval (circles: Quebec Election Studies; squares: Durand panels). In
-2022 the QES has the CAQ at 33% against 41% officially, and QS at 17%
-against 15%. Values in the table
+interval (circles: Quebec Election Studies; squares: Durand panels). The
+PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it.
+In 2022 the Quebec Election Study has the CAQ at 33% against 41%
+officially. Values in the table
 view.](survey-vs-official_files/figure-html/parties-light.png)![Five
 small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share
 of valid votes at each election from 2007 to 2022 as a line with a tick,
 and each study's reported vote as a dot with its confidence interval
-(circles: Quebec Election Studies; squares: Durand panels). In 2022 the
-QES has the CAQ at 33% against 41% officially, and QS at 17% against
-15%. Values in the table
+(circles: Quebec Election Studies; squares: Durand panels). The PLQ dots
+sit below the line from 2007 to 2014 and the PQ dots above it. In 2022
+the Quebec Election Study has the CAQ at 33% against 41% officially.
+Values in the table
 view.](survey-vs-official_files/figure-html/parties-dark.png)
 
-Source: qesR, pooled vote_choice (reported vote) of the Quebec Election
-Studies (circles, just left of each election) and the Durand panels
-(squares, just right); official results of Élections Québec. Dots:
-weighted with each study's post-election weight, 95% confidence
-intervals (logit). Hollow: unweighted, weight under review (the 2008
-study and the 2007 and 2012 panels); the 2018 panel uses its reviewed
-post-election weight. The 1998 polls interviewed francophones only and
-are left out. The table view gives every party, with the unweighted
-estimates.
+Source: Quebec Election Studies (circles, just left of each election)
+and Durand panels (squares, just right), reported vote among respondents
+who named a party; official results of Élections Québec. Dots are
+weighted, with 95% confidence intervals. Hollow dots: unweighted. The
+table view gives every party, with the unweighted estimates.
 
 Table view
 
@@ -159,18 +142,105 @@ Table view
 | Other | 2022 | QES 2022 | 2.8 \[2.0, 4.0\] | 1101 | 1.7 | +1.1 pts | unweighted |
 | Other | 2022 | QES 2022 | 3.5 \[2.0, 6.1\] | 1101 | 1.7 | +1.8 pts | weighted |
 
-Surveys under-report the PLQ from 2007 to 2014, and the CAQ by 8 points
-in 2022Reported vote in each study (dot, 95% CI) against the official
-share of valid votes (line and tick), by party
+The PLQ is under-reported in every study from 2007 to 2014, the PQ
+over-reported, and the CAQ 8 points below its result in 2022Reported
+vote in each study (dot, 95% CI) against the official share of valid
+votes (line and tick), by party
 
-What to notice:
+First, the Liberals. From 2007 to 2014 the PLQ is under-reported in all
+six studies and panels, by as much as 7 points in 2007 and 6 points in
+2014, the year it returned to power with 42% of the vote. The pattern
+then fades. The 2018 study puts the PLQ 2 points below its result, and
+the 2022 study puts it 3 points above. Second, the PQ is over-reported
+in every Quebec Election Study, by as little as 1 point in 2022 and as
+much as 7 points in 2012 (39% reported against 32% official). Taken one
+at a time, several of these gaps are within the margin of error: the
+PQ’s in 2007, 2008 and 2022, and the PLQ’s in 2008, 2018 and 2022.
 
-- The PQ is over-reported in most studies: +7 pts in 2012, +4 pts in
-  2014.
-- The PLQ is under-reported at every election from 2007 to 2014, by −6
-  pts in 2014, the year it won.
-- The winner is not always over-reported: in 2022 the CAQ is 8 points
-  short of its result.
+Third, and contrary to what the literature on post-election surveys
+would lead us to expect, the winner is rarely over-reported. The only
+exception is 2012, when the PQ won. In 2008 and 2018, the winner’s
+shortfall is within the margin of error. Not so in 2022: the CAQ took
+41% of the vote, but only 33% of the study’s respondents say they voted
+for it, a shortfall Bélanger et al. (2025) also report with the same
+study (33.7% against 41%). Not every 2022 party is off, however: the
+Parti conservateur du Québec (PCQ) is close to its result (14% against
+13%), as they also find. What stands out is the direction of the errors.
+From 2007 to 2014 at least, they are not random noise around the result:
+they lean the same way for the same parties.
+
+## Is the Liberal gap a language gap?
+
+The most familiar explanation for the Liberal gap is language.
+Non-francophones vote Liberal in very large numbers: in 2014, 87% of the
+non-francophones who reported a vote chose the PLQ, against 25% of
+francophones. A survey that reaches too few of them will under-report
+the party. The studies are weighted, among other things, on language, so
+non-francophones should make up roughly their share of the census
+population among all respondents. Among those who report a vote,
+however, they are fewer: 17% in 2014, against 19% of all respondents. We
+therefore examine what happens when non-francophones among voters are
+given back the share they have among all respondents. This is a generous
+test, since it assumes they name a party as often as francophones do.
+
+![Two dot charts side by side, one row per Quebec Election Study from
+2007 to 2022: the PLQ's and the PQ's reported vote minus the official
+result, as reported (coloured dot) and once non-francophones among
+voters are given their share of all respondents (grey diamond). For the
+PLQ in 2014 the gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the
+rebalancing also closes little of the gap. Values in the table
+view.](survey-vs-official_files/figure-html/language-light.png)![Two dot
+charts side by side, one row per Quebec Election Study from 2007 to
+2022: the PLQ's and the PQ's reported vote minus the official result, as
+reported (coloured dot) and once non-francophones among voters are given
+their share of all respondents (grey diamond). For the PLQ in 2014 the
+gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the rebalancing
+also closes little of the gap. Values in the table
+view.](survey-vs-official_files/figure-html/language-dark.png)
+
+Source: Quebec Election Studies, weighted, respondents whose mother
+tongue (or, where it is missing or mixed, home language) is known;
+official results of Élections Québec. Francophones: French mother
+tongue. Rebalanced: the respondents who reported a vote are weighted
+again so that non-francophones make up the same share as among all
+respondents; the vote of each language group is unchanged. The 2008
+study, whose weights are calibrated on the vote, is left out. The table
+view gives the vote of each group and the share of non-francophones
+among voters that would have matched the PLQ's result.
+
+Table view
+
+| Party | Study | Reported, % | Rebalanced, % | Official, % | Gap as reported | Gap rebalanced | Among francophones, % | Among non-francophones, % | Non-francophones among voters, % | Non-francophones among all respondents, % | Non-francophone share that would match the PLQ result, % | n |
+|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|---:|
+| PLQ | QES 2007 | 25.8 | 26.9 | 33.1 | −7.3 pts | −6.2 pts | 20.3 | 58.1 | 14.5 | 17.6 | 33.9 | 1726 |
+| PLQ | QES 2012 | 24.9 | 25.9 | 31.2 | −6.3 pts | −5.3 pts | 15.5 | 65.5 | 18.8 | 20.9 | 31.4 | 1274 |
+| PLQ | QES 2014 | 35.8 | 37.2 | 41.5 | −5.7 pts | −4.3 pts | 25.2 | 87.3 | 17.1 | 19.3 | 26.3 | 1282 |
+| PLQ | QES 2018 | 23.3 | 25.8 | 24.8 | −1.6 pts | +1.0 pts | 12.2 | 71.6 | 18.6 | 22.9 | 21.2 | 2016 |
+| PLQ | QES 2022 | 16.8 | 17.2 | 14.4 | +2.4 pts | +2.9 pts | 6.1 | 54.5 | 22.1 | 23.0 | 17.1 | 1056 |
+| PQ | QES 2007 | 30.8 | 30.2 | 28.3 | +2.5 pts | +1.9 pts | 33.8 | 13.4 | 14.5 | 17.6 |  | 1726 |
+| PQ | QES 2012 | 38.8 | 38.0 | 31.9 | +6.9 pts | +6.0 pts | 46.4 | 6.0 | 18.8 | 20.9 |  | 1274 |
+| PQ | QES 2014 | 29.8 | 29.1 | 25.4 | +4.5 pts | +3.8 pts | 35.3 | 3.2 | 17.1 | 19.3 |  | 1282 |
+| PQ | QES 2018 | 19.6 | 18.7 | 17.1 | +2.5 pts | +1.6 pts | 23.4 | 2.6 | 18.6 | 22.9 |  | 2016 |
+| PQ | QES 2022 | 15.7 | 15.6 | 14.6 | +1.1 pts | +0.9 pts | 19.7 | 1.7 | 22.1 | 23.0 |  | 1056 |
+
+Giving non-francophones their full weight closes 1.0 to 1.4 points of a
+Liberal gap of 6 to 7Reported vote minus the official result, as
+reported and with non-francophones among voters given their share of all
+respondents, in the weighted Quebec Election Studies
+
+The answer is fairly clear: language accounts for a small part of the
+gap. In the three weighted Quebec Election Studies of 2007, 2012 and
+2014, where the Liberal gap is 6 to 7 points, rebalancing closes 1.0 to
+1.4 points of it, and trims the PQ’s excess by 0.6 to 0.8 points. To
+close the PLQ gap through language alone, non-francophones would have
+had to make up 26% to 34% of voters, against 18% to 21% of all
+respondents. In other words, the Liberal gap is not only a matter of too
+few non-francophones. This suggests that it is also a gap within
+language groups, most likely among francophones: in these studies,
+either Liberal voters are missing from the samples, or they do not say
+they voted Liberal. In 2018, by contrast, the same correction takes the
+PLQ slightly past its result (+1.0 point). The gap was small that year,
+and language composition may account for most of it.
 
 ## Does weighting help?
 
@@ -178,23 +248,22 @@ What to notice:
 the index of dissimilarity between the reported and the official vote,
 unweighted (hollow ring) and weighted (filled dot). Weighting takes 2012
 from 11.0 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from
-4.9 to 5.6. Values in the table view, with the studies that have no
-reviewed
-weight.](survey-vs-official_files/figure-html/dissim-light.png)![Dumbbell
+4.9 to 5.6. Values in the table view, with the unweighted
+studies.](survey-vs-official_files/figure-html/dissim-light.png)![Dumbbell
 chart, one row per study with both estimates (2007 to 2022): the index
 of dissimilarity between the reported and the official vote, unweighted
 (hollow ring) and weighted (filled dot). Weighting takes 2012 from 11.0
 to 8.0 points and 2022 from 9.0 to 8.0, and moves 2014 from 4.9 to 5.6.
-Values in the table view, with the studies that have no reviewed
-weight.](survey-vs-official_files/figure-html/dissim-dark.png)
+Values in the table view, with the unweighted
+studies.](survey-vs-official_files/figure-html/dissim-dark.png)
 
-Source: qesR, pooled vote_choice (reported vote); official results of
-Élections Québec. Index of dissimilarity: half the sum over parties of
-the absolute difference between the reported and the official share, in
-points (0: identical; the share of voters that would have to change
-party). A party a study did not list counts in its Other. The 2008 study
-and the 2007 and 2012 panels have no reviewed weight: their unweighted
-index is in the table view.
+Source: Quebec Election Studies and Durand panels, reported vote;
+official results of Élections Québec. Index of dissimilarity: half the
+sum, over parties, of the absolute difference between the reported and
+the official share, in points. It is the share of respondents who would
+have to change party for the survey to match the result (0: identical).
+A party a study did not list counts in its Other. The unweighted studies
+(2008, and the 2007 and 2012 panels) are in the table view.
 
 Table view
 
@@ -218,44 +287,45 @@ Table view
 
 Weighting cuts the 2012 error from 11 to 8 points, but does not bring
 every study closer to the resultIndex of dissimilarity between the
-reported and the official vote, unweighted and weighted, for the studies
-with a reviewed weight
+reported and the official vote, unweighted and weighted
 
-What to notice:
+If language explains little, weighting cannot be expected to do much
+either, since it adjusts the sample to the census and not to the vote.
+The index of dissimilarity lets us check: it is the share of respondents
+who would have to change party for the survey to match the result.
+Weighting brings 2012 and 2022 closer to the result, by 3.0 and 1.1
+points, and moves 2014 slightly away. Note, however, that the index
+stays between 3.2 and 8.0 points in the weighted studies, and that two
+unweighted studies, the 2008 study and the 2007 panel, come closer than
+most of them (3.2 and 4.4 points). A weight based on census totals,
+then, does not by itself make a study’s reported vote more accurate.
 
-- Weighting brings 2012 and 2022 closer to the official result, by 3.0
-  and 1.1 points, and moves 2014 slightly away: it adjusts the sample to
-  census margins, not to the vote.
-- The unweighted 2008 study and 2007 panel, at 3.2 and 4.4 points, are
-  closer to the official result than most weighted studies (from 5.5 to
-  8.0; only 2018 matches them, at 3.2): weighting to census margins does
-  not guarantee a closer vote.
+## Before the vote: how far intentions move
 
-## Two and a half years of CROP polls around the 2008 election
-
-![Line chart of monthly CROP vote intentions from June 2007 to January
-2010 for the PLQ, PQ, ADQ and QS, each as a three-month mean over the
-faint monthly values, with a line at the election of 8 December 2008 and
-the official results as diamonds. The ADQ falls from 29% in June 2007 to
-14% in November 2008; the PLQ is at 41% in the last poll before the
-election and took 42%; the PQ leads in March to May and in October 2009.
-Values in the table
+![Line chart of monthly CROP vote intentions from June 2007 to Jan. 2010
+for the PLQ, PQ, ADQ and QS, each as a three-month mean over the faint
+monthly values, with a line at the election of 8 Dec. 2008 and the
+official results as diamonds. The ADQ falls from 29% in the first poll
+to 14% in the last poll before the election; the PLQ is at 41% in that
+poll and took 42%. Values in the table
 view.](survey-vs-official_files/figure-html/crop-light.png)![Line chart
-of monthly CROP vote intentions from June 2007 to January 2010 for the
-PLQ, PQ, ADQ and QS, each as a three-month mean over the faint monthly
-values, with a line at the election of 8 December 2008 and the official
-results as diamonds. The ADQ falls from 29% in June 2007 to 14% in
-November 2008; the PLQ is at 41% in the last poll before the election
-and took 42%; the PQ leads in March to May and in October 2009. Values
-in the table view.](survey-vs-official_files/figure-html/crop-dark.png)
+of monthly CROP vote intentions from June 2007 to Jan. 2010 for the PLQ,
+PQ, ADQ and QS, each as a three-month mean over the faint monthly
+values, with a line at the election of 8 Dec. 2008 and the official
+results as diamonds. The ADQ falls from 29% in the first poll to 14% in
+the last poll before the election; the PLQ is at 41% in that poll and
+took 42%. Values in the table
+view.](survey-vs-official_files/figure-html/crop-dark.png)
 
-Source: qesR, pooled vote_choice of the CROP polls (the intention, with
-the undecided pushed where the poll pushed them), about 1,000
-respondents a month, among those who named a party. Unweighted: the
-polls' weight (XPOND) is under review. Bold lines: the mean of the polls
-within a month and a half of each poll; faint lines: each month. The 95%
-confidence intervals (logit) of every poll are in the table view.
-Diamonds: official results of 8 December 2008.
+Source: CROP polls, vote intention (with the undecided asked which party
+they lean towards, where the poll asked it), about 850 respondents a
+month, among those who named a party; official results of Élections
+Québec (diamonds). Unweighted. By design, the polls over-sampled the
+Québec City area (20% of respondents, about twice its share of the
+population), so these shares give it too much weight. Bold lines: the
+mean of the polls within a month and a half of each poll; faint lines:
+each month. The 95% confidence intervals of every poll are in the table
+view.
 
 Table view
 
@@ -430,40 +500,108 @@ Table view
 | 2010-01      | PCQ   | —                       |     |
 | 2010-01      | Other | 6.9 \[5.3, 8.9\]        | 784 |
 
-The ADQ fell from 29% to 14% before the 2008 election; the PLQ led from
-August 2008, and the PQ passed it in 2009Monthly vote intentions in the
-CROP polls, June 2007 to January 2010: three-month means over the
-monthly values, and the official result
+The ADQ fell from 29% to 14% before the 2008 election; the last poll had
+the PLQ at 41%, and it took 42%Monthly vote intentions in the CROP
+polls, June 2007 to Jan. 2010: three-month means over the monthly
+values, and the official result
 
-What to notice:
+A post-election study has one advantage over a poll: the vote it asks
+about has already happened. Durand and Blais (2020) make the distinction
+between a polling miss, when voters move after the last poll or the
+undecided break unevenly, and a poll failure, when the method is at
+fault. The monthly CROP polls show why the distinction matters. Between
+June 2007 and November 2008, the Action démocratique du Québec (ADQ),
+then the official opposition, went from 29% to 14% of vote intentions,
+and the PQ was back ahead of the PLQ in June 2008 (35% against 33%). The
+last poll before the election, in November 2008, had the PLQ at 41%; it
+took 42%, within the poll’s margin of error. The 2008 study, which asked
+respondents how they voted after the election and is also unweighted,
+puts the PLQ at 39%, further from the result than the last poll. Since
+it was fielded after the vote, late movement cannot explain that gap,
+small as it is. It comes from who answers and from what they say.
 
-- The ADQ, official opposition after March 2007, falls through 2008 and
-  ends near its election score.
-- The PLQ leads from August 2008 to the election, and its November 2008
-  poll (41%) is close to its result (42%). In June 2008 the PQ was still
-  ahead (35% against 33%).
-- In 2009 the PQ overtakes the PLQ in the spring (March to May) and in
-  October, and the two are level in January 2010.
+## In sum
+
+The belief that surveys underestimate the Liberals holds for the Quebec
+Election Studies from 2007 to 2014, but not after, and language, the
+usual suspect, accounts for 1.0 to 1.4 points of it. The PQ is
+over-reported in most studies, and the winner is more often
+under-reported than over-reported. Our analysis is not without limits.
+First, the reported vote is a recall, measured among respondents who
+named a party. Second, a study of 1,278 voters (the median of the six
+studies) has a margin of error of up to 2.7 points on each party before
+weighting, and close to 4 once the weights are taken into account, as
+the intervals in the table views show. More importantly, the comparison
+with official results cannot tell apart the two sources of error: voters
+who do not take part in the survey, and respondents who do not report
+their vote as cast. In Britain, the main cause of the 2015 polling error
+was unrepresentative samples (Sturgis et al. 2018), as it was in Quebec
+in 1998 (Durand and Blais 1999); nothing here allows us to say whether
+it still is. The open question is whether the CAQ’s shortfall in 2022 is
+a one-off, or whether its voters now play the part that Liberal voters
+long played: that of an electorate less inclined to answer surveys.
+
+## Further reading
+
+- Atkeson, Lonna Rae. 1999. “‘Sure, I Voted for the Winner!’ Overreport
+  of the Primary Vote for the Party Nominee in the National Election
+  Studies.” *Political Behavior* 21 (3): 197–215.
+  [doi:10.1023/A:1022031432535](https://doi.org/10.1023/A:1022031432535)
+- Bélanger, Éric, Philippe Mongrain, Thomas Gareau-Paquette, and
+  Valérie-Anne Mahéo. 2025. “A Party that Went Viral? The Drivers of
+  Support for the Parti Conservateur du Québec in the 2022 Election.”
+  *Canadian Journal of Political Science* 58 (2): 277–296.
+  [doi:10.1017/S0008423924000829](https://doi.org/10.1017/S0008423924000829)
+  (the 2022 study: the CAQ under-represented, the PCQ close to its
+  result)
+- Durand, Claire, and André Blais. 1999. “Why Did the Polls Go Wrong in
+  the 1998 Quebec Election? The Answer from Post-Election Polls.”
+  *Bulletin of Sociological Methodology* 62 (1): 43–47.
+  [doi:10.1177/075910639906200105](https://doi.org/10.1177/075910639906200105)
+- Durand, Claire, and André Blais. 2020. “Quebec 2018: A Failure of the
+  Polls?” *Canadian Journal of Political Science* 53 (1): 133–150.
+  [doi:10.1017/S0008423919000787](https://doi.org/10.1017/S0008423919000787)
+- Sturgis, Patrick, Jouni Kuha, Nick Baker, Mario Callegaro, Stephen
+  Fisher, Jane Green, Will Jennings, Benjamin E. Lauderdale, and Patten
+  Smith. 2018. “An Assessment of the Causes of the Errors in the 2015 UK
+  General Election Opinion Polls.” *Journal of the Royal Statistical
+  Society: Series A* 181 (3): 757–781.
+  [doi:10.1111/rssa.12329](https://doi.org/10.1111/rssa.12329)
+
+On this site, [From two parties to
+four](https://thomasgareau.github.io/qesR/articles/realignment.md)
+follows the vote of francophones and non-francophones since 1998, and
+[Validation against official
+results](https://thomasgareau.github.io/qesR/articles/validation.md)
+runs these comparisons for every study.
 
 ## About the data
 
-- **Studies.** Every study that asked the reported vote after the
-  election, except the 1998 polls, which interviewed francophones only;
-  the CROP polls for intentions.
-- **Variable.** `vote_choice`, the reported vote (`recall`) in every
-  study but the CROP polls, whose values are intentions
-  (`intention_push`, or `intention` where no push was asked). Shares are
-  among respondents who named a party; would not vote, did not vote,
-  don’t know and refused are left out.
-- **Official results.** The share of valid votes of each party, from
-  Élections Québec, kept in the qesR source repository
-  (`inst/extdata/validation/official_results.csv`). The PV, ON and other
-  parties are “Other”; a party a study did not list counts in its Other.
-- **Weights.** Each study’s recommended post-election weight, through
-  [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md);
-  the unweighted estimate is shown next to it. The 2008 study, the 2007
-  and 2012 Durand panels and the CROP polls are unweighted (weights
-  under review); the 2018 panel uses its reviewed post-election weight.
-  [Validation against official
-  results](https://thomasgareau.github.io/qesR/articles/validation.md)
-  runs these checks on every study every week.
+- **Studies.** The six Quebec Election Studies (2007 to 2022) and the
+  three Durand panels (2007, 2012, 2018), which asked respondents how
+  they voted after the election. The 1998 polls interviewed francophones
+  only and are left out. The 24 CROP polls, conducted almost every month
+  from June 2007 to January 2010, measure vote intention instead.
+- **Shares.** Among respondents who named a party. Those who did not
+  vote, did not know or refused to answer are left out. The Green Party,
+  Option nationale and the smaller parties count as “Other”, and so does
+  a party a study did not list.
+- **Official results.** Each party’s share of valid votes, from
+  Élections Québec.
+- **Weights.** Each study’s post-election weight, which adjusts the
+  sample to the census on age, sex and language, and, depending on the
+  study, on region or education. The 2008 study, the 2007 and 2012
+  panels and the CROP polls are shown unweighted (hollow dots in the
+  charts). The 2008 study’s weights are calibrated on the vote itself,
+  so they cannot be used to test the reported vote.
+- **Language.** Francophones are respondents whose mother tongue is
+  French. Where the mother tongue is missing or mixed, the language
+  spoken at home is used instead.
+
+The data on this page come from one call:
+
+``` r
+
+h <- qes_harmonize(studies = qz_studies, targets = c("vote_choice", "lang_mother", "lang_home"),
+                   missing = "reasons", quiet = TRUE)
+```

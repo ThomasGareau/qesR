@@ -4,11 +4,10 @@
 française](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)*
 
 qesR loads the Quebec Election Studies and related Quebec election
-surveys into R by study code. Each code points to one Dataverse deposit,
-pinned to a dataset version and to one original data file that is
-checked against its md5 checksum before use. The catalog of studies,
-their documents, their citations and the description of every variable
-of every study ship with the package.
+surveys into R by study code. Each study code reads the study’s original
+data file, always the same version, checked before use. The catalog of
+studies, their documents, their citations and the description of every
+variable of every study ship with the package.
 
 This page goes from a study code to a weighted estimate. Every chunk on
 it runs without a network connection: it uses the catalog, the shipped
@@ -17,15 +16,12 @@ The chunks that would download a real study are shown but not run.
 
 ## Install
 
-Install qesR from GitHub; once it is accepted on CRAN,
-`install.packages("qesR")` will do.
+Install qesR from GitHub:
 
 ``` r
 
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
-# once accepted on CRAN:
-# install.packages("qesR")
 ```
 
 ``` r
@@ -37,7 +33,7 @@ library(qesR)
 
 [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
 lists every study, with its year, family, design, target population,
-licence, DOI and the dataset version it is pinned to.
+licence, DOI and the version of its data that qesR reads.
 
 ``` r
 
@@ -200,19 +196,9 @@ head(hits[, c("study", "variable", "label")])
 #> 6 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
 ```
 
-The 2022 study is licensed CC BY-NC 4.0. Its codebook ships with qesR
-too, under that licence (attribution, no commercial use), not under
-qesR’s MIT licence, which covers the package code only. It is derived
-from Mahéo, Bélanger, Stephenson and Harell (2023), *2022 Quebec
-Election Study*, Harvard Dataverse,
-<https://doi.org/10.7910/DVN/PAQBDR>; a printed codebook of `qes2022`
-repeats this notice, which codebooks,
-[`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md)
-and
-[`qes_search()`](https://thomasgareau.github.io/qesR/reference/qes_search.md)
-results that include `qes2022` also keep in their attribute
-`licence_notice`, and `system.file("COPYRIGHTS", package = "qesR")`
-lists the files.
+The codebook of the 2022 study is CC BY-NC 4.0 (attribution, no
+commercial use); see
+[`vignette("citations", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/citations.md).
 
 ## A weighted estimate
 
@@ -289,11 +275,11 @@ instance, would not have its usual meaning. Compute each estimate within
 one study: studies differ in design, population and wording, and their
 weights are on their own scales.
 
-## Harmonized data across studies (experimental)
+## Harmonized data across studies
 
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 builds one data frame from several studies, one column per harmonized
-variable (“target”), from a reviewed specification only.
+variable (“target”), following rules that ship with qesR.
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 shows which question of each study feeds a target and how comparable it
 is to the target’s anchor question:
@@ -309,14 +295,11 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #> 4 qes2022  cps cps_qc_referendum comparable cps_weight_general
 ```
 
-A row is applied once a reviewer has signed it off. In specification
-4.3.0 all rows but three are signed off, after an automated double
-review against the original files and documents (not a human review); a
-row still in review gives `NA` with the reason `not_reviewed`, unless
-`include_draft = TRUE`. The recommended weights of `qes1998`,
-`qes2007_panel`, `qes2012_panel` and the CROP polls still need review,
-so their weights are `NA`. On the demonstration study, which stands in
-for `qes2014`:
+Some studies have no usable weight yet; their weight columns are `NA`,
+and
+[`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
+tells you when it leaves rows out. On the demonstration study, which
+stands in for `qes2014`:
 
 ``` r
 
@@ -380,8 +363,8 @@ cites qesR and the datasets you used (see
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-09-30 00:17:31 UTC (local_demo). Read with haven::read_sav(user_na =
-#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.0.
+#> 2026-10-01 01:18:54 UTC (local_demo). Read with haven::read_sav(user_na =
+#> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 qes_cite("qes2014")
@@ -390,8 +373,8 @@ qes_cite("qes2014")
 ```
 
 [`qes_download()`](https://thomasgareau.github.io/qesR/reference/qes_download.md)
-saves the original files themselves (data file and documents),
-md5-checked, in a folder you choose:
+saves the original files themselves (data file and documents), checked,
+in a folder you choose:
 
 ``` r
 
@@ -416,10 +399,7 @@ tryCatch(
 #> [1] "qes2014"
 ```
 
-## Coming from qesR 0.4.4
+## Code written for an earlier version
 
-[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-and the other functions of qesR 0.4.4 keep working; since qesR 0.7.0 the
-master is rendered from the harmonization engine. What changed, and how
-to keep results reproducible, is in
+See *Upgrading from qesR 0.4.4*,
 [`vignette("migrating-0.7", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).
