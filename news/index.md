@@ -1,5 +1,158 @@
 # Changelog
 
+## qesR 0.9.0
+
+*Upgrading from qesR 0.4.4? See [Upgrading from qesR
+0.4.4](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).*
+
+**In short:**
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+returns one data frame for all 11 harmonized studies, with plain column
+names in the style of cesR. The columns are harmonized in a relaxed way:
+one column per concept even when the questions differ, with coarse
+common categories. The legacy functions return the same values as in
+0.8.0.
+
+### Relaxed harmonization: `qes_decon()`
+
+- `qes_decon(studies = NULL, lang = c("en", "fr"), weights = TRUE, quiet = FALSE)`
+  (new export, 29 in all) returns one flat data frame with one row per
+  respondent and wave and 32 columns: `citizenship`, `yob`, `age_group`,
+  `gender`, `education`, `income_cat`, `language`, `language_fr`,
+  `language_eng`, `religion`, `marital`, `employment`, `region`,
+  `region_admin`, `born_canada`, `born_quebec`, `vote_choice`,
+  `vote_type`, `turnout`, `vote_prev`, `pid`, `lr`, `interest`,
+  `interest_01`, `sovereignty`, `sovereignty_type`, `satis_democracy`,
+  `gov_satisfaction`, `econ_retro`, `identity`, `attach_quebec` and
+  `attach_canada`, after `study`, `year`, `wave`, `qes_id`, `weight` and
+  `weight_var`. Factor levels and every text are in English or French
+  (`lang`); column names stay English.
+  [`?qes_decon`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  lists the counterpart of each column of cesR’s
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md).
+- What relaxed means: one concept goes in one column for every study,
+  even when the wording or the answer options differ, in coarse common
+  categories: education in four groups (no high school diploma, high
+  school, college or trade school, university); household income in
+  thirds of each study’s own respondents, by the midpoint of whole
+  brackets; interest in politics low, medium or high from the 0-1 scale;
+  a referendum vote of yes or no whatever the question
+  (`sovereignty_type` says which); religion in five groups; marital
+  status in four; employment in five; the 17 administrative regions. It
+  trades exactness for coverage:
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  and its grades stay the strict layer, for when the difference between
+  two questions matters.
+- Relaxed columns carry no comparability grade and never claim that two
+  studies asked the same question. Each column says how it was relaxed
+  (`attr(, "relaxed")`) and where each study’s values come from
+  (`attr(, "sources")`: the source variable, the document that gives its
+  wording and the recode in words); `attr(x, "decon_sources")` gathers
+  every source with the count of values and of each reason for a missing
+  value, and `attr(x, "weights")` says why a weight is `NA` (`qes2008`
+  has no recommended weight; those of `qes1998`, `qes2007_panel`,
+  `qes2012_panel` and the CROP polls still need review).
+- A column reuses a strict target or a pooled variable where one exists
+  (`gender`, `vote_choice`, `satis_democracy`…), recoded into its
+  categories where needed (`born_quebec` from the birthplace), and adds
+  relaxed mappings of the studies’ own questions where the strict layer
+  has none or leaves a study out: 60 relaxed mappings, every one checked
+  against the pinned file (every observed code has an outcome). An
+  automated double review checked the 60 against the original files and
+  documents and signed them off (spec 4.5.0), so
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  applies them by default. It is not a human review, and each mapping’s
+  `reviewed_by` and `review_note` say so. Like a crosswalk row, a
+  relaxed mapping still in review is not applied: its cells are `NA`
+  with reason `not_reviewed`, and a message (class `qesR_message_decon`,
+  silenced by `quiet`) counts them.
+- Socio-demographic columns hold one value per respondent, repeated on
+  each of their waves; the vote, turnout and attitudes sit on the wave
+  that asked them. `weight` is the wave’s recommended weight with mean 1
+  in each study and wave.
+- [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md)
+  also works on
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  output (`vote_choice`, `vote_prev`, `pid`), with no grade column.
+- `qes_spec("relaxed")` lists the columns, their base, transform and
+  relaxation rule, and where each study’s values come from;
+  `qes_spec("relaxed_maps")` lists the relaxed mappings with their
+  recode in words. The generated reference
+  ([`vignette("harmonization-reference")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md)
+  and its French version) has a chapter on them.
+- [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  and
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  are unchanged (their values and column hashes are those of 0.8.0); the
+  help of
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  points to
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md).
+- In `qes_spec("relaxed")`, a column built on another column
+  (`language_fr`, `language_eng`) now takes that column’s source study
+  by study, so the 1998 polls show `"relaxed"` there, where the view
+  first showed `NA`; the values of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  do not change.
+
+### Website
+
+- New article pair *One file for every study: qes_decon()* / *Un seul
+  fichier pour toutes les études : qes_decon()* (Harmonization menu):
+  what
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  returns, a table of its columns generated from the relaxed
+  specification (categories, studies with values, how each was relaxed),
+  a weighted estimate within one study, the education gap in the ADQ and
+  CAQ vote among francophones from 2007 to 2022, and when to use
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  instead.
+- The coverage page has a grid of the relaxed columns: for each study,
+  whether its values come from the strict layer or from a relaxed
+  mapping. The home page, its French version and the README show
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  in the first session.
+
+### Harmonization rules (specifications 4.4.0 and 4.5.0)
+
+- Schema 4: two new tables, `relaxed.csv` (one row per column of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md))
+  and `relaxed_maps.csv` (the relaxed mappings, in the crosswalk row
+  format without grades), with 57 value maps in `valuemaps.csv` under
+  the prefix `rx_`, 10 level sets in `levels.csv` (prefix `rx_`) and the
+  recorded results on the pinned files
+  (`expected/relaxed_marginals.csv`, `expected/relaxed_hashes.csv`).
+  MINOR: no existing row, map, marginal or column hash changes.
+- The validator gains V-R1 to V-R12 (form and keys, names, bases and
+  transforms, English and French, at least 3 studies per column unless
+  essential, no claim of comparability, the relaxed rows and their maps,
+  the data checks on the dictionary with the income thirds rule,
+  override against the base, the recorded results, and the legacy
+  renderers never reading the relaxed layer).
+- New registered function `fn:amount_bands` (an amount in bands, with a
+  bracket question for those who gave none: the 2022 income) and the
+  option `first=TRUE` of `fn:multiselect` (the first option ticked wins:
+  French, then English, for several mother tongues). Neither is used by
+  a crosswalk row.
+- [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
+  reads spec directories of schema 2, 3 and 4; Engine-Min is 0.9.0.
+- Spec 4.5.0 signs off the 60 relaxed mappings (status `stable`). The
+  review had two passes, one on the codes and the data and one on the
+  wording, adjudicated where they disagreed. It corrected text only: the
+  notes of education for the 2007 panel and the CROP polls (13 to 15
+  years of schooling is college, so some university without a degree may
+  fall there), of marital status for 2012 and 2014 (360 and 309
+  respondents chose civil union, far more than Quebec’s legal civil
+  unions, so common-law partners are split between married and never
+  married), of employment for `qes2008` and the 2018 panel (the 400
+  telephone respondents were not asked `d4`; the file codes them 9) and
+  of the CROP referendum question (its wording is documented for 19 of
+  the 24 polls); the notes of three `qes2007` mother tongue maps; and
+  seven wordings or wording references, among them the `qes2012`
+  employment and region questions, whose English text sat in the French
+  field. MINOR: no code, value map, level set, recorded marginal or
+  column hash changes.
+
 ## qesR 0.8.0
 
 *Upgrading from qesR 0.4.4? See [Upgrading from qesR

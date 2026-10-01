@@ -142,6 +142,7 @@ for the weight columns and `attr(, "qes_weight_guide")`, which says
 which weight fits each target.
 
 Other harmonization:
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
 [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md),
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)

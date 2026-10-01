@@ -56,7 +56,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,6 +84,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
@@ -226,7 +227,7 @@
       </dl></div><div class="section level2">
       <h2 id="harmonization">Harmonization<a class="anchor" aria-label="anchor" href="#harmonization"></a></h2>
 
-      <div class="section-desc"><p>One data frame across the 11 studies: <code><a href="../reference/qes_spec.html">qes_spec()</a></code> shows which studies have which harmonized variable and how comparable each study’s question is; <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applies the rules, with a reason for every missing value and each respondent’s waves and weights; <code><a href="../reference/qes_design.html">qes_design()</a></code> turns the result into a survey design. See <a href="../articles/harmonization.html">How harmonization works</a>.</p></div>
+      <div class="section-desc"><p>One data frame across the 11 studies: <code><a href="../reference/qes_spec.html">qes_spec()</a></code> shows which studies have which harmonized variable and how comparable each study’s question is; <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> applies the rules, with a reason for every missing value and each respondent’s waves and weights; <code><a href="../reference/qes_decon.html">qes_decon()</a></code> gives one flat data frame of relaxed harmonized variables, one concept per column even where the questions differ; <code><a href="../reference/qes_design.html">qes_design()</a></code> turns the result into a survey design. See <a href="../articles/harmonization.html">How harmonization works</a>.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -246,6 +247,13 @@
 
         </dt>
         <dd>Harmonize variables across studies (experimental)</dd>
+
+        <dt>
+
+          <code><a href="qes_decon.html">qes_decon()</a></code>
+
+        </dt>
+        <dd>One flat data frame of relaxed harmonized variables (experimental)</dd>
 
         <dt>
 
@@ -309,7 +317,7 @@
       </dl></div><div class="section level2">
       <h2 id="older-function-names">Older function names<a class="anchor" aria-label="anchor" href="#older-function-names"></a></h2>
 
-      <div class="section-desc"><p>Earlier names of qesR functions. They keep working, with the same arguments, and will not be removed; each prints a one-time notice naming its replacement. <a href="../articles/migrating-0.7.html">The upgrading guide</a> says what changed in their results.</p><table><thead><tr><th>Older name</th>
+      <div class="section-desc"><p>Earlier names of qesR functions. They keep working, with the same arguments, and will not be removed; each prints a one-time notice naming its replacement. <a href="../articles/migrating-0.7.html">The upgrading guide</a> says what changed in their results.</p><table><colgroup><col width="50%"><col width="50%"></colgroup><thead><tr><th>Older name</th>
 <th>Replacement</th>
 </tr></thead><tbody><tr><td>
 <code><a href="../reference/get_codebook.html">get_codebook()</a></code>, <code><a href="../reference/get_codebook.html">get_qes_codebook()</a></code>
@@ -332,7 +340,8 @@
 </tr><tr><td><code><a href="../reference/get_qescodes.html">get_qescodes()</a></code></td>
 <td><code><a href="../reference/qes_studies.html">qes_studies()</a></code></td>
 </tr><tr><td><code><a href="../reference/get_decon.html">get_decon()</a></code></td>
-<td><code>qes_harmonize(srvy, targets = "decon")</code></td>
+<td>
+<code>qes_harmonize(srvy, targets = "decon")</code>, or <code><a href="../reference/qes_decon.html">qes_decon()</a></code> for every study, relaxed</td>
 </tr></tbody></table></div>
 
       <dl></dl></div><div class="section level2">

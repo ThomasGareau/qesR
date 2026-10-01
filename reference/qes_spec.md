@@ -12,7 +12,7 @@ anchor question.
 
 ``` r
 qes_spec(
-  view = c("targets", "crosswalk", "spec", "pooled"),
+  view = c("targets", "crosswalk", "spec", "pooled", "relaxed", "relaxed_maps"),
   targets = NULL,
   studies = NULL,
   level = c("row", "code"),
@@ -28,14 +28,18 @@ qes_spec(
 
 - view:
 
-  `"targets"`, `"crosswalk"`, `"spec"` or `"pooled"`.
+  `"targets"`, `"crosswalk"`, `"spec"`, `"pooled"`, `"relaxed"` or
+  `"relaxed_maps"`.
 
 - targets:
 
   Target, family or set names (views `"targets"` and `"crosswalk"`; the
   set `"decon"` holds the targets of the columns of
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md));
-  `NULL` (default) is every target.
+  pooled variables (view `"pooled"`); columns of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  (views `"relaxed"` and `"relaxed_maps"`); `NULL` (default) is every
+  one.
 
 - studies:
 
@@ -104,6 +108,16 @@ By `view`:
   `default`, `transform`, `grade_cap`, `note`, `status`, `added_in`,
   then one column per study.
 
+- `"relaxed"`: a data frame with columns `column`, `position`, `label`,
+  `type`, `levels`, `base`, `transform`, `timing`, `relaxed` (how the
+  column was relaxed), `definition`, `essential`, `status`, `added_in`,
+  then one column per study.
+
+- `"relaxed_maps"`: a data frame with columns `study`, `wave`, `column`,
+  `source_var`, `rule`, `map_id`, `args`, `na_codes`, `gate`,
+  `override`, `recode`, `wording`, `wording_ref`, `notes`, `evidence`,
+  `status`, `reviewed_by`, `reviewed_on`, `review_note`, `added_in`.
+
 - `"spec"`: an object of class `qes_spec`: a list with the spec
   `version`, its content `hash`, `custom` (`TRUE` when it is not the
   shipped spec) and `tables` (targets, levels, crosswalk, valuemaps,
@@ -112,7 +126,10 @@ By `view`:
   [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
   and
   [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md),
-  pooled and pooled_members: the pooled variables); `attr(, "check")`
+  pooled and pooled_members: the pooled variables, relaxed and
+  relaxed_maps: the relaxed layer of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
+  rx_expected and rx_hashes: its recorded results); `attr(, "check")`
   holds the problems table (`rule`, `severity`, `table`, `row`, `key`,
   `detail`).
 
@@ -139,6 +156,21 @@ By `view`:
   values and its grade cap, and one column per study giving the member's
   grade there (capped; `NA`: no question). `targets` selects pooled
   variables (or the set `"pooled"`).
+
+- `view = "relaxed"`: one row per column of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
+  the relaxed harmonization: its label, levels, base (the strict target
+  or pooled variable it reuses, if any), the transform of the base's
+  values, how it was relaxed, and one column per study saying where the
+  study's values come from (`"strict"`: the base; `"relaxed"`: a relaxed
+  mapping of the study's own question, with its status when it is not
+  signed off yet; `NA`: none; a column built on another column takes
+  that column's source). `targets` selects columns.
+
+- `view = "relaxed_maps"`: one row per relaxed mapping (study, wave and
+  column): the source variable, rule, value map, gate, whether it
+  replaces the base, the recode in words, the wording or the document
+  that gives it, notes and review status. `targets` selects columns.
 
 - `view = "spec"`: the spec itself, as an object of class `qes_spec`
   (tables, version and content hash), checked by the validator and the
@@ -176,10 +208,15 @@ La vue `"pooled"` décrit les variables regroupées (comme `vote_choice`,
 qui réunit le vote déclaré et les intentions de vote) : leurs membres,
 leur ordre de priorité et le niveau de chaque membre dans chaque étude.
 `lang = "fr"` donne les étiquettes, définitions et raisons en français.
+Les vues `"relaxed"` et `"relaxed_maps"` décrivent l'harmonisation
+souple de
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+: ses colonnes, leur base et la façon dont elles sont assouplies, puis
+l'appariement souple propre à chaque étude.
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 en est la référence complète.
 
-## Targets in the shipped spec (version 4.3.1)
+## Targets in the shipped spec (version 4.5.0)
 
 Generated from the spec by roxygen; `qes_spec()` gives the same list
 with each study's grade.
@@ -503,6 +540,7 @@ and
 the reference generated from the spec.
 
 Other harmonization:
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md),
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
 [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md)
@@ -907,22 +945,163 @@ pv[, c("type_name", "member", "precedence", "qes2012", "qes2022")]
 #> 2 intention_push vote_prov_intent_push          2      <NA> approximate
 #> 3      intention      vote_prov_intent          3      <NA> approximate
 
+# the relaxed columns of qes_decon(), and each study's relaxed mapping
+rx <- qes_spec("relaxed")
+rx[, c("column", "base", "transform", "qes2022", "qes1998")]
+#>              column                     base
+#> 1       citizenship           target:citizen
+#> 2               yob        target:birth_year
+#> 3         age_group        target:age_group3
+#> 4            gender            target:gender
+#> 5         education                     <NA>
+#> 6        income_cat                     <NA>
+#> 7          language       target:lang_mother
+#> 8       language_fr          column:language
+#> 9      language_eng          column:language
+#> 10         religion                     <NA>
+#> 11          marital                     <NA>
+#> 12       employment                     <NA>
+#> 13           region       target:region_cma3
+#> 14     region_admin                     <NA>
+#> 15      born_canada       target:born_canada
+#> 16      born_quebec       target:birthplace3
+#> 17      vote_choice       pooled:vote_choice
+#> 18        vote_type pooled:vote_choice__type
+#> 19          turnout           pooled:turnout
+#> 20        vote_prev    target:vote_prov_prev
+#> 21              pid          target:pid_prov
+#> 22               lr           target:lr_self
+#> 23         interest      pooled:pol_interest
+#> 24      interest_01      pooled:pol_interest
+#> 25      sovereignty       pooled:sov_support
+#> 26 sovereignty_type pooled:sov_support__type
+#> 27  satis_democracy     target:satis_demo_qc
+#> 28 gov_satisfaction  target:gov_satisfaction
+#> 29       econ_retro     target:econ_retro_qc
+#> 30         identity    target:identity_qc_ca
+#> 31    attach_quebec         target:attach_qc
+#> 32    attach_canada         target:attach_ca
+#>                                                                                                                                                      transform
+#> 1                                                                                                                            recode:yes=citizen,no=not_citizen
+#> 2                                                                                                                                                     identity
+#> 3                                                                                                                                                     identity
+#> 4                                                                                                                                                     identity
+#> 5                                                                                                                                                 relaxed_only
+#> 6                                                                                                                                                 relaxed_only
+#> 7                                                                                                                                                     identity
+#> 8                                                                                                                        recode:french=yes,english=no,other=no
+#> 9                                                                                                                        recode:french=no,english=yes,other=no
+#> 10                                                                                                                                                relaxed_only
+#> 11                                                                                                                                                relaxed_only
+#> 12                                                                                                                                                relaxed_only
+#> 13                                                                                                                                                    identity
+#> 14                                                                                                                                                relaxed_only
+#> 15                                                                                                                                                    identity
+#> 16                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no
+#> 17                                                                                                                                                    identity
+#> 18                                                                                                                                                    identity
+#> 19                                                                                                                                                    identity
+#> 20                                                                                                                                                    identity
+#> 21                                                                                                                                                    identity
+#> 22                                                                                                                                                    identity
+#> 23                                                                                                                             bands:0.35,0.75:low,medium,high
+#> 24                                                                                                                                                    identity
+#> 25                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable
+#> 26 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour
+#> 27                                                                                                                                                    identity
+#> 28                                                                                                                                                    identity
+#> 29                                                                                                                                                    identity
+#> 30                                                                                                                                                    identity
+#> 31                                                                                                                                                    identity
+#> 32                                                                                                                                                    identity
+#>    qes2022 qes1998
+#> 1   strict    <NA>
+#> 2   strict    <NA>
+#> 3   strict  strict
+#> 4   strict  strict
+#> 5  relaxed relaxed
+#> 6  relaxed    <NA>
+#> 7  relaxed relaxed
+#> 8  relaxed relaxed
+#> 9  relaxed relaxed
+#> 10 relaxed    <NA>
+#> 11 relaxed    <NA>
+#> 12 relaxed relaxed
+#> 13    <NA>    <NA>
+#> 14    <NA>    <NA>
+#> 15  strict    <NA>
+#> 16    <NA>    <NA>
+#> 17  strict  strict
+#> 18  strict  strict
+#> 19  strict  strict
+#> 20  strict relaxed
+#> 21  strict    <NA>
+#> 22  strict    <NA>
+#> 23  strict    <NA>
+#> 24  strict    <NA>
+#> 25  strict  strict
+#> 26  strict  strict
+#> 27  strict    <NA>
+#> 28  strict relaxed
+#> 29  strict    <NA>
+#> 30  strict    <NA>
+#> 31  strict    <NA>
+#> 32  strict    <NA>
+qes_spec("relaxed_maps", targets = "education")[, c("study", "source_var", "recode", "status")]
+#>                 study source_var
+#> 1             qes2022    cps_edu
+#> 2             qes2018      qscol
+#> 3             qes2014      QSCOL
+#> 4             qes2012       scol
+#> 5       qes2018_panel         d3
+#> 6       qes2007_panel       scol
+#> 7             qes2007        q77
+#> 8             qes2008        q77
+#> 9             qes1998       scol
+#> 10 qes_crop_2007_2010       scol
+#>                                                                                                                                                        recode
+#> 1    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)
+#> 2                         1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)
+#> 3                           1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)
+#> 4     1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don't know (NA); 99 = Refused (NA)
+#> 5  1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don't know or refused (one code) (NA)
+#> 6                                   1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)
+#> 7    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)
+#> 8    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)
+#> 9                                                               1-3 = Source category straddles target levels (NA); 9 = Don't know or refused (one code) (NA)
+#> 10                                  1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)
+#>    status
+#> 1  stable
+#> 2  stable
+#> 3  stable
+#> 4  stable
+#> 5  stable
+#> 6  stable
+#> 7  stable
+#> 8  stable
+#> 9  stable
+#> 10 stable
+
 # the checked spec itself
 s <- qes_spec("spec")
 s
-#> qesR harmonization spec 4.3.1 (2026-09-30), content hash cd62e566cd051bde5b236c3511555c91
+#> qesR harmonization spec 4.5.0 (2026-10-01), content hash 42816ecc38259a8deb01cd590d1c6a2b
 #>   targets: 50
-#>   levels: 115
+#>   levels: 166
 #>   crosswalk: 236
-#>   valuemaps: 1175
+#>   valuemaps: 1734
 #>   waves: 39
 #>   weights: 26
-#>   changes: 14
+#>   changes: 16
 #>   gates: 3209
 #>   expected: 2914
 #>   hashes: 269
 #>   legacy: 102
 #>   pooled: 4
 #>   pooled_members: 14
+#>   relaxed: 32
+#>   relaxed_maps: 60
+#>   rx_expected: 2606
+#>   rx_hashes: 352
 #> Check: 0 error(s), 0 warning(s), 0 note(s).
 ```

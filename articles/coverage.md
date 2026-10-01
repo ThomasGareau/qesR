@@ -66,6 +66,20 @@ in `qes1998`).
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
 reads them.
 
+## Relaxed columns of qes_decon()
+
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+returns one column per concept for every study, relaxed where the
+questions differ ([One file for every
+study](https://thomasgareau.github.io/qesR/articles/decon.md)). The grid
+says where each study’s values come from: *strict* where the column is
+built from a target or a pooled variable of the grid above, *relaxed*
+where a relaxed mapping of the study’s own question gives them. Relaxed
+columns carry no grade, and a mapping leaves a study’s column missing
+where its categories straddle the column’s.
+
+[TABLE]
+
 ## The same grid in R
 
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)

@@ -59,6 +59,13 @@ review). A row that nobody has reviewed yet is never read by
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md),
 even for their columns' targets: the legacy columns stay as they were.
 
+For one data frame of every study with plain, cesR-style columns,
+harmonized in a relaxed way (one concept per column even where the
+questions differ, in coarse common categories), see
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md).
+It is a different dataset: `get_decon()` keeps the 19 columns of qesR
+0.4.4, one study at a time, and its values do not change.
+
 `get_decon()` returns the data and assigns nothing unless
 `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
 call in a session that leaves `assign_global` unset prints a one-time
@@ -119,10 +126,15 @@ nombres, et texte pour `income` et `religion` (le montant du revenu de
 participation et le vote déclarés après l'élection, sauf pour `qes2022`,
 où ce sont la probabilité de voter et l'intention de vote pendant la
 campagne, comme dans qesR 0.4.4 ; `attr(, "timing")` l'indique (`"post"`
-ou `"pre"`).
+ou `"pre"`). Pour un seul tableau de toutes les études, aux colonnes
+simples à la manière de cesR et harmonisées de façon souple, voir
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+; `get_decon()` garde ses 19 colonnes et ses valeurs.
 
 ## See also
 
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+for every study in one data frame, harmonized in a relaxed way;
 [qesR-deprecated](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
 for the legacy functions and their replacements.
 

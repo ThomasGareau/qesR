@@ -122,6 +122,7 @@ qes_studies()                         # les études, sans réseau
 qes2018 <- get_qes("qes2018")         # une étude, à partir de son fichier original
 qes_search("souverain|sovereign")     # une question, dans toutes les études
 h <- qes_harmonize(targets = "vote_choice")  # le vote, dans six études
+d <- qes_decon(lang = "fr")           # toutes les études en un seul tableau, souple
 ```
 
 ## Citer qesR
@@ -156,6 +157,8 @@ Le [catalogue des
 études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md),
 [comment fonctionne
 l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md),
+[un seul fichier pour toutes les études avec
+`qes_decon()`](https://thomasgareau.github.io/qesR/articles/fr-decon.md),
 la [couverture de chaque
 étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md),
 la [référence des

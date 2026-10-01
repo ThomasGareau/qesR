@@ -363,12 +363,12 @@ cites qesR and the datasets you used (see
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-10-01 01:18:54 UTC (local_demo). Read with haven::read_sav(user_na =
+#> 2026-10-01 06:30:36 UTC (local_demo). Read with haven::read_sav(user_na =
 #> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

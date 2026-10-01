@@ -20,7 +20,7 @@ library(qesR)
 ``` r
 
 qes_cite()
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"
 ```
 
 `citation("qesR")` gives the same reference.
@@ -58,7 +58,7 @@ to cite exactly the datasets in an analysis:
 ``` r
 
 qes_cite(c("qes2018", "qes2022"))
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                                                                                                                                        
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"                                                                                                                                        
 #> [2] "Bélanger, Éric; Nadeau, Richard; Mahéo, Valérie-Anne; Daoust, Jean-François, 2023, \"Étude électorale québécoise 2018\", https://doi.org/10.5683/SP3/NWTGWS, Borealis, V1, UNF:6:luhys2QSLNTONPOXO4LYpg=="                                                                            
 #> [3] "Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, \"2022 Quebec Election Study\", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence: CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]"
 ```
@@ -78,7 +78,7 @@ cat(qes_cite("qes2018", style = "bibtex"), sep = "\n\n")
 #>   title = {{qesR}: Access Quebec Election Study Datasets},
 #>   author = {Thomas Gareau-Paquette},
 #>   year = {2026},
-#>   note = {R package version 0.8.0},
+#>   note = {R package version 0.9.0},
 #>   url = {https://github.com/ThomasGareau/qesR},
 #> }
 #> 

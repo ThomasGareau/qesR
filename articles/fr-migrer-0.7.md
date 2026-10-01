@@ -126,7 +126,7 @@ viennent :
 qes_provenance(qes_demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-10-01 01:16:52 UTC (local_demo). Lu avec
+#> Obtenu le 2026-10-01 06:28:55 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
 #> qesR 2.4.1.
 #> 
@@ -356,9 +356,9 @@ Consignez ce à partir de quoi chaque résultat a été calculé, et citez-le
 
 qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.3.1 cd62e566cd051bde5b236c3511555c91        0.8.0
+#> 1        4.5.0 42816ecc38259a8deb01cd590d1c6a2b        0.9.0
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.8.0, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.0, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

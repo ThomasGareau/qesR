@@ -30,6 +30,7 @@ Les fonctions sont regroupées comme dans la référence du site web.
 | Codebooks et recherche | [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md) | Remplace par `NA` les codes « ne sait pas », « refus » et les codes manquants déclarés. |
 | Harmonisation | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | La spécification d'harmonisation : quelles études ont quelle variable harmonisée (« cible »), la comparabilité de la question de chaque étude et l'appariement de ses codes. |
 | Harmonisation | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | Un seul tableau pour plusieurs études, une colonne par cible, chaque valeur manquante avec son motif, selon les règles d'harmonisation ; vagues, pondérations et admissibilité de chaque personne. |
+| Harmonisation | [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md) | Un seul tableau de variables harmonisées de façon souple pour toutes les études, sous des noms simples à la manière de cesR (`education`, `income_cat`, `vote_choice`, `sovereignty`...) : un concept par colonne même quand les questions diffèrent, en catégories communes larges, avec la source et le recodage de chaque étude. |
 | Harmonisation | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Les données harmonisées en plan de sondage des packages survey ou srvyr, avec la pondération qui convient aux cibles. |
 | Harmonisation | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Réunit l'ADQ et la CAQ (et, au besoin, Option nationale et Québec solidaire) en une seule filiation, pour les séries chronologiques des partis québécois. |
 | Reproductibilité | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Indique de quel fichier viennent les données : DOI, version, fichier, md5, date ; pour les données harmonisées, aussi la ligne de la spécification et le niveau de chaque cellule. |
@@ -45,6 +46,9 @@ l'applique et
 en fait un plan de sondage ; la référence générée à partir de la
 spécification est
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md).
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+en est la version souple : une colonne par concept pour chaque étude, en
+catégories communes larges et sans niveau de comparabilité.
 
 Les anciens noms de fonctions
 ([`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md),
@@ -174,7 +178,7 @@ qes_question("qes2014", "Q19", lang = "fr")
 #> 1            fr     FALSE questionnaire 352010:Q19;352009:Q19     <NA>
 demo <- get_qes("qes_demo", quiet = TRUE)
 qes_cite("qes2014", lang = "fr")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.8.0, https://github.com/ThomasGareau/qesR"               
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.9.0, https://github.com/ThomasGareau/qesR"               
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 options(old)
 ```

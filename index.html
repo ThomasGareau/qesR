@@ -81,7 +81,7 @@
 
     <a class="navbar-brand me-2" href="index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,6 +115,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
 <li><a class="dropdown-item" href="articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="articles/harmonization-reference.html">Variable reference</a></li>
     <li><a class="dropdown-item" href="articles/validation.html">Validation against official results</a></li>
@@ -195,7 +196,8 @@
 <span><span class="fu"><a href="reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span>                         <span class="co"># the studies, offline</span></span>
 <span><span class="va">qes2018</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2018"</span><span class="op">)</span>         <span class="co"># one study, from its original file</span></span>
 <span><span class="fu"><a href="reference/qes_search.html">qes_search</a></span><span class="op">(</span><span class="st">"souverain|sovereign"</span><span class="op">)</span>     <span class="co"># a question, in every study</span></span>
-<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"vote_choice"</span><span class="op">)</span>  <span class="co"># the vote, in six studies</span></span></code></pre></div>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"vote_choice"</span><span class="op">)</span>  <span class="co"># the vote, in six studies</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_decon.html">qes_decon</a></span><span class="op">(</span><span class="op">)</span>                      <span class="co"># every study in one flat file, relaxed</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="citing-qesr">Citing qesR<a class="anchor" aria-label="anchor" href="#citing-qesr"></a>
@@ -214,7 +216,7 @@
 <div class="section level2">
 <h2 id="also-on-this-site">Also on this site<a class="anchor" aria-label="anchor" href="#also-on-this-site"></a>
 </h2>
-<p>The <a href="articles/studies.html">study catalog</a>, <a href="articles/harmonization.html">how harmonization works</a>, the <a href="articles/coverage.html">coverage of each study</a>, the <a href="articles/harmonization-reference.html">variable reference</a>, the <a href="articles/validation.html">validation against official results</a>, <a href="articles/merged-dataset.html">the merged file</a> and the <a href="reference/index.html">function reference</a>. For code written with an earlier version of qesR: <a href="articles/migrating-0.7.html">upgrading</a>.</p>
+<p>The <a href="articles/studies.html">study catalog</a>, <a href="articles/harmonization.html">how harmonization works</a>, <a href="articles/decon.html">one file for every study with <code>qes_decon()</code></a>, the <a href="articles/coverage.html">coverage of each study</a>, the <a href="articles/harmonization-reference.html">variable reference</a>, the <a href="articles/validation.html">validation against official results</a>, <a href="articles/merged-dataset.html">the merged file</a> and the <a href="reference/index.html">function reference</a>. For code written with an earlier version of qesR: <a href="articles/migrating-0.7.html">upgrading</a>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

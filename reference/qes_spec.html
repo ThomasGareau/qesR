@@ -64,7 +64,7 @@ each study's question is to the target's anchor question."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,6 +92,7 @@ each study's question is to the target's anchor question."><meta property="og:im
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
@@ -131,7 +132,7 @@ each study's question is to the target's anchor question.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">qes_spec</span><span class="op">(</span></span>
-<span>  view <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"targets"</span>, <span class="st">"crosswalk"</span>, <span class="st">"spec"</span>, <span class="st">"pooled"</span><span class="op">)</span>,</span>
+<span>  view <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"targets"</span>, <span class="st">"crosswalk"</span>, <span class="st">"spec"</span>, <span class="st">"pooled"</span>, <span class="st">"relaxed"</span>, <span class="st">"relaxed_maps"</span><span class="op">)</span>,</span>
 <span>  targets <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  studies <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"row"</span>, <span class="st">"code"</span><span class="op">)</span>,</span>
@@ -148,13 +149,16 @@ each study's question is to the target's anchor question.</p>
 
 
 <dl><dt id="arg-view">view<a class="anchor" aria-label="anchor" href="#arg-view"></a></dt>
-<dd><p><code>"targets"</code>, <code>"crosswalk"</code>, <code>"spec"</code> or <code>"pooled"</code>.</p></dd>
+<dd><p><code>"targets"</code>, <code>"crosswalk"</code>, <code>"spec"</code>, <code>"pooled"</code>,
+<code>"relaxed"</code> or <code>"relaxed_maps"</code>.</p></dd>
 
 
 <dt id="arg-targets">targets<a class="anchor" aria-label="anchor" href="#arg-targets"></a></dt>
 <dd><p>Target, family or set names (views <code>"targets"</code> and
 <code>"crosswalk"</code>; the set <code>"decon"</code> holds the targets of the columns of
-<code><a href="get_decon.html">get_decon()</a></code>); <code>NULL</code> (default) is every target.</p></dd>
+<code><a href="get_decon.html">get_decon()</a></code>); pooled variables (view <code>"pooled"</code>); columns of
+<code><a href="qes_decon.html">qes_decon()</a></code> (views <code>"relaxed"</code> and <code>"relaxed_maps"</code>); <code>NULL</code>
+(default) is every one.</p></dd>
 
 
 <dt id="arg-studies">studies<a class="anchor" aria-label="anchor" href="#arg-studies"></a></dt>
@@ -218,12 +222,22 @@ whichever wave the respondent took part (the 2007 panel).</p></li>
 or the range of a numeric one), <code>type_name</code>, <code>type_label</code>, <code>member</code>,
 <code>precedence</code>, <code>default</code>, <code>transform</code>, <code>grade_cap</code>, <code>note</code>, <code>status</code>,
 <code>added_in</code>, then one column per study.</p></li>
+<li><p><code>"relaxed"</code>: a data frame with columns <code>column</code>, <code>position</code>,
+<code>label</code>, <code>type</code>, <code>levels</code>, <code>base</code>, <code>transform</code>, <code>timing</code>, <code>relaxed</code>
+(how the column was relaxed), <code>definition</code>, <code>essential</code>, <code>status</code>,
+<code>added_in</code>, then one column per study.</p></li>
+<li><p><code>"relaxed_maps"</code>: a data frame with columns <code>study</code>, <code>wave</code>,
+<code>column</code>, <code>source_var</code>, <code>rule</code>, <code>map_id</code>, <code>args</code>, <code>na_codes</code>, <code>gate</code>,
+<code>override</code>, <code>recode</code>, <code>wording</code>, <code>wording_ref</code>, <code>notes</code>, <code>evidence</code>,
+<code>status</code>, <code>reviewed_by</code>, <code>reviewed_on</code>, <code>review_note</code>, <code>added_in</code>.</p></li>
 <li><p><code>"spec"</code>: an object of class <code>qes_spec</code>: a list with the spec
 <code>version</code>, its content <code>hash</code>, <code>custom</code> (<code>TRUE</code> when it is not the
 shipped spec) and <code>tables</code> (targets, levels, crosswalk, valuemaps,
 waves, weights, changes, gates, expected, hashes, legacy: the renderer of
 <code><a href="get_qes_master.html">get_qes_master()</a></code> and <code><a href="get_decon.html">get_decon()</a></code>, pooled and pooled_members: the
-pooled variables); <code>attr(, "check")</code>
+pooled variables, relaxed and relaxed_maps: the relaxed layer of
+<code><a href="qes_decon.html">qes_decon()</a></code>, rx_expected and rx_hashes: its recorded results);
+<code>attr(, "check")</code>
 holds the problems table (<code>rule</code>, <code>severity</code>, <code>table</code>, <code>row</code>, <code>key</code>,
 <code>detail</code>).</p></li>
 </ul></div>
@@ -248,6 +262,18 @@ tried first is 1), whether it is used by default, the transform of its
 values and its grade cap, and one column per study giving the member's
 grade there (capped; <code>NA</code>: no question). <code>targets</code> selects pooled
 variables (or the set <code>"pooled"</code>).</p></li>
+<li><p><code>view = "relaxed"</code>: one row per column of <code><a href="qes_decon.html">qes_decon()</a></code>, the relaxed
+harmonization: its label, levels, base (the strict target or pooled
+variable it reuses, if any), the transform of the base's values, how it
+was relaxed, and one column per study saying where the study's values
+come from (<code>"strict"</code>: the base; <code>"relaxed"</code>: a relaxed mapping of the
+study's own question, with its status when it is not signed off yet;
+<code>NA</code>: none; a column built on another column takes that column's
+source). <code>targets</code> selects columns.</p></li>
+<li><p><code>view = "relaxed_maps"</code>: one row per relaxed mapping (study, wave and
+column): the source variable, rule, value map, gate, whether it
+replaces the base, the recode in words, the wording or the document
+that gives it, notes and review status. <code>targets</code> selects columns.</p></li>
 <li><p><code>view = "spec"</code>: the spec itself, as an object of class <code>qes_spec</code>
 (tables, version and content hash), checked by the validator and the
 data checks; this is what <code>spec =</code> of <code><a href="qes_harmonize.html">qes_harmonize()</a></code> accepts.</p></li>
@@ -279,11 +305,14 @@ L'ensemble de cibles <code>"decon"</code> réunit les cibles des colonnes de
 <code>vote_choice</code>, qui réunit le vote déclaré et les intentions de vote) :
 leurs membres, leur ordre de priorité et le niveau de chaque membre dans
 chaque étude. <code>lang = "fr"</code> donne les étiquettes, définitions et raisons en français.
+Les vues <code>"relaxed"</code> et <code>"relaxed_maps"</code> décrivent l'harmonisation
+souple de <code><a href="qes_decon.html">qes_decon()</a></code> : ses colonnes, leur base et la façon dont elles
+sont assouplies, puis l'appariement souple propre à chaque étude.
 <code><a href="../articles/fr-reference-harmonisation.html">vignette("fr-reference-harmonisation", package = "qesR")</a></code> en est la
 référence complète.</p>
     </div>
     <div class="section level2">
-    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.3.1)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
+    <h2 id="targets-in-the-shipped-spec-version-">Targets in the shipped spec (version 4.5.0)<a class="anchor" aria-label="anchor" href="#targets-in-the-shipped-spec-version-"></a></h2>
 
 
 <p>Generated from the spec by roxygen; <code>qes_spec()</code> gives the same list with each study's grade.</p><dl><dt><code>vote_prov_recall</code></dt>
@@ -457,6 +486,7 @@ référence complète.</p>
 <code><a href="../articles/harmonization-reference.html">vignette("harmonization-reference", package = "qesR")</a></code>, the reference
 generated from the spec.</p>
 <p>Other harmonization:
+<code><a href="qes_decon.html">qes_decon()</a></code>,
 <code><a href="qes_design.html">qes_design()</a></code>,
 <code><a href="qes_harmonize.html">qes_harmonize()</a></code>,
 <code><a href="qes_party_lineage.html">qes_party_lineage()</a></code></p></div>
@@ -861,23 +891,164 @@ generated from the spec.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 intention_push vote_prov_intent_push          2      &lt;NA&gt; approximate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3      intention      vote_prov_intent          3      &lt;NA&gt; approximate</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># the relaxed columns of qes_decon(), and each study's relaxed mapping</span></span></span>
+<span class="r-in"><span><span class="va">rx</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"relaxed"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rx</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"column"</span>, <span class="st">"base"</span>, <span class="st">"transform"</span>, <span class="st">"qes2022"</span>, <span class="st">"qes1998"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              column                     base</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       citizenship           target:citizen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2               yob        target:birth_year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         age_group        target:age_group3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4            gender            target:gender</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         education                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        income_cat                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          language       target:lang_mother</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       language_fr          column:language</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9      language_eng          column:language</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10         religion                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11          marital                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       employment                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13           region       target:region_cma3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14     region_admin                     &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15      born_canada       target:born_canada</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16      born_quebec       target:birthplace3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17      vote_choice       pooled:vote_choice</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18        vote_type pooled:vote_choice__type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19          turnout           pooled:turnout</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20        vote_prev    target:vote_prov_prev</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21              pid          target:pid_prov</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22               lr           target:lr_self</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23         interest      pooled:pol_interest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24      interest_01      pooled:pol_interest</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25      sovereignty       pooled:sov_support</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 sovereignty_type pooled:sov_support__type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  satis_democracy     target:satis_demo_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28 gov_satisfaction  target:gov_satisfaction</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29       econ_retro     target:econ_retro_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30         identity    target:identity_qc_ca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31    attach_quebec         target:attach_qc</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    attach_canada         target:attach_ca</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                      transform</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                                                                                                                            recode:yes=citizen,no=not_citizen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                                                                                                                                                     identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                                                                                                                                                     identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                                                                                                                                                     identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                                                                                                                                                 relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                                                                                                                                 relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                                                                                                                                                     identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                                                                                                                        recode:french=yes,english=no,other=no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                                                                                        recode:french=no,english=yes,other=no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14                                                                                                                                                relaxed_only</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                                                                                                                 recode:quebec=yes,other_canada=no,abroad=no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                                                                                                                             bands:0.35,0.75:low,medium,high</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                                                                                                                                                    identity</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    qes2022 qes1998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 relaxed    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 relaxed relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13    &lt;NA&gt;    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    &lt;NA&gt;    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16    &lt;NA&gt;    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  strict relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26  strict  strict</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28  strict relaxed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31  strict    &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32  strict    &lt;NA&gt;</span>
+<span class="r-in"><span><span class="fu">qes_spec</span><span class="op">(</span><span class="st">"relaxed_maps"</span>, targets <span class="op">=</span> <span class="st">"education"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"source_var"</span>, <span class="st">"recode"</span>, <span class="st">"status"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 study source_var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1             qes2022    cps_edu</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2             qes2018      qscol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3             qes2014      QSCOL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4             qes2012       scol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       qes2018_panel         d3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       qes2007_panel       scol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7             qes2007        q77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8             qes2008        q77</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9             qes1998       scol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 qes_crop_2007_2010       scol</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                        recode</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                           1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don't know or refused (one code) (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                                   1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don't know (NA); 99 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                                                               1-3 = Source category straddles target levels (NA); 9 = Don't know or refused (one code) (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                                  1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    status</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  stable</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 stable</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the checked spec itself</span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fu">qes_spec</span><span class="op">(</span><span class="st">"spec"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">s</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.3.1 (2026-09-30), content hash cd62e566cd051bde5b236c3511555c91</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonization spec 4.5.0 (2026-10-01), content hash 42816ecc38259a8deb01cd590d1c6a2b</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   targets: 50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   levels: 166</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   crosswalk: 236</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 1175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   valuemaps: 1734</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   waves: 39</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   weights: 26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   changes: 16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   gates: 3209</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   expected: 2914</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   hashes: 269</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   legacy: 102</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pooled: 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   pooled_members: 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed: 32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   relaxed_maps: 60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_expected: 2606</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   rx_hashes: 352</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Check: 0 error(s), 0 warning(s), 0 note(s).</span>
 </code></pre></div>
     </div>

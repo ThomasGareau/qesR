@@ -70,7 +70,7 @@ pooled variables of the spec.'><meta property="og:image" content="https://thomas
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -98,6 +98,7 @@ pooled variables of the spec.'><meta property="og:image" content="https://thomas
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
@@ -147,7 +148,10 @@ pooled variables of the spec.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Harmonized data returned by <code><a href="qes_harmonize.html">qes_harmonize()</a></code>.</p></dd>
+<dd><p>Harmonized data returned by <code><a href="qes_harmonize.html">qes_harmonize()</a></code>, or the relaxed
+data of <code><a href="qes_decon.html">qes_decon()</a></code> (its party columns are <code>vote_choice</code>, <code>vote_prev</code>
+and <code>pid</code>; relaxed columns carry no grade, so no <code>__grade</code> column is
+added).</p></dd>
 
 
 <dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
@@ -166,8 +170,9 @@ solidaire, which it joined in December 2017).</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>x</code> with, for each column <code>&lt;col&gt;</code> of <code>cols</code>, the columns
 <code>&lt;col&gt;_lineage</code> (a factor, or the ASCII code <code>"ADQ_CAQ"</code> when <code>x</code> was
-built with <code>values = "code"</code>; <code>"labelled"</code> data get codes as text) and
-<code>&lt;col&gt;_lineage__grade</code>, placed at the end.</p>
+built with <code>values = "code"</code>; <code>"labelled"</code> data get codes as text)
+and, for data of <code><a href="qes_harmonize.html">qes_harmonize()</a></code>, <code>&lt;col&gt;_lineage__grade</code>, placed at
+the end.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -189,12 +194,15 @@ Québec (CAQ), avec laquelle l'ADQ a fusionné le 21 janvier 2012, en un
 seul niveau « ADQ/CAQ ». C'est une vue pour les séries chronologiques ;
 les colonnes harmonisées gardent l'ADQ et la CAQ distinctes. Le niveau de
 comparabilité de la nouvelle colonne est <code>approximate</code> pour les lignes
-recueillies avant la fusion (<code>year</code> avant 2012).</p>
+recueillies avant la fusion (<code>year</code> avant 2012). Elle s'applique aussi
+aux données souples de <code><a href="qes_decon.html">qes_decon()</a></code> (<code>vote_choice</code>, <code>vote_prev</code>, <code>pid</code>),
+sans niveau de comparabilité.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="qes_harmonize.html">qes_harmonize()</a></code> and its <code>vote_choice</code> pooled variable.</p>
 <p>Other harmonization:
+<code><a href="qes_decon.html">qes_decon()</a></code>,
 <code><a href="qes_design.html">qes_design()</a></code>,
 <code><a href="qes_harmonize.html">qes_harmonize()</a></code>,
 <code><a href="qes_spec.html">qes_spec()</a></code></p></div>

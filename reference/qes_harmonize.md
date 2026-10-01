@@ -616,6 +616,7 @@ for the reference generated from the spec,
 for where each value came from.
 
 Other harmonization:
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md),
 [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md),
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
@@ -630,7 +631,7 @@ h <- qes_harmonize("qes_demo")
 #> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.
 #> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.
 h
-#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.3.1 (content hash cd62e566cd051bde5b236c3511555c91).
+#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.5.0 (content hash 42816ecc38259a8deb01cd590d1c6a2b).
 #> Approximate cells: qes_demo age_group3, qes_demo age_group6.
 #> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).
 #> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).

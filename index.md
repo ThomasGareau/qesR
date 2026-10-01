@@ -112,6 +112,7 @@ qes_studies()                         # the studies, offline
 qes2018 <- get_qes("qes2018")         # one study, from its original file
 qes_search("souverain|sovereign")     # a question, in every study
 h <- qes_harmonize(targets = "vote_choice")  # the vote, in six studies
+d <- qes_decon()                      # every study in one flat file, relaxed
 ```
 
 ## Citing qesR
@@ -145,6 +146,8 @@ The [study
 catalog](https://thomasgareau.github.io/qesR/articles/studies.md), [how
 harmonization
 works](https://thomasgareau.github.io/qesR/articles/harmonization.md),
+[one file for every study with
+`qes_decon()`](https://thomasgareau.github.io/qesR/articles/decon.md),
 the [coverage of each
 study](https://thomasgareau.github.io/qesR/articles/coverage.md), the
 [variable

@@ -1661,3 +1661,847 @@ cap) and the wave that asked it; a dash means the study has no question
 for the member. The last column is the member the respondent layout
 takes the study’s values from, among the default members (the long
 layout uses every wave).
+
+## Relaxed harmonization: qes_decon()
+
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+puts one concept in one column for every study, even when the wording or
+the answer options differ, with coarse common categories, under plain
+column names. It trades exactness for coverage: a relaxed column has no
+grade and does not claim that two studies asked the same question; the
+targets above keep the strict, graded versions. A column is built from a
+strict target or a pooled variable where one exists, recoded into the
+column’s categories where needed, and from relaxed mappings of the
+studies’ own questions where the strict layer has none. A relaxed
+mapping is applied once a reviewer has signed it off (status `stable`).
+
+### `citizenship`: Citizenship
+
+Whether the respondent is a Canadian citizen.
+
+Base: `target:citizen` · `recode:yes=citizen,no=not_citizen` · one value
+per respondent
+
+**How it is relaxed**: Canadian citizenship where a study recorded it:
+asked directly in 2022, and taken in the 2018 panel from the screening
+question on the right to vote in the coming Quebec election, so that
+every respondent of that panel is a citizen.
+
+**Levels**
+
+| Code | Name          | Label                  |
+|------|---------------|------------------------|
+| 1    | `citizen`     | Canadian citizen       |
+| 2    | `not_citizen` | Not a Canadian citizen |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2018_panel | `qa` (pre) | 1 = Canadian citizen; 2 = Source category straddles target levels (NA); 3 = Don’t know or refused (one code) (NA) | fills the study | OD-R12: the screening question asks whether the respondent may vote in the coming Quebec election, which requires Canadian citizenship; every respondent answered yes, so the column is constant in this study. | stable |
+
+### `yob`: Year of birth
+
+The respondent’s year of birth.
+
+Base: `target:birth_year` · `identity` · one value per respondent
+
+**How it is relaxed**: The year of birth as reported; the studies that
+asked only an age group have none (see age_group).
+
+**Valid range**: 1900-2010
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `age_group`: Age group
+
+The respondent’s age group.
+
+Base: `target:age_group3` · `identity` · one value per respondent
+
+**How it is relaxed**: Three age groups (18-34, 35-54, 55 and over),
+from the study’s own age bands or from the age at the start of
+fieldwork; respondents under 18 are missing.
+
+**Levels**
+
+| Code | Name       | Label       |
+|------|------------|-------------|
+| 1    | `a18_34`   | 18-34       |
+| 2    | `a35_54`   | 35-54       |
+| 3    | `a55_plus` | 55 and over |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `gender`: Gender
+
+The respondent’s gender.
+
+Base: `target:gender` · `identity` · one value per respondent
+
+**How it is relaxed**: Gender or sex as each study asked it: man or
+woman everywhere, and in 2022 also non-binary or another gender; the
+questions differ, the categories do not.
+
+**Levels**
+
+| Code | Name        | Label          |
+|------|-------------|----------------|
+| 1    | `man`       | Man            |
+| 2    | `woman`     | Woman          |
+| 3    | `nonbinary` | Non-binary     |
+| 4    | `other`     | Another gender |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `education`: Education
+
+The highest level of schooling the respondent completed, in four groups.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: Each study’s levels are grouped into four: no
+high school diploma, high school, college (CEGEP, technical or trade
+school) and university, including some university; the 2007 panel and
+the CROP polls asked years of schooling, so their high school group also
+holds those who left secondary school without a diploma, and their
+college group may hold some respondents with some university but no
+degree.
+
+**Levels**
+
+| Code | Name          | Label                          |
+|------|---------------|--------------------------------|
+| 1    | `no_diploma`  | No high school diploma         |
+| 2    | `high_school` | High school diploma            |
+| 3    | `college`     | College, CEGEP or trade school |
+| 4    | `university`  | University                     |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_edu` (cps) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA) | fills the study |  | stable |
+| qes2018 | `qscol` (post) | 1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA) | fills the study | Code 9 (secondary 5 with a vocational diploma, DEP) is college (OD-R10); the strict education4 puts it with secondary. | stable |
+| qes2014 | `QSCOL` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA) | fills the study |  | stable |
+| qes2012 | `scol` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Code 8 (post-secondary, not higher education; the French questionnaire’s technical course) is college; code 10 (certificate and diploma), in neither questionnaire, is university with code 9 (some higher education). | stable |
+| qes2018_panel | `d3` (pre) | 1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don’t know or refused (one code) (NA) | fills the study | Code 4 (registered apprenticeship or other trades certificate) is college (OD-R10); code 6 (university certificate below the bachelor’s) is university. | stable |
+| qes2007_panel | `scol` (any wave) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling, in bands named after a level: 7 years or less (primary) is no diploma, 8 to 12 years (secondary) is high school, 13 to 15 years (CEGEP, technical school) is college and 16 years or more is university. The high school group therefore also holds those who left secondary school without a diploma, and the college group may hold respondents with some university but no degree, whom other studies count as university. | stable |
+| qes2007 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
+| qes2008 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
+| qes1998 | `scol` (pre) | 1-3 = Source category straddles target levels (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out. | stable |
+| qes_crop_2007_2010 | `scol` (each poll) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling in CROP’s four ranges (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP or technical school; 16 or more, university): 7 or fewer is no diploma and 8 to 12 is high school, so that group also holds those who left secondary school without a diploma; grouping by years, not by highest level, can also put some university (14 or 15 years) in college. | stable |
+
+### `income_cat`: Household income (thirds)
+
+The household’s total income before taxes, in thirds of the study’s
+respondents.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: Household income in thirds of each study’s own
+respondents: income brackets are never split, so a third holds the whole
+brackets whose midpoint falls in it and is rarely exactly a third; the
+dollar limits differ from study to study.
+
+**Levels**
+
+| Code | Name     | Label              |
+|------|----------|--------------------|
+| 1    | `low`    | Low (bottom third) |
+| 2    | `middle` | Middle             |
+| 3    | `high`   | High (top third)   |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_income` (cps) | amount under 52200 = Low (bottom third); 52200 to under 95600 = Middle; 95600 or more = High (top third); -99, 0 pass to cps_income2: 1-3 = Low (bottom third); 4 = Middle; 5-8 = High (top third); -99 = No answer (item nonresponse) (NA) | fills the study | The amount (2021 income) in thirds of the 1,444 amounts given, unweighted: low under \$52,200, high \$95,600 or more. An amount of 0 or -99 (no amount) passes to the bracket question cps_income2, whose brackets go in by their midpoint against the same limits. | stable |
+| qes2018 | `q61` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$72,000 or more (2017 income). | stable |
+| qes2014 | `Q57` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$72,000 or more (2013 income). | stable |
+| qes2012 | `reven` (post) | 1-4 = Low (bottom third); 5-7 = Middle; 8, 9 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$88,000 or more (2011 income). | stable |
+| qes2018_panel | `d5` (pre) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5-7 = High (top third); 8 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$80,000 or more. | stable |
+| qes2007_panel | `revenu` (any wave) | 1, 2 = Low (bottom third); 3 = Middle; 4, 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$60,000 or more. | stable |
+| qes2007 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$70,000 or more (2006 income). | stable |
+| qes2008 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$70,000 or more (2007 income). | stable |
+| qes_crop_2007_2010 | `revenu` (each poll) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$80,000 or more; the thirds pool the 24 polls. | stable |
+
+### `language`: Mother tongue
+
+The respondent’s mother tongue: French, English or another language.
+
+Base: `target:lang_mother` · `identity` · one value per respondent
+
+**How it is relaxed**: The language first learned in childhood, in three
+groups; a respondent who reported French and another language is French,
+and English and a language other than French is English, and the 1998
+CREATEC respondents are French by the design of their sample.
+
+**Levels**
+
+| Code | Name      | Label   |
+|------|-----------|---------|
+| 1    | `french`  | French  |
+| 2    | `english` | English |
+| 3    | `other`   | Other   |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (French), cps_lang_1 (English), cps_lang_3 (Other) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = French; 2, 6 = English; 3 = Other; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
+| qes2007 | `langu` (post) | 1, 4, 7 = French; 2, 5 = English; 3, 6 = Other; 9 = Don’t know or refused (one code) (NA) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
+| qes1998 | `firme_post` (pre) | 1 = French; 2 = Source category straddles target levels (NA) | fills the study | OD-R3: the CREATEC sample (firme_post = 1) holds only respondents whose mother tongue is French (codebook of the CREATEC file); the CROP respondents were screened on another criterion and have no mother tongue. | stable |
+
+### `language_fr`: French as a mother tongue
+
+Whether French is one of the respondent’s mother tongues.
+
+Base: `column:language` · `recode:french=yes,english=no,other=no` · one
+value per respondent
+
+**How it is relaxed**: Yes when French is among the mother tongues
+reported, so a respondent with two mother tongues can be yes in both
+language_fr and language_eng.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (Yes), cps_lang_1 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = Yes; 2, 3, 6 = No; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2007 | `langu` (post) | 1, 4, 7 = Yes; 2, 3, 5, 6 = No; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+
+### `language_eng`: English as a mother tongue
+
+Whether English is one of the respondent’s mother tongues.
+
+Base: `column:language` · `recode:french=no,english=yes,other=no` · one
+value per respondent
+
+**How it is relaxed**: Yes when English is among the mother tongues
+reported, so a respondent with two mother tongues can be yes in both
+language_eng and language_fr.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_lang_1` (cps) | the first option ticked, in this order: cps_lang_1 (Yes), cps_lang_2 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2014 | `QLANG` (post) | 1, 3, 5 = No; 2, 4, 6 = Yes; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2007 | `langu` (post) | 1, 3, 4, 6 = No; 2, 5, 7 = Yes; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+
+### `religion`: Religion
+
+The respondent’s religion: Catholic, Protestant, other Christian,
+another religion or none.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: The religion the respondent belongs to, in five
+groups; the 2022 question offers a long list, where agnostic counts as
+no religion, and the other studies first ask whether the respondent
+belongs to a religion at all.
+
+**Levels**
+
+| Code | Name              | Label           |
+|------|-------------------|-----------------|
+| 1    | `catholic`        | Catholic        |
+| 2    | `protestant`      | Protestant      |
+| 3    | `other_christian` | Other Christian |
+| 4    | `other`           | Other religion  |
+| 5    | `none`            | No religion     |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `cps_religion` (cps) | 1, 2 = No religion; 3-7, 22 = Other religion; 8, 9, 13, 15-21 = Protestant; 10 = Catholic; 11, 12, 14 = Other Christian; -99 = No answer (item nonresponse) (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. Agnostic counts as none; the Orthodox churches, Jehovah’s Witnesses and Mormons are other Christian; the other Christian denominations listed are Protestant. | stable |
+| qes2018 | `q67` (post) | where q66: 2 = No religion; 9 = Refused (NA); else q67: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4, 5, 96 = Other religion; 99 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
+| qes2014 | `Q63` (post) | where Q62: 2 = No religion; 9 = Refused (NA); else Q63: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
+| qes2012 | `q103` (post) | where q102: 2 = No religion; 3 = Refused (NA); else q103: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
+
+### `marital`: Marital status
+
+The respondent’s marital status, in four groups.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: Married or living with a partner, separated or
+divorced, widowed, or never married; 2012 and 2014 asked the official
+civil status, with no common-law option, so some partners who live
+together are never married there.
+
+**Levels**
+
+| Code | Name                 | Label                            |
+|------|----------------------|----------------------------------|
+| 1    | `married`            | Married or living with a partner |
+| 2    | `separated_divorced` | Separated or divorced            |
+| 3    | `widowed`            | Widowed                          |
+| 4    | `never_married`      | Single, never married            |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `pes_married` (pes) | 1, 2 = Married or living with a partner; 3, 4 = Separated or divorced; 5 = Widowed; 6 = Single, never married; -99 = No answer (item nonresponse) (NA) | fills the study | Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
+| qes2018 | `qstat` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 98 = Refused (NA) | fills the study | Married or in a civil union (1) and common-law partner (6) are married. | stable |
+| qes2014 | `Q68` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | OD-R7: the question asks the official civil status and lists no common-law option. Civil union (6) is married. Code 6 holds 309 of the 1,501 substantive answers, far more than the share of formal civil unions in Quebec, so most respondents living common-law probably chose it; any who answered single instead are never married. | stable |
+| qes2012 | `q109` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | OD-R7: the question asks the official civil status, with no common-law option; civil partnership (6) is married. Partners who live together could answer Single or civil partnership: 360 respondents (24%) chose civil partnership, far more than the legal civil unions in Quebec, so common-law partners are split between married and never married. | stable |
+
+### `employment`: Employment
+
+The respondent’s employment status: working, unemployed, retired,
+student or other.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: The main employment status in five groups; a
+respondent who gave two statuses, such as retired and working, takes the
+one that is not work, and at home, unable to work and other statuses are
+other.
+
+**Levels**
+
+| Code | Name         | Label                               |
+|------|--------------|-------------------------------------|
+| 1    | `working`    | Working (employee or self-employed) |
+| 2    | `unemployed` | Unemployed                          |
+| 3    | `retired`    | Retired                             |
+| 4    | `student`    | Student                             |
+| 5    | `other`      | At home, unable to work or other    |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2022 | `pes_employed` (pes) | 1-3 = Working (employee or self-employed); 4, 11 = Retired; 5 = Unemployed; 6, 9 = Student; 7, 8, 10, 12 = At home, unable to work or other; -99 = No answer (item nonresponse) (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
+| qes2018 | `qoccup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
+| qes2014 | `Q58` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
+| qes2012 | `occup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
+| qes2018_panel | `d4` (pre) | 1-3 = Working (employee or self-employed); 4 = Unemployed; 5 = Student; 6 = Retired; 7, 8 = At home, unable to work or other; 9 = Don’t know or refused (one code) (NA) | fills the study | Full time, part time and self-employed are working; outside the labour market (at home) and other are other. The item was asked of the 850 web respondents only: the file codes all 400 telephone respondents (method 1-2) as 9 (don’t know), so 400 of the 406 missing values are not asked, not real don’t-know answers (6 web respondents chose 9). | stable |
+| qes2007_panel | `occup` (any wave) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | stable |
+| qes2007 | `q79` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
+| qes2008 | `q79` (post) | 1, 2 = Working (employee or self-employed); 3 = Retired; 4 = Unemployed; 5 = Student; 6, 7, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | One status per respondent (the 2008 questionnaire has no two-status codes): self-employed and working for pay are working; at home, disabled and other (specify) are other. | stable |
+| qes1998 | `occup` (pre) | 1-3 = Source category straddles target levels (NA) | fills the study | OD-R2: the pooled file has full time, part time and not working; not working joins the unemployed, the retired, students and those at home, so the study is left out. | stable |
+| qes_crop_2007_2010 | `Occup` (each poll) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | stable |
+
+### `region`: Region
+
+Where the respondent lives: Montreal CMA, Quebec CMA or the rest of
+Quebec.
+
+Base: `target:region_cma3` · `identity` · one value per respondent
+
+**How it is relaxed**: The Montreal census metropolitan area, the Quebec
+City census metropolitan area or the rest of Quebec, from each study’s
+region or sub-region variable, with the boundaries each study used.
+
+**Levels**
+
+| Code | Name         | Label          |
+|------|--------------|----------------|
+| 1    | `mtl_cma`    | Montreal CMA   |
+| 2    | `quebec_cma` | Quebec CMA     |
+| 3    | `rest`       | Rest of Quebec |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2007_panel | `reg2` (any wave) | 1-3, 5-11, 17-19, 21, 22 = Rest of Quebec; 4, 20 = Quebec CMA; 12-16 = Montreal CMA | fills the study | Sub-regions: the five parts of the Montreal CMA (in Lanaudière, Laurentides, Laval, Montérégie and Montréal) are the Montreal CMA, and the parts of the Quebec CMA in Capitale-Nationale and Chaudière-Appalaches are the Quebec CMA. | stable |
+
+### `region_admin`: Administrative region
+
+The administrative region where the respondent lives.
+
+Base: relaxed mappings only · `relaxed_only` · one value per respondent
+
+**How it is relaxed**: The 17 administrative regions of Quebec, where a
+study recorded them or sub-regions that fit within them; the sub-regions
+of the 2007 study and the 2007 panel that split a region are joined.
+
+**Levels**
+
+| Code | Name                      | Label                         |
+|------|---------------------------|-------------------------------|
+| 1    | `bas_saint_laurent`       | Bas-Saint-Laurent             |
+| 2    | `saguenay_lac_saint_jean` | Saguenay–Lac-Saint-Jean       |
+| 3    | `capitale_nationale`      | Capitale-Nationale            |
+| 4    | `mauricie`                | Mauricie                      |
+| 5    | `estrie`                  | Estrie                        |
+| 6    | `montreal`                | Montréal                      |
+| 7    | `outaouais`               | Outaouais                     |
+| 8    | `abitibi_temiscamingue`   | Abitibi-Témiscamingue         |
+| 9    | `cote_nord`               | Côte-Nord                     |
+| 10   | `nord_du_quebec`          | Nord-du-Québec                |
+| 11   | `gaspesie_iles`           | Gaspésie–Îles-de-la-Madeleine |
+| 12   | `chaudiere_appalaches`    | Chaudière-Appalaches          |
+| 13   | `laval`                   | Laval                         |
+| 14   | `lanaudiere`              | Lanaudière                    |
+| 15   | `laurentides`             | Laurentides                   |
+| 16   | `monteregie`              | Montérégie                    |
+| 17   | `centre_du_quebec`        | Centre-du-Québec              |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2018 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
+| qes2014 | `QREGION` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
+| qes2012 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
+| qes2007_panel | `reg2` (any wave) | 1 = Abitibi-Témiscamingue; 2 = Bas-Saint-Laurent; 3, 4 = Chaudière-Appalaches; 5 = Côte-Nord; 6 = Estrie; 7 = Gaspésie–Îles-de-la-Madeleine; 8, 12 = Lanaudière; 9, 13 = Laurentides; 10 = Mauricie; 11, 15 = Montérégie; 14 = Laval; 16 = Montréal; 17 = Nord-du-Québec; 18 = Outaouais; 19, 20 = Capitale-Nationale; 21 = Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined. | stable |
+| qes2007 | `nomx` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3, 33 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 11 = Gaspésie–Îles-de-la-Madeleine; 12, 32 = Chaudière-Appalaches; 13 = Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie; 17 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined; Nord-du-Québec has no code. | stable |
+
+### `born_canada`: Born in Canada
+
+Whether the respondent was born in Canada.
+
+Base: `target:born_canada` · `identity` · one value per respondent
+
+**How it is relaxed**: Born in Canada or not, as each study asked it:
+from the birthplace (Quebec, elsewhere in Canada or abroad), or asked
+directly in 2022.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `born_quebec`: Born in Quebec
+
+Whether the respondent was born in Quebec.
+
+Base: `target:birthplace3` ·
+`recode:quebec=yes,other_canada=no,abroad=no` · one value per respondent
+
+**How it is relaxed**: Born in Quebec or not, from the birthplace
+question (Quebec, elsewhere in Canada or abroad); 2022 asked only
+whether the respondent was born in Canada, so it is missing there.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `vote_choice`: Provincial vote choice
+
+The party of the respondent’s vote in the Quebec general election of the
+study.
+
+Base: `pooled:vote_choice` · `identity` · on the wave that asked it
+
+**How it is relaxed**: The reported vote where a study asked it, else
+the vote intention with the undecided pushed toward the party they lean
+to, else the first intention question (the pooled vote_choice);
+vote_type says which, and the parties are those each study offered.
+
+**Levels**
+
+| Code | Name       | Label                               |
+|------|------------|-------------------------------------|
+| 1    | `PLQ`      | PLQ                                 |
+| 2    | `PQ`       | PQ                                  |
+| 3    | `CAQ`      | CAQ                                 |
+| 4    | `QS`       | QS                                  |
+| 5    | `PVQ`      | PVQ                                 |
+| 6    | `PCQ`      | PCQ                                 |
+| 7    | `ON`       | ON                                  |
+| 8    | `ADQ`      | ADQ                                 |
+| 90   | `other`    | Other party                         |
+| 95   | `no_party` | Would not vote / none / would spoil |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `vote_type`: Question of the vote choice
+
+The question of vote_choice on the row.
+
+Base: `pooled:vote_choice__type` · `identity` · on the wave that asked
+it
+
+**How it is relaxed**: Which question vote_choice comes from on each
+row: the reported vote, the pushed intention or the first intention
+question.
+
+**Levels**
+
+| Code | Name             | Label                              |
+|------|------------------|------------------------------------|
+| 1    | `recall`         | Reported vote (after the election) |
+| 2    | `intention_push` | Vote intention (undecided pushed)  |
+| 3    | `intention`      | Vote intention (first question)    |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `turnout`: Turnout (reported)
+
+Whether the respondent voted in the Quebec general election of the
+study.
+
+Base: `pooled:turnout` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Whether the respondent says they voted in the
+Quebec general election of the study, asked after it; the wordings and
+answer options differ, some offering several ways of not voting.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `vote_prev`: Vote at the previous provincial election
+
+The party the respondent voted for at the previous Quebec general
+election.
+
+Base: `target:vote_prov_prev` · `identity` · on the wave that asked it
+
+**How it is relaxed**: The party of the reported vote at the Quebec
+general election before the study; those who did not vote are missing,
+the sources name the election recalled, and the 1998 question names only
+the PLQ and the PQ.
+
+**Levels**
+
+| Code | Name    | Label       |
+|------|---------|-------------|
+| 1    | `PLQ`   | PLQ         |
+| 2    | `PQ`    | PQ          |
+| 3    | `CAQ`   | CAQ         |
+| 4    | `QS`    | QS          |
+| 5    | `PVQ`   | PVQ         |
+| 6    | `PCQ`   | PCQ         |
+| 7    | `ON`    | ON          |
+| 8    | `ADQ`   | ADQ         |
+| 90   | `other` | Other party |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes2007_panel | `voteprec` (pre) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = Other party; 6 = Did not vote (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | The election of April 2003 (QC2003); asked in the second pre-election poll only, so the other respondents are system missing. | stable |
+| qes1998 | `vote94` (pre) | 1 = PLQ; 2 = PQ; 3 = Did not vote (NA); 4 = Don’t know or refused (one code) (NA); 9 = Source category straddles target levels (NA) | fills the study | The election of 1994 (QC1994). The pooled file names only the PLQ and the PQ; the unlabelled code 9 holds the other parties (the ADQ among them) and unknown answers, so 1994 ADQ voters are missing. | stable |
+| qes_crop_2007_2010 | `QP4` (each poll) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = QS; 5 = PVQ; 6 = Other party; 7 = Did not vote (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | The last Quebec election before each poll: QC2007 for the polls of June 2007 to November 2008, QC2008 from January 2009. The original question (QP4); code 7 joins not voted and spoiled. | stable |
+
+### `pid`: Provincial party identification
+
+The Quebec party the respondent identifies with.
+
+Base: `target:pid_prov` · `identity` · on the wave that asked it
+
+**How it is relaxed**: The Quebec party the respondent identifies with,
+or none, as each study asked it; the parties offered differ from study
+to study.
+
+**Levels**
+
+| Code | Name    | Label         |
+|------|---------|---------------|
+| 1    | `PLQ`   | PLQ           |
+| 2    | `PQ`    | PQ            |
+| 3    | `CAQ`   | CAQ           |
+| 4    | `QS`    | QS            |
+| 5    | `PVQ`   | PVQ           |
+| 6    | `PCQ`   | PCQ           |
+| 7    | `ON`    | ON            |
+| 8    | `ADQ`   | ADQ           |
+| 90   | `other` | Other party   |
+| 97   | `none`  | None of these |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `lr`: Left-right self-placement (0-10)
+
+The respondent’s position on a left-right scale.
+
+Base: `target:lr_self` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Self-placement on a left-right scale from 0
+(left) to 10 (right); a scale of another length would be rescaled to
+0-10, and every study that asked one used 0 to 10.
+
+**Valid range**: 0-10
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `interest`: Interest in politics
+
+How interested the respondent is in politics.
+
+Base: `pooled:pol_interest` · `bands:0.35,0.75:low,medium,high` · on the
+wave that asked it
+
+**How it is relaxed**: Interest on 0 to 1 (interest_01) in three bands,
+low below 0.35 and high from 0.75; the 4-point and 0-10 questions do not
+line up, and the 2008 study and the 2007 panel asked interest in the
+election or the campaign, not in politics.
+
+**Levels**
+
+| Code | Name     | Label  |
+|------|----------|--------|
+| 1    | `low`    | Low    |
+| 2    | `medium` | Medium |
+| 3    | `high`   | High   |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `interest_01`: Interest in politics (0-1)
+
+How interested the respondent is in politics, on 0 to 1.
+
+Base: `pooled:pol_interest` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Interest on 0 to 1 (the pooled pol_interest):
+four-point answers scored 1, 0.7, 0.3 and 0, and 0-10 answers divided by
+10.
+
+**Valid range**: 0-1
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `sovereignty`: Sovereignty referendum vote
+
+How the respondent would vote in a referendum on Quebec sovereignty.
+
+Base: `pooled:sov_support` ·
+`recode:yes=yes,no=no,would_not_vote=NA:not_mappable` · on the wave that
+asked it
+
+**How it is relaxed**: Yes or no in a referendum on Quebec sovereignty,
+whatever the question (an independent country, a sovereign country, the
+1995 question or being favourable to independence); sovereignty_type
+says which, and would not vote is missing.
+
+**Levels**
+
+| Code | Name  | Label |
+|------|-------|-------|
+| 1    | `yes` | Yes   |
+| 2    | `no`  | No    |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes_crop_2007_2010 | `intvoterefa` (each poll) | 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA); Don’t know (NA) pass to intvoterefb: 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | OD-R8: the referendum question of the CROP polls. Its label is cut off in the file and the deposited codebook gives no more. CROP’s reports give the wording for 19 of the 24 polls: whether Quebec should become a sovereign country (« devienne un pays souverain »). It is not documented for the other five; in April 2009 CROP asked both a sovereign-country and a sovereignty-partnership question, and for May 2009 the press does not say which one gave the published result. For those who did not know, the push (intvoterefb) is used. The push was also asked of those who would not vote or refused, whose first answer is kept. Would not vote is missing. | stable |
+
+### `sovereignty_type`: Question of the sovereignty vote
+
+The question of sovereignty on the row.
+
+Base: `pooled:sov_support__type` ·
+`recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour`
+· on the wave that asked it
+
+**How it is relaxed**: Which question sovereignty comes from on each
+row: an independent country, a sovereign country, the 1995 question,
+being favourable to independence, or the CROP polls’ question, whose
+full wording was not deposited.
+
+**Levels**
+
+| Code | Name                | Label                                            |
+|------|---------------------|--------------------------------------------------|
+| 1    | `independence`      | Independent country                              |
+| 2    | `sovereign_country` | Sovereign country                                |
+| 3    | `partnership_1995`  | 1995 question (sovereignty-partnership)          |
+| 4    | `favour`            | Favourable to independence                       |
+| 5    | `crop_undocumented` | CROP referendum question (wording not deposited) |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes_crop_2007_2010 | `intvoterefa` (each poll) | every respondent = CROP referendum question (wording not deposited) | fills the study | OD-R8: every CROP poll respondent; sovereignty says whether they answered. | stable |
+
+### `satis_democracy`: Satisfaction with democracy in Quebec
+
+How satisfied the respondent is with the way democracy works in Quebec.
+
+Base: `target:satis_demo_qc` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Satisfaction with the way democracy works in
+Quebec, on four points, as each study asked it.
+
+**Levels**
+
+| Code | Name         | Label                |
+|------|--------------|----------------------|
+| 1    | `very`       | Very satisfied       |
+| 2    | `fairly`     | Fairly satisfied     |
+| 3    | `not_very`   | Not very satisfied   |
+| 4    | `not_at_all` | Not at all satisfied |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `gov_satisfaction`: Satisfaction with the Quebec government
+
+How satisfied the respondent is with the Quebec government.
+
+Base: `target:gov_satisfaction` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Satisfaction with the Quebec government of the
+day, on four points; the 1998 question asks about the Bouchard
+government, in its own words.
+
+**Levels**
+
+| Code | Name         | Label                |
+|------|--------------|----------------------|
+| 1    | `very`       | Very satisfied       |
+| 2    | `fairly`     | Fairly satisfied     |
+| 3    | `not_very`   | Not very satisfied   |
+| 4    | `not_at_all` | Not at all satisfied |
+
+**Relaxed mappings**
+
+| Study | Source | Recode | Use | Notes | status |
+|----|----|----|----|----|----|
+| qes1998 | `satisf` (pre) | 1 = Very satisfied; 2 = Fairly satisfied; 3 = Not very satisfied; 4 = Not at all satisfied; 9 = Don’t know or refused (one code) (NA) | fills the study | Satisfaction with the Bouchard (PQ) government, in the pooled file’s words: very satisfied, rather satisfied, rather dissatisfied, very dissatisfied; code 9 is unlabelled and read as don’t know or refused. | stable |
+
+### `econ_retro`: Quebec’s economy over the past year
+
+The respondent’s view of Quebec’s economy over the past year.
+
+Base: `target:econ_retro_qc` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Whether Quebec’s economy got better, stayed about
+the same or got worse over the past year, as each study asked it.
+
+**Levels**
+
+| Code | Name     | Label          |
+|------|----------|----------------|
+| 1    | `better` | Better         |
+| 2    | `same`   | About the same |
+| 3    | `worse`  | Worse          |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `identity`: Québécois and Canadian identity
+
+How the respondent sees themselves, as Québécois, Canadian or both.
+
+Base: `target:identity_qc_ca` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Québécois only, Québécois first, both equally,
+Canadian first or Canadian only, from one question or from the two
+orders of a split ballot.
+
+**Levels**
+
+| Code | Name       | Label                          |
+|------|------------|--------------------------------|
+| 1    | `qc_only`  | Québécois only                 |
+| 2    | `qc_first` | Québécois first, then Canadian |
+| 3    | `equal`    | Equally Québécois and Canadian |
+| 4    | `ca_first` | Canadian first, then Québécois |
+| 5    | `ca_only`  | Canadian only                  |
+| 90   | `other`    | Other                          |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `attach_quebec`: Attachment to Quebec
+
+How attached the respondent feels to Quebec.
+
+Base: `target:attach_qc` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Attachment to Quebec on four points, as each
+study asked it.
+
+**Levels**
+
+| Code | Name         | Label               |
+|------|--------------|---------------------|
+| 1    | `very`       | Very attached       |
+| 2    | `fairly`     | Fairly attached     |
+| 3    | `not_very`   | Not very attached   |
+| 4    | `not_at_all` | Not at all attached |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.
+
+### `attach_canada`: Attachment to Canada
+
+How attached the respondent feels to Canada.
+
+Base: `target:attach_ca` · `identity` · on the wave that asked it
+
+**How it is relaxed**: Attachment to Canada on four points, as each
+study asked it.
+
+**Levels**
+
+| Code | Name         | Label               |
+|------|--------------|---------------------|
+| 1    | `very`       | Very attached       |
+| 2    | `fairly`     | Fairly attached     |
+| 3    | `not_very`   | Not very attached   |
+| 4    | `not_at_all` | Not at all attached |
+
+**Relaxed mappings**
+
+None: every study’s values come from the base.

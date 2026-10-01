@@ -69,6 +69,22 @@ sont dans `qes1998`).
 [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
 les lit.
 
+## Colonnes souples de qes_decon()
+
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+renvoie une colonne par concept pour chaque étude, assouplie lorsque les
+questions diffèrent ([Un seul fichier pour toutes les
+études](https://thomasgareau.github.io/qesR/articles/fr-decon.md)). La
+grille indique d’où viennent les valeurs de chaque étude : *stricte*
+lorsque la colonne est construite à partir d’une cible ou d’une variable
+regroupée de la grille ci-dessus, *souple* lorsqu’un appariement souple
+de la question propre à l’étude les fournit. Les colonnes souples n’ont
+pas de niveau de comparabilité, et un appariement laisse la colonne
+d’une étude manquante lorsque ses catégories chevauchent celles de la
+colonne.
+
+[TABLE]
+
 ## La même grille dans R
 
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)

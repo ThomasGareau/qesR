@@ -71,12 +71,24 @@ study.
 
 - [How harmonization
   works](https://thomasgareau.github.io/qesR/articles/harmonization.md):
+
+- [One file for every study:
+  qes_decon()](https://thomasgareau.github.io/qesR/articles/decon.md):
+
+  One data frame for the 11 harmonized studies, one column per concept
+  even where the questions differ: what qes_decon() gives, how each
+  column was relaxed, and when the strict qes_harmonize() is the better
+  tool.
+
 - [Coverage by
   study](https://thomasgareau.github.io/qesR/articles/coverage.md):
+
 - [Variable
   reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md):
+
 - [Validation against official results and the
   census](https://thomasgareau.github.io/qesR/articles/validation.md):
+
 - [The merged file
   (get_qes_master)](https://thomasgareau.github.io/qesR/articles/merged-dataset.md):
 
@@ -160,6 +172,14 @@ et des intervalles de confiance à 95 %, chacune dans une seule étude),
 
 - [Comment fonctionne
   l'harmonisation](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md):
+
+- [Un seul fichier pour toutes les études :
+  qes_decon()](https://thomasgareau.github.io/qesR/articles/fr-decon.md):
+
+  Un seul tableau pour les 11 études harmonisées, une colonne par
+  concept même lorsque les questions diffèrent : ce que donne
+  qes_decon(), comment chaque colonne a été assouplie, et quand la
+  fonction stricte qes_harmonize() est le meilleur outil.
 
 - [Couverture par
   étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md):

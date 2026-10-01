@@ -21,6 +21,7 @@ Grouped as in the reference index of the website.
 | Codebooks and search | [`qes_missing()`](https://thomasgareau.github.io/qesR/reference/qes_missing.md) | Sets "don't know", "refused" and declared missing codes to `NA`. |
 | Harmonization | [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md) | The harmonization spec: which studies have which harmonized variable ("target"), how comparable each study's question is, and how its codes map. |
 | Harmonization | [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | One data frame across studies, one column per target, every missing value with a reason, following the harmonization rules; waves, weights and eligibility of each respondent. |
+| Harmonization | [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md) | One flat data frame of relaxed harmonized variables for every study, with plain names in the style of cesR (`education`, `income_cat`, `vote_choice`, `sovereignty`...): one concept per column even where the questions differ, in coarse common categories, with each study's source and recode. |
 | Harmonization | [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md) | Harmonized data as a survey design of the survey or srvyr package, with the weight that fits the targets. |
 | Harmonization | [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md) | Joins the ADQ and the CAQ (and, optionally, Option nationale and Quebec solidaire) into one lineage, for time series of the Quebec parties. |
 | Reproducibility | [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md) | Which file the data came from: DOI, version, file, md5, date; for harmonized data, also the spec row and grade of each cell. |
@@ -36,6 +37,9 @@ applies it and
 turns the result into a survey design; the reference generated from the
 spec is
 [`vignette("harmonization-reference", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+is the relaxed version: one column per concept for every study, in
+coarse common categories and with no grade.
 
 Older function names
 ([`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md),
@@ -600,7 +604,7 @@ demo <- get_qes("qes_demo", quiet = TRUE)
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-10-01 01:14:24 UTC (local_demo). Read with haven::read_sav(user_na =
+#> 2026-10-01 06:26:12 UTC (local_demo). Read with haven::read_sav(user_na =
 #> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.

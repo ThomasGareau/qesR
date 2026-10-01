@@ -59,6 +59,9 @@ each study’s question is;
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 applies the rules, with a reason for every missing value and each
 respondent’s waves and weights;
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+gives one flat data frame of relaxed harmonized variables, one concept
+per column even where the questions differ;
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 turns the result into a survey design. See [How harmonization
 works](https://thomasgareau.github.io/qesR/articles/harmonization.md).
@@ -67,6 +70,8 @@ works](https://thomasgareau.github.io/qesR/articles/harmonization.md).
   : The harmonization spec (experimental)
 - [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
   : Harmonize variables across studies (experimental)
+- [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  : One flat data frame of relaxed harmonized variables (experimental)
 - [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
   : Harmonized data as a survey design (experimental)
 - [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md)
@@ -109,7 +114,7 @@ says what changed in their results.
 | [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` |
 | [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md) | `head(get_qes())` |
 | [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) |
-| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")` |
+| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")`, or [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md) for every study, relaxed |
 
 - [`qesR-deprecated`](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
   : Soft-deprecated qesR functions

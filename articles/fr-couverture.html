@@ -75,7 +75,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -109,6 +109,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
 <li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+    <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
     <li><a class="dropdown-item" href="../articles/validation.html">Validation against official results</a></li>
@@ -1364,6 +1365,557 @@ vague d’où vient chaque cible.</p>
 <p>Non harmonisées : <code>qes1998_crop</code>,
 <code>qes1998_createc</code> (leurs répondants sont dans
 <code>qes1998</code>). <code><a href="../reference/get_qes.html">get_qes()</a></code> les lit.</p>
+</div>
+<div class="section level2">
+<h2 id="colonnes-souples-de-qes_decon">Colonnes souples de qes_decon()<a class="anchor" aria-label="anchor" href="#colonnes-souples-de-qes_decon"></a>
+</h2>
+<p><code><a href="../reference/qes_decon.html">qes_decon()</a></code> renvoie une colonne par concept pour chaque
+étude, assouplie lorsque les questions diffèrent (<a href="fr-decon.html">Un seul fichier pour toutes les études</a>). La
+grille indique d’où viennent les valeurs de chaque étude :
+<em>stricte</em> lorsque la colonne est construite à partir d’une cible
+ou d’une variable regroupée de la grille ci-dessus, <em>souple</em>
+lorsqu’un appariement souple de la question propre à l’étude les
+fournit. Les colonnes souples n’ont pas de niveau de comparabilité, et
+un appariement laisse la colonne d’une étude manquante lorsque ses
+catégories chevauchent celles de la colonne.</p>
+<table class="table">
+<colgroup>
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+<col width="8%">
+</colgroup>
+<thead><tr class="header">
+<th>Colonne</th>
+<th>qes2022</th>
+<th>qes2018</th>
+<th>qes2018_panel</th>
+<th>qes2014</th>
+<th>qes2012</th>
+<th>qes2012_panel</th>
+<th>qes_crop_2007_2010</th>
+<th>qes2008</th>
+<th>qes2007</th>
+<th>qes2007_panel</th>
+<th>qes1998</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-citizenship"><code>citizenship</code></a><br>Citoyenneté</td>
+<td>stricte</td>
+<td>—</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-yob"><code>yob</code></a><br>Année
+de naissance</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-age_group"><code>age_group</code></a><br>Groupe
+d’âge</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-gender"><code>gender</code></a><br>Genre</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-education"><code>education</code></a><br>Scolarité</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-income_cat"><code>income_cat</code></a><br>Revenu
+du ménage (tiers)</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-language"><code>language</code></a><br>Langue
+maternelle</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>souple</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-language_fr"><code>language_fr</code></a><br>Français,
+langue maternelle</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>souple</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-language_eng"><code>language_eng</code></a><br>Anglais,
+langue maternelle</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>souple</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-religion"><code>religion</code></a><br>Religion</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-marital"><code>marital</code></a><br>État
+matrimonial</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-employment"><code>employment</code></a><br>Occupation</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+<td>souple</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-region"><code>region</code></a><br>Région</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-region_admin"><code>region_admin</code></a><br>Région
+administrative</td>
+<td>—</td>
+<td>souple</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-born_canada"><code>born_canada</code></a><br>Né(e)
+au Canada</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-born_quebec"><code>born_quebec</code></a><br>Né(e)
+au Québec</td>
+<td>—</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-vote_choice"><code>vote_choice</code></a><br>Choix
+de vote provincial</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-vote_type"><code>vote_type</code></a><br>Question
+du choix de vote</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-turnout"><code>turnout</code></a><br>Participation
+(déclarée)</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-vote_prev"><code>vote_prev</code></a><br>Vote
+à l’élection provinciale précédente</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>souple</td>
+<td>stricte</td>
+<td>—</td>
+<td>souple</td>
+<td>souple</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-pid"><code>pid</code></a><br>Identification
+partisane provinciale</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-lr"><code>lr</code></a><br>Autopositionnement
+gauche-droite (0-10)</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-interest"><code>interest</code></a><br>Intérêt
+pour la politique</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-interest_01"><code>interest_01</code></a><br>Intérêt
+pour la politique (0-1)</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-sovereignty"><code>sovereignty</code></a><br>Vote
+référendaire sur la souveraineté</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-sovereignty_type"><code>sovereignty_type</code></a><br>Question
+du vote sur la souveraineté</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>souple</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>stricte</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-satis_democracy"><code>satis_democracy</code></a><br>Satisfaction
+envers la démocratie au Québec</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-gov_satisfaction"><code>gov_satisfaction</code></a><br>Satisfaction
+envers le gouvernement du Québec</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>souple</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-econ_retro"><code>econ_retro</code></a><br>L’économie
+du Québec depuis un an</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-identity"><code>identity</code></a><br>Identité
+québécoise et canadienne</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="odd">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-attach_quebec"><code>attach_quebec</code></a><br>Attachement
+au Québec</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr class="even">
+<td>
+<a href="fr-reference-harmonisation.html#relaxed-attach_canada"><code>attach_canada</code></a><br>Attachement
+au Canada</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>stricte</td>
+<td>stricte</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section level2">
 <h2 id="la-même-grille-dans-r">La même grille dans R<a class="anchor" aria-label="anchor" href="#la-m%C3%AAme-grille-dans-r"></a>

@@ -20,7 +20,11 @@ qes_party_lineage(x, cols = NULL, lineage = "adq_caq")
 - x:
 
   Harmonized data returned by
-  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+  or the relaxed data of
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  (its party columns are `vote_choice`, `vote_prev` and `pid`; relaxed
+  columns carry no grade, so no `__grade` column is added).
 
 - cols:
 
@@ -37,7 +41,8 @@ qes_party_lineage(x, cols = NULL, lineage = "adq_caq")
 
 `x` with, for each column `<col>` of `cols`, the columns `<col>_lineage`
 (a factor, or the ASCII code `"ADQ_CAQ"` when `x` was built with
-`values = "code"`; `"labelled"` data get codes as text) and
+`values = "code"`; `"labelled"` data get codes as text) and, for data of
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
 `<col>_lineage__grade`, placed at the end.
 
 ## Details
@@ -58,7 +63,10 @@ Québec (CAQ), avec laquelle l'ADQ a fusionné le 21 janvier 2012, en un
 seul niveau « ADQ/CAQ ». C'est une vue pour les séries chronologiques ;
 les colonnes harmonisées gardent l'ADQ et la CAQ distinctes. Le niveau
 de comparabilité de la nouvelle colonne est `approximate` pour les
-lignes recueillies avant la fusion (`year` avant 2012).
+lignes recueillies avant la fusion (`year` avant 2012). Elle s'applique
+aussi aux données souples de
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+(`vote_choice`, `vote_prev`, `pid`), sans niveau de comparabilité.
 
 ## See also
 
@@ -66,6 +74,7 @@ lignes recueillies avant la fusion (`year` avant 2012).
 and its `vote_choice` pooled variable.
 
 Other harmonization:
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md),
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md),
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
