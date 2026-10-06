@@ -29,7 +29,7 @@ lorsque les questions diffèrent ([Un seul fichier pour toutes les
 chaque étude : *stricte* lorsque la colonne est construite à partir d'une
 cible ou d'une variable regroupée de la grille ci-dessus, *souple*
 lorsqu'un appariement souple de la question propre à l'étude les fournit,
-et *souple (en révision)* lorsque cet appariement n'est pas encore
+et *souple (en attente d’approbation)* lorsque cet appariement n'est pas encore
 approuvé, si bien que `qes_decon()` laisse pour l'instant la colonne
 manquante dans cette étude. Les colonnes souples n'ont pas de niveau de comparabilité, et un
 appariement laisse la colonne d'une étude manquante lorsque ses catégories
@@ -45,7 +45,7 @@ rows <- lapply(seq_len(nrow(rx)), function(j) {
   v <- unlist(rx[j, studies])
   # a relaxed mapping not yet signed off: "relaxed (review)"
   held <- !is.na(v) & startsWith(v, "relaxed (")
-  v[held] <- paste0(word[["relaxed"]], if (fr) " (en r\u00e9vision)" else " (in review)")
+  v[held] <- paste0(word[["relaxed"]], if (fr) " (en attente d\u2019approbation)" else " (awaiting sign-off)")
   cells <- ifelse(is.na(v), "\u2014", ifelse(v %in% names(word), word[v], v))
   c(sprintf("[`%s`](%s#relaxed-%s)<br>%s", rx$column[j], ref, rx$column[j], rx$label[j]), cells)
 })
@@ -60,7 +60,7 @@ la question de cette étude :
 
 ```{r spec, eval = FALSE}
 library(qesR)
-qes_spec(lang = params$lang)
+qes_spec(lang = "fr")
 ```
 
 Un niveau compare la question d'une étude à la question d'ancrage de la

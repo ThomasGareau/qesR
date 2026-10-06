@@ -27,7 +27,7 @@ where the questions differ ([One file for every study](decon.html)). The
 grid says where each study's values come from: *strict* where the column
 is built from a target or a pooled variable of the grid above, *relaxed*
 where a relaxed mapping of the study's own question gives them, and
-*relaxed (in review)* where that mapping is not yet signed off, so that
+*relaxed (awaiting sign-off)* where that mapping is not yet signed off, so that
 `qes_decon()` leaves the column missing there for now. Relaxed columns
 carry no grade, and a mapping leaves a study's column missing where its
 categories straddle the column's.
@@ -42,7 +42,7 @@ rows <- lapply(seq_len(nrow(rx)), function(j) {
   v <- unlist(rx[j, studies])
   # a relaxed mapping not yet signed off: "relaxed (review)"
   held <- !is.na(v) & startsWith(v, "relaxed (")
-  v[held] <- paste0(word[["relaxed"]], if (fr) " (en r\u00e9vision)" else " (in review)")
+  v[held] <- paste0(word[["relaxed"]], if (fr) " (en attente d\u2019approbation)" else " (awaiting sign-off)")
   cells <- ifelse(is.na(v), "\u2014", ifelse(v %in% names(word), word[v], v))
   c(sprintf("[`%s`](%s#relaxed-%s)<br>%s", rx$column[j], ref, rx$column[j], rx$label[j]), cells)
 })
@@ -56,7 +56,7 @@ column per study, each cell the grade of that study's question:
 
 ```{r spec, eval = FALSE}
 library(qesR)
-qes_spec(lang = params$lang)
+qes_spec(lang = "en")
 ```
 
 A grade compares a study's question with the target's anchor question.

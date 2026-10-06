@@ -143,9 +143,13 @@ built by `qes_harmonize()` for all 11 studies: each column comes from the
 harmonized variables ("targets") it needs, and a code the harmonization
 rules do not map is `NA`.
 
-`qes1998`, the Durand panels and the CROP polls have no usable weight yet:
-their answers are filled, but `weight_pre` and `weight_post` are `NA` there,
-and `survey_weight` keeps each study's own weight, as in 0.4.4. The
+`qes2008` has no recommended weight (its weights are calibrated on the
+reported vote), and the weights of `qes1998`, the 2007 and 2012 Durand
+panels and the CROP polls are not validated: their answers are filled, but
+`weight_pre` and `weight_post` are `NA` there, and `survey_weight` keeps
+each study's own weight, as in 0.4.4. The
+[weights table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+describes each study's weight. The
 [merged file](https://thomasgareau.github.io/qesR/articles/merged-dataset.html) page describes every column. The
 columns that change estimates:
 
@@ -210,7 +214,7 @@ master column. The master's `ideology` and `vote_choice` become:
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "en")
 table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column")]
 ```

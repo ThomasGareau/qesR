@@ -13,7 +13,13 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+# what the page downloads (the note below)
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
+:::
 
 ```{r data, include = FALSE}
 d <- qes_decon(lang = params$lang, quiet = TRUE)
@@ -86,11 +92,11 @@ prétend que deux études ont posé la même question.
 ## Ce que contient le fichier
 
 ```{r load, eval = FALSE}
-d <- qes_decon(lang = params$lang)
+d <- qes_decon(lang = "fr")
 ```
 
-`lang = "fr"` donne les étiquettes en français (`params$lang` est la
-langue de cette page) ; les noms de colonnes ne changent pas. Les
+`lang = "fr"` donne les étiquettes en français ; les noms de colonnes ne
+changent pas. Les
 premières lignes :
 
 ```{r peek}
@@ -111,9 +117,11 @@ de 1 dans chacune, et `weight_var` en donne la variable source. Sur les
 pondération sur chaque ligne : `r and_list(qz_study_label(weighted_studies))`.
 Les autres ont `NA`. L'`r and_list(qz_study_label(no_weight))` n'a pas de
 pondération recommandée, puisque ses pondérations sont calées sur le vote
-déclaré, et les pondérations des études suivantes sont encore en
-révision : `r and_list(qz_study_label(review_weight))`.
-`attr(d, "weights")` donne le détail, vague par vague.
+déclaré, et les pondérations des études suivantes ne sont pas validées :
+`r and_list(qz_study_label(review_weight))`. `attr(d, "weights")` donne
+le détail, vague par vague, et le
+[tableau des pondérations](fr-etudes.html#ponderations) décrit la
+pondération de chaque étude.
 
 ## Les colonnes
 
@@ -319,7 +327,7 @@ fig_divide <- function(mode) {
 tab <- fd[order(fd$year, fd$edu3), ]
 tab_divide <- setNames(data.frame(
   tab$year, tab$party, tab$label, qz_cell(tab$pct, tab$lo, tab$hi, tab$n), tab$n,
-  ifelse(tab$weighted, tr("weighted", "pondéré"), tr("unweighted (no recommended weight)", "non pondéré (aucune pondération recommandée)")),
+  ifelse(tab$weighted, tr("weighted", "pondéré"), tr("unweighted: no validated weight", "non pondéré : aucune pondération validée")),
   row.names = NULL
 ), c(tr("Election", "Élection"), tr("Party", "Parti"), tr("Education", "Scolarité"),
      trs("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"), "n", tr("Weighting", "Pondération")))
@@ -334,8 +342,8 @@ qz_figure(fig_divide, "divide",
   subtitle = trs("Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals",
                  "Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_divide, height = 4.0,
-  note = trs("Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.",
-             "Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée."))
+  note = trs("Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, no validated weight (the 2008 study has no recommended weight).",
+             "Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, aucune pondération validée (l'étude de 2008 n'a pas de pondération recommandée)."))
 ```
 
 La croyance populaire ne trouve qu'un appui partiel. En 2007, les

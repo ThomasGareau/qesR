@@ -73,6 +73,78 @@ populations diffèrent ; vérifiez les deux avant de comparer des études. Les
 licences, et l'attribution que demande l'étude de 2022, sont dans [Citer
 qesR et les études](fr-citations.html).
 
+```{r codes}
+spec <- qes_spec("spec")$tables
+covered <- unique(spec$waves$study)
+covered <- studies$study[studies$study %in% covered]
+parts_1998 <- setdiff(studies$study[startsWith(studies$study, "qes1998")], "qes1998")
+validated <- unique(spec$weights$study[spec$weights$recommended %in% TRUE &
+                                       spec$weights$status == "reviewed" &
+                                       spec$weights$study %in% covered])
+```
+
+## Codes d'étude
+
+`qes_studies()` donne `r nrow(studies)` codes d'étude. `qes1998` est le
+fichier de panel qui réunit les deux sondages de 1998, qui se chargent aussi
+séparément (`r paste0("\x60", parts_1998, "\x60", collapse = " et ")`). Les
+données harmonisées de `qes_harmonize()` et de `qes_decon()` couvrent
+`r length(covered)` de ces codes : toutes les études sauf les deux sondages
+de 1998 pris séparément.
+
+Les sondages de 1998 n'ont interrogé que des francophones, CREATEC selon la
+langue maternelle et CROP selon la langue d'usage. Les fichiers n'ont pas de
+question sur la langue maternelle que qesR harmonise pour 1998 ; les
+exemples comptent donc tous les répondants de 1998 comme francophones.
+
+## Pondérations {#ponderations}
+
+Chaque vague d'une étude harmonisée a une pondération recommandée, ou
+aucune. Seule une pondération vérifiée à partir de la documentation de
+l'étude et de son fichier est utilisée : `r length(validated)` des
+`r length(covered)` études en ont une. Pour les autres, les colonnes de
+pondération de `qes_harmonize()` valent `NA`, et les exemples tracent leurs
+estimations en points creux, marqués « non pondéré : aucune pondération
+validée ». `qes_spec("spec")$tables$weights` donne toutes les pondérations
+de chaque étude, avec leur source.
+
+```{r weights}
+w <- as.data.frame(spec$weights)
+w <- w[w$study %in% covered, ]
+w$key <- paste(w$study, w$wave)
+keys <- unique(w$key)
+rows <- lapply(keys, function(k) {
+  x <- w[w$key == k, ]
+  rec <- x[x$recommended %in% TRUE, ]
+  if (nrow(rec)) {
+    status <- if (all(rec$status == "reviewed")) {
+      pick("weighted: validated, in the weight columns of `qes_harmonize()`",
+           "pondéré : validée, dans les colonnes de pondération de `qes_harmonize()`")
+    } else {
+      pick("unweighted: weight not validated (weight columns `NA`)",
+           "non pondéré : pondération non validée (colonnes de pondération à `NA`)")
+    }
+    data.frame(study = x$study[1], wave = x$wave[1], weight = paste0("`", rec$weight_var, "`", collapse = ", "),
+               status = status, calibrated = rec$calibrated_on[1])
+  } else {
+    data.frame(study = x$study[1], wave = x$wave[1], weight = pick("none recommended", "aucune recommandée"),
+               status = pick(paste0("unweighted: the file's weights (", paste0("`", x$weight_var, "`", collapse = ", "),
+                                    ") are calibrated on the reported vote"),
+                             paste0("non pondéré : les pondérations du fichier (", paste0("`", x$weight_var, "`", collapse = ", "),
+                                    ") sont calées sur le vote déclaré")),
+               calibrated = x$calibrated_on[1])
+  }
+})
+tab_w <- do.call(rbind, rows)
+tab_w$wave[tab_w$wave == "*"] <- pick("every poll", "chaque sondage")
+tab_w$study <- sprintf("[`%s`](#%s)", tab_w$study, tab_w$study)
+tab_w$calibrated <- gsub(";", "; ", tab_w$calibrated, fixed = TRUE)
+knitr::kable(tab_w, col.names = pick(
+  c("Study", "Wave", "Recommended weight", "Status", "Calibrated on (as documented)"),
+  c("Étude", "Vague", "Pondération recommandée", "Statut", "Calée sur (selon la documentation, en anglais)")
+), row.names = FALSE)
+```
+
 ## Par étude
 
 La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents téléchargent

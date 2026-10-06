@@ -155,10 +155,13 @@ fichier fusionné est produit par `qes_harmonize()` pour les 11 études :
 chaque colonne vient des variables harmonisées (« cibles ») dont elle a
 besoin, et un code que les règles d'harmonisation n'apparient pas vaut `NA`.
 
-`qes1998`, les panels Durand et les sondages CROP n'ont pas encore de
-pondération utilisable : leurs réponses sont remplies, mais `weight_pre` et
-`weight_post` y valent `NA`, et `survey_weight` garde la pondération propre
-à chaque étude, comme dans 0.4.4. La page du [fichier
+`qes2008` n'a pas de pondération recommandée (ses pondérations sont calées
+sur le vote déclaré), et les pondérations de `qes1998`, des panels Durand de
+2007 et de 2012 et des sondages CROP ne sont pas validées : leurs réponses
+sont remplies, mais `weight_pre` et `weight_post` y valent `NA`, et
+`survey_weight` garde la pondération propre à chaque étude, comme dans
+0.4.4. Le [tableau des pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+décrit la pondération de chaque étude. La page du [fichier
 fusionné](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html) décrit chaque colonne. Les colonnes qui
 changent les estimations :
 
@@ -228,7 +231,7 @@ colonne du fichier fusionné. `ideology` et `vote_choice` deviennent :
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "fr")
 table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column")]
 ```

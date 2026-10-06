@@ -10,9 +10,19 @@ params:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
+library(qesR)
+# what the page downloads (the note below), from the site's data helpers
+source("_data.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
+# the columns of the fixed layout, which ends with survey_weight
+n_fixed <- match("survey_weight", names(get_qes_master(surveys = "qes_demo", quiet = TRUE)))
 ```
 
-`get_qes_master()` stacks 11 Quebec Election Studies, from 1998 to 2022, in one data frame: one row per respondent of each study, and the same 30 columns for every study (vote choice, turnout, sovereignty, party identification, ideology, political interest and the usual demographics, with the study's code, year and identifiers). Its layout is fixed: the names, order and types of the 30 columns do not change, and columns added later come after them. Code written against it keeps working.
+::: {.qesr-download}
+**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
+:::
+
+`get_qes_master()` stacks `r dl$n` studies, from 1998 to 2022, in one data frame: one row per respondent of each study, and the same `r n_fixed` columns for every study (vote choice, turnout, sovereignty, party identification, ideology, political interest and the usual demographics, with the study's code, year and identifiers). Its layout is fixed: the names, order and types of the `r n_fixed` columns do not change, and columns added later come after them. Code written against it keeps working.
 
 ## When to use it, and when to prefer `qes_harmonize()`
 
@@ -41,7 +51,7 @@ dim(master)
 table(master$qes_code)
 ```
 
-By default, and with `surveys = "all"`, `get_qes_master()` builds all 11 studies. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in it (their respondents are already in `qes1998`); read them with `get_qes()`.
+By default, and with `surveys = "all"`, `get_qes_master()` builds all `r dl$n` studies. The 1998 firm files `qes1998_crop` and `qes1998_createc` are not in it (their respondents are already in `qes1998`); read them with `get_qes()`.
 
 ## What each column holds
 
@@ -60,7 +70,7 @@ attr(demo_master, "legacy_na_columns")[, c("column", "study", "reason", "cause")
 
 ## Weights
 
-`survey_weight` is each study's own weight, on its own scale, and is not reviewed: do not pool weighted estimates across studies with it. `weight_pre` and `weight_post` are the recommended weights of the harmonization rules, `NA` where a study's weight still needs review. Compute each estimate within one study.
+`survey_weight` is each study's own weight, on its own scale, and is not reviewed: do not pool weighted estimates across studies with it. `weight_pre` and `weight_post` are the recommended weights of the harmonization rules, `NA` where a study has no validated weight (the [weights table](studies.html#weights) describes each study's weight). Compute each estimate within one study.
 
 ## Save the merged file
 

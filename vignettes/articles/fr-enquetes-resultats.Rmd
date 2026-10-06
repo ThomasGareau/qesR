@@ -13,11 +13,22 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
 
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo)
+la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde
+sur le disque pour les sessions suivantes.
+:::
+
 ```{r harmonize, echo = FALSE}
-h <- qes_harmonize(studies = qz_studies, targets = c("vote_choice", "lang_mother", "lang_home"),
-                   missing = "reasons", quiet = TRUE)
+h <- qes_harmonize(
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010", "qes2012",
+              "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "lang_home"),
+  missing = "reasons", quiet = TRUE
+)
 ```
 
 ```{r estimates, echo = FALSE}
@@ -61,6 +72,13 @@ rb <- function(s, p) {
   x$pct[order(x$weighting != "weighted")][1]
 }
 gap <- function(s, p) rb(s, p) - ov(qz_year(s), p)
+# the weighting column of the table views: an unweighted estimate of a study
+# with a validated weight, or of a study without one
+wt_text <- function(weighting, study) {
+  ifelse(weighting == "weighted", tr("weighted", "pondéré"),
+         ifelse(study %in% recall$study[recall$weighting == "weighted"], tr("unweighted", "non pondéré"),
+                tr("unweighted: no validated weight", "non pondéré : aucune pondération validée")))
+}
 
 # the Quebec Election Studies, one per election, and the claims of the opening
 qes_series <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
@@ -165,7 +183,7 @@ o <- official[official$party %in% panel_parties & official$year >= 2007, ]
 o$party <- factor(o$party, levels = panel_parties)
 key_lab <- c(qes = tr("Quebec Election Study", "Étude électorale québécoise"),
              panel = tr("Durand panel (just right)", "Panel Durand (juste à droite)"),
-             unweighted = tr("hollow: unweighted", "creux : non pondéré"))
+             unweighted = tr("hollow: unweighted,\nno validated weight", "creux : non pondéré,\naucune pondération validée"))
 
 fig_parties <- function(mode) {
   k <- qz_tokens[[mode]]
@@ -206,7 +224,7 @@ tab_parties <- setNames(data.frame(
   qz_party_label(tab$level), tab$year, qz_study_label(tab$study),
   ifelse(tab$status == "not_listed", tr("n.l.", "n.p."), qz_cell(tab$pct, tab$lo, tab$hi, tab$n)),
   tab$n, qz_num(tab$official), ifelse(tab$status == "not_listed", "", qz_pts(tab$pct - tab$official, 1)),
-  ifelse(tab$weighting == "weighted", tr("weighted", "pondéré"), tr("unweighted", "non pondéré")),
+  wt_text(tab$weighting, tab$study),
   row.names = NULL
 ), c(tr("Party", "Parti"), tr("Election", "Élection"), tr("Study", "Étude"),
      tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"), "n",
@@ -223,8 +241,8 @@ qz_figure(fig_parties, "parties",
   subtitle = tr("Reported vote in each study (dot, 95% CI) against the official share of valid votes (line and tick), by party",
                 "Vote déclaré dans chaque étude (point, IC à 95 %) et part officielle des votes valides (ligne et trait), selon le parti"),
   alt = alt, table = tab_parties, height = 5.2,
-  note = tr("Source: Quebec Election Studies (circles, just left of each election) and Durand panels (squares, just right), reported vote among respondents who named a party; official results of Élections Québec. Dots are weighted, with 95% confidence intervals. Hollow dots: unweighted. The table view gives every party, with the unweighted estimates.",
-            "Source : Études électorales québécoises (cercles, juste à gauche de chaque élection) et panels Durand (carrés, juste à droite), vote déclaré parmi les répondants qui nomment un parti ; résultats officiels d'Élections Québec. Les points sont pondérés, avec des intervalles de confiance à 95 %. Points creux : non pondéré. La vue en tableau donne tous les partis, avec les estimations non pondérées."))
+  note = tr("Source: Quebec Election Studies (circles, just left of each election) and Durand panels (squares, just right), reported vote among respondents who named a party; official results of Élections Québec. Dots are weighted, with 95% confidence intervals. Hollow dots: unweighted, no validated weight. The table view gives every party, with the unweighted estimates.",
+            "Source : Études électorales québécoises (cercles, juste à gauche de chaque élection) et panels Durand (carrés, juste à droite), vote déclaré parmi les répondants qui nomment un parti ; résultats officiels d'Élections Québec. Les points sont pondérés, avec des intervalles de confiance à 95 %. Points creux : non pondéré, aucune pondération validée. La vue en tableau donne tous les partis, avec les estimations non pondérées."))
 ```
 
 Premièrement, les libéraux. De 2007 à 2014, le PLQ est sous-estimé dans
@@ -468,8 +486,8 @@ qz_figure(fig_dissim, "dissim",
   subtitle = tr("Index of dissimilarity between the reported and the official vote, unweighted and weighted",
                 "Indice de dissimilarité entre le vote déclaré et le vote officiel, non pondéré et pondéré"),
   alt = alt, table = tab_dissim, height = 3.2,
-  note = tr("Source: Quebec Election Studies and Durand panels, reported vote; official results of Élections Québec. Index of dissimilarity: half the sum, over parties, of the absolute difference between the reported and the official share, in points. It is the share of respondents who would have to change party for the survey to match the result (0: identical). A party a study did not list counts in its Other. The unweighted studies (2008, and the 2007 and 2012 panels) are in the table view.",
-            "Source : Études électorales québécoises et panels Durand, vote déclaré ; résultats officiels d'Élections Québec. Indice de dissimilarité : la moitié de la somme, sur les partis, de l'écart absolu entre la part déclarée et la part officielle, en points. C'est la part des répondants qui devraient changer de parti pour que l'enquête donne le résultat (0 : identiques). Un parti qu'une étude ne proposait pas compte dans ses Autres. Les études non pondérées (2008, et les panels de 2007 et 2012) sont dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies and Durand panels, reported vote; official results of Élections Québec. Index of dissimilarity: half the sum, over parties, of the absolute difference between the reported and the official share, in points. It is the share of respondents who would have to change party for the survey to match the result (0: identical). A party a study did not list counts in its Other. The studies without a validated weight (2008, and the 2007 and 2012 panels) are in the table view.",
+            "Source : Études électorales québécoises et panels Durand, vote déclaré ; résultats officiels d'Élections Québec. Indice de dissimilarité : la moitié de la somme, sur les partis, de l'écart absolu entre la part déclarée et la part officielle, en points. C'est la part des répondants qui devraient changer de parti pour que l'enquête donne le résultat (0 : identiques). Un parti qu'une étude ne proposait pas compte dans ses Autres. Les études sans pondération validée (2008, et les panels de 2007 et 2012) sont dans la vue en tableau."))
 ```
 
 Si la langue explique peu, on ne peut guère attendre davantage de la
@@ -581,8 +599,8 @@ qz_figure(fig_crop, "crop",
                         "Intentions de vote mensuelles des sondages CROP, de %s à %s : moyennes sur trois mois par-dessus les valeurs mensuelles, et résultat officiel"),
                      month_lab(min(polls$date)), month_lab(max(polls$date))),
   alt = alt, table = tab_crop, height = 4.2,
-  note = sprintf(tr("Source: CROP polls, vote intention (with the undecided asked which party they lean towards, where the poll asked it), about %s respondents a month, among those who named a party; official results of Élections Québec (diamonds). Unweighted. By design, the polls over-sampled the Québec City area (%s of respondents, about twice its share of the population), so these shares give it too much weight. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95%% confidence intervals of every poll are in the table view.",
-                     "Source : sondages CROP, intention de vote (avec relance des indécis sur le parti vers lequel ils penchent, là où le sondage l'a demandé), environ %s répondants par mois, parmi ceux qui nomment un parti ; résultats officiels d'Élections Québec (losanges). Non pondéré. Par construction, les sondages surreprésentent la région de Québec (%s des répondants, environ le double de son poids dans la population) ; ces parts lui accordent donc trop de poids. Lignes foncées : la moyenne des sondages à un mois et demi ou moins de chaque sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95 %% de chaque sondage sont dans la vue en tableau."),
+  note = sprintf(tr("Source: CROP polls, vote intention (with the undecided asked which party they lean towards, where the poll asked it), about %s respondents a month, among those who named a party; official results of Élections Québec (diamonds). Unweighted: no validated weight. By design, the polls over-sampled the Québec City area (%s of respondents, about twice its share of the population), so these shares give it too much weight. Bold lines: the mean of the polls within a month and a half of each poll; faint lines: each month. The 95%% confidence intervals of every poll are in the table view.",
+                     "Source : sondages CROP, intention de vote (avec relance des indécis sur le parti vers lequel ils penchent, là où le sondage l'a demandé), environ %s répondants par mois, parmi ceux qui nomment un parti ; résultats officiels d'Élections Québec (losanges). Non pondéré : aucune pondération validée. Par construction, les sondages surreprésentent la région de Québec (%s des répondants, environ le double de son poids dans la population) ; ces parts lui accordent donc trop de poids. Lignes foncées : la moyenne des sondages à un mois et demi ou moins de chaque sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95 %% de chaque sondage sont dans la vue en tableau."),
                  qz_num(round(stats::median(polls$n[polls$level == "PLQ"]) / 50) * 50, 0), qz_pct(quebec_cma, 0)))
 ```
 
@@ -680,13 +698,12 @@ comparaisons pour chaque étude.
   « Autres », tout comme un parti qu'une étude ne proposait pas.
 - **Résultats officiels.** La part des votes valides de chaque parti,
   selon Élections Québec.
-- **Pondérations.** La pondération postélectorale de chaque étude, qui
-  ajuste l'échantillon au recensement selon l'âge, le sexe et la langue,
-  et, d'une étude à l'autre, selon la région ou la scolarité. L'étude de
-  2008, les panels de 2007 et 2012 et les sondages CROP sont présentés
-  sans pondération (en points creux dans les graphiques). Les pondérations
-  de l'étude de 2008 sont calées sur le vote lui-même ; elles ne peuvent
-  donc pas servir à évaluer le vote déclaré.
+- **Pondérations.** La pondération postélectorale de chaque étude qui en a
+  une validée (voir le [tableau des pondérations](fr-etudes.html#ponderations)) ;
+  les autres sont présentées sans pondération, en points creux dans les
+  graphiques. Les seules pondérations de l'étude de 2008 sont calées sur le
+  vote lui-même ; elles ne pourraient donc pas servir à évaluer le vote
+  déclaré de toute façon.
 - **Langue.** Sont considérés comme francophones les répondants dont la
   langue maternelle est le français. Lorsque la langue maternelle manque ou
   est multiple, la langue parlée à la maison la remplace.

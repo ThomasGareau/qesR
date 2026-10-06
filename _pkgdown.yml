@@ -58,13 +58,25 @@ template:
     image:
       src: man/figures/logo.png
       alt: "qesR logo"
-  # The FR/EN button of the navbar (styled by .qesr-lang-switch in
-  # pkgdown/extra.css). It goes to the page's translation: the page's own
-  # "Version française" / "English version" link, which every article has
-  # and data-raw/check_vignette_pairs.R checks, so it cannot drift from the
-  # pairs. Pages without such a link use the fallback map below; any other
-  # page goes to the other language's home. data-raw/check_site.R reads
-  # this map and checks that every built page gets a target that exists.
+  # The one script of the site (styled in pkgdown/extra.css):
+  # - the FR/EN button of the navbar (.qesr-lang-switch). It goes to the
+  #   page's translation: the page's own "Version française" / "English
+  #   version" link, which every article has and
+  #   data-raw/check_vignette_pairs.R checks, so it cannot drift from the
+  #   pairs. Pages without such a link use the fallback map below; any
+  #   other page goes to the other language's home. data-raw/check_site.R
+  #   reads this map and checks that every built page gets a target that
+  #   exists.
+  # - on a French page (articles/fr-*, reference/qesR-fr.html): the
+  #   document's lang is "fr", and the navbar is translated: each English
+  #   entry of the navbar (below) gets its French text and, where it has
+  #   one, its French partner's address (map navFr, keyed by the English
+  #   address; menus without an address by their English text). An entry
+  #   missing from the map stays in English.
+  # - wide tables: each table of the page is wrapped in a div.qesr-scroll
+  #   that scrolls sideways; when the table is wider than the page, the div
+  #   is a labelled region that takes the keyboard focus, so that it can be
+  #   scrolled with the arrow keys.
   # No dollar sign in the script: pkgdown passes it through the pandoc
   # template of each article, where "$" starts a variable.
   includes:
@@ -78,10 +90,38 @@ template:
           "reference/qesR-fr.html": "reference/qesR-package.html"
         };
         var french = ["reference/qesR-fr.html"];
+        var navFr = {
+          "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+          "Examples": ["Exemples"],
+          "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+          "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+          "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+          "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+          "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+          "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+          "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+          "Studies": ["Études"],
+          "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+          "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+          "Harmonization": ["Harmonisation"],
+          "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+          "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+          "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+          "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+          "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+          "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+          "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+          "news/index.html": ["Nouveautés"]
+        };
+        var path = window.location.pathname;
+        var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+        // set at once, before the page is drawn, for screen readers and hyphenation
+        if (isFrenchPath) document.documentElement.lang = "fr";
         document.addEventListener("DOMContentLoaded", function () {
           var container = document.querySelector(".navbar .container") ||
             document.querySelector(".navbar .container-fluid");
           var brand = document.querySelector(".navbar .navbar-brand");
+          wrapTables(isFrenchPath);
           if (!container || !brand) return;
           // the site root, from the brand link (pkgdown writes it relative)
           var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -90,12 +130,16 @@ template:
           var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
           if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
           var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+          if (isFrench) {
+            document.documentElement.lang = "fr";
+            translateNavbar(root);
+          }
           // the page's own link to its translation
           var target = null;
           var links = document.querySelectorAll("main a[href]");
           for (var i = 0; i < links.length; i++) {
             var text = links[i].textContent.replace(/\s+/g, " ").trim();
-            if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+            if (text === (isFrench ? "English version" : "Version française")) {
               target = new URL(links[i].getAttribute("href"), window.location.href).href;
               break;
             }
@@ -111,25 +155,129 @@ template:
           link.textContent = isFrench ? "EN" : "FR";
           link.lang = isFrench ? "en" : "fr";
           link.hreflang = isFrench ? "en" : "fr";
-          link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-          link.title = isFrench ? "English" : "Fran\u00e7ais";
+          link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+          link.title = isFrench ? "English" : "Français";
           wrap.appendChild(link);
           // before the menu button, so that it stays visible on a phone;
           // extra.css moves it after the menus on a wide screen
           var toggler = container.querySelector(".navbar-toggler");
           if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
         });
+
+        // French text and addresses for the navbar entries of navFr
+        function translateNavbar(root) {
+          var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+          for (var i = 0; i < items.length; i++) {
+            var a = items[i];
+            var href = a.getAttribute("href");
+            var key = null;
+            if (href && href.charAt(0) !== "#") {
+              var abs = new URL(href, window.location.href).href.split("#")[0];
+              if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+            }
+            if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+            var fr = navFr[key];
+            if (!fr) continue;
+            // keep icons and the menu caret: replace the text node only
+            var done = false;
+            for (var j = 0; j < a.childNodes.length; j++) {
+              var node = a.childNodes[j];
+              if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+                node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+                done = true;
+                break;
+              }
+            }
+            if (!done) continue;
+            if (fr[1]) {
+              a.setAttribute("href", root + fr[1]);
+              a.hreflang = "fr";
+            }
+          }
+        }
+
+        // every table of the page in a scrolling region
+        function wrapTables(fr) {
+          var tables = document.querySelectorAll("main table");
+          var regions = [];
+          for (var i = 0; i < tables.length; i++) {
+            var t = tables[i];
+            var parent = t.parentNode;
+            if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+                parent.classList.contains("table-responsive")))) continue;
+            var box = document.createElement("div");
+            box.className = "qesr-scroll";
+            parent.insertBefore(box, t);
+            box.appendChild(t);
+            box.setAttribute("aria-label", tableName(t, fr));
+            regions.push(box);
+          }
+          function update() {
+            for (var k = 0; k < regions.length; k++) {
+              var r = regions[k];
+              if (r.scrollWidth > r.clientWidth + 1) {
+                r.setAttribute("role", "region");
+                r.setAttribute("tabindex", "0");
+              } else {
+                r.removeAttribute("role");
+                r.removeAttribute("tabindex");
+              }
+            }
+          }
+          update();
+          var timer = null;
+          window.addEventListener("resize", function () {
+            clearTimeout(timer);
+            timer = setTimeout(update, 150);
+          });
+          // tables in a closed <details> have no width until it opens
+          document.addEventListener("toggle", update, true);
+        }
+
+        // a table's name: its caption, else the heading or figure title above it
+        function tableName(t, fr) {
+          var cap = t.querySelector("caption");
+          if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+          var fig = t.closest ? t.closest("figure") : null;
+          var title = fig ? fig.querySelector(".qesr-title") : null;
+          if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+          var node = t;
+          while (node && node !== document.body) {
+            var prev = node.previousElementSibling;
+            while (prev) {
+              if (/^H[1-6]/.test(prev.tagName)) {
+                return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+              }
+              var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+              if (h.length) {
+                return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+              }
+              prev = prev.previousElementSibling;
+            }
+            node = node.parentNode;
+          }
+          return fr ? "Tableau" : "Table";
+        }
       })();
       </script>
 
 home:
-  title: qesR
+  title: "qesR: Quebec Election Studies in R"
   description: >
     Load the Quebec Election Studies and related Quebec election surveys in
     R, and harmonize 11 of them into one data frame, with codebooks, search
     and citations in English and French.
+  # The licence box of the sidebar, spelled as on the rest of the site
+  # (pkgdown's own box is headed "License").
   sidebar:
-    structure: [links, license, citation, authors, dev]
+    structure: [links, licence, citation, authors, dev]
+    components:
+      licence:
+        title: Licence
+        text: >
+          [MIT](LICENSE.html) for the code. The data are not part of the
+          package; each study keeps its own licence
+          ([details](articles/citations.html#licences-and-attribution)).
   links:
   - text: Français
     href: articles/fr-accueil.html
@@ -154,20 +302,20 @@ navbar:
     examples:
       text: Examples
       menu:
-      - text: "From two parties to four: realignment"
+      - text: From two parties to four
         href: articles/realignment.html
-      - text: "A generation gap that reversed: sovereignty"
+      - text: Are young Quebecers still the most pro-independence?
         href: articles/sovereignty-generations.html
-      - text: "Two dimensions: sovereignty and left-right"
+      - text: Two dimensions of competition
         href: articles/dimensions.html
-      - text: Who votes? Turnout
+      - text: Who votes?
         href: articles/turnout.html
-      - text: Changing minds during the campaign
+      - text: Are Quebec elections decided during the campaign?
         href: articles/transitions.html
-      - text: How far off are surveys?
+      - text: Do surveys miss the Liberals?
         href: articles/survey-vs-official.html
       - text: "-------"
-      - text: "Recipes: pooled variables in five minutes"
+      - text: "Recipes: the language divide in the Liberal vote"
         href: articles/recipes.html
     studies:
       text: Studies
@@ -179,7 +327,7 @@ navbar:
     harmonization:
       text: Harmonization
       menu:
-      - text: How it works
+      - text: How harmonization works
         href: articles/harmonization.html
       - text: "One file for every study: qes_decon()"
         href: articles/decon.html
@@ -268,23 +416,9 @@ reference:
   - qes_cache_info
   - qes_cache_clear
 - title: Older function names
-  desc: |
-    Earlier names of qesR functions. They keep working, with the same
-    arguments, and will not be removed; each prints a one-time notice
-    naming its replacement. [The upgrading guide](../articles/migrating-0.7.html)
-    says what changed in their results.
-
-    | Older name | Replacement |
-    |---|---|
-    | `get_codebook()`, `get_qes_codebook()` | `qes_codebook()` |
-    | `format_codebook()` | `qes_codebook(codebook, layout = )` |
-    | `get_value_labels()` | `qes_codebook(layout = "long")` |
-    | `get_question()` | `qes_question()` |
-    | `get_codebook_files()`, `get_qes_codebook_files()` | `qes_docs()` |
-    | `download_codebook()` | `qes_download(what = "docs")` |
-    | `get_preview()` | `head(get_qes())` |
-    | `get_qescodes()` | `qes_studies()` |
-    | `get_decon()` | `qes_harmonize(srvy, targets = "decon")`, or `qes_decon()` for every study, relaxed |
+  desc: >
+    Earlier names that keep working; [`?qesR-deprecated`](qesR-deprecated.html)
+    names each one's replacement.
   contents:
   - qesR-deprecated
   - get_qescodes

@@ -11,7 +11,14 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**This page downloads `r dl$n` studies** (about `r qz_num(dl$mb, 0)` MB) the
+first time it runs. `options(qesR.cache = "disk")` keeps them on disk for
+later sessions.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
@@ -282,8 +289,8 @@ qz_figure(fig_age, "age",
   subtitle = trs("Reported turnout of respondents aged 55 and over minus that of those aged 18 to 34, in points, with its 95% confidence interval",
                  "Participation déclarée des 55 ans et plus moins celle des 18 à 34 ans, en points, avec son intervalle de confiance à 95 %"),
   alt = alt, table = tab_age, height = 3.6,
-  note = sprintf(trs("Source: one Quebec Election Study per election, and the 1998 polls (francophones only). Band: 95%% confidence interval of the difference. Weighted; hollow dots (%s): unweighted. The horizontal axis is in years, with a break between 1998 and 2007. The table view also gives the turnout of each age group, and the panels led by Claire Durand at the %s elections.",
-                     "Source : une Étude électorale québécoise par élection, et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %% de la différence. Pondéré ; points creux (%s) : non pondéré. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La vue en tableau donne aussi la participation de chaque groupe d'âge, ainsi que les panels menés par Claire Durand aux élections de %s."),
+  note = sprintf(trs("Source: one Quebec Election Study per election, and the 1998 polls (francophones only). Band: 95%% confidence interval of the difference. Weighted; hollow dots (%s): unweighted, no validated weight. The horizontal axis is in years, with a break between 1998 and 2007. The table view also gives the turnout of each age group, and the panels led by Claire Durand at the %s elections.",
+                     "Source : une Étude électorale québécoise par élection, et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %% de la différence. Pondéré ; points creux (%s) : non pondéré, aucune pondération validée. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La vue en tableau donne aussi la participation de chaque groupe d'âge, ainsi que les panels menés par Claire Durand aux élections de %s."),
                  and_list(d$year[!d$weighted]), and_list(tab$year[grepl("_panel$", tab$study)])))
 ```
 
@@ -532,9 +539,11 @@ from 0 to 10.
 ```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
 ```
 
-The turnout of each age group in 2018, and the age gap at equal interest:
+The turnout of each age group in 2018, and the age gap at equal interest,
+with the survey package (the `h` of the call above):
 
 ```{r example}
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018" & !h$eligible_voter %in% FALSE, ], weight = "weight_post")
 d18 <- subset(d18, !is.na(turnout) & !is.na(age_group3))
 svyby(~I(turnout == "Yes"), ~age_group3, d18, svyciprop, vartype = "ci", method = "logit")
@@ -560,11 +569,9 @@ coef(summary(svyglm(voted ~ age + answer, d18)))[2:3, ]
   interested respondents had been in the election (0-10), and the 2007
   panel asked about interest in the campaign; the 2012 and 2018 panels
   have no comparable question.
-- **Weights.** Each study's post-election weight. The 1998 polls and the
-  2007 and 2012 panels are left unweighted, as their weights are not
-  documented well enough to be used, and are drawn hollow. The 2008
-  study's only weights are calibrated on the reported vote or on turnout,
-  so none can be used here; it is also drawn hollow.
+- **Weights.** Each study's post-election weight, where it has a validated
+  one; the others are left unweighted and drawn hollow (see the
+  [weights table](studies.html#weights)).
 - **Who was interviewed.** The 1998 polls interviewed francophones only,
   and the respondents they interviewed again after the vote are not
   representative of all francophones. The 2018 study also interviewed 16-

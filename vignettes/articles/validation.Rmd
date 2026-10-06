@@ -10,7 +10,21 @@ params:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE, fig.width = 7, fig.height = 6)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
+library(qesR)
+# numbers and labels in the page's language
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+num <- function(x, digits = 1, sign = FALSE) {
+  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
+          decimal.mark = tr(".", ","))
+}
+# what the page downloads (the note below), from the site's data helpers
+source("_data.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
+:::
 
 How close do the harmonized studies come to what is known about the
 electorate? This page compares, for every study the harmonization
@@ -34,15 +48,14 @@ library(ggplot2)
 ```
 
 ```{r run, message = FALSE}
-tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
-num <- function(x, digits = 1, sign = FALSE) {
-  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
-          decimal.mark = tr(".", ","))
-}
 # every study the specification covers, harmonized from the original files,
-# against the benchmarks that ship with qesR
+# against the benchmarks that ship with qesR (internal functions, not part
+# of qesR's interface)
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
+```
+
+```{r run-tidy, include = FALSE}
 studies <- qes_studies()
 report$year <- studies$year[match(report$study, studies$study)]
 report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
@@ -65,7 +78,7 @@ the two to agree; 0 is a perfect match. Parties that the study's question
 did not list are counted as "other party" on the official side, since that
 is the only answer their voters could give.
 
-```{r recall-table}
+```{r recall-table, echo = FALSE}
 idx <- report[report$check == "recall" & is.na(report$level), ]
 wide <- reshape(idx[, c("study", "year", "reference", "weighting", "n", "value")],
                 idvar = c("study", "year", "reference"), timevar = "weighting",
@@ -86,9 +99,10 @@ knitr::kable(
 The weighted index uses the weight the specification recommends for the
 wave that asked the question; `qes2007`, `qes2012`, `qes2014`, `qes2018`,
 `qes2022` and the 2018 panel have one. The weights of `qes2007_panel`,
-`qes2012_panel`, the CROP polls and `qes1998` are not documented well
-enough to be used, and both weights of `qes2008` are calibrated on the vote
-or on turnout, so their index is unweighted. `qes1998` interviewed francophones only, a population
+`qes2012_panel`, the CROP polls and `qes1998` are not validated, and
+`qes2008` has no recommended weight (both of its weights are calibrated on
+the vote or on turnout), so their index is unweighted; the
+[weights table](studies.html#weights) describes each study's weight. `qes1998` interviewed francophones only, a population
 the official results do not describe: it is shown for reference but not
 checked.
 
@@ -165,7 +179,7 @@ d <- function(study, level) {
 
 ## 2. Reported turnout
 
-```{r turnout-table}
+```{r turnout-table, echo = FALSE}
 to <- best(report[report$check == "turnout", ])
 to <- to[order(to$year, to$study), ]
 # qes1998 (francophones only) is shown but not checked
@@ -210,7 +224,7 @@ report one mother tongue: the census's multiple answers and the surveys'
 answers naming two languages are left out. Education is compared as
 university (any university certificate, diploma or degree) or below.
 
-```{r census-table}
+```{r census-table, echo = FALSE}
 cz <- report[report$check == "census" & is.na(report$level), ]
 vars <- c(gender = tr("Gender", "Genre"), age_group6 = tr("Age", "Âge"),
           lang_mother = tr("Mother tongue", "Langue maternelle"),
@@ -304,7 +318,7 @@ harmonized answers relate to one another the way decades of research say
 they should; a mapping error (a party code swapped, a scale reversed)
 would break them.
 
-```{r construct-table}
+```{r construct-table, echo = FALSE}
 k <- report[report$check == "construct", ]
 k <- k[order(k$year, k$study, k$variable), ]
 what <- c(interest_4pt = tr("Voters are more interested than nonvoters (mean, 1-4)",

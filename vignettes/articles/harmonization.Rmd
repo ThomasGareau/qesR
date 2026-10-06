@@ -10,7 +10,26 @@ params:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang, width = 90)
+# decimal comma on the French page (formatC() and print() follow OutDec)
+if (identical(params$lang, "fr")) options(OutDec = ",")
+library(qesR)
+# what the page downloads (the note below): the studies qes_harmonize()
+# reads by default for these targets, and the size of their data files
+dl <- local({
+  grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"))
+  st <- as.data.frame(qes_studies())
+  st <- st[st$default_member & st$study %in% names(grid), , drop = FALSE]
+  st <- st[vapply(st$study, function(s) any(!is.na(grid[[s]])), logical(1)), , drop = FALSE]
+  files <- utils::read.csv(system.file("extdata", "catalog", "files.csv", package = "qesR"),
+                           colClasses = "character")
+  ids <- paste(st$study, c(st$data_file_id, st$label_file_id))
+  list(n = nrow(st), mb = sum(as.numeric(files$bytes[paste(files$study, files$file_id) %in% ids])) / 1e6)
+})
 ```
+
+::: {.qesr-download}
+**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
+:::
 
 This page goes from `qes_harmonize()` to a weighted estimate, study by
 study, and shows what qesR records on the way: the comparability grade of
@@ -22,15 +41,13 @@ The harmonization is **experimental**: targets, grades and mappings may
 still change from one version of qesR to the next. For each study and
 harmonized variable ("target"), the rules that ship with qesR say which
 question feeds the target and how each of its codes maps to the target's
-levels; nothing is matched by name. `qes1998`, the Durand panels and the
-CROP polls have no usable weight yet, so their weight columns are `NA`;
-their answers are harmonized like the others'.
+levels; nothing is matched by name. Some studies have no validated weight,
+so their weight columns are `NA`; their answers are harmonized like the
+others' (the [weights table](studies.html#weights) gives each study's
+weight).
 
 ```{r packages, message = FALSE}
 library(qesR)
-tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
-# percentages with one decimal, in the page's style
-pct <- function(x) formatC(100 * x, format = "f", digits = 1, decimal.mark = tr(".", ","))
 ```
 
 ## Which studies have the question
@@ -42,14 +59,14 @@ the referendum question on Quebec becoming an independent country, and the
 vote reported after the election.
 
 ```{r spec}
-grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"), lang = params$lang)
+grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"), lang = "en")
 knitr::kable(grid[, c("target", "label", "qes2022", "qes2018", "qes2014", "qes2012")])
 ```
 
 The crosswalk view says which question each grade is about, and why:
 
 ```{r crosswalk}
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "en")
 knitr::kable(xw[, c("study", "wave", "source_var", "grade", "grade_reason")])
 ```
 
@@ -74,7 +91,7 @@ asked it, next to that wave's weight. `missing = "reasons"` adds a column
 
 ```{r harmonize}
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), layout = "long",
-                   missing = "reasons", lang = params$lang)
+                   missing = "reasons", lang = "en")
 table(h$study, h$wave)
 ```
 
@@ -109,7 +126,7 @@ studies that asked the anchor question itself remain:
 ```{r min-grade}
 strict <- qes_harmonize(targets = "sov_indep", layout = "long", missing = "reasons",
                         min_grade = "identical", quiet = TRUE,
-                        lang = params$lang)
+                        lang = "en")
 table(strict$study, strict$sov_indep__na)[, c("dk", "refused", "below_grade")]
 ```
 
@@ -136,8 +153,8 @@ that row's wave, so one design serves both targets.
 
 `qes_design()` hands the data to the `survey` package: each study is a
 stratum and, in the long layout, the respondent is the sampling unit.
-Estimates are computed within each study with `svyby()`; the table marks
-the levels a study did not offer instead of printing a 0.
+Estimates are computed within each study with `svyby()`; a dash marks the
+levels a study did not offer, instead of a 0.
 
 ```{r design}
 d <- qes_design(h)
@@ -148,7 +165,8 @@ cells <- qes_provenance(h, level = "cell")
 spec <- qes_spec("spec")
 
 # Weighted percentage of each level of `target` by study, with its
-# standard error; levels the study's question did not offer are marked.
+# standard error; a dash marks the levels the study's question did not offer.
+pct <- function(x) formatC(100 * x, format = "f", digits = 1)
 share_table <- function(design, target) {
   est <- survey::svyby(stats::as.formula(paste0("~", target)), ~study, design,
                        survey::svymean, na.rm = TRUE)
@@ -163,7 +181,7 @@ share_table <- function(design, target) {
   for (s in rownames(out)) {
     off <- cells$levels_not_offered[cells$study == s & cells$target == target]
     gone <- lv[names_lv %in% strsplit(off, ";", fixed = TRUE)[[1]]]
-    out[s, gone] <- tr("not offered", "non offert")
+    out[s, gone] <- "\u2014"
   }
   out
 }
@@ -173,7 +191,7 @@ knitr::kable(share_table(d, "sov_indep"))
 Each cell is a weighted percentage with its standard error in parentheses.
 No study offered "would not vote" as an answer to this question, so that
 level is a structural zero everywhere. The standard errors treat each
-weighted sample as a probability sample. The four studies are web surveys
+weighted sample as a probability sample. These studies are web surveys
 whose weights adjust to census margins, so read the standard errors as a
 rough guide only (see `?qes_design`).
 
@@ -190,7 +208,7 @@ knitr::kable(share_table(voters, "vote_prov_recall"))
 ```
 
 Keeping eligible voters does not recalibrate the weights, which target the
-population each study sampled. A party marked "not offered" was not on that
+population each study sampled. A party marked with a dash was not on that
 study's list of answers, so its share there cannot be compared with the
 other studies.
 
@@ -213,8 +231,9 @@ These counts are per respondent of the study, as in the respondent layout,
 so `n_valid` and the counts of the reasons add up to the study's
 respondents; the table in *Why values are missing* counts rows of the long
 layout instead. Every `qes2022` respondent took part in the campaign wave,
-so none is `not_in_wave` for `sov_indep`, while 301 did not take part in
-the post-election wave and are `not_in_wave` for `vote_prov_recall`.
+so none is `not_in_wave` for `sov_indep`, while
+`r cells$n_not_in_wave[cells$study == "qes2022" & cells$target == "vote_prov_recall"]`
+did not take part in the post-election wave and are `not_in_wave` for `vote_prov_recall`.
 
 qesR records which files and which version of the rules produced every
 cell: `level = "study"` names the data file of each study, and
@@ -225,7 +244,7 @@ each dataset:
 ```{r cite}
 spec_record <- qes_provenance(h, level = "spec")
 spec_record[, c("spec_version", "qesR_version")]
-cat(qes_cite(h, lang = params$lang), sep = "\n\n")
+cat(qes_cite(h, lang = "en"), sep = "\n\n")
 ```
 
 ## Five sovereignty targets, one pooled variable
@@ -235,7 +254,7 @@ with other wordings, so they feed other targets, never merged into
 `sov_indep`:
 
 ```{r sovereignty}
-sov <- qes_spec("crosswalk", targets = "sovereignty", lang = params$lang)
+sov <- qes_spec("crosswalk", targets = "sovereignty", lang = "en")
 sov <- sov[sov$rule != "none", ]
 rownames(sov) <- NULL
 knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
@@ -248,7 +267,8 @@ sovereignty with an offer of partnership to the rest of Canada (`qes2007`,
 `qes2008`, `qes2007_panel` and the CROP respondents of `qes1998`). Only
 `qes2007` and the 2018 panel have a usable weight for these questions: both
 weights of `qes2008` are calibrated on the vote or on turnout, and the
-others' weights are not documented well enough to use. The other studies'
+others' weights are not validated (see the
+[weights table](studies.html#weights)). The other studies'
 rows are left out of weighted estimates, with a message. Put the targets
 side by side and read each one against its own question.
 
@@ -261,6 +281,11 @@ approximate. `vote_choice` does the same for the vote (the reported vote,
 else the vote intention), and `pol_interest` for interest in politics:
 
 ```{r pooled}
-pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+pooled <- qes_spec("pooled", targets = "sov_support", lang = "en")
 knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```
+
+```{r reset, include = FALSE}
+# the decimal mark of the French page is for this page only
+options(OutDec = ".")
 ```

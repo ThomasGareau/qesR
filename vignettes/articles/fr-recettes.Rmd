@@ -16,7 +16,13 @@ options(qesR.lang = params$lang)
 # the site's helpers (numbers in the page's language, the chart system,
 # the official results); the recipes themselves do not need them
 source("_setup.R", encoding = "UTF-8")
+# what the page downloads (the note below)
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
+:::
 
 ```{r early, include = FALSE, ref.label = c("packages", "pooled", "recall", "loop", "composition", "pool")}
 # runs the recipes once before the text, so that the opening paragraph can
@@ -63,10 +69,10 @@ typo_table <- function(d) {
   d
 }
 # the weighting column of the table views, and the weighting key of the charts
-weight_text <- function(w) ifelse(w, tr("weighted", "pondéré"), tr("unweighted", "non pondéré"))
+weight_text <- function(w) ifelse(w, tr("weighted", "pondéré"), tr("unweighted: no validated weight", "non pondéré : aucune pondération validée"))
 weight_key <- function(mode) {
   s <- scale_weight_key(mode)
-  s$labels <- tr("hollow point: unweighted", "point vide : non pondéré")
+  s$labels <- tr("hollow point: unweighted, no validated weight", "point vide : non pondéré, aucune pondération validée")
   s
 }
 ```
@@ -212,11 +218,10 @@ plq18_pct <- setNames(100 * plq18[[2]], plq18$lang_mother)
 n_allo18 <- sum(d$variables$lang_mother %in% "Other")
 ```
 
-En 2018, `r qz_num(plq18_pct[["English"]], 0)` % des anglophones et
-`r qz_num(plq18_pct[["Other"]], 0)` % des allophones ont voté libéral,
-contre `r qz_num(plq18_pct[["French"]], 0)` % des francophones.
-L'estimation chez les allophones repose sur `r n_allo18` répondants, d'où
-son intervalle plus large. Les recettes suivantes réunissent donc
+La sortie donne le vote libéral de chaque groupe de langue maternelle en
+2018, avec son intervalle ; la [page sur le réalignement](fr-realignement.html)
+suit ces parts à chaque élection. L'estimation chez les allophones repose
+sur `r n_allo18` répondants, d'où son intervalle plus large. Les recettes suivantes réunissent donc
 anglophones et allophones sous l'étiquette de non-francophones : pris
 seuls, les échantillons d'allophones sont trop petits pour être suivis
 d'une élection à l'autre.
@@ -225,10 +230,13 @@ d'une élection à l'autre.
 
 Les études diffèrent par leur population, leur mode d'enquête, leurs
 libellés et leur pondération ; chaque estimation est donc faite à
-l'intérieur d'une étude, avant toute comparaison. L'étude de 1998 ne mesure
-pas la langue maternelle : la série commence donc en 2007. La pondération
-de l'étude de 2008 est encore en révision : ses estimations ne sont pas
-pondérées, et les figures les représentent par un point vide.
+l'intérieur d'une étude, avant toute comparaison. Les sondages de 1998
+n'ont interrogé que des francophones : ils n'ont pas de non-francophones à
+comparer, et la série commence donc en 2007. L'étude de 2008 n'a pas de
+pondération recommandée (ses pondérations sont calées sur le vote déclaré ;
+voir le [tableau des pondérations](fr-etudes.html#ponderations)) : ses
+estimations ne sont pas pondérées, et les figures les représentent par un
+point vide.
 
 ```{r loop}
 qes <- c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022")
@@ -275,22 +283,22 @@ stopifnot(gap_of(2014) > gap_of(2012), gap_of(2018) > gap_of(2012),
           other_of(2018) - other_of(last) > fr_of(2018) - fr_of(last),
           which.min(n_other) == length(qes))
 
-dl <- plq
-dl$series <- ifelse(dl$group == "francophone", "fr", "other")
-dl$x <- qz_ex(dl$year)
+dpl <- plq
+dpl$series <- ifelse(dpl$group == "francophone", "fr", "other")
+dpl$x <- qz_ex(dpl$year)
 series_lab <- c(fr = tr("Francophones", "Francophones"), other = tr("Non-francophones", "Non-francophones"))
-dl$label <- series_lab[dl$series]
-years <- sort(unique(dl$year))
+dpl$label <- series_lab[dpl$series]
+years <- sort(unique(dpl$year))
 
 qz_figure(function(mode) {
   k <- qz_tokens[[mode]]
   cols <- c(fr = k$grp[["fr"]], other = k$grp[["other"]])
-  ggplot(dl, aes(x, pct, colour = series, group = series)) +
+  ggplot(dpl, aes(x, pct, colour = series, group = series)) +
     qz_band(aes(ymin = lo, ymax = hi, fill = series), mode = mode) +
     qz_line(show.legend = FALSE) +
-    qz_dots(mode, dl, aes(x, pct), colour_aes = "series") +
+    qz_dots(mode, dpl, aes(x, pct), colour_aes = "series") +
     weight_key(mode) +
-    qz_end_labels(dl, "x", "pct", "label", "series", mode, min_gap = 7, nudge_x = 1.1) +
+    qz_end_labels(dpl, "x", "pct", "label", "series", mode, min_gap = 7, nudge_x = 1.1) +
     scale_colour_manual(values = cols, guide = "none") +
     scale_fill_manual(values = cols, guide = "none") +
     scale_x_election(years = years, add = c(0.9, 5.4)) +
@@ -323,8 +331,8 @@ qz_figure(function(mode) {
       tr("Gap [95% CI]", "Écart [IC à 95 %]"),
       tr("n, francophones", "n, francophones"), tr("n, non-francophones", "n, non-francophones"),
       tr("Weighting", "Pondération")))),
-  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother; non-francophones are respondents whose mother tongue is English or another language. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
-                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother ; les non-francophones sont les répondants de langue maternelle anglaise ou autre. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother; non-francophones are respondents whose mother tongue is English or another language. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.",
+                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother ; les non-francophones sont les répondants de langue maternelle anglaise ou autre. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré, aucune pondération validée.")),
   height = 4)
 ```
 
@@ -336,11 +344,11 @@ nettement resserré après 2012. Par rapport à 2012 (environ
 2018, puis est revenu à environ `r qz_num(gap_of(last), 0)` points en
 `r last`, une estimation dont l'intervalle (de `r qz_num(gap_last$lo, 0)` à
 `r qz_num(gap_last$hi, 0)`) inclut l'écart de 2012. Deuxièmement, les deux
-groupes n'ont pas évolué au même rythme. Chez les francophones, le vote
-libéral recule de `r qz_num(fr_of(first), 0)` % en `r first` à
-`r qz_num(fr_of(last), 0)` % en `r last`. Chez les non-francophones, il
-oscille entre `r qz_num(other_rng[1], 0)` % et `r qz_num(other_rng[2], 0)` %
-sans tendance claire, et il se situe en `r last` environ
+groupes n'ont pas évolué au même rythme : le vote libéral des francophones
+a reculé d'une élection à l'autre (la
+[page sur le réalignement](fr-realignement.html) le suit), alors que celui
+des non-francophones a oscillé sans tendance claire, et il se situe en
+`r last` environ
 `r qz_num(other_of(first) - other_of(last), 0)` points sous son niveau de
 `r first`. L'écart plus étroit de `r last` vient du côté des
 non-francophones : de 2018 à `r last`, le vote libéral a reculé de
@@ -411,8 +419,8 @@ qz_figure(function(mode) {
       tr("Non-francophones among all voters, %", "Non-francophones parmi tous les électeurs, %"),
       sprintf(tr("Non-francophones among PLQ voters, at their %s share of all voters, %%", "Non-francophones parmi les électeurs du PLQ, à leur part de %s parmi tous les électeurs, %%"), first),
       tr("Weighting", "Pondération")))),
-  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
-                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) and lang_mother. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.",
+                 "Source : qesR, variables regroupées vote_choice (vote déclaré) et lang_mother. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré, aucune pondération validée.")),
   height = 3.4)
 ```
 
@@ -516,22 +524,28 @@ lineage <- do.call(rbind, lapply(qes, function(s) {
 # (2012 on), from Élections Québec
 official <- data.frame(year = c(2007, 2008, 2012, 2014, 2018, 2022),
                        pct = c(30.8, 16.4, 27.1, 23.1, 37.4, 41.0))
-fr <- identical(params$lang, "fr")
-lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
-  c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result")
-lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré") else
-  c(`TRUE` = "weighted", `FALSE` = "unweighted")
+# the chart's labels, in English or French
+labels_of <- function(lang = "en") {
+  if (lang == "fr") {
+    list(series = c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel"),
+         weight = c(`TRUE` = "pondéré", `FALSE` = "non pondéré"), y = "% du vote déclaré")
+  } else {
+    list(series = c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result"),
+         weight = c(`TRUE` = "weighted", `FALSE` = "unweighted"), y = "% of the reported vote")
+  }
+}
+lab <- labels_of(lang = "fr")
 
 p <- ggplot(lineage, aes(year, pct)) +
   geom_line(data = official, aes(colour = "official")) +
   geom_point(data = official, aes(colour = "official"), shape = 45, size = 9) +
   geom_linerange(aes(ymin = lo, ymax = hi, colour = "lineage")) +
   geom_point(aes(colour = "lineage", fill = weighted), shape = 21, size = 3, stroke = 1) +
-  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab_series) +
-  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab_weight) +
+  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab$series) +
+  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab$weight) +
   scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022)) +
   scale_y_continuous(limits = c(0, 50)) +
-  labs(x = NULL, y = if (fr) "% du vote déclaré" else "% of the reported vote", colour = NULL, fill = NULL)
+  labs(x = NULL, y = lab$y, colour = NULL, fill = NULL)
 print(lineage, digits = 3, row.names = FALSE)
 ```
 
@@ -546,9 +560,9 @@ before_year <- max(lineage$year[lineage$year < last])
 qz_figure(function(mode) {
   k <- qz_tokens[[mode]]
   p +
-    scale_colour_manual(values = c(lineage = k$party[["CAQ"]], official = k$ink), labels = lab_series,
+    scale_colour_manual(values = c(lineage = k$party[["CAQ"]], official = k$ink), labels = lab$series,
                         guide = guide_legend(order = 1, override.aes = list(fill = c(k$party[["CAQ"]], k$ink)))) +
-    scale_fill_manual(values = c(`TRUE` = k$party[["CAQ"]], `FALSE` = k$surface), labels = lab_weight,
+    scale_fill_manual(values = c(`TRUE` = k$party[["CAQ"]], `FALSE` = k$surface), labels = lab$weight,
                       guide = guide_legend(order = 2, override.aes = list(colour = k$ink2, linetype = 0, shape = 21))) +
     theme_qes(mode)
 }, "lineage",
@@ -568,8 +582,8 @@ qz_figure(function(mode) {
                                 tr("Reported vote, % [95% CI]", "Vote déclaré, % [IC à 95 %]"),
                                 tr("Official, % of valid votes", "Officiel, % des votes valides"), tr("Difference", "Écart"),
                                 tr("Weighting", "Pondération")))),
-  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012, and the lineage column joins them for a time series. Weighted with each study's post-election weight; hollow point (2008): unweighted.",
-                 "Source : qesR, variable regroupée vote_choice (vote déclaré) avec qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a fusionné avec la CAQ en 2012, et la colonne de lignée les réunit pour une série chronologique. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré.")),
+  note = typo(tr("Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012, and the lineage column joins them for a time series. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.",
+                 "Source : qesR, variable regroupée vote_choice (vote déclaré) avec qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a fusionné avec la CAQ en 2012, et la colonne de lignée les réunit pour une série chronologique. Pondéré avec la pondération postélectorale de chaque étude ; point vide (2008) : non pondéré, aucune pondération validée.")),
   height = 3.6)
 ```
 

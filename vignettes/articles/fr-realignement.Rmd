@@ -11,12 +11,20 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo)
+la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde
+sur le disque pour les sessions suivantes.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("vote_choice", "lang_mother", "age_group3", "sov_support"),
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010",
+              "qes2012", "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "sov_support"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
 )
@@ -40,8 +48,7 @@ recall_studies <- setdiff(qz_studies, "qes_crop_2007_2010")
 shares <- do.call(rbind, lapply(recall_studies, function(s) {
   d <- qz_design(h, s, "weight_post")
   rbind(qz_tag(qz_share(d, "party"), study = s),
-        qz_tag(qz_share(d, "party", by = "language"), study = s),
-        qz_tag(qz_share(d, "party", by = "age_group3"), study = s))
+        qz_tag(qz_share(d, "party", by = "language"), study = s))
 }))
 shares$year <- qz_year(shares$study)
 shares$status <- qz_party_status(shares$study, shares$level)
@@ -91,14 +98,6 @@ yes <- do.call(rbind, lapply(recall_studies, function(s) {
   qz_tag(qz_share(d, "side"), study = s)
 }))
 yes_pct <- function(s) yes$pct[yes$study == s & yes$level == "yes"]
-# a signed gap in the prose: "+10 points", "-1 point" / "+10 points", "-1 point"
-points_txt <- function(x, digits = 0, unit = TRUE) {
-  r <- round(x, digits)
-  one <- tr(abs(r) == 1, abs(r) < 2)
-  paste0(ifelse(r > 0, "+", ifelse(r < 0, "−", "")),
-         formatC(abs(r), format = "f", digits = digits, decimal.mark = tr(".", ",")),
-         if (unit) paste0(tr(" ", " "), ifelse(one, "point", "points")) else "")
-}
 ```
 
 Pendant une trentaine d'années, le système partisan québécois a reposé sur
@@ -126,13 +125,12 @@ la souveraineté structure encore le vote.
 
 Les Études électorales québécoises apportent une réponse assez nette à ces
 deux questions. Premier constat : la fragmentation touche d'abord le vote
-francophone. Chez les francophones, le nombre effectif de partis passe de
-`r qz_num(e("qes1998", "fr"))` en 1998 à `r qz_num(e("qes2022", "fr"))` en
-2022. L'estimation de 1998 provient toutefois des sondages CROP et CREATEC,
-qui n'ont interrogé que des francophones et ne sont pas pondérés ; depuis la
-première Étude électorale québécoise, en 2007, la hausse est plus modeste,
-de `r qz_num(e("qes2007", "fr"))` à `r qz_num(e("qes2022", "fr"))`. Les
-non-francophones, eux, ont continué de voter libéral jusqu'en 2018 : cette
+francophone. De la première Étude électorale québécoise, en 2007, à 2022, le
+nombre effectif de partis chez les francophones passe de
+`r qz_num(e("qes2007", "fr"))` à `r qz_num(e("qes2022", "fr"))`. Les sondages
+de 1998 le situent plus bas, à `r qz_num(e("qes1998", "fr"))`, mais ils
+n'ont interrogé que des francophones et n'ont aucune pondération validée :
+ce point n'est qu'indicatif. Les non-francophones, eux, ont continué de voter libéral jusqu'en 2018 : cette
 année-là, `r qz_pct(p("qes2018", "other", "PLQ"), 0)` d'entre eux ont appuyé
 le PLQ, contre `r qz_pct(p("qes2018", "fr", "PLQ"), 0)` des francophones.
 Deuxième constat : la question de la souveraineté divise toujours le vote
@@ -186,7 +184,7 @@ fig_enp <- function(mode) {
     theme(axis.line.x = element_blank())
 }
 
-tab <- enp[enp$group != "all", ]
+tab <- enp[enp$group != "all" & enp$n > 0, ]
 tab <- tab[order(tab$year, tab$study, tab$group), ]
 tab_enp <- setNames(data.frame(
   tab$year,
@@ -214,12 +212,12 @@ alt <- sprintf(tr(
 qz_figure(fig_enp, "enp",
   title = sprintf(tr("The francophone vote fragmented, from %s to %s effective parties; the non-francophone vote stayed far more concentrated",
                      "Le vote francophone s'est fragmenté, de %s à %s partis effectifs ; le vote non francophone est resté beaucoup plus concentré"),
-                  qz_num(e("qes1998", "fr")), qz_num(e("qes2022", "fr"))),
+                  qz_num(e("qes2007", "fr")), qz_num(e("qes2022", "fr"))),
   subtitle = tr("Effective number of parties at each election: official result and reported vote by mother tongue, with 95% confidence intervals",
                 "Nombre effectif de partis à chaque élection : résultat officiel et vote déclaré selon la langue maternelle, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_enp, height = 4.0,
-  note = tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls, which interviewed francophones only, each by its own definition (mother tongue for CREATEC, the language spoken most often at home for CROP); official results of Élections Québec. The effective number of parties (Laakso and Taagepera 1979) is 1 divided by the sum of the squared vote shares; the smaller parties are grouped into a single category, other parties. Bands: 95% confidence intervals. Hollow dots (1998, 2008): unweighted. The x axis is in years, with a break between 1998 and 2007.",
-            "Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC, qui n'ont interrogé que des francophones, chacun selon sa propre définition (la langue maternelle pour CREATEC, la langue parlée le plus souvent à la maison pour CROP) ; résultats officiels d'Élections Québec. Le nombre effectif de partis (Laakso et Taagepera, 1979) est 1 divisé par la somme des carrés des parts de vote ; les petits partis sont regroupés en une seule catégorie, « autres ». Bandes : intervalles de confiance à 95 %. Points creux (1998, 2008) : données non pondérées. L'axe horizontal est en années, avec une coupure entre 1998 et 2007."))
+  note = tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls, which interviewed francophones only, each by its own definition (mother tongue for CREATEC, the language spoken most often at home for CROP); official results of Élections Québec. The effective number of parties (Laakso and Taagepera 1979) is 1 divided by the sum of the squared vote shares; the smaller parties are grouped into a single category, other parties. Bands: 95% confidence intervals. Hollow dots (1998, 2008): unweighted, no validated weight. The x axis is in years, with a break between 1998 and 2007.",
+            "Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC, qui n'ont interrogé que des francophones, chacun selon sa propre définition (la langue maternelle pour CREATEC, la langue parlée le plus souvent à la maison pour CROP) ; résultats officiels d'Élections Québec. Le nombre effectif de partis (Laakso et Taagepera, 1979) est 1 divisé par la somme des carrés des parts de vote ; les petits partis sont regroupés en une seule catégorie, « autres ». Bandes : intervalles de confiance à 95 %. Points creux (1998, 2008) : non pondéré, aucune pondération validée. L'axe horizontal est en années, avec une coupure entre 1998 et 2007."))
 ```
 
 Les deux courbes tirées des enquêtes ne dessinent pas du tout le même
@@ -301,7 +299,7 @@ fig_lang <- function(mode) {
           legend.key.spacing.y = unit(4, "pt"))
 }
 
-tab <- shares[shares$group %in% c("fr", "other") & shares$level %in% c(panel_parties, "PCQ", "other"), ]
+tab <- shares[shares$group %in% c("fr", "other") & shares$level %in% c(panel_parties, "PCQ", "other") & shares$n > 0, ]
 tab <- tab[order(match(tab$level, qz_parties), tab$year, tab$study, tab$group), ]
 tab_lang <- setNames(data.frame(
   qz_party_label(tab$level),
@@ -334,8 +332,8 @@ qz_figure(fig_lang, "lang",
   subtitle = tr("Share of the reported vote among francophones and non-francophones, by party, with 95% confidence intervals and the official result",
                 "Part du vote déclaré chez les francophones et les non-francophones, selon le parti, avec intervalles de confiance à 95 % et résultat officiel"),
   alt = alt, table = tab_lang, height = 5.2,
-  note = tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls (francophones only). Tick: official share of valid votes, all voters. Bars: 95% confidence intervals. Hollow dots (1998, 2008): unweighted. Groups of fewer than 30 respondents are not drawn. The ADQ merged into the CAQ in 2012; the two are kept apart here. The PCQ and the smaller parties are in the table view.",
-            "Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC (francophones seulement). Trait : part officielle des votes valides, tous les électeurs. Barres : intervalles de confiance à 95 %. Points creux (1998, 2008) : données non pondérées. Les groupes de moins de 30 répondants ne sont pas tracés. L'ADQ a fusionné avec la CAQ en 2012 ; les deux restent distincts ici. Le PCQ et les petits partis sont dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls (francophones only). Tick: official share of valid votes, all voters. Bars: 95% confidence intervals. Hollow dots (1998, 2008): unweighted, no validated weight. Groups of fewer than 30 respondents are not drawn. The ADQ merged into the CAQ in 2012; the two are kept apart here. The PCQ and the smaller parties are in the table view.",
+            "Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC (francophones seulement). Trait : part officielle des votes valides, tous les électeurs. Barres : intervalles de confiance à 95 %. Points creux (1998, 2008) : non pondéré, aucune pondération validée. Les groupes de moins de 30 répondants ne sont pas tracés. L'ADQ a fusionné avec la CAQ en 2012 ; les deux restent distincts ici. Le PCQ et les petits partis sont dans la vue en tableau."))
 ```
 
 Le PLQ est demeuré le parti des non-francophones. Il a obtenu
@@ -420,7 +418,7 @@ fig_sov <- function(mode) {
           panel.spacing.x = unit(36, "pt"))
 }
 
-tab <- sides[sides$what == "party", ]
+tab <- sides[sides$what == "party" & sides$n > 0, ]
 tab <- tab[order(tab$year, tab$study, match(tab$group, c("yes", "no")), match(tab$level, qz_parties)), ]
 tab_sov <- setNames(data.frame(
   tab$year,
@@ -455,8 +453,8 @@ qz_figure(fig_sov, "sov",
                         "Vote déclaré des francophones, selon le camp qu'ils prendraient à un référendum sur la souveraineté. Chez les fédéralistes, le PLQ est passé de %s en 2012 à %s en 2022"),
                      qz_pct(ps("qes2012", "no", "PLQ"), 0), qz_pct(ps("qes2022", "no", "PLQ"), 0)),
   alt = alt, table = tab_sov, height = 3.9,
-  note = sprintf(tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP poll; francophone respondents who reported a vote and chose a side. From 1998 to 2008 the question is the one of the 1995 referendum, which offered a partnership with Canada, with the undecided asked which way they lean; from 2012 on, it asks about an independent country. The Yes side is about as large among these francophones in 2008 (%s) as in 2012 (%s), but the two questions may not draw the same voters, so compare the rows within each period. Labels show shares of 10%% or more; the 95%% confidence intervals and the Durand panels are in the table view. 1998 and 2008: unweighted.",
-                    "Source : Études électorales québécoises (une par élection) et, pour 1998, le sondage CROP ; répondants francophones qui ont déclaré un vote et choisi un camp. De 1998 à 2008, la question est celle du référendum de 1995, qui proposait un partenariat avec le Canada, et les indécis sont relancés ; à partir de 2012, elle porte sur un pays indépendant. Le camp du Oui est à peu près aussi grand chez ces francophones en 2008 (%s) qu'en 2012 (%s), mais les deux questions n'attirent pas forcément les mêmes électeurs : il faut comparer les rangées à l'intérieur de chaque période. Les étiquettes indiquent les parts de 10 %% ou plus ; les intervalles de confiance à 95 %% et les panels Durand sont dans la vue en tableau. 1998 et 2008 : données non pondérées."),
+  note = sprintf(tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP poll; francophone respondents who reported a vote and chose a side. From 1998 to 2008 the question is the one of the 1995 referendum, which offered a partnership with Canada, with the undecided asked which way they lean; from 2012 on, it asks about an independent country. The Yes side is about as large among these francophones in 2008 (%s) as in 2012 (%s), but the two questions may not draw the same voters, so compare the rows within each period. Labels show shares of 10%% or more; the 95%% confidence intervals and the Durand panels are in the table view. 1998 and 2008: unweighted, no validated weight.",
+                    "Source : Études électorales québécoises (une par élection) et, pour 1998, le sondage CROP ; répondants francophones qui ont déclaré un vote et choisi un camp. De 1998 à 2008, la question est celle du référendum de 1995, qui proposait un partenariat avec le Canada, et les indécis sont relancés ; à partir de 2012, elle porte sur un pays indépendant. Le camp du Oui est à peu près aussi grand chez ces francophones en 2008 (%s) qu'en 2012 (%s), mais les deux questions n'attirent pas forcément les mêmes électeurs : il faut comparer les rangées à l'intérieur de chaque période. Les étiquettes indiquent les parts de 10 %% ou plus ; les intervalles de confiance à 95 %% et les panels Durand sont dans la vue en tableau. 1998 et 2008 : non pondéré, aucune pondération validée."),
                  qz_pct(yes_pct("qes2008"), 0), qz_pct(yes_pct("qes2012"), 0)))
 ```
 
@@ -498,129 +496,13 @@ depuis 2006 après avoir diminué par rapport aux élections de 2000 et de
 2004. Ici, en revanche, c'est la façon dont ce clivage se traduit en partis
 qui a changé.
 
-## L'âge recoupe la langue et la souveraineté
-
-```{r fig-age, echo = FALSE}
-age_parties <- c("PLQ", "PQ", "ADQ", "QS", "CAQ", "PCQ")
-agegap <- do.call(rbind, lapply(recall_studies, function(s) {
-  d <- qz_design(h, s, "weight_post")
-  do.call(rbind, lapply(age_parties, function(pp) {
-    qz_tag(qz_gap(d, "party", pp, "age_group3", "18-34", "55 and over"),
-           study = s, party = pp, weighted = isTRUE(attr(d, "qz_weighted")))
-  }))
-}))
-agegap$year <- qz_year(agegap$study)
-agegap$status <- qz_party_status(agegap$study, agegap$party)
-agegap <- agegap[agegap$status == "offered", ]
-d <- agegap[agegap$study %in% qz_primary & !is.na(agegap$gap), ]
-d$x <- qz_ex(d$year)
-d$era <- qz_era(d$year)
-d$party <- factor(d$party, levels = age_parties)
-ext <- d[d$year == 2022 & d$party %in% c("QS", "CAQ"), ]
-ext$label <- qz_pts(ext$gap)
-g <- function(y, party) agegap$gap[agegap$study == qz_primary[as.character(y)] & agegap$party == party]
-age_lab <- c(`18-34` = tr("18 to 34", "18 à 34 ans"), `35-54` = tr("35 to 54", "35 à 54 ans"),
-             `55 and over` = tr("55 and over", "55 ans et plus"))
-
-fig_age <- function(mode) {
-  k <- qz_tokens[[mode]]
-  ggplot(d, aes(x, gap, colour = party, group = era)) +
-    geom_hline(yintercept = 0, colour = k$axis, linewidth = 0.35) +
-    qz_ci(aes(ymin = lo, ymax = hi)) +
-    qz_line() +
-    qz_dots(mode, d, aes(x, gap), colour_aes = "party", size = 2.4) +
-    geom_text(data = ext, aes(x - 0.4, ifelse(gap > 0, hi + 2, lo - 2), label = label,
-                              vjust = ifelse(gap > 0, 0, 1)), hjust = 1, size = 3.2, colour = k$ink,
-              family = qz_font(), fontface = "bold") +
-    qz_xbreak(mode) +
-    facet_wrap(~party, ncol = 3, axes = "all_x", labeller = as_labeller(function(x) qz_party_label(x))) +
-    scale_party(mode) +
-    scale_x_election(short = TRUE, add = c(1.4, 1.4)) +
-    scale_y_continuous(breaks = seq(-40, 40, 20), labels = function(x) qz_pts(x)) +
-    coord_cartesian(ylim = c(-50, 46), expand = FALSE, clip = "off") +
-    labs(x = NULL, y = tr("Share among the 18-34 minus share among the 55+", "Part chez les 18-34 ans moins part chez les 55 ans et plus")) +
-    theme_qes(mode) +
-    theme(axis.line.x = element_blank(), panel.spacing.x = unit(22, "pt"))
-}
-
-tab <- merge(agegap, reshape(shares[shares$group %in% c("18-34", "55 and over"), c("study", "level", "group", "pct", "n")],
-                             idvar = c("study", "level"), timevar = "group", direction = "wide"),
-             by.x = c("study", "party"), by.y = c("study", "level"))
-tab <- tab[order(match(tab$party, qz_parties), tab$year, tab$study), ]
-tab_age <- setNames(data.frame(
-  qz_party_label(tab$party),
-  tab$year,
-  qz_study_label(tab$study),
-  qz_cell(tab[["pct.18-34"]], NA, NA, tab[["n.18-34"]]),
-  qz_cell(tab[["pct.55 and over"]], NA, NA, tab[["n.55 and over"]]),
-  ifelse(is.na(tab$gap), tr("n < 30", "n < 30"),
-         paste0(qz_pts(tab$gap, 1), " [", qz_num(tab$lo), tr(", ", " ; "), qz_num(tab$hi), "]")),
-  qz_weight_text(tab$weighted)
-, row.names = NULL), c(
-  tr("Party", "Parti"),
-  tr("Election", "Élection"),
-  tr("Study", "Étude"),
-  tr("18 to 34, %", "18 à 34 ans, %"),
-  tr("55 and over, %", "55 ans et plus, %"),
-  tr("Gap, 18-34 minus 55+ [95% CI]", "Écart, 18-34 moins 55+ [IC à 95 %]"),
-  tr("Weighting", "Pondération")
-))
-alt <- sprintf(tr(
-  "Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among voters aged 18 to 34 minus its share among voters aged 55 and over, in percentage points, at each election from 1998 to 2022, with confidence intervals. The PLQ is below zero at every election. In 2022 Québec solidaire is at %s and the CAQ at %s. Values in the table view.",
-  "Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de pourcentage, à chaque élection de 1998 à 2022, avec intervalles de confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec solidaire est à %s et la CAQ à %s. Valeurs dans la vue en tableau."),
-  points_txt(g(2022, "QS")), points_txt(g(2022, "CAQ")))
-qz_figure(fig_age, "age",
-  title = sprintf(tr("In 2022 Québec solidaire led among younger voters and the CAQ among older ones (age gaps of %s and %s)",
-                     "En 2022, Québec solidaire menait chez les jeunes et la CAQ chez les aînés (écarts d'âge de %s et de %s)"),
-                  points_txt(g(2022, "QS")), points_txt(g(2022, "CAQ"))),
-  subtitle = tr("Each party's share of the reported vote among voters aged 18 to 34 minus its share among voters aged 55 and over, in percentage points, with 95% confidence intervals",
-                "Part du vote déclaré de chaque parti chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de pourcentage, avec intervalles de confiance à 95 %"),
-  alt = alt, table = tab_age, height = 4.6,
-  note = tr("Source: Quebec Election Studies (one per election) and, for 1998, the CROP and CREATEC polls (francophones only). Above zero: the party does better among younger voters. Bars: 95% confidence intervals of the difference. Hollow dots (1998, 2008): unweighted. The x axis is in years, with a break between 1998 and 2007. The shares of each age group are in the table view.",
-            "Source : Études électorales québécoises (une par élection) et, pour 1998, les sondages CROP et CREATEC (francophones seulement). Au-dessus de zéro : le parti fait mieux chez les jeunes. Barres : intervalles de confiance à 95 % de la différence. Points creux (1998, 2008) : données non pondérées. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. Les parts de chaque groupe d'âge sont dans la vue en tableau."))
-```
-
-Chaque écart de la figure correspond à la part d'un parti chez les 18 à
-34 ans moins sa part chez les 55 ans et plus, en points de pourcentage. En
-2007, les jeunes votaient PQ (`r qz_pct(p("qes2007", "18-34", "PQ"), 0)` des
-18 à 34 ans) et ADQ (`r qz_pct(p("qes2007", "18-34", "ADQ"), 0)`). En 2018 et
-en 2022, leur premier choix était Québec solidaire
-(`r qz_pct(p("qes2022", "18-34", "QS"), 0)` en 2022), un parti qui attire peu
-les électeurs de 55 ans et plus
-(`r qz_pct(p("qes2022", "55 and over", "QS"), 0)`). La CAQ, pour sa part,
-est devenue le parti des électeurs plus âgés. En 2012, elle puisait à peu
-près également dans les deux groupes d'âge (un écart de
-`r points_txt(g(2012, "CAQ"))`) ; en 2022,
-`r qz_pct(p("qes2022", "55 and over", "CAQ"), 0)` des 55 ans et plus ont voté
-pour elle, contre `r qz_pct(p("qes2022", "18-34", "CAQ"), 0)` des 18 à
-34 ans. Le PLQ fait mieux chez les aînés à chaque élection, bien qu'en 2014
-et en 2022 l'écart se situe à l'intérieur de la marge d'erreur.
-
-Le profil du PQ, lui, s'est inversé. Il faisait aussi bien ou mieux chez les
-jeunes jusqu'en 2012 (de `r points_txt(g(1998, "PQ"))` en 1998 à
-`r points_txt(g(2012, "PQ"), unit = FALSE)` en 2012), puis mieux chez les
-aînés à partir de 2014 (de `r points_txt(g(2014, "PQ"))` en 2014 à
-`r points_txt(g(2022, "PQ"), unit = FALSE)` en 2022, un écart alors à
-l'intérieur de la marge d'erreur). Le renversement survient en 2014,
-l'élection lors de laquelle Mahéo et Bélanger (2018) constatent que les
-pertes du PQ se sont concentrées chez les millénariaux, moins enclins à voir
-la souveraineté comme une priorité. Il s'agit toutefois d'enquêtes
-transversales distinctes, et un écart d'âge observé à une seule élection ne
-permet pas, à lui seul, de distinguer un changement générationnel d'un
-effet de cycle de vie.
-
 ## Ce qu'il faut en retenir
 
 En somme, le système partisan québécois ne s'est pas fragmenté de manière
 uniforme. Les nouveaux partis ont divisé le vote francophone, et ils l'ont
 fait à l'intérieur de chaque camp sur la souveraineté : le mur entre les
 camps a tenu, alors que le PQ et le PLQ perdaient leur emprise sur leur
-propre camp. L'âge pèse aussi davantage qu'aux élections de 2007 à 2014.
-En 2022, l'écart d'âge de la CAQ atteignait
-`r qz_num(abs(g(2022, "CAQ")), 0)` points, alors que le plus grand écart,
-tous partis confondus, était de
-`r qz_num(max(abs(agegap$gap[agegap$study %in% qz_primary[2:5]]), na.rm = TRUE), 0)`
-points de 2007 à 2014. Notre portrait n'est toutefois pas sans limites.
+propre camp. Notre portrait n'est toutefois pas sans limites.
 D'une part, il s'agit de votes déclarés dans des enquêtes distinctes : ils
 montrent comment des groupes d'électeurs se répartissent à chaque élection,
 et non si les mêmes personnes ont changé de parti (la page sur les
@@ -630,14 +512,15 @@ petits, entre `r min(other_n)` et `r max(other_n)` électeurs par élection,
 de sorte que leurs estimations varient beaucoup d'une élection à l'autre et
 que la rupture de 2022 reste à confirmer. Reste à savoir si le vote
 francophone se recomposera autour de nouveaux pôles, ou si le remplacement
-générationnel le maintiendra divisé.
+générationnel le maintiendra divisé (la
+[page sur la souveraineté](fr-souverainete-generations.html) suit les
+cohortes de naissance).
 
 ## Comment les figures sont produites
 
 Toutes les figures de cette page reposent sur une seule variable harmonisée,
 `vote_choice`, limitée au vote déclaré après l'élection, à laquelle
-s'ajoutent la langue maternelle, le groupe d'âge et la question
-référendaire :
+s'ajoutent la langue maternelle et la question référendaire :
 
 ```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
 ```
@@ -646,6 +529,7 @@ référendaire :
 s'obtiennent avec `qes_design()` et un appel à l'extension survey :
 
 ```{r example}
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018", ], weight = "weight_post")
 d18 <- subset(d18, !is.na(vote_choice) & !is.na(lang_mother))
 svyby(~I(vote_choice == "CAQ"), ~lang_mother, d18, svyciprop,
@@ -686,7 +570,10 @@ est produite à l'intérieur d'une seule étude ; aucune n'est regroupée d'un
 
 - **Études.** Une Étude électorale québécoise par élection (2007, 2008,
   2012, 2014, 2018, 2022) et, pour 1998, les sondages CROP et CREATEC, qui
-  n'ont interrogé que des francophones. Les vues en tableau comprennent
+  n'ont interrogé que des francophones (CREATEC selon la langue maternelle,
+  CROP selon la langue d'usage) ; qesR n'a pas de colonne de langue
+  maternelle pour 1998, et cette page compte tous les répondants de 1998
+  comme francophones. Les vues en tableau comprennent
   aussi les panels Durand de 2007, 2012 et 2018, qui ont interrogé les
   mêmes répondants pendant la campagne et après l'élection ; ils ne sont
   pas tracés. Les sondages CROP de 2007 à 2010 ne demandaient pas le vote
@@ -711,10 +598,12 @@ est produite à l'intérieur d'une seule étude ; aucune n'est regroupée d'un
   indépendant. En 1998, seul le sondage CROP l'a posée. Les panels Durand
   des vues en tableau emploient leur propre formulation (voir la colonne
   Question).
-- **Pondération.** La pondération postélectorale de chaque étude. Les
-  sondages de 1998 et l'étude de 2008 sont utilisés sans pondération et
-  sont représentés par des points creux ; les panels Durand de 2007 et de
-  2012 ne sont pas pondérés non plus. Les répondants de 1998 avaient
+- **Pondération.** La pondération postélectorale de chaque étude, si elle
+  en a une qui est validée (le
+  [tableau des pondérations](fr-etudes.html#ponderations) donne celle de
+  chaque étude) ; les autres, dont 1998 et 2008 parmi les études tracées,
+  ne sont pas pondérées et sont représentées par des points creux. Les
+  répondants de 1998 avaient
   d'abord participé à des sondages préélectoraux et ont été interrogés de
   nouveau après l'élection ; ce second passage a surreprésenté les indécis
   et les personnes qui refusaient de dévoiler leur vote.

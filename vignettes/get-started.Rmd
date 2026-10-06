@@ -1,10 +1,10 @@
 ---
-title: "Getting Started with qesR"
+title: "Getting started with qesR"
 output: rmarkdown::html_vignette
 params:
   lang: "en"
 vignette: >
-  %\VignetteIndexEntry{Getting Started with qesR}
+  %\VignetteIndexEntry{Getting started with qesR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,6 +15,13 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
+# the size of the data file of the last section, from the shipped catalog
+files <- utils::read.csv(system.file("extdata", "catalog", "files.csv", package = "qesR"),
+                         colClasses = "character")
+real_id <- qesR::qes_studies()$data_file_id[qesR::qes_studies()$study == "qes2014"]
+real_mb <- as.numeric(files$bytes[files$study == "qes2014" & files$file_id == real_id]) / 1e6
+real_mb <- formatC(real_mb, format = "f", digits = 1,
+                   decimal.mark = if (identical(params$lang, "fr")) "," else ".")
 ```
 
 qesR loads the Quebec Election Studies and related Quebec election surveys
@@ -24,17 +31,21 @@ documents, their citations and the description of every variable of every
 study ship with the package.
 
 This page goes from a study code to a weighted estimate. Every chunk on it
-runs without a network connection: it uses the catalog, the shipped metadata
-and `qes_demo`, a small synthetic study that ships with qesR. The chunks
-that would download a real study are shown but not run.
+runs without a network connection, except the last section: it uses the
+catalog, the shipped metadata and `qes_demo`, a small synthetic study that
+ships with qesR. The chunks that would download a real study are shown but
+not run, and the last section, [On the real data](#on-the-real-data), runs
+the same steps on one real study, which it downloads.
 
 ## Install
 
-Install qesR from GitHub:
+Install qesR from GitHub, and the `survey` package for the estimates with
+confidence intervals:
 
 ```{r install, eval = FALSE, purl = FALSE}
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+install.packages("survey")
 ```
 
 ```{r load}
@@ -93,7 +104,7 @@ its bilingual codebook), value labels and missing codes.
 
 ```{r codebook}
 cb <- qes_codebook("qes2014")
-head(cb[, c("variable", "label", "n_value_labels")])
+cb[cb$variable %in% c("Q2", "Q3", "Q19", "POND"), c("variable", "label", "n_value_labels")]
 qes_codebook("qes2014", layout = "long", variables = "Q19")
 ```
 
@@ -108,7 +119,7 @@ qes_question("qes2014", "Q19", lang = "fr")$question
 
 ```{r search}
 hits <- qes_search("souverain|sovereign")
-head(hits[, c("study", "variable", "label")])
+head(hits[!is.na(hits$label), c("study", "variable", "label")])
 ```
 
 The codebook of the 2022 study is CC BY-NC 4.0 (attribution, no commercial
@@ -155,9 +166,9 @@ c(
 ```
 
 The demonstration data are synthetic, so these numbers describe no
-population; they show the computation. On the real file the same lines give
-34.8% YES among the 1,353 respondents who answered YES or NO (34.1%
-unweighted), weighted to the Quebec adult population of 2014.
+population; they show the computation. On the real file the same lines
+give the share of YES weighted to the Quebec adult population of 2014; the
+last section of this page computes it, with its confidence interval.
 
 ```{r estimate-real, eval = FALSE}
 qes2014 <- qes_missing(get_qes("qes2014"))
@@ -181,17 +192,18 @@ per harmonized variable ("target"), following rules that ship with qesR.
 comparable it is to the target's anchor question:
 
 ```{r spec}
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "en")
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
-Some studies have no usable weight yet; their weight columns are `NA`, and
-`qes_design()` tells you when it leaves rows out. On the demonstration
-study, which stands in for `qes2014`:
+Not every study has a validated weight: the [weights
+table](studies.html#weights) of the website says which do. Where a study has
+none, its weight columns are `NA`, and `qes_design()` tells you when it
+leaves rows out. On the demonstration study, which stands in for `qes2014`:
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "en")
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
 ```
@@ -200,10 +212,13 @@ Every missing value has a reason (`sov_indep__na`). `eligible_voter` says
 whether the respondent could vote in the election, and each wave's
 recommended weight has mean 1: these questions were asked after the
 election, so `weight_post` is their weight, as the weight guide says.
-`qes_design()` hands the data to the `survey` package:
+`qes_design()` hands the data to the `survey` package. `droplevels()`
+first removes the answers no respondent of the demonstration study gave, so
+that they do not show as rows of zeros:
 
 ```{r design}
 if (requireNamespace("survey", quietly = TRUE)) {
+  h$sov_indep <- droplevels(h$sov_indep)
   d <- qes_design(h, weight = "weight_post")
   survey::svymean(~sov_indep, d, na.rm = TRUE)
 }
@@ -218,6 +233,12 @@ study's two waves can have different weights: `qes_design()` asks you to
 choose when the targets need different ones. The reference of every target,
 generated from the specification, is
 `vignette("harmonization-reference", package = "qesR")`.
+
+For a quicker start across every study, `qes_decon()` returns one flat data
+frame with plain column names (`vote_choice`, `sovereignty`, `education`,
+...), relaxed so that each column holds one concept even where the
+questions differ; see [One file for every study](decon.html) on the
+website.
 
 ## Provenance and citations
 
@@ -252,6 +273,26 @@ tryCatch(
   qesR_error_unknown_study = function(e) e$suggestions
 )
 ```
+
+## On the real data {#on-the-real-data}
+
+The same estimate on the real `qes2014`, from harmonization to a share with
+its 95% confidence interval. This section downloads one study (about
+`r real_mb` MB) the first time it runs;
+`options(qesR.cache = "disk")` keeps it on disk for later sessions. The
+interval treats the weighted panel as a probability sample, so for an
+opt-in panel such as `qes2014` read it as a rough guide.
+
+```{r real-data, eval = identical(Sys.getenv("IN_PKGDOWN"), "true"), message = FALSE}
+library(survey)
+h14 <- qes_harmonize("qes2014", targets = "sov_indep", quiet = TRUE)
+d14 <- qes_design(h14, weight = "weight_post")
+d14 <- subset(d14, sov_indep %in% c("Yes", "No"))
+svyciprop(~I(sov_indep == "Yes"), d14, method = "logit")
+```
+
+`qes_harmonize()` labels the answers in English by default; `lang = "fr"`
+gives them in French.
 
 ## Code written for an earlier version
 

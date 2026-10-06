@@ -15,6 +15,13 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
+# the size of the data file of the last section, from the shipped catalog
+files <- utils::read.csv(system.file("extdata", "catalog", "files.csv", package = "qesR"),
+                         colClasses = "character")
+real_id <- qesR::qes_studies()$data_file_id[qesR::qes_studies()$study == "qes2014"]
+real_mb <- as.numeric(files$bytes[files$study == "qes2014" & files$file_id == real_id]) / 1e6
+real_mb <- formatC(real_mb, format = "f", digits = 1,
+                   decimal.mark = if (identical(params$lang, "fr")) "," else ".")
 ```
 
 qesR charge dans R les Études électorales québécoises et d'autres enquêtes
@@ -25,18 +32,22 @@ citations et la description de chaque variable de chaque étude sont livrés
 avec le package.
 
 Cette page va d'un code d'étude à une estimation pondérée. Tous ses blocs
-de code s'exécutent sans connexion réseau : ils utilisent le catalogue, les
-métadonnées livrées et `qes_demo`, une petite étude synthétique fournie avec
-qesR. Les blocs qui téléchargeraient une vraie étude sont montrés, mais pas
-exécutés.
+de code s'exécutent sans connexion réseau, sauf ceux de la dernière
+section : ils utilisent le catalogue, les métadonnées livrées et
+`qes_demo`, une petite étude synthétique fournie avec qesR. Les blocs qui
+téléchargeraient une vraie étude sont montrés, mais pas exécutés, et la
+dernière section, [Sur les données réelles](#donnees-reelles), refait les
+mêmes étapes sur une vraie étude, qu'elle télécharge.
 
 ## Installation
 
-Installez qesR depuis GitHub :
+Installez qesR depuis GitHub, et le package `survey` pour les estimations
+avec intervalles de confiance :
 
 ```{r install, eval = FALSE, purl = FALSE}
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+install.packages("survey")
 ```
 
 ```{r load}
@@ -99,7 +110,7 @@ de valeurs et codes manquants.
 
 ```{r codebook}
 cb <- qes_codebook("qes2014")
-head(cb[, c("variable", "label", "n_value_labels")])
+cb[cb$variable %in% c("Q2", "Q3", "Q19", "POND"), c("variable", "label", "n_value_labels")]
 qes_codebook("qes2014", layout = "long", variables = "Q19")
 ```
 
@@ -115,7 +126,7 @@ de la casse ni des accents :
 
 ```{r search}
 hits <- qes_search("souverain|sovereign")
-head(hits[, c("study", "variable", "label")])
+head(hits[!is.na(hits$label), c("study", "variable", "label")])
 ```
 
 Le codebook de l'étude de 2022 est sous licence CC BY-NC 4.0 (attribution,
@@ -166,9 +177,9 @@ c(
 
 Les données de démonstration sont synthétiques : ces nombres ne décrivent
 aucune population, ils montrent le calcul. Sur le vrai fichier, les mêmes
-lignes donnent 34,8 % de OUI parmi les 1 353 répondants qui ont répondu OUI
-ou NON (34,1 % sans pondération), pondérés selon la population adulte du
-Québec de 2014.
+lignes donnent la part de OUI pondérée selon la population adulte du Québec
+de 2014 ; la dernière section de cette page la calcule, avec son intervalle
+de confiance.
 
 ```{r estimate-real, eval = FALSE}
 qes2014 <- qes_missing(get_qes("qes2014"))
@@ -195,18 +206,19 @@ alimente une cible et à quel point elle est comparable à la question
 d'ancrage de la cible :
 
 ```{r spec}
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "fr")
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 ```
 
-Certaines études n'ont pas encore de pondération utilisable ; leurs
-colonnes de pondération valent `NA`, et `qes_design()` vous prévient quand
-il écarte des lignes. Sur l'étude de démonstration, qui tient lieu de
-`qes2014` :
+Toutes les études n'ont pas une pondération validée : le [tableau des
+pondérations](fr-etudes.html#ponderations) du site web dit lesquelles. Pour
+une étude qui n'en a pas, les colonnes de pondération valent `NA`, et
+`qes_design()` vous prévient quand il écarte des lignes. Sur l'étude de
+démonstration, qui tient lieu de `qes2014` :
 
 ```{r harmonize}
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "fr")
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 attr(h, "qes_weight_guide")[, c("target", "study", "weight_column", "weight_var")]
 ```
@@ -216,10 +228,13 @@ indique si la personne pouvait voter à l'élection, et la pondération
 recommandée de chaque vague a une moyenne de 1 : ces questions ont été
 posées après l'élection, donc `weight_post` est leur pondération, comme
 l'indique le guide des pondérations. `qes_design()` transmet les données au
-package `survey` :
+package `survey`. `droplevels()` retire d'abord les réponses qu'aucun
+répondant de l'étude de démonstration n'a données, pour qu'elles
+n'apparaissent pas comme des lignes de zéros :
 
 ```{r design}
 if (requireNamespace("survey", quietly = TRUE)) {
+  h$sov_indep <- droplevels(h$sov_indep)
   d <- qes_design(h, weight = "weight_post")
   survey::svymean(~sov_indep, d, na.rm = TRUE)
 }
@@ -234,6 +249,12 @@ et les deux vagues d'une étude peuvent avoir des pondérations différentes :
 `qes_design()` demande de choisir quand les cibles en demandent de
 différentes. La référence de chaque cible, générée à partir de la
 spécification, est `vignette("fr-reference-harmonisation", package = "qesR")`.
+
+Pour démarrer plus vite avec toutes les études, `qes_decon()` renvoie un
+seul tableau aux noms de colonnes simples (`vote_choice`, `sovereignty`,
+`education`, ...), assoupli pour que chaque colonne porte un seul concept
+même là où les questions diffèrent ; voir [Un seul fichier pour toutes les
+études](fr-decon.html) sur le site web.
 
 ## Provenance et citations
 
@@ -269,6 +290,27 @@ tryCatch(
   qesR_error_unknown_study = function(e) e$suggestions
 )
 ```
+
+## Sur les données réelles {#donnees-reelles}
+
+La même estimation sur le vrai `qes2014`, de l'harmonisation à une part
+avec son intervalle de confiance à 95 %. Cette section télécharge une étude
+(environ `r real_mb` Mo) la première fois qu'elle s'exécute ;
+`options(qesR.cache = "disk")` la garde sur le disque pour les sessions
+suivantes. L'intervalle traite le panel pondéré comme un échantillon
+probabiliste ; pour un panel à participation volontaire comme `qes2014`,
+lisez-le comme un ordre de grandeur.
+
+```{r real-data, eval = identical(Sys.getenv("IN_PKGDOWN"), "true"), message = FALSE}
+library(survey)
+h14 <- qes_harmonize("qes2014", targets = "sov_indep", quiet = TRUE)
+d14 <- qes_design(h14, weight = "weight_post")
+d14 <- subset(d14, sov_indep %in% c("Yes", "No"))
+svyciprop(~I(sov_indep == "Yes"), d14, method = "logit")
+```
+
+`qes_harmonize()` étiquette les réponses en anglais par défaut, d'où
+`"Yes"` et `"No"` ci-dessus ; `lang = "fr"` les donne en français.
 
 ## Du code écrit pour une version antérieure
 

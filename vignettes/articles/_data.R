@@ -34,6 +34,20 @@ qz_year <- function(s) {
 
 qz_min_n <- 30
 
+# What a page downloads the first time it runs: the number of studies and
+# the size of their data files (the byte counts, in the shipped catalog, of
+# the data file and label donor get_qes() reads), for the note at the top
+# of each example page.
+qz_download <- function(studies) {
+  st <- as.data.frame(qes_studies())
+  st <- st[st$study %in% studies, , drop = FALSE]
+  files <- utils::read.csv(system.file("extdata", "catalog", "files.csv", package = "qesR", mustWork = TRUE),
+                           colClasses = "character")
+  ids <- paste(st$study, c(st$data_file_id, st$label_file_id))
+  bytes <- as.numeric(files$bytes[paste(files$study, files$file_id) %in% ids])
+  list(n = nrow(st), mb = sum(bytes) / 1e6)
+}
+
 # The official results of Elections Quebec (share of valid votes, turnout),
 # kept in the qesR source repository (not in the package build). The pages
 # are built from the source tree, two folders up.
@@ -75,7 +89,7 @@ qz_weight_col <- function(x, study, var) {
 }
 
 # A survey design for one study: qes_design() with the study's reviewed
-# weight, or with a unit weight where the weight is under review (or where
+# weight, or with a unit weight where it has no validated weight (or where
 # `unweighted` asks for it, to show what the weight changes).
 qz_design <- function(x, study, col = "weight_post", unweighted = FALSE) {
   sub <- x[x$study %in% study, , drop = FALSE]
@@ -201,7 +215,7 @@ qz_small <- function(x) x$n < qz_min_n
 
 # the text of the "weighting" column of the table views
 qz_weight_text <- function(weighted) {
-  ifelse(weighted, tr("weighted", "pondéré"), tr("unweighted (weight under review)", "non pondéré (pondération en révision)"))
+  ifelse(weighted, tr("weighted", "pondéré"), tr("unweighted: no validated weight", "non pondéré : aucune pondération validée"))
 }
 
 # a formatted estimate and interval for the table views

@@ -10,7 +10,21 @@ params:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE, fig.width = 7, fig.height = 6)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang)
+library(qesR)
+# numbers and labels in the page's language
+tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
+num <- function(x, digits = 1, sign = FALSE) {
+  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
+          decimal.mark = tr(".", ","))
+}
+# what the page downloads (the note below), from the site's data helpers
+source("_data.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r round(dl$mb)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
+:::
 
 Jusqu'où les études harmonisées rejoignent-elles ce que l'on sait de
 l'électorat ? Cette page compare, pour chaque étude que couvre la
@@ -35,15 +49,14 @@ library(ggplot2)
 ```
 
 ```{r run, message = FALSE}
-tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
-num <- function(x, digits = 1, sign = FALSE) {
-  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
-          decimal.mark = tr(".", ","))
-}
 # every study the specification covers, harmonized from the original files,
-# against the benchmarks that ship with qesR
+# against the benchmarks that ship with qesR (internal functions, not part
+# of qesR's interface)
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
+```
+
+```{r run-tidy, include = FALSE}
 studies <- qes_studies()
 report$year <- studies$year[match(report$study, studies$study)]
 report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
@@ -67,7 +80,7 @@ question de l'étude n'énumérait pas sont comptés comme « autre parti » du
 côté officiel, puisque c'est la seule réponse que leurs électeurs
 pouvaient donner.
 
-```{r recall-table}
+```{r recall-table, echo = FALSE}
 idx <- report[report$check == "recall" & is.na(report$level), ]
 wide <- reshape(idx[, c("study", "year", "reference", "weighting", "n", "value")],
                 idvar = c("study", "year", "reference"), timevar = "weighting",
@@ -89,9 +102,10 @@ L'indice pondéré utilise la pondération que la spécification recommande
 pour la vague qui a posé la question ; `qes2007`, `qes2012`, `qes2014`,
 `qes2018`, `qes2022` et le panel de 2018 en ont une. Les pondérations de
 `qes2007_panel`, de `qes2012_panel`, des sondages CROP et de `qes1998` ne
-sont pas assez documentées pour être utilisées, et les deux pondérations de
-`qes2008` sont calées sur le vote ou sur la participation : leur indice est
-non pondéré. `qes1998` n'a interrogé que des francophones, une population que
+sont pas validées, et `qes2008` n'a pas de pondération recommandée (ses deux
+pondérations sont calées sur le vote ou sur la participation) : leur indice
+est non pondéré ; le [tableau des pondérations](fr-etudes.html#ponderations)
+décrit la pondération de chaque étude. `qes1998` n'a interrogé que des francophones, une population que
 les résultats officiels ne décrivent pas : l'étude est montrée à titre
 indicatif, sans être vérifiée.
 
@@ -168,7 +182,7 @@ d <- function(study, level) {
 
 ## 2. Participation déclarée
 
-```{r turnout-table}
+```{r turnout-table, echo = FALSE}
 to <- best(report[report$check == "turnout", ])
 to <- to[order(to$year, to$study), ]
 # qes1998 (francophones only) is shown but not checked
@@ -218,7 +232,7 @@ enquêtes qui nomment deux langues sont laissées de côté. La scolarité est
 comparée en deux groupes : universitaire (tout certificat, diplôme ou grade
 universitaire) ou non.
 
-```{r census-table}
+```{r census-table, echo = FALSE}
 cz <- report[report$check == "census" & is.na(report$level), ]
 vars <- c(gender = tr("Gender", "Genre"), age_group6 = tr("Age", "Âge"),
           lang_mother = tr("Mother tongue", "Langue maternelle"),
@@ -314,7 +328,7 @@ décennies de recherche disent qu'elles devraient l'être ; une erreur de
 correspondance (deux codes de partis inversés, une échelle renversée) les
 ferait échouer.
 
-```{r construct-table}
+```{r construct-table, echo = FALSE}
 k <- report[report$check == "construct", ]
 k <- k[order(k$year, k$study, k$variable), ]
 what <- c(interest_4pt = tr("Voters are more interested than nonvoters (mean, 1-4)",

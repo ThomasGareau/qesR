@@ -4,23 +4,24 @@
   <img src="man/figures/logo.png" alt="qesR logo" width="180" />
 </p>
 
-The Quebec Election Studies, with the panels and polls that accompanied
-them, cover seven provincial elections, from 1998 to 2022, and their data
-are public. Using them together is another matter: they sit in separate
-deposits, in SPSS or Stata files, each with a codebook of its own, and the
-wording of a question often changed from one study to the next. qesR brings
-them into R. Each study loads by its code, from one original file of one
-pinned version of its Dataverse deposit (Borealis or the Harvard
-Dataverse), checked against its md5 checksum before use. The codebooks,
-question wording and search ship with the package and work offline, in
-English and French. qesR also harmonizes the 11 studies of 1998 to 2022
-into one data frame, question by question, with a comparability grade for
-each study's question and a reason for each missing value.
+qesR loads the Quebec Election Studies, with the panels and polls that
+accompanied them, into R: seven provincial elections from 1998 to 2022,
+each study by its code, from one original file of a pinned version of its
+deposit, checked against its md5 checksum. Their codebooks, question
+wording and a search across all studies ship with the package and work
+offline, in English and French. qesR also harmonizes 11 of the studies into
+one data frame, so that a question about 25 years of Quebec elections can
+be answered within each study and then compared.
 
-The [website](https://thomasgareau.github.io/qesR/) has worked examples on
-25 years of Quebec elections: the fragmentation of the vote, support for
-independence by generation, sovereignty and left-right, turnout, vote
-changes during the campaign, and surveys against the official results.
+<p align="center">
+  <a href="https://thomasgareau.github.io/qesR/articles/sovereignty-generations.html"><img src="https://thomasgareau.github.io/qesR/articles/sovereignty-generations_files/figure-html/gradient-light.png" alt="Dot charts in six panels, one per Quebec Election Study from 2007 to 2022, of the share of francophones who would vote Yes in each birth cohort: in 2007 the youngest cohort is the most likely to vote Yes, in 2022 the least likely." width="600" /></a>
+</p>
+
+In 2007 the youngest francophones were the cohort most likely to vote Yes
+in a referendum; in 2022 they were the least likely. The
+[website](https://thomasgareau.github.io/qesR/) has this and other worked
+examples on 25 years of Quebec elections, each estimate made within one
+study.
 
 Une présentation en français suit la version anglaise (section *En
 français*).
@@ -47,13 +48,15 @@ qes_studies()
 # their codebooks, questionnaires and reports
 qes_docs("qes2018")
 
-# load a study: get_qes() returns the data; assign it yourself
+# load a study (downloads it the first time): get_qes() returns the data;
+# assign it yourself
 qes2018 <- get_qes("qes2018")
 
 # the synthetic demonstration study ships with qesR (no download)
 demo <- get_qes("qes_demo")
 
-# every harmonized study in one flat data frame, cesR style (relaxed)
+# every harmonized study in one flat data frame, cesR style (relaxed);
+# downloads the 11 studies (about 16 MB) the first time
 d <- qes_decon()
 ```
 
@@ -127,16 +130,14 @@ specification that ships with qesR: for each study and harmonized variable
 ("target"), one question, its codes mapped one by one, with a comparability
 grade, a reason for every missing value and each wave's weight;
 `qes_design()` turns the result into a design for the `survey` package, and
-`qes_spec()` shows the specification. It applies only the rows a reviewer
-has signed off. In specification 4.1.0 every row is signed off, after an
-automated double review against the original files and documents (not a
-human review). The recommended weights of `qes1998`, `qes2007_panel`,
-`qes2012_panel` and the CROP polls still need review: their answers are
-harmonized, but their weights are `NA` until they are accepted (the
-registry, `qes_spec("spec")$tables$weights`, says what is known of each).
-The rows added in specification 4.3.0 went through the same automated
-review: all but three are signed off (the three are applied with
-`include_draft = TRUE`).
+`qes_spec()` shows the specification. The rows of the specification were
+signed off after an automated double review against the original files and
+documents (not a human review). Not every study has a validated weight: the
+[weights table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+says which do; the others have weight columns of `NA`. The rules are
+experimental and may change from one version to the next: keep
+`qes_provenance(h, level = "spec")` with your results and pin the version
+of qesR you used.
 
 A pooled variable puts the questions of one topic in one column for every
 study, with the question each value comes from: `vote_choice` is the
@@ -294,26 +295,20 @@ each file, its source and its licence.
 
 ## En français
 
-Les Études électorales québécoises, avec les panels et les sondages qui les
-ont accompagnées, couvrent sept élections provinciales, de 1998 à 2022, et
-leurs données sont publiques. Les utiliser ensemble est toutefois une autre
-affaire : elles se trouvent dans des dépôts distincts, dans des fichiers
-SPSS ou Stata, chacune avec son propre codebook, et le libellé d'une même
-question a souvent changé d'une étude à l'autre. qesR les réunit dans R.
-Chaque étude se charge par son code, à partir d'un fichier original d'une
-version fixée de son dépôt Dataverse (Borealis ou Harvard Dataverse),
-vérifié par sa somme de contrôle md5 avant usage. Les codebooks, les
-libellés des questions et la recherche sont livrés avec le package et
-fonctionnent sans réseau, en français et en anglais. qesR harmonise aussi
-les 11 études de 1998 à 2022 en un seul tableau, question par question,
-avec un niveau de comparabilité pour la question de chaque étude et un
-motif pour chaque valeur manquante.
+qesR charge dans R les Études électorales québécoises, avec les panels et
+les sondages qui les ont accompagnées : sept élections provinciales, de
+1998 à 2022, chaque étude par son code, à partir d'un fichier original
+d'une version fixée de son dépôt, vérifié par sa somme de contrôle md5.
+Leurs codebooks, le libellé de leurs questions et une recherche dans toutes
+les études sont livrés avec le package et fonctionnent sans réseau, en
+français et en anglais. qesR harmonise aussi 11 de ces études en un seul
+tableau, de sorte qu'une question sur 25 ans d'élections québécoises peut
+être examinée dans chaque étude, puis comparée.
 
 Le [site web](https://thomasgareau.github.io/qesR/articles/fr-accueil.html)
-présente des exemples sur 25 ans d'élections québécoises : la
-fragmentation du vote, l'appui à l'indépendance selon la génération,
-souveraineté et gauche-droite, la participation, les changements de vote
-pendant la campagne, et les enquêtes face aux résultats officiels.
+présente des exemples sur 25 ans d'élections québécoises : en 2007, les
+plus jeunes francophones formaient la cohorte la plus encline à voter Oui ;
+en 2022, la moins encline.
 
 ```r
 # install.packages("remotes")
@@ -377,16 +372,15 @@ variable harmonisée (« cible »), une question, dont les codes sont mis en
 correspondance un à un, avec un niveau de comparabilité, un motif pour
 chaque valeur manquante et la pondération de chaque vague ; `qes_design()`
 en fait un plan de sondage pour le package `survey`, et `qes_spec()` montre
-la spécification. Il n'applique que les lignes approuvées par un réviseur.
-Dans la spécification 4.1.0, toutes les lignes sont approuvées, après une
-double révision automatisée sur les fichiers et documents originaux (et non
-une révision humaine). Les pondérations recommandées de `qes1998`,
-`qes2007_panel`, `qes2012_panel` et des sondages CROP restent à réviser :
-leurs réponses sont harmonisées, mais leurs pondérations valent `NA`
-jusqu'à ce que la documentation des producteurs les établisse. Les
-lignes ajoutées dans la spécification 4.3.0 ont passé la même révision
-automatisée : toutes sauf trois sont approuvées (les trois s'appliquent
-avec `include_draft = TRUE`).
+la spécification. Les lignes de la spécification ont été approuvées après
+une double révision automatisée sur les fichiers et documents originaux (et
+non une révision humaine). Toutes les études n'ont pas une pondération
+validée : le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+dit lesquelles ; les autres ont des colonnes de pondération à `NA`. Les
+règles sont expérimentales et peuvent changer d'une version à l'autre :
+conservez `qes_provenance(h, level = "spec")` avec vos résultats et fixez
+la version de qesR utilisée.
 
 Une variable regroupée réunit les questions d'un même sujet en une seule
 colonne pour toutes les études, en indiquant la question d'où vient chaque

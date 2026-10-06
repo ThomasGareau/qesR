@@ -277,7 +277,7 @@ qz_band <- function(..., mode = "light") {
 
 # Dots: filled with the series colour and ringed with the surface where the
 # estimate is weighted; hollow (surface fill, series-colour ring) where the
-# study's weight is still under review, so the estimate is unweighted. `d`
+# study has no validated weight, so the estimate is unweighted. `d`
 # must have a logical column `weighted`. Pass the colour as a mapping
 # (`colour_aes`, the name of a column) or as one fixed colour (`fixed`).
 #
@@ -330,8 +330,8 @@ scale_weight_key <- function(mode, both = FALSE, shape = 21, order = 99, show = 
     return(ggplot2::scale_shape_manual(values = c(weighted = shape, unweighted = shape), guide = "none"))
   }
   lab <- c(weighted = tr("filled: weighted", "plein : pondéré"),
-           unweighted = tr("hollow: unweighted (weight under review)", "creux : non pondéré (pondération en révision)"))
-  if (wrap) lab <- sub(" (", "\n(", lab, fixed = TRUE)
+           unweighted = tr("hollow: unweighted, no validated weight", "creux : non pondéré, aucune pondération validée"))
+  if (wrap) lab <- sub(", ", ",\n", lab, fixed = TRUE)
   br <- if (both) c("weighted", "unweighted") else "unweighted"
   ggplot2::scale_shape_manual(
     values = c(weighted = shape, unweighted = shape), limits = c("weighted", "unweighted"),
@@ -450,7 +450,15 @@ qz_esc <- function(x) {
 # `alt` is the image's alt text, `note` the source, weights and intervals
 # line, and `table` (a data frame, already formatted) the collapsible table
 # view with the exact values behind the figure.
-qz_figure <- function(plot_fun, id, title, alt, table, note = NULL, subtitle = NULL, width = 7, height = 4.2) {
+#
+# A figure with several panels also gets a narrow variant for phones
+# (`narrow`, by default when the plot has more than one panel): the same
+# chart drawn on a 4.6-inch canvas, so that its text is about half again as
+# large once the browser scales it to the width of a phone; small multiples
+# of more than two columns wrap into two. The page serves it with
+# <picture><source media="(max-width: 576px)">.
+qz_figure <- function(plot_fun, id, title, alt, table, note = NULL, subtitle = NULL, width = 7, height = 4.2,
+                      narrow = NULL) {
   dir <- knitr::opts_current$get("fig.path")
   if (is.null(dir) || !nzchar(dir)) dir <- "figure/"
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
@@ -459,15 +467,52 @@ qz_figure <- function(plot_fun, id, title, alt, table, note = NULL, subtitle = N
   parent <- basename(dirname(dirname(file.path(dir, "x"))))
   if (nzchar(parent) && parent != ".") rel <- file.path(parent, rel)
   src <- character()
+  src_n <- character()
+  nw <- 4.6
+  nh <- max(height, 3.2) * 1.15
   for (mode in c("light", "dark")) {
+    p <- plot_fun(mode)
+    p_n <- p
+    if (inherits(p, "ggplot") && width > nw) {
+      lay <- ggplot2::ggplot_build(p)$layout$layout
+      if (is.null(narrow)) narrow <- nrow(lay) > 1L
+      # a legend set inside the panel would be cut on the narrow canvas
+      lp <- p$theme$legend.position
+      if (isTRUE(narrow) && (identical(lp, "inside") || is.numeric(lp))) {
+        p_n <- p_n + ggplot2::theme(legend.position = "top")
+      }
+      # small multiples in more than two columns wrap into two on a phone
+      if (isTRUE(narrow) && inherits(p$facet, "FacetWrap") && max(lay$COL) > 2L) {
+        f <- ggplot2::ggproto(NULL, p$facet)
+        f$params$ncol <- 2L
+        f$params$nrow <- NULL
+        p_n$facet <- f
+        nh <- max(3.2, height * 1.1 * ceiling(nrow(lay) / 2) / max(lay$ROW))
+      }
+    }
     file <- paste0(id, "-", mode, ".png")
     ragg::agg_png(file.path(dir, file), width = width, height = height, units = "in", res = 192,
                   background = qz_tokens[[mode]]$surface)
-    print(plot_fun(mode))
+    print(p)
     grDevices::dev.off()
     src[mode] <- paste0(rel, file)
+    if (isTRUE(narrow)) {
+      file <- paste0(id, "-", mode, "-narrow.png")
+      ragg::agg_png(file.path(dir, file), width = nw, height = nh, units = "in", res = 192,
+                    background = qz_tokens[[mode]]$surface)
+      print(p_n)
+      grDevices::dev.off()
+      src_n[mode] <- paste0(rel, file)
+    }
   }
   px <- round(width * 96)
+  img <- function(mode) {
+    tag <- paste0("<img class=\"qesr-img qesr-", mode, "\" src=\"", src[mode], "\" alt=\"", qz_esc(alt),
+                  "\" width=\"", px, "\" height=\"", round(height * 96), "\" loading=\"lazy\">")
+    if (!isTRUE(narrow)) return(tag)
+    paste0("<picture class=\"qesr-pic qesr-", mode, "\"><source media=\"(max-width: 576px)\" srcset=\"",
+           src_n[mode], "\" width=\"", round(nw * 96), "\" height=\"", round(nh * 96), "\">", tag, "</picture>")
+  }
   tab <- suppressWarnings(knitr::kable(table, format = "html", row.names = FALSE, escape = TRUE,
                                        table.attr = "class=\"table qesr-tv\""))
   html <- paste0(
@@ -475,10 +520,7 @@ qz_figure <- function(plot_fun, id, title, alt, table, note = NULL, subtitle = N
     "<figcaption><span class=\"qesr-title\">", qz_esc(title), "</span>",
     if (!is.null(subtitle)) paste0("<span class=\"qesr-sub\">", qz_esc(subtitle), "</span>") else "",
     "</figcaption>",
-    "<img class=\"qesr-img qesr-light\" src=\"", src["light"], "\" alt=\"", qz_esc(alt),
-    "\" width=\"", px, "\" height=\"", round(height * 96), "\" loading=\"lazy\">",
-    "<img class=\"qesr-img qesr-dark\" src=\"", src["dark"], "\" alt=\"", qz_esc(alt),
-    "\" width=\"", px, "\" height=\"", round(height * 96), "\" loading=\"lazy\">",
+    img("light"), img("dark"),
     if (!is.null(note)) paste0("<p class=\"qesr-note\">", qz_esc(note), "</p>") else "",
     "<details class=\"qesr-table\"><summary>", tr("Table view", "Vue en tableau"), "</summary>",
     paste(tab, collapse = "\n"),

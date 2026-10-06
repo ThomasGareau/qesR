@@ -11,7 +11,14 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(qz_studies)
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo)
+la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde
+sur le disque pour les sessions suivantes.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
@@ -291,8 +298,8 @@ qz_figure(fig_age, "age",
   subtitle = trs("Reported turnout of respondents aged 55 and over minus that of those aged 18 to 34, in points, with its 95% confidence interval",
                  "Participation déclarée des 55 ans et plus moins celle des 18 à 34 ans, en points, avec son intervalle de confiance à 95 %"),
   alt = alt, table = tab_age, height = 3.6,
-  note = sprintf(trs("Source: one Quebec Election Study per election, and the 1998 polls (francophones only). Band: 95%% confidence interval of the difference. Weighted; hollow dots (%s): unweighted. The horizontal axis is in years, with a break between 1998 and 2007. The table view also gives the turnout of each age group, and the panels led by Claire Durand at the %s elections.",
-                     "Source : une Étude électorale québécoise par élection, et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %% de la différence. Pondéré ; points creux (%s) : non pondéré. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La vue en tableau donne aussi la participation de chaque groupe d'âge, ainsi que les panels menés par Claire Durand aux élections de %s."),
+  note = sprintf(trs("Source: one Quebec Election Study per election, and the 1998 polls (francophones only). Band: 95%% confidence interval of the difference. Weighted; hollow dots (%s): unweighted, no validated weight. The horizontal axis is in years, with a break between 1998 and 2007. The table view also gives the turnout of each age group, and the panels led by Claire Durand at the %s elections.",
+                     "Source : une Étude électorale québécoise par élection, et les sondages de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %% de la différence. Pondéré ; points creux (%s) : non pondéré, aucune pondération validée. L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La vue en tableau donne aussi la participation de chaque groupe d'âge, ainsi que les panels menés par Claire Durand aux élections de %s."),
                  and_list(d$year[!d$weighted]), and_list(tab$year[grepl("_panel$", tab$study)])))
 ```
 
@@ -546,9 +553,11 @@ points ou aille de 0 à 10.
 ```{r show-harmonize, ref.label = "harmonize", eval = FALSE}
 ```
 
-La participation de chaque groupe d'âge en 2018, et l'écart d'âge à intérêt égal :
+La participation de chaque groupe d'âge en 2018, et l'écart d'âge à intérêt
+égal, avec le package survey (le `h` de l'appel ci-dessus) :
 
 ```{r example}
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018" & !h$eligible_voter %in% FALSE, ], weight = "weight_post")
 d18 <- subset(d18, !is.na(turnout) & !is.na(age_group3))
 svyby(~I(turnout == "Yes"), ~age_group3, d18, svyciprop, vartype = "ci", method = "logit")
@@ -576,12 +585,9 @@ coef(summary(svyglm(voted ~ age + answer, d18)))[2:3, ]
   les répondants s'étaient intéressés à l'élection (de 0 à 10), et le panel
   de 2007 portait sur l'intérêt pour la campagne ; les panels de 2012 et de
   2018 n'ont pas de question comparable.
-- **Pondération.** La pondération postélectorale de chaque étude. Les
-  sondages de 1998 et les panels de 2007 et de 2012 ne sont pas pondérés,
-  leur pondération n'étant pas assez documentée pour être utilisée, et sont
-  représentés par des points creux. Les seules pondérations de l'étude de
-  2008 sont calées sur le vote déclaré ou sur la participation ; aucune ne
-  peut servir ici, et l'étude est elle aussi représentée en creux.
+- **Pondération.** La pondération postélectorale de chaque étude qui en a
+  une validée ; les autres ne sont pas pondérées et sont représentées en
+  points creux (voir le [tableau des pondérations](fr-etudes.html#ponderations)).
 - **Qui a été interrogé.** Les sondages de 1998 n'ont interrogé que des
   francophones, et les répondants qu'ils ont interrogés de nouveau après le
   vote ne sont pas représentatifs de l'ensemble des francophones. L'étude de

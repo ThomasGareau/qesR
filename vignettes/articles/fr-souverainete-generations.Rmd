@@ -13,11 +13,18 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"))
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo)
+la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde
+sur le disque pour les sessions suivantes.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("sov_support", "birth_year", "lang_mother"),
   missing = "reasons", quiet = TRUE
 )
@@ -41,21 +48,14 @@ typo <- function(x) {
 qz_pct_page <- qz_pct
 qz_pct <- function(x, digits = 1) typo(qz_pct_page(x, digits))
 qz_int <- function(x) formatC(round(x), format = "d", big.mark = tr(",", " "))
-qz_weight_text <- function(weighted) ifelse(weighted, tr("weighted", "pondéré"), tr("unweighted", "non pondéré"))
+
 qz_figure_page <- qz_figure
 qz_figure <- function(plot_fun, id, title, alt, table, note = NULL, subtitle = NULL, ...) {
   table[] <- lapply(table, function(col) if (is.character(col)) typo(col) else col)
   names(table) <- typo(names(table))
   qz_figure_page(plot_fun, id, typo(title), typo(alt), table, typo(note), typo(subtitle), ...)
 }
-# the hollow-dot key, without the words in parentheses
-plain_key <- function(p) {
-  tryCatch({
-    s <- p$scales$get_scales("shape")
-    if (!is.null(s) && is.character(s$labels)) s$labels <- sub(" \\(.*\\)$", "", s$labels)
-  }, error = function(e) NULL)
-  p
-}
+
 
 # the share of Yes among those who would vote Yes or No
 h$yes <- factor(ifelse(h$sov_support %in% "Yes", "yes",
@@ -205,7 +205,7 @@ rind <- range(shown(d$pct[d$series == "independence"]))
 
 fig_levels <- function(mode) {
   k <- qz_tokens[[mode]]
-  plain_key(ggplot(d, aes(x, pct)) +
+    ggplot(d, aes(x, pct)) +
     annotate("rect", xmin = qz_ex(2008) + 0.6, xmax = qz_ex(2012) - 0.6, ymin = -Inf, ymax = Inf,
              fill = k$wash) +
     annotate("text", x = (qz_ex(2008) + qz_ex(2012)) / 2, y = 64,
@@ -224,7 +224,7 @@ fig_levels <- function(mode) {
     scale_y_continuous(breaks = seq(20, 60, 10), labels = qz_pct_axis) +
     coord_cartesian(ylim = c(20, 68), expand = FALSE, clip = "off") +
     labs(x = NULL, y = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)")) +
-    theme_qes(mode))
+        theme_qes(mode)
 }
 
 tab <- d[order(d$year), ]
@@ -245,8 +245,8 @@ qz_figure(fig_levels, "levels",
   subtitle = tr("Would vote Yes in a referendum, among those who would vote Yes or No, all respondents, with 95% confidence intervals",
                 "Voterait Oui à un référendum, parmi celles et ceux qui voteraient Oui ou Non, tous les répondants, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_levels, height = 3.9,
-  note = tr("Source: Quebec Election Studies, 2007 to 2022, all respondents. The 2007 and 2008 studies asked the 1995 referendum question, which offered a partnership with Canada, and asked those who did not know which way they leaned; from 2012 on, the studies asked about an independent country. The 2008 study is unweighted (hollow dot).",
-            "Source : Études électorales québécoises, 2007 à 2022, tous les répondants. Les études de 2007 et de 2008 ont posé la question du référendum de 1995, qui offrait un partenariat avec le Canada, et ont relancé les indécis ; à partir de 2012, les études portent sur un pays indépendant. L'étude de 2008 n'est pas pondérée (point creux)."))
+  note = tr("Source: Quebec Election Studies, 2007 to 2022, all respondents. The 2007 and 2008 studies asked the 1995 referendum question, which offered a partnership with Canada, and asked those who did not know which way they leaned; from 2012 on, the studies asked about an independent country. The 2008 study has no validated weight and is unweighted (hollow dot).",
+            "Source : Études électorales québécoises, 2007 à 2022, tous les répondants. Les études de 2007 et de 2008 ont posé la question du référendum de 1995, qui offrait un partenariat avec le Canada, et ont relancé les indécis ; à partir de 2012, les études portent sur un pays indépendant. L'étude de 2008 n'a aucune pondération validée et n'est pas pondérée (point creux)."))
 ```
 
 Avant de comparer les cohortes, un mot sur la question elle-même. Les
@@ -279,7 +279,7 @@ d$panel <- factor(paste0(d$year, " · ", q_short(d$type)),
 
 fig_gradient <- function(mode) {
   k <- qz_tokens[[mode]]
-  plain_key(ggplot(d, aes(pct, cohort)) +
+    ggplot(d, aes(pct, cohort)) +
     geom_vline(xintercept = 50, colour = k$axis, linewidth = 0.35) +
     annotate("text", x = 50.8, y = Inf, label = tr("50%", "50 %"), hjust = 0, vjust = 1.2, size = 2.7,
              colour = k$ink2, family = qz_font()) +
@@ -294,7 +294,7 @@ fig_gradient <- function(mode) {
     labs(x = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)"),
          y = tr("Born", "Nés")) +
     theme_qes(mode, grid = "x") +
-    theme(panel.spacing.x = unit(22, "pt")))
+        theme(panel.spacing.x = unit(22, "pt"))
 }
 alt <- sprintf(tr(
   "Dot charts with confidence intervals in six panels, one per study from 2007 to 2022: the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort (born 1975-1989) is %s from the cohort born in 1944 or before; in 2022 the youngest (born in 1990 or after) is %s from the cohort born 1945-1959. Values in the table view.",
@@ -313,8 +313,8 @@ qz_figure(fig_gradient, "gradient",
   subtitle = tr("Francophones who would vote Yes, by birth cohort, in each Quebec Election Study, with 95% confidence intervals",
                 "Francophones qui voteraient Oui, selon la cohorte de naissance, dans chaque Étude électorale québécoise, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_gradient, height = 4.8,
-  note = tr("Source: Quebec Election Studies, 2007 to 2022, respondents whose mother tongue is French. The 2007 and 2008 studies asked the 1995 question, the others about an independent country: compare the order of the cohorts within a panel, not the levels across panels. The 2008 study is unweighted (hollow dots). Cohorts of fewer than 30 respondents are not drawn.",
-            "Source : Études électorales québécoises, 2007 à 2022, répondants de langue maternelle française. Les études de 2007 et de 2008 ont posé la question de 1995, les autres portent sur un pays indépendant : comparer l'ordre des cohortes dans un panneau, pas les niveaux d'un panneau à l'autre. L'étude de 2008 n'est pas pondérée (points creux). Les cohortes de moins de 30 répondants ne sont pas tracées."))
+  note = tr("Source: Quebec Election Studies, 2007 to 2022, respondents whose mother tongue is French. The 2007 and 2008 studies asked the 1995 question, the others about an independent country: compare the order of the cohorts within a panel, not the levels across panels. The 2008 study has no validated weight and is unweighted (hollow dots). Cohorts of fewer than 30 respondents are not drawn.",
+            "Source : Études électorales québécoises, 2007 à 2022, répondants de langue maternelle française. Les études de 2007 et de 2008 ont posé la question de 1995, les autres portent sur un pays indépendant : comparer l'ordre des cohortes dans un panneau, pas les niveaux d'un panneau à l'autre. L'étude de 2008 n'a aucune pondération validée et n'est pas pondérée (points creux). Les cohortes de moins de 30 répondants ne sont pas tracées."))
 ```
 
 D'abord, en 2007, sur la question de 1995, l'appui diminue avec l'âge : les
@@ -345,7 +345,9 @@ répondu en 2022.
 years <- c(2012, 2014, 2018, 2022)
 d <- est[est$lang == "fr" & est$group %in% cohorts & est$year %in% years & est$n >= qz_min_n, ]
 d$weighted <- as.logical(d$weighted)
-d$x <- d$year
+# the two highlighted cohorts sit a little apart at each election, so that
+# their dots and intervals do not overlap where their levels are close
+d$x <- d$year + ifelse(d$group == "1945-59", -0.3, ifelse(d$group == "1990+", 0.3, 0))
 d$cohort <- factor(d$group, levels = cohorts)
 d$label <- cohort_lab[as.character(d$cohort)]
 # the story is two cohorts; the other three are grey context
@@ -362,7 +364,11 @@ fig_cohorts <- function(mode) {
     c(`1945-59` = "#3987e5", `1990+` = "#b7d3f6", context = k$muted)
   ggplot(d, aes(x, pct, colour = series, group = cohort)) +
     geom_line(data = ctx, linewidth = 0.45, lineend = "round", show.legend = FALSE) +
-    qz_band(data = foc, aes(ymin = lo, ymax = hi, fill = series), mode = mode) +
+        # the band of the older cohort is the more opaque, so the two read apart
+    geom_ribbon(data = foc, aes(ymin = lo, ymax = hi, fill = series, alpha = series), colour = NA,
+                show.legend = FALSE) +
+    scale_alpha_manual(values = if (mode == "light") c(`1945-59` = 0.2, `1990+` = 0.1) else
+      c(`1945-59` = 0.34, `1990+` = 0.16), guide = "none") +
     qz_line(data = foc, show.legend = FALSE) +
     qz_dots(mode, ctx, aes(x, pct), colour_aes = "series", size = 2) +
     qz_dots(mode, foc, aes(x, pct), colour_aes = "series") +
@@ -371,7 +377,7 @@ fig_cohorts <- function(mode) {
     scale_fill_manual(values = cols, breaks = c(focus, "context"),
                       labels = c(cohort_lab[focus], context = tr("other cohorts", "autres cohortes")),
                       guide = guide_legend(order = 1)) +
-    scale_x_continuous(breaks = years, limits = c(2011.3, 2026.4), expand = expansion(0)) +
+        scale_x_continuous(breaks = years, limits = c(2011.2, 2026.6), expand = expansion(0)) +
     scale_y_continuous(breaks = seq(20, 60, 10), labels = qz_pct_axis) +
     coord_cartesian(ylim = c(20, 66), expand = FALSE) +
     labs(x = NULL, y = tr("Would vote Yes (among Yes and No)", "Voterait Oui (parmi Oui et Non)")) +
@@ -603,7 +609,8 @@ parcours politique.
   cohorte la plus jeune.
 - **Moment et pondération.** L'étude de 2022 a posé la question pendant la
   campagne, les autres après l'élection. Chaque étude est pondérée, sauf
-  celle de 2008, qui ne l'est pas (points creux).
+  celle de 2008, qui n'a aucune pondération validée et ne l'est donc pas
+  (points creux ; voir le [tableau des pondérations](fr-etudes.html#ponderations)).
 - **Reproduire la page.** Les données proviennent d'un seul appel :
 
 ```{r show-harmonize, ref.label = "harmonize", eval = FALSE}

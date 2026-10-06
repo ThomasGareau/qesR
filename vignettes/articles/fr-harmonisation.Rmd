@@ -10,7 +10,26 @@ params:
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", warning = FALSE)
 # messages in the language of the page, whatever the locale of the build
 options(qesR.lang = params$lang, width = 90)
+# decimal comma on the French page (formatC() and print() follow OutDec)
+if (identical(params$lang, "fr")) options(OutDec = ",")
+library(qesR)
+# what the page downloads (the note below): the studies qes_harmonize()
+# reads by default for these targets, and the size of their data files
+dl <- local({
+  grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"))
+  st <- as.data.frame(qes_studies())
+  st <- st[st$default_member & st$study %in% names(grid), , drop = FALSE]
+  st <- st[vapply(st$study, function(s) any(!is.na(grid[[s]])), logical(1)), , drop = FALSE]
+  files <- utils::read.csv(system.file("extdata", "catalog", "files.csv", package = "qesR"),
+                           colClasses = "character")
+  ids <- paste(st$study, c(st$data_file_id, st$label_file_id))
+  list(n = nrow(st), mb = sum(as.numeric(files$bytes[paste(files$study, files$file_id) %in% ids])) / 1e6)
+})
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r round(dl$mb)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
+:::
 
 Cette page va de `qes_harmonize()` jusqu'à une estimation pondérée, étude
 par étude, et montre ce que qesR consigne en chemin : le niveau de
@@ -24,15 +43,14 @@ comparabilité et les appariements peuvent encore changer d'une version de
 qesR à l'autre. Pour chaque étude et chaque variable harmonisée (« cible »),
 les règles livrées avec qesR indiquent quelle question alimente la cible et
 comment chacun de ses codes correspond aux niveaux de la cible ; rien n'est
-apparié par le nom. `qes1998`, les panels Durand et les sondages CROP n'ont
-pas encore de pondération utilisable : leurs colonnes de pondération valent
-donc `NA`, et leurs réponses sont harmonisées comme les autres.
+apparié par le nom. Certaines études n'ont pas de pondération validée : leurs
+colonnes de pondération valent donc `NA`, et leurs réponses sont
+harmonisées comme les autres (le
+[tableau des pondérations](fr-etudes.html#ponderations) donne la
+pondération de chaque étude).
 
 ```{r packages, message = FALSE}
 library(qesR)
-tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
-# percentages with one decimal, in the page's style
-pct <- function(x) formatC(100 * x, format = "f", digits = 1, decimal.mark = tr(".", ","))
 ```
 
 ## Quelles études posent la question
@@ -45,7 +63,7 @@ référendaire sur un Québec pays indépendant, et le vote déclaré après
 l'élection.
 
 ```{r spec}
-grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"), lang = params$lang)
+grid <- qes_spec(targets = c("sov_indep", "vote_prov_recall"), lang = "fr")
 knitr::kable(grid[, c("target", "label", "qes2022", "qes2018", "qes2014", "qes2012")])
 ```
 
@@ -53,7 +71,7 @@ La vue de correspondance (`"crosswalk"`) dit sur quelle question porte
 chaque niveau, et pourquoi :
 
 ```{r crosswalk}
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "fr")
 knitr::kable(xw[, c("study", "wave", "source_var", "grade", "grade_reason")])
 ```
 
@@ -80,7 +98,7 @@ pondération de cette vague. `missing = "reasons"` ajoute une colonne
 
 ```{r harmonize}
 h <- qes_harmonize(targets = c("sov_indep", "vote_prov_recall"), layout = "long",
-                   missing = "reasons", lang = params$lang)
+                   missing = "reasons", lang = "fr")
 table(h$study, h$wave)
 ```
 
@@ -118,7 +136,7 @@ question d'ancrage elle-même :
 ```{r min-grade}
 strict <- qes_harmonize(targets = "sov_indep", layout = "long", missing = "reasons",
                         min_grade = "identical", quiet = TRUE,
-                        lang = params$lang)
+                        lang = "fr")
 table(strict$study, strict$sov_indep__na)[, c("dk", "refused", "below_grade")]
 ```
 
@@ -149,8 +167,8 @@ aux deux cibles.
 `qes_design()` transmet les données au package `survey` : chaque étude est
 une strate et, en disposition longue, le répondant est l'unité
 d'échantillonnage. Les estimations sont calculées dans chaque étude avec
-`svyby()` ; le tableau signale les niveaux qu'une étude n'offrait pas au
-lieu d'afficher 0.
+`svyby()` ; un tiret signale les niveaux qu'une étude n'offrait pas, au
+lieu d'un 0.
 
 ```{r design}
 d <- qes_design(h)
@@ -161,7 +179,8 @@ cells <- qes_provenance(h, level = "cell")
 spec <- qes_spec("spec")
 
 # Weighted percentage of each level of `target` by study, with its
-# standard error; levels the study's question did not offer are marked.
+# standard error; a dash marks the levels the study's question did not offer.
+pct <- function(x) formatC(100 * x, format = "f", digits = 1)
 share_table <- function(design, target) {
   est <- survey::svyby(stats::as.formula(paste0("~", target)), ~study, design,
                        survey::svymean, na.rm = TRUE)
@@ -176,7 +195,7 @@ share_table <- function(design, target) {
   for (s in rownames(out)) {
     off <- cells$levels_not_offered[cells$study == s & cells$target == target]
     gone <- lv[names_lv %in% strsplit(off, ";", fixed = TRUE)[[1]]]
-    out[s, gone] <- tr("not offered", "non offert")
+    out[s, gone] <- "\u2014"
   }
   out
 }
@@ -187,7 +206,7 @@ Chaque cellule est un pourcentage pondéré, avec son erreur type entre
 parenthèses. Aucune étude n'offrait « n'irait pas voter » comme réponse à
 cette question : ce niveau est un zéro structurel partout. Les erreurs
 types traitent chaque échantillon pondéré comme un échantillon
-probabiliste. Les quatre études sont des enquêtes Web dont les
+probabiliste. Ces études sont des enquêtes Web dont les
 pondérations s'ajustent aux marges du recensement : lisez les erreurs
 types comme un ordre de grandeur seulement (voir `?qes_design`).
 
@@ -205,7 +224,7 @@ knitr::kable(share_table(voters, "vote_prov_recall"))
 
 Garder les électeurs admissibles ne recalibre pas les pondérations, qui
 visent la population que chaque étude a échantillonnée. Un parti marqué
-« non offert » ne figurait pas dans la liste de réponses de cette étude :
+d'un tiret ne figurait pas dans la liste de réponses de cette étude :
 sa part n'y est donc pas comparable à celle des autres études.
 
 Regrouper les études en une seule estimation est possible
@@ -230,7 +249,9 @@ s'additionnent au nombre de répondants de l'étude, alors que le tableau de
 la section *Pourquoi des valeurs manquent* compte les lignes de la
 disposition longue. Tous les répondants de `qes2022` ont participé à la
 vague de campagne : aucun n'est donc `not_in_wave` pour `sov_indep`, alors
-que 301 n'ont pas participé à la vague postélectorale et sont
+que
+`r cells$n_not_in_wave[cells$study == "qes2022" & cells$target == "vote_prov_recall"]`
+n'ont pas participé à la vague postélectorale et sont
 `not_in_wave` pour `vote_prov_recall`.
 
 qesR consigne quels fichiers et quelle version des règles ont produit
@@ -242,7 +263,7 @@ les règles, puis chaque jeu de données :
 ```{r cite}
 spec_record <- qes_provenance(h, level = "spec")
 spec_record[, c("spec_version", "qesR_version")]
-cat(qes_cite(h, lang = params$lang), sep = "\n\n")
+cat(qes_cite(h, lang = "fr"), sep = "\n\n")
 ```
 
 ## Cinq cibles sur la souveraineté, une variable regroupée
@@ -252,7 +273,7 @@ posé des questions sur la souveraineté avec d'autres libellés : elles
 alimentent d'autres cibles, jamais fusionnées avec `sov_indep`.
 
 ```{r sovereignty}
-sov <- qes_spec("crosswalk", targets = "sovereignty", lang = params$lang)
+sov <- qes_spec("crosswalk", targets = "sovereignty", lang = "fr")
 sov <- sov[sov$rule != "none", ]
 rownames(sov) <- NULL
 knitr::kable(sov[, c("target", "study", "source_var", "grade", "weight_var")])
@@ -266,7 +287,8 @@ souveraineté assortie d'une offre de partenariat au reste du Canada
 Parmi ces études, seuls `qes2007` et le panel de 2018 ont une pondération
 utilisable pour ces questions : les deux pondérations de `qes2008` sont
 calées sur le vote ou sur la participation, et celles des autres ne sont
-pas assez documentées pour être utilisées. Les lignes des autres études
+pas validées (voir le
+[tableau des pondérations](fr-etudes.html#ponderations)). Les lignes des autres études
 sont écartées des estimations pondérées, avec un message. Placez les cibles
 côte à côte et lisez chacune à la lumière de sa propre question.
 
@@ -280,6 +302,11 @@ même pour le vote (le vote déclaré, sinon l'intention de vote) et
 `pol_interest` pour l'intérêt pour la politique :
 
 ```{r pooled}
-pooled <- qes_spec("pooled", targets = "sov_support", lang = params$lang)
+pooled <- qes_spec("pooled", targets = "sov_support", lang = "fr")
 knitr::kable(pooled[, c("type_name", "member", "precedence", "default", "grade_cap")])
+```
+
+```{r reset, include = FALSE}
+# the decimal mark of the French page is for this page only
+options(OutDec = ".")
 ```

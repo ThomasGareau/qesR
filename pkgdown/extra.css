@@ -1,8 +1,10 @@
 /* qesR site styles. Colours come from the logo (man/figures/logo.svg):
    navy #0B3D91 and gold #F2B632; the contrast of each is computed in the
    comment of template.bslib in _pkgdown.yml. Everything else is Bootstrap
-   5, set in _pkgdown.yml, so the light and dark themes both work. The only script is the FR/EN button of
-   the navbar (template.includes.before_body of _pkgdown.yml). */
+   5, set in _pkgdown.yml, so the light and dark themes both work. The only
+   script (template.includes.before_body of _pkgdown.yml) adds the FR/EN
+   button of the navbar, translates the navbar on French pages and wraps
+   wide tables in a scrolling region. */
 
 :root {
   --qesr-gold: #f2b632;
@@ -38,6 +40,7 @@
 a:focus-visible,
 button:focus-visible,
 summary:focus-visible,
+.qesr-scroll:focus-visible,
 .nav-link:focus-visible,
 .dropdown-item:focus-visible {
   outline: 3px solid #0b3d91;
@@ -47,6 +50,7 @@ summary:focus-visible,
 [data-bs-theme="dark"] a:focus-visible,
 [data-bs-theme="dark"] button:focus-visible,
 [data-bs-theme="dark"] summary:focus-visible,
+[data-bs-theme="dark"] .qesr-scroll:focus-visible,
 [data-bs-theme="dark"] .nav-link:focus-visible,
 [data-bs-theme="dark"] .dropdown-item:focus-visible {
   outline-color: var(--qesr-gold);
@@ -100,17 +104,29 @@ summary:focus-visible,
   font-weight: 600;
 }
 
-/* Wide catalog tables scroll inside their box instead of the page; the
-   flex column must be allowed to shrink for that to work on phones. */
+/* Wide tables scroll inside their box instead of the page; the flex
+   column must be allowed to shrink for that to work on phones. A table
+   keeps display: table (its rows and headers stay a table for screen
+   readers); the script of template.includes.before_body (_pkgdown.yml)
+   wraps each one in a div.qesr-scroll, a labelled region that takes the
+   keyboard focus when the table is wider than the page, so that it can be
+   scrolled with the arrow keys. */
 main {
   min-width: 0;
 }
 
 .table-responsive,
-main table {
-  display: block;
+.qesr-scroll {
   max-width: 100%;
   overflow-x: auto;
+}
+
+.qesr-scroll {
+  margin-bottom: 1rem;
+}
+
+.qesr-scroll > table {
+  margin-bottom: 0;
 }
 
 main table th {
@@ -174,6 +190,10 @@ main .contents > p:first-of-type > em:only-child > a {
   margin-top: 0.15rem;
 }
 
+.qesr-pic {
+  display: block;
+}
+
 .qesr-img {
   width: 100%;
   max-width: 720px;
@@ -229,4 +249,30 @@ main .contents > p:first-of-type > em:only-child > a {
   font-size: 0.95rem;
   font-weight: 600;
   margin-bottom: 0.35rem;
+}
+
+/* The note at the top of a page that downloads studies the first time it
+   runs: how many, how large, and how to keep them. */
+.qesr-download {
+  border-left: 4px solid var(--bs-link-color);
+  background: var(--bs-tertiary-bg);
+  padding: 0.6rem 0.9rem;
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  border-radius: 0 var(--bs-border-radius) var(--bs-border-radius) 0;
+}
+
+.qesr-download p:last-child {
+  margin-bottom: 0;
+}
+
+/* The variable reference: one collapsible coverage table per target. */
+.qesr-target summary {
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.qesr-jump {
+  columns: 16rem;
+  font-size: 0.9rem;
 }

@@ -12,11 +12,18 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"))
 ```
+
+::: {.qesr-download}
+**This page downloads `r dl$n` studies** (about `r qz_num(dl$mb, 0)` MB) the
+first time it runs. `options(qesR.cache = "disk")` keeps them on disk for
+later sessions.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
@@ -281,7 +288,7 @@ fig_where <- function(mode) {
     scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1, nrow = 1)) +
     scale_party(mode, aesthetics = "fill") +
     scale_shape_manual(values = c(weighted = 21, unweighted = 21), limits = c("weighted", "unweighted"),
-                       breaks = "unweighted", labels = tr("hollow: 2008, unweighted", "creux : 2008, non pondéré"),
+                       breaks = "unweighted", labels = tr("hollow: 2008, unweighted, no validated weight", "creux : 2008, non pondéré, aucune pondération validée"),
                        guide = guide_legend(order = 2, override.aes = list(fill = k$surface, colour = k$ink2, stroke = 1.1, size = 2.6,
                                                                           alpha = 1, linetype = 0))) +
     geom_point(data = d[1, ], aes(shape = "unweighted"), alpha = 0, colour = NA, show.legend = c(colour = FALSE, shape = TRUE)) +
@@ -319,8 +326,8 @@ qz_figure(fig_where, "where",
   subtitle = tr("How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals",
                 "Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_where, height = 4.2,
-  note = tr("Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.",
-            "Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted, no validated weight). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.",
+            "Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée, aucune pondération validée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau."))
 ```
 
 We now turn from where each party's voters stand to where each camp's
@@ -494,8 +501,8 @@ takes up that question.
   panels run by Claire Durand and colleagues at the same elections are
   left out, so that the series has one study per election; in 2012 and
   2018 they also asked other wordings of the referendum question. The 1998
-  polls are left out as well: they are unweighted, and only one of the two
-  asked the referendum question.
+  polls are left out as well: they have no validated weight, and only one
+  of the two asked the referendum question.
 - **Questions.** The vote reported after the election; the referendum
   vote as the share of Yes among respondents who chose Yes or No (those
   who remain undecided are set aside); the respondent's own placement
@@ -515,8 +522,9 @@ takes up that question.
   the respondents who took part in both waves, with the post-election
   weight.
 - **Weights.** Each study's post-election weight. The 2008 study is shown
-  unweighted: its weights were adjusted to the election result, which
-  makes them unsuited to a study of the vote.
+  unweighted: its only weights were calibrated on the reported vote, which
+  makes them unsuited to a study of the vote (see the
+  [weights table](studies.html#weights)).
 - **Share of variance.** Computed within each study on the respondents
   who answered both questions and voted for one of the parties shown, with
   95% intervals from 500 bootstrap replicates of the study's design.
@@ -534,6 +542,7 @@ studies:
 A weighted mean by party, within one study:
 
 ```{r example}
+library(survey)
 d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
 svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
       svymean, na.rm = TRUE)

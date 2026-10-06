@@ -21,5 +21,48 @@ The page is generated from the rules that ship with qesR, so it always
 describes what the installed version applies.
 
 ```{r reference, echo = FALSE, results = "asis"}
-cat(qesR:::.spec_reference_md(lang = params$lang, site = TRUE))
+fr <- identical(params$lang, "fr")
+md <- strsplit(qesR:::.spec_reference_md(lang = params$lang, site = TRUE), "\n", fixed = TRUE)[[1]]
+# The page is long: a jump list of the variables at the top, and the
+# coverage or mapping table of each variable folded in a <details>.
+head_re <- "^(#{3,4}) `([^`]+)`: (.*) \\{#((target|relaxed)-[^}]+)\\}\\s*$"
+section_re <- "^#{2,3} [^`]"
+jump <- character()
+group <- NULL
+for (line in md) {
+  if (grepl(head_re, line)) {
+    if (!is.null(group)) {
+      jump <- c(jump, paste0("\n**", group, "**\n"))
+      group <- NULL
+    }
+    jump <- c(jump, sub(head_re, "- [`\\2`](#\\4): \\3", line))
+  } else if (grepl(section_re, line)) {
+    group <- sub("^#+ ", "", line)
+  }
+}
+fold <- c(Coverage = "Coverage by study", `Relaxed mappings` = "Mappings by study",
+          Couverture = "Couverture par étude", `Appariements souples` = "Appariements par étude")
+out <- character()
+open <- FALSE
+for (i in seq_along(md)) {
+  line <- md[i]
+  label <- sub("^\\*\\*(.*)\\*\\*\\s*$", "\\1", line)
+  after <- md[seq_along(md) > i & nzchar(trimws(md))]
+  if (grepl("^\\*\\*.*\\*\\*\\s*$", line) && label %in% names(fold) &&
+      length(after) && startsWith(after[1], "|")) {
+    out <- c(out, paste0("<details class=\"qesr-target\"><summary>", fold[[label]], "</summary>"), "")
+    open <- TRUE
+    next
+  }
+  # the folded table ends at the first text after it that is not a table row
+  if (open && nzchar(trimws(line)) && !startsWith(line, "|")) {
+    out <- c(out, "", "</details>")
+    open <- FALSE
+  }
+  out <- c(out, line)
+}
+if (open) out <- c(out, "", "</details>")
+cat(if (fr) "## Aller à une variable\n\n" else "## Jump to a variable\n\n",
+    "::: {.qesr-jump}\n", paste(jump, collapse = "\n"), "\n:::\n\n",
+    paste(out, collapse = "\n"), sep = "")
 ```

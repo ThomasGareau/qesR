@@ -13,11 +13,18 @@ params:
 
 ```{r setup, include = FALSE}
 source("_setup.R", encoding = "UTF-8")
+dl <- qz_download(c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"))
 ```
+
+::: {.qesr-download}
+**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo)
+la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde
+sur le disque pour les sessions suivantes.
+:::
 
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
@@ -287,7 +294,7 @@ fig_where <- function(mode) {
     scale_party(mode, aesthetics = "colour", guide = guide_legend(order = 1, nrow = 1)) +
     scale_party(mode, aesthetics = "fill") +
     scale_shape_manual(values = c(weighted = 21, unweighted = 21), limits = c("weighted", "unweighted"),
-                       breaks = "unweighted", labels = tr("hollow: 2008, unweighted", "creux : 2008, non pondéré"),
+                       breaks = "unweighted", labels = tr("hollow: 2008, unweighted, no validated weight", "creux : 2008, non pondéré, aucune pondération validée"),
                        guide = guide_legend(order = 2, override.aes = list(fill = k$surface, colour = k$ink2, stroke = 1.1, size = 2.6,
                                                                           alpha = 1, linetype = 0))) +
     geom_point(data = d[1, ], aes(shape = "unweighted"), alpha = 0, colour = NA, show.legend = c(colour = FALSE, shape = TRUE)) +
@@ -325,8 +332,8 @@ qz_figure(fig_where, "where",
   subtitle = tr("How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals",
                 "Comment ont voté les répondants qui voteraient Oui et Non à un référendum : la part de chaque parti dans le vote déclaré du camp, avec intervalles de confiance à 95 %"),
   alt = alt, table = tab_where, height = 4.2,
-  note = tr("Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.",
-            "Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau."))
+  note = tr("Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted, no validated weight). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.",
+            "Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf 2008 (creux : non pondérée, aucune pondération validée). 2007 et 2008 ont posé la question référendaire de 1995, 2012 à 2022 une question sur un pays indépendant : les lignes s'interrompent au changement. Les autres partis (Parti vert, Option nationale et autres) sont dans la vue en tableau."))
 ```
 
 Nous passons maintenant de la position des électeurs de chaque parti au
@@ -510,8 +517,9 @@ se penche sur cette question.
   référendaire. Les panels menés par Claire Durand et ses collègues lors
   des mêmes élections sont exclus, afin de garder une étude par élection ;
   en 2012 et en 2018, ils ont en outre posé d'autres libellés de la
-  question référendaire. Les sondages de 1998 sont aussi exclus : ils ne
-  sont pas pondérés, et un seul des deux a posé la question référendaire.
+  question référendaire. Les sondages de 1998 sont aussi exclus : ils
+  n'ont aucune pondération validée, et un seul des deux a posé la question
+  référendaire.
 - **Questions.** Le vote déclaré après l'élection ; le vote référendaire,
   en part de Oui parmi les répondants qui ont choisi Oui ou Non (ceux qui
   restent indécis sont mis de côté) ; l'autopositionnement de la personne
@@ -531,9 +539,9 @@ se penche sur cette question.
   les estimations portent sur les répondants qui ont participé aux deux
   vagues, avec la pondération postélectorale.
 - **Pondérations.** La pondération postélectorale de chaque étude. L'étude
-  de 2008 est présentée sans pondération : ses pondérations ont été calées
-  sur le résultat de l'élection, ce qui les rend peu adaptées à l'étude du
-  vote.
+  de 2008 est présentée sans pondération : ses seules pondérations ont été
+  calées sur le vote déclaré, ce qui les rend peu adaptées à l'étude du
+  vote (voir le [tableau des pondérations](fr-etudes.html#ponderations)).
 - **Part de la variance.** Calculée dans chaque étude sur les répondants qui
   ont répondu aux deux questions et voté pour l'un des partis présentés,
   avec des intervalles à 95 % tirés de 500 répliques bootstrap du plan de
@@ -552,6 +560,7 @@ l'autopositionnement gauche-droite (`lr_self`) et la langue maternelle
 Une moyenne pondérée par parti, dans une étude :
 
 ```{r example}
+library(survey)
 d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
 svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
       svymean, na.rm = TRUE)
