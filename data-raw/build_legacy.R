@@ -1,15 +1,24 @@
 # The record of qesR 0.4.4's legacy sources, from the clean qesR 0.4.4
 # baseline (R9; design.md section 5.12, slices S4 and HZ6).
 #
+# FROZEN. Its outputs record qesR 0.4.4 and do not change when the package
+# does; rerun it only to check them (--check), never as part of a rebuild.
+#
 # Usage (from the package root):
+#   Rscript data-raw/build_legacy.R [--check]
 #   QESR_LEGACY_BASELINE=<dir> Rscript data-raw/build_legacy.R [--check]
 #
-# <dir> is the output directory of the R9 baseline run (qesR 0.4.4 at
-# commit v0.4.4, fresh session, LANGUAGE=en). It must hold:
+# <dir> (default data-raw/baselines/v044/) is the output directory of the R9
+# baseline run (qesR 0.4.4 at tag v0.4.4, fresh session, LANGUAGE=en), which
+# data-raw/make_legacy_baselines.R regenerates. It must hold:
 #   legacy_master_source_map.csv            the `source_map` attribute of
 #                                           get_qes_master() (1,067 rows);
 #   legacy_get_qes_names_all_studies.csv    the column names get_qes()
-#                                           returned for the 11 studies.
+#                                           returned for the 11 studies
+#                                           (when absent, the test fixture
+#                                           tests/testthat/fixtures/
+#                                           v044-get-qes-names.csv, which
+#                                           records the same names).
 # This script makes no network request.
 #
 # Writes
@@ -35,14 +44,21 @@ args <- commandArgs(trailingOnly = TRUE)
 check_only <- "--check" %in% args
 
 base <- Sys.getenv("QESR_LEGACY_BASELINE")
-if (!nzchar(base) || !dir.exists(base)) {
-  stop("Set QESR_LEGACY_BASELINE to the output directory of the R9 baseline run.", call. = FALSE)
+if (!nzchar(base)) base <- file.path("data-raw", "baselines", "v044")
+need <- file.path(base, c("legacy_master_source_map.csv", "legacy_get_qes_names_all_studies.csv"))
+# The 0.4.4 get_qes() names are also a test fixture (study, position, name,
+# type, n_na), which gives the same decon rows; it is used when the baseline
+# directory has no names file.
+names_fixture <- file.path("tests", "testthat", "fixtures", "v044-get-qes-names.csv")
+if (!file.exists(need[2]) && file.exists(names_fixture)) need[2] <- names_fixture
+if (!all(file.exists(need))) {
+  stop(sprintf(paste0("Missing %s. Set QESR_LEGACY_BASELINE to the output directory of the R9 baseline run, ",
+                      "or regenerate it with data-raw/make_legacy_baselines.R."),
+               paste(need[!file.exists(need)], collapse = ", ")), call. = FALSE)
 }
 
-source_map <- utils::read.csv(file.path(base, "legacy_master_source_map.csv"),
-                              colClasses = "character", encoding = "UTF-8")
-names_v044 <- utils::read.csv(file.path(base, "legacy_get_qes_names_all_studies.csv"),
-                              colClasses = "character", encoding = "UTF-8")
+source_map <- utils::read.csv(need[1], colClasses = "character", encoding = "UTF-8")
+names_v044 <- utils::read.csv(need[2], colClasses = "character", encoding = "UTF-8")
 names(names_v044)[1] <- "study"
 
 studies <- c(
@@ -155,4 +171,9 @@ write_utf8_csv <- function(x, path) {
 dir.create(file.path("inst", "extdata", "legacy"), showWarnings = FALSE)
 write_utf8_csv(frozen, file.path("data-raw", "legacy_source_map.csv"))
 write_utf8_csv(removed, file.path("inst", "extdata", "legacy", "removed.csv"))
-cat(sprintf("frozen rows: %d; removed columns: %d\n", nrow(frozen), nrow(removed)))
+if (check_only) {
+  cat(sprintf("build_legacy: the frozen record matches the baseline in %s (%d rows; %d removed columns).\n",
+              base, nrow(frozen), nrow(removed)))
+} else {
+  cat(sprintf("frozen rows: %d; removed columns: %d\n", nrow(frozen), nrow(removed)))
+}

@@ -1,13 +1,28 @@
 # Build the offline study catalog (design.md section 3) from Dataverse JSON.
 #
 # Usage (from the package root):
+#   Rscript data-raw/build_catalog.R [--check]
 #   QESR_DV_JSON_DIR=<dir> Rscript data-raw/build_catalog.R [--check]
 #
-# <dir> holds the dataset JSON of every deposit in the catalog, as returned by
+# Without QESR_DV_JSON_DIR it reads the committed snapshots in
+# data-raw/inputs/dataverse/: the JSON of the pinned version of every deposit,
+#   <server>/api/datasets/:persistentId/versions/<version>?persistentId=doi:<doi>
+# and their index.csv, which records the pin (dataset_version), the publisher
+# (the installation's name, from the dataset endpoint), the md5 of each
+# snapshot and any edit made to it. A snapshot whose md5 differs from
+# index.csv stops the script. So the catalog builds from a clean clone with
+# no request.
+#
+# With QESR_DV_JSON_DIR, <dir> holds the current dataset JSON of every
+# deposit, as returned by
 #   <server>/api/datasets/:persistentId/?persistentId=doi:<doi>
 # one file per deposit, any file name ending in .json. Fetch them with plain
 # requests (User-Agent "qesR/<ver> R/<ver>", one at a time, at least 1 s
-# apart); this script makes no network request itself.
+# apart); this script makes no network request itself. If the latestVersion
+# of any deposit is not its pinned version (index.csv), the script stops and
+# lists them. To move a pin, fetch the new version's JSON into
+# data-raw/inputs/dataverse/, update index.csv (version, url, md5), review the
+# curated overlays, and rebuild.
 #
 # Every fact that Dataverse publishes (titles, authors, versions, licences,
 # file names, sizes, md5, UNF, citation year) is copied from the JSON. The
@@ -27,8 +42,9 @@ args <- commandArgs(trailingOnly = TRUE)
 check_only <- "--check" %in% args
 
 json_dir <- Sys.getenv("QESR_DV_JSON_DIR")
-if (!nzchar(json_dir) || !dir.exists(json_dir)) {
-  stop("Set QESR_DV_JSON_DIR to the directory of cached dataset JSON files.", call. = FALSE)
+if (nzchar(json_dir) && !dir.exists(json_dir)) {
+  stop(sprintf("QESR_DV_JSON_DIR (%s) is not a directory. Unset it to use the committed snapshots.", json_dir),
+       call. = FALSE)
 }
 
 # Licences under which qesR ships a study's metadata (dictionary, wording,
@@ -51,15 +67,63 @@ read_utf8_csv <- function(path) {
 
 # ---- deposits ----------------------------------------------------------------
 
+snap_dir <- file.path(root, "data-raw", "inputs", "dataverse")
+index <- read_utf8_csv(file.path(snap_dir, "index.csv"))
+version_of <- function(v) sprintf("%s.%s", v$versionNumber, v$versionMinorNumber)
+# a snapshot of one version, in the shape of the dataset endpoint: the
+# dataset-level fields build_catalog reads come from index.csv
+as_dataset <- function(v, row) {
+  list(latestVersion = v, publisher = row$publisher, persistentUrl = row$persistent_url,
+       publicationDate = v$publicationDate)
+}
+
 deposits <- list()
-for (f in list.files(json_dir, pattern = "\\.json$", full.names = TRUE)) {
-  j <- jsonlite::fromJSON(f, simplifyVector = FALSE)
-  d <- j$data
-  doi <- sub("^doi:", "", d$latestVersion$datasetPersistentId %||% "")
-  if (!nzchar(doi)) {
-    doi <- sub("^https://doi.org/", "", d$persistentUrl)
+if (nzchar(json_dir)) {
+  input <- json_dir
+  moved <- character(0)
+  for (f in list.files(json_dir, pattern = "\\.json$", full.names = TRUE)) {
+    j <- jsonlite::fromJSON(f, simplifyVector = FALSE)
+    d <- j$data
+    if (is.null(d$latestVersion) && !is.null(d$versionNumber)) {
+      # a version JSON (as the snapshots are) rather than a dataset JSON
+      row <- index[index$doi == sub("^doi:", "", d$datasetPersistentId %||% ""), , drop = FALSE]
+      if (nrow(row) != 1L) stop(sprintf("%s: doi not in %s/index.csv.", basename(f), snap_dir), call. = FALSE)
+      d <- as_dataset(d, row)
+    }
+    doi <- sub("^doi:", "", d$latestVersion$datasetPersistentId %||% "")
+    if (!nzchar(doi)) {
+      doi <- sub("^https://doi.org/", "", d$persistentUrl)
+    }
+    pin <- index$dataset_version[index$doi == doi]
+    if (length(pin) != 1L) {
+      stop(sprintf("doi:%s (%s) has no pinned version in %s/index.csv.", doi, basename(f), snap_dir), call. = FALSE)
+    }
+    if (!identical(version_of(d$latestVersion), pin)) {
+      moved <- c(moved, sprintf("doi:%s latest %s, pinned %s", doi, version_of(d$latestVersion), pin))
+    }
+    deposits[[doi]] <- d
   }
-  deposits[[doi]] <- d
+  if (length(moved) > 0L) {
+    stop(sprintf(paste0("The latest version on Dataverse is not the pinned version for %d deposit(s):\n  %s\n",
+                        "The catalog is built from the pinned versions only. To move a pin, snapshot the new ",
+                        "version in %s, update index.csv and review the curated overlays."),
+                 length(moved), paste(moved, collapse = "\n  "), snap_dir), call. = FALSE)
+  }
+} else {
+  input <- snap_dir
+  for (i in seq_len(nrow(index))) {
+    row <- index[i, , drop = FALSE]
+    f <- file.path(snap_dir, row$file)
+    if (!file.exists(f)) stop(sprintf("Missing snapshot %s.", f), call. = FALSE)
+    if (!identical(unname(tools::md5sum(f)), row$md5)) {
+      stop(sprintf("%s does not have the md5 recorded in index.csv (%s).", f, row$md5), call. = FALSE)
+    }
+    v <- jsonlite::fromJSON(f, simplifyVector = FALSE)$data
+    if (!identical(sub("^doi:", "", v$datasetPersistentId), row$doi) || !identical(version_of(v), row$dataset_version)) {
+      stop(sprintf("%s is not version %s of doi:%s.", f, row$dataset_version, row$doi), call. = FALSE)
+    }
+    deposits[[row$doi]] <- as_dataset(v, row)
+  }
 }
 
 citation_field <- function(d, name) {
@@ -203,7 +267,7 @@ if (check_only) {
   if (length(bad) > 0L) {
     stop(sprintf("Out of date: %s. Re-run without --check.", paste(bad, collapse = ", ")), call. = FALSE)
   }
-  cat("Catalog matches the Dataverse JSON and the curated overlays.\n")
+  cat(sprintf("Catalog matches the Dataverse JSON (%s) and the curated overlays.\n", input))
   quit(save = "no", status = 0)
 }
 

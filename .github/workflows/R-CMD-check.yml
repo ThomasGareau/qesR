@@ -1,6 +1,8 @@
-# R CMD check --as-cran on every push and pull request, all branches
-# (design.md section 8.4). Replaces the former r-devel-check.yml, which ran one
-# ubuntu r-devel job on main only.
+# R CMD check --as-cran on every pull request, on pushes to main and on
+# release tags v* (design.md section 8.4). Replaces the former
+# r-devel-check.yml, which ran one ubuntu r-devel job on main only. On a
+# release tag a further job runs the CRAN incoming checks with their remote
+# part (_R_CHECK_CRAN_INCOMING_REMOTE_=true: URLs, DOIs, the CRAN database).
 #
 # Tests run offline: network tests are skipped unless QESR_LIVE=true, which is
 # never set here. The live checks (tests/testthat/test-*live*.R: V-L1 to V-L5)
@@ -12,6 +14,8 @@ name: R-CMD-check
 
 "on":
   push:
+    branches: [main]
+    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -68,6 +72,20 @@ jobs:
           error-on: '"warning"'
           upload-snapshots: true
 
+      # testthat warnings fail the build. R CMD check passes a test run whose
+      # only problems are warnings, so the tests run again here from the
+      # source tree (offline, QESR_LIVE=false) and the step fails unless the
+      # summary reports no failure, no error and no warning (WARN 0).
+      - name: Tests, warnings as errors
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        run: |
+          res <- as.data.frame(testthat::test_local(".", reporter = "summary", stop_on_failure = FALSE))
+          n <- c(FAIL = sum(res$failed), ERROR = sum(res$error), WARN = sum(res$warning),
+                 SKIP = sum(res$skipped), PASS = sum(res$passed))
+          cat(paste(names(n), n, collapse = " | "), "\n")
+          if (n[["FAIL"]] > 0 || n[["ERROR"]] > 0 || n[["WARN"]] > 0) quit(status = 1)
+        shell: Rscript {0}
+
       # CI-only checks on sources that are not installed with the package
       # (design.md section 8.4): the spec validator with its source-tree
       # rules, the spec version bump against the merge-base with main, and
@@ -79,9 +97,54 @@ jobs:
             git fetch --no-tags origin "+refs/heads/main:refs/remotes/origin/main" || true
           Rscript data-raw/spec_check.R ${{ startsWith(github.ref, 'refs/tags/') && '--release' || '' }}
 
+      # The builders that need no download (data-raw/README.md): the catalog
+      # from the committed Dataverse snapshots, the projected marginals from
+      # the shipped dictionary and gates.csv, the relaxed rows of the spec.
+      - name: Offline builders (--check)
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        run: |
+          Rscript data-raw/build_catalog.R --check
+          Rscript data-raw/project_marginals.R --check
+          Rscript data-raw/build_relaxed.R --check
+
       # EN/FR vignette pairs: every page has a partner that links back, and
       # the shipped pairs run identical code (design.md sections 1.2 and 9).
       # Vignette sources are not installed, so R CMD check cannot test this.
       - name: EN/FR vignette pairs
         if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
         run: Rscript data-raw/check_vignette_pairs.R
+
+  # Release tags only: the CRAN incoming checks, remote part included (the
+  # URL and DOI checks, the CRAN package database), as CRAN runs them on a
+  # submission (data-raw/build_tarball.sh --check does the same locally).
+  cran-incoming:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    name: CRAN incoming checks (release tag)
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      _R_CHECK_CRAN_INCOMING_: true
+      _R_CHECK_CRAN_INCOMING_REMOTE_: true
+      _R_CHECK_FORCE_SUGGESTS_: false
+      QESR_LIVE: "false"
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          error-on: '"warning"'

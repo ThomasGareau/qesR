@@ -75,6 +75,10 @@
 #                still expected to be higher in the surveys.
 #
 # With --check it writes nothing and fails when a table differs.
+#
+# Every source but the 2011 Census Profile is a plain download:
+# data-raw/fetch_inputs.R fetches them into <dest>/bench (QESR_BENCH_SRC) and
+# prints the manual step for the Profile.
 
 args <- commandArgs(trailingOnly = TRUE)
 check_only <- "--check" %in% args
@@ -212,7 +216,14 @@ add(2006L, "age_group6", "18+", tapply(single[ad, 1], band06, sum), NULL, note06
 # 98-316-XWE2011001 (2011 Census Profile): age by sex, single years 15 to 19,
 # then five-year bands
 pz <- file.path(src, "zips", "98-316-XWE2011001-101_CSV.zip")
-stopifnot(unname(tools::md5sum(pz)) == "290269093e4383386ead96eeedb11912")
+# the Profile's download page is behind a Cloudflare JavaScript challenge: a
+# plain GET returns an HTML page, so the zip is a manual download (a browser;
+# data-raw/inputs.csv, row statcan_profile2011_101; data-raw/README.md)
+if (!file.exists(pz) || !identical(unname(tools::md5sum(pz)), "290269093e4383386ead96eeedb11912")) {
+  stop(sprintf(paste0("%s is missing or is not the 2011 Census Profile zip (md5 290269093e4383386ead96eeedb11912). ",
+                      "Download it in a browser from the URL in data-raw/inputs.csv (statcan_profile2011_101); ",
+                      "a plain request gets a Cloudflare challenge page."), pz), call. = FALSE)
+}
 pl <- readLines(unz(pz, "98-316-XWE2011001-101.CSV"), encoding = "latin1", warn = FALSE)
 pr <- utils::read.csv(text = iconv(pl[-1L], "latin1", "UTF-8"), colClasses = "character", check.names = FALSE)
 pr <- pr[pr$Geo_Code == "24" & pr$Topic == "Age characteristics", , drop = FALSE]

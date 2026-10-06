@@ -115,6 +115,17 @@ jobs:
         if: always()
         run: Rscript data-raw/build_hashes.R --check
 
+      # The shipped dictionary and the joint gate counts (gates.csv) are
+      # rebuilt from the cached originals (no request) and compared with the
+      # committed files.
+      - name: Dictionary (build_dictionary.R --check)
+        if: always() && steps.fetch.outcome == 'success'
+        run: Rscript data-raw/build_dictionary.R --check
+
+      - name: Spec aggregates (build_sources.R --check)
+        if: always() && steps.fetch.outcome == 'success'
+        run: Rscript data-raw/build_sources.R --check
+
       # Information only: lists recorded baselines that differ from the report
       # (stale); the 2.0-point gate that fails the job is in the live tests.
       - name: Validation report (V-L2, census)

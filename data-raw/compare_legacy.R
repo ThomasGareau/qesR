@@ -1,6 +1,10 @@
 # Compare the legacy builders with qesR 0.4.4 and 0.5.0 (design.md sections
 # 5.11 and 5.12; the gate of slice HZ6, the legacy switch of qesR 0.7.0).
 #
+# FROZEN with the legacy builders: the baselines it reads are fixed records of
+# qesR 0.4.4 and 0.5.0 (data-raw/make_legacy_baselines.R regenerates them);
+# run it when a change touches get_qes_master() or get_decon().
+#
 # Usage (from the package root):
 #   QESR_LEGACY_BASELINE=<dir044> QESR_LEGACY_BASELINE_050=<dir050> \
 #     [QESR_TEST_DATA_DIR=<cache>] Rscript data-raw/compare_legacy.R [--check]

@@ -706,3 +706,8 @@ if (with_expected) {
   changed <- write_text(csv_text(hashes), file.path(dir, "expected", "relaxed_hashes.csv")) || changed
 }
 if (check_only && changed) quit(status = 1L)
+if (check_only) {
+  cat(sprintf("build_relaxed: relaxed_maps.csv and the rx_ value maps of valuemaps.csv%s are current (%d relaxed rows, %d stable).\n",
+              if (with_expected) ", expected/relaxed_marginals.csv and expected/relaxed_hashes.csv" else "",
+              nrow(rm_new), sum(rm_new$status == "stable")))
+}

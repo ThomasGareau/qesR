@@ -5,3 +5,6 @@ inst/extdata/VERSIONS text eol=lf
 inst/CITATION text eol=lf
 inst/extdata/harmonize/** text eol=lf
 *.sav binary
+# Build-input snapshots are compared by md5 (data-raw/inputs/dataverse/index.csv):
+# never convert their line endings.
+data-raw/inputs/** -text

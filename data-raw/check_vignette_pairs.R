@@ -45,6 +45,9 @@ purl_code <- function(path) {
   # chunk on
   first <- grep("^## ----", code)[1]
   if (!is.na(first)) code <- code[first:length(code)]
+  # shown code names the page's language literally, so a reader can copy it
+  # (lang = "en" on the English page, lang = "fr" on the French one)
+  code <- gsub('lang = "fr"', 'lang = "en"', code, fixed = TRUE)
   code[nzchar(trimws(code))]
 }
 
