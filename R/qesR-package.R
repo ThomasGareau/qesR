@@ -158,12 +158,13 @@
 #' `quiet = TRUE`).
 #' Progress messages (classes `qesR_message_download` and
 #' `qesR_message_cached`) are silenced by `quiet = TRUE`, as is the one-time
-#' tip suggesting the disk cache (`qesR_message_disk_cache_tip`). These
-#' notices are shown at most once per session and are
-#' not silenced by `quiet`: `qesR_message_deprecated` (see
-#' [qesR-deprecated]); `qesR_message_assign_default`, shown when `get_qes()`,
-#' `get_qes_master()` or `get_decon()` is called without `assign_global`;
-#' `qesR_message_arg_ignored`, shown when an argument that no longer
+#' tip suggesting the disk cache (`qesR_message_disk_cache_tip`), and the
+#' one-time `qesR_message_assign_default`, shown for the first top-level
+#' call to `get_qes()`, `get_qes_master()` or `get_decon()` in a session that
+#' passes neither `assign_global` nor `quiet = TRUE` (the data are no longer
+#' assigned by default). These notices are shown at most once per session
+#' and are not silenced by `quiet`: `qesR_message_deprecated` (see
+#' [qesR-deprecated]); `qesR_message_arg_ignored`, shown when an argument that no longer
 #' changes the result is used; and `qesR_message_values_changed` and
 #' `qesR_message_legacy_columns`, shown by [get_qes_master()] and
 #' [get_decon()] to say how their values and columns differ from those of
@@ -310,8 +311,11 @@
 #' `qesR_message_missing_untyped` (masqué par `quiet = TRUE`). Les messages
 #' de progression (`qesR_message_download`, `qesR_message_cached`) et le
 #' conseil unique sur le cache disque (`qesR_message_disk_cache_tip`) sont
-#' masqués par `quiet = TRUE`.
-#' `qesR_message_deprecated`, `qesR_message_assign_default`,
+#' masqués par `quiet = TRUE`, comme la note unique
+#' `qesR_message_assign_default`, affichée quand un appel de premier niveau
+#' à `get_qes()`, `get_qes_master()` ou `get_decon()` n'assigne pas son
+#' résultat, comme le faisait du code écrit pour qesR 0.4.4.
+#' `qesR_message_deprecated`,
 #' `qesR_message_arg_ignored` (argument qui ne change plus le résultat),
 #' `qesR_message_values_changed` et `qesR_message_legacy_columns` (en quoi
 #' les valeurs et les colonnes de [get_qes_master()] et de [get_decon()]

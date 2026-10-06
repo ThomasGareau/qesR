@@ -36,7 +36,9 @@ row, \code{n_value} (respondents of a static column, rows of a wave column)
 and \code{na_reasons} (\code{"dk=12; refused=3"})), \code{weights} (\code{study}, \code{wave},
 \code{weight_var}, \code{status}, \code{reason}: \code{NA}, \code{"needs_review"},
 \code{"no_recommended_weight"} or \code{"not_in_data"}, \code{n_rows}, \code{n_weight},
-\code{mean}), \code{qes_provenance} (the files read; see \code{\link[=qes_provenance]{qes_provenance()}}),
+\code{mean}), \code{qes_no_wave} (\code{study}, \code{n_rows}: the respondents left out
+because they took part in no wave), \code{qes_provenance} (the files read;
+see \code{\link[=qes_provenance]{qes_provenance()}}),
 \code{spec_version}, \code{qesR_version} and \code{lang}.
 }
 \description{
@@ -73,13 +75,19 @@ applied, and its cells are \code{NA} with reason \code{not_reviewed} (see
 spec 4.6.0, the 5 it adds (the education of \code{qes1998}, \code{union} and
 \code{econ_self}) included, are signed off (status \code{stable}) by an automated
 double review against the original files and documents, not a human
-review, as their \code{reviewed_by} and \code{review_note} say.
+review, as their \code{reviewed_by} and \code{review_note} say. A strict row still
+in review is not applied either: the previous vote (\code{vote_prev}) of
+\code{qes2008} and \code{qes2018} is \code{NA} (reason \code{not_reviewed}) while a decision
+on the respondents too young to vote at the previous election is pending,
+and the summary message names such columns and studies.
 }
 \section{Rows, waves and weights}{
 
 The rows are those of \code{qes_harmonize(layout = "long")}: one per respondent
 and wave they took part in, so a panel respondent has one row per wave,
-and no row is dropped. Socio-demographic columns (education, income,
+and \code{wave} is never \code{NA}. A respondent who took part in no wave has no
+row (in \code{qes2007_panel}, one interview that neither wave's rule counts);
+\code{attr(x, "qes_no_wave")} counts them, study by study. Socio-demographic columns (education, income,
 language, religion, region...) are the same on every row of a respondent;
 the vote, turnout and attitudes sit on the row of the wave that asked them
 (the vote intention on the campaign wave, the reported vote on the
@@ -88,8 +96,32 @@ recommended weight rescaled to mean 1 in each study and wave, and
 \code{weight_var} its source variable. Both are \code{NA} where the study has no
 recommended weight (\code{qes2008}: its weights are calibrated on the reported
 vote) or where the weight still needs review; \code{attr(x, "weights")} says
-which, study by study and wave by wave. Estimate within one study and
-wave, or with \code{\link[=qes_design]{qes_design()}} on \code{\link[=qes_harmonize]{qes_harmonize()}} output.
+which, study by study and wave by wave (its \code{n_rows} add up to the rows
+of \code{x}). Estimate within one study and wave, or with \code{\link[=qes_design]{qes_design()}} on
+\code{\link[=qes_harmonize]{qes_harmonize()}} output.
+}
+
+\section{Who was surveyed}{
+
+These differences between the studies matter for most analyses.
+\itemize{
+\item \code{qes1998} (the CROP and CREATEC polls) surveyed francophones only, each
+firm by its own definition (mother tongue for CREATEC, the language
+spoken most often at home for CROP): \code{language} is French or \code{NA}
+there, and the study says nothing about non-francophones.
+\item \code{qes2018} also interviewed people aged 16 and 17 (251 of its 3,072
+respondents, by the deposit's note). They are \code{NA} in \code{age_group} and
+\code{vote_choice} but have values in the other columns (\code{yob}, \code{gender},
+\code{sovereignty}...): drop them (by \code{yob}) to describe the electorate.
+\item In \code{qes2018_panel} only the web respondents were asked about
+employment: its 400 telephone respondents appear in \code{employment} as
+don't know or refused (\code{NA}, reason \code{dk_refused}), not as a real answer.
+\item \code{religion} comes from two formats: 2012 to 2018 first ask whether the
+respondent belongs to a religion, then which one; 2022 offers one long
+list (agnostic counts as no religion). The share with no religion is
+higher after a filter question, so the levels are not strictly
+comparable across that change.
+}
 }
 
 \section{Correspondence with cesR}{
@@ -112,7 +144,7 @@ cesR's columns.
 
 \section{Columns}{
 
-The relaxed columns of spec 4.6.0, in order (\code{qes_spec("relaxed")} lists them with their French labels):
+The relaxed columns of spec 4.7.0, in order (\code{qes_spec("relaxed")} lists them with their French labels):
 \describe{
 \item{\code{citizenship}}{Citizenship (one value per respondent, target:citizen). Canadian citizenship where a study recorded it: asked directly in 2022, and taken in the 2018 panel from the screening question on the right to vote in the coming Quebec election, so that every respondent of that panel is a citizen. Levels: Canadian citizen; Not a Canadian citizen.}
 \item{\code{yob}}{Year of birth (one value per respondent, target:birth_year). The year of birth as reported; the studies that asked only an age group have none (see age_group). A number from 1900 to 2010.}
@@ -126,8 +158,8 @@ The relaxed columns of spec 4.6.0, in order (\code{qes_spec("relaxed")} lists th
 \item{\code{language_eng}}{English as a mother tongue (one value per respondent, column:language). Yes when English is among the mother tongues reported, so a respondent with two mother tongues can be yes in both language_eng and language_fr. Levels: Yes; No.}
 \item{\code{religion}}{Religion (one value per respondent, relaxed mappings only). The religion the respondent belongs to, in five groups; the 2022 question offers a long list, where agnostic counts as no religion, and the other studies first ask whether the respondent belongs to a religion at all. Levels: Catholic; Protestant; Other Christian; Other religion; No religion.}
 \item{\code{marital}}{Marital status (one value per respondent, relaxed mappings only). Married or living with a partner, separated or divorced, widowed, or never married; 2012 and 2014 asked the official civil status, with no common-law option, so some partners who live together are never married there. Levels: Married or living with a partner; Separated or divorced; Widowed; Single, never married.}
-\item{\code{employment}}{Employment (one value per respondent, relaxed mappings only). The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. Levels: Working (employee or self-employed); Unemployed; Retired; Student; At home, unable to work or other.}
-\item{\code{union}}{Union membership (one value per respondent, relaxed mappings only). Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing; the column is kept whatever its number of studies (essential), as decided on 2026-10-01. Levels: Yes; No.}
+\item{\code{employment}}{Employment (one value per respondent, relaxed mappings only). The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. In the 2018 panel only web respondents were asked about employment, so its telephone respondents appear as don't know or refused. Levels: Working (employee or self-employed); Unemployed; Retired; Student; At home, unable to work or other.}
+\item{\code{union}}{Union membership (one value per respondent, relaxed mappings only). Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing. Levels: Yes; No.}
 \item{\code{region}}{Region (one value per respondent, target:region_cma3). The Montreal census metropolitan area, the Quebec City census metropolitan area or the rest of Quebec, from each study's region or sub-region variable, with the boundaries each study used. Levels: Montreal CMA; Quebec CMA; Rest of Quebec.}
 \item{\code{region_admin}}{Administrative region (one value per respondent, relaxed mappings only). The 17 administrative regions of Quebec, where a study recorded them or sub-regions that fit within them; the sub-regions of the 2007 study and the 2007 panel that split a region are joined. Levels: Bas-Saint-Laurent; Saguenay–Lac-Saint-Jean; Capitale-Nationale; Mauricie; Estrie; Montréal; Outaouais; Abitibi-Témiscamingue; Côte-Nord; Nord-du-Québec; Gaspésie–Îles-de-la-Madeleine; Chaudière-Appalaches; Laval; Lanaudière; Laurentides; Montérégie; Centre-du-Québec.}
 \item{\code{born_canada}}{Born in Canada (one value per respondent, target:born_canada). Born in Canada or not, as each study asked it: from the birthplace (Quebec, elsewhere in Canada or abroad), or asked directly in 2022. Levels: Yes; No.}
@@ -138,7 +170,7 @@ The relaxed columns of spec 4.6.0, in order (\code{qes_spec("relaxed")} lists th
 \item{\code{vote_prev}}{Vote at the previous provincial election (on the wave that asked it, target:vote_prov_prev). The party of the reported vote at the Quebec general election before the study; those who did not vote are missing, the sources name the election recalled, and the 1998 question names only the PLQ and the PQ. Levels: PLQ; PQ; CAQ; QS; PVQ; PCQ; ON; ADQ; Other party.}
 \item{\code{pid}}{Provincial party identification (on the wave that asked it, target:pid_prov). The Quebec party the respondent identifies with, or none, as each study asked it; the parties offered differ from study to study. Levels: PLQ; PQ; CAQ; QS; PVQ; PCQ; ON; ADQ; Other party; None of these.}
 \item{\code{lr}}{Left-right self-placement (0-10) (on the wave that asked it, target:lr_self). Self-placement on a left-right scale from 0 (left) to 10 (right); a scale of another length would be rescaled to 0-10, and every study that asked one used 0 to 10. A number from 0 to 10.}
-\item{\code{interest}}{Interest in politics (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (interest_01) in three bands, low below 0.35 and high from 0.75; the 4-point and 0-10 questions do not line up, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. Levels: Low; Medium; High.}
+\item{\code{interest}}{Interest in politics (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (interest_01) in three bands, low below 0.55 and high from 0.85: on a 0-10 question, 0 to 5 is low, 6 to 8 medium and 9 or 10 high; on a 4-point question, not at all or hardly interested is low, quite interested medium and very interested high. The two formats still do not line up exactly, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. Levels: Low; Medium; High.}
 \item{\code{interest_01}}{Interest in politics (0-1) (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (the pooled pol_interest): four-point answers scored 1, 0.7, 0.3 and 0, and 0-10 answers divided by 10. A number from 0 to 1.}
 \item{\code{sovereignty}}{Sovereignty referendum vote (on the wave that asked it, pooled:sov_support). Yes or no in a referendum on Quebec sovereignty, whatever the question (an independent country, a sovereign country, the 1995 question or being favourable to independence); sovereignty_type says which, and would not vote is missing. Levels: Yes; No.}
 \item{\code{sovereignty_type}}{Question of the sovereignty vote (on the wave that asked it, pooled:sov_support__type). Which question sovereignty comes from on each row: an independent country, a sovereign country, the 1995 question, being favourable to independence, or the CROP polls' question, whose full wording was not deposited. Levels: Independent country; Sovereign country; 1995 question (sovereignty-partnership); Favourable to independence; CROP referendum question (wording not deposited).}
@@ -158,7 +190,10 @@ The relaxed layer is new in qesR 0.9.0 (spec 4.4.0; its mappings signed
 off in spec 4.5.0). Its columns, groups and mappings may change, and a new
 relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts \code{education}
 in three groups instead of four, so that \code{qes1998} can be included, keeps
-the four groups as \code{education4}, and adds \code{union} and \code{econ_self}.
+the four groups as \code{education4}, and adds \code{union} and \code{econ_self}. qesR
+0.9.2 (spec 4.7.0) cuts \code{interest} at 0.55 and 0.85 instead of 0.35 and
+0.75, so that a 0-10 answer of 6 to 8 is medium and 9 or 10 high, as
+"quite" and "very" interested are on the 4-point questions.
 }
 
 \section{En français}{
@@ -186,7 +221,20 @@ documents originaux, et non par une révision humaine, comme le disent
 leurs champs \code{reviewed_by} et \code{review_note}. Depuis qesR 0.9.1, \code{education} compte trois groupes
 (sans diplôme d'études secondaires, secondaire au collégial, université),
 ce qui permet d'inclure \code{qes1998}, et \code{education4} garde les quatre
-groupes. Les noms de
+groupes. Les lignes suivent celles de \code{qes_harmonize(layout = "long")} :
+\code{wave} ne vaut jamais NA, et une personne qui n'a participé à aucune
+vague n'a pas de ligne (\code{attr(x, "qes_no_wave")} les compte). Une ligne
+stricte encore en révision n'est pas appliquée : le vote précédent
+(\code{vote_prev}) de \code{qes2008} et de \code{qes2018} vaut NA (motif \code{not_reviewed}),
+et le message de synthèse le dit. \code{qes1998} n'a interrogé que des
+francophones ; \code{qes2018} a aussi interrogé des personnes de 16 et 17 ans,
+NA dans \code{age_group} et \code{vote_choice} mais présentes dans les autres
+colonnes ; dans \code{qes2018_panel}, seuls les répondants web ont été
+interrogés sur leur emploi, et ses répondants téléphoniques apparaissent
+dans \code{employment} comme « ne sait pas ou refus » ; la religion vient d'une question filtre (2012 à 2018) ou d'une
+seule longue liste (2022), si bien que ses niveaux ne sont pas strictement
+comparables entre ces deux formats. Depuis qesR 0.9.2, \code{interest} est
+coupé à 0,55 et 0,85 : de 0 à 10, 6 à 8 est moyen et 9 ou 10 élevé. Les noms de
 colonnes restent en anglais ; \code{lang = "fr"} donne les étiquettes, les
 règles et les sources en français.
 }

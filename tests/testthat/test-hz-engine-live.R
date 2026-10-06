@@ -124,7 +124,11 @@ test_that("V-L3 and the waves, weights and eligibility of the originals (live)",
   l <- qes_harmonize(c("qes2022", "qes2007_panel", "qes2018_panel"), targets = "vote_prov_recall",
                      layout = "long", include_draft = TRUE, quiet = TRUE)
   expect_identical(as.vector(table(l$study, l$wave, useNA = "ifany")["qes2022", c("cps", "pes")]), c(1521L, 1220L))
-  expect_identical(sum(l$study == "qes2007_panel"), 2050L + 2054L + 1L)
+  # the one 2007 panel respondent in no wave (file row 1166) has no row
+  expect_identical(sum(l$study == "qes2007_panel"), 2050L + 2054L)
+  expect_false(anyNA(l$wave))
+  expect_identical(attr(l, "qes_no_wave"), data.frame(study = "qes2007_panel", n_rows = 1L, stringsAsFactors = FALSE))
+  expect_false("qes2007_panel:2-1663" %in% l$qes_id)
   expect_identical(sum(l$study == "qes2018_panel"), 1250L + 842L)
   expect_equal(mean(l$weight[l$study == "qes2022" & l$wave == "pes"]), 1)
 })

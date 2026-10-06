@@ -64,6 +64,7 @@ rd_family <- function(name) {
 }
 
 test_that("every exported help page has a family, as the website reference groups them", {
+  skip_on_cran()
   db <- qesR_rd_db()
   exported <- intersect(final_exports, getNamespaceExports("qesR"))
   aliases <- lapply(db, function(rd) {
@@ -83,6 +84,7 @@ test_that("every exported help page has a family, as the website reference group
 })
 
 test_that("the overviews group functions as the website reference does", {
+  skip_on_cran()
   en <- rd_text("qesR-package.Rd")
   fr <- rd_text("qesR-fr.Rd")
   for (group in stats::na.omit(site_groups$en)) {

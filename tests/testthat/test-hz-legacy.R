@@ -27,6 +27,7 @@ legacy_problems <- function() {
 }
 
 test_that("the ported 0.4.4 harmonization raises V-S8, V-S9, V-D1, V-D2 and V-D3", {
+  skip_on_cran()
   p <- legacy_problems()
   expect_true(all(c("V-S8", "V-S9", "V-D1", "V-D2", "V-D3") %in% p$rule))
   caught <- function(rule, key) any(p$rule == rule & startsWith(p$key, key))
@@ -53,6 +54,7 @@ test_that("the ported 0.4.4 harmonization raises V-S8, V-S9, V-D1, V-D2 and V-D3
 })
 
 test_that("qes_spec() refuses the ported 0.4.4 harmonization", {
+  skip_on_cran()
   dir <- withr::local_tempdir()
   s <- legacy_spec()
   for (tab in c("targets", "levels", "crosswalk", "valuemaps", "waves", "weights", "changes")) {

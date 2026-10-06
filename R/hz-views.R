@@ -85,6 +85,16 @@
 
 # Spec text as the website shows it: without the names of the spec's own
 # files (the reasons and descriptions of a few rows cite waves.csv).
+# Notes as rendered in the reference: without the pointers to the owner's
+# decisions ("OD-R9: ", "(OD-R11)"), which stay in the spec's tables.
+.qes_plain_note <- function(x) {
+  # a pointer that opens a note or a sentence: the next word takes a capital
+  x <- gsub("(^|[.!?]\\s+)OD-R[0-9]+\\s*:\\s*(\\p{Ll})", "\\1\\U\\2", x, perl = TRUE)
+  x <- gsub("\\bOD-R[0-9]+\\s*:\\s*", "", x, perl = TRUE)
+  x <- gsub("\\s*\\(OD-R[0-9]+(,\\s*OD-R[0-9]+)*\\)", "", x, perl = TRUE)
+  x
+}
+
 .qes_site_text <- function(x) {
   x <- gsub("\\s*\\((see |voir )?waves\\.csv\\)", "", x, perl = TRUE)
   x <- gsub(",\\s*(see|voir) waves\\.csv\\)", ")", x, perl = TRUE)
@@ -500,10 +510,11 @@ print.qes_crosswalk <- function(x, ...) {
            "**Ne sait pas**\u00a0: si \u00ab\u00a0je ne sais pas\u00a0\u00bb \u00e9tait offert.")
   ),
   site_status_note = c(
-    en = "A row marked *awaiting sign-off* is applied only if you ask for it (`include_draft = TRUE`).",
-    fr = "Une ligne marqu\u00e9e *en attente d'approbation* n'est appliqu\u00e9e que si vous la demandez (`include_draft = TRUE`)."
+    en = "A row marked *awaiting sign-off* is checked but not yet approved, and not used by default: its values are missing. To use it anyway, pass `include_draft = TRUE` to `qes_harmonize()`.",
+    fr = "Une ligne marqu\u00e9e *en attente d'approbation* est v\u00e9rifi\u00e9e mais pas encore approuv\u00e9e, et n'est pas utilis\u00e9e par d\u00e9faut\u00a0: ses valeurs sont manquantes. Pour l'utiliser quand m\u00eame, passez `include_draft = TRUE` \u00e0 `qes_harmonize()`."
   ),
   site_pending = c(en = "awaiting sign-off", fr = "en attente d'approbation"),
+  site_signed = c(en = "approved", fr = "approuv\u00e9e"),
   site_weight_review = c(en = "not usable yet", fr = "pas encore utilisable"),
   site_licence = c(
     en = "The wording and labels of `%s` quoted on this page come from *%s* (%s, %s, <%s>) and keep its licence, [%s](%s). See [Citing qesR and the studies](%s) for the attribution.",
@@ -515,8 +526,8 @@ print.qes_crosswalk <- function(x, ...) {
     fr = "Chaque cellule donne le niveau de comparabilit\u00e9 de la question de l'\u00e9tude pour la cible, par rapport \u00e0 la question d'ancrage de la cible\u00a0; un tiret signifie que l'\u00e9tude n'a pas de question pour la cible. Le nom d'une cible m\u00e8ne \u00e0 sa section de la [r\u00e9f\u00e9rence des variables](%s), qui donne la question, son libell\u00e9, les niveaux offerts et la raison de son niveau. `qes_spec()` renvoie la m\u00eame grille sous forme de tableau."
   ),
   site_cov_pending = c(
-    en = "\u2020 Awaiting sign-off: applied only if you ask for it (`qes_harmonize(include_draft = TRUE)`).",
-    fr = "\u2020 En attente d'approbation\u00a0: appliqu\u00e9e seulement si vous la demandez (`qes_harmonize(include_draft = TRUE)`)."
+    en = "\u2020 Awaiting sign-off; not used by default (see the reference).",
+    fr = "\u2020 En attente d'approbation\u00a0; non utilis\u00e9e par d\u00e9faut (voir la r\u00e9f\u00e9rence)."
   ),
   site_cov_studies_note = c(
     en = "`n` is the number of respondents of each wave. A weight marked *not usable yet* is not documented well enough to use: its weight columns are `NA`. `qes_design()` uses the weight of the wave each target came from.",
@@ -533,8 +544,8 @@ print.qes_crosswalk <- function(x, ...) {
   # the relaxed layer (.qes_relaxed_reference_md)
   relaxed_title = c(en = "Relaxed harmonization: qes_decon()", fr = "Harmonisation souple\u00a0: qes_decon()"),
   relaxed_intro = c(
-    en = "`qes_decon()` puts one concept in one column for every study, even when the wording or the answer options differ, with coarse common categories, under plain column names. It trades exactness for coverage: a relaxed column has no grade and does not claim that two studies asked the same question; the targets above keep the strict, graded versions. A column is built from a strict target or a pooled variable where one exists, recoded into the column's categories where needed, and from relaxed mappings of the studies' own questions where the strict layer has none. A relaxed mapping is applied once a reviewer has signed it off (status `stable`).",
-    fr = "`qes_decon()` met un concept dans une seule colonne pour chaque \u00e9tude, m\u00eame quand le libell\u00e9 ou les choix de r\u00e9ponse diff\u00e8rent, avec des cat\u00e9gories communes larges, sous des noms de colonnes simples. Elle \u00e9change l'exactitude contre la couverture\u00a0: une colonne souple n'a pas de niveau de comparabilit\u00e9 et ne pr\u00e9tend pas que deux \u00e9tudes ont pos\u00e9 la m\u00eame question\u00a0; les cibles ci-dessus gardent les versions strictes, avec leurs niveaux. Une colonne est construite \u00e0 partir d'une cible stricte ou d'une variable regroup\u00e9e quand il en existe une, recod\u00e9e au besoin dans les cat\u00e9gories de la colonne, et d'appariements souples des questions propres aux \u00e9tudes l\u00e0 o\u00f9 la couche stricte n'en a pas. Un appariement souple est appliqu\u00e9 une fois approuv\u00e9 par un r\u00e9viseur (statut `stable`)."
+    en = "`qes_decon()` puts one concept in one column for every study, even when the wording or the answer options differ, with coarse common categories, under plain column names. It trades exactness for coverage: a relaxed column has no grade and does not claim that two studies asked the same question; the targets above keep the strict, graded versions. A column is built from a strict target or a pooled variable where one exists, recoded into the column's categories where needed, and from relaxed mappings of the studies' own questions where the strict layer has none. A relaxed mapping is applied once a reviewer has approved it.",
+    fr = "`qes_decon()` met un concept dans une seule colonne pour chaque \u00e9tude, m\u00eame quand le libell\u00e9 ou les choix de r\u00e9ponse diff\u00e8rent, avec des cat\u00e9gories communes larges, sous des noms de colonnes simples. Elle \u00e9change l'exactitude contre la couverture\u00a0: une colonne souple n'a pas de niveau de comparabilit\u00e9 et ne pr\u00e9tend pas que deux \u00e9tudes ont pos\u00e9 la m\u00eame question\u00a0; les cibles ci-dessus gardent les versions strictes, avec leurs niveaux. Une colonne est construite \u00e0 partir d'une cible stricte ou d'une variable regroup\u00e9e quand il en existe une, recod\u00e9e au besoin dans les cat\u00e9gories de la colonne, et d'appariements souples des questions propres aux \u00e9tudes l\u00e0 o\u00f9 la couche stricte n'en a pas. Un appariement souple est appliqu\u00e9 une fois approuv\u00e9 par un r\u00e9viseur."
   ),
   relaxed_base = c(en = "Base", fr = "Base"),
   relaxed_only = c(en = "relaxed mappings only", fr = "appariements souples seulement"),
@@ -932,10 +943,12 @@ print.qes_crosswalk <- function(x, ...) {
   for (j in seq_len(nrow(rx))) {
     col <- rx$column[j]
     base <- if (is.na(rx$base[j])) t_("relaxed_only") else paste0("`", rx$base[j], "`")
+    # the website shows a transform only where it changes the base's values
+    tr_txt <- if (site && rx$transform[j] %in% c("identity", "relaxed_only")) NULL else paste0("`", rx$transform[j], "`")
     out <- c(out, sprintf("### `%s`%s%s {#relaxed-%s}", col, cl, rx[[paste0("label_", lang)]][j], col), "",
              rx[[paste0("description_", lang)]][j], "",
-             sprintf("%s%s%s \u00b7 `%s` \u00b7 %s", t_("relaxed_base"), cl, base, rx$transform[j],
-                     t_(if (rx$timing[j] %in% "static") "relaxed_static" else "relaxed_wave")), "",
+             paste0(t_("relaxed_base"), cl, paste(c(base, tr_txt, t_(if (rx$timing[j] %in% "static") "relaxed_static" else "relaxed_wave")),
+                                                  collapse = " \u00b7 ")), "",
              sprintf("**%s**%s%s", t_("relaxed_how"), cl, rx[[paste0("relax_", lang)]][j]), "")
     if (!is.na(rx$levels_id[j])) {
       set <- .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
@@ -955,12 +968,12 @@ print.qes_crosswalk <- function(x, ...) {
     set <- if (is.na(rx$levels_id[j])) NULL else .qes_spec_levels(spec$tables$levels, rx$levels_id[j])
     cells <- lapply(k, function(i) {
       ii <- match(paste(rm$study[i], rm$wave[i], rm$column[i]), paste(all_rm$study, all_rm$wave, all_rm$column))
-      notes <- .qes_pick_lang(rm[i, , drop = FALSE], "notes", lang)
+      notes <- .qes_plain_note(.qes_pick_lang(rm[i, , drop = FALSE], "notes", lang))
       c(rm$study[i], sprintf("`%s` (%s)", rm$source_var[i], .qes_wave_label(rm$wave[i], lang, rm$study[i], spec)),
         .qes_rx_row_text(ps, ps$tables$crosswalk, ii, set, lang),
         t_(if (isTRUE(rm$override[i])) "relaxed_replaces" else "relaxed_fills"),
         if (is.na(notes)) "" else notes,
-        if (site && rm$status[i] %in% c("draft", "review")) t_("site_pending") else rm$status[i])
+        if (!site) rm$status[i] else if (rm$status[i] %in% "stable") t_("site_signed") else t_("site_pending"))
     })
     out <- c(out, .qes_md_table(c(t_("study"), t_("source"), t_("relaxed_recode"), t_("relaxed_use"), t_("relaxed_notes"), t_("status")), cells), "")
   }

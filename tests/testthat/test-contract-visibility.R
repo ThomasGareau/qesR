@@ -107,6 +107,7 @@ test_that("every export returns its value visibly", {
 })
 
 test_that("default calls leave globalenv, the working directory, ~ and R_user_dir untouched", {
+  skip_on_cran()
   local_user_dirs()
   local_fake_dataverse()
   local_tempdir_cleanup()
@@ -119,6 +120,7 @@ test_that("default calls leave globalenv, the working directory, ~ and R_user_di
 })
 
 test_that("the offline fake answers every request the exports make", {
+  skip_on_cran()
   log <- local_fake_dataverse()
   local_tempdir_cleanup()
   for (f in names(export_calls())) {

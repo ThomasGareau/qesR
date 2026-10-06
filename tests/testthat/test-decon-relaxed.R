@@ -49,6 +49,7 @@ rx_run <- function(data, ..., include_review = TRUE, quiet = TRUE) {
 rx_cols <- function() .qes_rx_columns(hz_spec())
 
 test_that("the shipped relaxed layer passes V-R1 to V-R12 and covers 30 concepts", {
+  skip_on_cran()
   s <- hz_spec()
   p <- .qes_spec_check(s)
   expect_false(any(grepl("^V-R", p$rule)), info = paste(p$detail[grepl("^V-R", p$rule)], collapse = "; "))
@@ -79,9 +80,9 @@ test_that("the shipped relaxed layer passes V-R1 to V-R12 and covers 30 concepts
   expect_setequal(paste(new$column, new$study),
                   c("education qes1998", "union qes2014", "union qes2018", "union qes2022", "econ_self qes2022"))
   expect_true(all(startsWith(stats::na.omit(rm$map_id), "rx_")))
-  # schema 4, spec 4.6.0
+  # schema 4, spec 4.7.0
   expect_identical(s$schema_version, "4")
-  expect_identical(s$version, "4.6.0")
+  expect_identical(s$version, "4.7.0")
 })
 
 test_that("a relaxed column is never a target, and carries no grade", {
@@ -99,6 +100,7 @@ test_that("a relaxed column is never a target, and carries no grade", {
 })
 
 test_that("the validator rejects malformed relaxed tables (V-R1 to V-R12)", {
+  skip_on_cran()
   s <- hz_spec()
   bad <- function(edit) {
     t <- s
@@ -269,7 +271,7 @@ test_that("qes_decon() returns the documented columns, in order, offline", {
   src <- attr(d, "decon_sources")
   expect_identical(names(src), c("column", "study", "wave", "base", "source_var", "wording_ref", "recode", "relaxed",
                                  "status", "applied", "n_value", "na_reasons"))
-  expect_identical(attr(d, "spec_version"), "4.6.0")
+  expect_identical(attr(d, "spec_version"), "4.7.0")
   expect_identical(attr(d, "lang"), "en")
   expect_s3_class(qes_provenance(d), "qes_provenance")
 })
@@ -294,7 +296,7 @@ test_that("the collapses follow relaxed.csv (sovereignty, interest)", {
   sv <- as.character(h$sov_support)
   expect_identical(as.character(d$sovereignty), ifelse(sv %in% "yes", "Yes", ifelse(sv %in% "no", "No", NA)))
   x <- h$pol_interest
-  want <- ifelse(is.na(x), NA, ifelse(x < 0.35, "Low", ifelse(x < 0.75, "Medium", "High")))
+  want <- ifelse(is.na(x), NA, ifelse(x < 0.55, "Low", ifelse(x < 0.85, "Medium", "High")))
   expect_identical(as.character(d$interest), want)
   expect_identical(as.numeric(d$interest_01), as.numeric(x))
 })
@@ -314,6 +316,7 @@ test_that("labels follow lang; column names do not", {
 })
 
 test_that("signed-off relaxed rows are applied; rows in review are not, and say so", {
+  skip_on_cran()
   d <- qes_decon("qes_demo", quiet = TRUE)
   # the demonstration study has QREGION (qes2014's administrative region),
   # whose relaxed row is signed off
@@ -359,6 +362,7 @@ test_that("qes_decon() rejects bad arguments with qesR_error_input", {
 })
 
 test_that("end to end on synthetic data: relaxed rows, static columns, sources", {
+  skip_on_cran()
   syn <- rx_syn(c("qes2022", "qes2014", "qes2007_panel", "qes_crop_2007_2010", "qes1998"))
   d <- rx_run(syn)
   rx <- rx_cols()
@@ -425,7 +429,35 @@ test_that("end to end on synthetic data: relaxed rows, static columns, sources",
   expect_true(all(as.character(l$vote_choice_lineage[as.character(d$vote_choice) %in% c("ADQ", "CAQ")]) == "ADQ/CAQ"))
 })
 
+test_that("two rows that replace the base of a static column in two waves do not erase each other", {
+  skip_on_cran()
+  syn <- rx_syn("qes2022")
+  d <- rx_run(syn)
+  # a second override row for the 2022 language, on the post-election wave:
+  # the first wave's row gives the respondents of the campaign wave, the
+  # second only those it adds (none: every pes respondent was in cps)
+  s <- hz_spec()
+  rm <- s$tables$relaxed_maps
+  k <- which(rm$column == "language" & rm$study == "qes2022")
+  expect_length(k, 1L)
+  expect_true(rm$override[k])
+  extra <- rm[k, , drop = FALSE]
+  extra$wave <- "pes"
+  s$tables$relaxed_maps <- rbind(rm[seq_len(k), , drop = FALSE], extra, rm[-seq_len(k), , drop = FALSE])
+  rownames(s$tables$relaxed_maps) <- NULL
+  d2 <- rx_run(syn, spec = s)
+  expect_identical(as.character(d2$language), as.character(d$language))
+  expect_true(sum(!is.na(d2$language)) > 0L)
+  # the other way round, the pes row first: cps-only respondents still get
+  # the cps row's value (they are not erased by the pes row)
+  s$tables$relaxed_maps <- rbind(rm[seq_len(k - 1L), , drop = FALSE], extra, rm[k:nrow(rm), , drop = FALSE])
+  rownames(s$tables$relaxed_maps) <- NULL
+  d3 <- rx_run(syn, spec = s)
+  expect_identical(as.character(d3$language), as.character(d$language))
+})
+
 test_that("education joins the four groups of education4 into three, and takes qes1998 from its own row", {
+  skip_on_cran()
   syn <- rx_syn(c("qes2022", "qes2014", "qes2007_panel", "qes_crop_2007_2010", "qes1998"))
   d <- rx_run(syn)
   e4 <- as.character(d$education4)
@@ -460,6 +492,7 @@ test_that("education joins the four groups of education4 into three, and takes q
 })
 
 test_that("union and econ_self follow their rows, and are held while in review", {
+  skip_on_cran()
   syn <- rx_syn(c("qes2022", "qes2014"))
   d <- rx_run(syn)
   k22 <- d$study == "qes2022"
@@ -510,6 +543,7 @@ test_that("the Columns section of ?qes_decon is generated from relaxed.csv", {
 })
 
 test_that("the generated reference has a chapter on the relaxed layer, in both languages", {
+  skip_on_cran()
   en <- .spec_reference_md("en")
   fr <- .spec_reference_md("fr")
   expect_match(en, "## Relaxed harmonization: qes_decon()", fixed = TRUE)

@@ -1,7 +1,7 @@
 Package: qesR
 Type: Package
 Title: Access Quebec Election Study Datasets
-Version: 0.9.1
+Version: 0.9.2
 Maintainer: Thomas Gareau-Paquette <tg454@cornell.edu>
 Authors@R:
     person(

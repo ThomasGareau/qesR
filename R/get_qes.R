@@ -1,4 +1,4 @@
-#' Download and Load a Quebec Election Study
+#' Load a Quebec Election Study
 #'
 #' Reads a study's data file, as its authors deposited it, and returns it
 #' with its labels.
@@ -7,9 +7,10 @@
 #' workspace unless you ask for it with `assign_global = TRUE`: write
 #' `qes2018 <- get_qes("qes2018")`. A real study is downloaded once per
 #' session, or kept between sessions with `options(qesR.cache = "disk")`
-#' (see [qes_cache_info()]). The first call in a session that leaves
-#' `assign_global` unset prints a one-time note about it; passing
-#' `assign_global` explicitly (TRUE or FALSE) avoids it.
+#' (see [qes_cache_info()]). The first top-level call in a session
+#' (console, `Rscript` or `source()`) prints a one-time note that the data
+#' must be assigned; passing `assign_global` (TRUE or FALSE) or
+#' `quiet = TRUE` avoids it.
 #'
 #' @section Which file is read:
 #' Each study is pinned to one data file of one Dataverse dataset version
@@ -161,13 +162,13 @@ get_qes <- function(srvy, file = NULL, assign_global = FALSE, with_codebook = TR
     }
     .qes_assign(code, data, envir)
   } else if (isTRUE(assign_missing)) {
-    .qes_assign_default_notice("get_qes", code)
+    .qes_assign_default_notice("get_qes", code, quiet = quiet, envir = envir)
   }
 
   data
 }
 
-#' Preview a Quebec Election Study
+#' Preview a Quebec Election Study (older name)
 #'
 #' Loads a study and returns the first observations.
 #'

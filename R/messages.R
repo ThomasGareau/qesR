@@ -161,6 +161,10 @@
     en = "`lineage` must be one or more of %1$s.",
     fr = "`lineage` doit \u00eatre une ou plusieurs valeurs parmi %1$s."
   ),
+  input_lineage_x = c(
+    en = "`x` must be data returned by qes_harmonize() or qes_decon() (with its attributes).",
+    fr = "`x` doit \u00eatre un tableau renvoy\u00e9 par qes_harmonize() ou qes_decon() (avec ses attributs)."
+  ),
   input_lineage_cols = c(
     en = "`cols` must name party columns of `x`: %1$s.",
     fr = "`cols` doit nommer des colonnes de partis de `x`\u00a0: %1$s."
@@ -479,8 +483,12 @@
     fr = "Harmonisation souple\u00a0: %1$s colonnes pour %2$s, un concept par colonne m\u00eame quand les questions diff\u00e8rent\u00a0; les colonnes souples n'ont pas de niveau de comparabilit\u00e9. \u00c9tudes avec un appariement souple propre\u00a0: %3$s. attr(x, \"decon_sources\") donne chaque source et recodage\u00a0; qes_harmonize() garde les versions strictes, avec leurs niveaux."
   ),
   decon_summary_held = c(
-    en = "Relaxed harmonization: %1$s columns for %2$s, one concept per column even where the questions differ; relaxed columns carry no grade. Studies with a relaxed mapping of their own: %3$s. %4$s relaxed mappings are not signed off yet and are not applied (their cells are NA, reason not_reviewed): %5$s. attr(x, \"decon_sources\") gives every source and recode; qes_harmonize() keeps the strict, graded versions.",
-    fr = "Harmonisation souple\u00a0: %1$s colonnes pour %2$s, un concept par colonne m\u00eame quand les questions diff\u00e8rent\u00a0; les colonnes souples n'ont pas de niveau de comparabilit\u00e9. \u00c9tudes avec un appariement souple propre\u00a0: %3$s. %4$s appariements souples ne sont pas encore approuv\u00e9s et ne sont pas appliqu\u00e9s (leurs cellules valent NA, motif not_reviewed)\u00a0: %5$s. attr(x, \"decon_sources\") donne chaque source et recodage\u00a0; qes_harmonize() garde les versions strictes, avec leurs niveaux."
+    en = "Relaxed harmonization: %1$s columns for %2$s, one concept per column even where the questions differ; relaxed columns carry no grade. Studies with a relaxed mapping of their own: %3$s. %4$s source(s) are still in review and are not applied, so these columns are NA for these studies (reason not_reviewed): %5$s. attr(x, \"decon_sources\") gives every source and recode; qes_harmonize() keeps the strict, graded versions.",
+    fr = "Harmonisation souple\u00a0: %1$s colonnes pour %2$s, un concept par colonne m\u00eame quand les questions diff\u00e8rent\u00a0; les colonnes souples n'ont pas de niveau de comparabilit\u00e9. \u00c9tudes avec un appariement souple propre\u00a0: %3$s. %4$s source(s) sont encore en r\u00e9vision et ne sont pas appliqu\u00e9es\u00a0: ces colonnes valent NA pour ces \u00e9tudes (motif not_reviewed)\u00a0: %5$s. attr(x, \"decon_sources\") donne chaque source et recodage\u00a0; qes_harmonize() garde les versions strictes, avec leurs niveaux."
+  ),
+  long_no_wave = c(
+    en = "The long layout has one row per respondent and wave: %1$s respondent(s) who took part in no wave (an interview the waves' rules do not count) have no row: %2$s. attr(x, \"qes_no_wave\") counts them; the respondent layout keeps them.",
+    fr = "La disposition longue compte une ligne par personne et par vague\u00a0: %1$s personne(s) qui n'ont particip\u00e9 \u00e0 aucune vague (une entrevue que les r\u00e8gles des vagues ne comptent pas) n'ont pas de ligne\u00a0: %2$s. attr(x, \"qes_no_wave\") les compte\u00a0; la disposition par personne les garde."
   ),
   structural_zeros = c(
     en = "Levels a study's question did not offer are structural zeros, not an absence of support: %1$s. qes_provenance(x, level = \"cell\") lists them.",
@@ -543,14 +551,15 @@
   ),
   assign_default = c(
     en = paste0(
-      "%1$s() returns its result and no longer assigns it into your workspace ",
-      "by default. Write `%2$s <- %1$s(...)`, or pass `assign_global = TRUE`. ",
-      "This note is shown once per session."
+      "%1$s() returns the data and does not create objects in your workspace: ",
+      "assign the result, e.g. `%2$s <- %1$s(...)`. (Code written for qesR 0.4.4 ",
+      "can pass `assign_global = TRUE`.) This note is shown once per session."
     ),
     fr = paste0(
-      "%1$s() renvoie son r\u00e9sultat et ne l'assigne plus par d\u00e9faut dans ",
-      "votre espace de travail. \u00c9crivez `%2$s <- %1$s(...)`, ou passez ",
-      "`assign_global = TRUE`. Cette note s'affiche une fois par session."
+      "%1$s() renvoie les donn\u00e9es et ne cr\u00e9e pas d'objet dans votre espace de ",
+      "travail\u00a0: assignez le r\u00e9sultat, par exemple `%2$s <- %1$s(...)`. (Le code ",
+      "\u00e9crit pour qesR 0.4.4 peut passer `assign_global = TRUE`.) Cette note ",
+      "s'affiche une fois par session."
     )
   ),
 

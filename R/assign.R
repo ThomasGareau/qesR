@@ -17,13 +17,18 @@
   invisible(value)
 }
 
-# The one-time note shown when an export whose assign_global default changed
-# from TRUE (v0.4.4) to FALSE is called without assign_global. `quiet` does not
-# silence it; passing assign_global (TRUE or FALSE) does.
-.qes_assign_default_notice <- function(fn, object_name) {
-  if (!.qes_once_first(paste0("assign_default:", fn))) {
-    return(invisible(FALSE))
-  }
+# The one-time note for the exports whose assign_global default changed from
+# TRUE (v0.4.4) to FALSE. It is shown once per session per function, for a
+# call made from the global environment (the console, Rscript, or a script run
+# with source()) that does not pass assign_global and is not quiet. Calls
+# inside a function and calls while knitr is rendering never show it. It
+# cannot tell whether the result was assigned, so it is worded to make sense
+# either way.
+.qes_assign_default_notice <- function(fn, object_name, quiet = FALSE, envir = NULL) {
+  top_level <- is.environment(envir) && identical(environmentName(envir), "R_GlobalEnv")
+  knitting <- isTRUE(getOption("knitr.in.progress"))
+  if (isTRUE(quiet) || !top_level || knitting) return(invisible(FALSE))
+  if (!.qes_once_first(paste0("assign_default:", fn))) return(invisible(FALSE))
   .qes_inform(
     "assign_default",
     class = "qesR_message_assign_default",

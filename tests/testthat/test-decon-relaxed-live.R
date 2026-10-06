@@ -16,6 +16,11 @@ test_that("V-R11: qes_decon() on the originals equals the recorded results (live
   rx <- res$rx
   ex <- s$tables$rx_expected
   hs <- s$tables$rx_hashes
+  # every row belongs to a wave: the one 2007 panel respondent in no wave
+  # has no row, and the weights table covers every row
+  expect_false(anyNA(lead$wave))
+  expect_identical(sum(res$weights$n_rows), nrow(lead))
+  expect_identical(res$no_wave$n_rows[res$no_wave$study == "qes2007_panel"], 1L)
   for (col in rx$column) {
     static <- rx$timing[rx$column == col] == "static"
     for (st in unique(lead$study)) {

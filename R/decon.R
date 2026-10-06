@@ -4,7 +4,7 @@
 # "decon"). Soft-deprecated from 0.7.0: its replacement is
 # qes_harmonize(srvy, targets = "decon").
 
-#' Create a Prepared Non-Exhaustive qesR Dataset
+#' Prepared non-exhaustive data frame (older name)
 #'
 #' Builds a small teaching dataset with 19 standardized columns from one
 #' Quebec Election Study of qesR 0.4.4.
@@ -31,8 +31,9 @@
 #'
 #' `get_decon()` returns the data and assigns nothing unless
 #' `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
-#' call in a session that leaves `assign_global` unset prints a one-time note
-#' about this change from qesR 0.4.4.
+#' top-level call in a session (console, `Rscript` or `source()`) prints a
+#' one-time note about this; passing `assign_global` or `quiet = TRUE` avoids
+#' it.
 #'
 #' @section Columns:
 #' `qes_code`, then `citizenship`, `yob` (year of birth), `age`, `gender`,
@@ -174,7 +175,7 @@ get_decon <- function(srvy = "qes2022", assign_global = FALSE, quiet = FALSE) {
   if (isTRUE(assign_global)) {
     .qes_assign("decon", decon, envir)
   } else if (isTRUE(assign_missing)) {
-    .qes_assign_default_notice("get_decon", "decon")
+    .qes_assign_default_notice("get_decon", "decon", quiet = quiet, envir = envir)
   }
 
   decon

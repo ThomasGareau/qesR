@@ -65,6 +65,7 @@ test_that("every legacy target is a target of the spec, and every study row name
 })
 
 test_that("V-S18 finds a broken renderer table", {
+  skip_on_cran()
   s <- hz_spec()
   broken <- function(edit) {
     s2 <- s
@@ -215,6 +216,14 @@ test_that("catalog, lead, id, raw, constant, timing and item renders", {
   expect_identical(render("legacy_party", fake_h("qes2018"), "vote_prov_recall")$target, NA_character_)
 })
 
+test_that("a column the study lacks renders as n missing values, without a recycling warning", {
+  # regression: a logical NA subscript recycled (R-devel warns) and gave the label table's length
+  for (kind in c("legacy_party", "recode:yes=Yes;no=No", "as_is")) {
+    out <- expect_no_warning(render(kind, fake_h("qes2018"), "vote_prov_recall"))
+    expect_identical(out$value, rep(NA_character_, 3), info = kind)
+  }
+})
+
 test_that("changes.csv and removed.csv match their schemas; the column map reads them", {
   dir <- system.file("extdata", "legacy", package = "qesR", mustWork = TRUE)
   expect_setequal(basename(list.files(dir, pattern = "\\.csv$")), c("changes.csv", "removed.csv"))
@@ -245,6 +254,7 @@ test_that("changes.csv and removed.csv match their schemas; the column map reads
 })
 
 test_that("the notices of the legacy builders are classed and shown once per session", {
+  skip_on_cran()
   local_fake_legacy()
   local_qes_once()
   withr::local_options(qesR.quiet_deprecated = TRUE)
@@ -276,6 +286,7 @@ test_that("the notices of the legacy builders are classed and shown once per ses
 })
 
 test_that("the values-changed note names the columns and attributes of its builder", {
+  skip_on_cran()
   local_fake_legacy()
   local_qes_once()
   withr::local_options(qesR.quiet_deprecated = TRUE, qesR.lang = "en")

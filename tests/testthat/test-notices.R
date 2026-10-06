@@ -48,57 +48,39 @@ test_that("the deprecation notice is shown in French with qesR.lang = 'fr'", {
   expect_identical(msg$replacement, "qes_codebook()")
 })
 
-test_that("the assignment-default note fires once, only when assign_global is unset", {
+test_that("the assignment-default note fires once, for top-level calls only", {
   local_fake_legacy()
   local_qes_once()
+  notice <- qesR:::.qes_assign_default_notice
+  shows <- function(expr) count_class(expr, "qesR_message_assign_default")
 
-  # supplying assign_global (either value) never triggers it
-  expect_identical(
-    count_class(get_qes("qes2018", assign_global = FALSE, quiet = TRUE), "qesR_message_assign_default"),
-    0L
-  )
-  caller <- new.env(parent = globalenv())
-  expect_identical(
-    count_class(
-      eval(quote(get_qes("qes2018", assign_global = TRUE, quiet = TRUE)), caller),
-      "qesR_message_assign_default"
-    ),
-    0L
-  )
+  # a call inside a function (here, a test), and any call that passes
+  # assign_global or quiet = TRUE, never shows it
+  for (call in list(quote(get_qes("qes2018", quiet = TRUE)), quote(get_qes("qes2018", assign_global = FALSE)),
+                    quote(get_decon("qes2018", quiet = TRUE)),
+                    quote(get_qes_master(surveys = "qes2018", quiet = TRUE)))) {
+    expect_identical(shows(suppressMessages(eval(call), classes = "qesR_message_download")), 0L)
+  }
+  expect_identical(shows(notice("get_qes", "qes2018", quiet = TRUE, envir = globalenv())), 0L)
+  expect_identical(shows(notice("get_qes", "qes2018", quiet = FALSE, envir = new.env())), 0L)
 
-  # unset: once per session per function, even with quiet = TRUE
-  expect_identical(count_class(get_qes("qes2018", quiet = TRUE), "qesR_message_assign_default"), 1L)
-  expect_identical(count_class(get_qes("qes2018", quiet = TRUE), "qesR_message_assign_default"), 0L)
-  expect_identical(
-    count_class(get_decon("qes2018", quiet = TRUE), "qesR_message_assign_default"),
-    1L
-  )
-  expect_identical(
-    count_class(get_qes_master(surveys = "qes2018", quiet = TRUE), "qesR_message_assign_default"),
-    1L
-  )
+  # never while knitr renders a page
+  withr::with_options(list(knitr.in.progress = TRUE),
+    expect_identical(shows(notice("get_qes", "qes2018", envir = globalenv())), 0L))
 
-  # internal calls (get_preview, get_decon, get_qes_master -> get_qes) never
-  # announce get_qes()'s note on their own
-  local_qes_once()
-  withr::local_options(qesR.quiet_deprecated = TRUE)
-  n <- count_class(
-    {
-      get_preview("qes2018")
-      get_decon("qes2018", assign_global = FALSE, quiet = TRUE)
-      get_qes_master(surveys = "qes2018", assign_global = FALSE, quiet = TRUE)
-    },
-    "qesR_message_assign_default"
-  )
-  expect_identical(n, 0L)
+  # a top-level call (console, Rscript, source()) shows it once per session
+  # per function
+  expect_identical(shows(notice("get_qes", "qes2018", envir = globalenv())), 1L)
+  expect_identical(shows(notice("get_qes", "qes2018", envir = globalenv())), 0L)
+  expect_identical(shows(notice("get_decon", "decon", envir = globalenv())), 1L)
+  expect_identical(shows(notice("get_qes_master", "qes_master", envir = globalenv())), 1L)
 })
 
 test_that("the assignment-default note carries the function and object names", {
-  local_fake_dataverse()
   local_qes_once()
   msg <- NULL
   withCallingHandlers(
-    get_qes(" QES2018 ", quiet = TRUE),
+    qesR:::.qes_assign_default_notice("get_qes", "qes2018", envir = globalenv()),
     qesR_message_assign_default = function(m) {
       msg <<- m
       invokeRestart("muffleMessage")
@@ -106,6 +88,7 @@ test_that("the assignment-default note carries the function and object names", {
   )
   expect_identical(msg$fn, "get_qes")
   expect_identical(msg$object_name, "qes2018")
+  expect_match(conditionMessage(msg), "qes2018 <- get_qes(...)", fixed = TRUE)
 })
 
 test_that(".qes_reset_once() clears every flag", {

@@ -12,6 +12,7 @@ test_that("the shipped spec passes the data checks on the dictionary", {
 })
 
 test_that("V-D1 finds variables that do not exist, with a hint", {
+  skip_on_cran()
   p <- hz_data_problems(function(t) {
     i <- hz_xw_row(t, "qes2012", "vote_prov_recall")
     t$crosswalk$source_var[i] <- "Q25"
@@ -35,6 +36,7 @@ test_that("V-D1 finds variables that do not exist, with a hint", {
 })
 
 test_that("V-D2 finds unmapped codes and missing codes that become values", {
+  skip_on_cran()
   p <- hz_data_problems(function(t) {
     vm <- t$valuemaps
     t$valuemaps <- vm[!(vm$map_id == "vote_qes2012_q25" & vm$source_code == "99"), , drop = FALSE]
@@ -65,6 +67,7 @@ test_that("V-D2 finds unmapped codes and missing codes that become values", {
 })
 
 test_that("V-D3 compares value-map labels and label hashes with the file", {
+  skip_on_cran()
   p <- hz_data_problems(function(t) {
     i <- which(t$valuemaps$map_id == "vote_qes2014_q3" & t$valuemaps$source_code == "1")
     t$valuemaps$source_label[i] <- "Parti québécois"
@@ -99,6 +102,7 @@ test_that("V-D3 compares value-map labels and label hashes with the file", {
 })
 
 test_that("V-D4 requires the file's declared missing codes to be named", {
+  skip_on_cran()
   p <- hz_data_problems(function(t) {
     t$crosswalk$na_codes[hz_xw_row(t, "qes2018_panel", "lr_self")] <- NA
     t
@@ -113,6 +117,7 @@ test_that("V-D4 requires the file's declared missing codes to be named", {
 })
 
 test_that("V-D7 checks the universe of gated rows against gates.csv", {
+  skip_on_cran()
   # a closed gate code with answers
   p <- hz_data_problems(sources_edit = function(src) {
     g <- src$gates
@@ -153,6 +158,7 @@ test_that("V-D7 checks the universe of gated rows against gates.csv", {
 })
 
 test_that("V-D8 checks wave sizes against the dictionary and gates.csv", {
+  skip_on_cran()
   for (study in c("qes2012", "qes2018_panel", "qes2007_panel")) {
     p <- hz_data_problems(function(t) {
       i <- which(t$waves$study == study)[length(which(t$waves$study == study))]
@@ -164,6 +170,7 @@ test_that("V-D8 checks wave sizes against the dictionary and gates.csv", {
 })
 
 test_that("a custom spec without gates.csv loads with warnings, not errors", {
+  skip_on_cran()
   dir <- withr::local_tempdir()
   file.copy(list.files(hz_spec_dir(), full.names = TRUE), dir, recursive = TRUE)
   unlink(file.path(dir, "gates.csv"))
@@ -176,6 +183,7 @@ test_that("a custom spec without gates.csv loads with warnings, not errors", {
 })
 
 test_that("synthetic data pass the data checks of the spec", {
+  skip_on_cran()
   syn <- .qes_synthetic(c("qes2007_panel", "qes2018_panel", "qes2012"))
   s <- hz_spec()
   p <- .qes_data_check_frames(s, syn)
@@ -185,6 +193,7 @@ test_that("synthetic data pass the data checks of the spec", {
 })
 
 test_that("the data checks on data frames find each problem (V-D1 to V-D8)", {
+  skip_on_cran()
   s <- hz_spec()
   syn <- .qes_synthetic(c("qes2007_panel", "qes2018_panel"))
   rules_on <- function(edit) {
@@ -242,6 +251,7 @@ test_that("the data checks on data frames find each problem (V-D1 to V-D8)", {
 })
 
 test_that("qes_spec(data = ) adds the data problems and checks its argument", {
+  skip_on_cran()
   syn <- .qes_synthetic("qes2018_panel")
   names(syn) <- " QES2018_PANEL "
   expect_no_error(qes_spec("spec", data = syn))
@@ -273,6 +283,7 @@ test_that("qes_spec(data = ) adds the data problems and checks its argument", {
 })
 
 test_that("the data checks give the same result under a C locale and French messages", {
+  skip_on_cran()
   s <- hz_spec()
   ref <- .qes_data_check(s, .qes_hz_sources_shipped(s))
   syn <- .qes_synthetic("qes2007_panel")

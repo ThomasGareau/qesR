@@ -91,7 +91,8 @@ in the spec's order of precedence. See \emph{Pooled variables}.}
 \value{
 A data frame of class \code{qes_harmonized}, returned visibly, one row
 per respondent of each study's file (no row is dropped), or per
-respondent and wave in the long layout. Leading columns: \code{study},
+respondent and wave in the long layout (where a respondent in no wave
+has no row). Leading columns: \code{study},
 \code{year} (the study's year; for pooled polls, the year the respondent's
 poll began), \code{election_date}, \code{family}, \code{study_design}, \code{target_population},
 \code{waves} (the waves the respondent belongs to, \verb{;}-separated; in the
@@ -114,7 +115,9 @@ layout) or \code{weight} and \code{weight_var} (long layout). Attributes:
 \code{"cell"}, \code{"spec"} and, with pooled variables, \code{"pooled"}),
 \code{qes_weight_guide} (\code{target} or pooled variable, \code{study}, \code{wave},
 \code{target_timing}, \code{weight_column}, \code{weight_var}, \code{weight_status}) and
-\code{failed_studies} (\code{study}, \code{class}, \code{message}, \code{parent_message}).
+\code{failed_studies} (\code{study}, \code{class}, \code{message}, \code{parent_message}) and,
+in the long layout, \code{qes_no_wave} (\code{study}, \code{n_rows}: the respondents
+left out because they took part in no wave; no row when there are none).
 
 Results for different studies built with the same spec can be combined
 with \code{\link[=rbind]{rbind()}}, which also combines their provenance. It is an error
@@ -303,8 +306,11 @@ disposition or date variable, never an answer. A question belongs to the
 wave that asked it, so a respondent outside that wave is \code{NA} with reason
 \code{not_in_wave}. The respondent layout has one row per respondent, and
 \code{waves} lists the waves each respondent took part in. The long layout
-(\code{layout = "long"}) has one row per respondent and wave (a respondent in
-no wave keeps one row, with \code{wave} \code{NA}): a value sits on the row of the
+(\code{layout = "long"}) has one row per respondent and wave, so \code{wave} is
+never \code{NA}: a respondent who took part in no wave (in \code{qes2007_panel}, one
+interview that neither wave's rule counts) has no row, a message (class
+\code{qesR_message_no_wave}) says so, and \code{attr(x, "qes_no_wave")} counts them
+study by study. A value sits on the row of the
 wave that asked it and the respondent's other rows are \code{not_in_wave},
 except the time-invariant targets (year and month of birth), which are
 repeated on each of the respondent's rows.
@@ -405,9 +411,11 @@ pooled provenance), \code{qesR_message_unreviewed_skipped}
 with \code{include_draft = TRUE}), \code{qesR_message_approximate_cells} (cells
 graded approximate are included), \code{qesR_message_structural_zeros}
 (levels a question did not offer), \code{qesR_message_weight_review}
-(recommended weights that need review, left \code{NA}) and
+(recommended weights that need review, left \code{NA}),
 \code{qesR_message_weight_timing} (targets of one study that need different
-weights; not sent when all of the study's weights need review).
+weights; not sent when all of the study's weights need review) and
+\code{qesR_message_no_wave} (respondents the long layout leaves out because
+they took part in no wave; field \code{no_wave}).
 }
 
 \code{\link[=qes_design]{qes_design()}} sends \code{qesR_message_design_dropped} (fields \code{study}, \code{n})
@@ -428,7 +436,9 @@ n'offrait pas sont des zéros structurels, pas un appui nul. \code{lang = "fr"}
 donne les étiquettes des niveaux en français ; les codes sont les mêmes.
 \code{targets = "decon"} demande les cibles des colonnes de \code{\link[=get_decon]{get_decon()}}.
 La disposition longue (\code{layout = "long"}) donne une ligne par personne et
-par vague ; une question invariante d'un panel (genre, scolarité) est
+par vague (\code{wave} n'y vaut jamais NA : une personne qui n'a participé à
+aucune vague n'a pas de ligne, un message le dit et
+\code{attr(x, "qes_no_wave")} les compte) ; une question invariante d'un panel (genre, scolarité) est
 lue dans la vague à laquelle la personne a participé (panel de 2007) ;
 les sondages CROP regroupés ont une vague par sondage, et
 \code{stratum} donne l'échantillon indépendant d'où vient la personne : pour

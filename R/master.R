@@ -27,7 +27,7 @@
   codes
 }
 
-#' Build the Merged QES File
+#' Build the merged file
 #'
 #' Reads 11 Quebec Election Studies, from 1998 to 2022, and stacks them in
 #' one data frame: one row per respondent of each study, and the same 30
@@ -45,9 +45,9 @@
 #' with those of earlier versions of qesR, and how to reproduce those.
 #'
 #' `get_qes_master()` returns the data and assigns nothing unless
-#' `assign_global = TRUE`: write `master <- get_qes_master()`. The first call
-#' in a session that leaves `assign_global` unset prints a one-time note
-#' saying so. The first call in a session also prints one-time notes on how
+#' `assign_global = TRUE`: write `master <- get_qes_master()`. The first
+#' top-level call in a session (console, `Rscript` or `source()`) prints a
+#' one-time note saying so, unless `quiet = TRUE` or `assign_global` is passed. The first call in a session also prints one-time notes on how
 #' its values and columns compare with those of earlier versions (classes
 #' `qesR_message_values_changed` and `qesR_message_legacy_columns`).
 #'
@@ -357,7 +357,7 @@ get_qes_master <- function(
   if (isTRUE(assign_global)) {
     .qes_assign(object_name, master, envir)
   } else if (isTRUE(assign_missing)) {
-    .qes_assign_default_notice("get_qes_master", object_name)
+    .qes_assign_default_notice("get_qes_master", object_name, quiet = quiet, envir = envir)
   }
 
   if (!quiet) {

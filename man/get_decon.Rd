@@ -2,7 +2,7 @@
 % Please edit documentation in R/decon.R
 \name{get_decon}
 \alias{get_decon}
-\title{Create a Prepared Non-Exhaustive qesR Dataset}
+\title{Prepared non-exhaustive data frame (older name)}
 \usage{
 get_decon(srvy = "qes2022", assign_global = FALSE, quiet = FALSE)
 }
@@ -55,8 +55,9 @@ one study at a time, and its values do not change.
 
 \code{get_decon()} returns the data and assigns nothing unless
 \code{assign_global = TRUE}: write \code{decon <- get_decon("qes2022")}. The first
-call in a session that leaves \code{assign_global} unset prints a one-time note
-about this change from qesR 0.4.4.
+top-level call in a session (console, \code{Rscript} or \code{source()}) prints a
+one-time note about this; passing \code{assign_global} or \code{quiet = TRUE} avoids
+it.
 }
 \section{Columns}{
 

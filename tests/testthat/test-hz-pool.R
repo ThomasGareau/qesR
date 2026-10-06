@@ -34,6 +34,7 @@ expected_pool <- function(h, p, types = NULL) {
 }
 
 test_that("the shipped pooled variables pass V-F1 to V-F7 and name their members", {
+  skip_on_cran()
   s <- hz_spec()
   p <- .qes_spec_check(s)
   expect_false(any(grepl("^V-F", p$rule)))
@@ -49,6 +50,7 @@ test_that("the shipped pooled variables pass V-F1 to V-F7 and name their members
 })
 
 test_that("a pooled value is the first member, by precedence, that asked the respondent", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2022", "qes2007_panel", "qes2012"))
   members <- pool_members("vote_choice")$member
   h <- hz_run(syn, targets = c("vote_choice", members), layout = "long", values = "code", missing = "reasons")
@@ -73,6 +75,7 @@ test_that("a pooled value is the first member, by precedence, that asked the res
 })
 
 test_that("types keeps some members only, in the spec's order of precedence", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2022", "qes2012"))
   members <- pool_members("vote_choice")$member
   h <- hz_run(syn, targets = c("vote_choice", members), values = "code", missing = "reasons",
@@ -139,6 +142,7 @@ test_that("grades are the member's, capped, never raised; min_grade applies to t
 })
 
 test_that("a row every member passes takes the reason of the first usable member", {
+  skip_on_cran()
   # the 2007 panel's pushed 1995 question put back in review: with the
   # default include_draft = FALSE it is not usable, and a respondent whose
   # intref1 is system missing gets the reason, type and item of the first
@@ -241,6 +245,7 @@ test_that("rbind() of per-study results with pooled variables equals one call", 
 })
 
 test_that("qes_spec('pooled') gives each member's grade in each study", {
+  skip_on_cran()
   v <- qes_spec("pooled")
   expect_identical(names(v)[1:15], c("pooled", "label", "definition", "type", "levels", "type_name", "type_label",
                                      "member", "precedence", "default", "transform", "grade_cap", "note", "status",
@@ -279,6 +284,7 @@ test_that("qes_design() weights each study with the column of its pooled values'
 })
 
 test_that("the validator rejects malformed pooled variables (V-F1 to V-F7)", {
+  skip_on_cran()
   s <- hz_spec()
   bad <- function(edit) {
     t <- s
@@ -392,9 +398,18 @@ test_that("qes_party_lineage() joins the ADQ and the CAQ, graded approximate bef
   expect_error(qes_party_lineage(h, cols = "study"), class = "qesR_error_input")
   expect_error(qes_party_lineage(h, lineage = "x"), class = "qesR_error_input")
   expect_error(qes_party_lineage(data.frame(a = 1)), class = "qesR_error_input")
+  # the message names both functions whose output it takes
+  e <- tryCatch(qes_party_lineage(data.frame(a = 1)), error = identity)
+  expect_match(conditionMessage(e), "qes_decon()", fixed = TRUE)
+  # the label's suffix follows the language of the data
+  expect_match(attr(l$vote_choice_lineage, "label"), "\\(lineage\\)$")
+  fr <- qes_party_lineage(hz_run(syn, targets = "vote_choice", lang = "fr"))
+  expect_match(attr(fr$vote_choice_lineage, "label"), "\\(filiation\\)$")
+  expect_false(grepl("lineage", attr(fr$vote_choice_lineage, "label"), fixed = TRUE))
 })
 
 test_that("rows nobody has reviewed and derived cells never reach the legacy columns (V-S19)", {
+  skip_on_cran()
   local_qes_notices_shown()
   local_fake_legacy()
   now <- suppressMessages(get_qes_master(surveys = c("qes2012", "qes2022"), quiet = TRUE))

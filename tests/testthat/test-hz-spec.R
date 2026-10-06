@@ -32,6 +32,7 @@ xw_row <- function(t, study, target, source_var = NULL) {
 }
 
 test_that("the shipped spec passes V-S1 to V-S17 and the hash check", {
+  skip_on_cran()
   s <- shipped_spec()
   p <- .qes_spec_check(s)
   expect_identical(p$rule[p$severity == "error"], character(0))
@@ -69,6 +70,7 @@ test_that("the content hash ignores quoting and follows content", {
 })
 
 test_that("qes_spec(view = 'spec') returns the checked spec", {
+  skip_on_cran()
   s <- qes_spec("spec")
   expect_s3_class(s, "qes_spec")
   expect_identical(s$version, unname(read.dcf(file.path(spec_dir(), "SPEC"))[1, "Spec-Version"]))
@@ -87,6 +89,7 @@ test_that("qes_spec(view = 'spec') returns the checked spec", {
 })
 
 test_that("an unchanged copy of the spec is not custom; an edited one is", {
+  skip_on_cran()
   dir <- local_spec_copy()
   expect_false(qes_spec("spec", spec = dir)$custom)
   x <- .qes_read_csv(file.path(dir, "CHANGES.csv"))
@@ -101,6 +104,7 @@ test_that("an unchanged copy of the spec is not custom; an edited one is", {
 })
 
 test_that("a broken spec raises qesR_error_spec with the problems table", {
+  skip_on_cran()
   dir <- local_spec_copy()
   x <- .qes_read_csv(file.path(dir, "crosswalk.csv"))
   x$grade[1] <- "same"
@@ -113,6 +117,7 @@ test_that("a broken spec raises qesR_error_spec with the problems table", {
 })
 
 test_that("an edited qes_spec object is named as such when it is broken", {
+  skip_on_cran()
   sp <- qes_spec("spec")
   sp$tables$crosswalk$notes_en[1] <- "A note in English only."
   err <- expect_error(qes_spec("spec", spec = sp), class = "qesR_error_spec")
@@ -183,6 +188,7 @@ test_that("qes_spec() checks its arguments", {
 })
 
 test_that("V-S1 catches malformed cells", {
+  skip_on_cran()
   expect_true("V-S1" %in% rules_after(function(t) {
     t$crosswalk$args[xw_row(t, "qes2012", "lr_self")] <- "min=0;max"
     t
@@ -219,6 +225,7 @@ test_that("V-S1 catches malformed cells", {
 })
 
 test_that("V-S2 catches duplicate keys and codes with two outcomes", {
+  skip_on_cran()
   expect_true("V-S2" %in% rules_after(function(t) {
     t$crosswalk <- rbind(t$crosswalk, t$crosswalk[1, ])
     t
@@ -234,6 +241,7 @@ test_that("V-S2 catches duplicate keys and codes with two outcomes", {
 })
 
 test_that("V-S3 checks every enum column and the NA vocabulary", {
+  skip_on_cran()
   expect_true("V-S3" %in% rules_after(function(t) {
     t$targets$type[1] <- "nominal"
     t
@@ -258,6 +266,7 @@ test_that("V-S3 checks every enum column and the NA vocabulary", {
 })
 
 test_that("V-S4 checks references in both directions", {
+  skip_on_cran()
   expect_true("V-S4" %in% rules_after(function(t) {
     t$crosswalk$study[1] <- "qes2019"
     t
@@ -297,6 +306,7 @@ test_that("V-S5 allows one primary row per study and target", {
 })
 
 test_that("V-S6 requires English and French", {
+  skip_on_cran()
   expect_true("V-S6" %in% rules_after(function(t) {
     t$targets$label_fr[1] <- NA
     t
@@ -316,6 +326,7 @@ test_that("V-S6 requires English and French", {
 })
 
 test_that("V-S7 refuses replacement, control and decomposed characters", {
+  skip_on_cran()
   for (bad in c(intToUtf8(0xFFFD), intToUtf8(0x85), "\t", paste0("e", intToUtf8(0x301)))) {
     expect_true("V-S7" %in% rules_after(function(t) {
       t$targets$description_en[1] <- paste0("Text ", bad)
@@ -325,6 +336,7 @@ test_that("V-S7 refuses replacement, control and decomposed characters", {
 })
 
 test_that("V-S8 catches a label that names another level", {
+  skip_on_cran()
   expect_true("V-S8" %in% rules_after(function(t) {
     i <- which(t$valuemaps$map_id == "vote_qes2014_q3" & t$valuemaps$source_code == "1")
     t$valuemaps$target_code[i] <- 2L
@@ -349,6 +361,7 @@ test_that("V-S8 catches a label that names another level", {
 })
 
 test_that("V-S9 refuses timing and election mismatches", {
+  skip_on_cran()
   # [A:H4]: a pre-election target from the 2022 post-election wave
   expect_true("V-S9" %in% rules_after(function(t) {
     t$crosswalk$wave[xw_row(t, "qes2022", "vote_prov_intent")] <- "pes"
@@ -372,6 +385,7 @@ test_that("V-S10 requires a registered function and caps fn: rules", {
 })
 
 test_that("V-S11 sets the review requirements", {
+  skip_on_cran()
   # a stable row needs a reviewer and a date
   expect_true("V-S11" %in% rules_after(function(t) {
     i <- which(t$crosswalk$status == "stable")[1]
@@ -414,6 +428,7 @@ test_that("V-S11 sets the review requirements", {
 })
 
 test_that("V-S12 ties rules to target types and not_comparable to rule none", {
+  skip_on_cran()
   expect_true("V-S12" %in% rules_after(function(t) {
     t$crosswalk$grade[xw_row(t, "qes2018_panel", "sov_favour", "independance")] <- "comparable"
     t
@@ -432,6 +447,7 @@ test_that("V-S12 ties rules to target types and not_comparable to rule none", {
 })
 
 test_that("V-S13 checks weight roles and one recommended weight per wave", {
+  skip_on_cran()
   expect_true("V-S13" %in% rules_after(function(t) {
     t$weights$recommended[t$weights$weight_var == "cps_weight_general_trimmed"] <- TRUE
     t
@@ -473,6 +489,7 @@ test_that("V-S14 requires ordinal maps to be monotone", {
 })
 
 test_that("V-S15 keeps target, family and set names apart", {
+  skip_on_cran()
   expect_true("V-S15" %in% rules_after(function(t) {
     t$targets$family[t$targets$target == "lr_self"] <- "lr_self"
     t
@@ -488,6 +505,7 @@ test_that("V-S15 keeps target, family and set names apart", {
 })
 
 test_that("V-S16 keeps mapped levels within the offered levels", {
+  skip_on_cran()
   expect_true("V-S16" %in% rules_after(function(t) {
     t$crosswalk$levels_offered[xw_row(t, "qes2018", "vote_prov_recall")] <- "PLQ;PQ;CAQ"
     t
@@ -499,6 +517,7 @@ test_that("V-S16 keeps mapped levels within the offered levels", {
 })
 
 test_that("V-S17 holds identical rows to their anchor", {
+  skip_on_cran()
   expect_true("V-S17" %in% rules_after(function(t) {
     t$crosswalk$grade[xw_row(t, "qes2018", "pid_prov")] <- "identical"
     t
@@ -653,6 +672,7 @@ test_that("crosswalk wording of CC0 studies is the dictionary's question text", 
 })
 
 test_that("the spec reads the same under a C locale and French messages", {
+  skip_on_cran()
   ref <- .qes_spec_check(shipped_spec())
   ref_spec <- shipped_spec()
   withr::local_envvar(LANGUAGE = "fr")
@@ -665,6 +685,7 @@ test_that("the spec reads the same under a C locale and French messages", {
 })
 
 test_that("a value-map code outside an ordinal set is reported by V-S4, not an R error", {
+  skip_on_cran()
   dir <- local_spec_copy()
   x <- .qes_read_csv(file.path(dir, "valuemaps.csv"))
   x$target_code[x$map_id == "interest4_qes2018_q27" & x$source_code == "2"] <- "50"
@@ -690,6 +711,7 @@ test_that("V-S2 checks level sets as expanded by inherits=", {
 })
 
 test_that("V-S4 checks the files of wording_ref", {
+  skip_on_cran()
   expect_true("V-S4" %in% rules_after(function(t) {
     t$crosswalk$wording_ref[xw_row(t, "qes2012", "vote_prov_recall")] <- "999999:Q25"
     t
@@ -719,6 +741,7 @@ test_that("levels problems give the data row of levels.csv", {
 })
 
 test_that("an edited qes_spec object gets a new hash and is custom", {
+  skip_on_cran()
   s <- qes_spec("spec")
   expect_false(qes_spec("spec", spec = s)$custom)
   w <- s$tables$weights
@@ -733,6 +756,7 @@ test_that("an edited qes_spec object gets a new hash and is custom", {
 })
 
 test_that("V-S1, V-S2 and V-S4 check the form of expected/hashes.csv", {
+  skip_on_cran()
   expect_identical(rules_after(identity), character(0))
   expect_true("V-S1" %in% rules_after(function(t) {
     t$hashes$md5[1] <- "not an md5"

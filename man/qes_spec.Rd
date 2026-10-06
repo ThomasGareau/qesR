@@ -2,7 +2,7 @@
 % Please edit documentation in R/hz-spec.R
 \name{qes_spec}
 \alias{qes_spec}
-\title{The harmonization spec (experimental)}
+\title{Harmonization rules and coverage (experimental)}
 \usage{
 qes_spec(
   view = c("targets", "crosswalk", "spec", "pooled", "relaxed", "relaxed_maps"),
@@ -170,7 +170,7 @@ sont assouplies, puis l'appariement souple propre à chaque étude.
 référence complète.
 }
 
-\section{Targets in the shipped spec (version 4.6.0)}{
+\section{Targets in the shipped spec (version 4.7.0)}{
 
 Generated from the spec by roxygen; \code{qes_spec()} gives the same list with each study's grade.
 \describe{

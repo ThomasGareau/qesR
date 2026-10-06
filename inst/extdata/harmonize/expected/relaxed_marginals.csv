@@ -1,7 +1,7 @@
 column,study,wave,value,na_reason,n
 citizenship,qes1998,*,,not_asked,1483
 citizenship,qes2007,*,,not_asked,2175
-citizenship,qes2007_panel,*,,not_asked,2442
+citizenship,qes2007_panel,*,,not_asked,2441
 citizenship,qes2008,*,,not_asked,1151
 citizenship,qes2012,*,,not_asked,1505
 citizenship,qes2012_panel,*,,not_asked,844
@@ -82,7 +82,7 @@ yob,qes2007,*,1987,,25
 yob,qes2007,*,1988,,10
 yob,qes2007,*,1989,,2
 yob,qes2007,*,,refused,40
-yob,qes2007_panel,*,,not_asked,2442
+yob,qes2007_panel,*,,not_asked,2441
 yob,qes2008,*,1922,,1
 yob,qes2008,*,1926,,1
 yob,qes2008,*,1928,,3
@@ -448,7 +448,6 @@ age_group,qes2007,*,,refused,40
 age_group,qes2007_panel,*,a18_34,,528
 age_group,qes2007_panel,*,a35_54,,1065
 age_group,qes2007_panel,*,a55_plus,,847
-age_group,qes2007_panel,*,,not_in_wave,1
 age_group,qes2007_panel,*,,sysmis,1
 age_group,qes2008,*,a18_34,,266
 age_group,qes2008,*,a35_54,,484
@@ -482,7 +481,6 @@ gender,qes2007,*,man,,937
 gender,qes2007,*,woman,,1238
 gender,qes2007_panel,*,man,,1039
 gender,qes2007_panel,*,woman,,1401
-gender,qes2007_panel,*,,not_in_wave,1
 gender,qes2007_panel,*,,sysmis,1
 gender,qes2008,*,man,,532
 gender,qes2008,*,woman,,619
@@ -516,7 +514,6 @@ education4,qes2007_panel,*,college,,684
 education4,qes2007_panel,*,high_school,,761
 education4,qes2007_panel,*,no_diploma,,154
 education4,qes2007_panel,*,university,,830
-education4,qes2007_panel,*,,not_asked,1
 education4,qes2007_panel,*,,refused,11
 education4,qes2007_panel,*,,sysmis,1
 education4,qes2008,*,college,,346
@@ -569,7 +566,6 @@ education,qes2007,*,,refused,15
 education,qes2007_panel,*,high_school_college,,1445
 education,qes2007_panel,*,no_diploma,,154
 education,qes2007_panel,*,university,,830
-education,qes2007_panel,*,,not_asked,1
 education,qes2007_panel,*,,refused,11
 education,qes2007_panel,*,,sysmis,1
 education,qes2008,*,high_school_college,,548
@@ -612,7 +608,6 @@ income_cat,qes2007_panel,*,high,,800
 income_cat,qes2007_panel,*,low,,746
 income_cat,qes2007_panel,*,middle,,486
 income_cat,qes2007_panel,*,,dk_refused,408
-income_cat,qes2007_panel,*,,not_asked,1
 income_cat,qes2007_panel,*,,sysmis,1
 income_cat,qes2008,*,high,,371
 income_cat,qes2008,*,low,,286
@@ -657,7 +652,6 @@ language,qes2007_panel,*,english,,165
 language,qes2007_panel,*,french,,2083
 language,qes2007_panel,*,other,,186
 language,qes2007_panel,*,,dk_refused,6
-language,qes2007_panel,*,,not_in_wave,1
 language,qes2007_panel,*,,sysmis,1
 language,qes2008,*,english,,138
 language,qes2008,*,french,,965
@@ -695,7 +689,6 @@ language_fr,qes2007,*,,dk_refused,3
 language_fr,qes2007_panel,*,no,,351
 language_fr,qes2007_panel,*,yes,,2083
 language_fr,qes2007_panel,*,,dk_refused,6
-language_fr,qes2007_panel,*,,not_in_wave,1
 language_fr,qes2007_panel,*,,sysmis,1
 language_fr,qes2008,*,no,,186
 language_fr,qes2008,*,yes,,965
@@ -725,7 +718,6 @@ language_eng,qes2007,*,,dk_refused,3
 language_eng,qes2007_panel,*,no,,2269
 language_eng,qes2007_panel,*,yes,,165
 language_eng,qes2007_panel,*,,dk_refused,6
-language_eng,qes2007_panel,*,,not_in_wave,1
 language_eng,qes2007_panel,*,,sysmis,1
 language_eng,qes2008,*,no,,1013
 language_eng,qes2008,*,yes,,138
@@ -749,7 +741,7 @@ language_eng,qes_crop_2007_2010,*,,dk_refused,43
 language_eng,qes_crop_2007_2010,*,,sysmis,97
 religion,qes1998,*,,not_asked,1483
 religion,qes2007,*,,not_asked,2175
-religion,qes2007_panel,*,,not_asked,2442
+religion,qes2007_panel,*,,not_asked,2441
 religion,qes2008,*,,not_asked,1151
 religion,qes2012,*,catholic,,519
 religion,qes2012,*,none,,842
@@ -780,7 +772,7 @@ religion,qes2022,*,,no_answer,2
 religion,qes_crop_2007_2010,*,,not_asked,24027
 marital,qes1998,*,,not_asked,1483
 marital,qes2007,*,,not_asked,2175
-marital,qes2007_panel,*,,not_asked,2442
+marital,qes2007_panel,*,,not_asked,2441
 marital,qes2008,*,,not_asked,1151
 marital,qes2012,*,married,,805
 marital,qes2012,*,never_married,,537
@@ -818,7 +810,6 @@ employment,qes2007_panel,*,retired,,593
 employment,qes2007_panel,*,student,,131
 employment,qes2007_panel,*,unemployed,,59
 employment,qes2007_panel,*,working,,1504
-employment,qes2007_panel,*,,not_asked,1
 employment,qes2007_panel,*,,refused,3
 employment,qes2007_panel,*,,sysmis,1
 employment,qes2008,*,other,,55
@@ -866,7 +857,7 @@ employment,qes_crop_2007_2010,*,working,,14836
 employment,qes_crop_2007_2010,*,,refused,59
 union,qes1998,*,,not_asked,1483
 union,qes2007,*,,not_asked,2175
-union,qes2007_panel,*,,not_asked,2442
+union,qes2007_panel,*,,not_asked,2441
 union,qes2008,*,,not_asked,1151
 union,qes2012,*,,not_asked,1505
 union,qes2012_panel,*,,not_asked,844
@@ -889,7 +880,6 @@ region,qes2007,*,rest,,701
 region,qes2007_panel,*,mtl_cma,,1251
 region,qes2007_panel,*,quebec_cma,,213
 region,qes2007_panel,*,rest,,977
-region,qes2007_panel,*,,not_asked,1
 region,qes2008,*,mtl_cma,,433
 region,qes2008,*,quebec_cma,,360
 region,qes2008,*,rest,,358
@@ -946,7 +936,6 @@ region_admin,qes2007_panel,*,montreal,,670
 region_admin,qes2007_panel,*,nord_du_quebec,,5
 region_admin,qes2007_panel,*,outaouais,,93
 region_admin,qes2007_panel,*,saguenay_lac_saint_jean,,95
-region_admin,qes2007_panel,*,,not_asked,1
 region_admin,qes2008,*,,not_asked,1151
 region_admin,qes2012,*,abitibi_temiscamingue,,30
 region_admin,qes2012,*,bas_saint_laurent,,35
@@ -1005,7 +994,7 @@ region_admin,qes2022,*,,not_asked,1521
 region_admin,qes_crop_2007_2010,*,,not_asked,24027
 born_canada,qes1998,*,,not_asked,1483
 born_canada,qes2007,*,,not_asked,2175
-born_canada,qes2007_panel,*,,not_asked,2442
+born_canada,qes2007_panel,*,,not_asked,2441
 born_canada,qes2008,*,,not_asked,1151
 born_canada,qes2012,*,no,,118
 born_canada,qes2012,*,yes,,1384
@@ -1025,7 +1014,7 @@ born_canada,qes2022,*,yes,,1416
 born_canada,qes_crop_2007_2010,*,,not_asked,24027
 born_quebec,qes1998,*,,not_asked,1483
 born_quebec,qes2007,*,,not_asked,2175
-born_quebec,qes2007_panel,*,,not_asked,2442
+born_quebec,qes2007_panel,*,,not_asked,2441
 born_quebec,qes2008,*,,not_asked,1151
 born_quebec,qes2012,*,no,,185
 born_quebec,qes2012,*,yes,,1317
@@ -1068,7 +1057,6 @@ vote_choice,qes2007,post,,dk,8
 vote_choice,qes2007,post,,not_voted,176
 vote_choice,qes2007,post,,refused,252
 vote_choice,qes2007,post,,spoiled,12
-vote_choice,qes2007_panel,NA,,not_in_wave,1
 vote_choice,qes2007_panel,post,ADQ,,480
 vote_choice,qes2007_panel,post,PLQ,,428
 vote_choice,qes2007_panel,post,PQ,,460
@@ -1372,7 +1360,6 @@ vote_choice,qes_crop_2007_2010,poll_2010_01,,dk_refused,156
 vote_type,qes1998,post,recall,,1483
 vote_type,qes1998,pre,intention_push,,1483
 vote_type,qes2007,post,recall,,2175
-vote_type,qes2007_panel,NA,,not_in_wave,1
 vote_type,qes2007_panel,post,recall,,2054
 vote_type,qes2007_panel,pre,intention,,53
 vote_type,qes2007_panel,pre,intention_push,,1997
@@ -1441,7 +1428,6 @@ turnout,qes2007,post,no,,172
 turnout,qes2007,post,yes,,1990
 turnout,qes2007,post,,dk,1
 turnout,qes2007,post,,refused,12
-turnout,qes2007_panel,NA,,not_in_wave,1
 turnout,qes2007_panel,post,no,,302
 turnout,qes2007_panel,post,yes,,1752
 turnout,qes2007_panel,pre,,not_in_wave,2050
@@ -1501,7 +1487,6 @@ vote_prev,qes1998,pre,,not_mappable,242
 vote_prev,qes1998,pre,,not_voted,152
 vote_prev,qes1998,pre,,sysmis,340
 vote_prev,qes2007,post,,not_asked,2175
-vote_prev,qes2007_panel,NA,,not_asked,1
 vote_prev,qes2007_panel,post,,not_asked,2054
 vote_prev,qes2007_panel,pre,ADQ,,86
 vote_prev,qes2007_panel,pre,PLQ,,331
@@ -1734,7 +1719,6 @@ pid,qes2007,post,none,,295
 pid,qes2007,post,other,,4
 pid,qes2007,post,,dk,42
 pid,qes2007,post,,refused,64
-pid,qes2007_panel,NA,,not_asked,1
 pid,qes2007_panel,post,,not_asked,2054
 pid,qes2007_panel,pre,,not_asked,2050
 pid,qes2008,post,ADQ,,139
@@ -1810,7 +1794,6 @@ pid,qes_crop_2007_2010,poll_2010_01,,not_asked,1000
 lr,qes1998,post,,not_asked,1483
 lr,qes1998,pre,,not_asked,1483
 lr,qes2007,post,,not_asked,2175
-lr,qes2007_panel,NA,,not_asked,1
 lr,qes2007_panel,post,,not_asked,2054
 lr,qes2007_panel,pre,,not_asked,2050
 lr,qes2008,post,,not_asked,1151
@@ -1907,21 +1890,20 @@ lr,qes_crop_2007_2010,poll_2009_10,,not_asked,1000
 lr,qes_crop_2007_2010,poll_2010_01,,not_asked,1000
 interest,qes1998,post,,not_asked,1483
 interest,qes1998,pre,,not_asked,1483
-interest,qes2007,post,high,,853
-interest,qes2007,post,low,,265
-interest,qes2007,post,medium,,1047
+interest,qes2007,post,high,,423
+interest,qes2007,post,low,,684
+interest,qes2007,post,medium,,1058
 interest,qes2007,post,,dk,4
 interest,qes2007,post,,refused,6
-interest,qes2007_panel,NA,,not_in_wave,1
 interest,qes2007_panel,post,,not_in_wave,2054
 interest,qes2007_panel,pre,high,,420
 interest,qes2007_panel,pre,low,,950
 interest,qes2007_panel,pre,medium,,676
 interest,qes2007_panel,pre,,dk_refused,3
 interest,qes2007_panel,pre,,sysmis,1
-interest,qes2008,post,high,,257
-interest,qes2008,post,low,,435
-interest,qes2008,post,medium,,455
+interest,qes2008,post,high,,173
+interest,qes2008,post,low,,680
+interest,qes2008,post,medium,,294
 interest,qes2008,post,,dk,2
 interest,qes2008,post,,refused,2
 interest,qes2012,post,high,,335
@@ -1943,9 +1925,9 @@ interest,qes2018,post,,dk,40
 interest,qes2018,post,,refused,20
 interest,qes2018_panel,post,,not_asked,842
 interest,qes2018_panel,pre,,not_asked,1250
-interest,qes2022,cps,high,,642
-interest,qes2022,cps,low,,238
-interest,qes2022,cps,medium,,628
+interest,qes2022,cps,high,,346
+interest,qes2022,cps,low,,437
+interest,qes2022,cps,medium,,725
 interest,qes2022,cps,,no_answer,13
 interest,qes2022,pes,,not_in_wave,1220
 interest,qes_crop_2007_2010,poll_2007_06,,not_asked,1000
@@ -1987,7 +1969,6 @@ interest_01,qes2007,post,0.9,,153
 interest_01,qes2007,post,1,,270
 interest_01,qes2007,post,,dk,4
 interest_01,qes2007,post,,refused,6
-interest_01,qes2007_panel,NA,,not_in_wave,1
 interest_01,qes2007_panel,post,,not_in_wave,2054
 interest_01,qes2007_panel,pre,0,,289
 interest_01,qes2007_panel,pre,0.3,,661
@@ -2072,25 +2053,24 @@ sovereignty,qes1998,pre,no,,215
 sovereignty,qes1998,pre,yes,,165
 sovereignty,qes1998,pre,,dk,21
 sovereignty,qes1998,pre,,inapplicable,1057
-sovereignty,qes1998,pre,,not_mappable,8
+sovereignty,qes1998,pre,,not_voted,8
 sovereignty,qes1998,pre,,refused,17
 sovereignty,qes2007,post,no,,1158
 sovereignty,qes2007,post,yes,,853
 sovereignty,qes2007,post,,dk,91
-sovereignty,qes2007,post,,not_mappable,36
+sovereignty,qes2007,post,,not_voted,36
 sovereignty,qes2007,post,,refused,37
-sovereignty,qes2007_panel,NA,,not_in_wave,1
 sovereignty,qes2007_panel,post,,not_in_wave,2054
 sovereignty,qes2007_panel,pre,no,,1048
 sovereignty,qes2007_panel,pre,yes,,851
 sovereignty,qes2007_panel,pre,,dk,82
-sovereignty,qes2007_panel,pre,,not_mappable,32
+sovereignty,qes2007_panel,pre,,not_voted,32
 sovereignty,qes2007_panel,pre,,refused,36
 sovereignty,qes2007_panel,pre,,sysmis,1
 sovereignty,qes2008,post,no,,563
 sovereignty,qes2008,post,yes,,475
 sovereignty,qes2008,post,,dk,71
-sovereignty,qes2008,post,,not_mappable,16
+sovereignty,qes2008,post,,not_voted,16
 sovereignty,qes2008,post,,refused,26
 sovereignty,qes2012,post,no,,756
 sovereignty,qes2012,post,yes,,567
@@ -2100,7 +2080,7 @@ sovereignty,qes2012_panel,post,,not_in_wave,844
 sovereignty,qes2012_panel,pre,no,,482
 sovereignty,qes2012_panel,pre,yes,,261
 sovereignty,qes2012_panel,pre,,dk,88
-sovereignty,qes2012_panel,pre,,not_mappable,7
+sovereignty,qes2012_panel,pre,,not_voted,7
 sovereignty,qes2012_panel,pre,,refused,6
 sovereignty,qes2014,post,no,,891
 sovereignty,qes2014,post,yes,,462
@@ -2241,7 +2221,6 @@ sovereignty,qes_crop_2007_2010,poll_2010_01,,refused,29
 sovereignty_type,qes1998,post,,not_in_wave,1483
 sovereignty_type,qes1998,pre,partnership_1995,,1483
 sovereignty_type,qes2007,post,partnership_1995,,2175
-sovereignty_type,qes2007_panel,NA,,not_in_wave,1
 sovereignty_type,qes2007_panel,post,,not_in_wave,2054
 sovereignty_type,qes2007_panel,pre,partnership_1995,,2050
 sovereignty_type,qes2008,post,partnership_1995,,1151
@@ -2286,7 +2265,6 @@ satis_democracy,qes2007,post,not_very,,639
 satis_democracy,qes2007,post,very,,184
 satis_democracy,qes2007,post,,dk,26
 satis_democracy,qes2007,post,,refused,13
-satis_democracy,qes2007_panel,NA,,not_asked,1
 satis_democracy,qes2007_panel,post,,not_asked,2054
 satis_democracy,qes2007_panel,pre,,not_asked,2050
 satis_democracy,qes2008,post,fairly,,587
@@ -2355,7 +2333,6 @@ gov_satisfaction,qes1998,pre,very,,134
 gov_satisfaction,qes1998,pre,,dk_refused,60
 gov_satisfaction,qes1998,pre,,sysmis,79
 gov_satisfaction,qes2007,post,,not_asked,2175
-gov_satisfaction,qes2007_panel,NA,,not_in_wave,1
 gov_satisfaction,qes2007_panel,post,,not_in_wave,2054
 gov_satisfaction,qes2007_panel,pre,fairly,,670
 gov_satisfaction,qes2007_panel,pre,not_at_all,,456
@@ -2422,7 +2399,6 @@ econ_retro,qes2007,post,same,,1172
 econ_retro,qes2007,post,worse,,607
 econ_retro,qes2007,post,,dk,82
 econ_retro,qes2007,post,,refused,6
-econ_retro,qes2007_panel,NA,,not_asked,1
 econ_retro,qes2007_panel,post,,not_asked,2054
 econ_retro,qes2007_panel,pre,,not_asked,2050
 econ_retro,qes2008,post,better,,43
@@ -2480,7 +2456,6 @@ econ_retro,qes_crop_2007_2010,poll_2010_01,,not_asked,1000
 econ_self,qes1998,post,,not_asked,1483
 econ_self,qes1998,pre,,not_asked,1483
 econ_self,qes2007,post,,not_asked,2175
-econ_self,qes2007_panel,NA,,not_asked,1
 econ_self,qes2007_panel,post,,not_asked,2054
 econ_self,qes2007_panel,pre,,not_asked,2050
 econ_self,qes2008,post,,not_asked,1151
@@ -2529,7 +2504,6 @@ identity,qes2007,post,qc_first,,798
 identity,qes2007,post,qc_only,,398
 identity,qes2007,post,,dk,3
 identity,qes2007,post,,refused,16
-identity,qes2007_panel,NA,,not_asked,1
 identity,qes2007_panel,post,,not_asked,2054
 identity,qes2007_panel,pre,,not_asked,2050
 identity,qes2008,post,ca_first,,176
@@ -2594,7 +2568,6 @@ identity,qes_crop_2007_2010,poll_2010_01,,not_asked,1000
 attach_quebec,qes1998,post,,not_asked,1483
 attach_quebec,qes1998,pre,,not_asked,1483
 attach_quebec,qes2007,post,,not_asked,2175
-attach_quebec,qes2007_panel,NA,,not_asked,1
 attach_quebec,qes2007_panel,post,,not_asked,2054
 attach_quebec,qes2007_panel,pre,,not_asked,2050
 attach_quebec,qes2008,post,,not_asked,1151
@@ -2654,7 +2627,6 @@ attach_quebec,qes_crop_2007_2010,poll_2010_01,,not_asked,1000
 attach_canada,qes1998,post,,not_asked,1483
 attach_canada,qes1998,pre,,not_asked,1483
 attach_canada,qes2007,post,,not_asked,2175
-attach_canada,qes2007_panel,NA,,not_asked,1
 attach_canada,qes2007_panel,post,,not_asked,2054
 attach_canada,qes2007_panel,pre,,not_asked,2050
 attach_canada,qes2008,post,,not_asked,1151

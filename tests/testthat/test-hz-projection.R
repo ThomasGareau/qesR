@@ -3,6 +3,7 @@
 # HZ2), the MAJOR rule on expected/, and the semantics of the projection.
 
 test_that("the projection of the shipped spec is exactly expected/marginals.csv (V-P1)", {
+  skip_on_cran()
   s <- hz_spec()
   src <- .qes_hz_sources_shipped(s)
   proj <- .qes_project_marginals(s, src)
@@ -39,6 +40,7 @@ test_that("each projected row counts every member of its wave once", {
 })
 
 test_that("a spec change that moves counts fails V-P1", {
+  skip_on_cran()
   s <- hz_spec()
   vm <- s$tables$valuemaps
   i <- which(vm$map_id == "vote_qes2018_q6" & vm$source_code == "95")
@@ -116,6 +118,7 @@ test_that("real-code marginals are what the source files give", {
 })
 
 test_that("a row without cells in gates.csv is reported, never projected from the dictionary", {
+  skip_on_cran()
   # the dictionary lists only the labelled codes of agex (more than 50
   # codes): its counts must not stand in for the cells
   s <- hz_spec()
@@ -171,6 +174,7 @@ test_that("the projection applies the rule, na_codes and the gate in that order"
 })
 
 test_that("the MAJOR rule classifies changes to expected/marginals.csv", {
+  skip_on_cran()
   e <- hz_spec()$tables$expected
   expect_identical(as.character(.qes_expected_change(e, e)), "none")
   # rows added only: minor
@@ -213,6 +217,7 @@ test_that("the MAJOR rule classifies changes to expected/marginals.csv", {
 })
 
 test_that("gates.csv and expected/ are checked for form by the validator", {
+  skip_on_cran()
   s <- hz_spec()
   s$tables$gates$source_code[1] <- "01"
   s$tables$expected$na_reason[1] <- "dk"
@@ -238,6 +243,7 @@ test_that("gates.csv and expected/ are checked for form by the validator", {
 })
 
 test_that("the projection does not depend on the locale", {
+  skip_on_cran()
   s <- hz_spec()
   ref <- .qes_project_marginals(s, .qes_hz_sources_shipped(s))
   syn <- .qes_synthetic("qes2018_panel", spec = s)

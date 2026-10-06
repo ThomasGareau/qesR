@@ -174,12 +174,13 @@ it left unchanged in a \code{qesR_message_missing_untyped} (silenced by
 \code{quiet = TRUE}).
 Progress messages (classes \code{qesR_message_download} and
 \code{qesR_message_cached}) are silenced by \code{quiet = TRUE}, as is the one-time
-tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}). These
-notices are shown at most once per session and are
-not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
-\link{qesR-deprecated}); \code{qesR_message_assign_default}, shown when \code{get_qes()},
-\code{get_qes_master()} or \code{get_decon()} is called without \code{assign_global};
-\code{qesR_message_arg_ignored}, shown when an argument that no longer
+tip suggesting the disk cache (\code{qesR_message_disk_cache_tip}), and the
+one-time \code{qesR_message_assign_default}, shown for the first top-level
+call to \code{get_qes()}, \code{get_qes_master()} or \code{get_decon()} in a session that
+passes neither \code{assign_global} nor \code{quiet = TRUE} (the data are no longer
+assigned by default). These notices are shown at most once per session
+and are not silenced by \code{quiet}: \code{qesR_message_deprecated} (see
+\link{qesR-deprecated}); \code{qesR_message_arg_ignored}, shown when an argument that no longer
 changes the result is used; and \code{qesR_message_values_changed} and
 \code{qesR_message_legacy_columns}, shown by \code{\link[=get_qes_master]{get_qes_master()}} and
 \code{\link[=get_decon]{get_decon()}} to say how their values and columns differ from those of
@@ -337,8 +338,11 @@ les variables laissées inchangées dans un
 \code{qesR_message_missing_untyped} (masqué par \code{quiet = TRUE}). Les messages
 de progression (\code{qesR_message_download}, \code{qesR_message_cached}) et le
 conseil unique sur le cache disque (\code{qesR_message_disk_cache_tip}) sont
-masqués par \code{quiet = TRUE}.
-\code{qesR_message_deprecated}, \code{qesR_message_assign_default},
+masqués par \code{quiet = TRUE}, comme la note unique
+\code{qesR_message_assign_default}, affichée quand un appel de premier niveau
+à \code{get_qes()}, \code{get_qes_master()} ou \code{get_decon()} n'assigne pas son
+résultat, comme le faisait du code écrit pour qesR 0.4.4.
+\code{qesR_message_deprecated},
 \code{qesR_message_arg_ignored} (argument qui ne change plus le résultat),
 \code{qesR_message_values_changed} et \code{qesR_message_legacy_columns} (en quoi
 les valeurs et les colonnes de \code{\link[=get_qes_master]{get_qes_master()}} et de \code{\link[=get_decon]{get_decon()}}

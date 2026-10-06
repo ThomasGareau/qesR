@@ -1,4 +1,4 @@
-#' Soft-deprecated qesR functions
+#' Older function names
 #'
 #' @description
 #' Eleven functions from qesR 0.4.4 are kept as **legacy wrappers**. They keep

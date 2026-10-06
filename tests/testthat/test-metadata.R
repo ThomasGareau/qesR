@@ -287,6 +287,7 @@ test_that("codebooks, qes_question() and qes_search() results of qes2022 keep th
 })
 
 test_that("a printed qes2022 codebook and the harmonization reference carry the licence notice", {
+  skip_on_cran()
   local_qes_notices_shown()
   testthat::local_mocked_bindings(
     .qes_transport = function(...) stop("no request expected"),

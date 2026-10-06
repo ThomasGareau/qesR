@@ -419,7 +419,7 @@
 
 # ---- qes_spec() -----------------------------------------------------------------
 
-#' The harmonization spec (experimental)
+#' Harmonization rules and coverage (experimental)
 #'
 #' `qes_spec()` is the one entry point to the harmonization specification: the
 #' reviewed rules that say, study by study, which question feeds each

@@ -119,6 +119,7 @@ test_that("get_qes_master saves UTF-8 CSV or RDS, with the provenance next to it
 })
 
 test_that("get_qes_master no longer stacks raw variables shared across studies", {
+  skip_on_cran()
   local_qes_notices_shown()
   local_fake_legacy()
   master <- get_qes_master(surveys = c("qes2022", "qes2018"), quiet = TRUE)
@@ -133,6 +134,7 @@ test_that("get_qes_master no longer stacks raw variables shared across studies",
 })
 
 test_that("a study's rows do not depend on the studies loaded with it, and no row is dropped", {
+  skip_on_cran()
   local_qes_notices_shown()
   local_fake_legacy()
   both <- get_qes_master(surveys = c("qes2008", "qes2012_panel"), quiet = TRUE)
@@ -183,6 +185,7 @@ test_that("the columns of rows held in review are NA, with the reason, and annou
 })
 
 test_that("the recall targets fill vote_choice and turnout; the 1998 recall is used", {
+  skip_on_cran()
   local_qes_notices_shown()
   local_fake_legacy()
   m <- get_qes_master(surveys = c("qes1998", "qes2022", "qes_crop_2007_2010"), quiet = TRUE)
@@ -212,6 +215,7 @@ test_that("the recall targets fill vote_choice and turnout; the 1998 recall is u
 })
 
 test_that("a weight that needs review is NA in the master, with its cause, and not announced as held", {
+  skip_on_cran()
   # spec 4.1.0 (design.md OD20): the rows of qes1998 and the CROP polls are
   # stable and applied; their recommended weights (ponder3, XPOND) need
   # review and stay NA
@@ -262,6 +266,7 @@ test_that("a weight that needs review is NA in the master, with its cause, and n
 })
 
 test_that("the intended blanks of the master say why in cause and basis", {
+  skip_on_cran()
   local_qes_notices_shown()
   local_fake_legacy()
   m <- get_qes_master(surveys = c("qes1998", "qes2012_panel", "qes2018", "qes2022"), quiet = TRUE)

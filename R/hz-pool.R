@@ -422,7 +422,7 @@
 #'
 #' `qes_party_lineage()` adds, for each party column of harmonized data, a
 #' column that joins the parties of a lineage: by default the Action
-#' democratique du Quebec (ADQ) and the Coalition avenir Quebec (CAQ), into
+#' démocratique du Québec (ADQ) and the Coalition avenir Québec (CAQ), into
 #' which the ADQ merged on 2012-01-21, as one level `"ADQ/CAQ"`. It is a
 #' view for time series of the Quebec parties, such as vote choice from 1998
 #' to 2022: the harmonized columns keep the ADQ and the CAQ apart (they are
@@ -475,7 +475,7 @@ qes_party_lineage <- function(x, cols = NULL, lineage = "adq_caq") {
   # the relaxed data of qes_decon() (a plain data frame with decon_sources)
   decon <- is.data.frame(x) && !inherits(x, "qes_harmonized") && is.data.frame(attr(x, "decon_sources", exact = TRUE))
   if ((!inherits(x, "qes_harmonized") && !decon) || !is.data.frame(x)) {
-    .qes_abort("input_design_x", class = "qesR_error_input", data = list(arg = "x", value = NULL))
+    .qes_abort("input_lineage_x", class = "qesR_error_input", data = list(arg = "x", value = NULL))
   }
   if (!is.character(lineage) || length(lineage) == 0L || anyNA(lineage) || !all(lineage %in% names(.qes_lineages))) {
     .qes_abort("input_lineage", class = "qesR_error_input", args = list(.qes_q(names(.qes_lineages))),
@@ -532,7 +532,8 @@ qes_party_lineage <- function(x, cols = NULL, lineage = "adq_caq") {
     } else {
       joined
     }
-    attr(newv, "label") <- paste(attr(v, "label", exact = TRUE) %||% col, "(lineage)")
+    attr(newv, "label") <- paste(attr(v, "label", exact = TRUE) %||% col,
+                                 if (identical(lang, "fr")) "(filiation)" else "(lineage)")
     if (decon) {
       # relaxed columns carry no grade
       x[[paste0(col, "_lineage")]] <- newv

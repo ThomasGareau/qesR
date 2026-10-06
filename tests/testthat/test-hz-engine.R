@@ -39,6 +39,7 @@ hz_messages <- function(expr) {
 }
 
 test_that("two panel studies with two waves each give one row per respondent", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2007_panel", "qes2018_panel"))
   expect_warning(
     h <- qes_harmonize(data = syn, include_draft = TRUE, quiet = TRUE),
@@ -87,6 +88,7 @@ test_that("two panel studies with two waves each give one row per respondent", {
 })
 
 test_that("factor levels are the same in every study, and lang changes labels only", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2012", "qes2014", "qes2018"))
   h <- hz_run(syn)
   s <- hz_spec()
@@ -127,6 +129,7 @@ test_that("factor levels are the same in every study, and lang changes labels on
 })
 
 test_that("every missing value has a reason, and cell provenance counts sum to the rows", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2012", "qes2018", "qes2018_panel", "qes2007_panel"))
   h <- hz_run(syn, missing = "reasons", keep_source = TRUE)
   reasons <- .qes_hz_reason_levels()
@@ -163,6 +166,7 @@ test_that("every missing value has a reason, and cell provenance counts sum to t
 })
 
 test_that("structural zeros are listed and announced", {
+  skip_on_cran()
   syn <- hz_syn("qes2018")
   m <- hz_messages(hz_run(syn, quiet = FALSE))
   expect_true("qesR_message_structural_zeros" %in% m$classes)
@@ -179,6 +183,7 @@ test_that("structural zeros are listed and announced", {
 })
 
 test_that("min_grade sets lower cells to NA with reason below_grade", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2018", "qes2014"))
   # approximate cells are announced under the default min_grade
   expect_true("qesR_message_approximate_cells" %in% hz_messages(hz_run(syn, quiet = FALSE))$classes)
@@ -196,6 +201,7 @@ test_that("min_grade sets lower cells to NA with reason below_grade", {
 })
 
 test_that("rows not signed off by a reviewer are applied only with include_draft", {
+  skip_on_cran()
   syn <- hz_syn("qes2014")
   unsigned <- hz_spec_unsigned()
   # no row applied at all: a warning (qesR_warning_all_unreviewed), not the
@@ -293,6 +299,7 @@ test_that("unmapped codes are an error, or NA with reason unmapped", {
 })
 
 test_that("data that fail the spec's checks stop, or are skipped with on_fail = 'skip'", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2012", "qes2014"))
   bad <- syn
   bad$qes2014$Q19 <- NULL
@@ -429,6 +436,7 @@ test_that("printing shows the spec, the approximate and structural-zero cells, a
 })
 
 test_that("rbind() of per-study results combines their rows and provenance", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2012", "qes2022"))
   # the synthetic qes2022 frame has no value labels (the file's are not shipped)
   run <- function(...) {
@@ -500,6 +508,7 @@ test_that("rbind() of per-study results combines their rows and provenance", {
 })
 
 test_that("harmonized output does not depend on the locale", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2014", "qes2018_panel"))
   ref <- hz_run(syn, missing = "reasons", lang = "fr")
   attr(ref, "qes_provenance") <- NULL
@@ -513,6 +522,7 @@ test_that("harmonized output does not depend on the locale", {
 })
 
 test_that("a result left all NA by unreviewed rows is a warning that counts the values", {
+  skip_on_cran()
   syn <- hz_syn("qes2014")
   unsigned <- hz_spec_unsigned()
   w <- expect_warning(

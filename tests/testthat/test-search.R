@@ -107,6 +107,7 @@ test_that("search results do not depend on the locale or the message language", 
 })
 
 test_that("unmarked UTF-8 bytes typed in a C locale are searched as UTF-8", {
+  skip_on_cran()
   # A pattern typed at the console in a C (ASCII) locale reaches R as
   # unmarked bytes; qes_search() must read them as UTF-8, not as "<c3><a9>".
   typed <- rawToChar(as.raw(c(0xC3, 0xA9, 0x6C, 0x65, 0x63, 0x74, 0x65, 0x75, 0x72)))

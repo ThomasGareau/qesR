@@ -336,7 +336,7 @@
   # the legacy freeze: a row of cause legacy_frozen reads no target
   frozen <- identical(r$cause, "legacy_frozen")
   t <- if (length(targets) > 0L && !combining && !frozen) .qes_legacy_pick(targets, cell) else NA_character_
-  v <- if (!is.na(t)) .qes_legacy_value(h, t) else rep(NA, n)
+  v <- if (!is.na(t)) .qes_legacy_value(h, t) else rep(NA_character_, n)
   value <- switch(
     p$kind,
     catalog = {

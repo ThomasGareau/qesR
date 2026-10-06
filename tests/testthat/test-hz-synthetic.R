@@ -55,6 +55,7 @@ test_that("a gated synthetic source is missing exactly where its gate is closed"
 })
 
 test_that("synthetic data project and check like real data", {
+  skip_on_cran()
   s <- hz_spec()
   syn <- .qes_synthetic(c("qes2012", "qes2014", "qes2012_panel"), spec = s)
   src <- .qes_hz_sources_data(s, syn)

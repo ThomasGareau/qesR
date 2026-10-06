@@ -2,7 +2,7 @@
 % Please edit documentation in R/qes_catalog.R
 \name{get_qescodes}
 \alias{get_qescodes}
-\title{List Quebec Election Study Survey Codes}
+\title{List study codes (older name)}
 \usage{
 get_qescodes(detailed = FALSE)
 }

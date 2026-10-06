@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_qes.R
 \name{get_preview}
 \alias{get_preview}
-\title{Preview a Quebec Election Study}
+\title{Preview a Quebec Election Study (older name)}
 \usage{
 get_preview(srvy, obs = 6L, file = NULL)
 }

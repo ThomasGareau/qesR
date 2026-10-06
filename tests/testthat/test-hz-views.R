@@ -86,6 +86,7 @@ test_that("printing a single-target crosswalk view shows its reference section",
 })
 
 test_that("the generated reference covers every target, in English and French alike", {
+  skip_on_cran()
   en <- .spec_reference_md("en")
   fr <- .spec_reference_md("fr")
   s <- hz_spec()
@@ -192,6 +193,7 @@ md_table_rows <- function(md, title) {
 }
 
 test_that("the reference gives every target a fixed anchor, in English and French", {
+  skip_on_cran()
   s <- hz_spec()
   for (lang in c("en", "fr")) {
     ref <- .spec_reference_md(lang)
@@ -207,6 +209,7 @@ test_that("the reference gives every target a fixed anchor, in English and Frenc
 })
 
 test_that("the coverage grid gives each target's grade in each study, as qes_spec() does", {
+  skip_on_cran()
   v <- qes_spec()
   s <- hz_spec()
   md <- .spec_coverage_md("en")
@@ -301,6 +304,7 @@ test_that("the reference marks the recommended weights that need review, as the 
 })
 
 test_that("the coverage grid has the same shape in English and French, whatever the locale", {
+  skip_on_cran()
   en <- .spec_coverage_md("en")
   fr <- .spec_coverage_md("fr")
   lines_en <- strsplit(en, "\n", fixed = TRUE)[[1]]
@@ -358,6 +362,7 @@ test_that("the coverage grid counts the rows qes_harmonize() applies, and says w
 })
 
 test_that("the home page grid links each target to its section of the reference", {
+  skip_on_cran()
   plain <- strsplit(.spec_readme_md(hz_spec()), "\n", fixed = TRUE)[[1]]
   linked <- strsplit(.spec_readme_md(hz_spec(), reference = "articles/ref.html"), "\n", fixed = TRUE)[[1]]
   expect_identical(length(linked), length(plain))
@@ -414,6 +419,7 @@ test_that("the README grid gives the first letter of each grade qes_spec() gives
 })
 
 test_that("the website's reference and coverage grid leave out the spec's internals", {
+  skip_on_cran()
   s <- hz_spec()
   for (lang in c("en", "fr")) {
     ref <- .spec_reference_md(lang, site = TRUE)

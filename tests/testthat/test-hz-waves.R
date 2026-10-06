@@ -162,20 +162,21 @@ test_that("targets of waves with different weights are announced", {
 })
 
 test_that("the long layout has one row per respondent and wave", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2022", "qes2007_panel"))
   l <- hz_run(syn, targets = c("vote_prov_recall", "vote_prov_intent", "birth_year"),
               layout = "long", missing = "reasons", keep_source = TRUE)
   expect_s3_class(l, "qes_harmonized")
   expect_identical(names(l)[seq_along(lead_long)], lead_long)
   expect_identical(names(l)[(ncol(l) - 1L):ncol(l)], c("weight", "weight_var"))
-  # rows: one per membership, and one for a respondent in no wave
+  # rows: one per membership
   r <- hz_run(syn, targets = "vote_prov_recall")
   n_member <- vapply(strsplit(ifelse(is.na(r$waves), "", r$waves), ";", fixed = TRUE), length, integer(1))
-  expect_identical(nrow(l), sum(pmax(n_member, 1L)))
+  expect_identical(nrow(l), sum(n_member))
   expect_false(anyDuplicated(paste(l$qes_id, l$wave)) > 0L)
-  expect_true(all(is.na(l$wave[l$qes_id %in% r$qes_id[n_member == 0L]])))
+  expect_false(anyNA(l$wave))
   # the same respondents as the respondent layout, each with its source row
-  expect_setequal(unique(l$qes_id), r$qes_id)
+  expect_setequal(unique(l$qes_id), r$qes_id[n_member > 0L])
   # a value sits on the row of the wave that asked; other rows are not_in_wave
   p <- l[l$study == "qes2022", ]
   expect_true(all(p$vote_prov_recall__na[p$wave == "cps"] == "not_in_wave"))
@@ -205,6 +206,46 @@ test_that("the long layout has one row per respondent and wave", {
   expect_identical(fr$wave, en$wave)
 })
 
+test_that("the long layout leaves out a respondent in no wave, counts them and says so", {
+  skip_on_cran()
+  syn <- hz_syn(c("qes2022", "qes2007_panel"))
+  # the first 2007 panel respondent completes neither wave (as one row of
+  # the file does: resultat B, resultat_pst ML)
+  syn$qes2007_panel$resultat[1] <- "1"
+  syn$qes2007_panel$resultat_pst[1] <- "1"
+  r <- hz_run(syn, targets = c("vote_prov_recall", "birth_year"))
+  gone <- r$qes_id[r$study == "qes2007_panel" & is.na(r$waves)]
+  expect_length(gone, 1L)
+  expect_message(l <- hz_run(syn, targets = c("vote_prov_recall", "birth_year"), layout = "long", quiet = FALSE),
+                 class = "qesR_message_no_wave")
+  expect_false(anyNA(l$wave))
+  expect_false(gone %in% l$qes_id)
+  expect_setequal(unique(l$qes_id), setdiff(r$qes_id, gone))
+  expect_identical(attr(l, "qes_no_wave"), data.frame(study = "qes2007_panel", n_rows = 1L, stringsAsFactors = FALSE))
+  # quiet = TRUE silences the message, not the attribute
+  expect_no_message(l2 <- hz_run(syn, targets = "vote_prov_recall", layout = "long", quiet = TRUE),
+                    class = "qesR_message_no_wave")
+  expect_identical(attr(l2, "qes_no_wave")$n_rows, 1L)
+  # the respondent layout keeps every row; rbind() combines the counts
+  expect_null(attr(r, "qes_no_wave"))
+  a <- hz_run(syn["qes2022"], targets = "vote_prov_recall", layout = "long")
+  b <- hz_run(syn["qes2007_panel"], targets = "vote_prov_recall", layout = "long")
+  expect_identical(nrow(attr(a, "qes_no_wave")), 0L)
+  expect_identical(attr(rbind(a, b), "qes_no_wave")$n_rows, 1L)
+  # qes_decon() has the rows of the long layout: wave is never NA there either
+  d <- withCallingHandlers(
+    .qes_decon_build(names(syn), data = syn, quiet = TRUE),
+    qesR_warning_unverified_source = function(w) invokeRestart("muffleWarning"),
+    qesR_warning_label_mismatch = function(w) invokeRestart("muffleWarning")
+  )
+  expect_false(anyNA(d$wave))
+  expect_false(gone %in% d$qes_id)
+  expect_identical(attr(d, "qes_no_wave")$n_rows, 1L)
+  # and every row has a row in the weights table
+  w <- attr(d, "weights")
+  expect_identical(sum(w$n_rows), nrow(d))
+})
+
 test_that("an empty long result keeps the long columns", {
   syn <- hz_syn("qes2014")
   bad <- syn
@@ -215,6 +256,7 @@ test_that("an empty long result keeps the long columns", {
 })
 
 test_that("the interview mode varies by respondent where the wave says so", {
+  skip_on_cran()
   syn <- hz_syn("qes2018_panel")
   h <- hz_run(syn, targets = "vote_prov_intent")
   method <- unclass(syn$qes2018_panel$method)
@@ -274,6 +316,7 @@ test_that("eligibility follows age on election day and citizenship", {
 })
 
 test_that("eligibility reads the age targets whatever targets and min_grade ask for", {
+  skip_on_cran()
   syn <- hz_syn(c("qes2018", "qes2018_panel"))
   h <- hz_run(syn, targets = "sov_indep")
   expect_false("birth_year" %in% names(h))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/master.R
 \name{get_qes_master}
 \alias{get_qes_master}
-\title{Build the Merged QES File}
+\title{Build the merged file}
 \usage{
 get_qes_master(
   surveys = NULL,
@@ -127,9 +127,9 @@ a comparability grade, or the study files themselves (\code{\link[=get_qes]{get_
 with those of earlier versions of qesR, and how to reproduce those.
 
 \code{get_qes_master()} returns the data and assigns nothing unless
-\code{assign_global = TRUE}: write \code{master <- get_qes_master()}. The first call
-in a session that leaves \code{assign_global} unset prints a one-time note
-saying so. The first call in a session also prints one-time notes on how
+\code{assign_global = TRUE}: write \code{master <- get_qes_master()}. The first
+top-level call in a session (console, \code{Rscript} or \code{source()}) prints a
+one-time note saying so, unless \code{quiet = TRUE} or \code{assign_global} is passed. The first call in a session also prints one-time notes on how
 its values and columns compare with those of earlier versions (classes
 \code{qesR_message_values_changed} and \code{qesR_message_legacy_columns}).
 }

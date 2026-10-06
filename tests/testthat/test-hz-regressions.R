@@ -36,6 +36,7 @@ test_that("[A:H3] 2018 q27 = 1 is 'very' (same direction as 2012 and 2014), 2014
 })
 
 test_that("[A:H4] 2018 ideology comes from q36_1; 2022 PCQ is code 7 in the PES and 5 in the CPS", {
+  skip_on_cran()
   h <- hz_reg(hz_frame("qes2018", list(q36_1 = c(3, 99))))
   expect_identical(h$lr_self[1:2], c(3, NA))
   cell <- qes_provenance(h, level = "cell")

@@ -704,8 +704,8 @@
 # The leading columns of one study. Respondent layout: one row per row of
 # the file; the interview date and mode are those of the first wave the
 # respondent belongs to. Long layout: one row per respondent and wave the
-# respondent belongs to (a respondent in no wave keeps one row, with wave
-# NA); `rows` gives, for each output row, the row of the file and the wave
+# respondent belongs to (a respondent in no wave has no row); `rows` gives,
+# for each output row, the row of the file and the wave
 # (index into the waves, NA for none).
 .qes_hz_lead <- function(part, layout, lang, rows) {
   s <- part$s
@@ -779,14 +779,25 @@
   if (ncol(m) == 0L) {
     return(list(row = seq_len(n), wave = rep(NA_integer_, n)))
   }
-  row <- integer(0)
-  wave <- integer(0)
+  # a respondent in no wave (an incomplete interview the waves' rules do
+  # not count) has no row: .qes_hz_no_wave() counts them
   hit <- which(m, arr.ind = TRUE)
-  none <- which(rowSums(m) == 0L)
-  row <- c(hit[, 1], none)
-  wave <- c(hit[, 2], rep(NA_integer_, length(none)))
-  o <- order(row, wave, na.last = TRUE)
-  list(row = row[o], wave = wave[o])
+  row <- hit[, 1]
+  wave <- hit[, 2]
+  o <- order(row, wave)
+  list(row = unname(row[o]), wave = unname(wave[o]))
+}
+
+# The respondents of each study that the long layout leaves out because they
+# belong to no wave: data.frame(study, n_rows).
+.qes_hz_no_wave <- function(parts) {
+  n <- vapply(parts, function(part) {
+    m <- part$members
+    if (is.null(m) || ncol(m) == 0L || nrow(m) == 0L) 0L else sum(rowSums(m) == 0L)
+  }, integer(1))
+  keep <- n > 0L
+  data.frame(study = as.character(vapply(parts, `[[`, character(1), "study"))[keep], n_rows = unname(n[keep]),
+             stringsAsFactors = FALSE)
 }
 
 # The weight columns of one study: weight_pre, weight_post and their
@@ -1210,8 +1221,11 @@
 #' wave that asked it, so a respondent outside that wave is `NA` with reason
 #' `not_in_wave`. The respondent layout has one row per respondent, and
 #' `waves` lists the waves each respondent took part in. The long layout
-#' (`layout = "long"`) has one row per respondent and wave (a respondent in
-#' no wave keeps one row, with `wave` `NA`): a value sits on the row of the
+#' (`layout = "long"`) has one row per respondent and wave, so `wave` is
+#' never `NA`: a respondent who took part in no wave (in `qes2007_panel`, one
+#' interview that neither wave's rule counts) has no row, a message (class
+#' `qesR_message_no_wave`) says so, and `attr(x, "qes_no_wave")` counts them
+#' study by study. A value sits on the row of the
 #' wave that asked it and the respondent's other rows are `not_in_wave`,
 #' except the time-invariant targets (year and month of birth), which are
 #' repeated on each of the respondent's rows.
@@ -1305,9 +1319,11 @@
 #'   with `include_draft = TRUE`), `qesR_message_approximate_cells` (cells
 #'   graded approximate are included), `qesR_message_structural_zeros`
 #'   (levels a question did not offer), `qesR_message_weight_review`
-#'   (recommended weights that need review, left `NA`) and
+#'   (recommended weights that need review, left `NA`),
 #'   `qesR_message_weight_timing` (targets of one study that need different
-#'   weights; not sent when all of the study's weights need review).
+#'   weights; not sent when all of the study's weights need review) and
+#'   `qesR_message_no_wave` (respondents the long layout leaves out because
+#'   they took part in no wave; field `no_wave`).
 #'
 #' [qes_design()] sends `qesR_message_design_dropped` (fields `study`, `n`)
 #' when it leaves out rows without the chosen weight.
@@ -1325,7 +1341,9 @@
 #' donne les étiquettes des niveaux en français ; les codes sont les mêmes.
 #' `targets = "decon"` demande les cibles des colonnes de [get_decon()].
 #' La disposition longue (`layout = "long"`) donne une ligne par personne et
-#' par vague ; une question invariante d'un panel (genre, scolarité) est
+#' par vague (`wave` n'y vaut jamais NA : une personne qui n'a participé à
+#' aucune vague n'a pas de ligne, un message le dit et
+#' `attr(x, "qes_no_wave")` les compte) ; une question invariante d'un panel (genre, scolarité) est
 #' lue dans la vague à laquelle la personne a participé (panel de 2007) ;
 #' les sondages CROP regroupés ont une vague par sondage, et
 #' `stratum` donne l'échantillon indépendant d'où vient la personne : pour
@@ -1438,7 +1456,8 @@
 #'
 #' @return A data frame of class `qes_harmonized`, returned visibly, one row
 #'   per respondent of each study's file (no row is dropped), or per
-#'   respondent and wave in the long layout. Leading columns: `study`,
+#'   respondent and wave in the long layout (where a respondent in no wave
+#'   has no row). Leading columns: `study`,
 #'   `year` (the study's year; for pooled polls, the year the respondent's
 #'   poll began), `election_date`, `family`, `study_design`, `target_population`,
 #'   `waves` (the waves the respondent belongs to, `;`-separated; in the
@@ -1461,7 +1480,9 @@
 #'   `"cell"`, `"spec"` and, with pooled variables, `"pooled"`),
 #'   `qes_weight_guide` (`target` or pooled variable, `study`, `wave`,
 #'   `target_timing`, `weight_column`, `weight_var`, `weight_status`) and
-#'   `failed_studies` (`study`, `class`, `message`, `parent_message`).
+#'   `failed_studies` (`study`, `class`, `message`, `parent_message`) and,
+#'   in the long layout, `qes_no_wave` (`study`, `n_rows`: the respondents
+#'   left out because they took part in no wave; no row when there are none).
 #'
 #'   Results for different studies built with the same spec can be combined
 #'   with [rbind()], which also combines their provenance. It is an error
@@ -1642,6 +1663,11 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
   }
   attr(out, "qes_weight_guide") <- guide
   attr(out, "failed_studies") <- failed
+  no_wave <- NULL
+  if (identical(layout, "long")) {
+    no_wave <- .qes_hz_no_wave(parts)
+    attr(out, "qes_no_wave") <- no_wave
+  }
 
   # notices
   um <- do.call(rbind, lapply(unname(parts), `[[`, "unmapped"))
@@ -1692,6 +1718,11 @@ qes_harmonize <- function(studies = NULL, targets = "core", layout = c("responde
     .qes_inform("pooled_types", class = "qesR_message_pooled",
                 args = list(paste(pool_lines, collapse = "; ")),
                 data = list(pooled = pooled_prov), quiet = quiet)
+  }
+  if (NROW(no_wave) > 0L) {
+    .qes_inform("long_no_wave", class = "qesR_message_no_wave",
+                args = list(sum(no_wave$n_rows), paste(sprintf("%s (%d)", no_wave$study, no_wave$n_rows), collapse = ", ")),
+                data = list(no_wave = no_wave), quiet = quiet)
   }
   .qes_hz_weight_notices(parts, attr(out, "qes_weight_guide"), quiet, ctx$layout)
   out
@@ -1913,6 +1944,7 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
     attr(a, "qes_provenance") <- NULL
     attr(a, "qes_weight_guide") <- NULL
     attr(a, "failed_studies") <- NULL
+    attr(a, "qes_no_wave") <- NULL
     a
   }
   harmonized <- vapply(args, function(a) {
@@ -2014,6 +2046,15 @@ rbind.qes_harmonized <- function(..., deparse.level = 1) {
   attr(out, "qes_provenance") <- study_prov
   attr(out, "qes_weight_guide") <- bind(lapply(args, attr, "qes_weight_guide", exact = TRUE))
   attr(out, "failed_studies") <- failed
+  if (identical(layouts, "long")) {
+    nw <- lapply(args, attr, "qes_no_wave", exact = TRUE)
+    nw <- nw[!vapply(nw, is.null, logical(1))]
+    if (length(nw) > 0L) {
+      nw <- do.call(rbind, unname(nw))
+      rownames(nw) <- NULL
+      attr(out, "qes_no_wave") <- nw
+    }
+  }
   out
 }
 

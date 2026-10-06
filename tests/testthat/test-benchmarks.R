@@ -18,6 +18,7 @@ skip_if_no_official <- function() {
 }
 
 test_that("the official results add up and name their source", {
+  skip_on_cran()
   skip_if_no_official()
   b <- .qes_validation_benchmarks()
   r <- b$results

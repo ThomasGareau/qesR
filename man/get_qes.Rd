@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_qes.R
 \name{get_qes}
 \alias{get_qes}
-\title{Download and Load a Quebec Election Study}
+\title{Load a Quebec Election Study}
 \usage{
 get_qes(
   srvy,
@@ -61,9 +61,10 @@ with its labels.
 workspace unless you ask for it with \code{assign_global = TRUE}: write
 \code{qes2018 <- get_qes("qes2018")}. A real study is downloaded once per
 session, or kept between sessions with \code{options(qesR.cache = "disk")}
-(see \code{\link[=qes_cache_info]{qes_cache_info()}}). The first call in a session that leaves
-\code{assign_global} unset prints a one-time note about it; passing
-\code{assign_global} explicitly (TRUE or FALSE) avoids it.
+(see \code{\link[=qes_cache_info]{qes_cache_info()}}). The first top-level call in a session
+(console, \code{Rscript} or \code{source()}) prints a one-time note that the data
+must be assigned; passing \code{assign_global} (TRUE or FALSE) or
+\code{quiet = TRUE} avoids it.
 }
 \section{Which file is read}{
 

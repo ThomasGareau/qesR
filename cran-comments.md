@@ -1,7 +1,7 @@
 ## Resubmission
 
-This is a resubmission of qesR (first submitted as 0.4.4, reviewed by
-B. Altmann on 2026-02-27). This version answers each point of the
+This is a resubmission of qesR, now version 0.9.2 (first submitted as
+0.4.4, reviewed by B. Altmann on 2026-02-27). This version answers each point of the
 review:
 
 1. **Method references in the Description.** The Description now cites the
@@ -58,7 +58,12 @@ review:
    0.4.4 keeps working (the function signatures are unchanged); the help
    pages say where the object goes. A test scans the installed namespace:
    `.GlobalEnv` and `globalenv()` appear nowhere, and `assign()` appears only
-   in the one internal helper that performs the opt-in assignment.
+   in the one internal helper that performs the opt-in assignment. To tell
+   users of 0.4.4 code that the data are no longer assigned, a call made
+   from the global environment that does not pass `assign_global` and is
+   not `quiet` shows a one-line note, once per session per function (never
+   inside a function and never while knitr renders); it changes nothing
+   else.
 
 6. **Copyright holders.** The `cph` entry "Quebec Election Study" is
    removed from `Authors@R`: it is not a legal person, and the package ships
@@ -116,7 +121,12 @@ French, and the unweighted count of each answer code), in
 `inst/extdata/harmonize/crosswalk.csv`, `valuemaps.csv`, `gates.csv`,
 `waves.csv`, `weights.csv`, `expected/marginals.csv` and
 `expected/hashes.csv` (wording, labels, counts and hashes used to check the
-harmonization), in the notes of `inst/extdata/catalog/studies.csv` (the
+harmonization), in the relaxed layer of `qes_decon()`:
+`inst/extdata/harmonize/relaxed_maps.csv` (wording quoted from the codebook
+and the count of each code), `expected/relaxed_marginals.csv` and
+`expected/relaxed_hashes.csv` (counts and hashes of the relaxed columns), and
+`relaxed.csv`, whose column descriptions say in our own words how the 2022
+questions are grouped (it quotes no wording, label or count), in the notes of `inst/extdata/catalog/studies.csv` (the
 size of its two waves, from its codebook), and in the test fixtures
 `tests/testthat/fixtures/v044-get-qes-names.csv` and
 `tests/testthat/fixtures/spec_legacy/valuemaps.csv`, and in the two
@@ -150,58 +160,25 @@ function of 0.4.4 keeps its name and arguments.
 
 ## Test environments
 
-- Local: macOS 26 (aarch64), R 4.4.0.
-- GitHub Actions (`.github/workflows/R-CMD-check.yml`): macOS and Windows
-  (R release), Ubuntu (R devel, release, oldrel-1 and 4.1), with
-  `--as-cran`. RESULTS TO ADD BEFORE SUBMISSION (maintainer): the workflow
-  runs only after the branch is pushed, which has not been done yet.
-- win-builder (R devel): TO RUN BEFORE SUBMISSION (maintainer): upload the
-  tarball with `devtools::check_win_devel()`; the results go to the
-  maintainer's e-mail.
+- Local: macOS 26 (aarch64), R 4.4.0 (qesR 0.9.2, `R CMD check --as-cran`
+  on the built tarball, below).
+- GitHub Actions (`.github/workflows/R-CMD-check.yml`, `--as-cran`): the
+  six jobs (macOS and Windows with R release; Ubuntu with R devel, release,
+  oldrel-1 and 4.1) passed at commit 2466031 (qesR 0.9.1). The changes of
+  0.9.2 were checked locally as below.
+- win-builder (R devel): TO RUN BEFORE SUBMISSION (maintainer):
+  `devtools::check_win_devel()`; the results go to the maintainer's e-mail.
 
 ## R CMD check results
 
-`_R_CHECK_CRAN_INCOMING_REMOTE_=false R CMD check --as-cran qesR_0.7.1.tar.gz`
-on the local machine (macOS, R 4.4.0), run on 2026-09-29 on the release
-tarball of 0.7.1, built by `data-raw/build_tarball.sh` (a copy of the tree
-with git's file modes), without network access: 0 errors | 0 warnings |
-2 NOTEs, both from the local machine (future file timestamps and the HTML
-version of the manual, below). Without network access the incoming check
-could not read the CRAN package index, so its "New submission" NOTE and its
-remote URL and DOI checks did not run here. TO RERUN BEFORE SUBMISSION
-(maintainer): `sh data-raw/build_tarball.sh <dir> --check`, with network
-access, and update this section with its result.
-
-The tests pass (7,572 expectations, 0 failures, 0 warnings, in about 110
-seconds; 23 skipped with their reason: network tests and the tests that
-need the build-ignored official results, skipped on CRAN). The examples
-and the vignettes run without errors.
-
-* checking CRAN incoming feasibility ... NOTE (expected on CRAN's machines;
-  not reached locally without network access, see above)
-
-  New submission.
-
-  Possibly misspelled words in DESCRIPTION: the local machine has no
-  spell checker (neither aspell nor hunspell), so this part of the
-  incoming check did not run here. If it lists Bélanger, Blais, Durand,
-  Goyder, Mahéo, Nadeau or "al", these are the surnames of the authors of
-  the datasets cited in the Description with their DOIs, and the "al" of
-  "et al."; "catalogued" (British spelling) and "codebooks" are correct
-  words. (MAINTAINER: replace this paragraph
-  with the words the win-builder check actually lists.)
-
-  The earlier submission also had a NOTE on the URL
-  `https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR`
-  (Status: 202, Message: Accepted). The package no longer links to Harvard
-  Dataverse pages: the README, vignettes and citations link only to
-  `https://doi.org/...`, and the local check with
-  `_R_CHECK_CRAN_INCOMING_REMOTE_=true` reported no URL or DOI problem. If
-  the NOTE appears on CRAN's machines for `doi:10.7910/DVN/PAQBDR` (the
-  2022 study, cited in the Description), it is the same case: the DOI
-  resolves to the Harvard Dataverse landing page of the study, which opens
-  in a browser, but Harvard Dataverse answers some automated requests with
-  202 Accepted (a bot challenge) instead of 200. The DOI is valid.
+`_R_CHECK_CRAN_INCOMING_REMOTE_=false R CMD check --as-cran qesR_0.9.2.tar.gz`
+on the local machine (macOS, R 4.4.0), on 2026-10-06, without network
+access: 0 errors | 0 warnings | 2 NOTEs, both from the local machine
+(below). The check took 2.5 minutes, of which the tests 60 seconds
+(54 seconds of CPU time) and the vignettes 24 seconds. Without network
+access the incoming check could not read the CRAN package index, so its
+"New submission" NOTE does not appear here; it is expected on CRAN's
+machines.
 
 * checking for future file timestamps ... NOTE
 
@@ -215,6 +192,51 @@ and the vignettes run without errors.
   `<main> is not recognized!` for every Rd file, because R's own HTML help
   uses `<main>`. The NOTE does not occur with tidy-html5, and the Rd files
   have no problems of their own.
+
+The earlier submission had a NOTE on the URL
+`https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PAQBDR`
+(Status: 202, Message: Accepted). The package no longer links to Harvard
+Dataverse pages: the README, vignettes and citations link only to
+`https://doi.org/...`. If the NOTE appears on CRAN's machines for
+`doi:10.7910/DVN/PAQBDR` (the 2022 study, cited in the Description), the DOI
+is valid: it resolves to the study's landing page, but Harvard Dataverse
+answers some automated requests with 202 Accepted (a bot challenge) instead
+of 200.
+
+The remote checks of the incoming feasibility step ran separately with
+network access (`_R_CHECK_CRAN_INCOMING_REMOTE_=true`): the 31 URLs and the
+11 DOIs of the package all resolved without a problem.
+
+### Tests
+
+The tests that CRAN runs (`NOT_CRAN` unset) are the fast contract tests:
+every export's arguments, visibility, assignment and conditions, the
+offline examples, the shipped specification and catalog, and one end-to-end
+run of each main function on the synthetic demonstration study. The
+exhaustive tests (every rule of the validator on every malformed table,
+every study and every view) are skipped on CRAN with `skip_on_cran()` and
+run in continuous integration and with `NOT_CRAN=true`. Measured locally on
+the installed package:
+
+- CRAN mode (the tests of `R CMD check` above): 5,788 expectations passed,
+  0 failures, 0 warnings, 132 skipped (the exhaustive tests, and those that
+  need the network or the build-ignored official results); 60 seconds
+  (54 seconds of CPU time). Before the exhaustive tests were moved out of
+  the CRAN run, the same tests took about 245 seconds of CPU time here.
+- `NOT_CRAN=true`: 621 tests, 9,230 expectations, 0 failures, 0 warnings,
+  27 skipped (network and build-ignored files); about 240 seconds.
+
+### Spelling
+
+`spelling::spell_check_package()` finds no misspelled English word. The
+words it lists are French (every help page has a section in French, and
+half of the vignettes are French) or are listed in `inst/WORDLIST`: the
+surnames of the authors of the datasets cited in the Description with their
+DOIs (Bélanger, Blais, Durand, Goyder, Mahéo, Nadeau, ...), the "al" of
+"et al.", party and place names (ADQ, CAQ, PLQ, PQ, Abitibi-Témiscamingue,
+...), Canadian spellings ("catalogued", "labelled", "favour") and technical
+terms ("codebook", "recode", "nonresponse"). One typo it found
+("democratique") is fixed.
 
 ## Dependencies
 

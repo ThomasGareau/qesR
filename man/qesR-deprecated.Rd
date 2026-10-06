@@ -2,7 +2,7 @@
 % Please edit documentation in R/deprecated.R
 \name{qesR-deprecated}
 \alias{qesR-deprecated}
-\title{Soft-deprecated qesR functions}
+\title{Older function names}
 \description{
 Eleven functions from qesR 0.4.4 are kept as \strong{legacy wrappers}. They keep
 working, with the same arguments, and will not be removed. Each one prints a

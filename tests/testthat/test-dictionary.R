@@ -188,6 +188,7 @@ test_that("each study has as many variables as its pinned file has columns", {
 })
 
 test_that("reviewed rows have question text, with a document of their study", {
+  skip_on_cran()
   d <- dict_tables()
   v <- d$variables
   rev <- v[v$reviewed, ]

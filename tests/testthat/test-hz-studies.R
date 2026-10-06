@@ -33,6 +33,7 @@ small_polls <- function(s = hz_spec()) {
 }
 
 test_that("the spec covers the remaining studies, and not the firms' own 1998 files", {
+  skip_on_cran()
   s <- hz_spec()
   covered <- .qes_hz_covered(s)
   expect_true(all(c("qes2007", "qes2008", "qes2012_panel", crop, "qes1998") %in% covered))
@@ -67,6 +68,7 @@ test_that("the pooled CROP polls have one wave per poll, each with its election"
 })
 
 test_that("wave * is allowed only in a study of poll waves or for a static or any-time target, and checked like the waves it names", {
+  skip_on_cran()
   s <- hz_spec()
   # in a study whose waves are not poll waves, for a target tied to an
   # election period
@@ -110,6 +112,7 @@ test_that("wave * is allowed only in a study of poll waves or for a static or an
 })
 
 test_that("pooled polls: one row per respondent in their poll, strata and elections by poll", {
+  skip_on_cran()
   s <- reviewed_weights(crop, small_polls())
   syn <- .qes_synthetic(crop, spec = s)
   d <- syn[[crop]]
@@ -161,6 +164,7 @@ test_that("pooled polls: one row per respondent in their poll, strata and electi
 })
 
 test_that("pool = \"equal\" counts the polls of pooled polls as one study in the long layout", {
+  skip_on_cran()
   skip_if_not_installed("survey")
   s <- reviewed_weights("qes2007", reviewed_weights(crop, small_polls()))
   syn <- c(.qes_synthetic(crop, spec = s), .qes_synthetic("qes2007", spec = s))
@@ -225,6 +229,7 @@ test_that("the 1998 panel pools two firms, francophones only, with the firm as a
 })
 
 test_that("the 1998 firms are strata of the design", {
+  skip_on_cran()
   skip_if_not_installed("survey")
   s <- reviewed_weights("qes1998")
   syn <- .qes_synthetic("qes1998", spec = s)
@@ -301,6 +306,7 @@ test_that("the 1995 sovereignty-partnership question is its own target", {
 })
 
 test_that("synthetic data of the remaining studies pass the data checks and harmonize", {
+  skip_on_cran()
   s <- hz_spec()
   studies <- c("qes2007", "qes2008", "qes2012_panel", "qes1998")
   syn <- .qes_synthetic(studies, spec = s)
@@ -315,6 +321,7 @@ test_that("synthetic data of the remaining studies pass the data checks and harm
 })
 
 test_that("the reference, the coverage page and the weight notice summarize the polls", {
+  skip_on_cran()
   s <- hz_spec()
   expect_identical(.qes_wave_label(c("*", "post"), "en"), c("each poll", "post"))
   expect_identical(.qes_wave_label("*", "fr"), "chaque sondage")

@@ -570,7 +570,7 @@ print.qes_studies <- function(x, ...) {
 
 # ---- get_qescodes() (legacy) ------------------------------------------------------
 
-#' List Quebec Election Study Survey Codes
+#' List study codes (older name)
 #'
 #' Returns a data frame of qesR survey call codes, with optional detailed
 #' metadata.

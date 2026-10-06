@@ -428,7 +428,10 @@
     v <- tv$value
     r <- tv$reason
 
-    # the relaxed rows of this column
+    # the relaxed rows of this column; for a static column, the rows of one
+    # study that replace the base (override) clear it once, then each gives
+    # the respondents of its wave (an earlier row, the first wave, wins)
+    overridden <- list()
     for (e in rx_res) {
       i <- e$row
       # a row whose variables the data lack (the demonstration study holds
@@ -449,8 +452,18 @@
         rr <- e$res$reason[fr]
         rv[!in_wave] <- NA_character_
         rr[!in_wave] <- "not_in_wave"
-        take <- if (override) {
-          if (rx$timing[jx] %in% "static") rep(TRUE, length(rows)) else in_wave
+        take <- if (override && rx$timing[jx] %in% "static") {
+          if (is.null(overridden[[s]])) {
+            v[rows] <- NA_character_
+            r[rows] <- "not_in_wave"
+            key[rows] <- kk
+            overridden[[s]] <- rep(FALSE, length(rows))
+          }
+          t_ <- in_wave & !overridden[[s]]
+          overridden[[s]] <- overridden[[s]] | in_wave
+          t_
+        } else if (override) {
+          in_wave
         } else {
           in_wave & is.na(v[rows]) & r[rows] %in% c("not_asked", "not_in_wave")
         }
@@ -525,7 +538,7 @@
   rownames(winfo) <- NULL
 
   list(lead = lead, rx = rx, value = values, reason = reasons, key = keys, sources = sources,
-       weights = winfo, provenance = prov, spec = sp)
+       weights = winfo, provenance = prov, spec = sp, no_wave = attr(h, "qes_no_wave", exact = TRUE))
 }
 
 # ---- qes_decon() -------------------------------------------------------------------------
@@ -564,12 +577,18 @@
 #' spec 4.6.0, the 5 it adds (the education of `qes1998`, `union` and
 #' `econ_self`) included, are signed off (status `stable`) by an automated
 #' double review against the original files and documents, not a human
-#' review, as their `reviewed_by` and `review_note` say.
+#' review, as their `reviewed_by` and `review_note` say. A strict row still
+#' in review is not applied either: the previous vote (`vote_prev`) of
+#' `qes2008` and `qes2018` is `NA` (reason `not_reviewed`) while a decision
+#' on the respondents too young to vote at the previous election is pending,
+#' and the summary message names such columns and studies.
 #'
 #' @section Rows, waves and weights:
 #' The rows are those of `qes_harmonize(layout = "long")`: one per respondent
 #' and wave they took part in, so a panel respondent has one row per wave,
-#' and no row is dropped. Socio-demographic columns (education, income,
+#' and `wave` is never `NA`. A respondent who took part in no wave has no
+#' row (in `qes2007_panel`, one interview that neither wave's rule counts);
+#' `attr(x, "qes_no_wave")` counts them, study by study. Socio-demographic columns (education, income,
 #' language, religion, region...) are the same on every row of a respondent;
 #' the vote, turnout and attitudes sit on the row of the wave that asked them
 #' (the vote intention on the campaign wave, the reported vote on the
@@ -578,8 +597,28 @@
 #' `weight_var` its source variable. Both are `NA` where the study has no
 #' recommended weight (`qes2008`: its weights are calibrated on the reported
 #' vote) or where the weight still needs review; `attr(x, "weights")` says
-#' which, study by study and wave by wave. Estimate within one study and
-#' wave, or with [qes_design()] on [qes_harmonize()] output.
+#' which, study by study and wave by wave (its `n_rows` add up to the rows
+#' of `x`). Estimate within one study and wave, or with [qes_design()] on
+#' [qes_harmonize()] output.
+#'
+#' @section Who was surveyed:
+#' These differences between the studies matter for most analyses.
+#' * `qes1998` (the CROP and CREATEC polls) surveyed francophones only, each
+#'   firm by its own definition (mother tongue for CREATEC, the language
+#'   spoken most often at home for CROP): `language` is French or `NA`
+#'   there, and the study says nothing about non-francophones.
+#' * `qes2018` also interviewed people aged 16 and 17 (251 of its 3,072
+#'   respondents, by the deposit's note). They are `NA` in `age_group` and
+#'   `vote_choice` but have values in the other columns (`yob`, `gender`,
+#'   `sovereignty`...): drop them (by `yob`) to describe the electorate.
+#' * In `qes2018_panel` only the web respondents were asked about
+#'   employment: its 400 telephone respondents appear in `employment` as
+#'   don't know or refused (`NA`, reason `dk_refused`), not as a real answer.
+#' * `religion` comes from two formats: 2012 to 2018 first ask whether the
+#'   respondent belongs to a religion, then which one; 2022 offers one long
+#'   list (agnostic counts as no religion). The share with no religion is
+#'   higher after a filter question, so the levels are not strictly
+#'   comparable across that change.
 #'
 #' @section Correspondence with cesR:
 #' cesR's `get_decon()` returns 21 columns of the 2019 Canadian Election
@@ -604,7 +643,10 @@
 #' off in spec 4.5.0). Its columns, groups and mappings may change, and a new
 #' relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts `education`
 #' in three groups instead of four, so that `qes1998` can be included, keeps
-#' the four groups as `education4`, and adds `union` and `econ_self`.
+#' the four groups as `education4`, and adds `union` and `econ_self`. qesR
+#' 0.9.2 (spec 4.7.0) cuts `interest` at 0.55 and 0.85 instead of 0.35 and
+#' 0.75, so that a 0-10 answer of 6 to 8 is medium and 9 or 10 high, as
+#' "quite" and "very" interested are on the 4-point questions.
 #'
 #' @section En français:
 #' `qes_decon()` renvoie un seul tableau pour toutes les études électorales
@@ -630,7 +672,20 @@
 #' leurs champs `reviewed_by` et `review_note`. Depuis qesR 0.9.1, `education` compte trois groupes
 #' (sans diplôme d'études secondaires, secondaire au collégial, université),
 #' ce qui permet d'inclure `qes1998`, et `education4` garde les quatre
-#' groupes. Les noms de
+#' groupes. Les lignes suivent celles de `qes_harmonize(layout = "long")` :
+#' `wave` ne vaut jamais NA, et une personne qui n'a participé à aucune
+#' vague n'a pas de ligne (`attr(x, "qes_no_wave")` les compte). Une ligne
+#' stricte encore en révision n'est pas appliquée : le vote précédent
+#' (`vote_prev`) de `qes2008` et de `qes2018` vaut NA (motif `not_reviewed`),
+#' et le message de synthèse le dit. `qes1998` n'a interrogé que des
+#' francophones ; `qes2018` a aussi interrogé des personnes de 16 et 17 ans,
+#' NA dans `age_group` et `vote_choice` mais présentes dans les autres
+#' colonnes ; dans `qes2018_panel`, seuls les répondants web ont été
+#' interrogés sur leur emploi, et ses répondants téléphoniques apparaissent
+#' dans `employment` comme « ne sait pas ou refus » ; la religion vient d'une question filtre (2012 à 2018) ou d'une
+#' seule longue liste (2022), si bien que ses niveaux ne sont pas strictement
+#' comparables entre ces deux formats. Depuis qesR 0.9.2, `interest` est
+#' coupé à 0,55 et 0,85 : de 0 à 10, 6 à 8 est moyen et 9 ou 10 élevé. Les noms de
 #' colonnes restent en anglais ; `lang = "fr"` donne les étiquettes, les
 #' règles et les sources en français.
 #'
@@ -659,7 +714,9 @@
 #'   and `na_reasons` (`"dk=12; refused=3"`)), `weights` (`study`, `wave`,
 #'   `weight_var`, `status`, `reason`: `NA`, `"needs_review"`,
 #'   `"no_recommended_weight"` or `"not_in_data"`, `n_rows`, `n_weight`,
-#'   `mean`), `qes_provenance` (the files read; see [qes_provenance()]),
+#'   `mean`), `qes_no_wave` (`study`, `n_rows`: the respondents left out
+#'   because they took part in no wave), `qes_provenance` (the files read;
+#'   see [qes_provenance()]),
 #'   `spec_version`, `qesR_version` and `lang`.
 #' @family harmonization
 #' @seealso [qes_harmonize()] for the strict, graded harmonization;
@@ -753,6 +810,7 @@ qes_decon <- function(studies = NULL, lang = c("en", "fr"), weights = TRUE, quie
     attr(study_prov, "pooled") <- NULL
   }
   attr(res, "qes_provenance") <- study_prov
+  attr(res, "qes_no_wave") <- x$no_wave
   attr(res, "spec_version") <- sp$version
   attr(res, "qesR_version") <- as.character(.qes_engine_version())
   attr(res, "lang") <- lang
@@ -764,11 +822,15 @@ qes_decon <- function(studies = NULL, lang = c("en", "fr"), weights = TRUE, quie
     rel_txt <- vapply(relaxed_cols, function(col) {
       sprintf("%s (%s)", col, paste(unique(used$study[used$column == col & used$base == "relaxed"]), collapse = ", "))
     }, character(1))
-    held <- src[src$base == "relaxed" & !src$applied, , drop = FALSE]
+    # every source not applied: a relaxed row or a strict row still in review
+    held <- src[!src$applied, , drop = FALSE]
     args <- list(nrow(rx), .qes_q(unique(lead$study)), if (length(rel_txt) > 0L) paste(rel_txt, collapse = "; ") else "-")
     if (nrow(held) > 0L) {
+      held_txt <- vapply(unique(held$column), function(col) {
+        sprintf("%s (%s)", col, paste(unique(held$study[held$column == col]), collapse = ", "))
+      }, character(1))
       .qes_inform("decon_summary_held", class = "qesR_message_decon",
-                  args = c(args, list(nrow(held), paste(unique(held$column), collapse = ", "))),
+                  args = c(args, list(nrow(held), paste(held_txt, collapse = "; "))),
                   data = list(sources = src), quiet = quiet)
     } else {
       .qes_inform("decon_summary", class = "qesR_message_decon", args = args, data = list(sources = src),
