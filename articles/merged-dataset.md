@@ -3,14 +3,17 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-stacks 11 Quebec Election Studies, from 1998 to 2022, in one data frame:
-one row per respondent of each study, and the same 30 columns for every
-study (vote choice, turnout, sovereignty, party identification,
-ideology, political interest and the usual demographics, with the
-study’s code, year and identifiers). Its layout is fixed: the names,
-order and types of the 30 columns do not change, and columns added later
-come after them. Code written against it keeps working.
+stacks 11 studies, from 1998 to 2022, in one data frame: one row per
+respondent of each study, and the same 30 columns for every study (vote
+choice, turnout, sovereignty, party identification, ideology, political
+interest and the usual demographics, with the study’s code, year and
+identifiers). Its layout is fixed: the names, order and types of the 30
+columns do not change, and columns added later come after them. Code
+written against it keeps working.
 
 ## When to use it, and when to prefer `qes_harmonize()`
 
@@ -148,8 +151,10 @@ flags the columns that mix instruments (`political_interest`,
 `survey_weight` is each study’s own weight, on its own scale, and is not
 reviewed: do not pool weighted estimates across studies with it.
 `weight_pre` and `weight_post` are the recommended weights of the
-harmonization rules, `NA` where a study’s weight still needs review.
-Compute each estimate within one study.
+harmonization rules, `NA` where a study has no validated weight (the
+[weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+describes each study’s weight). Compute each estimate within one study.
 
 ## Save the merged file
 

@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md)*
 
+**This page downloads 6 studies** (about 13 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 For four decades, the national question organized party competition in
 Quebec. The Parti Québécois (PQ) stood for sovereignty, the Parti
 libéral du Québec (PLQ) for federalism, and a voter’s position on
@@ -48,14 +51,15 @@ self-placement, with confidence intervals. PQ voters go from 84% to 82%
 Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters
 move from 6.5 to 4.8 on the left-right scale; QS voters stay the
 furthest left, at 3.7 in 2022. Values in the table
-view.](dimensions_files/figure-html/paths-light.png)![Two line charts,
-2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022
-only): on the left the share of the party's voters who would vote Yes to
-independence, on the right their mean left-right self-placement, with
-confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from
-19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8
-on the left-right scale; QS voters stay the furthest left, at 3.7 in
-2022. Values in the table
+view.](dimensions_files/figure-html/paths-light.png)
+
+![Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS;
+the PCQ in 2022 only): on the left the share of the party's voters who
+would vote Yes to independence, on the right their mean left-right
+self-placement, with confidence intervals. PQ voters go from 84% to 82%
+Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters
+move from 6.5 to 4.8 on the left-right scale; QS voters stay the
+furthest left, at 3.7 in 2022. Values in the table
 view.](dimensions_files/figure-html/paths-dark.png)
 
 Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted.
@@ -124,19 +128,21 @@ side's reported vote that went to each party. The PQ's share of the Yes
 vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the
 CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29%
 in 2022. Values in the table
-view.](dimensions_files/figure-html/where-light.png)![Line charts in two
-panels, the respondents who would vote Yes (left) and No (right) in a
-referendum, from 2007 to 2022: the share of each side's reported vote
-that went to each party. The PQ's share of the Yes vote goes from 73% in
-2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's
-share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the
-table view.](dimensions_files/figure-html/where-dark.png)
+view.](dimensions_files/figure-html/where-light.png)
+
+![Line charts in two panels, the respondents who would vote Yes (left)
+and No (right) in a referendum, from 2007 to 2022: the share of each
+side's reported vote that went to each party. The PQ's share of the Yes
+vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the
+CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29%
+in 2022. Values in the table
+view.](dimensions_files/figure-html/where-dark.png)
 
 Source: Quebec Election Studies 2007 to 2022, weighted, except 2008
-(hollow: unweighted). 2007 and 2008 asked the 1995 referendum question,
-2012 to 2022 a question on an independent country, so the lines break at
-the change. The other parties (Green Party, Option nationale and others)
-are in the table view.
+(hollow: unweighted, no validated weight). 2007 and 2008 asked the 1995
+referendum question, 2012 to 2022 a question on an independent country,
+so the lines break at the change. The other parties (Green Party, Option
+nationale and others) are in the table view.
 
 Table view
 
@@ -156,20 +162,20 @@ Table view
 | 2007 | QES 2007 | No | CAQ | — | 913 | weighted |
 | 2007 | QES 2007 | No | PCQ | — | 913 | weighted |
 | 2007 | QES 2007 | No | Other | 8.5 \[6.3, 11.3\] | 913 | weighted |
-| 2008 | QES 2008 | Yes | PLQ | 10.0 \[7.4, 13.4\] | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | PQ | 73.3 \[68.6, 77.4\] | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | ADQ | 6.9 \[4.8, 9.9\] | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | QS | 6.9 \[4.8, 9.9\] | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | CAQ | — | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | PCQ | — | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | Yes | Other | 2.8 \[1.6, 5.0\] | 389 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | PLQ | 66.7 \[62.3, 70.9\] | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | PQ | 7.3 \[5.2, 10.1\] | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | ADQ | 21.7 \[18.2, 25.8\] | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | QS | 1.6 \[0.7, 3.2\] | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | CAQ | — | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | PCQ | — | 451 | unweighted (weight under review) |
-| 2008 | QES 2008 | No | Other | 2.7 \[1.5, 4.6\] | 451 | unweighted (weight under review) |
+| 2008 | QES 2008 | Yes | PLQ | 10.0 \[7.4, 13.4\] | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | PQ | 73.3 \[68.6, 77.4\] | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | ADQ | 6.9 \[4.8, 9.9\] | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | QS | 6.9 \[4.8, 9.9\] | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | CAQ | — | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | PCQ | — | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | Yes | Other | 2.8 \[1.6, 5.0\] | 389 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | PLQ | 66.7 \[62.3, 70.9\] | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | PQ | 7.3 \[5.2, 10.1\] | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | ADQ | 21.7 \[18.2, 25.8\] | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | QS | 1.6 \[0.7, 3.2\] | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | CAQ | — | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | PCQ | — | 451 | unweighted: no validated weight |
+| 2008 | QES 2008 | No | Other | 2.7 \[1.5, 4.6\] | 451 | unweighted: no validated weight |
 | 2012 | QES 2012 | Yes | PLQ | 0.8 \[0.2, 2.4\] | 529 | weighted |
 | 2012 | QES 2012 | Yes | PQ | 73.3 \[68.9, 77.2\] | 529 | weighted |
 | 2012 | QES 2012 | Yes | ADQ | — | 529 | weighted |
@@ -274,14 +280,15 @@ confidence intervals. For the referendum vote it goes from 57% in 2012
 to 25% in 2022 among all voters, and from 55% to 18% among francophones;
 for left-right placement from 26% to 23% among all voters, and 14% in
 2022 without the PCQ. Values in the table
-view.](dimensions_files/figure-html/sorting-light.png)![Line charts in
-two panels, all voters (left) and francophone voters (right), 2012 to
-2022: the share of the variance in the referendum vote and in left-right
-placement accounted for by party choice, with confidence intervals. For
-the referendum vote it goes from 57% in 2012 to 25% in 2022 among all
-voters, and from 55% to 18% among francophones; for left-right placement
-from 26% to 23% among all voters, and 14% in 2022 without the PCQ.
-Values in the table
+view.](dimensions_files/figure-html/sorting-light.png)
+
+![Line charts in two panels, all voters (left) and francophone voters
+(right), 2012 to 2022: the share of the variance in the referendum vote
+and in left-right placement accounted for by party choice, with
+confidence intervals. For the referendum vote it goes from 57% in 2012
+to 25% in 2022 among all voters, and from 55% to 18% among francophones;
+for left-right placement from 26% to 23% among all voters, and 14% in
+2022 without the PCQ. Values in the table
 view.](dimensions_files/figure-html/sorting-dark.png)
 
 Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted.
@@ -391,8 +398,8 @@ takes up that question.
   panels run by Claire Durand and colleagues at the same elections are
   left out, so that the series has one study per election; in 2012 and
   2018 they also asked other wordings of the referendum question. The
-  1998 polls are left out as well: they are unweighted, and only one of
-  the two asked the referendum question.
+  1998 polls are left out as well: they have no validated weight, and
+  only one of the two asked the referendum question.
 - **Questions.** The vote reported after the election; the referendum
   vote as the share of Yes among respondents who chose Yes or No (those
   who remain undecided are set aside); the respondent’s own placement
@@ -410,8 +417,10 @@ takes up that question.
   the respondents who took part in both waves, with the post-election
   weight.
 - **Weights.** Each study’s post-election weight. The 2008 study is
-  shown unweighted: its weights were adjusted to the election result,
-  which makes them unsuited to a study of the vote.
+  shown unweighted: its only weights were calibrated on the reported
+  vote, which makes them unsuited to a study of the vote (see the
+  [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)).
 - **Share of variance.** Computed within each study on the respondents
   who answered both questions and voted for one of the parties shown,
   with 95% intervals from 500 bootstrap replicates of the study’s
@@ -428,7 +437,7 @@ which pools the reported vote (`vote_choice`), the referendum vote
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
@@ -439,6 +448,7 @@ A weighted mean by party, within one study:
 
 ``` r
 
+library(survey)
 d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
 svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
       svymean, na.rm = TRUE)

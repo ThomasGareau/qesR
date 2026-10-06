@@ -24,10 +24,38 @@ target, how comparable each study's question is, and the exact mapping."><meta p
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -36,12 +64,16 @@ target, how comparable each study's question is, and the exact mapping."><meta p
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -57,20 +89,115 @@ target, how comparable each study's question is, and the exact mapping."><meta p
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,14 +208,14 @@ target, how comparable each study's question is, and the exact mapping."><meta p
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
@@ -97,7 +224,7 @@ target, how comparable each study's question is, and the exact mapping."><meta p
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -264,7 +391,8 @@ in the spec's order of precedence. See <em>Pooled variables</em>.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame of class <code>qes_harmonized</code>, returned visibly, one row
 per respondent of each study's file (no row is dropped), or per
-respondent and wave in the long layout. Leading columns: <code>study</code>,
+respondent and wave in the long layout (where a respondent in no wave
+has no row). Leading columns: <code>study</code>,
 <code>year</code> (the study's year; for pooled polls, the year the respondent's
 poll began), <code>election_date</code>, <code>family</code>, <code>study_design</code>, <code>target_population</code>,
 <code>waves</code> (the waves the respondent belongs to, <code>;</code>-separated; in the
@@ -287,7 +415,9 @@ layout) or <code>weight</code> and <code>weight_var</code> (long layout). Attrib
 <code>"cell"</code>, <code>"spec"</code> and, with pooled variables, <code>"pooled"</code>),
 <code>qes_weight_guide</code> (<code>target</code> or pooled variable, <code>study</code>, <code>wave</code>,
 <code>target_timing</code>, <code>weight_column</code>, <code>weight_var</code>, <code>weight_status</code>) and
-<code>failed_studies</code> (<code>study</code>, <code>class</code>, <code>message</code>, <code>parent_message</code>).</p>
+<code>failed_studies</code> (<code>study</code>, <code>class</code>, <code>message</code>, <code>parent_message</code>) and,
+in the long layout, <code>qes_no_wave</code> (<code>study</code>, <code>n_rows</code>: the respondents
+left out because they took part in no wave; no row when there are none).</p>
 <p>Results for different studies built with the same spec can be combined
 with <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code>, which also combines their provenance. It is an error
 (class <code>qesR_error_input</code>) if the spec content hashes differ, the parts
@@ -495,8 +625,11 @@ disposition or date variable, never an answer. A question belongs to the
 wave that asked it, so a respondent outside that wave is <code>NA</code> with reason
 <code>not_in_wave</code>. The respondent layout has one row per respondent, and
 <code>waves</code> lists the waves each respondent took part in. The long layout
-(<code>layout = "long"</code>) has one row per respondent and wave (a respondent in
-no wave keeps one row, with <code>wave</code> <code>NA</code>): a value sits on the row of the
+(<code>layout = "long"</code>) has one row per respondent and wave, so <code>wave</code> is
+never <code>NA</code>: a respondent who took part in no wave (in <code>qes2007_panel</code>, one
+interview that neither wave's rule counts) has no row, a message (class
+<code>qesR_message_no_wave</code>) says so, and <code>attr(x, "qes_no_wave")</code> counts them
+study by study. A value sits on the row of the
 wave that asked it and the respondent's other rows are <code>not_in_wave</code>,
 except the time-invariant targets (year and month of birth), which are
 repeated on each of the respondent's rows.</p>
@@ -595,9 +728,11 @@ pooled provenance), <code>qesR_message_unreviewed_skipped</code>
 with <code>include_draft = TRUE</code>), <code>qesR_message_approximate_cells</code> (cells
 graded approximate are included), <code>qesR_message_structural_zeros</code>
 (levels a question did not offer), <code>qesR_message_weight_review</code>
-(recommended weights that need review, left <code>NA</code>) and
+(recommended weights that need review, left <code>NA</code>),
 <code>qesR_message_weight_timing</code> (targets of one study that need different
-weights; not sent when all of the study's weights need review).</p></li>
+weights; not sent when all of the study's weights need review) and
+<code>qesR_message_no_wave</code> (respondents the long layout leaves out because
+they took part in no wave; field <code>no_wave</code>).</p></li>
 </ul><p><code><a href="qes_design.html">qes_design()</a></code> sends <code>qesR_message_design_dropped</code> (fields <code>study</code>, <code>n</code>)
 when it leaves out rows without the chosen weight.</p>
     </div>
@@ -617,7 +752,9 @@ n'offrait pas sont des zéros structurels, pas un appui nul. <code>lang = "fr"</
 donne les étiquettes des niveaux en français ; les codes sont les mêmes.
 <code>targets = "decon"</code> demande les cibles des colonnes de <code><a href="get_decon.html">get_decon()</a></code>.
 La disposition longue (<code>layout = "long"</code>) donne une ligne par personne et
-par vague ; une question invariante d'un panel (genre, scolarité) est
+par vague (<code>wave</code> n'y vaut jamais NA : une personne qui n'a participé à
+aucune vague n'a pas de ligne, un message le dit et
+<code>attr(x, "qes_no_wave")</code> les compte) ; une question invariante d'un panel (genre, scolarité) est
 lue dans la vague à laquelle la personne a participé (panel de 2007) ;
 les sondages CROP regroupés ont une vague par sondage, et
 <code>stratum</code> donne l'échantillon indépendant d'où vient la personne : pour
@@ -701,7 +838,7 @@ value came from.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.</span>
 <span class="r-in"><span><span class="va">h</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.6.0 (content hash 910e81120d19001bb1d7c0f9b0b32b3f).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.7.0 (content hash 30697daa0042aab3078507b665867748).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Approximate cells: qes_demo age_group3, qes_demo age_group6.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).</span>

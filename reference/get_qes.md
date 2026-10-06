@@ -1,4 +1,4 @@
-# Download and Load a Quebec Election Study
+# Load a Quebec Election Study
 
 Reads a study's data file, as its authors deposited it, and returns it
 with its labels.
@@ -78,9 +78,10 @@ workspace unless you ask for it with `assign_global = TRUE`: write
 session, or kept between sessions with `options(qesR.cache = "disk")`
 (see
 [`qes_cache_info()`](https://thomasgareau.github.io/qesR/reference/qes_cache_info.md)).
-The first call in a session that leaves `assign_global` unset prints a
-one-time note about it; passing `assign_global` explicitly (TRUE or
-FALSE) avoids it.
+The first top-level call in a session (console, `Rscript` or
+[`source()`](https://rdrr.io/r/base/source.html)) prints a one-time note
+that the data must be assigned; passing `assign_global` (TRUE or FALSE)
+or `quiet = TRUE` avoids it.
 
 ## Which file is read
 

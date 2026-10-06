@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-participation.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 Turnout in Quebec provincial elections has declined. According to
 Élections Québec, it fell from 78% in 1998 to 66% in 2022, with a low of
 57% in 2008. The conventional wisdom attributes this decline to the
@@ -63,12 +66,12 @@ Table view
 
 | Election | Study | Reported turnout, % \[95% CI\] | n | Official turnout, % | Gap | Weighting |
 |---:|:---|:---|---:|:---|:---|:---|
-| 1998 | 1998 polls | 87.4 \[85.6, 89.0\] | 1483 | 78.3 | +9 pts | unweighted (weight under review) |
+| 1998 | 1998 polls | 87.4 \[85.6, 89.0\] | 1483 | 78.3 | +9 pts | unweighted: no validated weight |
 | 2007 | QES 2007 | 90.7 \[89.0, 92.2\] | 2162 | 71.2 | +20 pts | weighted |
-| 2007 | 2007 panel | 85.3 \[83.7, 86.8\] | 2054 | 71.2 | +14 pts | unweighted (weight under review) |
-| 2008 | QES 2008 | 87.2 \[85.1, 89.0\] | 1131 | 57.4 | +30 pts | unweighted (weight under review) |
+| 2007 | 2007 panel | 85.3 \[83.7, 86.8\] | 2054 | 71.2 | +14 pts | unweighted: no validated weight |
+| 2008 | QES 2008 | 87.2 \[85.1, 89.0\] | 1131 | 57.4 | +30 pts | unweighted: no validated weight |
 | 2012 | QES 2012 | 93.2 \[91.8, 94.4\] | 1486 | 74.6 | +19 pts | weighted |
-| 2012 | 2012 panel | 92.2 \[90.2, 93.8\] | 844 | 74.6 | +18 pts | unweighted (weight under review) |
+| 2012 | 2012 panel | 92.2 \[90.2, 93.8\] | 844 | 74.6 | +18 pts | unweighted: no validated weight |
 | 2014 | QES 2014 | 88.9 \[86.8, 90.8\] | 1499 | 71.4 | +17 pts | weighted |
 | 2018 | QES 2018 | 83.2 \[81.5, 84.7\] | 2635 | 66.4 | +17 pts | weighted |
 | 2018 | 2018 panel | 83.7 \[80.1, 86.7\] | 842 | 66.4 | +17 pts | weighted |
@@ -109,21 +112,21 @@ view.](turnout_files/figure-html/age-dark.png)
 
 Source: one Quebec Election Study per election, and the 1998 polls
 (francophones only). Band: 95% confidence interval of the difference.
-Weighted; hollow dots (1998 and 2008): unweighted. The horizontal axis
-is in years, with a break between 1998 and 2007. The table view also
-gives the turnout of each age group, and the panels led by Claire Durand
-at the 2007, 2012 and 2018 elections.
+Weighted; hollow dots (1998 and 2008): unweighted, no validated weight.
+The horizontal axis is in years, with a break between 1998 and 2007. The
+table view also gives the turnout of each age group, and the panels led
+by Claire Durand at the 2007, 2012 and 2018 elections.
 
 Table view
 
 | Election | Study | 18 to 34, % | 35 to 54, % | 55 and over, % | Gap, 55+ minus 18-34 \[95% CI\] | Weighting |
 |---:|:---|:---|:---|:---|:---|:---|
-| 1998 | 1998 polls | 81.6 | 88.8 | 90.3 | +8.7 pts \[3.9, 13.6\] | unweighted (weight under review) |
+| 1998 | 1998 polls | 81.6 | 88.8 | 90.3 | +8.7 pts \[3.9, 13.6\] | unweighted: no validated weight |
 | 2007 | QES 2007 | 84.8 | 91.4 | 95.7 | +11.0 pts \[6.9, 15.1\] | weighted |
-| 2007 | 2007 panel | 73.5 | 86.4 | 91.0 | +17.5 pts \[12.9, 22.2\] | unweighted (weight under review) |
-| 2008 | QES 2008 | 78.9 | 86.5 | 93.5 | +14.5 pts \[9.0, 20.0\] | unweighted (weight under review) |
+| 2007 | 2007 panel | 73.5 | 86.4 | 91.0 | +17.5 pts \[12.9, 22.2\] | unweighted: no validated weight |
+| 2008 | QES 2008 | 78.9 | 86.5 | 93.5 | +14.5 pts \[9.0, 20.0\] | unweighted: no validated weight |
 | 2012 | QES 2012 | 89.5 | 92.7 | 96.4 | +7.0 pts \[3.5, 10.4\] | weighted |
-| 2012 | 2012 panel | 89.0 | 91.7 | 93.7 | +4.7 pts \[-1.3, 10.7\] | unweighted (weight under review) |
+| 2012 | 2012 panel | 89.0 | 91.7 | 93.7 | +4.7 pts \[-1.3, 10.7\] | unweighted: no validated weight |
 | 2014 | QES 2014 | 80.9 | 89.8 | 93.9 | +13.1 pts \[7.6, 18.5\] | weighted |
 | 2018 | QES 2018 | 70.3 | 81.8 | 91.4 | +21.2 pts \[17.1, 25.2\] | weighted |
 | 2018 | 2018 panel | 73.8 | 81.9 | 91.4 | +17.5 pts \[8.3, 26.8\] | weighted |
@@ -280,7 +283,7 @@ Table view
 | Election | Study | Age gap, all respondents \[95% CI\] | Age gap, same interest \[95% CI\] | Difference | Low interest, 18 to 34, % | Low interest, 55 and over, % | n | Interest in | Weighting |
 |---:|:---|:---|:---|:---|:---|:---|---:|:---|:---|
 | 2007 | QES 2007 | +11.0 pts \[6.9, 15.1\] | +10.5 pts \[6.5, 14.5\] | −0.5 pts | 19.9 | 13.4 | 2117 | politics, 0 to 10 | weighted |
-| 2008 | QES 2008 | +14.5 pts \[9.0, 20.0\] | +12.3 pts \[7.1, 17.5\] | −2.2 pts | 50.2 | 34.8 | 1129 | the election, 0 to 10 | unweighted (weight under review) |
+| 2008 | QES 2008 | +14.5 pts \[9.0, 20.0\] | +12.3 pts \[7.1, 17.5\] | −2.2 pts | 50.2 | 34.8 | 1129 | the election, 0 to 10 | unweighted: no validated weight |
 | 2012 | QES 2012 | +6.7 pts \[3.3, 10.1\] | +4.9 pts \[1.7, 8.1\] | −1.8 pts | 31.9 | 20.5 | 1472 | politics, four points | weighted |
 | 2014 | QES 2014 | +12.9 pts \[7.4, 18.4\] | +10.0 pts \[4.7, 15.3\] | −2.9 pts | 36.3 | 20.1 | 1489 | politics, four points | weighted |
 | 2018 | QES 2018 | +20.6 pts \[16.5, 24.7\] | +17.6 pts \[13.6, 21.6\] | −3.0 pts | 36.7 | 18.9 | 2599 | politics, four points | weighted |
@@ -372,10 +375,11 @@ h <- qes_harmonize(
 ```
 
 The turnout of each age group in 2018, and the age gap at equal
-interest:
+interest, with the survey package (the `h` of the call above):
 
 ``` r
 
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018" & !h$eligible_voter %in% FALSE, ], weight = "weight_post")
 d18 <- subset(d18, !is.na(turnout) & !is.na(age_group3))
 svyby(~I(turnout == "Yes"), ~age_group3, d18, svyciprop, vartype = "ci", method = "logit")
@@ -408,11 +412,10 @@ coef(summary(svyglm(voted ~ age + answer, d18)))[2:3, ]
   vote, how interested respondents had been in the election (0-10), and
   the 2007 panel asked about interest in the campaign; the 2012 and 2018
   panels have no comparable question.
-- **Weights.** Each study’s post-election weight. The 1998 polls and the
-  2007 and 2012 panels are left unweighted, as their weights are not
-  documented well enough to be used, and are drawn hollow. The 2008
-  study’s only weights are calibrated on the reported vote or on
-  turnout, so none can be used here; it is also drawn hollow.
+- **Weights.** Each study’s post-election weight, where it has a
+  validated one; the others are left unweighted and drawn hollow (see
+  the [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)).
 - **Who was interviewed.** The 1998 polls interviewed francophones only,
   and the respondents they interviewed again after the vote are not
   representative of all francophones. The 2018 study also interviewed

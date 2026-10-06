@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -160,6 +287,12 @@
     
     
 <p><em><a href="transitions.html">English version</a></em></p>
+<div class="qesr-download">
+<p><strong>Cette page télécharge 5 études</strong> (environ 5 Mo) la
+première fois qu’elle s’exécute.
+<code>options(qesR.cache = "disk")</code> les garde sur le disque pour
+les sessions suivantes.</p>
+</div>
 <p>Depuis l’élection fédérale de 1988, on sait que l’opinion peut bouger
 considérablement entre le déclenchement d’une campagne et le jour du
 vote (Johnston et collaborateurs, 1992). On dit souvent que les
@@ -199,7 +332,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
 <div class="section level2">
 <h2 id="la-plupart-des-électeurs-ont-fait-ce-quils-avaient-dit">La plupart des électeurs ont fait ce qu’ils avaient dit<a class="anchor" aria-label="anchor" href="#la-plupart-des-%C3%A9lecteurs-ont-fait-ce-quils-avaient-dit"></a>
 </h2>
-<figure class="qesr-fig" id="fig-matrix"><figcaption><span class="qesr-title">La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la CAQ a puisé de tous les côtés, dont 12 % des personnes qui comptaient voter PQ</span><span class="qesr-sub">De l'intention pendant la campagne (rangées) au vote déclaré après l'élection (colonnes) : le pourcentage de chaque rangée</span></figcaption><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/matrix-light.png" alt="Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et 67 % de celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en tableau." width="672" height="595" loading="lazy"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/matrix-dark.png" alt="Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et 67 % de celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en tableau." width="672" height="595" loading="lazy"><p class="qesr-note">Source : qesR. Répondants interrogés pendant la campagne et après l'élection, dans le panel Durand 2018 et l'EEQ 2022, pondérés avec la pondération postélectorale. Rangées : le parti prévu, avec le nombre de répondants ; les indécis n'ont nommé aucun parti, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient. Chaque rangée inclut les personnes qui n'ont pas voté. Les cases grises n'ont pas de valeur : le panel 2018 ne proposait pas le PCQ (n.p.), la question de campagne de 2022 n'avait pas de réponse « ne voterait pas », et les rangées de moins de 30 répondants ne sont pas tracées. Les intervalles de confiance et les panels de 1998, 2007 et 2012 sont dans la vue en tableau.</p>
+<figure class="qesr-fig" id="fig-matrix"><figcaption><span class="qesr-title">La plupart des électeurs ont fait ce qu'ils avaient dit ; en 2018, la CAQ a puisé de tous les côtés, dont 12 % des personnes qui comptaient voter PQ</span><span class="qesr-sub">De l'intention pendant la campagne (rangées) au vote déclaré après l'élection (colonnes) : le pourcentage de chaque rangée</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="fr-transitions_files/figure-html/matrix-light-narrow.png" width="442" height="684"><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/matrix-light.png" alt="Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et 67 % de celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en tableau." width="672" height="595" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="fr-transitions_files/figure-html/matrix-dark-narrow.png" width="442" height="684"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/matrix-dark.png" alt="Deux cartes de chaleur (panel 2018, EEQ 2022) : les rangées sont l'intention de vote pendant la campagne, avec le nombre de répondants, les colonnes le vote déclaré après l'élection, chaque case le pourcentage de la rangée. La diagonale domine : en 2022, 83 % des personnes qui comptaient voter CAQ ont déclaré un vote CAQ et 67 % de celles qui comptaient voter QS, un vote QS ; 24 % des indécis n'ont pas voté. Valeurs dans la vue en tableau." width="672" height="595" loading="lazy"></source></picture><p class="qesr-note">Source : qesR. Répondants interrogés pendant la campagne et après l'élection, dans le panel Durand 2018 et l'EEQ 2022, pondérés avec la pondération postélectorale. Rangées : le parti prévu, avec le nombre de répondants ; les indécis n'ont nommé aucun parti, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient. Chaque rangée inclut les personnes qui n'ont pas voté. Les cases grises n'ont pas de valeur : le panel 2018 ne proposait pas le PCQ (n.p.), la question de campagne de 2022 n'avait pas de réponse « ne voterait pas », et les rangées de moins de 30 répondants ne sont pas tracées. Les intervalles de confiance et les panels de 1998, 2007 et 2012 sont dans la vue en tableau.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -218,7 +351,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 80,1 [75,3 ; 84,1] </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -227,7 +360,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 5,1 [3,2 ; 8,2] </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -236,7 +369,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 4,5 [2,7 ; 7,5] </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -245,7 +378,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -254,7 +387,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -263,7 +396,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -272,7 +405,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 0,3 [0,0 ; 2,2] </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -281,7 +414,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 10,0 [7,1 ; 13,8] </td>
    <td style="text-align:right;"> 311 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -290,7 +423,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 3,9 [2,5 ; 6,2] </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -299,7 +432,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 85,7 [82,1 ; 88,7] </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -308,7 +441,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 2,5 [1,4 ; 4,5] </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -317,7 +450,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -326,7 +459,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -335,7 +468,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -344,7 +477,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 0,9 [0,3 ; 2,4] </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -353,7 +486,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 6,9 [4,9 ; 9,7] </td>
    <td style="text-align:right;"> 433 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -362,7 +495,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 13,1 [9,5 ; 17,8] </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -371,7 +504,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 15,4 [11,5 ; 20,4] </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -380,7 +513,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 56,0 [49,9 ; 61,9] </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -389,7 +522,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -398,7 +531,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -407,7 +540,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -416,7 +549,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 1,2 [0,4 ; 3,5] </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -425,7 +558,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 14,3 [10,5 ; 19,1] </td>
    <td style="text-align:right;"> 259 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -434,7 +567,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -443,7 +576,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -452,7 +585,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -461,7 +594,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -470,7 +603,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -479,7 +612,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -488,7 +621,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -497,7 +630,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 26 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -506,7 +639,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -515,7 +648,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -524,7 +657,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -533,7 +666,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -542,7 +675,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -551,7 +684,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -560,7 +693,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -569,7 +702,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 22 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -578,7 +711,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 38,3 [28,4 ; 49,3] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -587,7 +720,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 28,4 [19,7 ; 39,1] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -596,7 +729,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 13,6 [7,7 ; 22,9] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -605,7 +738,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -614,7 +747,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -623,7 +756,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -632,7 +765,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 2,5 [0,6 ; 9,3] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -641,7 +774,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 17,3 [10,5 ; 27,1] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -650,7 +783,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 73,2 [68,6 ; 77,3] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -659,7 +792,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 3,0 [1,7 ; 5,3] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -668,7 +801,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 8,1 [5,8 ; 11,2] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -677,7 +810,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 0,5 [0,1 ; 2,0] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -686,7 +819,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -695,7 +828,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -704,7 +837,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 0,8 [0,2 ; 2,3] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -713,7 +846,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 14,4 [11,3 ; 18,3] </td>
    <td style="text-align:right;"> 395 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -722,7 +855,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 3,8 [2,3 ; 6,1] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -731,7 +864,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 67,4 [62,7 ; 71,8] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -740,7 +873,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 9,0 [6,6 ; 12,3] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -749,7 +882,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 1,5 [0,7 ; 3,3] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -758,7 +891,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -767,7 +900,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -776,7 +909,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 1,8 [0,8 ; 3,6] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -785,7 +918,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 16,5 [13,2 ; 20,5] </td>
    <td style="text-align:right;"> 399 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -794,7 +927,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 4,3 [2,7 ; 6,9] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -803,7 +936,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 11,1 [8,3 ; 14,7] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -812,7 +945,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 71,9 [67,1 ; 76,2] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -821,7 +954,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 1,1 [0,4 ; 2,8] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -830,7 +963,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -839,7 +972,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -848,7 +981,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 1,4 [0,6 ; 3,2] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -857,7 +990,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 10,3 [7,6 ; 13,8] </td>
    <td style="text-align:right;"> 370 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -866,7 +999,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 5,1 [1,9 ; 12,7] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -875,7 +1008,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 21,5 [13,8 ; 31,9] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -884,7 +1017,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 13,9 [7,9 ; 23,4] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -893,7 +1026,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 41,8 [31,4 ; 52,9] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -902,7 +1035,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -911,7 +1044,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -920,7 +1053,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 10,1 [5,1 ; 19,0] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -929,7 +1062,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 7,6 [3,5 ; 15,9] </td>
    <td style="text-align:right;"> 79 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -938,7 +1071,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 13,9 [8,4 ; 22,1] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -947,7 +1080,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 15,8 [9,9 ; 24,3] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -956,7 +1089,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 12,9 [7,6 ; 20,9] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -965,7 +1098,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 3,0 [1,0 ; 8,8] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -974,7 +1107,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -983,7 +1116,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -992,7 +1125,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 33,7 [25,1 ; 43,4] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1001,7 +1134,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 20,8 [14,0 ; 29,8] </td>
    <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1010,7 +1143,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1019,7 +1152,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1028,7 +1161,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1037,7 +1170,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1046,7 +1179,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1055,7 +1188,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1064,7 +1197,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1073,7 +1206,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1082,7 +1215,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 19,2 [12,8 ; 27,9] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1091,7 +1224,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 26,9 [19,3 ; 36,2] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1100,7 +1233,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 23,1 [16,0 ; 32,1] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1109,7 +1242,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 0,0 </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1118,7 +1251,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1127,7 +1260,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1136,7 +1269,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 4,8 [2,0 ; 11,0] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -1145,7 +1278,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 26,0 [18,4 ; 35,2] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1154,7 +1287,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 82,3 [75,5 ; 87,5] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1163,7 +1296,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 3,2 [1,3 ; 7,4] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1172,7 +1305,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1181,7 +1314,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 1,3 [0,3 ; 4,9] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1190,7 +1323,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 6,3 [3,4 ; 11,4] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1199,7 +1332,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1208,7 +1341,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 0,6 [0,1 ; 4,4] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1217,7 +1350,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 6,3 [3,4 ; 11,4] </td>
    <td style="text-align:right;"> 158 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1226,7 +1359,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 1,0 [0,2 ; 3,7] </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1235,7 +1368,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 89,0 [84,1 ; 92,6] </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1244,7 +1377,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1253,7 +1386,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 2,4 [1,0 ; 5,6] </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1262,7 +1395,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 1,0 [0,2 ; 3,7] </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1271,7 +1404,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1280,7 +1413,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 0,0 </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1289,7 +1422,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 6,7 [4,0 ; 10,9] </td>
    <td style="text-align:right;"> 210 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1298,7 +1431,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 0,0 </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1307,7 +1440,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 27,7 [16,8 ; 42,0] </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1316,7 +1449,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1325,7 +1458,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 57,4 [43,1 ; 70,7] </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1334,7 +1467,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 4,3 [1,1 ; 15,5] </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1343,7 +1476,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1352,7 +1485,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 4,3 [1,1 ; 15,5] </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1361,7 +1494,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 6,4 [2,1 ; 18,0] </td>
    <td style="text-align:right;"> 47 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1370,7 +1503,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 6,6 [3,7 ; 11,5] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1379,7 +1512,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 9,0 [5,5 ; 14,4] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1388,7 +1521,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1397,7 +1530,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 2,4 [0,9 ; 6,2] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1406,7 +1539,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 72,5 [65,2 ; 78,7] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1415,7 +1548,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1424,7 +1557,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 1,2 [0,3 ; 4,7] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1433,7 +1566,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 8,4 [5,0 ; 13,7] </td>
    <td style="text-align:right;"> 167 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1442,7 +1575,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 10,5 [4,0 ; 24,9] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1451,7 +1584,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 18,4 [9,0 ; 33,9] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1460,7 +1593,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1469,7 +1602,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 10,5 [4,0 ; 24,9] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1478,7 +1611,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 5,3 [1,3 ; 18,8] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1487,7 +1620,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1496,7 +1629,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 50,0 [34,6 ; 65,4] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1505,7 +1638,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 5,3 [1,3 ; 18,8] </td>
    <td style="text-align:right;"> 38 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1514,7 +1647,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1523,7 +1656,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1532,7 +1665,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1541,7 +1674,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1550,7 +1683,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1559,7 +1692,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1568,7 +1701,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1577,7 +1710,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 8 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1586,7 +1719,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 29,5 [19,4 ; 42,1] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1595,7 +1728,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 23,0 [14,1 ; 35,1] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1604,7 +1737,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1613,7 +1746,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 3,3 [0,8 ; 12,2] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1622,7 +1755,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 14,8 [7,9 ; 26,0] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1631,7 +1764,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1640,7 +1773,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 4,9 [1,6 ; 14,2] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1649,7 +1782,7 @@ mais, une fois les gains et les pertes additionnés, peu de votes.</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 24,6 [15,4 ; 36,9] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2018 </td>
@@ -2685,248 +2818,9 @@ le PQ et l’Action démocratique du Québec (ADQ), et c’est ce panel qui
 compte le plus de changements de parti (21 %).</p>
 </div>
 <div class="section level2">
-<h2 id="la-fidélité-voter-comme-prévu">La fidélité : voter comme prévu<a class="anchor" aria-label="anchor" href="#la-fid%C3%A9lit%C3%A9-voter-comme-pr%C3%A9vu"></a>
-</h2>
-<figure class="qesr-fig" id="fig-loyal"><figcaption><span class="qesr-title">Le PLQ, le PQ et la CAQ gardent de 79 % à 96 % des personnes qui comptaient voter pour eux ; QS en garde moins, jusqu'à 45 % en 2007</span><span class="qesr-sub">Part des personnes qui comptaient voter pour chaque parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, selon l'étude par panel, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/loyal-light.png" alt="Graphique à points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une rangée par étude par panel de 1998 à 2022 : la part des personnes qui comptaient voter pour le parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, avec intervalles de confiance. Le PLQ, le PQ et la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a gardé 45 %. En 2022, la CAQ en a gardé 88 % et le PLQ 85 %. Valeurs dans la vue en tableau." width="672" height="518" loading="lazy"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/loyal-dark.png" alt="Graphique à points groupé par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ), une rangée par étude par panel de 1998 à 2022 : la part des personnes qui comptaient voter pour le parti pendant la campagne qui ont déclaré avoir voté pour lui, parmi les votants, avec intervalles de confiance. Le PLQ, le PQ et la CAQ sont entre 79 % et 96 % ; QS, dans le panel 2007, en a gardé 45 %. En 2022, la CAQ en a gardé 88 % et le PLQ 85 %. Valeurs dans la vue en tableau." width="672" height="518" loading="lazy"><p class="qesr-note">Source : qesR. Répondants interrogés pendant la campagne et après l'élection qui ont déclaré un vote. Traits : intervalles de confiance à 95 %. Points pleins : pondérés avec la pondération postélectorale (panel 2018, EEQ 2022) ; points creux (panels 1998, 2007 et 2012) : non pondérés ici, leurs pondérations étant en révision. Les études diffèrent par leur devis et leur mode de collecte ; les comparaisons entre études se font donc de préférence à l'intérieur d'un parti. Les cellules de moins de 30 répondants ne sont pas tracées ; les autres partis sont dans la vue en tableau.</p>
-<details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
-<thead><tr>
-<th style="text-align:right;"> Élection </th>
-   <th style="text-align:left;"> Étude </th>
-   <th style="text-align:left;"> Intention </th>
-   <th style="text-align:left;"> A voté comme prévu, % [IC à 95 %] </th>
-   <th style="text-align:right;"> n </th>
-   <th style="text-align:left;"> Pondération </th>
-  </tr></thead>
-<tbody>
-<tr>
-<td style="text-align:right;"> 1998 </td>
-   <td style="text-align:left;"> Sondages de 1998 </td>
-   <td style="text-align:left;"> PLQ </td>
-   <td style="text-align:left;"> 88,9 [84,7 ; 92,1] </td>
-   <td style="text-align:right;"> 280 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 1998 </td>
-   <td style="text-align:left;"> Sondages de 1998 </td>
-   <td style="text-align:left;"> PQ </td>
-   <td style="text-align:left;"> 92,1 [89,0 ; 94,3] </td>
-   <td style="text-align:right;"> 403 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 1998 </td>
-   <td style="text-align:left;"> Sondages de 1998 </td>
-   <td style="text-align:left;"> ADQ </td>
-   <td style="text-align:left;"> 65,3 [58,8 ; 71,3] </td>
-   <td style="text-align:right;"> 222 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 1998 </td>
-   <td style="text-align:left;"> Sondages de 1998 </td>
-   <td style="text-align:left;"> Autres </td>
-   <td style="text-align:left;"> n &lt; 30 </td>
-   <td style="text-align:right;"> 23 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> Panel 2007 </td>
-   <td style="text-align:left;"> PLQ </td>
-   <td style="text-align:left;"> 85,5 [81,3 ; 88,9] </td>
-   <td style="text-align:right;"> 338 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> Panel 2007 </td>
-   <td style="text-align:left;"> PQ </td>
-   <td style="text-align:left;"> 80,8 [76,2 ; 84,7] </td>
-   <td style="text-align:right;"> 333 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> Panel 2007 </td>
-   <td style="text-align:left;"> ADQ </td>
-   <td style="text-align:left;"> 80,1 [75,5 ; 84,1] </td>
-   <td style="text-align:right;"> 332 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> Panel 2007 </td>
-   <td style="text-align:left;"> QS </td>
-   <td style="text-align:left;"> 45,2 [34,2 ; 56,7] </td>
-   <td style="text-align:right;"> 73 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2007 </td>
-   <td style="text-align:left;"> Panel 2007 </td>
-   <td style="text-align:left;"> Autres </td>
-   <td style="text-align:left;"> 42,5 [32,2 ; 53,5] </td>
-   <td style="text-align:right;"> 80 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> Panel 2012 </td>
-   <td style="text-align:left;"> PLQ </td>
-   <td style="text-align:left;"> 87,8 [81,5 ; 92,2] </td>
-   <td style="text-align:right;"> 148 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> Panel 2012 </td>
-   <td style="text-align:left;"> PQ </td>
-   <td style="text-align:left;"> 95,4 [91,4 ; 97,6] </td>
-   <td style="text-align:right;"> 196 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> Panel 2012 </td>
-   <td style="text-align:left;"> QS </td>
-   <td style="text-align:left;"> 61,4 [46,4 ; 74,5] </td>
-   <td style="text-align:right;"> 44 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> Panel 2012 </td>
-   <td style="text-align:left;"> CAQ </td>
-   <td style="text-align:left;"> 79,1 [71,9 ; 84,8] </td>
-   <td style="text-align:right;"> 153 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2012 </td>
-   <td style="text-align:left;"> Panel 2012 </td>
-   <td style="text-align:left;"> Autres </td>
-   <td style="text-align:left;"> 52,8 [36,7 ; 68,3] </td>
-   <td style="text-align:right;"> 36 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> Panel 2018 </td>
-   <td style="text-align:left;"> PLQ </td>
-   <td style="text-align:left;"> 90,2 [84,4 ; 94,0] </td>
-   <td style="text-align:right;"> 201 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> Panel 2018 </td>
-   <td style="text-align:left;"> PQ </td>
-   <td style="text-align:left;"> 84,8 [71,9 ; 92,4] </td>
-   <td style="text-align:right;"> 102 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> Panel 2018 </td>
-   <td style="text-align:left;"> QS </td>
-   <td style="text-align:left;"> 74,1 [63,1 ; 82,8] </td>
-   <td style="text-align:right;"> 101 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> Panel 2018 </td>
-   <td style="text-align:left;"> CAQ </td>
-   <td style="text-align:left;"> 95,7 [90,6 ; 98,1] </td>
-   <td style="text-align:right;"> 199 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2018 </td>
-   <td style="text-align:left;"> Panel 2018 </td>
-   <td style="text-align:left;"> Autres </td>
-   <td style="text-align:left;"> n &lt; 30 </td>
-   <td style="text-align:right;"> 29 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> PLQ </td>
-   <td style="text-align:left;"> 85,1 [75,3 ; 91,4] </td>
-   <td style="text-align:right;"> 112 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> PQ </td>
-   <td style="text-align:left;"> 86,7 [78,7 ; 92,0] </td>
-   <td style="text-align:right;"> 147 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> QS </td>
-   <td style="text-align:left;"> 71,3 [59,3 ; 81,0] </td>
-   <td style="text-align:right;"> 206 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> CAQ </td>
-   <td style="text-align:left;"> 88,4 [84,2 ; 91,6] </td>
-   <td style="text-align:right;"> 359 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> PCQ </td>
-   <td style="text-align:left;"> 82,3 [73,9 ; 88,5] </td>
-   <td style="text-align:right;"> 159 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-<tr>
-<td style="text-align:right;"> 2022 </td>
-   <td style="text-align:left;"> EEQ 2022 </td>
-   <td style="text-align:left;"> Autres </td>
-   <td style="text-align:left;"> n &lt; 30 </td>
-   <td style="text-align:right;"> 24 </td>
-   <td style="text-align:left;"> pondéré </td>
-  </tr>
-</tbody>
-</table></details></figure><p>Deux tendances se dégagent. Premièrement, le PLQ est le parti le plus
-constant dans le temps : il conserve de 85 % à 90 % des personnes qui
-comptaient voter pour lui à chaque élection, alors que le PQ varie de
-81 % à 95 % et la CAQ de 79 % à 96 %. Ces parts excluent les personnes
-qui n’ont pas voté, ce qui explique que la CAQ en conserve ici 88 % en
-2022, contre 83 % dans la matrice. Deuxièmement, ce sont les petits
-partis qui en gardent le moins. L’ADQ en a conservé 65 % en 1998, et QS
-45 % en 2007 et 61 % en 2012. Ce constat est cohérent avec une
-explication bien connue, selon laquelle l’électeur séduit par un petit
-parti pendant la campagne se rabat, le jour du vote, sur un parti qui
-peut gagner. Les panels ne permettent toutefois pas, à eux seuls, de
-distinguer la désertion stratégique d’un simple changement d’idée.</p>
-<p>La fidélité n’est pas pour autant un trait fixe d’un parti. La CAQ a
-conservé 79 % des personnes qui comptaient voter pour elle en 2012, à sa
-première élection, et 96 % en 2018, l’année de sa victoire. L’ADQ est
-passée de 65 % en 1998 à 80 % en 2007, l’année où elle est devenue
-l’opposition officielle. Ces cas suggèrent, sans l’établir, que la
-fidélité suit l’élan d’un parti davantage que sa taille. Le Parti
-conservateur du Québec (PCQ) ne va dans le même sens que si c’est
-l’élan, et non les chances de l’emporter, qui compte : avec 1,5 % des
-voix en 2018, il a conservé 82 % des personnes qui comptaient voter pour
-lui en 2022, sans faire élire de député (sur cette percée, voir Bélanger
-et collaborateurs, 2025).</p>
-</div>
-<div class="section level2">
 <h2 id="où-sont-allés-les-indécis">Où sont allés les indécis<a class="anchor" aria-label="anchor" href="#o%C3%B9-sont-all%C3%A9s-les-ind%C3%A9cis"></a>
 </h2>
-<figure class="qesr-fig" id="fig-undecided"><figcaption><span class="qesr-title">De 17 % à 27 % des indécis de la campagne n'ont pas voté ; en 2018, 37 % d'entre eux ont voté CAQ, le parti gagnant</span><span class="qesr-sub">Ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, selon l'étude par panel</span></figcaption><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/undecided-light.png" alt="Barres horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont pas voté et 13 % ont voté CAQ. Valeurs dans la vue en tableau." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/undecided-dark.png" alt="Barres horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont pas voté et 13 % ont voté CAQ. Valeurs dans la vue en tableau." width="672" height="307" loading="lazy"><p class="qesr-note">Source : qesR. Les indécis sont les répondants qui n'ont nommé aucun parti pendant la campagne, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient, et qui ont répondu après l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré ici, les pondérations étant en révision (panels 1998, 2007 et 2012). Segment vide : n'a pas voté. Nombres : parts de 8 % ou plus. Chaque rangée repose sur 104 répondants ou moins : les intervalles de confiance de la vue en tableau sont donc larges. Dans les panels 2007 et 2018, « ne sait pas » et « refus » ne peuvent être distingués et sont tous deux comptés comme indécis.</p>
+<figure class="qesr-fig" id="fig-undecided"><figcaption><span class="qesr-title">De 17 % à 27 % des indécis de la campagne n'ont pas voté ; en 2018, 37 % d'entre eux ont voté CAQ, le parti gagnant</span><span class="qesr-sub">Ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, selon l'étude par panel</span></figcaption><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/undecided-light.png" alt="Barres horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont pas voté et 13 % ont voté CAQ. Valeurs dans la vue en tableau." width="672" height="307" loading="lazy"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/undecided-dark.png" alt="Barres horizontales empilées à 100 %, une par étude par panel de 1998 à 2022 : ce qu'ont déclaré après l'élection les répondants encore indécis pendant la campagne, en commençant par ceux qui n'ont pas voté. Entre 17 % et 27 % n'ont pas voté ; en 2018, 37 % ont voté CAQ ; en 2022, 24 % n'ont pas voté et 13 % ont voté CAQ. Valeurs dans la vue en tableau." width="672" height="307" loading="lazy"><p class="qesr-note">Source : qesR. Les indécis sont les répondants qui n'ont nommé aucun parti pendant la campagne, même quand on leur demandait (là où le panel le demandait) vers lequel ils penchaient, et qui ont répondu après l'élection. Pondéré (panel 2018, EEQ 2022) ou non pondéré, aucune pondération validée (panels 1998, 2007 et 2012). Segment vide : n'a pas voté. Nombres : parts de 8 % ou plus. Chaque rangée repose sur 104 répondants ou moins : les intervalles de confiance de la vue en tableau sont donc larges. Dans les panels 2007 et 2018, « ne sait pas » et « refus » ne peuvent être distingués et sont tous deux comptés comme indécis.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -2943,7 +2837,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 38,3 [28,4 ; 49,3] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2951,7 +2845,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 28,4 [19,7 ; 39,1] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2959,7 +2853,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 13,6 [7,7 ; 22,9] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2967,7 +2861,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2975,7 +2869,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2983,7 +2877,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2991,7 +2885,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 2,5 [0,6 ; 9,3] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 1998 </td>
@@ -2999,7 +2893,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 17,3 [10,5 ; 27,1] </td>
    <td style="text-align:right;"> 81 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3007,7 +2901,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 19,2 [12,8 ; 27,9] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3015,7 +2909,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 26,9 [19,3 ; 36,2] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3023,7 +2917,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 23,1 [16,0 ; 32,1] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3031,7 +2925,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 0,0 </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3039,7 +2933,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3047,7 +2941,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3055,7 +2949,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 4,8 [2,0 ; 11,0] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3063,7 +2957,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 26,0 [18,4 ; 35,2] </td>
    <td style="text-align:right;"> 104 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3071,7 +2965,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 29,5 [19,4 ; 42,1] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3079,7 +2973,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 23,0 [14,1 ; 35,1] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3087,7 +2981,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3095,7 +2989,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 3,3 [0,8 ; 12,2] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3103,7 +2997,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> 14,8 [7,9 ; 26,0] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3111,7 +3005,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> n.p. </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3119,7 +3013,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> Autres </td>
    <td style="text-align:left;"> 4,9 [1,6 ; 14,2] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3127,7 +3021,7 @@ et collaborateurs, 2025).</p>
    <td style="text-align:left;"> N'a pas voté </td>
    <td style="text-align:left;"> 24,6 [15,4 ; 36,9] </td>
    <td style="text-align:right;"> 61 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2018 </td>
@@ -3279,7 +3173,7 @@ chaque parti, nous calculons sa part du vote déclaré moins sa part des
 intentions, chez les mêmes répondants. Un écart positif signifie que le
 parti a gagné plus d’électeurs pendant la campagne qu’il n’en a
 perdu.</p>
-<figure class="qesr-fig" id="fig-gains"><figcaption><span class="qesr-title">En solde net, la campagne a déplacé quelques points tout au plus : de −3,1 pts pour le PCQ en 2022 à +6,1 pts pour la CAQ en 2018</span><span class="qesr-sub">Part du vote déclaré de chaque parti moins sa part des intentions de campagne, chez les mêmes répondants, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/gains-light.png" alt="Graphique à points en quatre panneaux, un par étude par panel de 2007 à 2022, une rangée par parti : la part du vote déclaré moins la part des intentions de campagne, chez les mêmes répondants, en points, avec intervalles de confiance. La plupart des écarts sont à quelques points de zéro. Le plus grand gain est celui de la CAQ en 2018, +6,1 pts, la plus grande perte celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à −2,9 pts et le PQ à +3,0 pts. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/gains-dark.png" alt="Graphique à points en quatre panneaux, un par étude par panel de 2007 à 2022, une rangée par parti : la part du vote déclaré moins la part des intentions de campagne, chez les mêmes répondants, en points, avec intervalles de confiance. La plupart des écarts sont à quelques points de zéro. Le plus grand gain est celui de la CAQ en 2018, +6,1 pts, la plus grande perte celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à −2,9 pts et le PQ à +3,0 pts. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"><p class="qesr-note">Source : qesR. Tous les répondants interrogés pendant la campagne et après l'élection, y compris les indécis, ceux qui disaient ne pas vouloir voter et ceux qui n'ont pas voté, de sorte que les gains des partis et de l'abstention s'additionnent. Points pleins : pondérés avec la pondération postélectorale (panel 2018, EEQ 2022) ; points creux : non pondérés ici, les pondérations étant en révision (panels 2007 et 2012). Les sondages de 1998 sont omis : leur recontact surreprésente les indécis, les discrets et les partisans des tiers partis (ADQ), de sorte que leurs gains non pondérés ne peuvent être lus (voir le texte). Les partis qui ne se présentaient pas, ou que la question ne proposait pas, sont omis.</p>
+<figure class="qesr-fig" id="fig-gains"><figcaption><span class="qesr-title">En solde net, la campagne a déplacé quelques points tout au plus : de −3,1 pts pour le PCQ en 2022 à +6,1 pts pour la CAQ en 2018</span><span class="qesr-sub">Part du vote déclaré de chaque parti moins sa part des intentions de campagne, chez les mêmes répondants, avec intervalles de confiance à 95 %</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="fr-transitions_files/figure-html/gains-light-narrow.png" width="442" height="552"><img class="qesr-img qesr-light" src="fr-transitions_files/figure-html/gains-light.png" alt="Graphique à points en quatre panneaux, un par étude par panel de 2007 à 2022, une rangée par parti : la part du vote déclaré moins la part des intentions de campagne, chez les mêmes répondants, en points, avec intervalles de confiance. La plupart des écarts sont à quelques points de zéro. Le plus grand gain est celui de la CAQ en 2018, +6,1 pts, la plus grande perte celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à −2,9 pts et le PQ à +3,0 pts. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="fr-transitions_files/figure-html/gains-dark-narrow.png" width="442" height="552"><img class="qesr-img qesr-dark" src="fr-transitions_files/figure-html/gains-dark.png" alt="Graphique à points en quatre panneaux, un par étude par panel de 2007 à 2022, une rangée par parti : la part du vote déclaré moins la part des intentions de campagne, chez les mêmes répondants, en points, avec intervalles de confiance. La plupart des écarts sont à quelques points de zéro. Le plus grand gain est celui de la CAQ en 2018, +6,1 pts, la plus grande perte celle du PCQ en 2022, −3,1 pts ; en 2022, la CAQ est à −2,9 pts et le PQ à +3,0 pts. Valeurs dans la vue en tableau." width="672" height="480" loading="lazy"></source></picture><p class="qesr-note">Source : qesR. Tous les répondants interrogés pendant la campagne et après l'élection, y compris les indécis, ceux qui disaient ne pas vouloir voter et ceux qui n'ont pas voté, de sorte que les gains des partis et de l'abstention s'additionnent. Points pleins : pondérés avec la pondération postélectorale (panel 2018, EEQ 2022) ; points creux : non pondérés, aucune pondération validée (panels 2007 et 2012). Les sondages de 1998 sont omis : leur recontact surreprésente les indécis, les discrets et les partisans des tiers partis (ADQ), de sorte que leurs gains non pondérés ne peuvent être lus (voir le texte). Les partis qui ne se présentaient pas, ou que la question ne proposait pas, sont omis.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -3296,7 +3190,7 @@ perdu.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> -2,4 [-4,2 ; -0,7] </td>
    <td style="text-align:right;"> 1477 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3304,7 +3198,7 @@ perdu.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> -0,9 [-3,0 ; 1,2] </td>
    <td style="text-align:right;"> 1477 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3312,7 +3206,7 @@ perdu.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 1,4 [-0,6 ; 3,4] </td>
    <td style="text-align:right;"> 1477 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2007 </td>
@@ -3320,7 +3214,7 @@ perdu.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> -2,1 [-3,1 ; -1,1] </td>
    <td style="text-align:right;"> 1477 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3328,7 +3222,7 @@ perdu.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 1,0 [-1,2 ; 3,3] </td>
    <td style="text-align:right;"> 689 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3336,7 +3230,7 @@ perdu.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 4,6 [2,2 ; 7,1] </td>
    <td style="text-align:right;"> 689 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3344,7 +3238,7 @@ perdu.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> -0,4 [-2,2 ; 1,3] </td>
    <td style="text-align:right;"> 689 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -3352,7 +3246,7 @@ perdu.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> -2,6 [-5,1 ; -0,2] </td>
    <td style="text-align:right;"> 689 </td>
-   <td style="text-align:left;"> non pondéré (pondération en révision) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2018 </td>
@@ -3444,20 +3338,21 @@ réunit deux des trois sondages que Durand et Blais (1999) ont
 recontactés, ceux de CROP et de CREATEC, qui n’ont interrogé que des
 francophones. Le recontact a été tiré de manière à surreprésenter les
 indécis, les discrets et les partisans des tiers partis, et il est
-analysé ici sans pondération (ses pondérations sont en révision). Sans
-pondération, les personnes qui comptaient voter ADQ forment 23 % des
-paires ; avec la pondération que les producteurs ont utilisée pour leurs
-propres tableaux, elles en forment 16 %. Les chiffres non pondérés
-montrent un PLQ et un PQ qui gagnent à peu près autant (2,7 et 2,3
-points) : il n’y a donc pas de remontée libérale au détriment du PQ, et
-l’ADQ recule de 6,2 points. Avec la pondération des producteurs, le gain
-du PLQ est presque nul (0,3 point) et le recul du PQ est faible (1,5
-point), tous deux avec des intervalles de confiance qui incluent zéro,
-tandis que le recul de l’ADQ se réduit à 3,2 points. Dans un cas comme
-dans l’autre, ces chiffres concordent avec ceux de Durand et Blais
-(1999). Cela n’a rien d’étonnant : ils proviennent des mêmes répondants
-et confirment donc l’analyse originale plutôt qu’ils ne la mettent à
-l’épreuve de manière indépendante.</p>
+analysé ici sans pondération (ses pondérations ne sont pas validées ;
+voir le <a href="fr-etudes.html#ponderations">tableau des
+pondérations</a>). Sans pondération, les personnes qui comptaient voter
+ADQ forment 23 % des paires ; avec la pondération que les producteurs
+ont utilisée pour leurs propres tableaux, elles en forment 16 %. Les
+chiffres non pondérés montrent un PLQ et un PQ qui gagnent à peu près
+autant (2,7 et 2,3 points) : il n’y a donc pas de remontée libérale au
+détriment du PQ, et l’ADQ recule de 6,2 points. Avec la pondération des
+producteurs, le gain du PLQ est presque nul (0,3 point) et le recul du
+PQ est faible (1,5 point), tous deux avec des intervalles de confiance
+qui incluent zéro, tandis que le recul de l’ADQ se réduit à 3,2 points.
+Dans un cas comme dans l’autre, ces chiffres concordent avec ceux de
+Durand et Blais (1999). Cela n’a rien d’étonnant : ils proviennent des
+mêmes répondants et confirment donc l’analyse originale plutôt qu’ils ne
+la mettent à l’épreuve de manière indépendante.</p>
 </div>
 <div class="section level2">
 <h2 id="portée-et-limites-des-résultats">Portée et limites des résultats<a class="anchor" aria-label="anchor" href="#port%C3%A9e-et-limites-des-r%C3%A9sultats"></a>
@@ -3548,10 +3443,10 @@ l’abstention.</li>
 <li>
 <strong>Pondérations.</strong> La pondération postélectorale de
 chaque répondant dans le panel 2018 et l’EEQ 2022. Les panels de 1998,
-2007 et 2012 ne sont pas pondérés ici, leurs pondérations étant en
-révision, et sont tracés en points creux. Le recontact de 1998
-surreprésente en outre les indécis, les discrets et les partisans des
-tiers partis (ADQ) : ses gains nets sont donc omis de la dernière
+2007 et 2012 n’ont pas de pondération validée (voir le <a href="fr-etudes.html#ponderations">tableau des pondérations</a>) : ils
+ne sont pas pondérés ici et sont tracés en points creux. Le recontact de
+1998 surreprésente en outre les indécis, les discrets et les partisans
+des tiers partis (ADQ) : ses gains nets sont donc omis de la dernière
 figure, et le texte les compare avec et sans la pondération des
 producteurs.</li>
 <li>

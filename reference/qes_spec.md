@@ -1,4 +1,4 @@
-# The harmonization spec (experimental)
+# Harmonization rules and coverage (experimental)
 
 `qes_spec()` is the one entry point to the harmonization specification:
 the reviewed rules that say, study by study, which question feeds each
@@ -216,7 +216,7 @@ l'appariement souple propre à chaque étude.
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md)
 en est la référence complète.
 
-## Targets in the shipped spec (version 4.6.0)
+## Targets in the shipped spec (version 4.7.0)
 
 Generated from the spec by roxygen; `qes_spec()` gives the same list
 with each study's grade.
@@ -1009,9 +1009,9 @@ rx[, c("column", "base", "transform", "qes2022", "qes1998")]
 #> 22                                                                                                                                                    identity
 #> 23                                                                                                                                                    identity
 #> 24                                                                                                                                                    identity
-#> 25                                                                                                                             bands:0.35,0.75:low,medium,high
+#> 25                                                                                                                             bands:0.55,0.85:low,medium,high
 #> 26                                                                                                                                                    identity
-#> 27                                                                                                         recode:yes=yes,no=no,would_not_vote=NA:not_mappable
+#> 27                                                                                                            recode:yes=yes,no=no,would_not_vote=NA:not_voted
 #> 28 recode:independence=independence,sovereign_country=sovereign_country,partnership_1995_push=partnership_1995,partnership_1995=partnership_1995,favour=favour
 #> 29                                                                                                                                                    identity
 #> 30                                                                                                                                                    identity
@@ -1067,14 +1067,14 @@ qes_spec("relaxed_maps", targets = "education")[, c("study", "source_var", "reco
 # the checked spec itself
 s <- qes_spec("spec")
 s
-#> qesR harmonization spec 4.6.0 (2026-10-01), content hash 910e81120d19001bb1d7c0f9b0b32b3f
+#> qesR harmonization spec 4.7.0 (2026-10-05), content hash 30697daa0042aab3078507b665867748
 #>   targets: 50
 #>   levels: 169
 #>   crosswalk: 236
 #>   valuemaps: 1754
 #>   waves: 39
 #>   weights: 26
-#>   changes: 17
+#>   changes: 18
 #>   gates: 3209
 #>   expected: 2914
 #>   hashes: 269
@@ -1083,7 +1083,7 @@ s
 #>   pooled_members: 14
 #>   relaxed: 35
 #>   relaxed_maps: 65
-#>   rx_expected: 2712
+#>   rx_expected: 2684
 #>   rx_hashes: 385
 #> Check: 0 error(s), 0 warning(s), 0 note(s).
 ```

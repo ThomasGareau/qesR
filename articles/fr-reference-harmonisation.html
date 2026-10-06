@@ -29,10 +29,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -41,12 +69,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -62,20 +94,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +215,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -108,7 +235,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -159,9 +286,16 @@ version</a></em></p>
 <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, étude par étude. La page est générée à
 partir des règles livrées avec qesR : elle décrit donc toujours ce que
 la version installée applique.</p>
+<div class="section level2">
+<h2 id="aller-à-une-variable">Aller à une variable<a class="anchor" aria-label="anchor" href="#aller-%C3%A0-une-variable"></a>
+</h2>
+<div class="qesr-jump">
+
+</div>
 <p><code><a href="../reference/qes_spec.html">qes_spec()</a></code> renvoie les mêmes informations sous forme de
 tableaux, et <code>qes_provenance(x, level = "spec")</code> la version
 des règles qui a produit des données harmonisées.</p>
+</div>
 <div class="section level2">
 <h2 id="comment-lire-cette-référence">Comment lire cette référence<a class="anchor" aria-label="anchor" href="#comment-lire-cette-r%C3%A9f%C3%A9rence"></a>
 </h2>
@@ -196,8 +330,10 @@ colonnes de pondération valent alors <code>NA</code>) ;</li>
 <strong>Ne sait pas</strong> : si « je ne sais pas » était
 offert.</li>
 </ul>
-<p>Une ligne marquée <em>en attente d’approbation</em> n’est appliquée
-que si vous la demandez (<code>include_draft = TRUE</code>).</p>
+<p>Une ligne marquée <em>en attente d’approbation</em> est vérifiée mais
+pas encore approuvée, et n’est pas utilisée par défaut : ses valeurs
+sont manquantes. Pour l’utiliser quand même, passez
+<code>include_draft = TRUE</code> à <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>.</p>
 <p>Les libellés et les étiquettes de <code>qes2022</code> cités sur
 cette page viennent de <em>2022 Quebec Election Study</em> (Mahéo,
 Bélanger, Stephenson et Harell, 2023, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>) et gardent sa
@@ -370,8 +506,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -425,7 +562,7 @@ moment</p>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -497,8 +634,9 @@ Postélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -688,7 +826,7 @@ Web.</td>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent">
@@ -761,8 +899,9 @@ Préélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -889,7 +1028,7 @@ lequel des partis suivants voteriez-vous? Voteriez-vous pour…</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent_push">
@@ -965,8 +1104,9 @@ Préélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1138,8 +1278,7 @@ lequel de ces partis seriez-vous tenté(e) de voter?)</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
-<p><strong>Non utilisé</strong></p>
+</table></details><p><strong>Non utilisé</strong></p>
 <ul>
 <li>qes1998 <code>intvote2</code> (pre) : <code>not_comparable</code>.
 Les étiquettes de valeur sont décalées dans la source : les effectifs
@@ -1178,8 +1317,9 @@ Postélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1369,7 +1509,7 @@ dernier?</td>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-turnout_prov_likely">
@@ -1419,8 +1559,9 @@ Préélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1460,7 +1601,7 @@ cadre de cette élection, êtes-vous…</td>
 <td><code>cps_weight_general</code></td>
 <td>Non offert</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent_other">
@@ -1471,8 +1612,9 @@ cadre de cette élection, êtes-vous…</td>
 à la question d’intention de vote (vote_prov_intent, niveau other), tel
 qu’inscrit. Texte libre, non harmonisé.</p>
 <p>Famille <code>vote_prov</code> · type Texte · moment Préélectoral</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1513,7 +1655,7 @@ spécifier)]</td>
 <td><code>cps_weight_general</code></td>
 <td>Non offert</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_prev">
@@ -1583,8 +1725,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1688,7 +1831,7 @@ mars 2007?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_fed_recall">
@@ -1747,8 +1890,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1842,7 +1986,7 @@ parti avez-vous voté ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -1916,8 +2060,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2040,7 +2185,7 @@ identifiez …?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-pid_fed">
@@ -2100,8 +2245,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2158,7 +2304,7 @@ un…?</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-pid_prov_strength">
@@ -2197,8 +2343,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2331,7 +2478,7 @@ inapplicable</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -2370,8 +2517,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2463,7 +2611,7 @@ OUI ou voteriez-vous NON?</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_sovereign_country">
@@ -2503,8 +2651,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2549,7 +2698,7 @@ voteriez-vous non?</td>
 <code>pondam1</code> (pas encore utilisable)</td>
 <td>Non documenté</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_favour">
@@ -2591,8 +2740,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2635,8 +2785,7 @@ Québec ne fasse plus partie du Canada, êtes-vous personnellement</td>
 <td><code>weight_rts</code></td>
 <td>Non documenté</td>
 </tr></tbody>
-</table>
-<p><strong>Non utilisé</strong></p>
+</table></details><p><strong>Non utilisé</strong></p>
 <ul>
 <li>qes2018_panel <code>independance</code> (post) :
 <code>not_comparable</code>. Un recodage de rts_q7 (1-2 favorable, 3-4
@@ -2653,8 +2802,9 @@ jamais apparié.</li>
 <p>Famille <code>left_right</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-10</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2762,7 +2912,7 @@ générale?</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_4pt">
@@ -2805,8 +2955,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2877,8 +3028,7 @@ l’ancrage a « Hardly interested ».</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
-<p><strong>Non utilisé</strong></p>
+</table></details><p><strong>Non utilisé</strong></p>
 <ul>
 <li>qes2012_panel <code>interetrec</code> (pre) :
 <code>not_comparable</code>. Pas une question : un score d’intérêt pour
@@ -2925,8 +3075,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3026,7 +3177,7 @@ reste du Canada, voteriez-vous OUI ou voteriez-vous NON</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_0_10">
@@ -3039,8 +3190,9 @@ pol_interest la divise par 10.</p>
 <p>Famille <code>interest</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-10</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3100,7 +3252,7 @@ intérêt et 10 veut dire beaucoup d’intérêt)</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_election_0_10">
@@ -3114,8 +3266,9 @@ en général.</p>
 <p>Famille <code>interest</code> · type Numérique · moment
 Postélectoral</p>
 <p><strong>Plage valide</strong> : 0-10</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3174,7 +3327,7 @@ PROVINCIALE qui vient d’avoir lieu ?</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_campaign_4pt">
@@ -3217,8 +3370,9 @@ Préélectoral</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3259,7 +3413,7 @@ tout à la présente campagne électorale au Québec?</td>
 <code>pondam1</code> (pas encore utilisable)</td>
 <td>Spontané seulement</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_partnership_1995_push">
@@ -3301,8 +3455,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3421,7 +3576,7 @@ tenté(e) de voter pour le OUI ou pour le NON?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-satis_demo_qc">
@@ -3463,8 +3618,9 @@ Tout moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3588,7 +3744,7 @@ fonctionne au Québec ? Êtes-vous…</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-gov_satisfaction">
@@ -3633,8 +3789,9 @@ Tout moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3745,7 +3902,7 @@ Québec?</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-econ_retro_qc">
@@ -3781,8 +3938,9 @@ Tout moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3900,7 +4058,7 @@ ou est-elle restée à PEU PRÈS LA MÊME depuis un an ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-attach_qc">
@@ -3940,8 +4098,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4028,7 +4187,7 @@ Plutôt attaché(e) » et « Pas très attaché(e) ».</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-attach_ca">
@@ -4068,8 +4227,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4159,7 +4319,7 @@ Plutôt attaché(e) » et « Pas très attaché(e) ».</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-identity_qc_ca">
@@ -4210,8 +4370,9 @@ Tout moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4335,7 +4496,7 @@ vous considérez…?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_plq">
@@ -4349,8 +4510,9 @@ pas connaître la personne est « ne sait pas » (dk).</p>
 <p>Famille <code>leader_ratings</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-100</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4484,7 +4646,7 @@ Aimez-vous JEAN CHAREST ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_pq">
@@ -4497,8 +4659,9 @@ pas connaître la personne est « ne sait pas » (dk).</p>
 <p>Famille <code>leader_ratings</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-100</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4631,7 +4794,7 @@ Aimez-vous ANDRÉ BOISCLAIR ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_caq">
@@ -4645,8 +4808,9 @@ pas connaître la personne est « ne sait pas » (dk).</p>
 <p>Famille <code>leader_ratings</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-100</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4739,7 +4903,7 @@ VRAIMENT BEAUCOUP, que pensez-vous de… FRANÇOIS LEGAULT?</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_qs">
@@ -4755,8 +4919,9 @@ fait évaluer les deux). Ne pas connaître la personne est « ne sait pas »
 <p>Famille <code>leader_ratings</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-100</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4888,7 +5053,7 @@ Aimez-vous FRANÇOISE DAVID ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_adq">
@@ -4902,8 +5067,9 @@ pas connaître la personne est « ne sait pas » (dk).</p>
 <p>Famille <code>leader_ratings</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 0-100</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4968,7 +5134,7 @@ Aimez-vous MARIO DUMONT ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -5070,8 +5236,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5199,7 +5366,7 @@ le plus important lors de l’élection provinciale du 8 décembre dernier
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -5212,8 +5379,9 @@ le plus important lors de l’élection provinciale du 8 décembre dernier
 <p>Année de naissance de la personne.</p>
 <p>Famille <code>birth</code> · type Numérique · moment Invariant</p>
 <p><strong>Plage valide</strong> : 1900-2010</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5334,7 +5502,7 @@ l’ensemble de la population québécoise. D’abord, en quelle année
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-birth_month">
@@ -5346,8 +5514,9 @@ personne née 18 ans avant l’année de l’élection avait 18 ans le jour du
 scrutin.</p>
 <p>Famille <code>birth</code> · type Numérique · moment Invariant</p>
 <p><strong>Plage valide</strong> : 1-12</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5386,7 +5555,7 @@ scrutin.</p>
 <td><code>pond</code></td>
 <td>Offert explicitement</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age">
@@ -5398,8 +5567,9 @@ l’âge qu’à un an près.</p>
 <p>Famille <code>age_years</code> · type Numérique · moment Tout
 moment</p>
 <p><strong>Plage valide</strong> : 15-115</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5457,7 +5627,7 @@ naissance ; l’ancrage la pose à tout le monde.</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age_group3">
@@ -5496,8 +5666,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5616,7 +5787,7 @@ l’ancrage offre les trois tranches, par téléphone et en ligne.</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-citizen">
@@ -5646,8 +5817,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5686,7 +5858,7 @@ moment</p>
 <td><code>cps_weight_general</code></td>
 <td>Non offert</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age_group6">
@@ -5740,8 +5912,9 @@ moment</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5843,7 +6016,7 @@ sait pas » était offert.</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-gender">
@@ -5885,8 +6058,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5968,9 +6142,10 @@ elle a été demandée ou notée.</td>
 <td>Mêmes deux options sur le Web et mêmes énoncés que l’ancrage en
 anglais (What is your gender?) et en français (Quel est votre sexe?),
 plus une option de non-réponse absente du fichier ; gardée au niveau
-comparable, celui qu’elle avait avant la révision, parce qu’un niveau
-identique pour une ligne qui réunit des langues de passation demande un
-second réviseur (humain).</td>
+comparable, celui qu’elle avait avant la révision : un niveau identique
+pour une ligne qui réunit les langues de passation n’est accordé
+qu’après une révision par une personne, que cette ligne n’a pas encore
+eue.</td>
 <td>gender_2</td>
 <td>man, woman; non offerts : nonbinary, other</td>
 <td>Quel est votre sexe?</td>
@@ -6084,7 +6259,7 @@ qu’on ignore si elle a été demandée ou notée par l’intervieweur.</td>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-education4">
@@ -6132,8 +6307,9 @@ niveaux de comparabilité.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6313,7 +6489,7 @@ université), par téléphone, et non le plus haut niveau atteint.</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-lang_mother">
@@ -6350,8 +6526,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6535,7 +6712,7 @@ que vous avez apprise et que vous pouvez encore parler?</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-born_canada">
@@ -6566,8 +6743,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6654,7 +6832,7 @@ hors du Canada), regroupée exactement en né ou non au Canada, sur le Web
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-income_native">
@@ -6667,8 +6845,9 @@ là où l’étude le demandait). Les tranches diffèrent d’une étude à
 l’autre, de sorte que les valeurs ne sont pas comparables entre études ;
 « ne sait pas » et les refus sont des valeurs manquantes.</p>
 <p>Famille <code>income</code> · type Texte · moment Invariant</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6825,7 +7004,7 @@ en vous incluant? Est-ce…</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-religion">
@@ -6840,8 +7019,9 @@ motif inapplicable pour celles qui ont dit n’appartenir à aucune,
 refused pour celles qui n’ont pas voulu répondre à la question filtre,
 qui sert de filtre à la ligne de correspondance.</p>
 <p>Famille <code>faith</code> · type Texte · moment Invariant</p>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6911,7 +7091,7 @@ l’ancrage.</td>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-region_cma3">
@@ -6949,8 +7129,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7112,7 +7293,7 @@ partie RMR de Chaudière-Appalaches.</td>
 <td>Non offert</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-lang_home">
@@ -7148,8 +7329,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7303,7 +7485,7 @@ langue.</td>
 <td>Spontané seulement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-relig_attend">
@@ -7350,8 +7532,9 @@ jamais (niveau approximate).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7461,7 +7644,7 @@ année ou presque jamais ?</td>
 <td>Non documenté</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-birthplace3">
@@ -7498,8 +7681,9 @@ Invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7568,7 +7752,7 @@ affiché.</td>
 <td>Offert explicitement</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 </div>
@@ -7754,8 +7938,9 @@ personnes, dont 43 nomment un parti).</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table class="table">
 <colgroup>
 <col width="20%">
 <col width="20%">
@@ -7849,8 +8034,7 @@ personnes, dont 43 nomment un parti).</td>
 <td><code>recall</code></td>
 </tr>
 </tbody>
-</table>
-<p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
+</table></details><p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
 la vague qui a posé la question ; un tiret signifie que l’étude n’a pas
 de question pour le membre. La dernière colonne donne le membre dont la
 disposition par répondant tire les valeurs de l’étude, parmi les membres
@@ -7965,8 +8149,9 @@ approximate.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="14%">
 <col width="14%">
@@ -8086,8 +8271,7 @@ approximate.</td>
 <td><code>partnership_1995_push</code></td>
 </tr>
 </tbody>
-</table>
-<p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
+</table></details><p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
 la vague qui a posé la question ; un tiret signifie que l’étude n’a pas
 de question pour le membre. La dernière colonne donne le membre dont la
 disposition par répondant tire les valeurs de l’étude, parmi les membres
@@ -8169,8 +8353,9 @@ pour une élection, pas pour la politique : au mieux approximate.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8277,8 +8462,7 @@ pour une élection, pas pour la politique : au mieux approximate.</td>
 <td>—</td>
 </tr>
 </tbody>
-</table>
-<p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
+</table></details><p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
 la vague qui a posé la question ; un tiret signifie que l’étude n’a pas
 de question pour le membre. La dernière colonne donne le membre dont la
 disposition par répondant tire les valeurs de l’étude, parmi les membres
@@ -8359,8 +8543,9 @@ une participation.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Couverture</strong></p>
-<table class="table">
+<details class="qesr-target"><summary>
+Couverture par étude
+</summary><table class="table">
 <thead><tr class="header">
 <th>Étude</th>
 <th><code>recall</code></th>
@@ -8435,8 +8620,7 @@ une participation.</td>
 <td><code>recall</code></td>
 </tr>
 </tbody>
-</table>
-<p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
+</table></details><p>Chaque cellule donne le niveau du membre dans l’étude (plafonné) et
 la vague qui a posé la question ; un tiret signifie que l’étude n’a pas
 de question pour le membre. La dernière colonne donne le membre dont la
 disposition par répondant tire les valeurs de l’étude, parmi les membres
@@ -8457,7 +8641,7 @@ cible stricte ou d’une variable regroupée quand il en existe une,
 recodée au besoin dans les catégories de la colonne, et d’appariements
 souples des questions propres aux études là où la couche stricte n’en a
 pas. Un appariement souple est appliqué une fois approuvé par un
-réviseur (statut <code>stable</code>).</p>
+réviseur.</p>
 <div class="section level3">
 <h3 id="relaxed-citizenship">
 <code>citizenship</code> : Citoyenneté<a class="anchor" aria-label="anchor" href="#relaxed-citizenship"></a>
@@ -8491,8 +8675,9 @@ répondants de ce panel sont citoyens.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8517,21 +8702,20 @@ répondants de ce panel sont citoyens.</p>
 plusieurs niveaux (NA); 3 = Ne sait pas ou refus (un seul code)
 (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R12 : la question de sélection demande si la personne peut voter
-à la prochaine élection québécoise, ce qui exige la citoyenneté
-canadienne ; tous les répondants ont répondu oui, si bien que la colonne
-est constante dans cette étude.</td>
-<td>stable</td>
+<td>La question de sélection demande si la personne peut voter à la
+prochaine élection québécoise, ce qui exige la citoyenneté canadienne ;
+tous les répondants ont répondu oui, si bien que la colonne est
+constante dans cette étude.</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-yob">
 <code>yob</code> : Année de naissance<a class="anchor" aria-label="anchor" href="#relaxed-yob"></a>
 </h3>
 <p>L’année de naissance de la personne.</p>
-<p>Base : <code>target:birth_year</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:birth_year</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : L’année de naissance
 déclarée ; les études qui n’ont demandé qu’un groupe d’âge n’en ont pas
 (voir age_group).</p>
@@ -8544,8 +8728,7 @@ déclarée ; les études qui n’ont demandé qu’un groupe d’âge n’en ont
 <code>age_group</code> : Groupe d’âge<a class="anchor" aria-label="anchor" href="#relaxed-age_group"></a>
 </h3>
 <p>Le groupe d’âge de la personne.</p>
-<p>Base : <code>target:age_group3</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:age_group3</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Trois groupes d’âge
 (18-34, 35-54, 55 et plus), tirés des tranches d’âge de l’étude ou de
 l’âge au début du terrain ; les moins de 18 ans sont manquants.</p>
@@ -8582,8 +8765,7 @@ l’âge au début du terrain ; les moins de 18 ans sont manquants.</p>
 <code>gender</code> : Genre<a class="anchor" aria-label="anchor" href="#relaxed-gender"></a>
 </h3>
 <p>Le genre de la personne.</p>
-<p>Base : <code>target:gender</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:gender</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Le genre ou le sexe tel
 que chaque étude l’a demandé : homme ou femme partout, et en 2022 aussi
 non binaire ou un autre genre ; les questions diffèrent, pas les
@@ -8627,8 +8809,7 @@ catégories.</p>
 </h3>
 <p>Le plus haut niveau de scolarité atteint par la personne, en quatre
 groupes.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Les niveaux de chaque
 étude sont regroupés en quatre : sans diplôme d’études secondaires,
 secondaire, collégial (cégep, formation technique ou professionnelle) et
@@ -8672,8 +8853,9 @@ bas est primaire ou moins.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8700,7 +8882,7 @@ secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11
 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA)</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -8711,9 +8893,9 @@ secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15
 = Universitaire; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Le code 9 (secondaire 5 avec un diplôme d’études professionnelles,
-DEP) est collégial (OD-R10) ; la cible stricte education4 le classe au
+DEP) est collégial ; la cible stricte education4 le classe au
 secondaire.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -8724,7 +8906,7 @@ secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 =
 Universitaire; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -8738,7 +8920,7 @@ Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 questionnaire français) est collégial ; le code 10 (certificat et
 diplôme), absent des deux questionnaires, est universitaire, comme le
 code 9 (études supérieures non terminées).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -8749,9 +8931,9 @@ secondaires; 4, 5 = Collégial, cégep ou formation professionnelle; 6-8 =
 Universitaire; 9 = Ne sait pas ou refus (un seul code) (NA)</td>
 <td>complète l’étude</td>
 <td>Le code 4 (apprentissage enregistré ou autre certificat d’une école
-de métiers) est collégial (OD-R10) ; le code 6 (certificat universitaire
+de métiers) est collégial ; le code 6 (certificat universitaire
 inférieur au baccalauréat) est universitaire.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -8768,7 +8950,7 @@ ans ou plus est universitaire. Le groupe secondaire compte donc aussi
 ceux qui ont quitté le secondaire sans diplôme, et le groupe collégial
 peut compter des personnes ayant fait des études universitaires sans
 diplôme, que les autres études classent à l’universitaire.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -8779,7 +8961,7 @@ secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11
 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -8790,7 +8972,7 @@ secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11
 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes1998</td>
@@ -8799,12 +8981,12 @@ secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11
 <td>1-3 = Catégorie source à cheval sur plusieurs niveaux (NA); 9 = Ne
 sait pas ou refus (un seul code) (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R1 : le fichier regroupé classe les années d’études en 1-9, 10-15
-et université ; 10 à 15 ans chevauche le secondaire et le collégial, et
+<td>Le fichier regroupé classe les années d’études en 1-9, 10-15 et
+université ; 10 à 15 ans chevauche le secondaire et le collégial, et
 n’apparier que les deux autres groupes fausserait toutes les
 proportions, si bien que l’étude est laissée de côté des quatre groupes.
-Les trois groupes de education l’incluent (OD-R17).</td>
-<td>stable</td>
+Les trois groupes de education l’incluent.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes_crop_2007_2010</td>
@@ -8821,10 +9003,10 @@ secondaire, si bien que ce groupe compte aussi ceux qui ont quitté le
 secondaire sans diplôme ; le classement par années, et non par plus haut
 niveau atteint, peut aussi placer des études universitaires non
 terminées (14 ou 15 ans) au collégial.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-education">
@@ -8872,8 +9054,9 @@ universitaires (14 ou 15 ans) ne sont pas classés à l’université.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8898,23 +9081,23 @@ universitaires (14 ou 15 ans) ne sont pas classés à l’université.</p>
 (cégep); 3 = Université; 9 = Ne sait pas ou refus (un seul code)
 (NA)</td>
 <td>remplace la base</td>
-<td>OD-R17 : les trois groupes du fichier regroupé portent les
-étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux
-firmes les ont construits autrement. Pour les répondants de CREATEC
-(firme_post = 1), scol recode le plus haut niveau atteint (r15 :
-primaire ou études secondaires partielles ; secondaire terminé ou
-formation technique, collégiale ou cégep ; université, terminée ou non),
-si bien que les trois groupes tiennent. Pour les répondants de CROP
-(firme_post = 2), il regroupe les années d’études (question 19 de CROP :
-7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l’appariement est
-approximatif : le secondaire se terminant après 11 ans au Québec, une
-personne qui compte 10 ans n’a pas de diplôme mais est classée au
-secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont
-des étudiants universitaires classés au secondaire au collégial. Le code
-9, sans étiquette, est lu comme ne sait pas ou refus.</td>
-<td>stable</td>
+<td>Les trois groupes du fichier regroupé portent les étiquettes 1-9
+ans, 10-15 ans et université et plus, mais les deux firmes les ont
+construits autrement. Pour les répondants de CREATEC (firme_post = 1),
+scol recode le plus haut niveau atteint (r15 : primaire ou études
+secondaires partielles ; secondaire terminé ou formation technique,
+collégiale ou cégep ; université, terminée ou non), si bien que les
+trois groupes tiennent. Pour les répondants de CROP (firme_post = 2), il
+regroupe les années d’études (question 19 de CROP : 7 ou moins, 8-9,
+10-11, 12-15, 16 ou plus), et l’appariement est approximatif : le
+secondaire se terminant après 11 ans au Québec, une personne qui compte
+10 ans n’a pas de diplôme mais est classée au secondaire au collégial,
+et des personnes qui comptent 14 ou 15 ans sont des étudiants
+universitaires classés au secondaire au collégial. Le code 9, sans
+étiquette, est lu comme ne sait pas ou refus.</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-income_cat">
@@ -8922,8 +9105,7 @@ des étudiants universitaires classés au secondaire au collégial. Le code
 </h3>
 <p>Le revenu total du ménage avant impôts, en tiers des répondants de
 l’étude.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Le revenu du ménage en
 tiers des répondants de chaque étude : les tranches de revenu ne sont
 jamais coupées, si bien qu’un tiers réunit les tranches entières dont le
@@ -8954,8 +9136,9 @@ en dollars diffèrent d’une étude à l’autre.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8987,7 +9170,7 @@ pondérés : faible sous 52 200 $, élevé 95 600 $ ou plus. Un montant de 0
 ou de -99 (aucun montant) passe à la question par tranches cps_income2,
 dont les tranches sont classées selon leur point milieu, avec les mêmes
 seuils.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -8997,9 +9180,9 @@ seuils.</td>
 supérieur); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 72 000 $ ou plus
-(revenu de 2017).</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 72 000 $ ou plus (revenu
+de 2017).</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9009,9 +9192,9 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 72 000 $ ou plus
 supérieur); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 72 000 $ ou plus
-(revenu de 2013).</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 72 000 $ ou plus (revenu
+de 2013).</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9021,9 +9204,9 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 72 000 $ ou plus
 supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 88 000 $ ou plus
-(revenu de 2011).</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 88 000 $ ou plus (revenu
+de 2011).</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -9033,9 +9216,8 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 88 000 $ ou plus
 supérieur); 8 = Ne sait pas ou refus (un seul code) (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 80 000 $ ou
-plus.</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 80 000 $ ou plus.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -9045,9 +9227,8 @@ plus.</td>
 supérieur); 9 = Ne sait pas ou refus (un seul code) (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 60 000 $ ou
-plus.</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 60 000 $ ou plus.</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9057,9 +9238,9 @@ plus.</td>
 supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 70 000 $ ou plus
-(revenu de 2006).</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 70 000 $ ou plus (revenu
+de 2006).</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -9069,9 +9250,9 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 70 000 $ ou plus
 supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 70 000 $ ou plus
-(revenu de 2007).</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 70 000 $ ou plus (revenu
+de 2007).</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes_crop_2007_2010</td>
@@ -9081,12 +9262,12 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 70 000 $ ou plus
 supérieur); 9 = Ne sait pas ou refus (un seul code) (NA)</td>
 <td>complète l’étude</td>
 <td>Tiers selon la règle du point milieu sur les effectifs non pondérés
-des tranches (OD-R11). Faible est sous 40 000 $, élevé 80 000 $ ou plus
-; les tiers regroupent les 24 sondages.</td>
-<td>stable</td>
+des tranches. Faible est sous 40 000 $, élevé 80 000 $ ou plus ; les
+tiers regroupent les 24 sondages.</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language">
@@ -9094,8 +9275,7 @@ des tranches (OD-R11). Faible est sous 40 000 $, élevé 80 000 $ ou plus
 </h3>
 <p>La langue maternelle de la personne : français, anglais ou une autre
 langue.</p>
-<p>Base : <code>target:lang_mother</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:lang_mother</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : La langue apprise en
 premier dans l’enfance, en trois groupes ; une personne qui déclare le
 français et une autre langue est classée au français, et l’anglais et
@@ -9127,8 +9307,9 @@ CREATEC de 1998 sont francophones par la conception de leur
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9153,10 +9334,10 @@ CREATEC de 1998 sont francophones par la conception de leur
 <td>la première option cochée, dans cet ordre : cps_lang_2 (Français),
 cps_lang_1 (Anglais), cps_lang_3 (Autre)</td>
 <td>remplace la base</td>
-<td>OD-R5 : une personne qui a déclaré deux langues maternelles est
-classée au français si l’une est le français, sinon à l’anglais si l’une
-est l’anglais.</td>
-<td>stable</td>
+<td>Une personne qui a déclaré deux langues maternelles est classée au
+français si l’une est le français, sinon à l’anglais si l’une est
+l’anglais.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9165,10 +9346,10 @@ est l’anglais.</td>
 <td>1, 4, 5 = Français; 2, 6 = Anglais; 3 = Autre; 8 = Ne sait pas (NA);
 9 = Refus (NA)</td>
 <td>remplace la base</td>
-<td>OD-R5 : une personne qui a déclaré deux langues maternelles est
-classée au français si l’une est le français, sinon à l’anglais si l’une
-est l’anglais.</td>
-<td>stable</td>
+<td>Une personne qui a déclaré deux langues maternelles est classée au
+français si l’une est le français, sinon à l’anglais si l’une est
+l’anglais.</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9177,10 +9358,10 @@ est l’anglais.</td>
 <td>1, 4, 7 = Français; 2, 5 = Anglais; 3, 6 = Autre; 9 = Ne sait pas ou
 refus (un seul code) (NA)</td>
 <td>remplace la base</td>
-<td>OD-R5 : une personne qui a déclaré deux langues maternelles est
-classée au français si l’une est le français, sinon à l’anglais si l’une
-est l’anglais.</td>
-<td>stable</td>
+<td>Une personne qui a déclaré deux langues maternelles est classée au
+français si l’une est le français, sinon à l’anglais si l’une est
+l’anglais.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes1998</td>
@@ -9189,14 +9370,14 @@ est l’anglais.</td>
 <td>1 = Français; 2 = Catégorie source à cheval sur plusieurs niveaux
 (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R3 : l’échantillon de CREATEC (firme_post = 1) ne compte que des
+<td>L’échantillon de CREATEC (firme_post = 1) ne compte que des
 personnes dont la langue maternelle est le français (livre de codes du
 fichier CREATEC) ; les répondants de CROP ont été choisis selon un autre
 critère et n’ont pas de langue maternelle.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language_fr">
@@ -9230,8 +9411,9 @@ dans language_eng.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9258,7 +9440,7 @@ cps_lang_1 (Non), cps_lang_3 (Non)</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9269,7 +9451,7 @@ déclarées.</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9280,10 +9462,10 @@ code) (NA)</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language_eng">
@@ -9317,8 +9499,9 @@ dans language_fr.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9345,7 +9528,7 @@ cps_lang_2 (Non), cps_lang_3 (Non)</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9356,7 +9539,7 @@ déclarées.</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9367,10 +9550,10 @@ code) (NA)</td>
 <td>remplace la base</td>
 <td>Oui quand cette langue est parmi les langues maternelles
 déclarées.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-religion">
@@ -9378,8 +9561,7 @@ déclarées.</td>
 </h3>
 <p>La religion de la personne : catholique, protestante, autre
 chrétienne, autre religion ou aucune.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : La religion
 d’appartenance, en cinq groupes ; la question de 2022 offre une longue
 liste, où l’agnosticisme compte comme aucune religion, et les autres
@@ -9419,8 +9601,9 @@ liste, où l’agnosticisme compte comme aucune religion, et les autres
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9451,7 +9634,7 @@ religions juive, musulmane et les autres religions non chrétiennes sont
 autre. L’agnosticisme compte comme aucune ; les Églises orthodoxes, les
 Témoins de Jéhovah et les mormons sont autre chrétienne ; les autres
 dénominations chrétiennes de la liste sont protestantes.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9464,7 +9647,7 @@ religion; 99 = Refus (NA)</td>
 <td>Les personnes sans appartenance religieuse sont aucune ; les
 religions juive, musulmane et les autres religions non chrétiennes sont
 autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9477,7 +9660,7 @@ Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion;
 <td>Les personnes sans appartenance religieuse sont aucune ; les
 religions juive, musulmane et les autres religions non chrétiennes sont
 autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9490,18 +9673,17 @@ Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion;
 <td>Les personnes sans appartenance religieuse sont aucune ; les
 religions juive, musulmane et les autres religions non chrétiennes sont
 autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-marital">
 <code>marital</code> : État matrimonial<a class="anchor" aria-label="anchor" href="#relaxed-marital"></a>
 </h3>
 <p>L’état matrimonial de la personne, en quatre groupes.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Marié(e) ou en couple,
 séparé(e) ou divorcé(e), veuf ou veuve, ou jamais marié(e) ; 2012 et
 2014 ont demandé l’état civil officiel, sans union de fait, si bien que
@@ -9536,8 +9718,9 @@ des conjoints de fait y sont jamais marié(e)s.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9565,7 +9748,7 @@ Veuf ou veuve; 6 = Célibataire, jamais marié(e); -99 = Sans réponse
 <td>complète l’étude</td>
 <td>Posée après l’élection : les répondants de la seule vague de
 campagne sont manquants (absents de cette vague).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9576,7 +9759,7 @@ Célibataire, jamais marié(e); 5 = Veuf ou veuve; 98 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>Marié(e) ou en union civile (1) et conjoint(e) de fait (6) sont
 marié(e).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9585,12 +9768,12 @@ marié(e).</td>
 <td>1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 =
 Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R7 : la question demande l’état civil officiel et n’offre pas
-l’union de fait. L’union civile (6) est marié(e). Le code 6 regroupe 309
-des 1 501 réponses valides, bien plus que la part des unions civiles au
-Québec : la plupart des conjoints de fait l’ont probablement choisie ;
-ceux qui ont répondu célibataire sont jamais marié(e)s.</td>
-<td>stable</td>
+<td>La question demande l’état civil officiel et n’offre pas l’union de
+fait. L’union civile (6) est marié(e). Le code 6 regroupe 309 des 1 501
+réponses valides, bien plus que la part des unions civiles au Québec :
+la plupart des conjoints de fait l’ont probablement choisie ; ceux qui
+ont répondu célibataire sont jamais marié(e)s.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9599,16 +9782,16 @@ ceux qui ont répondu célibataire sont jamais marié(e)s.</td>
 <td>1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 =
 Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R7 : la question demande l’état civil officiel, sans union de
-fait ; l’union civile (6) est marié(e). Les conjoints de fait pouvaient
+<td>La question demande l’état civil officiel, sans union de fait ;
+l’union civile (6) est marié(e). Les conjoints de fait pouvaient
 répondre célibataire ou union civile : 360 répondants (24 %) ont choisi
 l’union civile, bien plus que les unions civiles légales au Québec, si
 bien que les conjoints de fait se répartissent entre marié(e) et jamais
 marié(e).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-employment">
@@ -9616,13 +9799,14 @@ marié(e).</td>
 </h3>
 <p>La situation d’emploi de la personne : en emploi, au chômage,
 retraitée, étudiante ou autre.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : La situation d’emploi
 principale en cinq groupes ; une personne qui donne deux situations,
 comme retraitée et salariée, prend celle qui n’est pas l’emploi, et la
 personne au foyer, inapte au travail ou dans une autre situation est
-classée autre.</p>
+classée autre. Dans le panel de 2018, seuls les répondants web ont été
+interrogés sur leur emploi, si bien que ses répondants téléphoniques
+apparaissent comme « ne sait pas ou refus ».</p>
 <p><strong>Niveaux</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -9658,8 +9842,9 @@ classée autre.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9685,12 +9870,12 @@ classée autre.</p>
 = Au chômage; 6, 9 = Étudiant(e); 7, 8, 10, 12 = À la maison, inapte au
 travail ou autre; -99 = Sans réponse (non-réponse partielle) (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R9 : une personne qui a donné deux situations (étudiante et
-salariée, retraitée et salariée, au foyer et salariée) prend celle qui
-n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et
-autres situations sont autre. Posée après l’élection : les répondants de
-la seule vague de campagne sont manquants (absents de cette vague).</td>
-<td>stable</td>
+<td>Une personne qui a donné deux situations (étudiante et salariée,
+retraitée et salariée, au foyer et salariée) prend celle qui n’est pas
+l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres
+situations sont autre. Posée après l’élection : les répondants de la
+seule vague de campagne sont manquants (absents de cette vague).</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9700,11 +9885,11 @@ la seule vague de campagne sont manquants (absents de cette vague).</td>
 Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la
 maison, inapte au travail ou autre; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R9 : une personne qui a donné deux situations (étudiante et
-salariée, retraitée et salariée, au foyer et salariée) prend celle qui
-n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et
-autres situations sont autre.</td>
-<td>stable</td>
+<td>Une personne qui a donné deux situations (étudiante et salariée,
+retraitée et salariée, au foyer et salariée) prend celle qui n’est pas
+l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres
+situations sont autre.</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9714,11 +9899,11 @@ autres situations sont autre.</td>
 Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la
 maison, inapte au travail ou autre; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R9 : une personne qui a donné deux situations (étudiante et
-salariée, retraitée et salariée, au foyer et salariée) prend celle qui
-n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et
-autres situations sont autre.</td>
-<td>stable</td>
+<td>Une personne qui a donné deux situations (étudiante et salariée,
+retraitée et salariée, au foyer et salariée) prend celle qui n’est pas
+l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres
+situations sont autre.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9728,11 +9913,11 @@ autres situations sont autre.</td>
 Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la
 maison, inapte au travail ou autre; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R9 : une personne qui a donné deux situations (étudiante et
-salariée, retraitée et salariée, au foyer et salariée) prend celle qui
-n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et
-autres situations sont autre.</td>
-<td>stable</td>
+<td>Une personne qui a donné deux situations (étudiante et salariée,
+retraitée et salariée, au foyer et salariée) prend celle qui n’est pas
+l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres
+situations sont autre.</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -9748,7 +9933,7 @@ question n’a été posée qu’aux 850 répondants web : le fichier code 9 (ne
 sait pas) pour les 400 répondants téléphoniques (method 1-2), si bien
 que 400 des 406 valeurs manquantes sont des questions non posées et non
 de vrais « ne sait pas » (6 répondants web ont choisi 9).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -9760,7 +9945,7 @@ la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e);
 <td>complète l’étude</td>
 <td>Temps plein et temps partiel sont en emploi ; à la maison à temps
 plein est autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9770,11 +9955,11 @@ plein est autre.</td>
 Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la
 maison, inapte au travail ou autre; 99 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R9 : une personne qui a donné deux situations (étudiante et
-salariée, retraitée et salariée, au foyer et salariée) prend celle qui
-n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et
-autres situations sont autre.</td>
-<td>stable</td>
+<td>Une personne qui a donné deux situations (étudiante et salariée,
+retraitée et salariée, au foyer et salariée) prend celle qui n’est pas
+l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres
+situations sont autre.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -9787,7 +9972,7 @@ ou autre; 99 = Refus (NA)</td>
 <td>Une seule situation par personne (le questionnaire de 2008 n’a pas
 de codes de double situation) : à son compte et salarié sont en emploi ;
 au foyer, handicapé et autre (préciser) sont autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes1998</td>
@@ -9795,10 +9980,10 @@ au foyer, handicapé et autre (préciser) sont autre.</td>
 <code>occup</code> (pre)</td>
 <td>1-3 = Catégorie source à cheval sur plusieurs niveaux (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R2 : le fichier regroupé a temps plein, temps partiel et ne
-travaille pas ; ne travaille pas réunit chômeurs, retraités, étudiants
-et personnes au foyer, si bien que l’étude est laissée de côté.</td>
-<td>stable</td>
+<td>Le fichier regroupé a temps plein, temps partiel et ne travaille pas
+; ne travaille pas réunit chômeurs, retraités, étudiants et personnes au
+foyer, si bien que l’étude est laissée de côté.</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes_crop_2007_2010</td>
@@ -9810,10 +9995,10 @@ la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e);
 <td>complète l’étude</td>
 <td>Temps plein et temps partiel sont en emploi ; à la maison à temps
 plein est autre.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-union">
@@ -9821,16 +10006,14 @@ plein est autre.</td>
 </h3>
 <p>Si la personne, ou dans certaines études quelqu’un de son ménage, est
 syndiquée.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Si la personne est
 syndiquée en 2022, mais si elle-même ou quelqu’un de son ménage l’est en
 2014 et en 2018 (en 2018, les personnes qui vivent chez leurs parents
 ont été interrogées sur leur famille : parents, frères ou sœurs). Seules
 ces trois études posent la question, et celle de 2022 la pose après
 l’élection, si bien que ses répondants de la seule vague de campagne
-sont manquants ; la colonne est conservée quel que soit son nombre
-d’études (essentielle), selon la décision du 2026-10-01.</p>
+sont manquants.</p>
 <p><strong>Niveaux</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -9851,8 +10034,9 @@ d’études (essentielle), selon la décision du 2026-10-01.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9879,7 +10063,7 @@ d’études (essentielle), selon la décision du 2026-10-01.</p>
 <td>La personne elle-même est syndiquée (et non son ménage). Posée après
 l’élection : les répondants de la seule vague de campagne sont manquants
 (absents de cette vague).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9896,7 +10080,7 @@ frères ou sœurs). La version du ménage est lue d’abord, puis celle de la
 famille pour les personnes à qui la première n’a pas été posée. La
 personne ou quelqu’un de son ménage (ou de sa famille) est
 syndiqué(e).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9905,10 +10089,10 @@ syndiqué(e).</td>
 <td>1 = Oui; 2 = Non; 9 = Refus (NA)</td>
 <td>complète l’étude</td>
 <td>La personne ou quelqu’un de son ménage est syndiqué(e).</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-region">
@@ -9916,8 +10100,7 @@ syndiqué(e).</td>
 </h3>
 <p>Où vit la personne : RMR de Montréal, RMR de Québec ou reste du
 Québec.</p>
-<p>Base : <code>target:region_cma3</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:region_cma3</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : La région
 métropolitaine de recensement de Montréal, celle de Québec ou le reste
 du Québec, d’après la variable de région ou de sous-région de chaque
@@ -9947,8 +10130,9 @@ du Québec, d’après la variable de région ou de sous-région de chaque
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9976,17 +10160,16 @@ du Québec, d’après la variable de région ou de sous-région de chaque
 Lanaudière, les Laurentides, Laval, la Montérégie et Montréal) sont la
 RMR de Montréal, et les parties de la RMR de Québec dans la
 Capitale-Nationale et Chaudière-Appalaches sont la RMR de Québec.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-region_admin">
 <code>region_admin</code> : Région administrative<a class="anchor" aria-label="anchor" href="#relaxed-region_admin"></a>
 </h3>
 <p>La région administrative où vit la personne.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-une valeur par personne</p>
+<p>Base : appariements souples seulement · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Les 17 régions
 administratives du Québec, là où une étude les a enregistrées ou des
 sous-régions qui s’y emboîtent ; les sous-régions de l’étude de 2007 et
@@ -10086,8 +10269,9 @@ du panel de 2007 qui divisent une région sont réunies.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10117,7 +10301,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -10131,7 +10315,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2012</td>
@@ -10145,7 +10329,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>complète l’étude</td>
 <td></td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -10160,7 +10344,7 @@ Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec</td>
 <td>complète l’étude</td>
 <td>Les sous-régions qui divisent une région (sa partie dans une RMR et
 le reste) sont réunies.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -10175,18 +10359,17 @@ Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie;
 <td>complète l’étude</td>
 <td>Les sous-régions qui divisent une région (sa partie dans une RMR et
 le reste) sont réunies ; le Nord-du-Québec n’a pas de code.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-born_canada">
 <code>born_canada</code> : Né(e) au Canada<a class="anchor" aria-label="anchor" href="#relaxed-born_canada"></a>
 </h3>
 <p>Si la personne est née au Canada.</p>
-<p>Base : <code>target:born_canada</code> · <code>identity</code> · une
-valeur par personne</p>
+<p>Base : <code>target:born_canada</code> · une valeur par personne</p>
 <p><strong>Comment elle est assouplie</strong> : Né(e) au Canada ou non,
 tel que chaque étude l’a demandé : d’après le lieu de naissance (Québec,
 ailleurs au Canada ou à l’étranger), ou demandé directement en 2022.</p>
@@ -10254,8 +10437,8 @@ Canada, si bien qu’elle y est manquante.</p>
 </h3>
 <p>Le parti du vote de la personne à l’élection générale québécoise de
 l’étude.</p>
-<p>Base : <code>pooled:vote_choice</code> · <code>identity</code> · sur
-la vague qui l’a posée</p>
+<p>Base : <code>pooled:vote_choice</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : Le vote déclaré là où
 une étude l’a demandé, sinon l’intention de vote avec les indécis
 relancés vers le parti dont ils se sentent proches, sinon la première
@@ -10329,8 +10512,8 @@ laquelle, et les partis sont ceux que chaque étude offrait.</p>
 <code>vote_type</code> : Question du choix de vote<a class="anchor" aria-label="anchor" href="#relaxed-vote_type"></a>
 </h3>
 <p>La question de vote_choice sur la ligne.</p>
-<p>Base : <code>pooled:vote_choice__type</code> · <code>identity</code>
-· sur la vague qui l’a posée</p>
+<p>Base : <code>pooled:vote_choice__type</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : La question d’où vient
 vote_choice sur chaque ligne : le vote déclaré, l’intention relancée ou
 la première question d’intention.</p>
@@ -10368,8 +10551,7 @@ la première question d’intention.</p>
 </h3>
 <p>Si la personne a voté à l’élection générale québécoise de
 l’étude.</p>
-<p>Base : <code>pooled:turnout</code> · <code>identity</code> · sur la
-vague qui l’a posée</p>
+<p>Base : <code>pooled:turnout</code> · sur la vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : Si la personne dit
 avoir voté à l’élection générale québécoise de l’étude, question posée
 après l’élection ; les libellés et les choix de réponse diffèrent,
@@ -10404,8 +10586,8 @@ précédente<a class="anchor" aria-label="anchor" href="#relaxed-vote_prev"></a>
 </h3>
 <p>Le parti pour lequel la personne a voté à l’élection générale
 québécoise précédente.</p>
-<p>Base : <code>target:vote_prov_prev</code> · <code>identity</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : <code>target:vote_prov_prev</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : Le parti du vote
 déclaré à l’élection générale québécoise qui précède l’étude ; les
 abstentionnistes sont manquants, les sources nomment l’élection
@@ -10465,8 +10647,9 @@ rappelée, et la question de 1998 ne nomme que le PLQ et le PQ.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10494,7 +10677,7 @@ rappelée, et la question de 1998 ne nomme que le PLQ et le PQ.</p>
 <td>L’élection d’avril 2003 (QC2003) ; posée au deuxième sondage
 préélectoral seulement, si bien que les autres répondants sont des
 valeurs manquantes système.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="even">
 <td>qes1998</td>
@@ -10508,7 +10691,7 @@ seul code) (NA); 9 = Catégorie source à cheval sur plusieurs niveaux
 et le PQ ; le code 9, sans étiquette, réunit les autres partis (dont
 l’ADQ) et des réponses inconnues, si bien que les électeurs de l’ADQ en
 1994 sont manquants.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 <tr class="odd">
 <td>qes_crop_2007_2010</td>
@@ -10521,18 +10704,17 @@ pas voté (NA); 9 = Ne sait pas ou refus (un seul code) (NA)</td>
 les sondages de juin 2007 à novembre 2008, QC2008 à partir de janvier
 2009. La question originale (QP4) ; le code 7 réunit n’a pas voté et a
 annulé.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-pid">
 <code>pid</code> : Identification partisane provinciale<a class="anchor" aria-label="anchor" href="#relaxed-pid"></a>
 </h3>
 <p>Le parti québécois auquel la personne s’identifie.</p>
-<p>Base : <code>target:pid_prov</code> · <code>identity</code> · sur la
-vague qui l’a posée</p>
+<p>Base : <code>target:pid_prov</code> · sur la vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : Le parti québécois
 auquel la personne s’identifie, ou aucun, tel que chaque étude l’a
 demandé ; les partis offerts diffèrent d’une étude à l’autre.</p>
@@ -10604,8 +10786,7 @@ demandé ; les partis offerts diffèrent d’une étude à l’autre.</p>
 <code>lr</code> : Autopositionnement gauche-droite (0-10)<a class="anchor" aria-label="anchor" href="#relaxed-lr"></a>
 </h3>
 <p>La position de la personne sur une échelle gauche-droite.</p>
-<p>Base : <code>target:lr_self</code> · <code>identity</code> · sur la
-vague qui l’a posée</p>
+<p>Base : <code>target:lr_self</code> · sur la vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : L’autopositionnement
 sur une échelle gauche-droite de 0 (gauche) à 10 (droite) ; une échelle
 d’une autre longueur serait ramenée à 0-10, et toutes les études qui en
@@ -10620,13 +10801,16 @@ ont posé une allaient de 0 à 10.</p>
 </h3>
 <p>Le degré d’intérêt de la personne pour la politique.</p>
 <p>Base : <code>pooled:pol_interest</code> ·
-<code>bands:0.35,0.75:low,medium,high</code> · sur la vague qui l’a
+<code>bands:0.55,0.85:low,medium,high</code> · sur la vague qui l’a
 posée</p>
 <p><strong>Comment elle est assouplie</strong> : L’intérêt de 0 à 1
-(interest_01) en trois tranches, faible sous 0,35 et élevé à partir de
-0,75 ; les questions à quatre points et de 0 à 10 ne concordent pas, et
-l’étude de 2008 et le panel de 2007 ont demandé l’intérêt pour
-l’élection ou la campagne, pas pour la politique.</p>
+(interest_01) en trois tranches, faible sous 0,55 et élevé à partir de
+0,85 : à une question de 0 à 10, 0 à 5 est faible, 6 à 8 moyen et 9 ou
+10 élevé ; à une question à quatre points, pas du tout ou peu intéressé
+est faible, assez intéressé moyen et très intéressé élevé. Les deux
+formats ne concordent toujours pas exactement, et l’étude de 2008 et le
+panel de 2007 ont demandé l’intérêt pour l’élection ou la campagne, pas
+pour la politique.</p>
 <p><strong>Niveaux</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -10660,8 +10844,8 @@ l’élection ou la campagne, pas pour la politique.</p>
 <code>interest_01</code> : Intérêt pour la politique (0-1)<a class="anchor" aria-label="anchor" href="#relaxed-interest_01"></a>
 </h3>
 <p>Le degré d’intérêt de la personne pour la politique, de 0 à 1.</p>
-<p>Base : <code>pooled:pol_interest</code> · <code>identity</code> · sur
-la vague qui l’a posée</p>
+<p>Base : <code>pooled:pol_interest</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : L’intérêt de 0 à 1 (la
 variable regroupée pol_interest) : réponses à quatre points notées 1,
 0,7, 0,3 et 0, et réponses de 0 à 10 divisées par 10.</p>
@@ -10677,8 +10861,8 @@ souveraineté<a class="anchor" aria-label="anchor" href="#relaxed-sovereignty"><
 <p>Comment la personne voterait à un référendum sur la souveraineté du
 Québec.</p>
 <p>Base : <code>pooled:sov_support</code> ·
-<code>recode:yes=yes,no=no,would_not_vote=NA:not_mappable</code> · sur
-la vague qui l’a posée</p>
+<code>recode:yes=yes,no=no,would_not_vote=NA:not_voted</code> · sur la
+vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : Oui ou non à un
 référendum sur la souveraineté du Québec, quelle que soit la question
 (un pays indépendant, un pays souverain, la question de 1995 ou être
@@ -10704,8 +10888,9 @@ voterait pas est manquant.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10731,19 +10916,19 @@ niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA); Ne sait pas (NA)
 passent à intvoterefb: 1 = Oui; 2 = Non; 3 = Catégorie source à cheval
 sur plusieurs niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA)</td>
 <td>complète l’étude</td>
-<td>OD-R8 : la question référendaire des sondages CROP. Le fichier
-tronque son étiquette et le livre de codes déposé n’en dit pas plus. Les
-rapports de CROP donnent le libellé pour 19 des 24 sondages : un Québec
-qui « devienne un pays souverain ». Il n’est pas documenté pour les cinq
+<td>La question référendaire des sondages CROP. Le fichier tronque son
+étiquette et le livre de codes déposé n’en dit pas plus. Les rapports de
+CROP donnent le libellé pour 19 des 24 sondages : un Québec qui «
+devienne un pays souverain ». Il n’est pas documenté pour les cinq
 autres ; en avril 2009, CROP a posé une question sur le pays souverain
 et une autre sur la souveraineté-partenariat, et pour mai 2009 la presse
 ne dit pas laquelle a donné le résultat publié. Pour ceux qui ne
 savaient pas, la relance (intvoterefb) est utilisée. Elle a aussi été
 posée à ceux qui ne voteraient pas ou refusaient, dont la première
 réponse est gardée. Ne voterait pas est manquant.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-sovereignty_type">
@@ -10798,8 +10983,9 @@ sondages CROP, dont le libellé complet n’a pas été déposé.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10823,11 +11009,11 @@ sondages CROP, dont le libellé complet n’a pas été déposé.</p>
 <td>chaque personne = Question référendaire CROP (libellé non
 déposé)</td>
 <td>complète l’étude</td>
-<td>OD-R8 : chaque répondant des sondages CROP ; sovereignty dit s’il a
+<td>Chaque répondant des sondages CROP ; sovereignty dit s’il a
 répondu.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-satis_democracy">
@@ -10836,8 +11022,8 @@ Québec<a class="anchor" aria-label="anchor" href="#relaxed-satis_democracy"></a
 </h3>
 <p>Le degré de satisfaction de la personne envers le fonctionnement de
 la démocratie au Québec.</p>
-<p>Base : <code>target:satis_demo_qc</code> · <code>identity</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : <code>target:satis_demo_qc</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : La satisfaction envers
 le fonctionnement de la démocratie au Québec, en quatre points, telle
 que chaque étude l’a demandée.</p>
@@ -10881,8 +11067,8 @@ du Québec<a class="anchor" aria-label="anchor" href="#relaxed-gov_satisfaction"
 </h3>
 <p>Le degré de satisfaction de la personne envers le gouvernement du
 Québec.</p>
-<p>Base : <code>target:gov_satisfaction</code> · <code>identity</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : <code>target:gov_satisfaction</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : La satisfaction envers
 le gouvernement du Québec en place, en quatre points ; la question de
 1998 porte sur le gouvernement Bouchard, dans ses propres mots.</p>
@@ -10916,8 +11102,9 @@ le gouvernement du Québec en place, en quatre points ; la question de
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10946,17 +11133,17 @@ seul code) (NA)</td>
 du fichier regroupé : très satisfait, plutôt satisfait, plutôt
 insatisfait, très insatisfait ; le code 9, sans étiquette, est lu comme
 ne sait pas ou refus.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-econ_retro">
 <code>econ_retro</code> : L’économie du Québec depuis un an<a class="anchor" aria-label="anchor" href="#relaxed-econ_retro"></a>
 </h3>
 <p>L’avis de la personne sur l’économie du Québec depuis un an.</p>
-<p>Base : <code>target:econ_retro_qc</code> · <code>identity</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : <code>target:econ_retro_qc</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : Si l’économie du Québec
 s’est améliorée, est restée à peu près la même ou s’est détériorée
 depuis un an, tel que chaque étude l’a demandé.</p>
@@ -10995,8 +11182,8 @@ an<a class="anchor" aria-label="anchor" href="#relaxed-econ_self"></a>
 </h3>
 <p>L’avis de la personne sur sa propre situation financière depuis un
 an.</p>
-<p>Base : appariements souples seulement · <code>relaxed_only</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : appariements souples seulement · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : Si la situation
 financière de la personne s’est améliorée, est restée à peu près la même
 ou s’est détériorée depuis un an. Seule qes2022 pose la question,
@@ -11030,8 +11217,9 @@ indépendant est une autre question et n’est pas utilisée.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Appariements souples</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Appariements par étude
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -11058,9 +11246,9 @@ indépendant est une autre question et n’est pas utilisée.</p>
 valeur manquante. Ce n’est pas la question de 2012 et de 2014 sur sa
 propre situation financière si le Québec devenait indépendant (q85,
 Q47), qui porte sur une autre situation.</td>
-<td>stable</td>
+<td>approuvée</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-identity">
@@ -11068,8 +11256,8 @@ Q47), qui porte sur une autre situation.</td>
 </h3>
 <p>Comment la personne se définit, comme Québécoise, Canadienne ou les
 deux.</p>
-<p>Base : <code>target:identity_qc_ca</code> · <code>identity</code> ·
-sur la vague qui l’a posée</p>
+<p>Base : <code>target:identity_qc_ca</code> · sur la vague qui l’a
+posée</p>
 <p><strong>Comment elle est assouplie</strong> : Uniquement
 québécois(e), d’abord québécois(e), les deux également, d’abord
 canadien(ne) ou uniquement canadien(ne), d’après une question ou les
@@ -11122,8 +11310,7 @@ deux ordres d’un questionnaire partagé.</p>
 <code>attach_quebec</code> : Attachement au Québec<a class="anchor" aria-label="anchor" href="#relaxed-attach_quebec"></a>
 </h3>
 <p>Le degré d’attachement de la personne au Québec.</p>
-<p>Base : <code>target:attach_qc</code> · <code>identity</code> · sur la
-vague qui l’a posée</p>
+<p>Base : <code>target:attach_qc</code> · sur la vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : L’attachement au Québec
 en quatre points, tel que chaque étude l’a demandé.</p>
 <p><strong>Niveaux</strong></p>
@@ -11164,8 +11351,7 @@ en quatre points, tel que chaque étude l’a demandé.</p>
 <code>attach_canada</code> : Attachement au Canada<a class="anchor" aria-label="anchor" href="#relaxed-attach_canada"></a>
 </h3>
 <p>Le degré d’attachement de la personne au Canada.</p>
-<p>Base : <code>target:attach_ca</code> · <code>identity</code> · sur la
-vague qui l’a posée</p>
+<p>Base : <code>target:attach_ca</code> · sur la vague qui l’a posée</p>
 <p><strong>Comment elle est assouplie</strong> : L’attachement au Canada
 en quatre points, tel que chaque étude l’a demandé.</p>
 <p><strong>Niveaux</strong></p>

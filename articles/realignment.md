@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-realignement.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 For about three decades, Quebec’s party system rested on the sovereignty
 question. From the 1970s on, the Parti Québécois (PQ) and the Parti
 libéral du Québec (PLQ) alternated in power, and where Quebecers stood
@@ -25,21 +28,20 @@ still organizes the vote.
 
 The Quebec Election Studies give a fairly clear answer to both
 questions. First, the fragmentation is concentrated among francophones.
-Their effective number of parties went from 2.8 in 1998 to 3.9 in 2022.
-The 1998 estimate comes from the CROP and CREATEC polls, which
-interviewed francophones only and are unweighted; from the first Quebec
-Election Study, in 2007, the rise is smaller, from 3.5 to 3.9.
-Non-francophones, by contrast, kept voting Liberal until 2018: 72% of
-them supported the PLQ that year, compared to 12% of francophones.
-Second, the sovereignty question still divides the francophone vote, but
-it no longer channels it into two parties. Since 2012 sovereigntists
-have almost never voted PLQ and federalists have rarely voted PQ, yet
-the share of francophones who voted for the party of their own camp fell
-from 55% in 2012 to 22% in 2022. In other words, knowing where a
-francophone voter stands on independence now tells us more about the
-party they will not choose than about the one they will. The idea that
-the sovereignty question has faded from Quebec elections therefore finds
-only mixed support.
+From the first Quebec Election Study, in 2007, to 2022, their effective
+number of parties went from 3.5 to 3.9. The 1998 polls put it lower, at
+2.8, but they surveyed francophones only and have no validated weight,
+so that point is a rough guide. Non-francophones, by contrast, kept
+voting Liberal until 2018: 72% of them supported the PLQ that year,
+compared to 12% of francophones. Second, the sovereignty question still
+divides the francophone vote, but it no longer channels it into two
+parties. Since 2012 sovereigntists have almost never voted PLQ and
+federalists have rarely voted PQ, yet the share of francophones who
+voted for the party of their own camp fell from 55% in 2012 to 22% in
+2022. In other words, knowing where a francophone voter stands on
+independence now tells us more about the party they will not choose than
+about the one they will. The idea that the sovereignty question has
+faded from Quebec elections therefore finds only mixed support.
 
 ## The francophone vote fragmented first
 
@@ -63,25 +65,24 @@ often at home for CROP); official results of Élections Québec. The
 effective number of parties (Laakso and Taagepera 1979) is 1 divided by
 the sum of the squared vote shares; the smaller parties are grouped into
 a single category, other parties. Bands: 95% confidence intervals.
-Hollow dots (1998, 2008): unweighted. The x axis is in years, with a
-break between 1998 and 2007.
+Hollow dots (1998, 2008): unweighted, no validated weight. The x axis is
+in years, with a break between 1998 and 2007.
 
 Table view
 
 | Election | Study | Group | Effective number \[95% CI\] | n | Official, all voters | Weighting |
 |---:|:---|:---|:---|---:|:---|:---|
-| 1998 | 1998 polls | Francophones | 2.78 \[2.67, 2.88\] | 1126 | 2.58 | unweighted (weight under review) |
-| 1998 | 1998 polls | Non-francophones | n \< 30 | 0 | 2.58 | unweighted (weight under review) |
+| 1998 | 1998 polls | Francophones | 2.78 \[2.67, 2.88\] | 1126 | 2.58 | unweighted: no validated weight |
 | 2007 | QES 2007 | Francophones | 3.54 \[3.39, 3.70\] | 1525 | 3.47 | weighted |
 | 2007 | QES 2007 | Non-francophones | 2.53 \[1.94, 3.12\] | 163 | 3.47 | weighted |
-| 2007 | 2007 panel | Francophones | 3.45 \[3.34, 3.56\] | 1337 | 3.47 | unweighted (weight under review) |
-| 2007 | 2007 panel | Non-francophones | 1.78 \[1.49, 2.06\] | 155 | 3.47 | unweighted (weight under review) |
-| 2008 | QES 2008 | Francophones | 3.12 \[2.96, 3.29\] | 771 | 3.03 | unweighted (weight under review) |
-| 2008 | QES 2008 | Non-francophones | 1.58 \[1.32, 1.84\] | 127 | 3.03 | unweighted (weight under review) |
+| 2007 | 2007 panel | Francophones | 3.45 \[3.34, 3.56\] | 1337 | 3.47 | unweighted: no validated weight |
+| 2007 | 2007 panel | Non-francophones | 1.78 \[1.49, 2.06\] | 155 | 3.47 | unweighted: no validated weight |
+| 2008 | QES 2008 | Francophones | 3.12 \[2.96, 3.29\] | 771 | 3.03 | unweighted: no validated weight |
+| 2008 | QES 2008 | Non-francophones | 1.58 \[1.32, 1.84\] | 127 | 3.03 | unweighted: no validated weight |
 | 2012 | QES 2012 | Francophones | 3.12 \[2.93, 3.31\] | 1094 | 3.60 | weighted |
 | 2012 | QES 2012 | Non-francophones | 2.14 \[1.75, 2.53\] | 180 | 3.60 | weighted |
-| 2012 | 2012 panel | Francophones | 3.42 \[3.20, 3.64\] | 576 | 3.60 | unweighted (weight under review) |
-| 2012 | 2012 panel | Non-francophones | 2.31 \[1.59, 3.03\] | 57 | 3.60 | unweighted (weight under review) |
+| 2012 | 2012 panel | Francophones | 3.42 \[3.20, 3.64\] | 576 | 3.60 | unweighted: no validated weight |
+| 2012 | 2012 panel | Non-francophones | 2.31 \[1.59, 3.03\] | 57 | 3.60 | unweighted: no validated weight |
 | 2014 | QES 2014 | Francophones | 3.68 \[3.51, 3.84\] | 981 | 3.38 | weighted |
 | 2014 | QES 2014 | Non-francophones | 1.34 \[1.15, 1.54\] | 201 | 3.38 | weighted |
 | 2018 | QES 2018 | Francophones | 3.62 \[3.45, 3.78\] | 1656 | 3.88 | weighted |
@@ -91,7 +92,7 @@ Table view
 | 2022 | QES 2022 | Francophones | 3.92 \[3.64, 4.20\] | 883 | 3.99 | weighted |
 | 2022 | QES 2022 | Non-francophones | 2.93 \[1.94, 3.92\] | 121 | 3.99 | weighted |
 
-The francophone vote fragmented, from 2.8 to 3.9 effective parties; the
+The francophone vote fragmented, from 3.5 to 3.9 effective parties; the
 non-francophone vote stayed far more concentratedEffective number of
 parties at each election: official result and reported vote by mother
 tongue, with 95% confidence intervals
@@ -126,11 +127,12 @@ at each election from 1998 to 2022, with the official result as a tick.
 The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the
 francophone vote; the CAQ takes 41% of francophones and 12% of the
 others. Values in the table
-view.](realignment_files/figure-html/lang-light.png)![Five small line
-charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the share of the
-reported vote among francophones and among non-francophones at each
-election from 1998 to 2022, with the official result as a tick. The PLQ
-takes 72% of the non-francophone vote in 2018 against 12% of the
+view.](realignment_files/figure-html/lang-light.png)
+
+![Five small line charts, one per party (PLQ, PQ, QS, ADQ, CAQ), of the
+share of the reported vote among francophones and among non-francophones
+at each election from 1998 to 2022, with the official result as a tick.
+The PLQ takes 72% of the non-francophone vote in 2018 against 12% of the
 francophone vote; the CAQ takes 41% of francophones and 12% of the
 others. Values in the table
 view.](realignment_files/figure-html/lang-dark.png)
@@ -138,25 +140,26 @@ view.](realignment_files/figure-html/lang-dark.png)
 Source: Quebec Election Studies (one per election) and, for 1998, the
 CROP and CREATEC polls (francophones only). Tick: official share of
 valid votes, all voters. Bars: 95% confidence intervals. Hollow dots
-(1998, 2008): unweighted. Groups of fewer than 30 respondents are not
-drawn. The ADQ merged into the CAQ in 2012; the two are kept apart here.
-The PCQ and the smaller parties are in the table view.
+(1998, 2008): unweighted, no validated weight. Groups of fewer than 30
+respondents are not drawn. The ADQ merged into the CAQ in 2012; the two
+are kept apart here. The PCQ and the smaller parties are in the table
+view.
 
 Table view
 
 | Party | Election | Study | Group | Share of reported vote \[95% CI\] | n | Official, all voters | Weighting |
 |:---|---:|:---|:---|:---|---:|:---|:---|
-| PLQ | 1998 | 1998 polls | Francophones | 34.1 \[31.4, 36.9\] | 1126 | 43.6 | unweighted (weight under review) |
+| PLQ | 1998 | 1998 polls | Francophones | 34.1 \[31.4, 36.9\] | 1126 | 43.6 | unweighted: no validated weight |
 | PLQ | 2007 | QES 2007 | Francophones | 20.1 \[17.9, 22.6\] | 1525 | 33.1 | weighted |
 | PLQ | 2007 | QES 2007 | Non-francophones | 58.4 \[48.1, 68.1\] | 163 | 33.1 | weighted |
-| PLQ | 2007 | 2007 panel | Francophones | 23.5 \[21.3, 25.8\] | 1337 | 33.1 | unweighted (weight under review) |
-| PLQ | 2007 | 2007 panel | Non-francophones | 73.5 \[66.1, 79.9\] | 155 | 33.1 | unweighted (weight under review) |
-| PLQ | 2008 | QES 2008 | Francophones | 32.7 \[29.5, 36.1\] | 771 | 42.1 | unweighted (weight under review) |
-| PLQ | 2008 | QES 2008 | Non-francophones | 78.7 \[70.8, 85.0\] | 127 | 42.1 | unweighted (weight under review) |
+| PLQ | 2007 | 2007 panel | Francophones | 23.5 \[21.3, 25.8\] | 1337 | 33.1 | unweighted: no validated weight |
+| PLQ | 2007 | 2007 panel | Non-francophones | 73.5 \[66.1, 79.9\] | 155 | 33.1 | unweighted: no validated weight |
+| PLQ | 2008 | QES 2008 | Francophones | 32.7 \[29.5, 36.1\] | 771 | 42.1 | unweighted: no validated weight |
+| PLQ | 2008 | QES 2008 | Non-francophones | 78.7 \[70.8, 85.0\] | 127 | 42.1 | unweighted: no validated weight |
 | PLQ | 2012 | QES 2012 | Francophones | 15.5 \[13.2, 18.0\] | 1094 | 31.2 | weighted |
 | PLQ | 2012 | QES 2012 | Non-francophones | 65.5 \[57.3, 72.8\] | 180 | 31.2 | weighted |
-| PLQ | 2012 | 2012 panel | Francophones | 22.7 \[19.5, 26.3\] | 576 | 31.2 | unweighted (weight under review) |
-| PLQ | 2012 | 2012 panel | Non-francophones | 63.2 \[50.0, 74.6\] | 57 | 31.2 | unweighted (weight under review) |
+| PLQ | 2012 | 2012 panel | Francophones | 22.7 \[19.5, 26.3\] | 576 | 31.2 | unweighted: no validated weight |
+| PLQ | 2012 | 2012 panel | Non-francophones | 63.2 \[50.0, 74.6\] | 57 | 31.2 | unweighted: no validated weight |
 | PLQ | 2014 | QES 2014 | Francophones | 24.2 \[21.3, 27.4\] | 981 | 41.5 | weighted |
 | PLQ | 2014 | QES 2014 | Non-francophones | 86.0 \[78.0, 91.4\] | 201 | 41.5 | weighted |
 | PLQ | 2018 | QES 2018 | Francophones | 12.2 \[10.7, 13.9\] | 1656 | 24.8 | weighted |
@@ -165,17 +168,17 @@ Table view
 | PLQ | 2018 | 2018 panel | Non-francophones | 67.8 \[59.0, 75.5\] | 143 | 24.8 | weighted |
 | PLQ | 2022 | QES 2022 | Francophones | 6.1 \[4.4, 8.4\] | 883 | 14.4 | weighted |
 | PLQ | 2022 | QES 2022 | Non-francophones | 54.0 \[40.5, 67.0\] | 121 | 14.4 | weighted |
-| PQ | 1998 | 1998 polls | Francophones | 45.9 \[43.0, 48.8\] | 1126 | 42.9 | unweighted (weight under review) |
+| PQ | 1998 | 1998 polls | Francophones | 45.9 \[43.0, 48.8\] | 1126 | 42.9 | unweighted: no validated weight |
 | PQ | 2007 | QES 2007 | Francophones | 34.1 \[31.3, 37.1\] | 1525 | 28.3 | weighted |
 | PQ | 2007 | QES 2007 | Non-francophones | 15.0 \[8.3, 25.4\] | 163 | 28.3 | weighted |
-| PQ | 2007 | 2007 panel | Francophones | 33.4 \[31.0, 36.0\] | 1337 | 28.3 | unweighted (weight under review) |
-| PQ | 2007 | 2007 panel | Non-francophones | 7.7 \[4.4, 13.1\] | 155 | 28.3 | unweighted (weight under review) |
-| PQ | 2008 | QES 2008 | Francophones | 42.3 \[38.8, 45.8\] | 771 | 35.2 | unweighted (weight under review) |
-| PQ | 2008 | QES 2008 | Non-francophones | 7.9 \[4.3, 14.0\] | 127 | 35.2 | unweighted (weight under review) |
+| PQ | 2007 | 2007 panel | Francophones | 33.4 \[31.0, 36.0\] | 1337 | 28.3 | unweighted: no validated weight |
+| PQ | 2007 | 2007 panel | Non-francophones | 7.7 \[4.4, 13.1\] | 155 | 28.3 | unweighted: no validated weight |
+| PQ | 2008 | QES 2008 | Francophones | 42.3 \[38.8, 45.8\] | 771 | 35.2 | unweighted: no validated weight |
+| PQ | 2008 | QES 2008 | Non-francophones | 7.9 \[4.3, 14.0\] | 127 | 35.2 | unweighted: no validated weight |
 | PQ | 2012 | QES 2012 | Francophones | 46.4 \[43.1, 49.8\] | 1094 | 31.9 | weighted |
 | PQ | 2012 | QES 2012 | Non-francophones | 6.0 \[3.4, 10.2\] | 180 | 31.9 | weighted |
-| PQ | 2012 | 2012 panel | Francophones | 41.3 \[37.4, 45.4\] | 576 | 31.9 | unweighted (weight under review) |
-| PQ | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 31.9 | unweighted (weight under review) |
+| PQ | 2012 | 2012 panel | Francophones | 41.3 \[37.4, 45.4\] | 576 | 31.9 | unweighted: no validated weight |
+| PQ | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 31.9 | unweighted: no validated weight |
 | PQ | 2014 | QES 2014 | Francophones | 35.7 \[32.3, 39.3\] | 981 | 25.4 | weighted |
 | PQ | 2014 | QES 2014 | Non-francophones | 4.1 \[1.4, 11.6\] | 201 | 25.4 | weighted |
 | PQ | 2018 | QES 2018 | Francophones | 23.4 \[21.3, 25.7\] | 1656 | 17.1 | weighted |
@@ -184,23 +187,23 @@ Table view
 | PQ | 2018 | 2018 panel | Non-francophones | 2.9 \[1.1, 7.5\] | 143 | 17.1 | weighted |
 | PQ | 2022 | QES 2022 | Francophones | 19.6 \[17.0, 22.6\] | 883 | 14.6 | weighted |
 | PQ | 2022 | QES 2022 | Non-francophones | 1.7 \[0.5, 6.1\] | 121 | 14.6 | weighted |
-| ADQ | 1998 | 1998 polls | Francophones | 18.1 \[16.0, 20.5\] | 1126 | 11.8 | unweighted (weight under review) |
+| ADQ | 1998 | 1998 polls | Francophones | 18.1 \[16.0, 20.5\] | 1126 | 11.8 | unweighted: no validated weight |
 | ADQ | 2007 | QES 2007 | Francophones | 34.4 \[31.7, 37.4\] | 1525 | 30.8 | weighted |
 | ADQ | 2007 | QES 2007 | Non-francophones | 12.1 \[7.0, 20.1\] | 163 | 30.8 | weighted |
-| ADQ | 2007 | 2007 panel | Francophones | 34.6 \[32.1, 37.1\] | 1337 | 30.8 | unweighted (weight under review) |
-| ADQ | 2007 | 2007 panel | Non-francophones | 11.6 \[7.4, 17.7\] | 155 | 30.8 | unweighted (weight under review) |
-| ADQ | 2008 | QES 2008 | Francophones | 17.8 \[15.2, 20.6\] | 771 | 16.4 | unweighted (weight under review) |
-| ADQ | 2008 | QES 2008 | Non-francophones | 5.5 \[2.6, 11.1\] | 127 | 16.4 | unweighted (weight under review) |
+| ADQ | 2007 | 2007 panel | Francophones | 34.6 \[32.1, 37.1\] | 1337 | 30.8 | unweighted: no validated weight |
+| ADQ | 2007 | 2007 panel | Non-francophones | 11.6 \[7.4, 17.7\] | 155 | 30.8 | unweighted: no validated weight |
+| ADQ | 2008 | QES 2008 | Francophones | 17.8 \[15.2, 20.6\] | 771 | 16.4 | unweighted: no validated weight |
+| ADQ | 2008 | QES 2008 | Non-francophones | 5.5 \[2.6, 11.1\] | 127 | 16.4 | unweighted: no validated weight |
 | QS | 2007 | QES 2007 | Francophones | 5.3 \[4.0, 7.0\] | 1525 | 3.6 | weighted |
 | QS | 2007 | QES 2007 | Non-francophones | 1.7 \[0.4, 7.1\] | 163 | 3.6 | weighted |
-| QS | 2007 | 2007 panel | Francophones | 4.0 \[3.0, 5.2\] | 1337 | 3.6 | unweighted (weight under review) |
-| QS | 2007 | 2007 panel | Non-francophones | 2.6 \[1.0, 6.7\] | 155 | 3.6 | unweighted (weight under review) |
-| QS | 2008 | QES 2008 | Francophones | 4.7 \[3.4, 6.4\] | 771 | 3.8 | unweighted (weight under review) |
-| QS | 2008 | QES 2008 | Non-francophones | 1.6 \[0.4, 6.1\] | 127 | 3.8 | unweighted (weight under review) |
+| QS | 2007 | 2007 panel | Francophones | 4.0 \[3.0, 5.2\] | 1337 | 3.6 | unweighted: no validated weight |
+| QS | 2007 | 2007 panel | Non-francophones | 2.6 \[1.0, 6.7\] | 155 | 3.6 | unweighted: no validated weight |
+| QS | 2008 | QES 2008 | Francophones | 4.7 \[3.4, 6.4\] | 771 | 3.8 | unweighted: no validated weight |
+| QS | 2008 | QES 2008 | Non-francophones | 1.6 \[0.4, 6.1\] | 127 | 3.8 | unweighted: no validated weight |
 | QS | 2012 | QES 2012 | Francophones | 6.4 \[5.0, 8.1\] | 1094 | 6.0 | weighted |
 | QS | 2012 | QES 2012 | Non-francophones | 6.9 \[3.6, 12.8\] | 180 | 6.0 | weighted |
-| QS | 2012 | 2012 panel | Francophones | 6.9 \[5.1, 9.3\] | 576 | 6.0 | unweighted (weight under review) |
-| QS | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 6.0 | unweighted (weight under review) |
+| QS | 2012 | 2012 panel | Francophones | 6.9 \[5.1, 9.3\] | 576 | 6.0 | unweighted: no validated weight |
+| QS | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 6.0 | unweighted: no validated weight |
 | QS | 2014 | QES 2014 | Francophones | 9.2 \[7.5, 11.2\] | 981 | 7.6 | weighted |
 | QS | 2014 | QES 2014 | Non-francophones | 4.7 \[2.1, 10.4\] | 201 | 7.6 | weighted |
 | QS | 2018 | QES 2018 | Francophones | 18.9 \[16.9, 20.9\] | 1656 | 16.1 | weighted |
@@ -211,8 +214,8 @@ Table view
 | QS | 2022 | QES 2022 | Non-francophones | 11.5 \[5.9, 21.3\] | 121 | 15.4 | weighted |
 | CAQ | 2012 | QES 2012 | Francophones | 27.4 \[24.5, 30.4\] | 1094 | 27.1 | weighted |
 | CAQ | 2012 | QES 2012 | Non-francophones | 16.8 \[11.3, 24.2\] | 180 | 27.1 | weighted |
-| CAQ | 2012 | 2012 panel | Francophones | 25.2 \[21.8, 28.9\] | 576 | 27.1 | unweighted (weight under review) |
-| CAQ | 2012 | 2012 panel | Non-francophones | 10.5 \[4.8, 21.5\] | 57 | 27.1 | unweighted (weight under review) |
+| CAQ | 2012 | 2012 panel | Francophones | 25.2 \[21.8, 28.9\] | 576 | 27.1 | unweighted: no validated weight |
+| CAQ | 2012 | 2012 panel | Non-francophones | 10.5 \[4.8, 21.5\] | 57 | 27.1 | unweighted: no validated weight |
 | CAQ | 2014 | QES 2014 | Francophones | 27.7 \[24.5, 31.1\] | 981 | 23.1 | weighted |
 | CAQ | 2014 | QES 2014 | Non-francophones | 4.2 \[1.7, 10.2\] | 201 | 23.1 | weighted |
 | CAQ | 2018 | QES 2018 | Francophones | 41.1 \[38.6, 43.7\] | 1656 | 37.4 | weighted |
@@ -223,17 +226,17 @@ Table view
 | CAQ | 2022 | QES 2022 | Non-francophones | 12.2 \[4.3, 30.2\] | 121 | 41.0 | weighted |
 | PCQ | 2022 | QES 2022 | Francophones | 14.7 \[12.2, 17.6\] | 883 | 12.9 | weighted |
 | PCQ | 2022 | QES 2022 | Non-francophones | 9.4 \[5.1, 16.7\] | 121 | 12.9 | weighted |
-| Other | 1998 | 1998 polls | Francophones | 1.9 \[1.2, 2.8\] | 1126 | 1.8 | unweighted (weight under review) |
+| Other | 1998 | 1998 polls | Francophones | 1.9 \[1.2, 2.8\] | 1126 | 1.8 | unweighted: no validated weight |
 | Other | 2007 | QES 2007 | Francophones | 5.9 \[4.6, 7.6\] | 1525 | 4.1 | weighted |
 | Other | 2007 | QES 2007 | Non-francophones | 12.8 \[7.3, 21.4\] | 163 | 4.1 | weighted |
-| Other | 2007 | 2007 panel | Francophones | 4.6 \[3.6, 5.8\] | 1337 | 4.1 | unweighted (weight under review) |
-| Other | 2007 | 2007 panel | Non-francophones | 4.5 \[2.2, 9.2\] | 155 | 4.1 | unweighted (weight under review) |
-| Other | 2008 | QES 2008 | Francophones | 2.6 \[1.7, 4.0\] | 771 | 2.6 | unweighted (weight under review) |
-| Other | 2008 | QES 2008 | Non-francophones | 6.3 \[3.2, 12.1\] | 127 | 2.6 | unweighted (weight under review) |
+| Other | 2007 | 2007 panel | Francophones | 4.6 \[3.6, 5.8\] | 1337 | 4.1 | unweighted: no validated weight |
+| Other | 2007 | 2007 panel | Non-francophones | 4.5 \[2.2, 9.2\] | 155 | 4.1 | unweighted: no validated weight |
+| Other | 2008 | QES 2008 | Francophones | 2.6 \[1.7, 4.0\] | 771 | 2.6 | unweighted: no validated weight |
+| Other | 2008 | QES 2008 | Non-francophones | 6.3 \[3.2, 12.1\] | 127 | 2.6 | unweighted: no validated weight |
 | Other | 2012 | QES 2012 | Francophones | 4.3 \[3.3, 5.7\] | 1094 | 3.6 | weighted |
 | Other | 2012 | QES 2012 | Non-francophones | 4.9 \[2.5, 9.4\] | 180 | 3.6 | weighted |
-| Other | 2012 | 2012 panel | Francophones | 3.8 \[2.5, 5.7\] | 576 | 3.6 | unweighted (weight under review) |
-| Other | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 3.6 | unweighted (weight under review) |
+| Other | 2012 | 2012 panel | Francophones | 3.8 \[2.5, 5.7\] | 576 | 3.6 | unweighted: no validated weight |
+| Other | 2012 | 2012 panel | Non-francophones | 8.8 \[3.7, 19.4\] | 57 | 3.6 | unweighted: no validated weight |
 | Other | 2014 | QES 2014 | Francophones | 3.2 \[2.2, 4.7\] | 981 | 2.0 | weighted |
 | Other | 2014 | QES 2014 | Non-francophones | 0.9 \[0.3, 2.4\] | 201 | 2.0 | weighted |
 | Other | 2018 | QES 2018 | Francophones | 4.3 \[3.3, 5.6\] | 1656 | 3.1 | weighted |
@@ -279,13 +282,14 @@ in a referendum split their reported vote among the parties. Among those
 who would vote Yes, the PQ takes 75% in 2012 and 38% in 2022; among
 those who would vote No, the PLQ takes 34% in 2012 and 10% in 2022, and
 the CAQ 43% in 2022. Values in the table
-view.](realignment_files/figure-html/sov-light.png)![Two panels of
-stacked horizontal bars, one bar per election from 1998 to 2022: how
-francophones who would vote Yes and those who would vote No in a
-referendum split their reported vote among the parties. Among those who
-would vote Yes, the PQ takes 75% in 2012 and 38% in 2022; among those
-who would vote No, the PLQ takes 34% in 2012 and 10% in 2022, and the
-CAQ 43% in 2022. Values in the table
+view.](realignment_files/figure-html/sov-light.png)
+
+![Two panels of stacked horizontal bars, one bar per election from 1998
+to 2022: how francophones who would vote Yes and those who would vote No
+in a referendum split their reported vote among the parties. Among those
+who would vote Yes, the PQ takes 75% in 2012 and 38% in 2022; among
+those who would vote No, the PLQ takes 34% in 2012 and 10% in 2022, and
+the CAQ 43% in 2022. Values in the table
 view.](realignment_files/figure-html/sov-dark.png)
 
 Source: Quebec Election Studies (one per election) and, for 1998, the
@@ -297,20 +301,20 @@ side is about as large among these francophones in 2008 (52%) as in 2012
 (52%), but the two questions may not draw the same voters, so compare
 the rows within each period. Labels show shares of 10% or more; the 95%
 confidence intervals and the Durand panels are in the table view. 1998
-and 2008: unweighted.
+and 2008: unweighted, no validated weight.
 
 Table view
 
 | Election | Study | Question | Side | Party | Share of reported vote \[95% CI\] | n | Weighting |
 |---:|:---|:---|:---|:---|:---|---:|:---|
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 1.4 \[0.4, 5.5\] | 141 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 83.7 \[76.6, 88.9\] | 141 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 14.2 \[9.3, 21.0\] | 141 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 0.7 \[0.1, 4.9\] | 141 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 52.1 \[44.5, 59.5\] | 169 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | PQ | 24.9 \[18.9, 31.9\] | 169 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 20.7 \[15.3, 27.5\] | 169 | unweighted (weight under review) |
-| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | Other | 2.4 \[0.9, 6.1\] | 169 | unweighted (weight under review) |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 1.4 \[0.4, 5.5\] | 141 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 83.7 \[76.6, 88.9\] | 141 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 14.2 \[9.3, 21.0\] | 141 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 0.7 \[0.1, 4.9\] | 141 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 52.1 \[44.5, 59.5\] | 169 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | PQ | 24.9 \[18.9, 31.9\] | 169 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 20.7 \[15.3, 27.5\] | 169 | unweighted: no validated weight |
+| 1998 | 1998 polls | The 1995 question (partnership) | Would vote No (federalists) | Other | 2.4 \[0.9, 6.1\] | 169 | unweighted: no validated weight |
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 2.8 \[1.7, 4.7\] | 715 | weighted |
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 58.7 \[54.3, 63.0\] | 715 | weighted |
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 25.7 \[22.0, 29.7\] | 715 | weighted |
@@ -321,26 +325,26 @@ Table view
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 42.4 \[38.2, 46.7\] | 741 | weighted |
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote No (federalists) | QS | 2.5 \[1.3, 4.5\] | 741 | weighted |
 | 2007 | QES 2007 | The 1995 question (partnership) | Would vote No (federalists) | Other | 6.4 \[4.5, 9.1\] | 741 | weighted |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 5.0 \[3.4, 7.2\] | 541 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 56.0 \[51.8, 60.1\] | 541 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 28.1 \[24.5, 32.0\] | 541 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | QS | 6.3 \[4.5, 8.7\] | 541 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 4.6 \[3.1, 6.7\] | 541 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 44.9 \[40.6, 49.2\] | 517 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | PQ | 9.9 \[7.6, 12.8\] | 517 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 39.1 \[35.0, 43.3\] | 517 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | QS | 1.4 \[0.6, 2.8\] | 517 | unweighted (weight under review) |
-| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | Other | 4.8 \[3.3, 7.1\] | 517 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 9.6 \[7.0, 13.0\] | 376 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 73.7 \[69.0, 77.9\] | 376 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 6.9 \[4.7, 10.0\] | 376 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | QS | 7.2 \[5.0, 10.3\] | 376 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 2.7 \[1.4, 4.9\] | 376 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 60.5 \[55.2, 65.6\] | 342 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | PQ | 9.4 \[6.7, 12.9\] | 342 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 27.2 \[22.7, 32.2\] | 342 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | QS | 1.5 \[0.6, 3.5\] | 342 | unweighted (weight under review) |
-| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | Other | 1.5 \[0.6, 3.5\] | 342 | unweighted (weight under review) |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 5.0 \[3.4, 7.2\] | 541 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 56.0 \[51.8, 60.1\] | 541 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 28.1 \[24.5, 32.0\] | 541 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | QS | 6.3 \[4.5, 8.7\] | 541 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 4.6 \[3.1, 6.7\] | 541 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 44.9 \[40.6, 49.2\] | 517 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | PQ | 9.9 \[7.6, 12.8\] | 517 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 39.1 \[35.0, 43.3\] | 517 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | QS | 1.4 \[0.6, 2.8\] | 517 | unweighted: no validated weight |
+| 2007 | 2007 panel | The 1995 question (partnership) | Would vote No (federalists) | Other | 4.8 \[3.3, 7.1\] | 517 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PLQ | 9.6 \[7.0, 13.0\] | 376 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | PQ | 73.7 \[69.0, 77.9\] | 376 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | ADQ | 6.9 \[4.7, 10.0\] | 376 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | QS | 7.2 \[5.0, 10.3\] | 376 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote Yes (sovereigntists) | Other | 2.7 \[1.4, 4.9\] | 376 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | PLQ | 60.5 \[55.2, 65.6\] | 342 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | PQ | 9.4 \[6.7, 12.9\] | 342 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | ADQ | 27.2 \[22.7, 32.2\] | 342 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | QS | 1.5 \[0.6, 3.5\] | 342 | unweighted: no validated weight |
+| 2008 | QES 2008 | The 1995 question (partnership) | Would vote No (federalists) | Other | 1.5 \[0.6, 3.5\] | 342 | unweighted: no validated weight |
 | 2012 | QES 2012 | An independent country | Would vote Yes (sovereigntists) | PLQ | 0.5 \[0.1, 1.9\] | 514 | weighted |
 | 2012 | QES 2012 | An independent country | Would vote Yes (sovereigntists) | PQ | 74.8 \[70.5, 78.7\] | 514 | weighted |
 | 2012 | QES 2012 | An independent country | Would vote Yes (sovereigntists) | QS | 8.9 \[6.5, 12.0\] | 514 | weighted |
@@ -351,16 +355,16 @@ Table view
 | 2012 | QES 2012 | An independent country | Would vote No (federalists) | QS | 4.1 \[2.6, 6.4\] | 475 | weighted |
 | 2012 | QES 2012 | An independent country | Would vote No (federalists) | CAQ | 45.7 \[40.8, 50.7\] | 475 | weighted |
 | 2012 | QES 2012 | An independent country | Would vote No (federalists) | Other | 3.5 \[2.2, 5.6\] | 475 | weighted |
-| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | PLQ | 1.4 \[0.5, 4.3\] | 214 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | PQ | 72.4 \[66.1, 78.0\] | 214 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | QS | 12.1 \[8.4, 17.3\] | 214 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | CAQ | 9.3 \[6.1, 14.0\] | 214 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | Other | 4.7 \[2.5, 8.5\] | 214 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | PLQ | 39.7 \[34.4, 45.2\] | 315 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | PQ | 19.4 \[15.4, 24.1\] | 315 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | QS | 2.9 \[1.5, 5.4\] | 315 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | CAQ | 34.6 \[29.6, 40.0\] | 315 | unweighted (weight under review) |
-| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | Other | 3.5 \[1.9, 6.2\] | 315 | unweighted (weight under review) |
+| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | PLQ | 1.4 \[0.5, 4.3\] | 214 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | PQ | 72.4 \[66.1, 78.0\] | 214 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | QS | 12.1 \[8.4, 17.3\] | 214 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | CAQ | 9.3 \[6.1, 14.0\] | 214 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote Yes (sovereigntists) | Other | 4.7 \[2.5, 8.5\] | 214 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | PLQ | 39.7 \[34.4, 45.2\] | 315 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | PQ | 19.4 \[15.4, 24.1\] | 315 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | QS | 2.9 \[1.5, 5.4\] | 315 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | CAQ | 34.6 \[29.6, 40.0\] | 315 | unweighted: no validated weight |
+| 2012 | 2012 panel | A sovereign country | Would vote No (federalists) | Other | 3.5 \[1.9, 6.2\] | 315 | unweighted: no validated weight |
 | 2014 | QES 2014 | An independent country | Would vote Yes (sovereigntists) | PLQ | 1.9 \[0.9, 4.2\] | 397 | weighted |
 | 2014 | QES 2014 | An independent country | Would vote Yes (sovereigntists) | PQ | 68.7 \[63.4, 73.6\] | 397 | weighted |
 | 2014 | QES 2014 | An independent country | Would vote Yes (sovereigntists) | QS | 13.0 \[10.1, 16.6\] | 397 | weighted |
@@ -435,131 +439,37 @@ independence remains a key predictor of the vote, its weight stable
 since 2006 after a fall from the 2000 and 2004 elections. Here, by
 contrast, what changed is how that division maps onto parties.
 
-## Age cuts across language and sovereignty
-
-![Six small charts, one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the
-share of the party among voters aged 18 to 34 minus its share among
-voters aged 55 and over, in percentage points, at each election from
-1998 to 2022, with confidence intervals. The PLQ is below zero at every
-election. In 2022 Québec solidaire is at +31 points and the CAQ at −34
-points. Values in the table
-view.](realignment_files/figure-html/age-light.png)![Six small charts,
-one per party (PLQ, PQ, ADQ, QS, CAQ, PCQ): the share of the party among
-voters aged 18 to 34 minus its share among voters aged 55 and over, in
-percentage points, at each election from 1998 to 2022, with confidence
-intervals. The PLQ is below zero at every election. In 2022 Québec
-solidaire is at +31 points and the CAQ at −34 points. Values in the
-table view.](realignment_files/figure-html/age-dark.png)
-
-Source: Quebec Election Studies (one per election) and, for 1998, the
-CROP and CREATEC polls (francophones only). Above zero: the party does
-better among younger voters. Bars: 95% confidence intervals of the
-difference. Hollow dots (1998, 2008): unweighted. The x axis is in
-years, with a break between 1998 and 2007. The shares of each age group
-are in the table view.
-
-Table view
-
-| Party | Election | Study | 18 to 34, % | 55 and over, % | Gap, 18-34 minus 55+ \[95% CI\] | Weighting |
-|:---|---:|:---|:---|:---|:---|:---|
-| PLQ | 1998 | 1998 polls | 25.0 | 55.1 | −30.1 pts \[-37.7, -22.6\] | unweighted (weight under review) |
-| PLQ | 2007 | QES 2007 | 25.0 | 55.1 | −20.3 pts \[-26.8, -13.9\] | weighted |
-| PLQ | 2007 | 2007 panel | 25.0 | 55.1 | −25.7 pts \[-31.6, -19.8\] | unweighted (weight under review) |
-| PLQ | 2008 | QES 2008 | 25.0 | 55.1 | −20.0 pts \[-28.3, -11.7\] | unweighted (weight under review) |
-| PLQ | 2012 | QES 2012 | 25.0 | 55.1 | −14.9 pts \[-21.7, -8.0\] | weighted |
-| PLQ | 2012 | 2012 panel | 25.0 | 55.1 | −25.1 pts \[-33.0, -17.2\] | unweighted (weight under review) |
-| PLQ | 2014 | QES 2014 | 25.0 | 55.1 | −5.0 pts \[-13.0, 3.0\] | weighted |
-| PLQ | 2018 | QES 2018 | 25.0 | 55.1 | −12.0 pts \[-16.6, -7.5\] | weighted |
-| PLQ | 2018 | 2018 panel | 25.0 | 55.1 | −17.5 pts \[-27.1, -7.9\] | weighted |
-| PLQ | 2022 | QES 2022 | 25.0 | 55.1 | −4.8 pts \[-14.8, 5.1\] | weighted |
-| PQ | 1998 | 1998 polls | 25.0 | 55.1 | +9.8 pts \[1.9, 17.7\] | unweighted (weight under review) |
-| PQ | 2007 | QES 2007 | 25.0 | 55.1 | +6.8 pts \[-0.1, 13.8\] | weighted |
-| PQ | 2007 | 2007 panel | 25.0 | 55.1 | +3.4 pts \[-3.2, 10.0\] | unweighted (weight under review) |
-| PQ | 2008 | QES 2008 | 25.0 | 55.1 | −0.2 pts \[-8.7, 8.2\] | unweighted (weight under review) |
-| PQ | 2012 | QES 2012 | 25.0 | 55.1 | +2.8 pts \[-4.9, 10.4\] | weighted |
-| PQ | 2012 | 2012 panel | 25.0 | 55.1 | −7.3 pts \[-18.2, 3.5\] | unweighted (weight under review) |
-| PQ | 2014 | QES 2014 | 25.0 | 55.1 | −13.9 pts \[-21.5, -6.3\] | weighted |
-| PQ | 2018 | QES 2018 | 25.0 | 55.1 | −8.2 pts \[-12.4, -3.9\] | weighted |
-| PQ | 2018 | 2018 panel | 25.0 | 55.1 | −6.4 pts \[-13.7, 0.8\] | weighted |
-| PQ | 2022 | QES 2022 | 25.0 | 55.1 | −4.4 pts \[-10.6, 1.9\] | weighted |
-| ADQ | 1998 | 1998 polls | 25.0 | 55.1 | +19.6 pts \[13.4, 25.8\] | unweighted (weight under review) |
-| ADQ | 2007 | QES 2007 | 25.0 | 55.1 | +3.5 pts \[-2.9, 9.8\] | weighted |
-| ADQ | 2007 | 2007 panel | 25.0 | 55.1 | +13.0 pts \[6.4, 19.5\] | unweighted (weight under review) |
-| ADQ | 2008 | QES 2008 | 25.0 | 55.1 | +11.0 pts \[4.4, 17.6\] | unweighted (weight under review) |
-| QS | 2007 | QES 2007 | 25.0 | 55.1 | +3.2 pts \[0.2, 6.2\] | weighted |
-| QS | 2007 | 2007 panel | 25.0 | 55.1 | +3.9 pts \[1.0, 6.7\] | unweighted (weight under review) |
-| QS | 2008 | QES 2008 | 25.0 | 55.1 | +5.3 pts \[1.3, 9.4\] | unweighted (weight under review) |
-| QS | 2012 | QES 2012 | 25.0 | 55.1 | +7.4 pts \[3.2, 11.5\] | weighted |
-| QS | 2012 | 2012 panel | 25.0 | 55.1 | +11.0 pts \[3.7, 18.2\] | unweighted (weight under review) |
-| QS | 2014 | QES 2014 | 25.0 | 55.1 | +12.0 pts \[7.3, 16.8\] | weighted |
-| QS | 2018 | QES 2018 | 25.0 | 55.1 | +22.7 pts \[17.6, 27.7\] | weighted |
-| QS | 2018 | 2018 panel | 25.0 | 55.1 | +19.8 pts \[9.6, 30.0\] | weighted |
-| QS | 2022 | QES 2022 | 25.0 | 55.1 | +30.6 pts \[22.7, 38.6\] | weighted |
-| CAQ | 2012 | QES 2012 | 25.0 | 55.1 | −1.2 pts \[-7.7, 5.4\] | weighted |
-| CAQ | 2012 | 2012 panel | 25.0 | 55.1 | +11.1 pts \[1.1, 21.1\] | unweighted (weight under review) |
-| CAQ | 2014 | QES 2014 | 25.0 | 55.1 | +3.2 pts \[-4.3, 10.8\] | weighted |
-| CAQ | 2018 | QES 2018 | 25.0 | 55.1 | −9.4 pts \[-14.9, -3.9\] | weighted |
-| CAQ | 2018 | 2018 panel | 25.0 | 55.1 | −2.1 pts \[-14.8, 10.6\] | weighted |
-| CAQ | 2022 | QES 2022 | 25.0 | 55.1 | −33.8 pts \[-42.1, -25.5\] | weighted |
-| PCQ | 2022 | QES 2022 | 25.0 | 55.1 | +9.6 pts \[3.9, 15.3\] | weighted |
-
-In 2022 Québec solidaire led among younger voters and the CAQ among
-older ones (age gaps of +31 points and −34 points)Each party's share of
-the reported vote among voters aged 18 to 34 minus its share among
-voters aged 55 and over, in percentage points, with 95% confidence
-intervals
-
-Each gap in the figure is a party’s share among voters aged 18 to 34
-minus its share among voters aged 55 and over, in percentage points. In
-2007 younger voters chose the PQ (36% of those aged 18 to 34) and the
-ADQ (30%). In 2018 and 2022 their first choice was Québec solidaire (37%
-in 2022), a party that draws little from voters aged 55 and over (6%).
-The CAQ, for its part, became the party of older voters. In 2012 it drew
-about equally from both age groups (a gap of −1 point); in 2022, 48% of
-voters aged 55 and over voted for it, against 15% of those aged 18 to
-34. The PLQ does better among older voters at every election, although
-in 2014 and 2022 the gap is within the margin of error.
-
-The PQ’s profile reversed. It did as well or better among younger voters
-until 2012 (from +10 points in 1998 to +3 in 2012) and better among
-older voters from 2014 on (from −14 points in 2014 to −4 in 2022, by
-then within the margin of error). The reversal comes in 2014, the
-election in which Mahéo and Bélanger (2018) find that the PQ’s losses
-were concentrated among millennials, who were less inclined to see
-sovereignty as a priority. These are, however, separate cross-sections,
-and an age gap at one election cannot by itself tell a generational
-change from a life-cycle effect.
-
 ## What this means
 
 Overall, the Quebec party system did not fragment evenly. The new
 parties divided the francophone vote, and they did so within each
 sovereignty camp: the wall between the camps held while the PQ and the
-PLQ lost their hold on their own side. Age now weighs more than it did
-in the 2007 to 2014 elections. In 2022 the CAQ’s age gap reached 34
-points, whereas the largest gap of any party from 2007 to 2014 was 20
-points. Two limits deserve mention. First, these are reported votes in
-separate surveys: they show how groups of voters split at each election,
-not whether the same people changed parties (the
+PLQ lost their hold on their own side. Two limits deserve mention.
+First, these are reported votes in separate surveys: they show how
+groups of voters split at each election, not whether the same people
+changed parties (the
 [Transitions](https://thomasgareau.github.io/qesR/articles/transitions.md)
 page follows the same respondents through a campaign). Second, the
 non-francophone samples are small, between 121 and 359 voters per
 election, so their estimates move a lot from one election to the next,
 and the 2022 break among them remains to be confirmed. The next question
 is whether the francophone vote will settle again around new poles, or
-whether generational replacement will keep it divided.
+whether generational replacement will keep it divided (the [sovereignty
+page](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)
+follows the birth cohorts).
 
 ## How the figures are made
 
 Every figure on this page uses one harmonized variable, `vote_choice`,
-restricted to the vote reported after the election, with mother tongue,
-age group and the referendum question:
+restricted to the vote reported after the election, with mother tongue
+and the referendum question:
 
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("vote_choice", "lang_mother", "age_group3", "sov_support"),
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010",
+              "qes2012", "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "sov_support"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
 )
@@ -571,6 +481,7 @@ and one call to the survey package:
 
 ``` r
 
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018", ], weight = "weight_post")
 d18 <- subset(d18, !is.na(vote_choice) & !is.na(lang_mother))
 svyby(~I(vote_choice == "CAQ"), ~lang_mother, d18, svyciprop,
@@ -614,11 +525,13 @@ one study and never pooled across studies.
 
 - **Studies.** One Quebec Election Study per election (2007, 2008, 2012,
   2014, 2018, 2022) and, for 1998, the CROP and CREATEC polls, which
-  interviewed francophones only. The table views also include the Durand
-  panel surveys of 2007, 2012 and 2018, which interviewed the same
-  respondents during the campaign and after the election; they are not
-  drawn. The CROP polls of 2007 to 2010 asked no reported vote and are
-  not used.
+  surveyed francophones only (CREATEC by mother tongue, CROP by the
+  language of use); qesR has no mother-tongue column for 1998, and this
+  page counts every 1998 respondent as francophone. The table views also
+  include the Durand panel surveys of 2007, 2012 and 2018, which
+  interviewed the same respondents during the campaign and after the
+  election; they are not drawn. The CROP polls of 2007 to 2010 asked no
+  reported vote and are not used.
 - **Vote.** The party respondents said they voted for, asked after the
   election. Those who did not vote, spoiled their ballot, did not know
   or refused are left out. A party that a study did not list, or that
@@ -635,9 +548,11 @@ one study and never pooled across studies.
   they leaned; from 2012 on, the question is about an independent
   country. In 1998 only the CROP poll asked it. The Durand panels in the
   table views use their own wordings (see the Question column).
-- **Weights.** Each study’s post-election weight. The 1998 polls and the
-  2008 study are used without weights and are drawn as hollow dots; the
-  2007 and 2012 Durand panels are unweighted too. The 1998 respondents
+- **Weights.** Each study’s post-election weight, where it has a
+  validated one (the [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+  gives each study’s); the others, 1998 and 2008 among the drawn
+  studies, are unweighted and drawn as hollow dots. The 1998 respondents
   had first answered pre-election polls and were interviewed again after
   the election, and that second round over-selected undecided voters and
   those who would not say how they would vote.

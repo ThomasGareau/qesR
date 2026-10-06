@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-recettes.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 Since the first provincial election studies, the Quebec vote has been
 read through language and the national question (Hamilton and Pinard
 1976; Pinard and Hamilton 1978; Bélanger et al. 2018). The Parti libéral
@@ -165,19 +168,24 @@ plq18
 #> Other         Other               0.6416905 0.5267904 0.7423376
 ```
 
-In 2018, 74% of anglophones and 64% of allophones voted Liberal, against
-12% of francophones. The allophone estimate rests on 84 respondents,
-hence its wider interval. The next recipes group anglophones and
-allophones as non-francophones, since the allophone samples are too
-small to follow on their own from one election to the next.
+The output gives the Liberal vote of each mother-tongue group in 2018,
+with its interval; the [realignment
+page](https://thomasgareau.github.io/qesR/articles/realignment.md)
+follows these shares over every election. The allophone estimate rests
+on 84 respondents, hence its wider interval. The next recipes group
+anglophones and allophones as non-francophones, since the allophone
+samples are too small to follow on their own from one election to the
+next.
 
 ## 6. Every study, one at a time
 
 Studies differ in population, mode, wording and weighting, so each
-estimate is made within one study before any comparison. The 1998 study
-does not measure mother tongue, so the series starts in 2007. The weight
-of the 2008 study is still under review: its estimates are unweighted,
-and the charts draw them as hollow points.
+estimate is made within one study before any comparison. The 1998 polls
+surveyed francophones only, so they have no non-francophones to compare,
+and the series starts in 2007. The 2008 study has no recommended weight
+(its weights are calibrated on the reported vote; see the [weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)):
+its estimates are unweighted, and the charts draw them as hollow points.
 
 ``` r
 
@@ -230,14 +238,14 @@ view.](recipes_files/figure-html/plq-language-dark.png)
 Source: qesR, pooled vote_choice (reported vote) and lang_mother;
 non-francophones are respondents whose mother tongue is English or
 another language. Weighted with each study's post-election weight;
-hollow point (2008): unweighted.
+hollow point (2008): unweighted, no validated weight.
 
 Table view
 
 | Election | Study | Francophones, % PLQ \[95% CI\] | Non-francophones, % PLQ \[95% CI\] | Gap \[95% CI\] | n, francophones | n, non-francophones | Weighting |
 |---:|:---|:---|:---|:---|---:|---:|:---|
 | 2007 | QES 2007 | 20.1 \[17.9, 22.6\] | 58.4 \[48.0, 68.2\] | +38.3 pts \[27.9, 48.7\] | 1525 | 163 | weighted |
-| 2008 | QES 2008 | 32.7 \[29.5, 36.1\] | 78.7 \[70.7, 85.1\] | +46.1 pts \[38.2, 53.9\] | 771 | 127 | unweighted |
+| 2008 | QES 2008 | 32.7 \[29.5, 36.1\] | 78.7 \[70.7, 85.1\] | +46.1 pts \[38.2, 53.9\] | 771 | 127 | unweighted: no validated weight |
 | 2012 | QES 2012 | 15.5 \[13.2, 18.1\] | 65.5 \[57.2, 72.9\] | +50.0 pts \[41.8, 58.2\] | 1094 | 180 | weighted |
 | 2014 | QES 2014 | 24.2 \[21.3, 27.4\] | 86.0 \[77.9, 91.5\] | +61.8 pts \[54.5, 69.1\] | 981 | 201 | weighted |
 | 2018 | QES 2018 | 12.2 \[10.7, 13.9\] | 71.8 \[66.5, 76.6\] | +59.6 pts \[54.3, 64.9\] | 1656 | 359 | weighted |
@@ -253,16 +261,17 @@ Two results emerge. First, the divide is large at every election, from
 after 2012. Relative to 2012 (about 50 points), the gap widened in 2014
 and 2018 and was back to about 48 points in 2022, an estimate whose
 interval (34 to 62) includes the 2012 gap. Second, the two groups did
-not move in step. Among francophones, the Liberal vote fell from 20% in
-2007 to 6% in 2022. Among non-francophones it moved between 54% and 86%
-with no clear trend, and in 2022 it was about 4 points below its 2007
-level. The narrower gap of 2022 comes from the non-francophone side:
-from 2018 to 2022, the Liberal vote fell 18 points among
-non-francophones and 6 among francophones. The non-francophone estimate
-of 2022, however, rests on only 121 respondents, the smallest sample of
-the series (the largest has 359), and its interval is wide. This is also
-why the page does not split non-francophones into anglophones and
-allophones.
+not move in step: the francophone Liberal vote fell from one election to
+the next (the [realignment
+page](https://thomasgareau.github.io/qesR/articles/realignment.md)
+follows it), while the non-francophone vote moved with no clear trend,
+and in 2022 it was about 4 points below its 2007 level. The narrower gap
+of 2022 comes from the non-francophone side: from 2018 to 2022, the
+Liberal vote fell 18 points among non-francophones and 6 among
+francophones. The non-francophone estimate of 2022, however, rests on
+only 121 respondents, the smallest sample of the series (the largest has
+359), and its interval is wide. This is also why the page does not split
+non-francophones into anglophones and allophones.
 
 ## 7. Who votes Liberal
 
@@ -300,14 +309,14 @@ view.](recipes_files/figure-html/plq-composition-dark.png)
 
 Source: qesR, pooled vote_choice (reported vote) and lang_mother.
 Weighted with each study's post-election weight; hollow point (2008):
-unweighted.
+unweighted, no validated weight.
 
 Table view
 
 | Election | Study | Non-francophones among PLQ voters, % \[95% CI\] | n, PLQ voters | Non-francophones among all voters, % | Non-francophones among PLQ voters, at their 2007 share of all voters, % | Weighting |
 |---:|:---|:---|---:|:---|:---|:---|
 | 2007 | QES 2007 | 30.9 \[25.3, 37.2\] | 424 | 13.4 | 30.9 | weighted |
-| 2008 | QES 2008 | 28.4 \[23.9, 33.4\] | 352 | 14.1 | 27.1 | unweighted |
+| 2008 | QES 2008 | 28.4 \[23.9, 33.4\] | 352 | 14.1 | 27.1 | unweighted: no validated weight |
 | 2012 | QES 2012 | 49.5 \[42.9, 56.2\] | 278 | 18.8 | 39.5 | weighted |
 | 2014 | QES 2014 | 34.8 \[29.5, 40.4\] | 417 | 13.0 | 35.4 | weighted |
 | 2018 | QES 2018 | 57.2 \[52.5, 61.8\] | 490 | 18.5 | 47.5 | weighted |
@@ -460,22 +469,28 @@ lineage <- do.call(rbind, lapply(qes, function(s) {
 # (2012 on), from Élections Québec
 official <- data.frame(year = c(2007, 2008, 2012, 2014, 2018, 2022),
                        pct = c(30.8, 16.4, 27.1, 23.1, 37.4, 41.0))
-fr <- identical(params$lang, "fr")
-lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
-  c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result")
-lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré") else
-  c(`TRUE` = "weighted", `FALSE` = "unweighted")
+# the chart's labels, in English or French
+labels_of <- function(lang = "en") {
+  if (lang == "fr") {
+    list(series = c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel"),
+         weight = c(`TRUE` = "pondéré", `FALSE` = "non pondéré"), y = "% du vote déclaré")
+  } else {
+    list(series = c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result"),
+         weight = c(`TRUE` = "weighted", `FALSE` = "unweighted"), y = "% of the reported vote")
+  }
+}
+lab <- labels_of(lang = "en")
 
 p <- ggplot(lineage, aes(year, pct)) +
   geom_line(data = official, aes(colour = "official")) +
   geom_point(data = official, aes(colour = "official"), shape = 45, size = 9) +
   geom_linerange(aes(ymin = lo, ymax = hi, colour = "lineage")) +
   geom_point(aes(colour = "lineage", fill = weighted), shape = 21, size = 3, stroke = 1) +
-  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab_series) +
-  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab_weight) +
+  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab$series) +
+  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab$weight) +
   scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022)) +
   scale_y_continuous(limits = c(0, 50)) +
-  labs(x = NULL, y = if (fr) "% du vote déclaré" else "% of the reported vote", colour = NULL, fill = NULL)
+  labs(x = NULL, y = lab$y, colour = NULL, fill = NULL)
 print(lineage, digits = 3, row.names = FALSE)
 #>    study year weighted  pct   lo   hi
 #>  qes2007 2007     TRUE 31.6 29.0 34.3
@@ -501,14 +516,14 @@ Source: qesR, pooled vote_choice (reported vote) with
 qes_party_lineage(); official results of Élections Québec. The ADQ
 merged into the CAQ in 2012, and the lineage column joins them for a
 time series. Weighted with each study's post-election weight; hollow
-point (2008): unweighted.
+point (2008): unweighted, no validated weight.
 
 Table view
 
 | Election | Study | Party | Reported vote, % \[95% CI\] | Official, % of valid votes | Difference | Weighting |
 |---:|:---|:---|:---|:---|:---|:---|
 | 2007 | QES 2007 | ADQ | 31.6 \[29.0, 34.3\] | 30.8 | +0.8 pts | weighted |
-| 2008 | QES 2008 | ADQ | 16.0 \[13.8, 18.6\] | 16.4 | −0.4 pts | unweighted |
+| 2008 | QES 2008 | ADQ | 16.0 \[13.8, 18.6\] | 16.4 | −0.4 pts | unweighted: no validated weight |
 | 2012 | QES 2012 | CAQ | 25.4 \[22.8, 28.2\] | 27.1 | −1.7 pts | weighted |
 | 2014 | QES 2014 | CAQ | 23.1 \[20.5, 26.0\] | 23.1 | 0.0 pts | weighted |
 | 2018 | QES 2018 | CAQ | 35.8 \[33.6, 38.1\] | 37.4 | −1.6 pts | weighted |

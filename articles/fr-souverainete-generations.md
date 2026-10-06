@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)*
 
+**Cette page télécharge 6 études** (environ 13 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 On a longtemps cru que le temps jouait en faveur du projet
 souverainiste. Selon cette ancienne croyance, les jeunes votaient Oui en
 plus grand nombre que leurs aînés, et chaque nouvelle génération allait
@@ -63,14 +67,15 @@ Source : Études électorales québécoises, 2007 à 2022, tous les
 répondants. Les études de 2007 et de 2008 ont posé la question du
 référendum de 1995, qui offrait un partenariat avec le Canada, et ont
 relancé les indécis ; à partir de 2012, les études portent sur un pays
-indépendant. L’étude de 2008 n’est pas pondérée (point creux).
+indépendant. L’étude de 2008 n’a aucune pondération validée et n’est pas
+pondérée (point creux).
 
 Vue en tableau
 
 | Élection | Étude | Question | Oui, % \[IC à 95 %\] | n | Pondération |
 |---:|:---|:---|:---|---:|:---|
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | 42,5 \[39,9 ; 45,2\] | 2011 | pondéré |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | 45,8 \[42,7 ; 48,8\] | 1038 | non pondéré |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | 45,8 \[42,7 ; 48,8\] | 1038 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | Un pays indépendant | 40,4 \[37,5 ; 43,4\] | 1323 | pondéré |
 | 2014 | EEQ 2014 | Un pays indépendant | 34,8 \[31,8 ; 37,9\] | 1353 | pondéré |
 | 2018 | EEQ 2018 | Un pays indépendant | 34,6 \[32,6 ; 36,7\] | 2558 | pondéré |
@@ -105,11 +110,12 @@ dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née
 en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la
 plus jeune (née en 1990 ou après) est à −24 pts de celle née en
 1945-1959. Valeurs dans la vue en
-tableau.](fr-souverainete-generations_files/figure-html/gradient-light.png)![Graphiques
-à points avec intervalles de confiance en six panneaux, un par étude de
-2007 à 2022 : la part des francophones qui voteraient Oui dans chaque
-cohorte de naissance. En 2007, la cohorte la plus jeune (née en
-1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la
+tableau.](fr-souverainete-generations_files/figure-html/gradient-light.png)
+
+![Graphiques à points avec intervalles de confiance en six panneaux, un
+par étude de 2007 à 2022 : la part des francophones qui voteraient Oui
+dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née
+en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la
 plus jeune (née en 1990 ou après) est à −24 pts de celle née en
 1945-1959. Valeurs dans la vue en
 tableau.](fr-souverainete-generations_files/figure-html/gradient-dark.png)
@@ -118,8 +124,9 @@ Source : Études électorales québécoises, 2007 à 2022, répondants de
 langue maternelle française. Les études de 2007 et de 2008 ont posé la
 question de 1995, les autres portent sur un pays indépendant : comparer
 l’ordre des cohortes dans un panneau, pas les niveaux d’un panneau à
-l’autre. L’étude de 2008 n’est pas pondérée (points creux). Les cohortes
-de moins de 30 répondants ne sont pas tracées.
+l’autre. L’étude de 2008 n’a aucune pondération validée et n’est pas
+pondérée (points creux). Les cohortes de moins de 30 répondants ne sont
+pas tracées.
 
 Vue en tableau
 
@@ -129,11 +136,11 @@ Vue en tableau
 | 2007 | La question de 1995 (partenariat) | nés en 1945-1959 | 51,2 \[46,4 ; 56,0\] | 588 | pondéré |
 | 2007 | La question de 1995 (partenariat) | nés en 1960-1974 | 51,7 \[46,0 ; 57,3\] | 406 | pondéré |
 | 2007 | La question de 1995 (partenariat) | nés en 1975-1989 | 57,8 \[51,8 ; 63,5\] | 379 | pondéré |
-| 2008 | La question de 1995 (partenariat) | nés en 1944 ou avant | 45,4 \[38,2 ; 52,9\] | 174 | non pondéré |
-| 2008 | La question de 1995 (partenariat) | nés en 1945-1959 | 62,1 \[55,5 ; 68,3\] | 219 | non pondéré |
-| 2008 | La question de 1995 (partenariat) | nés en 1960-1974 | 50,5 \[44,7 ; 56,4\] | 275 | non pondéré |
-| 2008 | La question de 1995 (partenariat) | nés en 1975-1989 | 52,7 \[45,5 ; 59,9\] | 182 | non pondéré |
-| 2008 | La question de 1995 (partenariat) | nés en 1990 ou après | n \< 30 | 4 | non pondéré |
+| 2008 | La question de 1995 (partenariat) | nés en 1944 ou avant | 45,4 \[38,2 ; 52,9\] | 174 | non pondéré : aucune pondération validée |
+| 2008 | La question de 1995 (partenariat) | nés en 1945-1959 | 62,1 \[55,5 ; 68,3\] | 219 | non pondéré : aucune pondération validée |
+| 2008 | La question de 1995 (partenariat) | nés en 1960-1974 | 50,5 \[44,7 ; 56,4\] | 275 | non pondéré : aucune pondération validée |
+| 2008 | La question de 1995 (partenariat) | nés en 1975-1989 | 52,7 \[45,5 ; 59,9\] | 182 | non pondéré : aucune pondération validée |
+| 2008 | La question de 1995 (partenariat) | nés en 1990 ou après | n \< 30 | 4 | non pondéré : aucune pondération validée |
 | 2012 | Un pays indépendant | nés en 1944 ou avant | 37,0 \[25,6 ; 50,0\] | 62 | pondéré |
 | 2012 | Un pays indépendant | nés en 1945-1959 | 53,6 \[46,4 ; 60,6\] | 214 | pondéré |
 | 2012 | Un pays indépendant | nés en 1960-1974 | 46,2 \[40,6 ; 51,9\] | 327 | pondéré |
@@ -417,13 +424,15 @@ générations ou un moment de leur parcours politique.
   la cohorte la plus jeune.
 - **Moment et pondération.** L’étude de 2022 a posé la question pendant
   la campagne, les autres après l’élection. Chaque étude est pondérée,
-  sauf celle de 2008, qui ne l’est pas (points creux).
+  sauf celle de 2008, qui n’a aucune pondération validée et ne l’est
+  donc pas (points creux ; voir le [tableau des
+  pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)).
 - **Reproduire la page.** Les données proviennent d’un seul appel :
 
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("sov_support", "birth_year", "lang_mother"),
   missing = "reasons", quiet = TRUE
 )

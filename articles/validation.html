@@ -29,10 +29,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -41,12 +69,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -62,20 +94,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +215,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -108,7 +235,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -154,6 +281,11 @@
     
     
 <p><em><a href="fr-validation.html">Version française</a></em></p>
+<div class="qesr-download">
+<p><strong>This page downloads 11 studies</strong> (about 16 MB) the
+first time it runs. <code>options(qesR.cache = "disk")</code> keeps them
+on disk for later sessions.</p>
+</div>
 <p>How close do the harmonized studies come to what is known about the
 electorate? This page compares, for every study the harmonization
 specification covers:</p>
@@ -176,25 +308,11 @@ caught.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">en</span>, <span class="va">fr</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">lang</span>, <span class="st">"fr"</span><span class="op">)</span><span class="op">)</span> <span class="va">fr</span> <span class="kw">else</span> <span class="va">en</span></span>
-<span><span class="va">num</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">digits</span> <span class="op">=</span> <span class="fl">1</span>, <span class="va">sign</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="va">x</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="va">digits</span>, flag <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">sign</span><span class="op">)</span> <span class="st">"+"</span> <span class="kw">else</span> <span class="st">""</span>,</span>
-<span>          decimal.mark <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"."</span>, <span class="st">","</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co"># every study the specification covers, harmonized from the original files,</span></span>
-<span><span class="co"># against the benchmarks that ship with qesR</span></span>
+<code class="sourceCode R"><span><span class="co"># every study the specification covers, harmonized from the original files,</span></span>
+<span><span class="co"># against the benchmarks that ship with qesR (internal functions, not part</span></span>
+<span><span class="co"># of qesR's interface)</span></span>
 <span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_run</span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span></span>
-<span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_gate</span><span class="op">(</span><span class="va">report</span>, <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_recorded</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">studies</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">report</span><span class="op">$</span><span class="va">year</span> <span class="op">&lt;-</span> <span class="va">studies</span><span class="op">$</span><span class="va">year</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">study</span>, <span class="va">studies</span><span class="op">$</span><span class="va">study</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">report</span><span class="op">$</span><span class="va">weighting</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"unweighted"</span>, <span class="st">"non pondéré"</span><span class="op">)</span>,</span>
-<span>                           <span class="fu">tr</span><span class="op">(</span><span class="st">"weighted"</span>, <span class="st">"pondéré"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co"># one row per study and check: the weighted value where the study has a</span></span>
-<span><span class="co"># usable weight, the unweighted one otherwise</span></span>
-<span><span class="va">best</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span>, <span class="va">x</span><span class="op">$</span><span class="va">weight</span> <span class="op">==</span> <span class="st">"none"</span><span class="op">)</span>, <span class="op">]</span></span>
-<span>  <span class="va">x</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">study</span>, <span class="va">x</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+<span><span class="va">report</span> <span class="op">&lt;-</span> <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_gate</span><span class="op">(</span><span class="va">report</span>, <span class="fu">qesR</span><span class="fu">:::</span><span class="fu">.qes_validation_recorded</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="reported-vote-and-official-results">1. Reported vote and official results<a class="anchor" aria-label="anchor" href="#reported-vote-and-official-results"></a>
 </h2>
@@ -206,22 +324,6 @@ who would have to change party for the two to agree; 0 is a perfect
 match. Parties that the study’s question did not list are counted as
 “other party” on the official side, since that is the only answer their
 voters could give.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">report</span><span class="op">[</span><span class="va">report</span><span class="op">$</span><span class="va">check</span> <span class="op">==</span> <span class="st">"recall"</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">level</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">idx</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"reference"</span>, <span class="st">"weighting"</span>, <span class="st">"n"</span>, <span class="st">"value"</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>                idvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"reference"</span><span class="op">)</span>, timevar <span class="op">=</span> <span class="st">"weighting"</span>,</span>
-<span>                direction <span class="op">=</span> <span class="st">"wide"</span>, drop <span class="op">=</span> <span class="st">"n"</span><span class="op">)</span></span>
-<span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">wide</span>, <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="va">n</span> <span class="op">~</span> <span class="va">study</span>, <span class="va">idx</span>, <span class="va">max</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"study"</span><span class="op">)</span></span>
-<span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="va">wide</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">wide</span><span class="op">$</span><span class="va">year</span>, <span class="va">wide</span><span class="op">$</span><span class="va">study</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">un</span> <span class="op">&lt;-</span> <span class="va">wide</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"value."</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"unweighted"</span>, <span class="st">"non pondéré"</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="va">we</span> <span class="op">&lt;-</span> <span class="va">wide</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"value."</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"weighted"</span>, <span class="st">"pondéré"</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">wide</span><span class="op">$</span><span class="va">study</span>, <span class="va">wide</span><span class="op">$</span><span class="va">reference</span>, <span class="va">wide</span><span class="op">$</span><span class="va">n</span>, <span class="fu">num</span><span class="op">(</span><span class="va">un</span><span class="op">)</span>,</span>
-<span>             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">we</span><span class="op">)</span>, <span class="st">""</span>, <span class="fu">num</span><span class="op">(</span><span class="va">we</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="st">"Election"</span>, <span class="st">"N (reported a party)"</span>, <span class="st">"Index, unweighted"</span>, <span class="st">"Index, weighted"</span><span class="op">)</span>,</span>
-<span>                 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Étude"</span>, <span class="st">"Élection"</span>, <span class="st">"N (ont nommé un parti)"</span>, <span class="st">"Indice, non pondéré"</span>, <span class="st">"Indice, pondéré"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"r"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="17%">
@@ -315,11 +417,12 @@ the wave that asked the question; <code>qes2007</code>,
 <code>qes2012</code>, <code>qes2014</code>, <code>qes2018</code>,
 <code>qes2022</code> and the 2018 panel have one. The weights of
 <code>qes2007_panel</code>, <code>qes2012_panel</code>, the CROP polls
-and <code>qes1998</code> are not documented well enough to be used, and
-both weights of <code>qes2008</code> are calibrated on the vote or on
-turnout, so their index is unweighted. <code>qes1998</code> interviewed
-francophones only, a population the official results do not describe: it
-is shown for reference but not checked.</p>
+and <code>qes1998</code> are not validated, and <code>qes2008</code> has
+no recommended weight (both of its weights are calibrated on the vote or
+on turnout), so their index is unweighted; the <a href="studies.html#weights">weights table</a> describes each study’s
+weight. <code>qes1998</code> interviewed francophones only, a population
+the official results do not describe: it is shown for reference but not
+checked.</p>
 <figure class="qesr-fig" id="fig-recall"><figcaption><span class="qesr-title">Surveys under-report the PLQ at every election from 2007 to 2014, by 3 to 7 points, and the CAQ by 8 points in 2022</span><span class="qesr-sub">Reported minus official vote share, in points, by party (rows) and study (columns)</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/recall-light.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/recall-dark.png" alt="Heatmap of the difference in points between each party's share of the reported vote and its official share of valid votes, one row per party and one column per study from 2007 to 2022; blue cells are over-reported, red cells under-reported, and differences of 5 points or more are outlined. The PLQ is under-reported in every study from 2007 to 2014 and the CAQ in 2022. Values in the table view." width="672" height="442" loading="lazy"><p class="qesr-note">Weighted with the study's weight where it has a usable one; the 2008 study and the 2007 and 2012 Durand panels are unweighted. A blank cell: the party did not run, or the study counts it in Other. The 1998 polls, which interviewed francophones only, are left out.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
@@ -665,18 +768,6 @@ is shown for reference but not checked.</p>
 <div class="section level2">
 <h2 id="reported-turnout">2. Reported turnout<a class="anchor" aria-label="anchor" href="#reported-turnout"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">to</span> <span class="op">&lt;-</span> <span class="fu">best</span><span class="op">(</span><span class="va">report</span><span class="op">[</span><span class="va">report</span><span class="op">$</span><span class="va">check</span> <span class="op">==</span> <span class="st">"turnout"</span>, <span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">to</span> <span class="op">&lt;-</span> <span class="va">to</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">year</span>, <span class="va">to</span><span class="op">$</span><span class="va">study</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="co"># qes1998 (francophones only) is shown but not checked</span></span>
-<span><span class="va">checked</span> <span class="op">&lt;-</span> <span class="va">to</span><span class="op">[</span><span class="op">!</span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">status</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">"skipped"</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">study</span>, <span class="va">to</span><span class="op">$</span><span class="va">reference</span>, <span class="va">to</span><span class="op">$</span><span class="va">weighting</span>, <span class="va">to</span><span class="op">$</span><span class="va">n</span>, <span class="fu">num</span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span>, <span class="fu">num</span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">benchmark</span><span class="op">)</span>,</span>
-<span>             <span class="fu">num</span><span class="op">(</span><span class="va">to</span><span class="op">$</span><span class="va">value</span>, sign <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="st">"Election"</span>, <span class="st">"Weighting"</span>, <span class="st">"N"</span>, <span class="st">"Reported turnout (%)"</span>, <span class="st">"Official turnout (%)"</span>, <span class="st">"Difference (points)"</span><span class="op">)</span>,</span>
-<span>                 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Étude"</span>, <span class="st">"Élection"</span>, <span class="st">"Pondération"</span>, <span class="st">"N"</span>, <span class="st">"Participation déclarée (%)"</span>, <span class="st">"Participation officielle (%)"</span>, <span class="st">"Écart (points)"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"r"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="13%">
@@ -858,25 +949,6 @@ who report one mother tongue: the census’s multiple answers and the
 surveys’ answers naming two languages are left out. Education is
 compared as university (any university certificate, diploma or degree)
 or below.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cz</span> <span class="op">&lt;-</span> <span class="va">report</span><span class="op">[</span><span class="va">report</span><span class="op">$</span><span class="va">check</span> <span class="op">==</span> <span class="st">"census"</span> <span class="op">&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">report</span><span class="op">$</span><span class="va">level</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>gender <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Gender"</span>, <span class="st">"Genre"</span><span class="op">)</span>, age_group6 <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Age"</span>, <span class="st">"Âge"</span><span class="op">)</span>,</span>
-<span>          lang_mother <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Mother tongue"</span>, <span class="st">"Langue maternelle"</span><span class="op">)</span>,</span>
-<span>          education <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Education"</span>, <span class="st">"Scolarité"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">cz</span><span class="op">$</span><span class="va">cell</span> <span class="op">&lt;-</span> <span class="fu">num</span><span class="op">(</span><span class="va">cz</span><span class="op">$</span><span class="va">value</span><span class="op">)</span></span>
-<span><span class="va">cw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/reshape.html" class="external-link">reshape</a></span><span class="op">(</span><span class="va">cz</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"reference"</span>, <span class="st">"variable"</span>, <span class="st">"weighting"</span>, <span class="st">"cell"</span><span class="op">)</span><span class="op">]</span>,</span>
-<span>              idvar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"year"</span>, <span class="st">"reference"</span>, <span class="st">"weighting"</span><span class="op">)</span>, timevar <span class="op">=</span> <span class="st">"variable"</span>,</span>
-<span>              direction <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cw</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"^cell\\."</span>, <span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cw</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">v</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vars</span><span class="op">)</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">cw</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="va">cw</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span><span class="va">cw</span> <span class="op">&lt;-</span> <span class="va">cw</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">cw</span><span class="op">$</span><span class="va">year</span>, <span class="va">cw</span><span class="op">$</span><span class="va">study</span>, <span class="va">cw</span><span class="op">$</span><span class="va">weighting</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="va">cw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"reference"</span>, <span class="st">"weighting"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vars</span><span class="op">)</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">out</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">""</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="va">out</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu">tr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="st">"Census"</span>, <span class="st">"Weighting"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Étude"</span>, <span class="st">"Recensement"</span>, <span class="st">"Pondération"</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="va">vars</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"r"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="24%">
@@ -1046,7 +1118,7 @@ or below.</p>
 <p>Each cell is a dissimilarity index in points (0 is a perfect match);
 a blank cell is a margin the study did not ask, or one the collected
 census tables do not publish for that year (mother tongue in 2006).</p>
-<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">After weighting, university graduates are still over-represented by 4 to 21 points; in 2018, English speakers by 9</span><span class="qesr-sub">Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.</span></figcaption><img class="qesr-img qesr-light" src="validation_files/figure-html/census-light.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><img class="qesr-img qesr-dark" src="validation_files/figure-html/census-dark.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"><p class="qesr-note">Studies with a usable weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.</p>
+<figure class="qesr-fig" id="fig-census"><figcaption><span class="qesr-title">After weighting, university graduates are still over-represented by 4 to 21 points; in 2018, English speakers by 9</span><span class="qesr-sub">Weighted survey share minus census share, in points, by category and study; margins matched to within half a point, as raking targets are, are marked cal.</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="validation_files/figure-html/census-light-narrow.png" width="442" height="552"><img class="qesr-img qesr-light" src="validation_files/figure-html/census-light.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="validation_files/figure-html/census-dark-narrow.png" width="442" height="552"><img class="qesr-img qesr-dark" src="validation_files/figure-html/census-dark.png" alt="Heatmap of the difference in points between the weighted share of each category of education, mother tongue, age and gender and its census share, one column per study with a usable weight; blue cells are over-represented, red cells under-represented, and grey cells marked cal. are margins the weight is raked on. University graduates are over-represented in every study. Values in the table view." width="672" height="480" loading="lazy"></source></picture><p class="qesr-note">Studies with a usable weight, weighted; the census of the year before each study (Statistics Canada). Gender and education have two categories, so one row is shown (women; university): the other is its mirror. A margin is marked cal. when every category is within half a point of the census, as a margin the weight is raked on is by construction; a close match there says nothing about representativeness.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Margin </th>
@@ -1458,25 +1530,6 @@ census tables do not publish for that year (mother tongue in 2006).</p>
 the harmonized answers relate to one another the way decades of research
 say they should; a mapping error (a party code swapped, a scale
 reversed) would break them.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">report</span><span class="op">[</span><span class="va">report</span><span class="op">$</span><span class="va">check</span> <span class="op">==</span> <span class="st">"construct"</span>, <span class="op">]</span></span>
-<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">k</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">year</span>, <span class="va">k</span><span class="op">$</span><span class="va">study</span>, <span class="va">k</span><span class="op">$</span><span class="va">variable</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">what</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>interest_4pt <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Voters are more interested than nonvoters (mean, 1-4)"</span>,</span>
-<span>                            <span class="st">"Les votants sont plus intéressés que les abstentionnistes (moyenne, 1-4)"</span><span class="op">)</span>,</span>
-<span>          lr_self <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"QS voters are to the left of CAQ voters (mean, 0-10)"</span>,</span>
-<span>                       <span class="st">"Les électeurs de QS sont à gauche de ceux de la CAQ (moyenne, 0-10)"</span><span class="op">)</span>,</span>
-<span>          sov_indep <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Yes to independence: PQ voters more than 40 points above PLQ voters (%)"</span>,</span>
-<span>                         <span class="st">"Oui à l'indépendance : électeurs du PQ plus de 40 points au-dessus de ceux du PLQ (%)"</span><span class="op">)</span>,</span>
-<span>          pid_prov <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"Partisans who voted for their party: at least 55% (%)"</span>,</span>
-<span>                        <span class="st">"Partisans qui ont voté pour leur parti : au moins 55 % (%)"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">study</span>, <span class="va">what</span><span class="op">[</span><span class="va">k</span><span class="op">$</span><span class="va">variable</span><span class="op">]</span>, <span class="fu">num</span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">estimate</span><span class="op">)</span>,</span>
-<span>             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">benchmark</span><span class="op">)</span>, <span class="st">""</span>, <span class="fu">num</span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">benchmark</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>             <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">k</span><span class="op">$</span><span class="va">status</span> <span class="op">==</span> <span class="st">"pass"</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"yes"</span>, <span class="st">"oui"</span><span class="op">)</span>, <span class="fu">tr</span><span class="op">(</span><span class="st">"no"</span>, <span class="st">"non"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  col.names <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Study"</span>, <span class="st">"Expected"</span>, <span class="st">"Value"</span>, <span class="st">"Compared with"</span>, <span class="st">"Holds"</span><span class="op">)</span>,</span>
-<span>                 <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Étude"</span>, <span class="st">"Attendu"</span>, <span class="st">"Valeur"</span>, <span class="st">"Comparé à"</span>, <span class="st">"Vérifié"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  align <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"l"</span>, <span class="st">"l"</span>, <span class="st">"r"</span>, <span class="st">"r"</span>, <span class="st">"l"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="12%">

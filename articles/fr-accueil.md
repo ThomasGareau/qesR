@@ -2,67 +2,58 @@
 
 *[English version](https://thomasgareau.github.io/qesR/index.md)*
 
-Les Études électorales québécoises, avec les panels et les sondages qui
-les ont accompagnées, couvrent sept élections provinciales, de 1998 à
-2022, et leurs données sont publiques. Les utiliser ensemble est
-toutefois une autre affaire. Elles se trouvent dans des dépôts
-distincts, dans des fichiers SPSS ou Stata, chacune avec son propre
-codebook, et le libellé d’une même question a souvent changé d’une étude
-à l’autre. qesR les réunit dans R. Chaque étude se charge par son code,
-à partir de son fichier original, vérifié avant usage ; son codebook, le
-libellé de ses questions et une recherche dans toutes les études
+qesR charge dans R les Études électorales québécoises, avec les panels
+et les sondages qui les ont accompagnées : sept élections provinciales,
+de 1998 à 2022, chaque étude par son code, à partir de son fichier
+original. Leurs codebooks, le libellé de leurs questions et une
+recherche dans toutes les études sont livrés avec le package et
 fonctionnent sans réseau, en français et en anglais. qesR harmonise
-aussi les 11 études de 1998 à 2022 en un seul tableau, question par
-question, avec un niveau de comparabilité pour la question de chaque
-étude et un motif pour chaque valeur manquante. Autrement dit, une
-question sur 25 ans d’élections québécoises peut être examinée dans
-chaque étude, puis comparée d’une étude à l’autre, sans recoder chaque
-fichier à la main.
+aussi 11 de ces études en un seul tableau, de sorte qu’une question sur
+25 ans d’élections québécoises peut être examinée dans chaque étude,
+puis comparée d’une étude à l’autre.
 
-[Démarrage](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)
-mène d’un code d’étude à une estimation pondérée. La page s’exécute sans
-réseau, sur une petite étude synthétique livrée avec qesR.
+![Graphiques à points en six panneaux, un par Étude électorale
+québécoise de 2007 à 2022, de la part des francophones qui voteraient
+Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune
+est la plus encline à voter Oui ; en 2022, la moins encline. Détails sur
+la page de la
+souveraineté.](fr-souverainete-generations_files/figure-html/gradient-light.png)
 
-## Ce que montrent les études
+![Graphiques à points en six panneaux, un par Étude électorale
+québécoise de 2007 à 2022, de la part des francophones qui voteraient
+Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune
+est la plus encline à voter Oui ; en 2022, la moins encline. Détails sur
+la page de la
+souveraineté.](fr-souverainete-generations_files/figure-html/gradient-dark.png)
 
-Deux résultats tirés des exemples. Chaque estimation est faite dans une
-seule étude, avec la pondération de cette étude lorsqu’elle en a une et
-un intervalle de confiance à 95 % ; rien n’est regroupé d’une étude à
-l’autre.
+En 2007, les plus jeunes francophones formaient la cohorte la plus
+souverainiste ; en 2022, la moins souverainiste
 
-[![Graphique linéaire du nombre effectif de partis à chaque élection
-québécoise de 1998 à 2022 : le résultat officiel, les répondants
-francophones et les répondants non francophones. Chez les francophones,
-il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il
-reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un
-intervalle large. Détails sur la page du
-réalignement.](fr-realignement_files/figure-html/enp-light.png)![Graphique
-linéaire du nombre effectif de partis à chaque élection québécoise de
-1998 à 2022 : le résultat officiel, les répondants francophones et les
-répondants non francophones. Chez les francophones, il passe de 2,8 en
-1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et
-2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large.
-Détails sur la page du
-réalignement.](fr-realignement_files/figure-html/enp-dark.png)](https://thomasgareau.github.io/qesR/articles/fr-realignement.md)
+![Graphiques linéaires en deux panneaux, tous les électeurs et les
+électeurs francophones, de 2012 à 2022, de la part de la variation du
+vote référendaire et du positionnement gauche-droite qui se trouve entre
+les électorats des partis : le vote référendaire est beaucoup moins lié
+au choix partisan en 2022 qu’en 2012, et le positionnement gauche-droite
+n’a pas progressé. Détails sur la page des deux
+dimensions.](fr-dimensions_files/figure-html/sorting-light.png)
 
-Le vote francophone s'est fragmenté, de 2,8 à 3,9 partis effectifs ; le
-vote non francophone est resté beaucoup plus concentré
+![Graphiques linéaires en deux panneaux, tous les électeurs et les
+électeurs francophones, de 2012 à 2022, de la part de la variation du
+vote référendaire et du positionnement gauche-droite qui se trouve entre
+les électorats des partis : le vote référendaire est beaucoup moins lié
+au choix partisan en 2022 qu’en 2012, et le positionnement gauche-droite
+n’a pas progressé. Détails sur la page des deux
+dimensions.](fr-dimensions_files/figure-html/sorting-dark.png)
 
-[![Graphique linéaire de la part des francophones qui voteraient Oui à
-ce que le Québec devienne un pays indépendant, pour cinq cohortes de
-naissance, aux élections de 2012, 2014, 2018 et 2022. Les personnes nées
-en 1990 ou après passent de 53 % à 30 %, le niveau le plus bas ; celles
-nées en 1945-1959 restent entre 50 % et 54 %. Détails sur la page de la
-souveraineté.](fr-souverainete-generations_files/figure-html/cohorts-light.png)![Graphique
-linéaire de la part des francophones qui voteraient Oui à ce que le
-Québec devienne un pays indépendant, pour cinq cohortes de naissance,
-aux élections de 2012, 2014, 2018 et 2022. Les personnes nées en 1990 ou
-après passent de 53 % à 30 %, le niveau le plus bas ; celles nées en
-1945-1959 restent entre 50 % et 54 %. Détails sur la page de la
-souveraineté.](fr-souverainete-generations_files/figure-html/cohorts-dark.png)](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)
+Le choix partisan est beaucoup moins lié au vote référendaire qu’en
+2012, et l’axe gauche-droite n’a pas pris sa place
 
-Les francophones nés en 1990 ou après sont passés de 53 % à 30 % de
-Oui ; ceux nés de 1945 à 1959 sont restés entre 50 et 54 %
+Chaque estimation est faite dans une seule étude, avec la pondération de
+cette étude lorsqu’elle en a une qui est validée et un intervalle de
+confiance à 95 % ; rien n’est regroupé d’une étude à l’autre.
+[Démarrer](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)
+mène d’un code d’étude à une estimation pondérée, sans réseau, sur une
+petite étude synthétique livrée avec qesR.
 
 ## Exemples
 
@@ -96,8 +87,7 @@ québécoises aux données des études.
 - [Les enquêtes sous-estiment-elles les
   libéraux ?](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md) :
   le vote libéral a été sous-déclaré de 2007 à 2014, mais l’écart s’est
-  estompé en 2018 et en 2022, et le gagnant est plus souvent sous-estimé
-  que surestimé.
+  estompé en 2018 et en 2022.
 - [Recettes](https://thomasgareau.github.io/qesR/articles/fr-recettes.md) :
   le code, pas à pas, pour savoir si le clivage linguistique du vote
   libéral s’est resserré à mesure que la question de la souveraineté
@@ -151,24 +141,26 @@ l’étude de 2022, et les métadonnées que qesR en livre, sont sous CC
 BY-NC 4.0 (attribution, pas d’usage commercial). [Détails et attribution
 requise](https://thomasgareau.github.io/qesR/articles/fr-citations.html#licences-et-attribution).
 
-## Aussi sur ce site
+## Toutes les pages en français
 
-Le [catalogue des
-études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md),
-[comment fonctionne
-l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md),
-[un seul fichier pour toutes les études avec
-`qes_decon()`](https://thomasgareau.github.io/qesR/articles/fr-decon.md),
-la [couverture de chaque
-étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md),
-la [référence des
-variables](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md),
-la [validation par les résultats
-officiels](https://thomasgareau.github.io/qesR/articles/fr-validation.md),
-[le fichier
-fusionné](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)
-et l’[aperçu des fonctions en
-français](https://thomasgareau.github.io/qesR/reference/qesR-fr.md).
-Pour du code écrit avec une version antérieure de qesR : [passer à la
-version
-actuelle](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md).
+- Études : le [catalogue des
+  études](https://thomasgareau.github.io/qesR/articles/fr-etudes.md),
+  avec le tableau des pondérations, et [citer qesR et les
+  études](https://thomasgareau.github.io/qesR/articles/fr-citations.md).
+- Harmonisation : [comment fonctionne
+  l’harmonisation](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md),
+  [un seul fichier pour toutes les études avec
+  `qes_decon()`](https://thomasgareau.github.io/qesR/articles/fr-decon.md),
+  la [couverture par
+  étude](https://thomasgareau.github.io/qesR/articles/fr-couverture.md),
+  la [référence des
+  variables](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md),
+  la [validation par les résultats
+  officiels](https://thomasgareau.github.io/qesR/articles/fr-validation.md)
+  et [le fichier
+  fusionné](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md).
+- Les fonctions : l’[aperçu des fonctions en
+  français](https://thomasgareau.github.io/qesR/reference/qesR-fr.md).
+- Pour du code écrit avec une version antérieure de qesR : [passer à la
+  version
+  actuelle](https://thomasgareau.github.io/qesR/articles/fr-migrer-0.7.md).

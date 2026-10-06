@@ -29,10 +29,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -41,12 +69,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -62,20 +94,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +215,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -108,7 +235,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -158,9 +285,285 @@ française</a></em></p>
 <p>The harmonized variables (“targets”) of <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>,
 study by study. The page is generated from the rules that ship with
 qesR, so it always describes what the installed version applies.</p>
+<div class="section level2">
+<h2 id="jump-to-a-variable">Jump to a variable<a class="anchor" aria-label="anchor" href="#jump-to-a-variable"></a>
+</h2>
+<div class="qesr-jump">
+<p><strong>Survey design</strong></p>
+<ul>
+<li>
+<a href="#target-survey_mode"><code>survey_mode</code></a>:
+Interview mode</li>
+</ul>
+<p><strong>Vote and turnout</strong></p>
+<ul>
+<li>
+<a href="#target-vote_prov_recall"><code>vote_prov_recall</code></a>:
+Provincial vote (recall)</li>
+<li>
+<a href="#target-vote_prov_intent"><code>vote_prov_intent</code></a>:
+Provincial vote intention</li>
+<li>
+<a href="#target-vote_prov_intent_push"><code>vote_prov_intent_push</code></a>:
+Provincial vote intention, undecided pushed</li>
+<li>
+<a href="#target-turnout_prov_recall"><code>turnout_prov_recall</code></a>:
+Voted in the provincial election (recall)</li>
+<li>
+<a href="#target-turnout_prov_likely"><code>turnout_prov_likely</code></a>:
+Likelihood of voting in the provincial election</li>
+<li>
+<a href="#target-vote_prov_intent_other"><code>vote_prov_intent_other</code></a>:
+Provincial vote intention: another party (text)</li>
+<li>
+<a href="#target-vote_prov_prev"><code>vote_prov_prev</code></a>:
+Provincial vote at the previous election (recall)</li>
+<li>
+<a href="#target-vote_fed_recall"><code>vote_fed_recall</code></a>:
+Federal vote at the last federal election (recall)</li>
+</ul>
+<p><strong>Party identification</strong></p>
+<ul>
+<li>
+<a href="#target-pid_prov"><code>pid_prov</code></a>: Provincial
+party identification</li>
+<li>
+<a href="#target-pid_fed"><code>pid_fed</code></a>: Federal party
+identification</li>
+<li>
+<a href="#target-pid_prov_strength"><code>pid_prov_strength</code></a>:
+Strength of provincial party identification</li>
+</ul>
+<p><strong>Attitudes</strong></p>
+<ul>
+<li>
+<a href="#target-sov_indep"><code>sov_indep</code></a>: Referendum
+vote: independent country</li>
+<li>
+<a href="#target-sov_sovereign_country"><code>sov_sovereign_country</code></a>:
+Referendum vote: sovereign country</li>
+<li>
+<a href="#target-sov_favour"><code>sov_favour</code></a>: Favour
+Quebec independence (4 points)</li>
+<li>
+<a href="#target-lr_self"><code>lr_self</code></a>: Left-right
+self-placement (0-10)</li>
+<li>
+<a href="#target-interest_4pt"><code>interest_4pt</code></a>:
+Interest in politics (4 points)</li>
+<li>
+<a href="#target-sov_partnership_1995"><code>sov_partnership_1995</code></a>:
+Referendum vote: the 1995 sovereignty-partnership question</li>
+<li>
+<a href="#target-interest_0_10"><code>interest_0_10</code></a>:
+Interest in politics (0-10)</li>
+<li>
+<a href="#target-interest_election_0_10"><code>interest_election_0_10</code></a>:
+Interest in the provincial election (0-10)</li>
+<li>
+<a href="#target-interest_campaign_4pt"><code>interest_campaign_4pt</code></a>:
+Interest in the election campaign (4 points)</li>
+<li>
+<a href="#target-sov_partnership_1995_push"><code>sov_partnership_1995_push</code></a>:
+Referendum vote: the 1995 question, undecided pushed</li>
+<li>
+<a href="#target-satis_demo_qc"><code>satis_demo_qc</code></a>:
+Satisfaction with democracy in Quebec</li>
+<li>
+<a href="#target-gov_satisfaction"><code>gov_satisfaction</code></a>:
+Satisfaction with the Quebec government</li>
+<li>
+<a href="#target-econ_retro_qc"><code>econ_retro_qc</code></a>:
+Quebec’s economy over the past year</li>
+<li>
+<a href="#target-attach_qc"><code>attach_qc</code></a>: Attachment
+to Quebec</li>
+<li>
+<a href="#target-attach_ca"><code>attach_ca</code></a>: Attachment
+to Canada</li>
+<li>
+<a href="#target-identity_qc_ca"><code>identity_qc_ca</code></a>:
+Québécois or Canadian identity</li>
+<li>
+<a href="#target-therm_leader_plq"><code>therm_leader_plq</code></a>:
+Rating of the PLQ leader (0-100)</li>
+<li>
+<a href="#target-therm_leader_pq"><code>therm_leader_pq</code></a>:
+Rating of the PQ leader (0-100)</li>
+<li>
+<a href="#target-therm_leader_caq"><code>therm_leader_caq</code></a>:
+Rating of the CAQ leader (0-100)</li>
+<li>
+<a href="#target-therm_leader_qs"><code>therm_leader_qs</code></a>:
+Rating of the QS leader (0-100)</li>
+<li>
+<a href="#target-therm_leader_adq"><code>therm_leader_adq</code></a>:
+Rating of the ADQ leader (0-100)</li>
+</ul>
+<p><strong>Issues</strong></p>
+<ul>
+<li>
+<a href="#target-mip_issue"><code>mip_issue</code></a>: Most
+important issue of the election</li>
+</ul>
+<p><strong>Sociodemographics</strong></p>
+<ul>
+<li>
+<a href="#target-birth_year"><code>birth_year</code></a>: Year of
+birth</li>
+<li>
+<a href="#target-birth_month"><code>birth_month</code></a>: Month of
+birth</li>
+<li>
+<a href="#target-age"><code>age</code></a>: Age in years</li>
+<li>
+<a href="#target-age_group3"><code>age_group3</code></a>: Age group
+(3 bands)</li>
+<li>
+<a href="#target-citizen"><code>citizen</code></a>: Canadian
+citizen</li>
+<li>
+<a href="#target-age_group6"><code>age_group6</code></a>: Age group
+(6 bands)</li>
+<li>
+<a href="#target-gender"><code>gender</code></a>: Gender</li>
+<li>
+<a href="#target-education4"><code>education4</code></a>: Education
+(4 groups)</li>
+<li>
+<a href="#target-lang_mother"><code>lang_mother</code></a>: Mother
+tongue</li>
+<li>
+<a href="#target-born_canada"><code>born_canada</code></a>: Born in
+Canada</li>
+<li>
+<a href="#target-income_native"><code>income_native</code></a>:
+Household income (each study’s own brackets)</li>
+<li>
+<a href="#target-religion"><code>religion</code></a>: Religion (each
+study’s own categories)</li>
+<li>
+<a href="#target-region_cma3"><code>region_cma3</code></a>: Region
+(Montreal and Quebec CMAs)</li>
+<li>
+<a href="#target-lang_home"><code>lang_home</code></a>: Language
+spoken most often at home</li>
+<li>
+<a href="#target-relig_attend"><code>relig_attend</code></a>:
+Attendance at religious services</li>
+<li>
+<a href="#target-birthplace3"><code>birthplace3</code></a>:
+Birthplace (Quebec, rest of Canada, abroad)</li>
+</ul>
+<p><strong>Relaxed harmonization: qes_decon()</strong></p>
+<ul>
+<li>
+<a href="#relaxed-citizenship"><code>citizenship</code></a>:
+Citizenship</li>
+<li>
+<a href="#relaxed-yob"><code>yob</code></a>: Year of birth</li>
+<li>
+<a href="#relaxed-age_group"><code>age_group</code></a>: Age
+group</li>
+<li>
+<a href="#relaxed-gender"><code>gender</code></a>: Gender</li>
+<li>
+<a href="#relaxed-education4"><code>education4</code></a>: Education
+(four groups)</li>
+<li>
+<a href="#relaxed-education"><code>education</code></a>:
+Education</li>
+<li>
+<a href="#relaxed-income_cat"><code>income_cat</code></a>: Household
+income (thirds)</li>
+<li>
+<a href="#relaxed-language"><code>language</code></a>: Mother
+tongue</li>
+<li>
+<a href="#relaxed-language_fr"><code>language_fr</code></a>: French
+as a mother tongue</li>
+<li>
+<a href="#relaxed-language_eng"><code>language_eng</code></a>:
+English as a mother tongue</li>
+<li>
+<a href="#relaxed-religion"><code>religion</code></a>: Religion</li>
+<li>
+<a href="#relaxed-marital"><code>marital</code></a>: Marital
+status</li>
+<li>
+<a href="#relaxed-employment"><code>employment</code></a>:
+Employment</li>
+<li>
+<a href="#relaxed-union"><code>union</code></a>: Union
+membership</li>
+<li>
+<a href="#relaxed-region"><code>region</code></a>: Region</li>
+<li>
+<a href="#relaxed-region_admin"><code>region_admin</code></a>:
+Administrative region</li>
+<li>
+<a href="#relaxed-born_canada"><code>born_canada</code></a>: Born in
+Canada</li>
+<li>
+<a href="#relaxed-born_quebec"><code>born_quebec</code></a>: Born in
+Quebec</li>
+<li>
+<a href="#relaxed-vote_choice"><code>vote_choice</code></a>:
+Provincial vote choice</li>
+<li>
+<a href="#relaxed-vote_type"><code>vote_type</code></a>: Question of
+the vote choice</li>
+<li>
+<a href="#relaxed-turnout"><code>turnout</code></a>: Turnout
+(reported)</li>
+<li>
+<a href="#relaxed-vote_prev"><code>vote_prev</code></a>: Vote at the
+previous provincial election</li>
+<li>
+<a href="#relaxed-pid"><code>pid</code></a>: Provincial party
+identification</li>
+<li>
+<a href="#relaxed-lr"><code>lr</code></a>: Left-right self-placement
+(0-10)</li>
+<li>
+<a href="#relaxed-interest"><code>interest</code></a>: Interest in
+politics</li>
+<li>
+<a href="#relaxed-interest_01"><code>interest_01</code></a>:
+Interest in politics (0-1)</li>
+<li>
+<a href="#relaxed-sovereignty"><code>sovereignty</code></a>:
+Sovereignty referendum vote</li>
+<li>
+<a href="#relaxed-sovereignty_type"><code>sovereignty_type</code></a>:
+Question of the sovereignty vote</li>
+<li>
+<a href="#relaxed-satis_democracy"><code>satis_democracy</code></a>:
+Satisfaction with democracy in Quebec</li>
+<li>
+<a href="#relaxed-gov_satisfaction"><code>gov_satisfaction</code></a>:
+Satisfaction with the Quebec government</li>
+<li>
+<a href="#relaxed-econ_retro"><code>econ_retro</code></a>: Quebec’s
+economy over the past year</li>
+<li>
+<a href="#relaxed-econ_self"><code>econ_self</code></a>: Personal
+financial situation over the past year</li>
+<li>
+<a href="#relaxed-identity"><code>identity</code></a>: Québécois and
+Canadian identity</li>
+<li>
+<a href="#relaxed-attach_quebec"><code>attach_quebec</code></a>:
+Attachment to Quebec</li>
+<li>
+<a href="#relaxed-attach_canada"><code>attach_canada</code></a>:
+Attachment to Canada</li>
+</ul>
+</div>
 <p><code><a href="../reference/qes_spec.html">qes_spec()</a></code> returns the same information as data frames,
 and <code>qes_provenance(x, level = "spec")</code> the version of the
 rules that produced harmonized data.</p>
+</div>
 <div class="section level2">
 <h2 id="how-to-read-this-reference">How to read this reference<a class="anchor" aria-label="anchor" href="#how-to-read-this-reference"></a>
 </h2>
@@ -192,8 +595,10 @@ wave (marked when it is not usable yet: its weight columns are then
 <li>
 <strong>Don’t know</strong>: whether “don’t know” was offered.</li>
 </ul>
-<p>A row marked <em>awaiting sign-off</em> is applied only if you ask
-for it (<code>include_draft = TRUE</code>).</p>
+<p>A row marked <em>awaiting sign-off</em> is checked but not yet
+approved, and not used by default: its values are missing. To use it
+anyway, pass <code>include_draft = TRUE</code> to
+<code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>.</p>
 <p>The wording and labels of <code>qes2022</code> quoted on this page
 come from <em>2022 Quebec Election Study</em> (Mahéo, Bélanger,
 Stephenson and Harell, 2023, <a href="https://doi.org/10.7910/DVN/PAQBDR" class="external-link uri">https://doi.org/10.7910/DVN/PAQBDR</a>) and keep its
@@ -359,8 +764,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -414,7 +820,7 @@ time</p>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -485,8 +891,9 @@ Post-election</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -670,7 +1077,7 @@ CAQ; the anchor is web.</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent">
@@ -742,8 +1149,9 @@ Pre-election</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -869,7 +1277,7 @@ lequel des partis suivants voteriez-vous? Voteriez-vous pour…</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent_push">
@@ -945,8 +1353,9 @@ Pre-election</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1112,8 +1521,7 @@ lequel de ces partis seriez-vous tenté(e) de voter?)</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
-<p><strong>Not used</strong></p>
+</table></details><p><strong>Not used</strong></p>
 <ul>
 <li>qes1998 <code>intvote2</code> (pre): <code>not_comparable</code>.
 The value labels are shifted in the source: the counts are those of vpl,
@@ -1151,8 +1559,9 @@ Post-election</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1338,7 +1747,7 @@ dernier?</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-turnout_prov_likely">
@@ -1388,8 +1797,9 @@ Pre-election</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1429,7 +1839,7 @@ election, are you…</td>
 <td><code>cps_weight_general</code></td>
 <td>Not offered</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_intent_other">
@@ -1440,8 +1850,9 @@ another party (text)<a class="anchor" aria-label="anchor" href="#target-vote_pro
 vote-intention question (vote_prov_intent, level other), as typed. Open
 text, not harmonized.</p>
 <p>Family <code>vote_prov</code> · type Text · timing Pre-election</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1482,7 +1893,7 @@ specify)]</td>
 <td><code>cps_weight_general</code></td>
 <td>Not offered</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_prov_prev">
@@ -1551,8 +1962,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1653,7 +2065,7 @@ birth date.</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-vote_fed_recall">
@@ -1711,8 +2123,9 @@ party.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1806,7 +2219,7 @@ you vote?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -1879,8 +2292,9 @@ close to; none is an answer.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -1996,7 +2410,7 @@ the telephone script is deposited), the anchor is web.</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-pid_fed">
@@ -2055,8 +2469,9 @@ close to; none is an answer.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2111,7 +2526,7 @@ in 2018) and no other-party option; web.</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-pid_prov_strength">
@@ -2149,8 +2564,9 @@ inapplicable.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2277,7 +2693,7 @@ inapplicable</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -2316,8 +2732,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2404,7 +2821,7 @@ should be an independent country, would you vote YES or NO?</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_sovereign_country">
@@ -2443,8 +2860,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2488,7 +2906,7 @@ voteriez-vous non?</td>
 <code>pondam1</code> (not usable yet)</td>
 <td>Not documented</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_favour">
@@ -2527,8 +2945,9 @@ on a four-point scale. Not a referendum vote.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2571,8 +2990,7 @@ Québec ne fasse plus partie du Canada, êtes-vous personnellement</td>
 <td><code>weight_rts</code></td>
 <td>Not documented</td>
 </tr></tbody>
-</table>
-<p><strong>Not used</strong></p>
+</table></details><p><strong>Not used</strong></p>
 <ul>
 <li>qes2018_panel <code>independance</code> (post):
 <code>not_comparable</code>. A recode of rts_q7 (1-2 favour, 3-4 oppose,
@@ -2587,8 +3005,9 @@ Québec ne fasse plus partie du Canada, êtes-vous personnellement</td>
 to 10 (right).</p>
 <p>Family <code>left_right</code> · type Numeric · timing Any time</p>
 <p><strong>Valid range</strong>: 0-10</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2693,7 +3112,7 @@ generally speaking?</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_4pt">
@@ -2734,8 +3153,9 @@ most.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2806,8 +3226,7 @@ third English option reads ‘Not very interested’ where the anchor has
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
-<p><strong>Not used</strong></p>
+</table></details><p><strong>Not used</strong></p>
 <ul>
 <li>qes2012_panel <code>interetrec</code> (pre):
 <code>not_comparable</code>. Not a question: a campaign-interest score
@@ -2854,8 +3273,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -2951,7 +3371,7 @@ reste du Canada, voteriez-vous OUI ou voteriez-vous NON</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_0_10">
@@ -2963,8 +3383,9 @@ item (interest_4pt), never rescaled; the pooled variable pol_interest
 divides it by 10.</p>
 <p>Family <code>interest</code> · type Numeric · timing Any time</p>
 <p><strong>Valid range</strong>: 0-10</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3024,7 +3445,7 @@ intérêt et 10 veut dire beaucoup d’intérêt)</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_election_0_10">
@@ -3037,8 +3458,9 @@ after it. Interest in an election, not in politics in general.</p>
 <p>Family <code>interest</code> · type Numeric · timing
 Post-election</p>
 <p><strong>Valid range</strong>: 0-10</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3097,7 +3519,7 @@ PROVINCIALE qui vient d’avoir lieu ?</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-interest_campaign_4pt">
@@ -3138,8 +3560,9 @@ campaign, not in politics in general (interest_4pt).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3180,7 +3603,7 @@ tout à la présente campagne électorale au Québec?</td>
 <code>pondam1</code> (not usable yet)</td>
 <td>Volunteered only</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-sov_partnership_1995_push">
@@ -3221,8 +3644,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3337,7 +3761,7 @@ tenté(e) de voter pour le OUI ou pour le NON?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-satis_demo_qc">
@@ -3379,8 +3803,9 @@ Any time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3502,7 +3927,7 @@ Quebec? Are you …</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-gov_satisfaction">
@@ -3546,8 +3971,9 @@ Any time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3657,7 +4083,7 @@ Québec?</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-econ_retro_qc">
@@ -3693,8 +4119,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3810,7 +4237,7 @@ worse, or stayed about the same?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-attach_qc">
@@ -3849,8 +4276,9 @@ worse, or stayed about the same?</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -3937,7 +4365,7 @@ and ‘Pas très attaché(e)’.</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-attach_ca">
@@ -3976,8 +4404,9 @@ and ‘Pas très attaché(e)’.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4066,7 +4495,7 @@ and ‘Pas très attaché(e)’.</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-identity_qc_ca">
@@ -4117,8 +4546,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4235,7 +4665,7 @@ yourself to be…</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_plq">
@@ -4248,8 +4678,9 @@ row names the person rated. Not knowing the leader is don’t know
 <p>Family <code>leader_ratings</code> · type Numeric · timing Any
 time</p>
 <p><strong>Valid range</strong>: 0-100</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4373,7 +4804,7 @@ leader. How do you feel about JEAN CHAREST?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_pq">
@@ -4386,8 +4817,9 @@ row names the person rated. Not knowing the leader is don’t know
 <p>Family <code>leader_ratings</code> · type Numeric · timing Any
 time</p>
 <p><strong>Valid range</strong>: 0-100</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4510,7 +4942,7 @@ leader. How do you feel about ANDRÉ BOISCLAIR?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_caq">
@@ -4523,8 +4955,9 @@ row names the person rated. Not knowing the leader is don’t know
 <p>Family <code>leader_ratings</code> · type Numeric · timing Any
 time</p>
 <p><strong>Valid range</strong>: 0-100</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4615,7 +5048,7 @@ LEGAULT?</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_qs">
@@ -4629,8 +5062,9 @@ knowing the leader is don’t know (dk).</p>
 <p>Family <code>leader_ratings</code> · type Numeric · timing Any
 time</p>
 <p><strong>Valid range</strong>: 0-100</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4753,7 +5187,7 @@ leader. How do you feel about FRANÇOISE DAVID?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-therm_leader_adq">
@@ -4766,8 +5200,9 @@ row names the person rated. Not knowing the leader is don’t know
 <p>Family <code>leader_ratings</code> · type Numeric · timing Any
 time</p>
 <p><strong>Valid range</strong>: 0-100</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -4827,7 +5262,7 @@ leader. How do you feel about MARIO DUMONT?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -4928,8 +5363,9 @@ concern.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5050,7 +5486,7 @@ provincial election on December 8?</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 <div class="section level3">
@@ -5063,8 +5499,9 @@ provincial election on December 8?</td>
 <p>Year the respondent was born.</p>
 <p>Family <code>birth</code> · type Numeric · timing Time-invariant</p>
 <p><strong>Valid range</strong>: 1900-2010</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5182,7 +5619,7 @@ year were you born? Enter year of birth Refusal 9999</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-birth_month">
@@ -5193,8 +5630,9 @@ birth in some studies; with birth_year, it tells whether a respondent
 born 18 years before the election year was 18 on election day.</p>
 <p>Family <code>birth</code> · type Numeric · timing Time-invariant</p>
 <p><strong>Valid range</strong>: 1-12</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5233,7 +5671,7 @@ born 18 years before the election year was 18 on election day.</p>
 <td><code>pond</code></td>
 <td>Offered explicitly</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age">
@@ -5244,8 +5682,9 @@ computed from the year of birth, which gives the age only to within a
 year.</p>
 <p>Family <code>age_years</code> · type Numeric · timing Any time</p>
 <p><strong>Valid range</strong>: 15-115</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5303,7 +5742,7 @@ anchor asks every respondent.</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age_group3">
@@ -5340,8 +5779,9 @@ an age at a band edge can be one year off).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5460,7 +5900,7 @@ anchor offers the three bands, by telephone and web.</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-citizen">
@@ -5490,8 +5930,9 @@ time</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5530,7 +5971,7 @@ time</p>
 <td><code>cps_weight_general</code></td>
 <td>Not offered</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-age_group6">
@@ -5583,8 +6024,9 @@ off).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5686,7 +6128,7 @@ this one.</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-gender">
@@ -5728,8 +6170,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -5810,8 +6253,9 @@ documented.</td>
 <td>Same two options on the web and the same stems as the anchor in
 English (What is your gender?) and French (Quel est votre sexe?), plus a
 no-answer option that is not in the file; kept at comparable, the grade
-it had before the review, because an identical grade on a row that pools
-fielding languages needs a second (human) reviewer.</td>
+it had before the review: an identical grade for a row that pools the
+languages of the interview is given only after a review by a person,
+which this row has not had yet.</td>
 <td>gender_2</td>
 <td>man, woman; not offered: nonbinary, other</td>
 <td>What is your gender?</td>
@@ -5924,7 +6368,7 @@ by the interviewer is not documented.</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-education4">
@@ -5971,8 +6415,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6146,7 +6591,7 @@ university), by telephone, not the highest level completed.</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-lang_mother">
@@ -6183,8 +6628,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6366,7 +6812,7 @@ que vous avez apprise et que vous pouvez encore parler?</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-born_canada">
@@ -6397,8 +6843,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6484,7 +6931,7 @@ anchor asks directly.</td>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-income_native">
@@ -6497,8 +6944,9 @@ asked for one). Brackets differ between studies, so the values are not
 comparable across studies; don’t know and refusals are missing
 values.</p>
 <p>Family <code>income</code> · type Text · timing Time-invariant</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6654,7 +7102,7 @@ en vous incluant? Est-ce…</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-religion">
@@ -6667,8 +7115,9 @@ others are missing values: reason inapplicable for those who said they
 belong to none, refused for those who would not answer the filter
 question, which is the gate of the crosswalk row.</p>
 <p>Family <code>faith</code> · type Text · timing Time-invariant</p>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6737,7 +7186,7 @@ longer question stem, on the web.</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-region_cma3">
@@ -6774,8 +7223,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -6933,7 +7383,7 @@ the CMA part of Chaudière-Appalaches.</td>
 <td>Not offered</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-lang_home">
@@ -6968,8 +7418,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7122,7 +7573,7 @@ language only.</td>
 <td>Volunteered only</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-relig_attend">
@@ -7168,8 +7619,9 @@ who do not are hardly ever or never (graded approximate).</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7276,7 +7728,7 @@ or twice a year, or hardly ever?</td>
 <td>Not documented</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level4">
 <h4 id="target-birthplace3">
@@ -7313,8 +7765,9 @@ Time-invariant</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="10%">
 <col width="10%">
@@ -7381,7 +7834,7 @@ Time-invariant</p>
 <td>Offered explicitly</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 </div>
 </div>
@@ -7559,8 +8012,9 @@ respondents, 43 of whom name a party).</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table class="table">
 <colgroup>
 <col width="20%">
 <col width="20%">
@@ -7654,8 +8108,7 @@ respondents, 43 of whom name a party).</td>
 <td><code>recall</code></td>
 </tr>
 </tbody>
-</table>
-<p>Each cell gives the member’s grade in the study (capped by its grade
+</table></details><p>Each cell gives the member’s grade in the study (capped by its grade
 cap) and the wave that asked it; a dash means the study has no question
 for the member. The last column is the member the respondent layout
 takes the study’s values from, among the default members (the long
@@ -7770,8 +8223,9 @@ approximate at most.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="14%">
 <col width="14%">
@@ -7891,8 +8345,7 @@ approximate at most.</td>
 <td><code>partnership_1995_push</code></td>
 </tr>
 </tbody>
-</table>
-<p>Each cell gives the member’s grade in the study (capped by its grade
+</table></details><p>Each cell gives the member’s grade in the study (capped by its grade
 cap) and the wave that asked it; a dash means the study has no question
 for the member. The last column is the member the respondent layout
 takes the study’s values from, among the default members (the long
@@ -7973,8 +8426,9 @@ in one election, not in politics: graded approximate at most.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8081,8 +8535,7 @@ in one election, not in politics: graded approximate at most.</td>
 <td>—</td>
 </tr>
 </tbody>
-</table>
-<p>Each cell gives the member’s grade in the study (capped by its grade
+</table></details><p>Each cell gives the member’s grade in the study (capped by its grade
 cap) and the wave that asked it; a dash means the study has no question
 for the member. The last column is the member the respondent layout
 takes the study’s values from, among the default members (the long
@@ -8162,8 +8615,9 @@ turnout.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Coverage</strong></p>
-<table class="table">
+<details class="qesr-target"><summary>
+Coverage by study
+</summary><table class="table">
 <thead><tr class="header">
 <th>Study</th>
 <th><code>recall</code></th>
@@ -8238,8 +8692,7 @@ turnout.</td>
 <td><code>recall</code></td>
 </tr>
 </tbody>
-</table>
-<p>Each cell gives the member’s grade in the study (capped by its grade
+</table></details><p>Each cell gives the member’s grade in the study (capped by its grade
 cap) and the wave that asked it; a dash means the study has no question
 for the member. The last column is the member the respondent layout
 takes the study’s values from, among the default members (the long
@@ -8258,7 +8711,7 @@ graded versions. A column is built from a strict target or a pooled
 variable where one exists, recoded into the column’s categories where
 needed, and from relaxed mappings of the studies’ own questions where
 the strict layer has none. A relaxed mapping is applied once a reviewer
-has signed it off (status <code>stable</code>).</p>
+has approved it.</p>
 <div class="section level3">
 <h3 id="relaxed-citizenship">
 <code>citizenship</code>: Citizenship<a class="anchor" aria-label="anchor" href="#relaxed-citizenship"></a>
@@ -8291,8 +8744,9 @@ election, so that every respondent of that panel is a citizen.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8316,21 +8770,19 @@ election, so that every respondent of that panel is a citizen.</p>
 <td>1 = Canadian citizen; 2 = Source category straddles target levels
 (NA); 3 = Don’t know or refused (one code) (NA)</td>
 <td>fills the study</td>
-<td>OD-R12: the screening question asks whether the respondent may vote
-in the coming Quebec election, which requires Canadian citizenship;
-every respondent answered yes, so the column is constant in this
-study.</td>
-<td>stable</td>
+<td>The screening question asks whether the respondent may vote in the
+coming Quebec election, which requires Canadian citizenship; every
+respondent answered yes, so the column is constant in this study.</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-yob">
 <code>yob</code>: Year of birth<a class="anchor" aria-label="anchor" href="#relaxed-yob"></a>
 </h3>
 <p>The respondent’s year of birth.</p>
-<p>Base: <code>target:birth_year</code> · <code>identity</code> · one
-value per respondent</p>
+<p>Base: <code>target:birth_year</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The year of birth as reported;
 the studies that asked only an age group have none (see age_group).</p>
 <p><strong>Valid range</strong>: 1900-2010</p>
@@ -8342,8 +8794,7 @@ the studies that asked only an age group have none (see age_group).</p>
 <code>age_group</code>: Age group<a class="anchor" aria-label="anchor" href="#relaxed-age_group"></a>
 </h3>
 <p>The respondent’s age group.</p>
-<p>Base: <code>target:age_group3</code> · <code>identity</code> · one
-value per respondent</p>
+<p>Base: <code>target:age_group3</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Three age groups (18-34, 35-54,
 55 and over), from the study’s own age bands or from the age at the
 start of fieldwork; respondents under 18 are missing.</p>
@@ -8380,8 +8831,7 @@ start of fieldwork; respondents under 18 are missing.</p>
 <code>gender</code>: Gender<a class="anchor" aria-label="anchor" href="#relaxed-gender"></a>
 </h3>
 <p>The respondent’s gender.</p>
-<p>Base: <code>target:gender</code> · <code>identity</code> · one value
-per respondent</p>
+<p>Base: <code>target:gender</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Gender or sex as each study asked
 it: man or woman everywhere, and in 2022 also non-binary or another
 gender; the questions differ, the categories do not.</p>
@@ -8424,8 +8874,7 @@ gender; the questions differ, the categories do not.</p>
 </h3>
 <p>The highest level of schooling the respondent completed, in four
 groups.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Each study’s levels are grouped
 into four: no high school diploma, high school, college (CEGEP,
 technical or trade school) and university, including some university;
@@ -8467,8 +8916,9 @@ is primary or less.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8495,7 +8945,7 @@ College, CEGEP or trade school; 8-11 = University; -99 = No answer (item
 nonresponse) (NA)</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -8505,9 +8955,9 @@ nonresponse) (NA)</td>
 College, CEGEP or trade school; 13-15 = University; 99 = Refused
 (NA)</td>
 <td>fills the study</td>
-<td>Code 9 (secondary 5 with a vocational diploma, DEP) is college
-(OD-R10); the strict education4 puts it with secondary.</td>
-<td>stable</td>
+<td>Code 9 (secondary 5 with a vocational diploma, DEP) is college; the
+strict education4 puts it with secondary.</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -8518,7 +8968,7 @@ College, CEGEP or trade school; 9-11 = University; 99 = Refused
 (NA)</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -8532,7 +8982,7 @@ College, CEGEP or trade school; 9-12 = University; 98 = Don’t know (NA);
 questionnaire’s technical course) is college; code 10 (certificate and
 diploma), in neither questionnaire, is university with code 9 (some
 higher education).</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -8543,9 +8993,9 @@ College, CEGEP or trade school; 6-8 = University; 9 = Don’t know or
 refused (one code) (NA)</td>
 <td>fills the study</td>
 <td>Code 4 (registered apprenticeship or other trades certificate) is
-college (OD-R10); code 6 (university certificate below the bachelor’s)
-is university.</td>
-<td>stable</td>
+college; code 6 (university certificate below the bachelor’s) is
+university.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -8561,7 +9011,7 @@ university. The high school group therefore also holds those who left
 secondary school without a diploma, and the college group may hold
 respondents with some university but no degree, whom other studies count
 as university.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -8572,7 +9022,7 @@ College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA);
 99 = Refused (NA)</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -8583,7 +9033,7 @@ College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA);
 99 = Refused (NA)</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes1998</td>
@@ -8592,11 +9042,11 @@ College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA);
 <td>1-3 = Source category straddles target levels (NA); 9 = Don’t know
 or refused (one code) (NA)</td>
 <td>fills the study</td>
-<td>OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and
+<td>The pooled file groups years of schooling as 1-9, 10-15 and
 university; 10-15 years spans high school and college, and mapping only
 the other two groups would bias every share, so the study is left out of
-the four groups. The three groups of education include it (OD-R17).</td>
-<td>stable</td>
+the four groups. The three groups of education include it.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes_crop_2007_2010</td>
@@ -8611,10 +9061,10 @@ university): 7 or fewer is no diploma and 8 to 12 is high school, so
 that group also holds those who left secondary school without a diploma;
 grouping by years, not by highest level, can also put some university
 (14 or 15 years) in college.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-education">
@@ -8661,8 +9111,9 @@ counted in university.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8686,21 +9137,21 @@ counted in university.</p>
 <td>1 = No high school diploma; 2 = High school to college (CEGEP); 3 =
 University; 9 = Don’t know or refused (one code) (NA)</td>
 <td>replaces the base</td>
-<td>OD-R17: the pooled file’s three groups are labelled 1-9 years, 10-15
-years and university or more, but the two firms built them differently.
-For the CREATEC respondents (firme_post = 1), scol recodes the highest
-level completed (r15: elementary or some secondary; secondary completed
-or technical, college or CEGEP; university, completed or not), so the
-three groups hold. For the CROP respondents (firme_post = 2), it groups
-years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16
-or more), so the match is approximate: Quebec high school ends after 11
+<td>The pooled file’s three groups are labelled 1-9 years, 10-15 years
+and university or more, but the two firms built them differently. For
+the CREATEC respondents (firme_post = 1), scol recodes the highest level
+completed (r15: elementary or some secondary; secondary completed or
+technical, college or CEGEP; university, completed or not), so the three
+groups hold. For the CROP respondents (firme_post = 2), it groups years
+of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16 or
+more), so the match is approximate: Quebec high school ends after 11
 years, so a respondent with 10 years has no diploma but counts as high
 school to college, and some respondents with 14 or 15 years are
 university students who count as high school to college. Code 9 is
 unlabelled and read as don’t know or refused.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-income_cat">
@@ -8708,8 +9159,7 @@ unlabelled and read as don’t know or refused.</td>
 </h3>
 <p>The household’s total income before taxes, in thirds of the study’s
 respondents.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Household income in thirds of
 each study’s own respondents: income brackets are never split, so a
 third holds the whole brackets whose midpoint falls in it and is rarely
@@ -8739,8 +9189,9 @@ exactly a third; the dollar limits differ from study to study.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8771,7 +9222,7 @@ answer (item nonresponse) (NA)</td>
 unweighted: low under $52,200, high $95,600 or more. An amount of 0 or
 -99 (no amount) passes to the bracket question cps_income2, whose
 brackets go in by their midpoint against the same limits.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -8780,9 +9231,9 @@ brackets go in by their midpoint against the same limits.</td>
 <td>1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99
 = Refused (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $72,000 or more (2017 income).</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $72,000 or more (2017 income).</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -8791,9 +9242,9 @@ brackets go in by their midpoint against the same limits.</td>
 <td>1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99
 = Refused (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $72,000 or more (2013 income).</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $72,000 or more (2013 income).</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -8802,9 +9253,9 @@ brackets go in by their midpoint against the same limits.</td>
 <td>1-4 = Low (bottom third); 5-7 = Middle; 8, 9 = High (top third); 98
 = Don’t know (NA); 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $88,000 or more (2011 income).</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $88,000 or more (2011 income).</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -8813,9 +9264,9 @@ brackets go in by their midpoint against the same limits.</td>
 <td>1, 2 = Low (bottom third); 3, 4 = Middle; 5-7 = High (top third); 8
 = Don’t know or refused (one code) (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $80,000 or more.</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $80,000 or more.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -8824,9 +9275,9 @@ brackets go in by their midpoint against the same limits.</td>
 <td>1, 2 = Low (bottom third); 3 = Middle; 4, 5 = High (top third); 9 =
 Don’t know or refused (one code) (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $60,000 or more.</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $60,000 or more.</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -8835,9 +9286,9 @@ Don’t know or refused (one code) (NA)</td>
 <td>1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98
 = Don’t know (NA); 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $70,000 or more (2006 income).</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $70,000 or more (2006 income).</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -8846,9 +9297,9 @@ Don’t know or refused (one code) (NA)</td>
 <td>1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98
 = Don’t know (NA); 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $70,000 or more (2007 income).</td>
-<td>stable</td>
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $70,000 or more (2007 income).</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes_crop_2007_2010</td>
@@ -8857,13 +9308,13 @@ Don’t know or refused (one code) (NA)</td>
 <td>1, 2 = Low (bottom third); 3, 4 = Middle; 5 = High (top third); 9 =
 Don’t know or refused (one code) (NA)</td>
 <td>fills the study</td>
-<td>Thirds by the midpoint rule on the unweighted counts of the brackets
-(OD-R11). Low is under $40,000, high $80,000 or more; the thirds pool
+<td>Thirds by the midpoint rule on the unweighted counts of the
+brackets. Low is under $40,000, high $80,000 or more; the thirds pool
 the 24 polls.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language">
@@ -8871,8 +9322,7 @@ the 24 polls.</td>
 </h3>
 <p>The respondent’s mother tongue: French, English or another
 language.</p>
-<p>Base: <code>target:lang_mother</code> · <code>identity</code> · one
-value per respondent</p>
+<p>Base: <code>target:lang_mother</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The language first learned in
 childhood, in three groups; a respondent who reported French and another
 language is French, and English and a language other than French is
@@ -8903,8 +9353,9 @@ their sample.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -8929,9 +9380,9 @@ their sample.</p>
 <td>the first option ticked, in this order: cps_lang_2 (French),
 cps_lang_1 (English), cps_lang_3 (Other)</td>
 <td>replaces the base</td>
-<td>OD-R5: a respondent who reported two mother tongues is French when
-one is French, else English when one is English.</td>
-<td>stable</td>
+<td>A respondent who reported two mother tongues is French when one is
+French, else English when one is English.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -8940,9 +9391,9 @@ one is French, else English when one is English.</td>
 <td>1, 4, 5 = French; 2, 6 = English; 3 = Other; 8 = Don’t know (NA); 9
 = Refused (NA)</td>
 <td>replaces the base</td>
-<td>OD-R5: a respondent who reported two mother tongues is French when
-one is French, else English when one is English.</td>
-<td>stable</td>
+<td>A respondent who reported two mother tongues is French when one is
+French, else English when one is English.</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -8951,9 +9402,9 @@ one is French, else English when one is English.</td>
 <td>1, 4, 7 = French; 2, 5 = English; 3, 6 = Other; 9 = Don’t know or
 refused (one code) (NA)</td>
 <td>replaces the base</td>
-<td>OD-R5: a respondent who reported two mother tongues is French when
-one is French, else English when one is English.</td>
-<td>stable</td>
+<td>A respondent who reported two mother tongues is French when one is
+French, else English when one is English.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes1998</td>
@@ -8961,14 +9412,14 @@ one is French, else English when one is English.</td>
 <code>firme_post</code> (pre)</td>
 <td>1 = French; 2 = Source category straddles target levels (NA)</td>
 <td>fills the study</td>
-<td>OD-R3: the CREATEC sample (firme_post = 1) holds only respondents
-whose mother tongue is French (codebook of the CREATEC file); the CROP
+<td>The CREATEC sample (firme_post = 1) holds only respondents whose
+mother tongue is French (codebook of the CREATEC file); the CROP
 respondents were screened on another criterion and have no mother
 tongue.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language_fr">
@@ -9001,8 +9452,9 @@ yes in both language_fr and language_eng.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9028,7 +9480,7 @@ yes in both language_fr and language_eng.</p>
 (No), cps_lang_3 (No)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9038,7 +9490,7 @@ yes in both language_fr and language_eng.</p>
 (NA)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9048,10 +9500,10 @@ yes in both language_fr and language_eng.</p>
 (NA)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-language_eng">
@@ -9084,8 +9536,9 @@ yes in both language_eng and language_fr.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9111,7 +9564,7 @@ yes in both language_eng and language_fr.</p>
 (No), cps_lang_3 (No)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9121,7 +9574,7 @@ yes in both language_eng and language_fr.</p>
 (NA)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9131,10 +9584,10 @@ yes in both language_eng and language_fr.</p>
 (NA)</td>
 <td>replaces the base</td>
 <td>Yes when this language is among the mother tongues reported.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-religion">
@@ -9142,8 +9595,7 @@ yes in both language_eng and language_fr.</p>
 </h3>
 <p>The respondent’s religion: Catholic, Protestant, other Christian,
 another religion or none.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The religion the respondent
 belongs to, in five groups; the 2022 question offers a long list, where
 agnostic counts as no religion, and the other studies first ask whether
@@ -9183,8 +9635,9 @@ the respondent belongs to a religion at all.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9214,7 +9667,7 @@ Protestant; 10 = Catholic; 11, 12, 14 = Other Christian; -99 = No answer
 non-Christian religions are other. Agnostic counts as none; the Orthodox
 churches, Jehovah’s Witnesses and Mormons are other Christian; the other
 Christian denominations listed are Protestant.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9226,7 +9679,7 @@ religion; 99 = Refused (NA)</td>
 <td>fills the study</td>
 <td>Those who belong to no religion are none; Jewish, Muslim and other
 non-Christian religions are other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9238,7 +9691,7 @@ Refused (NA)</td>
 <td>fills the study</td>
 <td>Those who belong to no religion are none; Jewish, Muslim and other
 non-Christian religions are other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9250,18 +9703,17 @@ Refused (NA)</td>
 <td>fills the study</td>
 <td>Those who belong to no religion are none; Jewish, Muslim and other
 non-Christian religions are other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-marital">
 <code>marital</code>: Marital status<a class="anchor" aria-label="anchor" href="#relaxed-marital"></a>
 </h3>
 <p>The respondent’s marital status, in four groups.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Married or living with a partner,
 separated or divorced, widowed, or never married; 2012 and 2014 asked
 the official civil status, with no common-law option, so some partners
@@ -9296,8 +9748,9 @@ who live together are never married there.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9325,7 +9778,7 @@ nonresponse) (NA)</td>
 <td>fills the study</td>
 <td>Asked after the election: the respondents of the campaign wave only
 are missing (not in this wave).</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9336,7 +9789,7 @@ divorced; 3 = Single, never married; 5 = Widowed; 98 = Refused (NA)</td>
 <td>fills the study</td>
 <td>Married or in a civil union (1) and common-law partner (6) are
 married.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9345,12 +9798,12 @@ married.</td>
 <td>1, 6 = Married or living with a partner; 2, 4 = Separated or
 divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R7: the question asks the official civil status and lists no
-common-law option. Civil union (6) is married. Code 6 holds 309 of the
-1,501 substantive answers, far more than the share of formal civil
-unions in Quebec, so most respondents living common-law probably chose
-it; any who answered single instead are never married.</td>
-<td>stable</td>
+<td>The question asks the official civil status and lists no common-law
+option. Civil union (6) is married. Code 6 holds 309 of the 1,501
+substantive answers, far more than the share of formal civil unions in
+Quebec, so most respondents living common-law probably chose it; any who
+answered single instead are never married.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9359,15 +9812,15 @@ it; any who answered single instead are never married.</td>
 <td>1, 6 = Married or living with a partner; 2, 4 = Separated or
 divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R7: the question asks the official civil status, with no
-common-law option; civil partnership (6) is married. Partners who live
-together could answer Single or civil partnership: 360 respondents (24%)
-chose civil partnership, far more than the legal civil unions in Quebec,
-so common-law partners are split between married and never married.</td>
-<td>stable</td>
+<td>The question asks the official civil status, with no common-law
+option; civil partnership (6) is married. Partners who live together
+could answer Single or civil partnership: 360 respondents (24%) chose
+civil partnership, far more than the legal civil unions in Quebec, so
+common-law partners are split between married and never married.</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-employment">
@@ -9375,12 +9828,13 @@ so common-law partners are split between married and never married.</td>
 </h3>
 <p>The respondent’s employment status: working, unemployed, retired,
 student or other.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The main employment status in
 five groups; a respondent who gave two statuses, such as retired and
 working, takes the one that is not work, and at home, unable to work and
-other statuses are other.</p>
+other statuses are other. In the 2018 panel only web respondents were
+asked about employment, so its telephone respondents appear as don’t
+know or refused.</p>
 <p><strong>Levels</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -9416,8 +9870,9 @@ other statuses are other.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9443,12 +9898,12 @@ other statuses are other.</p>
 Unemployed; 6, 9 = Student; 7, 8, 10, 12 = At home, unable to work or
 other; -99 = No answer (item nonresponse) (NA)</td>
 <td>fills the study</td>
-<td>OD-R9: a respondent who gave two statuses (student and working,
-retired and working, at home and working) takes the one that is not
-work; two jobs is working; at home, disabled and other statuses are
-other. Asked after the election: the respondents of the campaign wave
-only are missing (not in this wave).</td>
-<td>stable</td>
+<td>A respondent who gave two statuses (student and working, retired and
+working, at home and working) takes the one that is not work; two jobs
+is working; at home, disabled and other statuses are other. Asked after
+the election: the respondents of the campaign wave only are missing (not
+in this wave).</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9458,11 +9913,10 @@ only are missing (not in this wave).</td>
 Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or
 other; 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R9: a respondent who gave two statuses (student and working,
-retired and working, at home and working) takes the one that is not
-work; two jobs is working; at home, disabled and other statuses are
-other.</td>
-<td>stable</td>
+<td>A respondent who gave two statuses (student and working, retired and
+working, at home and working) takes the one that is not work; two jobs
+is working; at home, disabled and other statuses are other.</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9472,11 +9926,10 @@ other.</td>
 Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or
 other; 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R9: a respondent who gave two statuses (student and working,
-retired and working, at home and working) takes the one that is not
-work; two jobs is working; at home, disabled and other statuses are
-other.</td>
-<td>stable</td>
+<td>A respondent who gave two statuses (student and working, retired and
+working, at home and working) takes the one that is not work; two jobs
+is working; at home, disabled and other statuses are other.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2012</td>
@@ -9486,11 +9939,10 @@ other.</td>
 Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or
 other; 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R9: a respondent who gave two statuses (student and working,
-retired and working, at home and working) takes the one that is not
-work; two jobs is working; at home, disabled and other statuses are
-other.</td>
-<td>stable</td>
+<td>A respondent who gave two statuses (student and working, retired and
+working, at home and working) takes the one that is not work; two jobs
+is working; at home, disabled and other statuses are other.</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2018_panel</td>
@@ -9505,7 +9957,7 @@ labour market (at home) and other are other. The item was asked of the
 850 web respondents only: the file codes all 400 telephone respondents
 (method 1-2) as 9 (don’t know), so 400 of the 406 missing values are not
 asked, not real don’t-know answers (6 web respondents chose 9).</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -9517,7 +9969,7 @@ home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused
 <td>fills the study</td>
 <td>Full time and part time are working; at home full time is
 other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9527,11 +9979,10 @@ other.</td>
 Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or
 other; 99 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R9: a respondent who gave two statuses (student and working,
-retired and working, at home and working) takes the one that is not
-work; two jobs is working; at home, disabled and other statuses are
-other.</td>
-<td>stable</td>
+<td>A respondent who gave two statuses (student and working, retired and
+working, at home and working) takes the one that is not work; two jobs
+is working; at home, disabled and other statuses are other.</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2008</td>
@@ -9544,7 +9995,7 @@ Unemployed; 5 = Student; 6, 7, 96 = At home, unable to work or other; 99
 <td>One status per respondent (the 2008 questionnaire has no two-status
 codes): self-employed and working for pay are working; at home, disabled
 and other (specify) are other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes1998</td>
@@ -9552,10 +10003,10 @@ and other (specify) are other.</td>
 <code>occup</code> (pre)</td>
 <td>1-3 = Source category straddles target levels (NA)</td>
 <td>fills the study</td>
-<td>OD-R2: the pooled file has full time, part time and not working; not
+<td>The pooled file has full time, part time and not working; not
 working joins the unemployed, the retired, students and those at home,
 so the study is left out.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes_crop_2007_2010</td>
@@ -9567,10 +10018,10 @@ home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused
 <td>fills the study</td>
 <td>Full time and part time are working; at home full time is
 other.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-union">
@@ -9578,15 +10029,13 @@ other.</td>
 </h3>
 <p>Whether the respondent, or in some studies anyone in the household,
 belongs to a union.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Whether the respondent belongs to
 a union in 2022, but whether the respondent or anyone in the household
 does in 2014 and 2018 (in 2018, respondents who live with their parents
 were asked about their family: parents, brothers or sisters). Only these
 three studies ask it, and 2022 asks it after the election, so its
-campaign-only respondents are missing; the column is kept whatever its
-number of studies (essential), as decided on 2026-10-01.</p>
+campaign-only respondents are missing.</p>
 <p><strong>Levels</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -9607,8 +10056,9 @@ number of studies (essential), as decided on 2026-10-01.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9635,7 +10085,7 @@ number of studies (essential), as decided on 2026-10-01.</p>
 <td>The respondent belongs to a union (not the household). Asked after
 the election: the respondents of the campaign wave only are missing (not
 in this wave).</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2018</td>
@@ -9651,7 +10101,7 @@ household, those who do (q65b, 514) about their family (parents,
 brothers or sisters). The household version is read first, then the
 family version for those who were not asked it. The respondent or anyone
 in the household (or family) belongs to a union.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2014</td>
@@ -9660,10 +10110,10 @@ in the household (or family) belongs to a union.</td>
 <td>1 = Yes; 2 = No; 9 = Refused (NA)</td>
 <td>fills the study</td>
 <td>The respondent or anyone in the household belongs to a union.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-region">
@@ -9671,8 +10121,7 @@ in the household (or family) belongs to a union.</td>
 </h3>
 <p>Where the respondent lives: Montreal CMA, Quebec CMA or the rest of
 Quebec.</p>
-<p>Base: <code>target:region_cma3</code> · <code>identity</code> · one
-value per respondent</p>
+<p>Base: <code>target:region_cma3</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The Montreal census metropolitan
 area, the Quebec City census metropolitan area or the rest of Quebec,
 from each study’s region or sub-region variable, with the boundaries
@@ -9702,8 +10151,9 @@ each study used.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9731,17 +10181,16 @@ each study used.</p>
 Laurentides, Laval, Montérégie and Montréal) are the Montreal CMA, and
 the parts of the Quebec CMA in Capitale-Nationale and
 Chaudière-Appalaches are the Quebec CMA.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-region_admin">
 <code>region_admin</code>: Administrative region<a class="anchor" aria-label="anchor" href="#relaxed-region_admin"></a>
 </h3>
 <p>The administrative region where the respondent lives.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · one value
-per respondent</p>
+<p>Base: relaxed mappings only · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: The 17 administrative regions of
 Quebec, where a study recorded them or sub-regions that fit within them;
 the sub-regions of the 2007 study and the 2007 panel that split a region
@@ -9841,8 +10290,9 @@ are joined.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -9872,7 +10322,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2014</td>
@@ -9886,7 +10336,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2012</td>
@@ -9900,7 +10350,7 @@ Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16
 = Montérégie; 17 = Centre-du-Québec</td>
 <td>fills the study</td>
 <td></td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes2007_panel</td>
@@ -9915,7 +10365,7 @@ Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec</td>
 <td>fills the study</td>
 <td>Sub-regions that split a region (its part in a CMA and the rest) are
 joined.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes2007</td>
@@ -9930,18 +10380,17 @@ Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie;
 <td>fills the study</td>
 <td>Sub-regions that split a region (its part in a CMA and the rest) are
 joined; Nord-du-Québec has no code.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-born_canada">
 <code>born_canada</code>: Born in Canada<a class="anchor" aria-label="anchor" href="#relaxed-born_canada"></a>
 </h3>
 <p>Whether the respondent was born in Canada.</p>
-<p>Base: <code>target:born_canada</code> · <code>identity</code> · one
-value per respondent</p>
+<p>Base: <code>target:born_canada</code> · one value per respondent</p>
 <p><strong>How it is relaxed</strong>: Born in Canada or not, as each
 study asked it: from the birthplace (Quebec, elsewhere in Canada or
 abroad), or asked directly in 2022.</p>
@@ -10009,8 +10458,7 @@ there.</p>
 </h3>
 <p>The party of the respondent’s vote in the Quebec general election of
 the study.</p>
-<p>Base: <code>pooled:vote_choice</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>pooled:vote_choice</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: The reported vote where a study
 asked it, else the vote intention with the undecided pushed toward the
 party they lean to, else the first intention question (the pooled
@@ -10084,8 +10532,8 @@ offered.</p>
 <code>vote_type</code>: Question of the vote choice<a class="anchor" aria-label="anchor" href="#relaxed-vote_type"></a>
 </h3>
 <p>The question of vote_choice on the row.</p>
-<p>Base: <code>pooled:vote_choice__type</code> · <code>identity</code> ·
-on the wave that asked it</p>
+<p>Base: <code>pooled:vote_choice__type</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Which question vote_choice comes
 from on each row: the reported vote, the pushed intention or the first
 intention question.</p>
@@ -10123,8 +10571,7 @@ intention question.</p>
 </h3>
 <p>Whether the respondent voted in the Quebec general election of the
 study.</p>
-<p>Base: <code>pooled:turnout</code> · <code>identity</code> · on the
-wave that asked it</p>
+<p>Base: <code>pooled:turnout</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Whether the respondent says they
 voted in the Quebec general election of the study, asked after it; the
 wordings and answer options differ, some offering several ways of not
@@ -10159,8 +10606,8 @@ election<a class="anchor" aria-label="anchor" href="#relaxed-vote_prev"></a>
 </h3>
 <p>The party the respondent voted for at the previous Quebec general
 election.</p>
-<p>Base: <code>target:vote_prov_prev</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>target:vote_prov_prev</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: The party of the reported vote at
 the Quebec general election before the study; those who did not vote are
 missing, the sources name the election recalled, and the 1998 question
@@ -10220,8 +10667,9 @@ names only the PLQ and the PQ.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10249,7 +10697,7 @@ names only the PLQ and the PQ.</p>
 <td>The election of April 2003 (QC2003); asked in the second
 pre-election poll only, so the other respondents are system
 missing.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="even">
 <td>qes1998</td>
@@ -10261,7 +10709,7 @@ missing.</td>
 <td>The election of 1994 (QC1994). The pooled file names only the PLQ
 and the PQ; the unlabelled code 9 holds the other parties (the ADQ among
 them) and unknown answers, so 1994 ADQ voters are missing.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 <tr class="odd">
 <td>qes_crop_2007_2010</td>
@@ -10273,18 +10721,17 @@ not vote (NA); 9 = Don’t know or refused (one code) (NA)</td>
 <td>The last Quebec election before each poll: QC2007 for the polls of
 June 2007 to November 2008, QC2008 from January 2009. The original
 question (QP4); code 7 joins not voted and spoiled.</td>
-<td>stable</td>
+<td>approved</td>
 </tr>
 </tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-pid">
 <code>pid</code>: Provincial party identification<a class="anchor" aria-label="anchor" href="#relaxed-pid"></a>
 </h3>
 <p>The Quebec party the respondent identifies with.</p>
-<p>Base: <code>target:pid_prov</code> · <code>identity</code> · on the
-wave that asked it</p>
+<p>Base: <code>target:pid_prov</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: The Quebec party the respondent
 identifies with, or none, as each study asked it; the parties offered
 differ from study to study.</p>
@@ -10356,8 +10803,7 @@ differ from study to study.</p>
 <code>lr</code>: Left-right self-placement (0-10)<a class="anchor" aria-label="anchor" href="#relaxed-lr"></a>
 </h3>
 <p>The respondent’s position on a left-right scale.</p>
-<p>Base: <code>target:lr_self</code> · <code>identity</code> · on the
-wave that asked it</p>
+<p>Base: <code>target:lr_self</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Self-placement on a left-right
 scale from 0 (left) to 10 (right); a scale of another length would be
 rescaled to 0-10, and every study that asked one used 0 to 10.</p>
@@ -10371,12 +10817,15 @@ rescaled to 0-10, and every study that asked one used 0 to 10.</p>
 </h3>
 <p>How interested the respondent is in politics.</p>
 <p>Base: <code>pooled:pol_interest</code> ·
-<code>bands:0.35,0.75:low,medium,high</code> · on the wave that asked
+<code>bands:0.55,0.85:low,medium,high</code> · on the wave that asked
 it</p>
 <p><strong>How it is relaxed</strong>: Interest on 0 to 1 (interest_01)
-in three bands, low below 0.35 and high from 0.75; the 4-point and 0-10
-questions do not line up, and the 2008 study and the 2007 panel asked
-interest in the election or the campaign, not in politics.</p>
+in three bands, low below 0.55 and high from 0.85: on a 0-10 question, 0
+to 5 is low, 6 to 8 medium and 9 or 10 high; on a 4-point question, not
+at all or hardly interested is low, quite interested medium and very
+interested high. The two formats still do not line up exactly, and the
+2008 study and the 2007 panel asked interest in the election or the
+campaign, not in politics.</p>
 <p><strong>Levels</strong></p>
 <table class="table">
 <thead><tr class="header">
@@ -10410,8 +10859,8 @@ interest in the election or the campaign, not in politics.</p>
 <code>interest_01</code>: Interest in politics (0-1)<a class="anchor" aria-label="anchor" href="#relaxed-interest_01"></a>
 </h3>
 <p>How interested the respondent is in politics, on 0 to 1.</p>
-<p>Base: <code>pooled:pol_interest</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>pooled:pol_interest</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Interest on 0 to 1 (the pooled
 pol_interest): four-point answers scored 1, 0.7, 0.3 and 0, and 0-10
 answers divided by 10.</p>
@@ -10426,8 +10875,8 @@ answers divided by 10.</p>
 <p>How the respondent would vote in a referendum on Quebec
 sovereignty.</p>
 <p>Base: <code>pooled:sov_support</code> ·
-<code>recode:yes=yes,no=no,would_not_vote=NA:not_mappable</code> · on
-the wave that asked it</p>
+<code>recode:yes=yes,no=no,would_not_vote=NA:not_voted</code> · on the
+wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Yes or no in a referendum on
 Quebec sovereignty, whatever the question (an independent country, a
 sovereign country, the 1995 question or being favourable to
@@ -10453,8 +10902,9 @@ missing.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10480,9 +10930,9 @@ missing.</p>
 intvoterefb: 1 = Yes; 2 = No; 3 = Source category straddles target
 levels (NA); 8 = Don’t know (NA); 9 = Refused (NA)</td>
 <td>fills the study</td>
-<td>OD-R8: the referendum question of the CROP polls. Its label is cut
-off in the file and the deposited codebook gives no more. CROP’s reports
-give the wording for 19 of the 24 polls: whether Quebec should become a
+<td>The referendum question of the CROP polls. Its label is cut off in
+the file and the deposited codebook gives no more. CROP’s reports give
+the wording for 19 of the 24 polls: whether Quebec should become a
 sovereign country (« devienne un pays souverain »). It is not documented
 for the other five; in April 2009 CROP asked both a sovereign-country
 and a sovereignty-partnership question, and for May 2009 the press does
@@ -10490,9 +10940,9 @@ not say which one gave the published result. For those who did not know,
 the push (intvoterefb) is used. The push was also asked of those who
 would not vote or refused, whose first answer is kept. Would not vote is
 missing.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-sovereignty_type">
@@ -10546,8 +10996,9 @@ whose full wording was not deposited.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10571,11 +11022,11 @@ whose full wording was not deposited.</p>
 <td>every respondent = CROP referendum question (wording not
 deposited)</td>
 <td>fills the study</td>
-<td>OD-R8: every CROP poll respondent; sovereignty says whether they
+<td>Every CROP poll respondent; sovereignty says whether they
 answered.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-satis_democracy">
@@ -10584,8 +11035,8 @@ Quebec<a class="anchor" aria-label="anchor" href="#relaxed-satis_democracy"></a>
 </h3>
 <p>How satisfied the respondent is with the way democracy works in
 Quebec.</p>
-<p>Base: <code>target:satis_demo_qc</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>target:satis_demo_qc</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Satisfaction with the way
 democracy works in Quebec, on four points, as each study asked it.</p>
 <p><strong>Levels</strong></p>
@@ -10627,8 +11078,8 @@ democracy works in Quebec, on four points, as each study asked it.</p>
 government<a class="anchor" aria-label="anchor" href="#relaxed-gov_satisfaction"></a>
 </h3>
 <p>How satisfied the respondent is with the Quebec government.</p>
-<p>Base: <code>target:gov_satisfaction</code> · <code>identity</code> ·
-on the wave that asked it</p>
+<p>Base: <code>target:gov_satisfaction</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Satisfaction with the Quebec
 government of the day, on four points; the 1998 question asks about the
 Bouchard government, in its own words.</p>
@@ -10662,8 +11113,9 @@ Bouchard government, in its own words.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10691,17 +11143,17 @@ Bouchard government, in its own words.</p>
 words: very satisfied, rather satisfied, rather dissatisfied, very
 dissatisfied; code 9 is unlabelled and read as don’t know or
 refused.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-econ_retro">
 <code>econ_retro</code>: Quebec’s economy over the past year<a class="anchor" aria-label="anchor" href="#relaxed-econ_retro"></a>
 </h3>
 <p>The respondent’s view of Quebec’s economy over the past year.</p>
-<p>Base: <code>target:econ_retro_qc</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>target:econ_retro_qc</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Whether Quebec’s economy got
 better, stayed about the same or got worse over the past year, as each
 study asked it.</p>
@@ -10740,8 +11192,7 @@ year<a class="anchor" aria-label="anchor" href="#relaxed-econ_self"></a>
 </h3>
 <p>The respondent’s view of their own financial situation over the past
 year.</p>
-<p>Base: relaxed mappings only · <code>relaxed_only</code> · on the wave
-that asked it</p>
+<p>Base: relaxed mappings only · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Whether the respondent’s own
 financial situation got better, stayed about the same or got worse over
 the past year. Only qes2022 asks it, during the campaign; the column is
@@ -10774,8 +11225,9 @@ is not used.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>Relaxed mappings</strong></p>
-<table style="width:100%;" class="table">
+<details class="qesr-target"><summary>
+Mappings by study
+</summary><table style="width:100%;" class="table">
 <colgroup>
 <col width="16%">
 <col width="16%">
@@ -10802,9 +11254,9 @@ is not used.</p>
 missing value. Not the 2012 and 2014 question on one’s own finances if
 Quebec became independent (q85, Q47), which asks about another
 situation.</td>
-<td>stable</td>
+<td>approved</td>
 </tr></tbody>
-</table>
+</table></details>
 </div>
 <div class="section level3">
 <h3 id="relaxed-identity">
@@ -10812,8 +11264,8 @@ situation.</td>
 </h3>
 <p>How the respondent sees themselves, as Québécois, Canadian or
 both.</p>
-<p>Base: <code>target:identity_qc_ca</code> · <code>identity</code> · on
-the wave that asked it</p>
+<p>Base: <code>target:identity_qc_ca</code> · on the wave that asked
+it</p>
 <p><strong>How it is relaxed</strong>: Québécois only, Québécois first,
 both equally, Canadian first or Canadian only, from one question or from
 the two orders of a split ballot.</p>
@@ -10865,8 +11317,7 @@ the two orders of a split ballot.</p>
 <code>attach_quebec</code>: Attachment to Quebec<a class="anchor" aria-label="anchor" href="#relaxed-attach_quebec"></a>
 </h3>
 <p>How attached the respondent feels to Quebec.</p>
-<p>Base: <code>target:attach_qc</code> · <code>identity</code> · on the
-wave that asked it</p>
+<p>Base: <code>target:attach_qc</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Attachment to Quebec on four
 points, as each study asked it.</p>
 <p><strong>Levels</strong></p>
@@ -10907,8 +11358,7 @@ points, as each study asked it.</p>
 <code>attach_canada</code>: Attachment to Canada<a class="anchor" aria-label="anchor" href="#relaxed-attach_canada"></a>
 </h3>
 <p>How attached the respondent feels to Canada.</p>
-<p>Base: <code>target:attach_ca</code> · <code>identity</code> · on the
-wave that asked it</p>
+<p>Base: <code>target:attach_ca</code> · on the wave that asked it</p>
 <p><strong>How it is relaxed</strong>: Attachment to Canada on four
 points, as each study asked it.</p>
 <p><strong>Levels</strong></p>

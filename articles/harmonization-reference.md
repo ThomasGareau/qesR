@@ -8,6 +8,149 @@ The harmonized variables (“targets”) of
 study by study. The page is generated from the rules that ship with
 qesR, so it always describes what the installed version applies.
 
+## Jump to a variable
+
+**Survey design**
+
+- [`survey_mode`](#target-survey_mode): Interview mode
+
+**Vote and turnout**
+
+- [`vote_prov_recall`](#target-vote_prov_recall): Provincial vote
+  (recall)
+- [`vote_prov_intent`](#target-vote_prov_intent): Provincial vote
+  intention
+- [`vote_prov_intent_push`](#target-vote_prov_intent_push): Provincial
+  vote intention, undecided pushed
+- [`turnout_prov_recall`](#target-turnout_prov_recall): Voted in the
+  provincial election (recall)
+- [`turnout_prov_likely`](#target-turnout_prov_likely): Likelihood of
+  voting in the provincial election
+- [`vote_prov_intent_other`](#target-vote_prov_intent_other): Provincial
+  vote intention: another party (text)
+- [`vote_prov_prev`](#target-vote_prov_prev): Provincial vote at the
+  previous election (recall)
+- [`vote_fed_recall`](#target-vote_fed_recall): Federal vote at the last
+  federal election (recall)
+
+**Party identification**
+
+- [`pid_prov`](#target-pid_prov): Provincial party identification
+- [`pid_fed`](#target-pid_fed): Federal party identification
+- [`pid_prov_strength`](#target-pid_prov_strength): Strength of
+  provincial party identification
+
+**Attitudes**
+
+- [`sov_indep`](#target-sov_indep): Referendum vote: independent country
+- [`sov_sovereign_country`](#target-sov_sovereign_country): Referendum
+  vote: sovereign country
+- [`sov_favour`](#target-sov_favour): Favour Quebec independence (4
+  points)
+- [`lr_self`](#target-lr_self): Left-right self-placement (0-10)
+- [`interest_4pt`](#target-interest_4pt): Interest in politics (4
+  points)
+- [`sov_partnership_1995`](#target-sov_partnership_1995): Referendum
+  vote: the 1995 sovereignty-partnership question
+- [`interest_0_10`](#target-interest_0_10): Interest in politics (0-10)
+- [`interest_election_0_10`](#target-interest_election_0_10): Interest
+  in the provincial election (0-10)
+- [`interest_campaign_4pt`](#target-interest_campaign_4pt): Interest in
+  the election campaign (4 points)
+- [`sov_partnership_1995_push`](#target-sov_partnership_1995_push):
+  Referendum vote: the 1995 question, undecided pushed
+- [`satis_demo_qc`](#target-satis_demo_qc): Satisfaction with democracy
+  in Quebec
+- [`gov_satisfaction`](#target-gov_satisfaction): Satisfaction with the
+  Quebec government
+- [`econ_retro_qc`](#target-econ_retro_qc): Quebec’s economy over the
+  past year
+- [`attach_qc`](#target-attach_qc): Attachment to Quebec
+- [`attach_ca`](#target-attach_ca): Attachment to Canada
+- [`identity_qc_ca`](#target-identity_qc_ca): Québécois or Canadian
+  identity
+- [`therm_leader_plq`](#target-therm_leader_plq): Rating of the PLQ
+  leader (0-100)
+- [`therm_leader_pq`](#target-therm_leader_pq): Rating of the PQ leader
+  (0-100)
+- [`therm_leader_caq`](#target-therm_leader_caq): Rating of the CAQ
+  leader (0-100)
+- [`therm_leader_qs`](#target-therm_leader_qs): Rating of the QS leader
+  (0-100)
+- [`therm_leader_adq`](#target-therm_leader_adq): Rating of the ADQ
+  leader (0-100)
+
+**Issues**
+
+- [`mip_issue`](#target-mip_issue): Most important issue of the election
+
+**Sociodemographics**
+
+- [`birth_year`](#target-birth_year): Year of birth
+- [`birth_month`](#target-birth_month): Month of birth
+- [`age`](#target-age): Age in years
+- [`age_group3`](#target-age_group3): Age group (3 bands)
+- [`citizen`](#target-citizen): Canadian citizen
+- [`age_group6`](#target-age_group6): Age group (6 bands)
+- [`gender`](#target-gender): Gender
+- [`education4`](#target-education4): Education (4 groups)
+- [`lang_mother`](#target-lang_mother): Mother tongue
+- [`born_canada`](#target-born_canada): Born in Canada
+- [`income_native`](#target-income_native): Household income (each
+  study’s own brackets)
+- [`religion`](#target-religion): Religion (each study’s own categories)
+- [`region_cma3`](#target-region_cma3): Region (Montreal and Quebec
+  CMAs)
+- [`lang_home`](#target-lang_home): Language spoken most often at home
+- [`relig_attend`](#target-relig_attend): Attendance at religious
+  services
+- [`birthplace3`](#target-birthplace3): Birthplace (Quebec, rest of
+  Canada, abroad)
+
+**Relaxed harmonization: qes_decon()**
+
+- [`citizenship`](#relaxed-citizenship): Citizenship
+- [`yob`](#relaxed-yob): Year of birth
+- [`age_group`](#relaxed-age_group): Age group
+- [`gender`](#relaxed-gender): Gender
+- [`education4`](#relaxed-education4): Education (four groups)
+- [`education`](#relaxed-education): Education
+- [`income_cat`](#relaxed-income_cat): Household income (thirds)
+- [`language`](#relaxed-language): Mother tongue
+- [`language_fr`](#relaxed-language_fr): French as a mother tongue
+- [`language_eng`](#relaxed-language_eng): English as a mother tongue
+- [`religion`](#relaxed-religion): Religion
+- [`marital`](#relaxed-marital): Marital status
+- [`employment`](#relaxed-employment): Employment
+- [`union`](#relaxed-union): Union membership
+- [`region`](#relaxed-region): Region
+- [`region_admin`](#relaxed-region_admin): Administrative region
+- [`born_canada`](#relaxed-born_canada): Born in Canada
+- [`born_quebec`](#relaxed-born_quebec): Born in Quebec
+- [`vote_choice`](#relaxed-vote_choice): Provincial vote choice
+- [`vote_type`](#relaxed-vote_type): Question of the vote choice
+- [`turnout`](#relaxed-turnout): Turnout (reported)
+- [`vote_prev`](#relaxed-vote_prev): Vote at the previous provincial
+  election
+- [`pid`](#relaxed-pid): Provincial party identification
+- [`lr`](#relaxed-lr): Left-right self-placement (0-10)
+- [`interest`](#relaxed-interest): Interest in politics
+- [`interest_01`](#relaxed-interest_01): Interest in politics (0-1)
+- [`sovereignty`](#relaxed-sovereignty): Sovereignty referendum vote
+- [`sovereignty_type`](#relaxed-sovereignty_type): Question of the
+  sovereignty vote
+- [`satis_democracy`](#relaxed-satis_democracy): Satisfaction with
+  democracy in Quebec
+- [`gov_satisfaction`](#relaxed-gov_satisfaction): Satisfaction with the
+  Quebec government
+- [`econ_retro`](#relaxed-econ_retro): Quebec’s economy over the past
+  year
+- [`econ_self`](#relaxed-econ_self): Personal financial situation over
+  the past year
+- [`identity`](#relaxed-identity): Québécois and Canadian identity
+- [`attach_quebec`](#relaxed-attach_quebec): Attachment to Quebec
+- [`attach_canada`](#relaxed-attach_canada): Attachment to Canada
+
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 returns the same information as data frames, and
 `qes_provenance(x, level = "spec")` the version of the rules that
@@ -31,8 +174,10 @@ from. For each study, the coverage table of a target gives:
   it is not usable yet: its weight columns are then `NA`);
 - **Don’t know**: whether “don’t know” was offered.
 
-A row marked *awaiting sign-off* is applied only if you ask for it
-(`include_draft = TRUE`).
+A row marked *awaiting sign-off* is checked but not yet approved, and
+not used by default: its values are missing. To use it anyway, pass
+`include_draft = TRUE` to
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
 
 The wording and labels of `qes2022` quoted on this page come from *2022
 Quebec Election Study* (Mahéo, Bélanger, Stephenson and Harell, 2023,
@@ -114,7 +259,7 @@ Family `interview_mode` · type Categorical · timing Any time
 | 2    | `phone` | Telephone |
 | 3    | `mixed` | Mixed     |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -146,7 +291,7 @@ Family `vote_prov` · type Categorical · timing Post-election
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Other party |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -185,7 +330,7 @@ Family `vote_prov` · type Categorical · timing Pre-election
 | 90   | `other`    | Other party                         |
 | 95   | `no_party` | Would not vote / none / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -222,7 +367,7 @@ Family `vote_prov` · type Categorical · timing Pre-election
 | 90   | `other`    | Other party                         |
 | 95   | `no_party` | Would not vote / none / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -255,7 +400,7 @@ Family `turnout_prov` · type Categorical · timing Post-election
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -291,7 +436,7 @@ Family `turnout_prov` · type Ordinal · timing Pre-election
 | 3    | `unlikely`      | Unlikely to vote    |
 | 4    | `certain_not`   | Certain not to vote |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -305,7 +450,7 @@ text, not harmonized.
 
 Family `vote_prov` · type Text · timing Pre-election
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -335,7 +480,7 @@ Family `vote_prov_past` · type Categorical · timing Any time
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Other party |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -366,7 +511,7 @@ Family `vote_fed` · type Categorical · timing Any time
 | 6    | `PPC`   | PPC            |
 | 90   | `other` | Another party  |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -399,7 +544,7 @@ Family `party_id` · type Categorical · timing Any time
 | 90   | `other` | Other party   |
 | 97   | `none`  | None of these |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -430,7 +575,7 @@ Family `party_id` · type Categorical · timing Any time
 | 90   | `other` | Another party  |
 | 97   | `none`  | None of these  |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -454,7 +599,7 @@ Family `party_id` · type Ordinal · timing Any time
 | 2    | `fairly`   | Fairly strongly   |
 | 3    | `not_very` | Not very strongly |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -482,7 +627,7 @@ Family `sovereignty` · type Categorical · timing Any time
 | 2    | `no`             | No                           |
 | 95   | `would_not_vote` | Would not vote / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -510,7 +655,7 @@ Family `sovereignty` · type Categorical · timing Any time
 | 2    | `no`             | No                           |
 | 95   | `would_not_vote` | Would not vote / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -532,7 +677,7 @@ Family `sovereignty` · type Ordinal · timing Any time
 | 3    | `somewhat_opposed`    | Somewhat opposed    |
 | 4    | `very_opposed`        | Very opposed        |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -553,7 +698,7 @@ Family `left_right` · type Numeric · timing Any time
 
 **Valid range**: 0-10
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -581,7 +726,7 @@ Family `interest` · type Ordinal · timing Any time
 | 3    | `hardly`     | Hardly interested     |
 | 4    | `not_at_all` | Not at all interested |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -615,7 +760,7 @@ Family `sovereignty` · type Categorical · timing Any time
 | 2    | `no`             | No                           |
 | 95   | `would_not_vote` | Would not vote / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -635,7 +780,7 @@ Family `interest` · type Numeric · timing Any time
 
 **Valid range**: 0-10
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -652,7 +797,7 @@ Family `interest` · type Numeric · timing Post-election
 
 **Valid range**: 0-10
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -676,7 +821,7 @@ Family `interest` · type Ordinal · timing Pre-election
 | 3    | `hardly`     | Hardly interested     |
 | 4    | `not_at_all` | Not at all interested |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -702,7 +847,7 @@ Family `sovereignty` · type Categorical · timing Any time
 | 2    | `no`             | No                           |
 | 95   | `would_not_vote` | Would not vote / would spoil |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -728,7 +873,7 @@ Family `democracy_satisfaction` · type Ordinal · timing Any time
 | 3    | `not_very`   | Not very satisfied   |
 | 4    | `not_at_all` | Not at all satisfied |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -758,7 +903,7 @@ Family `government_satisfaction` · type Ordinal · timing Any time
 | 3    | `not_very`   | Not very satisfied   |
 | 4    | `not_at_all` | Not at all satisfied |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -784,7 +929,7 @@ Family `economy_retrospective` · type Ordinal · timing Any time
 | 2    | `same`   | About the same |
 | 3    | `worse`  | Worse          |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -811,7 +956,7 @@ Family `attachment` · type Ordinal · timing Any time
 | 3    | `not_very`   | Not very attached   |
 | 4    | `not_at_all` | Not at all attached |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -836,7 +981,7 @@ Family `attachment` · type Ordinal · timing Any time
 | 3    | `not_very`   | Not very attached   |
 | 4    | `not_at_all` | Not at all attached |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -864,7 +1009,7 @@ Family `national_identity` · type Categorical · timing Any time
 | 5    | `ca_only`  | Canadian only                  |
 | 90   | `other`    | Other                          |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -884,7 +1029,7 @@ Family `leader_ratings` · type Numeric · timing Any time
 
 **Valid range**: 0-100
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -905,7 +1050,7 @@ Family `leader_ratings` · type Numeric · timing Any time
 
 **Valid range**: 0-100
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -926,7 +1071,7 @@ Family `leader_ratings` · type Numeric · timing Any time
 
 **Valid range**: 0-100
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -947,7 +1092,7 @@ Family `leader_ratings` · type Numeric · timing Any time
 
 **Valid range**: 0-100
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -968,7 +1113,7 @@ Family `leader_ratings` · type Numeric · timing Any time
 
 **Valid range**: 0-100
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1006,7 +1151,7 @@ Family `issues` · type Categorical · timing Any time
 | 14   | `french_language` | The French language            |
 | 90   | `other`           | Another issue                  |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1026,7 +1171,7 @@ Family `birth` · type Numeric · timing Time-invariant
 
 **Valid range**: 1900-2010
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1047,7 +1192,7 @@ Family `birth` · type Numeric · timing Time-invariant
 
 **Valid range**: 1-12
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1062,7 +1207,7 @@ Family `age_years` · type Numeric · timing Any time
 
 **Valid range**: 15-115
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1087,7 +1232,7 @@ Family `age_bands` · type Ordinal · timing Any time
 | 2    | `a35_54`   | 35-54       |
 | 3    | `a55_plus` | 55 and over |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1112,7 +1257,7 @@ Family `citizenship` · type Categorical · timing Any time
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1139,7 +1284,7 @@ Family `age_bands` · type Ordinal · timing Any time
 | 5    | `a55_64`   | 55-64       |
 | 6    | `a65_plus` | 65 and over |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1167,14 +1312,14 @@ Family `sex_gender` · type Categorical · timing Time-invariant
 | 3    | `nonbinary` | Non-binary     |
 | 4    | `other`     | Another gender |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
 | qes2022 | `cps_genderid` (cps) | `comparable` | A question on gender identity on the web that adds non-binary and another gender to the two options of the anchor; expected to move the shares of man and woman very little. | gender_4 | man, woman, nonbinary, other | Are you…? |  | `cps_weight_general` | Not offered |
 | qes2018 | `qsexe` (post) | `comparable` | Same two options on the web and the same stems as the anchor (English gender, French sexe); the French questionnaire with programmed values adds Statistics Canada’s note that transgender, transsexual and intersex respondents choose the sex they identify with most; the file has no value labels. | gender_2 | man, woman; not offered: nonbinary, other | What is your gender? |  | `pond` | Not offered |
 | qes2018_panel | `sexfix` (pre) | `comparable` | Same two options, by web (850) and telephone (400); the codebook gives only the label Sexe, so whether it was asked or recorded is not documented. | gender_2 | man, woman; not offered: nonbinary, other | Sexe: |  | `weight` | Not documented |
-| qes2014 | `QSEXE` (post) | `comparable` | Same two options on the web and the same stems as the anchor in English (What is your gender?) and French (Quel est votre sexe?), plus a no-answer option that is not in the file; kept at comparable, the grade it had before the review, because an identical grade on a row that pools fielding languages needs a second (human) reviewer. | gender_2 | man, woman; not offered: nonbinary, other | What is your gender? |  | `POND` | Not offered |
+| qes2014 | `QSEXE` (post) | `comparable` | Same two options on the web and the same stems as the anchor in English (What is your gender?) and French (Quel est votre sexe?), plus a no-answer option that is not in the file; kept at comparable, the grade it had before the review: an identical grade for a row that pools the languages of the interview is given only after a review by a person, which this row has not had yet. | gender_2 | man, woman; not offered: nonbinary, other | What is your gender? |  | `POND` | Not offered |
 | qes2012 | `sexe` (post) | `identical` (anchor) | Anchor row of the target. | gender_2 | man, woman; not offered: nonbinary, other | What is your gender? |  | `pond` | Not offered |
 | qes2012_panel | `sexe` (pre) | `comparable` | Same two options, by telephone; the codebook gives only the variable name, so whether it was asked or recorded is not documented. | sex_recorded | man, woman; not offered: nonbinary, other | document 654292, sexe |  | `pondam1` (not usable yet) | Not documented |
 | qes_crop_2007_2010 | `SEXE` (each poll) | `comparable` | Same two options, recorded by the interviewer (not asked), by telephone. | sex_recorded | man, woman; not offered: nonbinary, other | INSCRIRE LE SEXE DU REPONDANT |  | `XPOND` (not usable yet) | Not offered |
@@ -1206,7 +1351,7 @@ Family `education` · type Ordinal · timing Time-invariant
 | 3    | `college`    | College (CEGEP, technical) |
 | 4    | `university` | University                 |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1237,7 +1382,7 @@ Family `language` · type Categorical · timing Time-invariant
 | 2    | `english` | English |
 | 3    | `other`   | Other   |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1267,7 +1412,7 @@ Family `birthplace` · type Categorical · timing Time-invariant
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1285,7 +1430,7 @@ comparable across studies; don’t know and refusals are missing values.
 
 Family `income` · type Text · timing Time-invariant
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1309,7 +1454,7 @@ question, which is the gate of the crosswalk row.
 
 Family `faith` · type Text · timing Time-invariant
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1333,7 +1478,7 @@ Family `region` · type Categorical · timing Time-invariant
 | 2    | `quebec_cma` | Quebec CMA     |
 | 3    | `rest`       | Rest of Quebec |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1361,7 +1506,7 @@ Family `language` · type Categorical · timing Time-invariant
 | 2    | `english` | English |
 | 3    | `other`   | Other   |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1393,7 +1538,7 @@ Family `faith` · type Ordinal · timing Any time
 | 4    | `yearly`      | Once or twice a year |
 | 5    | `never`       | Hardly ever or never |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1419,7 +1564,7 @@ Family `birthplace` · type Categorical · timing Time-invariant
 | 2    | `other_canada` | Elsewhere in Canada |
 | 3    | `abroad`       | Outside Canada      |
 
-**Coverage**
+Coverage by study
 
 | Study | Source | Grade | Reason | Instrument | Levels offered | Wording | Filter | Weight | Don’t know |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1493,7 +1638,7 @@ type Categorical
 | 2 | `intention_push`: Vote intention, undecided pushed. The first question plus a push put to those who named no party at it: a party named at the first question is never changed. Who was pushed differs by study: the undecided everywhere, and also those who would not vote, would vote for none or would spoil (qes1998, qes2007_panel, qes2012_panel, the CROP polls) or who refused (qes1998, qes2012_panel). The push can turn such an answer into a (softer) party or into another answer without a party: in qes2012_panel, of 172 don’t know 77 name a party, 1 would not vote and 1 refuses, of 30 refusals 6 name a party, 2 would not vote and 4 don’t know, and of 14 would not vote 3 name a party and 2 don’t know; in qes2007_panel, of 81 would not vote, none or spoil, 25 name a party and 14 don’t know or refuse; in qes1998, 5 would-not-vote answers and 20 refusals name a party, and 4 and 6 become don’t know. So no_party is lower under intention_push than under intention. In qes2022 it also adds the conditional intention of respondents unlikely to vote, who were not asked the first question (cps_votechoice2, ‘If you decide to vote, which party do you think you would vote for?’, then cps_votelean if they did not know: 62 respondents, 43 of whom name a party). | [`vote_prov_intent_push`](#target-vote_prov_intent_push) | yes | `identity` |  |
 | 3 | `intention`: Vote intention (first question) | [`vote_prov_intent`](#target-vote_prov_intent) | yes | `identity` |  |
 
-**Coverage**
+Coverage by study
 
 | Study | `recall` | `intention_push` | `intention` | Respondent layout uses |
 |----|----|----|----|----|
@@ -1546,7 +1691,7 @@ type Categorical
 | 4 | `partnership_1995`: 1995 question (sovereignty-partnership) | [`sov_partnership_1995`](#target-sov_partnership_1995) | yes | `identity` |  |
 | 5 | `favour`: Favourable or opposed to independence (collapsed to yes or no). Four points collapsed to two: graded approximate at most. | [`sov_favour`](#target-sov_favour) | yes | `recode:very_favourable=yes,somewhat_favourable=yes,somewhat_opposed=no,very_opposed=no` | `approximate` |
 
-**Coverage**
+Coverage by study
 
 | Study | `independence` | `sovereign_country` | `partnership_1995_push` | `partnership_1995` | `favour` | Respondent layout uses |
 |----|----|----|----|----|----|----|
@@ -1592,7 +1737,7 @@ type Numeric
 | 3 | `campaign_4pt`: Interest in the campaign, four points (scored) | [`interest_campaign_4pt`](#target-interest_campaign_4pt) | yes | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
 | 4 | `election_0_10`: Interest in the election, 0-10. Interest in one election, not in politics: graded approximate at most. | [`interest_election_0_10`](#target-interest_election_0_10) | yes | `affine:0.1*x` | `approximate` |
 
-**Coverage**
+Coverage by study
 
 | Study | `general_4pt` | `general_0_10` | `campaign_4pt` | `election_0_10` | Respondent layout uses |
 |----|----|----|----|----|----|
@@ -1640,7 +1785,7 @@ type Categorical
 | 1 | `recall`: Reported turnout (after the election) | [`turnout_prov_recall`](#target-turnout_prov_recall) | yes | `identity` |  |
 | 2 | `intention`: Likelihood of voting (before the election, collapsed). Not used by default: an intention to vote is not a turnout. | [`turnout_prov_likely`](#target-turnout_prov_likely) | no | `recode:certain=yes,likely=yes,already_voted=yes,unlikely=no,certain_not=no` | `approximate` |
 
-**Coverage**
+Coverage by study
 
 | Study | `recall` | `intention` | Respondent layout uses |
 |----|----|----|----|
@@ -1673,7 +1818,7 @@ targets above keep the strict, graded versions. A column is built from a
 strict target or a pooled variable where one exists, recoded into the
 column’s categories where needed, and from relaxed mappings of the
 studies’ own questions where the strict layer has none. A relaxed
-mapping is applied once a reviewer has signed it off (status `stable`).
+mapping is applied once a reviewer has approved it.
 
 ### `citizenship`: Citizenship
 
@@ -1694,17 +1839,17 @@ every respondent of that panel is a citizen.
 | 1    | `citizen`     | Canadian citizen       |
 | 2    | `not_citizen` | Not a Canadian citizen |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2018_panel | `qa` (pre) | 1 = Canadian citizen; 2 = Source category straddles target levels (NA); 3 = Don’t know or refused (one code) (NA) | fills the study | OD-R12: the screening question asks whether the respondent may vote in the coming Quebec election, which requires Canadian citizenship; every respondent answered yes, so the column is constant in this study. | stable |
+| qes2018_panel | `qa` (pre) | 1 = Canadian citizen; 2 = Source category straddles target levels (NA); 3 = Don’t know or refused (one code) (NA) | fills the study | The screening question asks whether the respondent may vote in the coming Quebec election, which requires Canadian citizenship; every respondent answered yes, so the column is constant in this study. | approved |
 
 ### `yob`: Year of birth
 
 The respondent’s year of birth.
 
-Base: `target:birth_year` · `identity` · one value per respondent
+Base: `target:birth_year` · one value per respondent
 
 **How it is relaxed**: The year of birth as reported; the studies that
 asked only an age group have none (see age_group).
@@ -1719,7 +1864,7 @@ None: every study’s values come from the base.
 
 The respondent’s age group.
 
-Base: `target:age_group3` · `identity` · one value per respondent
+Base: `target:age_group3` · one value per respondent
 
 **How it is relaxed**: Three age groups (18-34, 35-54, 55 and over),
 from the study’s own age bands or from the age at the start of
@@ -1741,7 +1886,7 @@ None: every study’s values come from the base.
 
 The respondent’s gender.
 
-Base: `target:gender` · `identity` · one value per respondent
+Base: `target:gender` · one value per respondent
 
 **How it is relaxed**: Gender or sex as each study asked it: man or
 woman everywhere, and in 2022 also non-binary or another gender; the
@@ -1764,7 +1909,7 @@ None: every study’s values come from the base.
 
 The highest level of schooling the respondent completed, in four groups.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: Each study’s levels are grouped into four: no
 high school diploma, high school, college (CEGEP, technical or trade
@@ -1787,20 +1932,20 @@ or less.
 | 3    | `college`     | College, CEGEP or trade school |
 | 4    | `university`  | University                     |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_edu` (cps) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA) | fills the study |  | stable |
-| qes2018 | `qscol` (post) | 1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA) | fills the study | Code 9 (secondary 5 with a vocational diploma, DEP) is college (OD-R10); the strict education4 puts it with secondary. | stable |
-| qes2014 | `QSCOL` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA) | fills the study |  | stable |
-| qes2012 | `scol` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Code 8 (post-secondary, not higher education; the French questionnaire’s technical course) is college; code 10 (certificate and diploma), in neither questionnaire, is university with code 9 (some higher education). | stable |
-| qes2018_panel | `d3` (pre) | 1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don’t know or refused (one code) (NA) | fills the study | Code 4 (registered apprenticeship or other trades certificate) is college (OD-R10); code 6 (university certificate below the bachelor’s) is university. | stable |
-| qes2007_panel | `scol` (any wave) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling, in bands named after a level: 7 years or less (primary) is no diploma, 8 to 12 years (secondary) is high school, 13 to 15 years (CEGEP, technical school) is college and 16 years or more is university. The high school group therefore also holds those who left secondary school without a diploma, and the college group may hold respondents with some university but no degree, whom other studies count as university. | stable |
-| qes2007 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
-| qes2008 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | stable |
-| qes1998 | `scol` (pre) | 1-3 = Source category straddles target levels (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | OD-R1: the pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out of the four groups. The three groups of education include it (OD-R17). | stable |
-| qes_crop_2007_2010 | `scol` (each poll) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling in CROP’s four ranges (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP or technical school; 16 or more, university): 7 or fewer is no diploma and 8 to 12 is high school, so that group also holds those who left secondary school without a diploma; grouping by years, not by highest level, can also put some university (14 or 15 years) in college. | stable |
+| qes2022 | `cps_edu` (cps) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; -99 = No answer (item nonresponse) (NA) | fills the study |  | approved |
+| qes2018 | `qscol` (post) | 1-7 = No high school diploma; 8 = High school diploma; 9-12 = College, CEGEP or trade school; 13-15 = University; 99 = Refused (NA) | fills the study | Code 9 (secondary 5 with a vocational diploma, DEP) is college; the strict education4 puts it with secondary. | approved |
+| qes2014 | `QSCOL` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-11 = University; 99 = Refused (NA) | fills the study |  | approved |
+| qes2012 | `scol` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6-8 = College, CEGEP or trade school; 9-12 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Code 8 (post-secondary, not higher education; the French questionnaire’s technical course) is college; code 10 (certificate and diploma), in neither questionnaire, is university with code 9 (some higher education). | approved |
+| qes2018_panel | `d3` (pre) | 1, 2 = No high school diploma; 3 = High school diploma; 4, 5 = College, CEGEP or trade school; 6-8 = University; 9 = Don’t know or refused (one code) (NA) | fills the study | Code 4 (registered apprenticeship or other trades certificate) is college; code 6 (university certificate below the bachelor’s) is university. | approved |
+| qes2007_panel | `scol` (any wave) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling, in bands named after a level: 7 years or less (primary) is no diploma, 8 to 12 years (secondary) is high school, 13 to 15 years (CEGEP, technical school) is college and 16 years or more is university. The high school group therefore also holds those who left secondary school without a diploma, and the college group may hold respondents with some university but no degree, whom other studies count as university. | approved |
+| qes2007 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | approved |
+| qes2008 | `q77` (post) | 1-4 = No high school diploma; 5 = High school diploma; 6, 7 = College, CEGEP or trade school; 8-11 = University; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study |  | approved |
+| qes1998 | `scol` (pre) | 1-3 = Source category straddles target levels (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | The pooled file groups years of schooling as 1-9, 10-15 and university; 10-15 years spans high school and college, and mapping only the other two groups would bias every share, so the study is left out of the four groups. The three groups of education include it. | approved |
+| qes_crop_2007_2010 | `scol` (each poll) | 1 = No high school diploma; 2 = High school diploma; 3 = College, CEGEP or trade school; 4 = University; 9 = Refused (NA) | fills the study | Years of schooling in CROP’s four ranges (7 or fewer, primary; 8 to 12, secondary; 13 to 15, CEGEP or technical school; 16 or more, university): 7 or fewer is no diploma and 8 to 12 is high school, so that group also holds those who left secondary school without a diploma; grouping by years, not by highest level, can also put some university (14 or 15 years) in college. | approved |
 
 ### `education`: Education
 
@@ -1830,18 +1975,18 @@ some university students (14 or 15 years) are not counted in university.
 | 2    | `high_school_college` | High school to college (CEGEP) |
 | 3    | `university`          | University                     |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes1998 | `scol` (pre) | 1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University; 9 = Don’t know or refused (one code) (NA) | replaces the base | OD-R17: the pooled file’s three groups are labelled 1-9 years, 10-15 years and university or more, but the two firms built them differently. For the CREATEC respondents (firme_post = 1), scol recodes the highest level completed (r15: elementary or some secondary; secondary completed or technical, college or CEGEP; university, completed or not), so the three groups hold. For the CROP respondents (firme_post = 2), it groups years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16 or more), so the match is approximate: Quebec high school ends after 11 years, so a respondent with 10 years has no diploma but counts as high school to college, and some respondents with 14 or 15 years are university students who count as high school to college. Code 9 is unlabelled and read as don’t know or refused. | stable |
+| qes1998 | `scol` (pre) | 1 = No high school diploma; 2 = High school to college (CEGEP); 3 = University; 9 = Don’t know or refused (one code) (NA) | replaces the base | The pooled file’s three groups are labelled 1-9 years, 10-15 years and university or more, but the two firms built them differently. For the CREATEC respondents (firme_post = 1), scol recodes the highest level completed (r15: elementary or some secondary; secondary completed or technical, college or CEGEP; university, completed or not), so the three groups hold. For the CROP respondents (firme_post = 2), it groups years of schooling (CROP question 19: 7 or fewer, 8-9, 10-11, 12-15, 16 or more), so the match is approximate: Quebec high school ends after 11 years, so a respondent with 10 years has no diploma but counts as high school to college, and some respondents with 14 or 15 years are university students who count as high school to college. Code 9 is unlabelled and read as don’t know or refused. | approved |
 
 ### `income_cat`: Household income (thirds)
 
 The household’s total income before taxes, in thirds of the study’s
 respondents.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: Household income in thirds of each study’s own
 respondents: income brackets are never split, so a third holds the whole
@@ -1856,25 +2001,25 @@ dollar limits differ from study to study.
 | 2    | `middle` | Middle             |
 | 3    | `high`   | High (top third)   |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_income` (cps) | amount under 52200 = Low (bottom third); 52200 to under 95600 = Middle; 95600 or more = High (top third); -99, 0 pass to cps_income2: 1-3 = Low (bottom third); 4 = Middle; 5-8 = High (top third); -99 = No answer (item nonresponse) (NA) | fills the study | The amount (2021 income) in thirds of the 1,444 amounts given, unweighted: low under \$52,200, high \$95,600 or more. An amount of 0 or -99 (no amount) passes to the bracket question cps_income2, whose brackets go in by their midpoint against the same limits. | stable |
-| qes2018 | `q61` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$72,000 or more (2017 income). | stable |
-| qes2014 | `Q57` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$72,000 or more (2013 income). | stable |
-| qes2012 | `reven` (post) | 1-4 = Low (bottom third); 5-7 = Middle; 8, 9 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$88,000 or more (2011 income). | stable |
-| qes2018_panel | `d5` (pre) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5-7 = High (top third); 8 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$80,000 or more. | stable |
-| qes2007_panel | `revenu` (any wave) | 1, 2 = Low (bottom third); 3 = Middle; 4, 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$60,000 or more. | stable |
-| qes2007 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$70,000 or more (2006 income). | stable |
-| qes2008 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$70,000 or more (2007 income). | stable |
-| qes_crop_2007_2010 | `revenu` (each poll) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets (OD-R11). Low is under \$40,000, high \$80,000 or more; the thirds pool the 24 polls. | stable |
+| qes2022 | `cps_income` (cps) | amount under 52200 = Low (bottom third); 52200 to under 95600 = Middle; 95600 or more = High (top third); -99, 0 pass to cps_income2: 1-3 = Low (bottom third); 4 = Middle; 5-8 = High (top third); -99 = No answer (item nonresponse) (NA) | fills the study | The amount (2021 income) in thirds of the 1,444 amounts given, unweighted: low under \$52,200, high \$95,600 or more. An amount of 0 or -99 (no amount) passes to the bracket question cps_income2, whose brackets go in by their midpoint against the same limits. | approved |
+| qes2018 | `q61` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$72,000 or more (2017 income). | approved |
+| qes2014 | `Q57` (post) | 1-4 = Low (bottom third); 5, 6 = Middle; 7-9 = High (top third); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$72,000 or more (2013 income). | approved |
+| qes2012 | `reven` (post) | 1-4 = Low (bottom third); 5-7 = Middle; 8, 9 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$88,000 or more (2011 income). | approved |
+| qes2018_panel | `d5` (pre) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5-7 = High (top third); 8 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$80,000 or more. | approved |
+| qes2007_panel | `revenu` (any wave) | 1, 2 = Low (bottom third); 3 = Middle; 4, 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$60,000 or more. | approved |
+| qes2007 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$70,000 or more (2006 income). | approved |
+| qes2008 | `q78` (post) | 1-3 = Low (bottom third); 4-6 = Middle; 7-10 = High (top third); 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$70,000 or more (2007 income). | approved |
+| qes_crop_2007_2010 | `revenu` (each poll) | 1, 2 = Low (bottom third); 3, 4 = Middle; 5 = High (top third); 9 = Don’t know or refused (one code) (NA) | fills the study | Thirds by the midpoint rule on the unweighted counts of the brackets. Low is under \$40,000, high \$80,000 or more; the thirds pool the 24 polls. | approved |
 
 ### `language`: Mother tongue
 
 The respondent’s mother tongue: French, English or another language.
 
-Base: `target:lang_mother` · `identity` · one value per respondent
+Base: `target:lang_mother` · one value per respondent
 
 **How it is relaxed**: The language first learned in childhood, in three
 groups; a respondent who reported French and another language is French,
@@ -1889,14 +2034,14 @@ CREATEC respondents are French by the design of their sample.
 | 2    | `english` | English |
 | 3    | `other`   | Other   |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (French), cps_lang_1 (English), cps_lang_3 (Other) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
-| qes2014 | `QLANG` (post) | 1, 4, 5 = French; 2, 6 = English; 3 = Other; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
-| qes2007 | `langu` (post) | 1, 4, 7 = French; 2, 5 = English; 3, 6 = Other; 9 = Don’t know or refused (one code) (NA) | replaces the base | OD-R5: a respondent who reported two mother tongues is French when one is French, else English when one is English. | stable |
-| qes1998 | `firme_post` (pre) | 1 = French; 2 = Source category straddles target levels (NA) | fills the study | OD-R3: the CREATEC sample (firme_post = 1) holds only respondents whose mother tongue is French (codebook of the CREATEC file); the CROP respondents were screened on another criterion and have no mother tongue. | stable |
+| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (French), cps_lang_1 (English), cps_lang_3 (Other) | replaces the base | A respondent who reported two mother tongues is French when one is French, else English when one is English. | approved |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = French; 2, 6 = English; 3 = Other; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | A respondent who reported two mother tongues is French when one is French, else English when one is English. | approved |
+| qes2007 | `langu` (post) | 1, 4, 7 = French; 2, 5 = English; 3, 6 = Other; 9 = Don’t know or refused (one code) (NA) | replaces the base | A respondent who reported two mother tongues is French when one is French, else English when one is English. | approved |
+| qes1998 | `firme_post` (pre) | 1 = French; 2 = Source category straddles target levels (NA) | fills the study | The CREATEC sample (firme_post = 1) holds only respondents whose mother tongue is French (codebook of the CREATEC file); the CROP respondents were screened on another criterion and have no mother tongue. | approved |
 
 ### `language_fr`: French as a mother tongue
 
@@ -1916,13 +2061,13 @@ language_fr and language_eng.
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (Yes), cps_lang_1 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
-| qes2014 | `QLANG` (post) | 1, 4, 5 = Yes; 2, 3, 6 = No; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
-| qes2007 | `langu` (post) | 1, 4, 7 = Yes; 2, 3, 5, 6 = No; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2022 | `cps_lang_2` (cps) | the first option ticked, in this order: cps_lang_2 (Yes), cps_lang_1 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = Yes; 2, 3, 6 = No; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
+| qes2007 | `langu` (post) | 1, 4, 7 = Yes; 2, 3, 5, 6 = No; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
 
 ### `language_eng`: English as a mother tongue
 
@@ -1942,20 +2087,20 @@ language_eng and language_fr.
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_1` (cps) | the first option ticked, in this order: cps_lang_1 (Yes), cps_lang_2 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
-| qes2014 | `QLANG` (post) | 1, 3, 5 = No; 2, 4, 6 = Yes; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
-| qes2007 | `langu` (post) | 1, 3, 4, 6 = No; 2, 5, 7 = Yes; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | stable |
+| qes2022 | `cps_lang_1` (cps) | the first option ticked, in this order: cps_lang_1 (Yes), cps_lang_2 (No), cps_lang_3 (No) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
+| qes2014 | `QLANG` (post) | 1, 3, 5 = No; 2, 4, 6 = Yes; 8 = Don’t know (NA); 9 = Refused (NA) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
+| qes2007 | `langu` (post) | 1, 3, 4, 6 = No; 2, 5, 7 = Yes; 9 = Don’t know or refused (one code) (NA) | replaces the base | Yes when this language is among the mother tongues reported. | approved |
 
 ### `religion`: Religion
 
 The respondent’s religion: Catholic, Protestant, other Christian,
 another religion or none.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: The religion the respondent belongs to, in five
 groups; the 2022 question offers a long list, where agnostic counts as
@@ -1972,20 +2117,20 @@ belongs to a religion at all.
 | 4    | `other`           | Other religion  |
 | 5    | `none`            | No religion     |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_religion` (cps) | 1, 2 = No religion; 3-7, 22 = Other religion; 8, 9, 13, 15-21 = Protestant; 10 = Catholic; 11, 12, 14 = Other Christian; -99 = No answer (item nonresponse) (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. Agnostic counts as none; the Orthodox churches, Jehovah’s Witnesses and Mormons are other Christian; the other Christian denominations listed are Protestant. | stable |
-| qes2018 | `q67` (post) | where q66: 2 = No religion; 9 = Refused (NA); else q67: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4, 5, 96 = Other religion; 99 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
-| qes2014 | `Q63` (post) | where Q62: 2 = No religion; 9 = Refused (NA); else Q63: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
-| qes2012 | `q103` (post) | where q102: 2 = No religion; 3 = Refused (NA); else q103: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | stable |
+| qes2022 | `cps_religion` (cps) | 1, 2 = No religion; 3-7, 22 = Other religion; 8, 9, 13, 15-21 = Protestant; 10 = Catholic; 11, 12, 14 = Other Christian; -99 = No answer (item nonresponse) (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. Agnostic counts as none; the Orthodox churches, Jehovah’s Witnesses and Mormons are other Christian; the other Christian denominations listed are Protestant. | approved |
+| qes2018 | `q67` (post) | where q66: 2 = No religion; 9 = Refused (NA); else q67: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4, 5, 96 = Other religion; 99 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | approved |
+| qes2014 | `Q63` (post) | where Q62: 2 = No religion; 9 = Refused (NA); else Q63: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | approved |
+| qes2012 | `q103` (post) | where q102: 2 = No religion; 3 = Refused (NA); else q103: 1 = Catholic; 2 = Protestant; 3 = Other Christian; 4-6 = Other religion; 9 = Refused (NA) | fills the study | Those who belong to no religion are none; Jewish, Muslim and other non-Christian religions are other. | approved |
 
 ### `marital`: Marital status
 
 The respondent’s marital status, in four groups.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: Married or living with a partner, separated or
 divorced, widowed, or never married; 2012 and 2014 asked the official
@@ -2001,26 +2146,28 @@ together are never married there.
 | 3    | `widowed`            | Widowed                          |
 | 4    | `never_married`      | Single, never married            |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `pes_married` (pes) | 1, 2 = Married or living with a partner; 3, 4 = Separated or divorced; 5 = Widowed; 6 = Single, never married; -99 = No answer (item nonresponse) (NA) | fills the study | Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
-| qes2018 | `qstat` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 98 = Refused (NA) | fills the study | Married or in a civil union (1) and common-law partner (6) are married. | stable |
-| qes2014 | `Q68` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | OD-R7: the question asks the official civil status and lists no common-law option. Civil union (6) is married. Code 6 holds 309 of the 1,501 substantive answers, far more than the share of formal civil unions in Quebec, so most respondents living common-law probably chose it; any who answered single instead are never married. | stable |
-| qes2012 | `q109` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | OD-R7: the question asks the official civil status, with no common-law option; civil partnership (6) is married. Partners who live together could answer Single or civil partnership: 360 respondents (24%) chose civil partnership, far more than the legal civil unions in Quebec, so common-law partners are split between married and never married. | stable |
+| qes2022 | `pes_married` (pes) | 1, 2 = Married or living with a partner; 3, 4 = Separated or divorced; 5 = Widowed; 6 = Single, never married; -99 = No answer (item nonresponse) (NA) | fills the study | Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | approved |
+| qes2018 | `qstat` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 98 = Refused (NA) | fills the study | Married or in a civil union (1) and common-law partner (6) are married. | approved |
+| qes2014 | `Q68` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | The question asks the official civil status and lists no common-law option. Civil union (6) is married. Code 6 holds 309 of the 1,501 substantive answers, far more than the share of formal civil unions in Quebec, so most respondents living common-law probably chose it; any who answered single instead are never married. | approved |
+| qes2012 | `q109` (post) | 1, 6 = Married or living with a partner; 2, 4 = Separated or divorced; 3 = Single, never married; 5 = Widowed; 9 = Refused (NA) | fills the study | The question asks the official civil status, with no common-law option; civil partnership (6) is married. Partners who live together could answer Single or civil partnership: 360 respondents (24%) chose civil partnership, far more than the legal civil unions in Quebec, so common-law partners are split between married and never married. | approved |
 
 ### `employment`: Employment
 
 The respondent’s employment status: working, unemployed, retired,
 student or other.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: The main employment status in five groups; a
 respondent who gave two statuses, such as retired and working, takes the
 one that is not work, and at home, unable to work and other statuses are
-other.
+other. In the 2018 panel only web respondents were asked about
+employment, so its telephone respondents appear as don’t know or
+refused.
 
 **Levels**
 
@@ -2032,35 +2179,34 @@ other.
 | 4    | `student`    | Student                             |
 | 5    | `other`      | At home, unable to work or other    |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `pes_employed` (pes) | 1-3 = Working (employee or self-employed); 4, 11 = Retired; 5 = Unemployed; 6, 9 = Student; 7, 8, 10, 12 = At home, unable to work or other; -99 = No answer (item nonresponse) (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
-| qes2018 | `qoccup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
-| qes2014 | `Q58` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
-| qes2012 | `occup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
-| qes2018_panel | `d4` (pre) | 1-3 = Working (employee or self-employed); 4 = Unemployed; 5 = Student; 6 = Retired; 7, 8 = At home, unable to work or other; 9 = Don’t know or refused (one code) (NA) | fills the study | Full time, part time and self-employed are working; outside the labour market (at home) and other are other. The item was asked of the 850 web respondents only: the file codes all 400 telephone respondents (method 1-2) as 9 (don’t know), so 400 of the 406 missing values are not asked, not real don’t-know answers (6 web respondents chose 9). | stable |
-| qes2007_panel | `occup` (any wave) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | stable |
-| qes2007 | `q79` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | OD-R9: a respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | stable |
-| qes2008 | `q79` (post) | 1, 2 = Working (employee or self-employed); 3 = Retired; 4 = Unemployed; 5 = Student; 6, 7, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | One status per respondent (the 2008 questionnaire has no two-status codes): self-employed and working for pay are working; at home, disabled and other (specify) are other. | stable |
-| qes1998 | `occup` (pre) | 1-3 = Source category straddles target levels (NA) | fills the study | OD-R2: the pooled file has full time, part time and not working; not working joins the unemployed, the retired, students and those at home, so the study is left out. | stable |
-| qes_crop_2007_2010 | `Occup` (each poll) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | stable |
+| qes2022 | `pes_employed` (pes) | 1-3 = Working (employee or self-employed); 4, 11 = Retired; 5 = Unemployed; 6, 9 = Student; 7, 8, 10, 12 = At home, unable to work or other; -99 = No answer (item nonresponse) (NA) | fills the study | A respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | approved |
+| qes2018 | `qoccup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | A respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | approved |
+| qes2014 | `Q58` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | A respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | approved |
+| qes2012 | `occup` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | A respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | approved |
+| qes2018_panel | `d4` (pre) | 1-3 = Working (employee or self-employed); 4 = Unemployed; 5 = Student; 6 = Retired; 7, 8 = At home, unable to work or other; 9 = Don’t know or refused (one code) (NA) | fills the study | Full time, part time and self-employed are working; outside the labour market (at home) and other are other. The item was asked of the 850 web respondents only: the file codes all 400 telephone respondents (method 1-2) as 9 (don’t know), so 400 of the 406 missing values are not asked, not real don’t-know answers (6 web respondents chose 9). | approved |
+| qes2007_panel | `occup` (any wave) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | approved |
+| qes2007 | `q79` (post) | 1, 2, 8 = Working (employee or self-employed); 3, 11 = Retired; 4 = Unemployed; 5, 9 = Student; 6, 7, 10, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | A respondent who gave two statuses (student and working, retired and working, at home and working) takes the one that is not work; two jobs is working; at home, disabled and other statuses are other. | approved |
+| qes2008 | `q79` (post) | 1, 2 = Working (employee or self-employed); 3 = Retired; 4 = Unemployed; 5 = Student; 6, 7, 96 = At home, unable to work or other; 99 = Refused (NA) | fills the study | One status per respondent (the 2008 questionnaire has no two-status codes): self-employed and working for pay are working; at home, disabled and other (specify) are other. | approved |
+| qes1998 | `occup` (pre) | 1-3 = Source category straddles target levels (NA) | fills the study | The pooled file has full time, part time and not working; not working joins the unemployed, the retired, students and those at home, so the study is left out. | approved |
+| qes_crop_2007_2010 | `Occup` (each poll) | 1, 2 = Working (employee or self-employed); 3 = Unemployed; 4 = At home, unable to work or other; 5 = Retired; 6 = Student; 9 = Refused (NA) | fills the study | Full time and part time are working; at home full time is other. | approved |
 
 ### `union`: Union membership
 
 Whether the respondent, or in some studies anyone in the household,
 belongs to a union.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: Whether the respondent belongs to a union in
 2022, but whether the respondent or anyone in the household does in 2014
 and 2018 (in 2018, respondents who live with their parents were asked
 about their family: parents, brothers or sisters). Only these three
 studies ask it, and 2022 asks it after the election, so its
-campaign-only respondents are missing; the column is kept whatever its
-number of studies (essential), as decided on 2026-10-01.
+campaign-only respondents are missing.
 
 **Levels**
 
@@ -2069,20 +2215,20 @@ number of studies (essential), as decided on 2026-10-01.
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `pes_union` (pes) | 1 = Yes; 2 = No | fills the study | The respondent belongs to a union (not the household). Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | stable |
-| qes2018 | `q65a` (post) | 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA); Inapplicable (routed out) (NA), System missing (NA) pass to q65b: 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Q65 has two versions, split by QPARENTS: those who do not live with their parents (q65a, 2,558 respondents) were asked about their household, those who do (q65b, 514) about their family (parents, brothers or sisters). The household version is read first, then the family version for those who were not asked it. The respondent or anyone in the household (or family) belongs to a union. | stable |
-| qes2014 | `Q61` (post) | 1 = Yes; 2 = No; 9 = Refused (NA) | fills the study | The respondent or anyone in the household belongs to a union. | stable |
+| qes2022 | `pes_union` (pes) | 1 = Yes; 2 = No | fills the study | The respondent belongs to a union (not the household). Asked after the election: the respondents of the campaign wave only are missing (not in this wave). | approved |
+| qes2018 | `q65a` (post) | 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA); Inapplicable (routed out) (NA), System missing (NA) pass to q65b: 1 = Yes; 2 = No; 98 = Don’t know (NA); 99 = Refused (NA) | fills the study | Q65 has two versions, split by QPARENTS: those who do not live with their parents (q65a, 2,558 respondents) were asked about their household, those who do (q65b, 514) about their family (parents, brothers or sisters). The household version is read first, then the family version for those who were not asked it. The respondent or anyone in the household (or family) belongs to a union. | approved |
+| qes2014 | `Q61` (post) | 1 = Yes; 2 = No; 9 = Refused (NA) | fills the study | The respondent or anyone in the household belongs to a union. | approved |
 
 ### `region`: Region
 
 Where the respondent lives: Montreal CMA, Quebec CMA or the rest of
 Quebec.
 
-Base: `target:region_cma3` · `identity` · one value per respondent
+Base: `target:region_cma3` · one value per respondent
 
 **How it is relaxed**: The Montreal census metropolitan area, the Quebec
 City census metropolitan area or the rest of Quebec, from each study’s
@@ -2096,17 +2242,17 @@ region or sub-region variable, with the boundaries each study used.
 | 2    | `quebec_cma` | Quebec CMA     |
 | 3    | `rest`       | Rest of Quebec |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2007_panel | `reg2` (any wave) | 1-3, 5-11, 17-19, 21, 22 = Rest of Quebec; 4, 20 = Quebec CMA; 12-16 = Montreal CMA | fills the study | Sub-regions: the five parts of the Montreal CMA (in Lanaudière, Laurentides, Laval, Montérégie and Montréal) are the Montreal CMA, and the parts of the Quebec CMA in Capitale-Nationale and Chaudière-Appalaches are the Quebec CMA. | stable |
+| qes2007_panel | `reg2` (any wave) | 1-3, 5-11, 17-19, 21, 22 = Rest of Quebec; 4, 20 = Quebec CMA; 12-16 = Montreal CMA | fills the study | Sub-regions: the five parts of the Montreal CMA (in Lanaudière, Laurentides, Laval, Montérégie and Montréal) are the Montreal CMA, and the parts of the Quebec CMA in Capitale-Nationale and Chaudière-Appalaches are the Quebec CMA. | approved |
 
 ### `region_admin`: Administrative region
 
 The administrative region where the respondent lives.
 
-Base: relaxed mappings only · `relaxed_only` · one value per respondent
+Base: relaxed mappings only · one value per respondent
 
 **How it is relaxed**: The 17 administrative regions of Quebec, where a
 study recorded them or sub-regions that fit within them; the sub-regions
@@ -2134,21 +2280,21 @@ of the 2007 study and the 2007 panel that split a region are joined.
 | 16   | `monteregie`              | Montérégie                    |
 | 17   | `centre_du_quebec`        | Centre-du-Québec              |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2018 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
-| qes2014 | `QREGION` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
-| qes2012 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | stable |
-| qes2007_panel | `reg2` (any wave) | 1 = Abitibi-Témiscamingue; 2 = Bas-Saint-Laurent; 3, 4 = Chaudière-Appalaches; 5 = Côte-Nord; 6 = Estrie; 7 = Gaspésie–Îles-de-la-Madeleine; 8, 12 = Lanaudière; 9, 13 = Laurentides; 10 = Mauricie; 11, 15 = Montérégie; 14 = Laval; 16 = Montréal; 17 = Nord-du-Québec; 18 = Outaouais; 19, 20 = Capitale-Nationale; 21 = Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined. | stable |
-| qes2007 | `nomx` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3, 33 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 11 = Gaspésie–Îles-de-la-Madeleine; 12, 32 = Chaudière-Appalaches; 13 = Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie; 17 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined; Nord-du-Québec has no code. | stable |
+| qes2018 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | approved |
+| qes2014 | `QREGION` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | approved |
+| qes2012 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | fills the study |  | approved |
+| qes2007_panel | `reg2` (any wave) | 1 = Abitibi-Témiscamingue; 2 = Bas-Saint-Laurent; 3, 4 = Chaudière-Appalaches; 5 = Côte-Nord; 6 = Estrie; 7 = Gaspésie–Îles-de-la-Madeleine; 8, 12 = Lanaudière; 9, 13 = Laurentides; 10 = Mauricie; 11, 15 = Montérégie; 14 = Laval; 16 = Montréal; 17 = Nord-du-Québec; 18 = Outaouais; 19, 20 = Capitale-Nationale; 21 = Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined. | approved |
+| qes2007 | `nomx` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3, 33 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 11 = Gaspésie–Îles-de-la-Madeleine; 12, 32 = Chaudière-Appalaches; 13 = Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie; 17 = Centre-du-Québec | fills the study | Sub-regions that split a region (its part in a CMA and the rest) are joined; Nord-du-Québec has no code. | approved |
 
 ### `born_canada`: Born in Canada
 
 Whether the respondent was born in Canada.
 
-Base: `target:born_canada` · `identity` · one value per respondent
+Base: `target:born_canada` · one value per respondent
 
 **How it is relaxed**: Born in Canada or not, as each study asked it:
 from the birthplace (Quebec, elsewhere in Canada or abroad), or asked
@@ -2192,7 +2338,7 @@ None: every study’s values come from the base.
 The party of the respondent’s vote in the Quebec general election of the
 study.
 
-Base: `pooled:vote_choice` · `identity` · on the wave that asked it
+Base: `pooled:vote_choice` · on the wave that asked it
 
 **How it is relaxed**: The reported vote where a study asked it, else
 the vote intention with the undecided pushed toward the party they lean
@@ -2222,8 +2368,7 @@ None: every study’s values come from the base.
 
 The question of vote_choice on the row.
 
-Base: `pooled:vote_choice__type` · `identity` · on the wave that asked
-it
+Base: `pooled:vote_choice__type` · on the wave that asked it
 
 **How it is relaxed**: Which question vote_choice comes from on each
 row: the reported vote, the pushed intention or the first intention
@@ -2246,7 +2391,7 @@ None: every study’s values come from the base.
 Whether the respondent voted in the Quebec general election of the
 study.
 
-Base: `pooled:turnout` · `identity` · on the wave that asked it
+Base: `pooled:turnout` · on the wave that asked it
 
 **How it is relaxed**: Whether the respondent says they voted in the
 Quebec general election of the study, asked after it; the wordings and
@@ -2268,7 +2413,7 @@ None: every study’s values come from the base.
 The party the respondent voted for at the previous Quebec general
 election.
 
-Base: `target:vote_prov_prev` · `identity` · on the wave that asked it
+Base: `target:vote_prov_prev` · on the wave that asked it
 
 **How it is relaxed**: The party of the reported vote at the Quebec
 general election before the study; those who did not vote are missing,
@@ -2289,19 +2434,19 @@ the PLQ and the PQ.
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Other party |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2007_panel | `voteprec` (pre) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = Other party; 6 = Did not vote (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | The election of April 2003 (QC2003); asked in the second pre-election poll only, so the other respondents are system missing. | stable |
-| qes1998 | `vote94` (pre) | 1 = PLQ; 2 = PQ; 3 = Did not vote (NA); 4 = Don’t know or refused (one code) (NA); 9 = Source category straddles target levels (NA) | fills the study | The election of 1994 (QC1994). The pooled file names only the PLQ and the PQ; the unlabelled code 9 holds the other parties (the ADQ among them) and unknown answers, so 1994 ADQ voters are missing. | stable |
-| qes_crop_2007_2010 | `QP4` (each poll) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = QS; 5 = PVQ; 6 = Other party; 7 = Did not vote (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | The last Quebec election before each poll: QC2007 for the polls of June 2007 to November 2008, QC2008 from January 2009. The original question (QP4); code 7 joins not voted and spoiled. | stable |
+| qes2007_panel | `voteprec` (pre) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = Other party; 6 = Did not vote (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | The election of April 2003 (QC2003); asked in the second pre-election poll only, so the other respondents are system missing. | approved |
+| qes1998 | `vote94` (pre) | 1 = PLQ; 2 = PQ; 3 = Did not vote (NA); 4 = Don’t know or refused (one code) (NA); 9 = Source category straddles target levels (NA) | fills the study | The election of 1994 (QC1994). The pooled file names only the PLQ and the PQ; the unlabelled code 9 holds the other parties (the ADQ among them) and unknown answers, so 1994 ADQ voters are missing. | approved |
+| qes_crop_2007_2010 | `QP4` (each poll) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = QS; 5 = PVQ; 6 = Other party; 7 = Did not vote (NA); 9 = Don’t know or refused (one code) (NA) | fills the study | The last Quebec election before each poll: QC2007 for the polls of June 2007 to November 2008, QC2008 from January 2009. The original question (QP4); code 7 joins not voted and spoiled. | approved |
 
 ### `pid`: Provincial party identification
 
 The Quebec party the respondent identifies with.
 
-Base: `target:pid_prov` · `identity` · on the wave that asked it
+Base: `target:pid_prov` · on the wave that asked it
 
 **How it is relaxed**: The Quebec party the respondent identifies with,
 or none, as each study asked it; the parties offered differ from study
@@ -2330,7 +2475,7 @@ None: every study’s values come from the base.
 
 The respondent’s position on a left-right scale.
 
-Base: `target:lr_self` · `identity` · on the wave that asked it
+Base: `target:lr_self` · on the wave that asked it
 
 **How it is relaxed**: Self-placement on a left-right scale from 0
 (left) to 10 (right); a scale of another length would be rescaled to
@@ -2346,13 +2491,16 @@ None: every study’s values come from the base.
 
 How interested the respondent is in politics.
 
-Base: `pooled:pol_interest` · `bands:0.35,0.75:low,medium,high` · on the
+Base: `pooled:pol_interest` · `bands:0.55,0.85:low,medium,high` · on the
 wave that asked it
 
 **How it is relaxed**: Interest on 0 to 1 (interest_01) in three bands,
-low below 0.35 and high from 0.75; the 4-point and 0-10 questions do not
-line up, and the 2008 study and the 2007 panel asked interest in the
-election or the campaign, not in politics.
+low below 0.55 and high from 0.85: on a 0-10 question, 0 to 5 is low, 6
+to 8 medium and 9 or 10 high; on a 4-point question, not at all or
+hardly interested is low, quite interested medium and very interested
+high. The two formats still do not line up exactly, and the 2008 study
+and the 2007 panel asked interest in the election or the campaign, not
+in politics.
 
 **Levels**
 
@@ -2370,7 +2518,7 @@ None: every study’s values come from the base.
 
 How interested the respondent is in politics, on 0 to 1.
 
-Base: `pooled:pol_interest` · `identity` · on the wave that asked it
+Base: `pooled:pol_interest` · on the wave that asked it
 
 **How it is relaxed**: Interest on 0 to 1 (the pooled pol_interest):
 four-point answers scored 1, 0.7, 0.3 and 0, and 0-10 answers divided by
@@ -2387,7 +2535,7 @@ None: every study’s values come from the base.
 How the respondent would vote in a referendum on Quebec sovereignty.
 
 Base: `pooled:sov_support` ·
-`recode:yes=yes,no=no,would_not_vote=NA:not_mappable` · on the wave that
+`recode:yes=yes,no=no,would_not_vote=NA:not_voted` · on the wave that
 asked it
 
 **How it is relaxed**: Yes or no in a referendum on Quebec sovereignty,
@@ -2402,11 +2550,11 @@ says which, and would not vote is missing.
 | 1    | `yes` | Yes   |
 | 2    | `no`  | No    |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes_crop_2007_2010 | `intvoterefa` (each poll) | 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA); Don’t know (NA) pass to intvoterefb: 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | OD-R8: the referendum question of the CROP polls. Its label is cut off in the file and the deposited codebook gives no more. CROP’s reports give the wording for 19 of the 24 polls: whether Quebec should become a sovereign country (« devienne un pays souverain »). It is not documented for the other five; in April 2009 CROP asked both a sovereign-country and a sovereignty-partnership question, and for May 2009 the press does not say which one gave the published result. For those who did not know, the push (intvoterefb) is used. The push was also asked of those who would not vote or refused, whose first answer is kept. Would not vote is missing. | stable |
+| qes_crop_2007_2010 | `intvoterefa` (each poll) | 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA); Don’t know (NA) pass to intvoterefb: 1 = Yes; 2 = No; 3 = Source category straddles target levels (NA); 8 = Don’t know (NA); 9 = Refused (NA) | fills the study | The referendum question of the CROP polls. Its label is cut off in the file and the deposited codebook gives no more. CROP’s reports give the wording for 19 of the 24 polls: whether Quebec should become a sovereign country (« devienne un pays souverain »). It is not documented for the other five; in April 2009 CROP asked both a sovereign-country and a sovereignty-partnership question, and for May 2009 the press does not say which one gave the published result. For those who did not know, the push (intvoterefb) is used. The push was also asked of those who would not vote or refused, whose first answer is kept. Would not vote is missing. | approved |
 
 ### `sovereignty_type`: Question of the sovereignty vote
 
@@ -2431,17 +2579,17 @@ full wording was not deposited.
 | 4    | `favour`            | Favourable to independence                       |
 | 5    | `crop_undocumented` | CROP referendum question (wording not deposited) |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes_crop_2007_2010 | `intvoterefa` (each poll) | every respondent = CROP referendum question (wording not deposited) | fills the study | OD-R8: every CROP poll respondent; sovereignty says whether they answered. | stable |
+| qes_crop_2007_2010 | `intvoterefa` (each poll) | every respondent = CROP referendum question (wording not deposited) | fills the study | Every CROP poll respondent; sovereignty says whether they answered. | approved |
 
 ### `satis_democracy`: Satisfaction with democracy in Quebec
 
 How satisfied the respondent is with the way democracy works in Quebec.
 
-Base: `target:satis_demo_qc` · `identity` · on the wave that asked it
+Base: `target:satis_demo_qc` · on the wave that asked it
 
 **How it is relaxed**: Satisfaction with the way democracy works in
 Quebec, on four points, as each study asked it.
@@ -2463,7 +2611,7 @@ None: every study’s values come from the base.
 
 How satisfied the respondent is with the Quebec government.
 
-Base: `target:gov_satisfaction` · `identity` · on the wave that asked it
+Base: `target:gov_satisfaction` · on the wave that asked it
 
 **How it is relaxed**: Satisfaction with the Quebec government of the
 day, on four points; the 1998 question asks about the Bouchard
@@ -2478,17 +2626,17 @@ government, in its own words.
 | 3    | `not_very`   | Not very satisfied   |
 | 4    | `not_at_all` | Not at all satisfied |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes1998 | `satisf` (pre) | 1 = Very satisfied; 2 = Fairly satisfied; 3 = Not very satisfied; 4 = Not at all satisfied; 9 = Don’t know or refused (one code) (NA) | fills the study | Satisfaction with the Bouchard (PQ) government, in the pooled file’s words: very satisfied, rather satisfied, rather dissatisfied, very dissatisfied; code 9 is unlabelled and read as don’t know or refused. | stable |
+| qes1998 | `satisf` (pre) | 1 = Very satisfied; 2 = Fairly satisfied; 3 = Not very satisfied; 4 = Not at all satisfied; 9 = Don’t know or refused (one code) (NA) | fills the study | Satisfaction with the Bouchard (PQ) government, in the pooled file’s words: very satisfied, rather satisfied, rather dissatisfied, very dissatisfied; code 9 is unlabelled and read as don’t know or refused. | approved |
 
 ### `econ_retro`: Quebec’s economy over the past year
 
 The respondent’s view of Quebec’s economy over the past year.
 
-Base: `target:econ_retro_qc` · `identity` · on the wave that asked it
+Base: `target:econ_retro_qc` · on the wave that asked it
 
 **How it is relaxed**: Whether Quebec’s economy got better, stayed about
 the same or got worse over the past year, as each study asked it.
@@ -2510,7 +2658,7 @@ None: every study’s values come from the base.
 The respondent’s view of their own financial situation over the past
 year.
 
-Base: relaxed mappings only · `relaxed_only` · on the wave that asked it
+Base: relaxed mappings only · on the wave that asked it
 
 **How it is relaxed**: Whether the respondent’s own financial situation
 got better, stayed about the same or got worse over the past year. Only
@@ -2528,17 +2676,17 @@ used.
 | 2    | `same`   | About the same |
 | 3    | `worse`  | Worse          |
 
-**Relaxed mappings**
+Mappings by study
 
 | Study | Source | Recode | Use | Notes | status |
 |----|----|----|----|----|----|
-| qes2022 | `cps_ownfin` (cps) | 1 = Better; 2 = Worse; 3 = About the same | fills the study | Asked during the campaign of every respondent; the file has no missing value. Not the 2012 and 2014 question on one’s own finances if Quebec became independent (q85, Q47), which asks about another situation. | stable |
+| qes2022 | `cps_ownfin` (cps) | 1 = Better; 2 = Worse; 3 = About the same | fills the study | Asked during the campaign of every respondent; the file has no missing value. Not the 2012 and 2014 question on one’s own finances if Quebec became independent (q85, Q47), which asks about another situation. | approved |
 
 ### `identity`: Québécois and Canadian identity
 
 How the respondent sees themselves, as Québécois, Canadian or both.
 
-Base: `target:identity_qc_ca` · `identity` · on the wave that asked it
+Base: `target:identity_qc_ca` · on the wave that asked it
 
 **How it is relaxed**: Québécois only, Québécois first, both equally,
 Canadian first or Canadian only, from one question or from the two
@@ -2563,7 +2711,7 @@ None: every study’s values come from the base.
 
 How attached the respondent feels to Quebec.
 
-Base: `target:attach_qc` · `identity` · on the wave that asked it
+Base: `target:attach_qc` · on the wave that asked it
 
 **How it is relaxed**: Attachment to Quebec on four points, as each
 study asked it.
@@ -2585,7 +2733,7 @@ None: every study’s values come from the base.
 
 How attached the respondent feels to Canada.
 
-Base: `target:attach_ca` · `identity` · on the wave that asked it
+Base: `target:attach_ca` · on the wave that asked it
 
 **How it is relaxed**: Attachment to Canada on four points, as each
 study asked it.

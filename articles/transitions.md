@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-transitions.md)*
 
+**This page downloads 5 studies** (about 5 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 Since the 1988 federal election, Canadian election studies have shown
 that opinion can move a great deal between the start of a campaign and
 the vote (Johnston et al. 1992). It is often said that Quebec elections
@@ -44,13 +47,14 @@ reported after the election, each cell the percentage of the row. The
 diagonal dominates: in 2022, 83% of those who intended to vote CAQ
 reported a CAQ vote and 67% of those who intended to vote QS a QS vote;
 24% of the undecided did not vote. Values in the table
-view.](transitions_files/figure-html/matrix-light.png)![Two heatmaps
-(2018 panel, QES 2022): rows are the vote intention during the campaign,
-with the number of respondents, columns the vote reported after the
-election, each cell the percentage of the row. The diagonal dominates:
-in 2022, 83% of those who intended to vote CAQ reported a CAQ vote and
-67% of those who intended to vote QS a QS vote; 24% of the undecided did
-not vote. Values in the table
+view.](transitions_files/figure-html/matrix-light.png)
+
+![Two heatmaps (2018 panel, QES 2022): rows are the vote intention
+during the campaign, with the number of respondents, columns the vote
+reported after the election, each cell the percentage of the row. The
+diagonal dominates: in 2022, 83% of those who intended to vote CAQ
+reported a CAQ vote and 67% of those who intended to vote QS a QS vote;
+24% of the undecided did not vote. Values in the table
 view.](transitions_files/figure-html/matrix-dark.png)
 
 Source: qesR. Respondents interviewed during the campaign and after the
@@ -67,166 +71,166 @@ Table view
 
 | Election | Study | Intention | Reported vote | Row %, \[95% CI\] | n (row) | Weighting |
 |---:|:---|:---|:---|:---|---:|:---|
-| 1998 | 1998 polls | PLQ | PLQ | 80.1 \[75.3, 84.1\] | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | PQ | 5.1 \[3.2, 8.2\] | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | ADQ | 4.5 \[2.7, 7.5\] | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | QS | — | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | CAQ | — | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | PCQ | — | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | Other | 0.3 \[0.0, 2.2\] | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PLQ | Did not vote | 10.0 \[7.1, 13.8\] | 311 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | PLQ | 3.9 \[2.5, 6.2\] | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | PQ | 85.7 \[82.1, 88.7\] | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | ADQ | 2.5 \[1.4, 4.5\] | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | QS | — | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | CAQ | — | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | PCQ | — | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | Other | 0.9 \[0.3, 2.4\] | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | Did not vote | 6.9 \[4.9, 9.7\] | 433 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | PLQ | 13.1 \[9.5, 17.8\] | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | PQ | 15.4 \[11.5, 20.4\] | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | ADQ | 56.0 \[49.9, 61.9\] | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | QS | — | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | CAQ | — | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | PCQ | — | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | Other | 1.2 \[0.4, 3.5\] | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | Did not vote | 14.3 \[10.5, 19.1\] | 259 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | PLQ | n \< 30 | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | PQ | n \< 30 | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | ADQ | n \< 30 | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | QS | — | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | CAQ | — | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | PCQ | — | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | Other | n \< 30 | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | Did not vote | n \< 30 | 26 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | PLQ | n \< 30 | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | PQ | n \< 30 | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | ADQ | n \< 30 | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | QS | — | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | CAQ | — | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | PCQ | — | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | Other | n \< 30 | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | None / would not vote | Did not vote | n \< 30 | 22 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | PLQ | 38.3 \[28.4, 49.3\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | PQ | 28.4 \[19.7, 39.1\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | ADQ | 13.6 \[7.7, 22.9\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | QS | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | CAQ | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | PCQ | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | Other | 2.5 \[0.6, 9.3\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Undecided | Did not vote | 17.3 \[10.5, 27.1\] | 81 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | PLQ | 73.2 \[68.6, 77.3\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | PQ | 3.0 \[1.7, 5.3\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | ADQ | 8.1 \[5.8, 11.2\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | QS | 0.5 \[0.1, 2.0\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | CAQ | — | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | PCQ | — | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | Other | 0.8 \[0.2, 2.3\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | Did not vote | 14.4 \[11.3, 18.3\] | 395 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | PLQ | 3.8 \[2.3, 6.1\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | PQ | 67.4 \[62.7, 71.8\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | ADQ | 9.0 \[6.6, 12.3\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | QS | 1.5 \[0.7, 3.3\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | CAQ | — | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | PCQ | — | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | Other | 1.8 \[0.8, 3.6\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | Did not vote | 16.5 \[13.2, 20.5\] | 399 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | PLQ | 4.3 \[2.7, 6.9\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | PQ | 11.1 \[8.3, 14.7\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | ADQ | 71.9 \[67.1, 76.2\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | QS | 1.1 \[0.4, 2.8\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | CAQ | — | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | PCQ | — | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | Other | 1.4 \[0.6, 3.2\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | Did not vote | 10.3 \[7.6, 13.8\] | 370 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | PLQ | 5.1 \[1.9, 12.7\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | PQ | 21.5 \[13.8, 31.9\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | ADQ | 13.9 \[7.9, 23.4\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | QS | 41.8 \[31.4, 52.9\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | CAQ | — | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | PCQ | — | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | Other | 10.1 \[5.1, 19.0\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | Did not vote | 7.6 \[3.5, 15.9\] | 79 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | PLQ | 13.9 \[8.4, 22.1\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | PQ | 15.8 \[9.9, 24.3\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | ADQ | 12.9 \[7.6, 20.9\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | QS | 3.0 \[1.0, 8.8\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | CAQ | — | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | PCQ | — | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | Other | 33.7 \[25.1, 43.4\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | Did not vote | 20.8 \[14.0, 29.8\] | 101 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | PLQ | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | PQ | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | ADQ | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | QS | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | CAQ | — | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | PCQ | — | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | Other | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | None / would not vote | Did not vote | n \< 30 | 29 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | PLQ | 19.2 \[12.8, 27.9\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | PQ | 26.9 \[19.3, 36.2\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | ADQ | 23.1 \[16.0, 32.1\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | QS | 0.0 | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | CAQ | — | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | PCQ | — | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | Other | 4.8 \[2.0, 11.0\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Undecided | Did not vote | 26.0 \[18.4, 35.2\] | 104 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | PLQ | 82.3 \[75.5, 87.5\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | PQ | 3.2 \[1.3, 7.4\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | ADQ | — | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | QS | 1.3 \[0.3, 4.9\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | CAQ | 6.3 \[3.4, 11.4\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | PCQ | n.l. | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | Other | 0.6 \[0.1, 4.4\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | Did not vote | 6.3 \[3.4, 11.4\] | 158 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | PLQ | 1.0 \[0.2, 3.7\] | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | PQ | 89.0 \[84.1, 92.6\] | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | ADQ | — | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | QS | 2.4 \[1.0, 5.6\] | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | CAQ | 1.0 \[0.2, 3.7\] | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | PCQ | n.l. | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | Other | 0.0 | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | Did not vote | 6.7 \[4.0, 10.9\] | 210 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | PLQ | 0.0 | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | PQ | 27.7 \[16.8, 42.0\] | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | ADQ | — | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | QS | 57.4 \[43.1, 70.7\] | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | CAQ | 4.3 \[1.1, 15.5\] | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | PCQ | n.l. | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | Other | 4.3 \[1.1, 15.5\] | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | Did not vote | 6.4 \[2.1, 18.0\] | 47 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | PLQ | 6.6 \[3.7, 11.5\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | PQ | 9.0 \[5.5, 14.4\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | ADQ | — | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | QS | 2.4 \[0.9, 6.2\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | CAQ | 72.5 \[65.2, 78.7\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | PCQ | n.l. | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | Other | 1.2 \[0.3, 4.7\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | Did not vote | 8.4 \[5.0, 13.7\] | 167 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | PLQ | 10.5 \[4.0, 24.9\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | PQ | 18.4 \[9.0, 33.9\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | ADQ | — | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | QS | 10.5 \[4.0, 24.9\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | CAQ | 5.3 \[1.3, 18.8\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | PCQ | n.l. | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | Other | 50.0 \[34.6, 65.4\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | Did not vote | 5.3 \[1.3, 18.8\] | 38 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | PLQ | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | PQ | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | ADQ | — | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | QS | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | CAQ | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | PCQ | n.l. | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | Other | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | None / would not vote | Did not vote | n \< 30 | 8 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | PLQ | 29.5 \[19.4, 42.1\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | PQ | 23.0 \[14.1, 35.1\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | ADQ | — | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | QS | 3.3 \[0.8, 12.2\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | CAQ | 14.8 \[7.9, 26.0\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | PCQ | n.l. | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | Other | 4.9 \[1.6, 14.2\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Undecided | Did not vote | 24.6 \[15.4, 36.9\] | 61 | unweighted (weight under review) |
+| 1998 | 1998 polls | PLQ | PLQ | 80.1 \[75.3, 84.1\] | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | PQ | 5.1 \[3.2, 8.2\] | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | ADQ | 4.5 \[2.7, 7.5\] | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | QS | — | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | CAQ | — | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | PCQ | — | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | Other | 0.3 \[0.0, 2.2\] | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PLQ | Did not vote | 10.0 \[7.1, 13.8\] | 311 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | PLQ | 3.9 \[2.5, 6.2\] | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | PQ | 85.7 \[82.1, 88.7\] | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | ADQ | 2.5 \[1.4, 4.5\] | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | QS | — | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | CAQ | — | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | PCQ | — | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | Other | 0.9 \[0.3, 2.4\] | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | Did not vote | 6.9 \[4.9, 9.7\] | 433 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | PLQ | 13.1 \[9.5, 17.8\] | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | PQ | 15.4 \[11.5, 20.4\] | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | ADQ | 56.0 \[49.9, 61.9\] | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | QS | — | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | CAQ | — | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | PCQ | — | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | Other | 1.2 \[0.4, 3.5\] | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | Did not vote | 14.3 \[10.5, 19.1\] | 259 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | PLQ | n \< 30 | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | PQ | n \< 30 | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | ADQ | n \< 30 | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | QS | — | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | CAQ | — | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | PCQ | — | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | Other | n \< 30 | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | Did not vote | n \< 30 | 26 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | PLQ | n \< 30 | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | PQ | n \< 30 | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | ADQ | n \< 30 | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | QS | — | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | CAQ | — | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | PCQ | — | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | Other | n \< 30 | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | None / would not vote | Did not vote | n \< 30 | 22 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | PLQ | 38.3 \[28.4, 49.3\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | PQ | 28.4 \[19.7, 39.1\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | ADQ | 13.6 \[7.7, 22.9\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | QS | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | CAQ | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | PCQ | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | Other | 2.5 \[0.6, 9.3\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Undecided | Did not vote | 17.3 \[10.5, 27.1\] | 81 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | PLQ | 73.2 \[68.6, 77.3\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | PQ | 3.0 \[1.7, 5.3\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | ADQ | 8.1 \[5.8, 11.2\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | QS | 0.5 \[0.1, 2.0\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | CAQ | — | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | PCQ | — | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | Other | 0.8 \[0.2, 2.3\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | Did not vote | 14.4 \[11.3, 18.3\] | 395 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | PLQ | 3.8 \[2.3, 6.1\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | PQ | 67.4 \[62.7, 71.8\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | ADQ | 9.0 \[6.6, 12.3\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | QS | 1.5 \[0.7, 3.3\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | CAQ | — | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | PCQ | — | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | Other | 1.8 \[0.8, 3.6\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | Did not vote | 16.5 \[13.2, 20.5\] | 399 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | PLQ | 4.3 \[2.7, 6.9\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | PQ | 11.1 \[8.3, 14.7\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | ADQ | 71.9 \[67.1, 76.2\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | QS | 1.1 \[0.4, 2.8\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | CAQ | — | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | PCQ | — | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | Other | 1.4 \[0.6, 3.2\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | Did not vote | 10.3 \[7.6, 13.8\] | 370 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | PLQ | 5.1 \[1.9, 12.7\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | PQ | 21.5 \[13.8, 31.9\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | ADQ | 13.9 \[7.9, 23.4\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | QS | 41.8 \[31.4, 52.9\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | CAQ | — | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | PCQ | — | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | Other | 10.1 \[5.1, 19.0\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | Did not vote | 7.6 \[3.5, 15.9\] | 79 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | PLQ | 13.9 \[8.4, 22.1\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | PQ | 15.8 \[9.9, 24.3\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | ADQ | 12.9 \[7.6, 20.9\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | QS | 3.0 \[1.0, 8.8\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | CAQ | — | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | PCQ | — | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | Other | 33.7 \[25.1, 43.4\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | Did not vote | 20.8 \[14.0, 29.8\] | 101 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | PLQ | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | PQ | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | ADQ | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | QS | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | CAQ | — | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | PCQ | — | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | Other | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | None / would not vote | Did not vote | n \< 30 | 29 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | PLQ | 19.2 \[12.8, 27.9\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | PQ | 26.9 \[19.3, 36.2\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | ADQ | 23.1 \[16.0, 32.1\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | QS | 0.0 | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | CAQ | — | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | PCQ | — | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | Other | 4.8 \[2.0, 11.0\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Undecided | Did not vote | 26.0 \[18.4, 35.2\] | 104 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | PLQ | 82.3 \[75.5, 87.5\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | PQ | 3.2 \[1.3, 7.4\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | ADQ | — | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | QS | 1.3 \[0.3, 4.9\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | CAQ | 6.3 \[3.4, 11.4\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | PCQ | n.l. | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | Other | 0.6 \[0.1, 4.4\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | Did not vote | 6.3 \[3.4, 11.4\] | 158 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | PLQ | 1.0 \[0.2, 3.7\] | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | PQ | 89.0 \[84.1, 92.6\] | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | ADQ | — | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | QS | 2.4 \[1.0, 5.6\] | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | CAQ | 1.0 \[0.2, 3.7\] | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | PCQ | n.l. | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | Other | 0.0 | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | Did not vote | 6.7 \[4.0, 10.9\] | 210 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | PLQ | 0.0 | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | PQ | 27.7 \[16.8, 42.0\] | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | ADQ | — | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | QS | 57.4 \[43.1, 70.7\] | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | CAQ | 4.3 \[1.1, 15.5\] | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | PCQ | n.l. | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | Other | 4.3 \[1.1, 15.5\] | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | Did not vote | 6.4 \[2.1, 18.0\] | 47 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | PLQ | 6.6 \[3.7, 11.5\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | PQ | 9.0 \[5.5, 14.4\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | ADQ | — | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | QS | 2.4 \[0.9, 6.2\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | CAQ | 72.5 \[65.2, 78.7\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | PCQ | n.l. | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | Other | 1.2 \[0.3, 4.7\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | Did not vote | 8.4 \[5.0, 13.7\] | 167 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | PLQ | 10.5 \[4.0, 24.9\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | PQ | 18.4 \[9.0, 33.9\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | ADQ | — | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | QS | 10.5 \[4.0, 24.9\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | CAQ | 5.3 \[1.3, 18.8\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | PCQ | n.l. | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | Other | 50.0 \[34.6, 65.4\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | Did not vote | 5.3 \[1.3, 18.8\] | 38 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | PLQ | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | PQ | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | ADQ | — | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | QS | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | CAQ | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | PCQ | n.l. | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | Other | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | None / would not vote | Did not vote | n \< 30 | 8 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | PLQ | 29.5 \[19.4, 42.1\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | PQ | 23.0 \[14.1, 35.1\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | ADQ | — | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | QS | 3.3 \[0.8, 12.2\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | CAQ | 14.8 \[7.9, 26.0\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | PCQ | n.l. | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | Other | 4.9 \[1.6, 14.2\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Undecided | Did not vote | 24.6 \[15.4, 36.9\] | 61 | unweighted: no validated weight |
 | 2018 | 2018 panel | PLQ | PLQ | 79.3 \[72.6, 84.7\] | 226 | weighted |
 | 2018 | 2018 panel | PLQ | PQ | 0.0 | 226 | weighted |
 | 2018 | 2018 panel | PLQ | ADQ | — | 226 | weighted |
@@ -367,89 +371,6 @@ undecided than the others. The 2007 election, a three-way race between
 the PLQ, the PQ and the Action démocratique du Québec (ADQ), produced
 the most switchers, 21%.
 
-## Loyalty: voted as they intended
-
-![Dot chart grouped by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per
-panel study from 1998 to 2022: the share of those who intended to vote
-for the party during the campaign who reported voting for it, among
-those who voted, with confidence intervals. The PLQ, the PQ and the CAQ
-are between 79% and 96%; QS in the 2007 panel kept 45%. In 2022 the CAQ
-kept 88% and the PLQ 85%. Values in the table
-view.](transitions_files/figure-html/loyal-light.png)![Dot chart grouped
-by party (PLQ, PQ, ADQ, QS, CAQ, PCQ), one row per panel study from 1998
-to 2022: the share of those who intended to vote for the party during
-the campaign who reported voting for it, among those who voted, with
-confidence intervals. The PLQ, the PQ and the CAQ are between 79% and
-96%; QS in the 2007 panel kept 45%. In 2022 the CAQ kept 88% and the PLQ
-85%. Values in the table
-view.](transitions_files/figure-html/loyal-dark.png)
-
-Source: qesR. Respondents interviewed during the campaign and after the
-election who reported a vote. Lines: 95% confidence intervals. Filled
-dots are weighted with the post-election weight (2018 panel, QES 2022);
-hollow dots (1998, 2007 and 2012 panels) are not weighted here, because
-their weights are under review. The studies differ in design and mode,
-so comparisons across studies are best made within a party. Cells of
-fewer than 30 respondents are not drawn; the other parties are in the
-table view.
-
-Table view
-
-| Election | Study | Intention | Voted as intended, % \[95% CI\] | n | Weighting |
-|---:|:---|:---|:---|---:|:---|
-| 1998 | 1998 polls | PLQ | 88.9 \[84.7, 92.1\] | 280 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | 92.1 \[89.0, 94.3\] | 403 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | 65.3 \[58.8, 71.3\] | 222 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | n \< 30 | 23 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | 85.5 \[81.3, 88.9\] | 338 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | 80.8 \[76.2, 84.7\] | 333 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | 80.1 \[75.5, 84.1\] | 332 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | 45.2 \[34.2, 56.7\] | 73 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | 42.5 \[32.2, 53.5\] | 80 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | 87.8 \[81.5, 92.2\] | 148 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | 95.4 \[91.4, 97.6\] | 196 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | 61.4 \[46.4, 74.5\] | 44 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | 79.1 \[71.9, 84.8\] | 153 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | 52.8 \[36.7, 68.3\] | 36 | unweighted (weight under review) |
-| 2018 | 2018 panel | PLQ | 90.2 \[84.4, 94.0\] | 201 | weighted |
-| 2018 | 2018 panel | PQ | 84.8 \[71.9, 92.4\] | 102 | weighted |
-| 2018 | 2018 panel | QS | 74.1 \[63.1, 82.8\] | 101 | weighted |
-| 2018 | 2018 panel | CAQ | 95.7 \[90.6, 98.1\] | 199 | weighted |
-| 2018 | 2018 panel | Other | n \< 30 | 29 | weighted |
-| 2022 | QES 2022 | PLQ | 85.1 \[75.3, 91.4\] | 112 | weighted |
-| 2022 | QES 2022 | PQ | 86.7 \[78.7, 92.0\] | 147 | weighted |
-| 2022 | QES 2022 | QS | 71.3 \[59.3, 81.0\] | 206 | weighted |
-| 2022 | QES 2022 | CAQ | 88.4 \[84.2, 91.6\] | 359 | weighted |
-| 2022 | QES 2022 | PCQ | 82.3 \[73.9, 88.5\] | 159 | weighted |
-| 2022 | QES 2022 | Other | n \< 30 | 24 | weighted |
-
-The PLQ, the PQ and the CAQ keep 79% to 96% of their campaign
-supporters; QS keeps fewer, down to 45% in 2007Share of those who
-intended to vote for each party during the campaign who reported voting
-for it, among those who voted, by panel study, with 95% confidence
-intervals
-
-Two patterns stand out. First, the PLQ is the most consistent party over
-time: it keeps from 85% to 90% of its campaign supporters at every
-election, whereas the PQ ranges from 81% to 95% and the CAQ from 79% to
-96%. These shares leave out those who did not vote, which is why the CAQ
-keeps 88% here in 2022, compared to 83% in the matrix above. Second, the
-smaller parties keep the fewest. The ADQ kept 65% in 1998, and QS kept
-45% in 2007 and 61% in 2012. This is consistent with a familiar account
-in which a voter who likes a small party during the campaign returns to
-a party that can win on election day, although the panels alone cannot
-tell strategic desertion from a simple change of mind.
-
-Loyalty is not a fixed trait of a party, however. The CAQ kept 79% of
-its campaign supporters in 2012, its first election, and 96% in 2018,
-when it went on to win. The ADQ went from 65% in 1998 to 80% in 2007,
-the year it became the official opposition. These cases suggest, without
-establishing it, that loyalty follows a party’s momentum more than its
-size. The Parti conservateur du Québec (PCQ) points the same way only if
-momentum, rather than the chance of winning, is what matters: with 1.5%
-of the vote in 2018, it kept 82% of its campaign supporters in 2022 and
-won no seat (on that surge, see Bélanger et al. 2025).
-
 ## Where the undecided went
 
 ![100% stacked horizontal bars, one per panel study from 1998 to 2022:
@@ -468,41 +389,40 @@ view.](transitions_files/figure-html/undecided-dark.png)
 Source: qesR. The undecided are respondents who named no party during
 the campaign, even when asked (where the panel asked) which party they
 leaned to, and who answered after the election. Weighted (2018 panel,
-QES 2022) or not weighted here, because their weights are under review
-(1998, 2007 and 2012 panels). Outlined segment: did not vote. Numbers:
-shares of 8% or more. Each row rests on 104 respondents or fewer, so the
-confidence intervals in the table view are wide. In the 2007 and 2018
-panels, 'don't know' and 'refused' cannot be told apart and are both
-counted as undecided.
+QES 2022) or unweighted, no validated weight (1998, 2007 and 2012
+panels). Outlined segment: did not vote. Numbers: shares of 8% or more.
+Each row rests on 104 respondents or fewer, so the confidence intervals
+in the table view are wide. In the 2007 and 2018 panels, 'don't know'
+and 'refused' cannot be told apart and are both counted as undecided.
 
 Table view
 
 | Election | Study | Reported vote | Share of the undecided, % \[95% CI\] | n | Weighting |
 |---:|:---|:---|:---|---:|:---|
-| 1998 | 1998 polls | PLQ | 38.3 \[28.4, 49.3\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | PQ | 28.4 \[19.7, 39.1\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | ADQ | 13.6 \[7.7, 22.9\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | QS | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | CAQ | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | PCQ | — | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Other | 2.5 \[0.6, 9.3\] | 81 | unweighted (weight under review) |
-| 1998 | 1998 polls | Did not vote | 17.3 \[10.5, 27.1\] | 81 | unweighted (weight under review) |
-| 2007 | 2007 panel | PLQ | 19.2 \[12.8, 27.9\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | 26.9 \[19.3, 36.2\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | 23.1 \[16.0, 32.1\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | 0.0 | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | CAQ | — | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | PCQ | — | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Other | 4.8 \[2.0, 11.0\] | 104 | unweighted (weight under review) |
-| 2007 | 2007 panel | Did not vote | 26.0 \[18.4, 35.2\] | 104 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | 29.5 \[19.4, 42.1\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | 23.0 \[14.1, 35.1\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | ADQ | — | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | 3.3 \[0.8, 12.2\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | 14.8 \[7.9, 26.0\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | PCQ | n.l. | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Other | 4.9 \[1.6, 14.2\] | 61 | unweighted (weight under review) |
-| 2012 | 2012 panel | Did not vote | 24.6 \[15.4, 36.9\] | 61 | unweighted (weight under review) |
+| 1998 | 1998 polls | PLQ | 38.3 \[28.4, 49.3\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | PQ | 28.4 \[19.7, 39.1\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | ADQ | 13.6 \[7.7, 22.9\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | QS | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | CAQ | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | PCQ | — | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Other | 2.5 \[0.6, 9.3\] | 81 | unweighted: no validated weight |
+| 1998 | 1998 polls | Did not vote | 17.3 \[10.5, 27.1\] | 81 | unweighted: no validated weight |
+| 2007 | 2007 panel | PLQ | 19.2 \[12.8, 27.9\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | 26.9 \[19.3, 36.2\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | 23.1 \[16.0, 32.1\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | 0.0 | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | CAQ | — | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | PCQ | — | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Other | 4.8 \[2.0, 11.0\] | 104 | unweighted: no validated weight |
+| 2007 | 2007 panel | Did not vote | 26.0 \[18.4, 35.2\] | 104 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | 29.5 \[19.4, 42.1\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | 23.0 \[14.1, 35.1\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | ADQ | — | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | 3.3 \[0.8, 12.2\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | 14.8 \[7.9, 26.0\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | PCQ | n.l. | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Other | 4.9 \[1.6, 14.2\] | 61 | unweighted: no validated weight |
+| 2012 | 2012 panel | Did not vote | 24.6 \[15.4, 36.9\] | 61 | unweighted: no validated weight |
 | 2018 | 2018 panel | PLQ | 13.4 \[7.0, 24.1\] | 75 | weighted |
 | 2018 | 2018 panel | PQ | 7.9 \[3.5, 17.1\] | 75 | weighted |
 | 2018 | 2018 panel | ADQ | — | 75 | weighted |
@@ -549,39 +469,40 @@ confidence intervals. Most gaps are within a few points of zero. The
 largest gain is that of the CAQ in 2018, +6.1 pts, the largest loss that
 of the PCQ in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ
 at +3.0 pts. Values in the table
-view.](transitions_files/figure-html/gains-light.png)![Dot chart in four
-panels, one per panel study from 2007 to 2022, one row per party: the
-party's share of the reported vote minus its share of the campaign
-intentions, among the same respondents, in points, with confidence
-intervals. Most gaps are within a few points of zero. The largest gain
-is that of the CAQ in 2018, +6.1 pts, the largest loss that of the PCQ
-in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ at +3.0
-pts. Values in the table
+view.](transitions_files/figure-html/gains-light.png)
+
+![Dot chart in four panels, one per panel study from 2007 to 2022, one
+row per party: the party's share of the reported vote minus its share of
+the campaign intentions, among the same respondents, in points, with
+confidence intervals. Most gaps are within a few points of zero. The
+largest gain is that of the CAQ in 2018, +6.1 pts, the largest loss that
+of the PCQ in 2022, −3.1 pts; in 2022 the CAQ is at −2.9 pts and the PQ
+at +3.0 pts. Values in the table
 view.](transitions_files/figure-html/gains-dark.png)
 
 Source: qesR. All respondents interviewed during the campaign and after
 the election, including the undecided, those who said they would not
 vote and those who did not vote, so that the gains of the parties and of
 abstention add up. Filled dots: weighted with the post-election weight
-(2018 panel, QES 2022); hollow dots: not weighted here, because their
-weights are under review (2007 and 2012 panels). The 1998 polls are left
-out: their recontact over-represents the undecided, non-disclosers and
-third-party (ADQ) supporters, so their unweighted gains cannot be read
-(see the text). Parties that did not run, or that the question did not
-list, are left out.
+(2018 panel, QES 2022); hollow dots: unweighted, no validated weight
+(2007 and 2012 panels). The 1998 polls are left out: their recontact
+over-represents the undecided, non-disclosers and third-party (ADQ)
+supporters, so their unweighted gains cannot be read (see the text).
+Parties that did not run, or that the question did not list, are left
+out.
 
 Table view
 
 | Election | Study | Party | Net gain, points \[95% CI\] | n | Weighting |
 |---:|:---|:---|:---|---:|:---|
-| 2007 | 2007 panel | PLQ | -2.4 \[-4.2, -0.7\] | 1477 | unweighted (weight under review) |
-| 2007 | 2007 panel | PQ | -0.9 \[-3.0, 1.2\] | 1477 | unweighted (weight under review) |
-| 2007 | 2007 panel | ADQ | 1.4 \[-0.6, 3.4\] | 1477 | unweighted (weight under review) |
-| 2007 | 2007 panel | QS | -2.1 \[-3.1, -1.1\] | 1477 | unweighted (weight under review) |
-| 2012 | 2012 panel | PLQ | 1.0 \[-1.2, 3.3\] | 689 | unweighted (weight under review) |
-| 2012 | 2012 panel | PQ | 4.6 \[2.2, 7.1\] | 689 | unweighted (weight under review) |
-| 2012 | 2012 panel | QS | -0.4 \[-2.2, 1.3\] | 689 | unweighted (weight under review) |
-| 2012 | 2012 panel | CAQ | -2.6 \[-5.1, -0.2\] | 689 | unweighted (weight under review) |
+| 2007 | 2007 panel | PLQ | -2.4 \[-4.2, -0.7\] | 1477 | unweighted: no validated weight |
+| 2007 | 2007 panel | PQ | -0.9 \[-3.0, 1.2\] | 1477 | unweighted: no validated weight |
+| 2007 | 2007 panel | ADQ | 1.4 \[-0.6, 3.4\] | 1477 | unweighted: no validated weight |
+| 2007 | 2007 panel | QS | -2.1 \[-3.1, -1.1\] | 1477 | unweighted: no validated weight |
+| 2012 | 2012 panel | PLQ | 1.0 \[-1.2, 3.3\] | 689 | unweighted: no validated weight |
+| 2012 | 2012 panel | PQ | 4.6 \[2.2, 7.1\] | 689 | unweighted: no validated weight |
+| 2012 | 2012 panel | QS | -0.4 \[-2.2, 1.3\] | 689 | unweighted: no validated weight |
+| 2012 | 2012 panel | CAQ | -2.6 \[-5.1, -0.2\] | 689 | unweighted: no validated weight |
 | 2018 | 2018 panel | PLQ | -2.9 \[-5.0, -0.8\] | 815 | weighted |
 | 2018 | 2018 panel | PQ | -2.2 \[-4.8, 0.3\] | 815 | weighted |
 | 2018 | 2018 panel | QS | -2.5 \[-4.5, -0.5\] | 815 | weighted |
@@ -613,18 +534,20 @@ cannot be read as they stand. The 1998 panel in qesR is made of two of
 the three polls that Durand and Blais (1999) recontacted, those of CROP
 and CREATEC, which interviewed francophones only. The recontact was
 drawn to over-represent the undecided, non-disclosers and supporters of
-third parties, and it is analysed here without weights (its weights are
-under review). Unweighted, those who intended to vote ADQ make up 23% of
-the pairs; with the weight the producers used for their own published
-tables, they make up 16%. The unweighted numbers show the PLQ and the PQ
-gaining about as much (2.7 and 2.3 points), so there is no Liberal swing
-at the PQ’s expense, and the ADQ losing 6.2 points. With the producers’
-weight, the PLQ’s gain is close to zero (0.3 points) and the PQ’s loss
-is small (1.5 points), both with confidence intervals that include zero,
-while the ADQ’s loss shrinks to 3.2 points. Either way, these numbers
-are consistent with Durand and Blais (1999). This is hardly surprising:
-they come from the same respondents, so they confirm the original
-analysis rather than test it independently.
+third parties, and it is analysed here without weights (they are not
+validated; see the [weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)).
+Unweighted, those who intended to vote ADQ make up 23% of the pairs;
+with the weight the producers used for their own published tables, they
+make up 16%. The unweighted numbers show the PLQ and the PQ gaining
+about as much (2.7 and 2.3 points), so there is no Liberal swing at the
+PQ’s expense, and the ADQ losing 6.2 points. With the producers’ weight,
+the PLQ’s gain is close to zero (0.3 points) and the PQ’s loss is small
+(1.5 points), both with confidence intervals that include zero, while
+the ADQ’s loss shrinks to 3.2 points. Either way, these numbers are
+consistent with Durand and Blais (1999). This is hardly surprising: they
+come from the same respondents, so they confirm the original analysis
+rather than test it independently.
 
 ## What the numbers mean and their limits
 
@@ -696,12 +619,13 @@ vote as in 2022; that is a question the next panels will have to answer.
   used.
 - **Vote.** The party reported after the election, or did not vote.
 - **Weights.** The post-election weight of each respondent in the 2018
-  panel and the 2022 study. The 1998, 2007 and 2012 panels are not
-  weighted here, because their weights are under review, and they are
-  drawn hollow. The 1998 recontact also over-represents the undecided,
-  non-disclosers and third-party (ADQ) supporters, so its net gains are
-  left out of the last figure; the text compares them with and without
-  the weight the producers used.
+  panel and the 2022 study. The 1998, 2007 and 2012 panels have no
+  validated weight (see the [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)):
+  they are unweighted here and drawn hollow. The 1998 recontact also
+  over-represents the undecided, non-disclosers and third-party (ADQ)
+  supporters, so its net gains are left out of the last figure; the text
+  compares them with and without the weight the producers used.
 - **Attrition.** Respondents who left the panel after the campaign are
   not in these tables.
 - **Code.** Every figure starts from the pooled `vote_choice`, in the

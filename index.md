@@ -3,63 +3,52 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-accueil.md)*
 
-The Quebec Election Studies, with the panels and polls that accompanied
-them, cover seven provincial elections, from 1998 to 2022, and their
-data are public. Using them together is another matter. They sit in
-separate deposits, in SPSS or Stata files, each with a codebook of its
-own, and the wording of a question often changed from one study to the
-next. qesR brings them into R. Each study loads by its code, from its
-original file, checked before use; its codebook, its question wording
-and a search across all studies work offline, in English and French.
-qesR also harmonizes the 11 studies of 1998 to 2022 into one data frame,
-question by question, with a comparability grade for each study’s
-question and a reason for each missing value. In other words, a question
-about 25 years of Quebec elections can be answered within each study and
-then compared, without recoding every file by hand.
+qesR loads the Quebec Election Studies, with the panels and polls that
+accompanied them, into R: seven provincial elections from 1998 to 2022,
+each study by its code, from its original file. Their codebooks,
+question wording and a search across all studies ship with the package
+and work offline, in English and French. qesR also harmonizes 11 of the
+studies into one data frame, so that a question about 25 years of Quebec
+elections can be answered within each study and then compared.
 
-[Get
+![Dot charts in six panels, one per Quebec Election Study from 2007 to
+2022, of the share of francophones who would vote Yes in each birth
+cohort. In 2007 the youngest cohort is the most likely to vote Yes; in
+2022 it is the least likely. Details on the sovereignty
+page.](articles/sovereignty-generations_files/figure-html/gradient-light.png)
+
+![Dot charts in six panels, one per Quebec Election Study from 2007 to
+2022, of the share of francophones who would vote Yes in each birth
+cohort. In 2007 the youngest cohort is the most likely to vote Yes; in
+2022 it is the least likely. Details on the sovereignty
+page.](articles/sovereignty-generations_files/figure-html/gradient-dark.png)
+
+In 2007 the youngest francophones were the cohort most likely to vote
+Yes; in 2022 they were the least likely
+
+![Line charts in two panels, all voters and francophone voters, 2012 to
+2022, of how much of the variation in the referendum vote and in
+left-right placement lies between the parties' electorates: the
+referendum vote is far less tied to party choice in 2022 than in 2012,
+and left-right placement did not rise. Details on the dimensions
+page.](articles/dimensions_files/figure-html/sorting-light.png)
+
+![Line charts in two panels, all voters and francophone voters, 2012 to
+2022, of how much of the variation in the referendum vote and in
+left-right placement lies between the parties' electorates: the
+referendum vote is far less tied to party choice in 2022 than in 2012,
+and left-right placement did not rise. Details on the dimensions
+page.](articles/dimensions_files/figure-html/sorting-dark.png)
+
+Party choice is far less tied to the referendum vote than in 2012, and
+left-right has not taken its place
+
+Each estimate is made within one study, with that study’s weight where
+it has a validated one and a 95% confidence interval; nothing is pooled
+across studies. [Get
 started](https://thomasgareau.github.io/qesR/articles/get-started.md)
-goes from a study code to a weighted estimate. It runs offline, on a
-small synthetic study that ships with qesR.
-
-## What the studies show
-
-Two results from the examples. Each estimate is made within one study,
-with that study’s weight where it has one and a 95% confidence interval;
-nothing is pooled across studies.
-
-[![Line chart of the effective number of parties at each Quebec election
-from 1998 to 2022: the official result, francophone respondents and
-non-francophone respondents. Among francophones it rises from 2.8 in
-1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5
-until 2018 and reaches 2.9 in 2022, with a wide interval. Details on the
-realignment
-page.](articles/realignment_files/figure-html/enp-light.png)![Line chart
-of the effective number of parties at each Quebec election from 1998 to
-2022: the official result, francophone respondents and non-francophone
-respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in
-2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and
-reaches 2.9 in 2022, with a wide interval. Details on the realignment
-page.](articles/realignment_files/figure-html/enp-dark.png)](https://thomasgareau.github.io/qesR/articles/realignment.md)
-
-The francophone vote fragmented, from 2.8 to 3.9 effective parties; the
-non-francophone vote stayed far more concentrated
-
-[![Line chart of the share of francophones who would vote Yes to Quebec
-becoming an independent country, for five birth cohorts, at the
-elections of 2012, 2014, 2018 and 2022. Those born in 1990 or after go
-from 53% to 30%, the lowest level; those born 1945-1959 stay between 50%
-and 54%. Details on the sovereignty
-page.](articles/sovereignty-generations_files/figure-html/cohorts-light.png)![Line
-chart of the share of francophones who would vote Yes to Quebec becoming
-an independent country, for five birth cohorts, at the elections of
-2012, 2014, 2018 and 2022. Those born in 1990 or after go from 53% to
-30%, the lowest level; those born 1945-1959 stay between 50% and 54%.
-Details on the sovereignty
-page.](articles/sovereignty-generations_files/figure-html/cohorts-dark.png)](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)
-
-Francophones born in 1990 or after went from 53% to 30% Yes; those born
-1945-59 stayed between 50% and 54%
+goes from a study code to a weighted estimate, offline, on a small
+synthetic study that ships with qesR.
 
 ## Examples
 
@@ -68,14 +57,14 @@ against the studies.
 
 - [From two parties to
   four](https://thomasgareau.github.io/qesR/articles/realignment.md):
-  the vote fragmented from 1998 to 2022, but mainly among francophones,
-  and within each sovereignty camp rather than across them.
+  the vote fragmented, mainly among francophones, and within each
+  sovereignty camp rather than across them.
 - [Are young Quebecers still the most
   pro-independence?](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md):
   the youngest francophones were the most likely to vote Yes in 2007 and
   the least likely in 2022, mostly through change within cohorts.
-- [Two dimensions: sovereignty and
-  left-right](https://thomasgareau.github.io/qesR/articles/dimensions.md):
+- [Two dimensions of
+  competition](https://thomasgareau.github.io/qesR/articles/dimensions.md):
   the national question structures the vote less than in 2012, and the
   left-right scale has not taken its place.
 - [Who votes?](https://thomasgareau.github.io/qesR/articles/turnout.md):
@@ -88,11 +77,11 @@ against the studies.
 - [Do surveys miss the
   Liberals?](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md):
   the Liberal vote was under-reported from 2007 to 2014, but the gap
-  faded in 2018 and 2022, and the winner falls short more often than
-  not.
-- [Recipes](https://thomasgareau.github.io/qesR/articles/recipes.md):
-  the code, step by step, to ask whether the language divide in the
-  Liberal vote narrowed as the sovereignty question receded.
+  faded in 2018 and 2022.
+- [Recipes: the language divide in the Liberal
+  vote](https://thomasgareau.github.io/qesR/articles/recipes.md): the
+  code, step by step, from one harmonized variable to an estimate for
+  every study.
 
 ## Installation
 
@@ -103,17 +92,23 @@ remotes::install_github("ThomasGareau/qesR")
 ```
 
 Once qesR is accepted on CRAN, `install.packages("qesR")` will do the
-same. A first session:
+same. A first session (the lines marked “downloads” fetch studies from
+their deposits the first time; `options(qesR.cache = "disk")` keeps
+them):
 
 ``` r
 
 library(qesR)
 qes_studies()                         # the studies, offline
-qes2018 <- get_qes("qes2018")         # one study, from its original file
-qes_search("souverain|sovereign")     # a question, in every study
-h <- qes_harmonize(targets = "vote_choice")  # the vote, in six studies
-d <- qes_decon()                      # every study in one flat file, relaxed
+qes2018 <- get_qes("qes2018")         # downloads: one study, from its original file
+qes_search("souverain|sovereign")     # a question, in every study, offline
+h <- qes_harmonize(targets = "vote_choice")  # downloads: the vote, in six studies
+d <- qes_decon()                      # downloads: every study in one flat file, relaxed
 ```
+
+The harmonization rules are experimental and may change from one version
+of qesR to the next. Keep `qes_provenance(h, level = "spec")` with your
+results and pin the version of qesR you used.
 
 ## Citing qesR
 
@@ -139,24 +134,3 @@ Harvard Dataverse. Most studies are released under CC0; the 2022 study,
 and the metadata qesR ships from it, are under CC BY-NC 4.0
 (attribution, no commercial use). [Details and the required
 attribution](https://thomasgareau.github.io/qesR/articles/citations.html#licences-and-attribution).
-
-## Also on this site
-
-The [study
-catalog](https://thomasgareau.github.io/qesR/articles/studies.md), [how
-harmonization
-works](https://thomasgareau.github.io/qesR/articles/harmonization.md),
-[one file for every study with
-`qes_decon()`](https://thomasgareau.github.io/qesR/articles/decon.md),
-the [coverage of each
-study](https://thomasgareau.github.io/qesR/articles/coverage.md), the
-[variable
-reference](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md),
-the [validation against official
-results](https://thomasgareau.github.io/qesR/articles/validation.md),
-[the merged
-file](https://thomasgareau.github.io/qesR/articles/merged-dataset.md)
-and the [function
-reference](https://thomasgareau.github.io/qesR/reference/index.md). For
-code written with an earlier version of qesR:
-[upgrading](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).

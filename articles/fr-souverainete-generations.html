@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -161,6 +288,12 @@
     
 <p><em><a href="sovereignty-generations.html">English
 version</a></em></p>
+<div class="qesr-download">
+<p><strong>Cette page télécharge 6 études</strong> (environ 13 Mo) la
+première fois qu’elle s’exécute.
+<code>options(qesR.cache = "disk")</code> les garde sur le disque pour
+les sessions suivantes.</p>
+</div>
 <p>On a longtemps cru que le temps jouait en faveur du projet
 souverainiste. Selon cette ancienne croyance, les jeunes votaient Oui en
 plus grand nombre que leurs aînés, et chaque nouvelle génération allait
@@ -200,7 +333,7 @@ l’intérieur des cohortes.</p>
 <div class="section level2">
 <h2 id="le-changement-de-question-en-2012">Le changement de question en 2012<a class="anchor" aria-label="anchor" href="#le-changement-de-question-en-2012"></a>
 </h2>
-<figure class="qesr-fig" id="fig-levels"><figcaption><span class="qesr-title">La question change en 2012 : de 43 à 46 % d’appui au Oui sur la question de 1995, de 34 à 40 % sur un pays indépendant</span><span class="qesr-sub">Voterait Oui à un référendum, parmi celles et ceux qui voteraient Oui ou Non, tous les répondants, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/levels-light.png" alt="Graphique linéaire avec intervalles de confiance de la part de tous les répondants qui voteraient Oui, parmi celles et ceux qui voteraient Oui ou Non, dans les Études électorales québécoises de 2007 à 2022. L’appui est de 43 % à 46 % sur la question de 1995 (2007, 2008) et de 34 % à 40 % sur un pays indépendant (2012 à 2022) ; une bande grise marque le changement de question. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/levels-dark.png" alt="Graphique linéaire avec intervalles de confiance de la part de tous les répondants qui voteraient Oui, parmi celles et ceux qui voteraient Oui ou Non, dans les Études électorales québécoises de 2007 à 2022. L’appui est de 43 % à 46 % sur la question de 1995 (2007, 2008) et de 34 % à 40 % sur un pays indépendant (2012 à 2022) ; une bande grise marque le changement de question. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises, 2007 à 2022, tous les répondants. Les études de 2007 et de 2008 ont posé la question du référendum de 1995, qui offrait un partenariat avec le Canada, et ont relancé les indécis ; à partir de 2012, les études portent sur un pays indépendant. L’étude de 2008 n’est pas pondérée (point creux).</p>
+<figure class="qesr-fig" id="fig-levels"><figcaption><span class="qesr-title">La question change en 2012 : de 43 à 46 % d’appui au Oui sur la question de 1995, de 34 à 40 % sur un pays indépendant</span><span class="qesr-sub">Voterait Oui à un référendum, parmi celles et ceux qui voteraient Oui ou Non, tous les répondants, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/levels-light.png" alt="Graphique linéaire avec intervalles de confiance de la part de tous les répondants qui voteraient Oui, parmi celles et ceux qui voteraient Oui ou Non, dans les Études électorales québécoises de 2007 à 2022. L’appui est de 43 % à 46 % sur la question de 1995 (2007, 2008) et de 34 % à 40 % sur un pays indépendant (2012 à 2022) ; une bande grise marque le changement de question. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/levels-dark.png" alt="Graphique linéaire avec intervalles de confiance de la part de tous les répondants qui voteraient Oui, parmi celles et ceux qui voteraient Oui ou Non, dans les Études électorales québécoises de 2007 à 2022. L’appui est de 43 % à 46 % sur la question de 1995 (2007, 2008) et de 34 % à 40 % sur un pays indépendant (2012 à 2022) ; une bande grise marque le changement de question. Valeurs dans la vue en tableau." width="672" height="374" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises, 2007 à 2022, tous les répondants. Les études de 2007 et de 2008 ont posé la question du référendum de 1995, qui offrait un partenariat avec le Canada, et ont relancé les indécis ; à partir de 2012, les études portent sur un pays indépendant. L’étude de 2008 n’a aucune pondération validée et n’est pas pondérée (point creux).</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -225,7 +358,7 @@ l’intérieur des cohortes.</p>
    <td style="text-align:left;"> La question de 1995 (partenariat) </td>
    <td style="text-align:left;"> 45,8 [42,7 ; 48,8] </td>
    <td style="text-align:right;"> 1038 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -279,7 +412,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
 <div class="section level2">
 <h2 id="lordre-des-cohortes-sinverse">L’ordre des cohortes s’inverse<a class="anchor" aria-label="anchor" href="#lordre-des-cohortes-sinverse"></a>
 </h2>
-<figure class="qesr-fig" id="fig-gradient"><figcaption><span class="qesr-title">En 2007, les plus jeunes francophones formaient la cohorte la plus souverainiste ; en 2022, la moins souverainiste</span><span class="qesr-sub">Francophones qui voteraient Oui, selon la cohorte de naissance, dans chaque Étude électorale québécoise, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/gradient-light.png" alt="Graphiques à points avec intervalles de confiance en six panneaux, un par étude de 2007 à 2022 : la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la plus jeune (née en 1990 ou après) est à −24 pts de celle née en 1945-1959. Valeurs dans la vue en tableau." width="672" height="461" loading="lazy"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/gradient-dark.png" alt="Graphiques à points avec intervalles de confiance en six panneaux, un par étude de 2007 à 2022 : la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la plus jeune (née en 1990 ou après) est à −24 pts de celle née en 1945-1959. Valeurs dans la vue en tableau." width="672" height="461" loading="lazy"><p class="qesr-note">Source : Études électorales québécoises, 2007 à 2022, répondants de langue maternelle française. Les études de 2007 et de 2008 ont posé la question de 1995, les autres portent sur un pays indépendant : comparer l’ordre des cohortes dans un panneau, pas les niveaux d’un panneau à l’autre. L’étude de 2008 n’est pas pondérée (points creux). Les cohortes de moins de 30 répondants ne sont pas tracées.</p>
+<figure class="qesr-fig" id="fig-gradient"><figcaption><span class="qesr-title">En 2007, les plus jeunes francophones formaient la cohorte la plus souverainiste ; en 2022, la moins souverainiste</span><span class="qesr-sub">Francophones qui voteraient Oui, selon la cohorte de naissance, dans chaque Étude électorale québécoise, avec intervalles de confiance à 95 %</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="fr-souverainete-generations_files/figure-html/gradient-light-narrow.png" width="442" height="760"><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/gradient-light.png" alt="Graphiques à points avec intervalles de confiance en six panneaux, un par étude de 2007 à 2022 : la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la plus jeune (née en 1990 ou après) est à −24 pts de celle née en 1945-1959. Valeurs dans la vue en tableau." width="672" height="461" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="fr-souverainete-generations_files/figure-html/gradient-dark-narrow.png" width="442" height="760"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/gradient-dark.png" alt="Graphiques à points avec intervalles de confiance en six panneaux, un par étude de 2007 à 2022 : la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune (née en 1975-1989) est à +20 pts de celle née en 1944 ou avant ; en 2022, la plus jeune (née en 1990 ou après) est à −24 pts de celle née en 1945-1959. Valeurs dans la vue en tableau." width="672" height="461" loading="lazy"></source></picture><p class="qesr-note">Source : Études électorales québécoises, 2007 à 2022, répondants de langue maternelle française. Les études de 2007 et de 2008 ont posé la question de 1995, les autres portent sur un pays indépendant : comparer l’ordre des cohortes dans un panneau, pas les niveaux d’un panneau à l’autre. L’étude de 2008 n’a aucune pondération validée et n’est pas pondérée (points creux). Les cohortes de moins de 30 répondants ne sont pas tracées.</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -328,7 +461,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
    <td style="text-align:left;"> nés en 1944 ou avant </td>
    <td style="text-align:left;"> 45,4 [38,2 ; 52,9] </td>
    <td style="text-align:right;"> 174 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -336,7 +469,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
    <td style="text-align:left;"> nés en 1945-1959 </td>
    <td style="text-align:left;"> 62,1 [55,5 ; 68,3] </td>
    <td style="text-align:right;"> 219 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -344,7 +477,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
    <td style="text-align:left;"> nés en 1960-1974 </td>
    <td style="text-align:left;"> 50,5 [44,7 ; 56,4] </td>
    <td style="text-align:right;"> 275 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -352,7 +485,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
    <td style="text-align:left;"> nés en 1975-1989 </td>
    <td style="text-align:left;"> 52,7 [45,5 ; 59,9] </td>
    <td style="text-align:right;"> 182 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -360,7 +493,7 @@ attardant à l’ordre des cohortes plutôt qu’à leur niveau.</p>
    <td style="text-align:left;"> nés en 1990 ou après </td>
    <td style="text-align:left;"> n &lt; 30 </td>
    <td style="text-align:right;"> 4 </td>
-   <td style="text-align:left;"> non pondéré </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -874,14 +1007,15 @@ cohorte la plus jeune.</li>
 <li>
 <strong>Moment et pondération.</strong> L’étude de 2022 a posé la
 question pendant la campagne, les autres après l’élection. Chaque étude
-est pondérée, sauf celle de 2008, qui ne l’est pas (points creux).</li>
+est pondérée, sauf celle de 2008, qui n’a aucune pondération validée et
+ne l’est donc pas (points creux ; voir le <a href="fr-etudes.html#ponderations">tableau des pondérations</a>).</li>
 <li>
 <strong>Reproduire la page.</strong> Les données proviennent d’un
 seul appel :</li>
 </ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  studies <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2007"</span>, <span class="st">"qes2008"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span>,</span>
 <span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_support"</span>, <span class="st">"birth_year"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
 <span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>

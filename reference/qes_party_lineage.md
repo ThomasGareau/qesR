@@ -2,7 +2,7 @@
 
 `qes_party_lineage()` adds, for each party column of harmonized data, a
 column that joins the parties of a lineage: by default the Action
-democratique du Quebec (ADQ) and the Coalition avenir Quebec (CAQ), into
+démocratique du Québec (ADQ) and the Coalition avenir Québec (CAQ), into
 which the ADQ merged on 2012-01-21, as one level `"ADQ/CAQ"`. It is a
 view for time series of the Quebec parties, such as vote choice from
 1998 to 2022: the harmonized columns keep the ADQ and the CAQ apart

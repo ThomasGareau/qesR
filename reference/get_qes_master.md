@@ -1,4 +1,4 @@
-# Build the Merged QES File
+# Build the merged file
 
 Reads 11 Quebec Election Studies, from 1998 to 2022, and stacks them in
 one data frame: one row per respondent of each study, and the same 30
@@ -155,11 +155,12 @@ how to reproduce those.
 
 `get_qes_master()` returns the data and assigns nothing unless
 `assign_global = TRUE`: write `master <- get_qes_master()`. The first
-call in a session that leaves `assign_global` unset prints a one-time
-note saying so. The first call in a session also prints one-time notes
-on how its values and columns compare with those of earlier versions
-(classes `qesR_message_values_changed` and
-`qesR_message_legacy_columns`).
+top-level call in a session (console, `Rscript` or
+[`source()`](https://rdrr.io/r/base/source.html)) prints a one-time note
+saying so, unless `quiet = TRUE` or `assign_global` is passed. The first
+call in a session also prints one-time notes on how its values and
+columns compare with those of earlier versions (classes
+`qesR_message_values_changed` and `qesR_message_legacy_columns`).
 
 ## How it is built
 
@@ -276,7 +277,6 @@ Other data:
 # the synthetic demonstration study, offline
 demo_master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 #> get_qes_master() no longer appends the 70 columns that qesR 0.4.4 built by stacking variables that share a name across studies; attr(, "removed_columns") lists them. Read those items from each study with get_qes(). This note is shown once per session.
-#> get_qes_master() returns its result and no longer assigns it into your workspace by default. Write `qes_master <- get_qes_master(...)`, or pass `assign_global = TRUE`. This note is shown once per session.
 head(demo_master[, c("qes_code", "gender", "turnout", "vote_choice")])
 #>   qes_code gender turnout vote_choice
 #> 1 qes_demo  Woman       1         CAQ

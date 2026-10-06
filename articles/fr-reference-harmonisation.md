@@ -8,6 +8,8 @@ Les variables harmonisées (« cibles ») de
 étude par étude. La page est générée à partir des règles livrées avec
 qesR : elle décrit donc toujours ce que la version installée applique.
 
+## Aller à une variable
+
 [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
 renvoie les mêmes informations sous forme de tableaux, et
 `qes_provenance(x, level = "spec")` la version des règles qui a produit
@@ -34,8 +36,10 @@ Pour chaque étude, le tableau de couverture d’une cible donne :
   de pondération valent alors `NA`) ;
 - **Ne sait pas** : si « je ne sais pas » était offert.
 
-Une ligne marquée *en attente d’approbation* n’est appliquée que si vous
-la demandez (`include_draft = TRUE`).
+Une ligne marquée *en attente d’approbation* est vérifiée mais pas
+encore approuvée, et n’est pas utilisée par défaut : ses valeurs sont
+manquantes. Pour l’utiliser quand même, passez `include_draft = TRUE` à
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md).
 
 Les libellés et les étiquettes de `qes2022` cités sur cette page
 viennent de *2022 Quebec Election Study* (Mahéo, Bélanger, Stephenson et
@@ -119,7 +123,7 @@ Famille `interview_mode` · type Catégorielle · moment Tout moment
 | 2    | `phone` | Téléphone |
 | 3    | `mixed` | Mixte     |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -152,7 +156,7 @@ Famille `vote_prov` · type Catégorielle · moment Postélectoral
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Autre parti |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -191,7 +195,7 @@ Famille `vote_prov` · type Catégorielle · moment Préélectoral
 | 90   | `other`    | Autre parti                          |
 | 95   | `no_party` | Ne voterait pas / aucun / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -228,7 +232,7 @@ Famille `vote_prov` · type Catégorielle · moment Préélectoral
 | 90   | `other`    | Autre parti                          |
 | 95   | `no_party` | Ne voterait pas / aucun / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -261,7 +265,7 @@ Famille `turnout_prov` · type Catégorielle · moment Postélectoral
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -297,7 +301,7 @@ Famille `turnout_prov` · type Ordinale · moment Préélectoral
 | 3    | `unlikely`      | Peu probable de voter      |
 | 4    | `certain_not`   | Certain(e) de ne pas voter |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -311,7 +315,7 @@ qu’inscrit. Texte libre, non harmonisé.
 
 Famille `vote_prov` · type Texte · moment Préélectoral
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -342,7 +346,7 @@ Famille `vote_prov_past` · type Catégorielle · moment Tout moment
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Autre parti |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -373,7 +377,7 @@ Famille `vote_fed` · type Catégorielle · moment Tout moment
 | 6    | `PPC`   | PPC            |
 | 90   | `other` | Un autre parti |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -406,7 +410,7 @@ Famille `party_id` · type Catégorielle · moment Tout moment
 | 90   | `other` | Autre parti      |
 | 97   | `none`  | Aucun de ceux-là |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -437,7 +441,7 @@ Famille `party_id` · type Catégorielle · moment Tout moment
 | 90   | `other` | Un autre parti   |
 | 97   | `none`  | Aucun de ceux-là |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -462,7 +466,7 @@ Famille `party_id` · type Ordinale · moment Tout moment
 | 2    | `fairly`   | Assez fortement    |
 | 3    | `not_very` | Pas très fortement |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -490,7 +494,7 @@ Famille `sovereignty` · type Catégorielle · moment Tout moment
 | 2    | `no`             | Non                            |
 | 95   | `would_not_vote` | N’irait pas voter / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -517,7 +521,7 @@ Famille `sovereignty` · type Catégorielle · moment Tout moment
 | 2    | `no`             | Non                            |
 | 95   | `would_not_vote` | N’irait pas voter / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -539,7 +543,7 @@ Famille `sovereignty` · type Ordinale · moment Tout moment
 | 3    | `somewhat_opposed`    | Assez opposé    |
 | 4    | `very_opposed`        | Très opposé     |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -560,7 +564,7 @@ Famille `left_right` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-10
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -588,7 +592,7 @@ Famille `interest` · type Ordinale · moment Tout moment
 | 3    | `hardly`     | Pas très intéressé(e)    |
 | 4    | `not_at_all` | Pas du tout intéressé(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -622,7 +626,7 @@ Famille `sovereignty` · type Catégorielle · moment Tout moment
 | 2    | `no`             | Non                            |
 | 95   | `would_not_vote` | N’irait pas voter / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -642,7 +646,7 @@ Famille `interest` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-10
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -660,7 +664,7 @@ Famille `interest` · type Numérique · moment Postélectoral
 
 **Plage valide** : 0-10
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -685,7 +689,7 @@ Famille `interest` · type Ordinale · moment Préélectoral
 | 3    | `hardly`     | Pas très intéressé(e)    |
 | 4    | `not_at_all` | Pas du tout intéressé(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -712,7 +716,7 @@ Famille `sovereignty` · type Catégorielle · moment Tout moment
 | 2    | `no`             | Non                            |
 | 95   | `would_not_vote` | N’irait pas voter / annulerait |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -738,7 +742,7 @@ Famille `democracy_satisfaction` · type Ordinale · moment Tout moment
 | 3    | `not_very`   | Pas très satisfait(e)    |
 | 4    | `not_at_all` | Pas du tout satisfait(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -769,7 +773,7 @@ Famille `government_satisfaction` · type Ordinale · moment Tout moment
 | 3    | `not_very`   | Pas très satisfait(e)    |
 | 4    | `not_at_all` | Pas du tout satisfait(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -795,7 +799,7 @@ Famille `economy_retrospective` · type Ordinale · moment Tout moment
 | 2    | `same`   | À peu près la même |
 | 3    | `worse`  | Détériorée         |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -822,7 +826,7 @@ Famille `attachment` · type Ordinale · moment Tout moment
 | 3    | `not_very`   | Pas très attaché(e)    |
 | 4    | `not_at_all` | Pas du tout attaché(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -847,7 +851,7 @@ Famille `attachment` · type Ordinale · moment Tout moment
 | 3    | `not_very`   | Pas très attaché(e)    |
 | 4    | `not_at_all` | Pas du tout attaché(e) |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -875,7 +879,7 @@ Famille `national_identity` · type Catégorielle · moment Tout moment
 | 5    | `ca_only`  | Uniquement canadien(ne)                 |
 | 90   | `other`    | Autre                                   |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -896,7 +900,7 @@ Famille `leader_ratings` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-100
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -918,7 +922,7 @@ Famille `leader_ratings` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-100
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -940,7 +944,7 @@ Famille `leader_ratings` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-100
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -963,7 +967,7 @@ Famille `leader_ratings` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-100
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -985,7 +989,7 @@ Famille `leader_ratings` · type Numérique · moment Tout moment
 
 **Plage valide** : 0-100
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1024,7 +1028,7 @@ Famille `issues` · type Catégorielle · moment Tout moment
 | 14   | `french_language` | La langue française                 |
 | 90   | `other`           | Un autre enjeu                      |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1044,7 +1048,7 @@ Famille `birth` · type Numérique · moment Invariant
 
 **Plage valide** : 1900-2010
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1066,7 +1070,7 @@ Famille `birth` · type Numérique · moment Invariant
 
 **Plage valide** : 1-12
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1082,7 +1086,7 @@ Famille `age_years` · type Numérique · moment Tout moment
 
 **Plage valide** : 15-115
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1108,7 +1112,7 @@ Famille `age_bands` · type Ordinale · moment Tout moment
 | 2    | `a35_54`   | 35-54      |
 | 3    | `a55_plus` | 55 et plus |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1133,7 +1137,7 @@ Famille `citizenship` · type Catégorielle · moment Tout moment
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1161,7 +1165,7 @@ Famille `age_bands` · type Ordinale · moment Tout moment
 | 5    | `a55_64`   | 55-64      |
 | 6    | `a65_plus` | 65 et plus |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1189,14 +1193,14 @@ Famille `sex_gender` · type Catégorielle · moment Invariant
 | 3    | `nonbinary` | Non binaire    |
 | 4    | `other`     | Un autre genre |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
 | qes2022 | `cps_genderid` (cps) | `comparable` | Question sur l’identité de genre sur le Web qui ajoute non binaire et un autre genre aux deux options de l’ancrage ; ne devrait guère changer les parts d’hommes et de femmes. | gender_4 | man, woman, nonbinary, other | Êtes-vous… |  | `cps_weight_general` | Non offert |
 | qes2018 | `qsexe` (post) | `comparable` | Mêmes deux options sur le Web et mêmes énoncés que l’ancrage (genre en anglais, sexe en français) ; le questionnaire français avec valeurs programmées ajoute la note de Statistique Canada invitant les personnes transgenres, transsexuelles et intersexuées à choisir le sexe auquel elles s’identifient le plus ; le fichier n’a pas d’étiquettes de valeur. | gender_2 | man, woman; non offerts : nonbinary, other | Quel est votre sexe? |  | `pond` | Non offert |
 | qes2018_panel | `sexfix` (pre) | `comparable` | Mêmes deux options, sur le Web (850) et par téléphone (400) ; le livre de codes ne donne que l’étiquette Sexe, de sorte qu’on ignore si elle a été demandée ou notée. | gender_2 | man, woman; non offerts : nonbinary, other | Sexe: |  | `weight` | Non documenté |
-| qes2014 | `QSEXE` (post) | `comparable` | Mêmes deux options sur le Web et mêmes énoncés que l’ancrage en anglais (What is your gender?) et en français (Quel est votre sexe?), plus une option de non-réponse absente du fichier ; gardée au niveau comparable, celui qu’elle avait avant la révision, parce qu’un niveau identique pour une ligne qui réunit des langues de passation demande un second réviseur (humain). | gender_2 | man, woman; non offerts : nonbinary, other | Quel est votre sexe? |  | `POND` | Non offert |
+| qes2014 | `QSEXE` (post) | `comparable` | Mêmes deux options sur le Web et mêmes énoncés que l’ancrage en anglais (What is your gender?) et en français (Quel est votre sexe?), plus une option de non-réponse absente du fichier ; gardée au niveau comparable, celui qu’elle avait avant la révision : un niveau identique pour une ligne qui réunit les langues de passation n’est accordé qu’après une révision par une personne, que cette ligne n’a pas encore eue. | gender_2 | man, woman; non offerts : nonbinary, other | Quel est votre sexe? |  | `POND` | Non offert |
 | qes2012 | `sexe` (post) | `identical` (ancrage) | Ligne d’ancrage de la cible. | gender_2 | man, woman; non offerts : nonbinary, other | Quel est votre sexe? |  | `pond` | Non offert |
 | qes2012_panel | `sexe` (pre) | `comparable` | Mêmes deux options, par téléphone ; le livre de codes ne donne que le nom de la variable, de sorte qu’on ignore si elle a été demandée ou notée. | sex_recorded | man, woman; non offerts : nonbinary, other | document 654292, sexe |  | `pondam1` (pas encore utilisable) | Non documenté |
 | qes_crop_2007_2010 | `SEXE` (chaque sondage) | `comparable` | Mêmes deux options, noté par l’intervieweur (non demandé), par téléphone. | sex_recorded | man, woman; non offerts : nonbinary, other | INSCRIRE LE SEXE DU REPONDANT |  | `XPOND` (pas encore utilisable) | Non offert |
@@ -1230,7 +1234,7 @@ Famille `education` · type Ordinale · moment Invariant
 | 3    | `college`    | Collégial (cégep, technique) |
 | 4    | `university` | Universitaire                |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1261,7 +1265,7 @@ Famille `language` · type Catégorielle · moment Invariant
 | 2    | `english` | Anglais   |
 | 3    | `other`   | Autre     |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1291,7 +1295,7 @@ Famille `birthplace` · type Catégorielle · moment Invariant
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1310,7 +1314,7 @@ sait pas » et les refus sont des valeurs manquantes.
 
 Famille `income` · type Texte · moment Invariant
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1335,7 +1339,7 @@ qui sert de filtre à la ligne de correspondance.
 
 Famille `faith` · type Texte · moment Invariant
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1360,7 +1364,7 @@ Famille `region` · type Catégorielle · moment Invariant
 | 2    | `quebec_cma` | RMR de Québec   |
 | 3    | `rest`       | Reste du Québec |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1388,7 +1392,7 @@ Famille `language` · type Catégorielle · moment Invariant
 | 2    | `english` | Anglais   |
 | 3    | `other`   | Autre     |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1421,7 +1425,7 @@ Famille `faith` · type Ordinale · moment Tout moment
 | 4    | `yearly`      | Une ou deux fois par année |
 | 5    | `never`       | Presque jamais ou jamais   |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1447,7 +1451,7 @@ Famille `birthplace` · type Catégorielle · moment Invariant
 | 2    | `other_canada` | Ailleurs au Canada |
 | 3    | `abroad`       | Hors du Canada     |
 
-**Couverture**
+Couverture par étude
 
 | Étude | Source | Niveau | Raison | Instrument | Niveaux offerts | Libellé | Filtre | Pondération | Ne sait pas |
 |----|----|----|----|----|----|----|----|----|----|
@@ -1527,7 +1531,7 @@ type Catégorielle
 | 2 | `intention_push`: Intention de vote, indécis relancés. La première question plus une relance posée à qui n’y a nommé aucun parti : un parti nommé à la première question n’est jamais changé. Les personnes relancées diffèrent selon l’étude : les indécis partout, et aussi celles qui ne voteraient pas, pour aucun parti ou annuleraient (qes1998, qes2007_panel, qes2012_panel, les sondages CROP) ou qui refusaient (qes1998, qes2012_panel). La relance peut changer une telle réponse en un parti (moins ferme) ou en une autre réponse sans parti : dans qes2012_panel, sur 172 « je ne sais pas », 77 nomment un parti, 1 ne voterait pas et 1 refuse, sur 30 refus, 6 nomment un parti, 2 ne voteraient pas et 4 ne savent pas, et sur 14 « ne voterait pas », 3 nomment un parti et 2 ne savent pas ; dans qes2007_panel, sur 81 « ne voterait pas, aucun ou annulerait », 25 nomment un parti et 14 ne savent pas ou refusent ; dans qes1998, 5 réponses « ne voterait pas » et 20 refus nomment un parti, et 4 et 6 deviennent « je ne sais pas ». no_party est donc plus bas sous intention_push que sous intention. Dans qes2022, elle ajoute aussi l’intention conditionnelle des personnes peu susceptibles de voter, à qui la première question n’a pas été posée (cps_votechoice2, « Si vous décidez de voter, pour quel parti prévoyez-vous voter? », puis cps_votelean si elles ne savaient pas : 62 personnes, dont 43 nomment un parti). | [`vote_prov_intent_push`](#target-vote_prov_intent_push) | oui | `identity` |  |
 | 3 | `intention`: Intention de vote (première question) | [`vote_prov_intent`](#target-vote_prov_intent) | oui | `identity` |  |
 
-**Couverture**
+Couverture par étude
 
 | Étude | `recall` | `intention_push` | `intention` | Disposition par répondant |
 |----|----|----|----|----|
@@ -1580,7 +1584,7 @@ type Catégorielle
 | 4 | `partnership_1995`: Question de 1995 (souveraineté-partenariat) | [`sov_partnership_1995`](#target-sov_partnership_1995) | oui | `identity` |  |
 | 5 | `favour`: Favorable ou opposé à l’indépendance (regroupé en oui ou non). Quatre points regroupés en deux : au mieux approximate. | [`sov_favour`](#target-sov_favour) | oui | `recode:very_favourable=yes,somewhat_favourable=yes,somewhat_opposed=no,very_opposed=no` | `approximate` |
 
-**Couverture**
+Couverture par étude
 
 | Étude | `independence` | `sovereign_country` | `partnership_1995_push` | `partnership_1995` | `favour` | Disposition par répondant |
 |----|----|----|----|----|----|----|
@@ -1626,7 +1630,7 @@ type Numérique
 | 3 | `campaign_4pt`: Intérêt pour la campagne, quatre points (notés) | [`interest_campaign_4pt`](#target-interest_campaign_4pt) | oui | `score:very=1,quite=0.7,hardly=0.3,not_at_all=0` | `approximate` |
 | 4 | `election_0_10`: Intérêt pour l’élection, 0-10. Intérêt pour une élection, pas pour la politique : au mieux approximate. | [`interest_election_0_10`](#target-interest_election_0_10) | oui | `affine:0.1*x` | `approximate` |
 
-**Couverture**
+Couverture par étude
 
 | Étude | `general_4pt` | `general_0_10` | `campaign_4pt` | `election_0_10` | Disposition par répondant |
 |----|----|----|----|----|----|
@@ -1675,7 +1679,7 @@ type Catégorielle
 | 1 | `recall`: Participation déclarée (après l’élection) | [`turnout_prov_recall`](#target-turnout_prov_recall) | oui | `identity` |  |
 | 2 | `intention`: Probabilité de voter (avant l’élection, regroupée). Non utilisée par défaut : une intention de voter n’est pas une participation. | [`turnout_prov_likely`](#target-turnout_prov_likely) | non | `recode:certain=yes,likely=yes,already_voted=yes,unlikely=no,certain_not=no` | `approximate` |
 
-**Couverture**
+Couverture par étude
 
 | Étude | `recall` | `intention` | Disposition par répondant |
 |----|----|----|----|
@@ -1710,8 +1714,7 @@ leurs niveaux. Une colonne est construite à partir d’une cible stricte
 ou d’une variable regroupée quand il en existe une, recodée au besoin
 dans les catégories de la colonne, et d’appariements souples des
 questions propres aux études là où la couche stricte n’en a pas. Un
-appariement souple est appliqué une fois approuvé par un réviseur
-(statut `stable`).
+appariement souple est appliqué une fois approuvé par un réviseur.
 
 ### `citizenship` : Citoyenneté
 
@@ -1733,17 +1736,17 @@ panel sont citoyens.
 | 1    | `citizen`     | Citoyen(ne) canadien(ne)     |
 | 2    | `not_citizen` | Pas citoyen(ne) canadien(ne) |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2018_panel | `qa` (pre) | 1 = Citoyen(ne) canadien(ne); 2 = Catégorie source à cheval sur plusieurs niveaux (NA); 3 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | OD-R12 : la question de sélection demande si la personne peut voter à la prochaine élection québécoise, ce qui exige la citoyenneté canadienne ; tous les répondants ont répondu oui, si bien que la colonne est constante dans cette étude. | stable |
+| qes2018_panel | `qa` (pre) | 1 = Citoyen(ne) canadien(ne); 2 = Catégorie source à cheval sur plusieurs niveaux (NA); 3 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | La question de sélection demande si la personne peut voter à la prochaine élection québécoise, ce qui exige la citoyenneté canadienne ; tous les répondants ont répondu oui, si bien que la colonne est constante dans cette étude. | approuvée |
 
 ### `yob` : Année de naissance
 
 L’année de naissance de la personne.
 
-Base : `target:birth_year` · `identity` · une valeur par personne
+Base : `target:birth_year` · une valeur par personne
 
 **Comment elle est assouplie** : L’année de naissance déclarée ; les
 études qui n’ont demandé qu’un groupe d’âge n’en ont pas (voir
@@ -1759,7 +1762,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le groupe d’âge de la personne.
 
-Base : `target:age_group3` · `identity` · une valeur par personne
+Base : `target:age_group3` · une valeur par personne
 
 **Comment elle est assouplie** : Trois groupes d’âge (18-34, 35-54, 55
 et plus), tirés des tranches d’âge de l’étude ou de l’âge au début du
@@ -1781,7 +1784,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le genre de la personne.
 
-Base : `target:gender` · `identity` · une valeur par personne
+Base : `target:gender` · une valeur par personne
 
 **Comment elle est assouplie** : Le genre ou le sexe tel que chaque
 étude l’a demandé : homme ou femme partout, et en 2022 aussi non binaire
@@ -1805,8 +1808,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 Le plus haut niveau de scolarité atteint par la personne, en quatre
 groupes.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : Les niveaux de chaque étude sont
 regroupés en quatre : sans diplôme d’études secondaires, secondaire,
@@ -1831,20 +1833,20 @@ bas est primaire ou moins.
 | 3    | `college`     | Collégial, cégep ou formation professionnelle |
 | 4    | `university`  | Universitaire                                 |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_edu` (cps) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude |  | stable |
-| qes2018 | `qscol` (post) | 1-7 = Sans diplôme d’études secondaires; 8 = Diplôme d’études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA) | complète l’étude | Le code 9 (secondaire 5 avec un diplôme d’études professionnelles, DEP) est collégial (OD-R10) ; la cible stricte education4 le classe au secondaire. | stable |
-| qes2014 | `QSCOL` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA) | complète l’étude |  | stable |
-| qes2012 | `scol` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-12 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Le code 8 (postsecondaire non universitaire ; le cours technique du questionnaire français) est collégial ; le code 10 (certificat et diplôme), absent des deux questionnaires, est universitaire, comme le code 9 (études supérieures non terminées). | stable |
-| qes2018_panel | `d3` (pre) | 1, 2 = Sans diplôme d’études secondaires; 3 = Diplôme d’études secondaires; 4, 5 = Collégial, cégep ou formation professionnelle; 6-8 = Universitaire; 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Le code 4 (apprentissage enregistré ou autre certificat d’une école de métiers) est collégial (OD-R10) ; le code 6 (certificat universitaire inférieur au baccalauréat) est universitaire. | stable |
-| qes2007_panel | `scol` (toute vague) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études, en tranches nommées d’après un ordre d’enseignement : 7 ans ou moins (primaire) est sans diplôme, 8 à 12 ans (secondaire) est secondaire, 13 à 15 ans (cégep, école technique) est collégial et 16 ans ou plus est universitaire. Le groupe secondaire compte donc aussi ceux qui ont quitté le secondaire sans diplôme, et le groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme, que les autres études classent à l’universitaire. | stable |
-| qes2007 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | stable |
-| qes2008 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | stable |
-| qes1998 | `scol` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | OD-R1 : le fichier regroupé classe les années d’études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n’apparier que les deux autres groupes fausserait toutes les proportions, si bien que l’étude est laissée de côté des quatre groupes. Les trois groupes de education l’incluent (OD-R17). | stable |
-| qes_crop_2007_2010 | `scol` (chaque sondage) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études selon les quatre intervalles de CROP (7 ou moins, primaire ; 8 à 12, secondaire ; 13 à 15, cégep ou école technique ; 16 ou plus, université) : 7 ou moins est sans diplôme et 8 à 12 est secondaire, si bien que ce groupe compte aussi ceux qui ont quitté le secondaire sans diplôme ; le classement par années, et non par plus haut niveau atteint, peut aussi placer des études universitaires non terminées (14 ou 15 ans) au collégial. | stable |
+| qes2022 | `cps_edu` (cps) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude |  | approuvée |
+| qes2018 | `qscol` (post) | 1-7 = Sans diplôme d’études secondaires; 8 = Diplôme d’études secondaires; 9-12 = Collégial, cégep ou formation professionnelle; 13-15 = Universitaire; 99 = Refus (NA) | complète l’étude | Le code 9 (secondaire 5 avec un diplôme d’études professionnelles, DEP) est collégial ; la cible stricte education4 le classe au secondaire. | approuvée |
+| qes2014 | `QSCOL` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-11 = Universitaire; 99 = Refus (NA) | complète l’étude |  | approuvée |
+| qes2012 | `scol` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6-8 = Collégial, cégep ou formation professionnelle; 9-12 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Le code 8 (postsecondaire non universitaire ; le cours technique du questionnaire français) est collégial ; le code 10 (certificat et diplôme), absent des deux questionnaires, est universitaire, comme le code 9 (études supérieures non terminées). | approuvée |
+| qes2018_panel | `d3` (pre) | 1, 2 = Sans diplôme d’études secondaires; 3 = Diplôme d’études secondaires; 4, 5 = Collégial, cégep ou formation professionnelle; 6-8 = Universitaire; 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Le code 4 (apprentissage enregistré ou autre certificat d’une école de métiers) est collégial ; le code 6 (certificat universitaire inférieur au baccalauréat) est universitaire. | approuvée |
+| qes2007_panel | `scol` (toute vague) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études, en tranches nommées d’après un ordre d’enseignement : 7 ans ou moins (primaire) est sans diplôme, 8 à 12 ans (secondaire) est secondaire, 13 à 15 ans (cégep, école technique) est collégial et 16 ans ou plus est universitaire. Le groupe secondaire compte donc aussi ceux qui ont quitté le secondaire sans diplôme, et le groupe collégial peut compter des personnes ayant fait des études universitaires sans diplôme, que les autres études classent à l’universitaire. | approuvée |
+| qes2007 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | approuvée |
+| qes2008 | `q77` (post) | 1-4 = Sans diplôme d’études secondaires; 5 = Diplôme d’études secondaires; 6, 7 = Collégial, cégep ou formation professionnelle; 8-11 = Universitaire; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude |  | approuvée |
+| qes1998 | `scol` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Le fichier regroupé classe les années d’études en 1-9, 10-15 et université ; 10 à 15 ans chevauche le secondaire et le collégial, et n’apparier que les deux autres groupes fausserait toutes les proportions, si bien que l’étude est laissée de côté des quatre groupes. Les trois groupes de education l’incluent. | approuvée |
+| qes_crop_2007_2010 | `scol` (chaque sondage) | 1 = Sans diplôme d’études secondaires; 2 = Diplôme d’études secondaires; 3 = Collégial, cégep ou formation professionnelle; 4 = Universitaire; 9 = Refus (NA) | complète l’étude | Années d’études selon les quatre intervalles de CROP (7 ou moins, primaire ; 8 à 12, secondaire ; 13 à 15, cégep ou école technique ; 16 ou plus, université) : 7 ou moins est sans diplôme et 8 à 12 est secondaire, si bien que ce groupe compte aussi ceux qui ont quitté le secondaire sans diplôme ; le classement par années, et non par plus haut niveau atteint, peut aussi placer des études universitaires non terminées (14 ou 15 ans) au collégial. | approuvée |
 
 ### `education` : Scolarité
 
@@ -1876,19 +1878,18 @@ ou 15 ans) ne sont pas classés à l’université.
 | 2    | `high_school_college` | Secondaire au collégial (cégep)   |
 | 3    | `university`          | Université                        |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes1998 | `scol` (pre) | 1 = Sans diplôme d’études secondaires; 2 = Secondaire au collégial (cégep); 3 = Université; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | OD-R17 : les trois groupes du fichier regroupé portent les étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux firmes les ont construits autrement. Pour les répondants de CREATEC (firme_post = 1), scol recode le plus haut niveau atteint (r15 : primaire ou études secondaires partielles ; secondaire terminé ou formation technique, collégiale ou cégep ; université, terminée ou non), si bien que les trois groupes tiennent. Pour les répondants de CROP (firme_post = 2), il regroupe les années d’études (question 19 de CROP : 7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l’appariement est approximatif : le secondaire se terminant après 11 ans au Québec, une personne qui compte 10 ans n’a pas de diplôme mais est classée au secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont des étudiants universitaires classés au secondaire au collégial. Le code 9, sans étiquette, est lu comme ne sait pas ou refus. | stable |
+| qes1998 | `scol` (pre) | 1 = Sans diplôme d’études secondaires; 2 = Secondaire au collégial (cégep); 3 = Université; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Les trois groupes du fichier regroupé portent les étiquettes 1-9 ans, 10-15 ans et université et plus, mais les deux firmes les ont construits autrement. Pour les répondants de CREATEC (firme_post = 1), scol recode le plus haut niveau atteint (r15 : primaire ou études secondaires partielles ; secondaire terminé ou formation technique, collégiale ou cégep ; université, terminée ou non), si bien que les trois groupes tiennent. Pour les répondants de CROP (firme_post = 2), il regroupe les années d’études (question 19 de CROP : 7 ou moins, 8-9, 10-11, 12-15, 16 ou plus), et l’appariement est approximatif : le secondaire se terminant après 11 ans au Québec, une personne qui compte 10 ans n’a pas de diplôme mais est classée au secondaire au collégial, et des personnes qui comptent 14 ou 15 ans sont des étudiants universitaires classés au secondaire au collégial. Le code 9, sans étiquette, est lu comme ne sait pas ou refus. | approuvée |
 
 ### `income_cat` : Revenu du ménage (tiers)
 
 Le revenu total du ménage avant impôts, en tiers des répondants de
 l’étude.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : Le revenu du ménage en tiers des
 répondants de chaque étude : les tranches de revenu ne sont jamais
@@ -1904,26 +1905,26 @@ dollars diffèrent d’une étude à l’autre.
 | 2    | `middle` | Moyen                    |
 | 3    | `high`   | Élevé (tiers supérieur)  |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_income` (cps) | montant moins de 52200 = Faible (tiers inférieur); 52200 à moins de 95600 = Moyen; 95600 ou plus = Élevé (tiers supérieur); -99, 0 passent à cps_income2: 1-3 = Faible (tiers inférieur); 4 = Moyen; 5-8 = Élevé (tiers supérieur); -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Le montant (revenu de 2021) en tiers des 1 444 montants donnés, non pondérés : faible sous 52 200 \$, élevé 95 600 \$ ou plus. Un montant de 0 ou de -99 (aucun montant) passe à la question par tranches cps_income2, dont les tranches sont classées selon leur point milieu, avec les mêmes seuils. | stable |
-| qes2018 | `q61` (post) | 1-4 = Faible (tiers inférieur); 5, 6 = Moyen; 7-9 = Élevé (tiers supérieur); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 72 000 \$ ou plus (revenu de 2017). | stable |
-| qes2014 | `Q57` (post) | 1-4 = Faible (tiers inférieur); 5, 6 = Moyen; 7-9 = Élevé (tiers supérieur); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 72 000 \$ ou plus (revenu de 2013). | stable |
-| qes2012 | `reven` (post) | 1-4 = Faible (tiers inférieur); 5-7 = Moyen; 8, 9 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 88 000 \$ ou plus (revenu de 2011). | stable |
-| qes2018_panel | `d5` (pre) | 1, 2 = Faible (tiers inférieur); 3, 4 = Moyen; 5-7 = Élevé (tiers supérieur); 8 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 80 000 \$ ou plus. | stable |
-| qes2007_panel | `revenu` (toute vague) | 1, 2 = Faible (tiers inférieur); 3 = Moyen; 4, 5 = Élevé (tiers supérieur); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 60 000 \$ ou plus. | stable |
-| qes2007 | `q78` (post) | 1-3 = Faible (tiers inférieur); 4-6 = Moyen; 7-10 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 70 000 \$ ou plus (revenu de 2006). | stable |
-| qes2008 | `q78` (post) | 1-3 = Faible (tiers inférieur); 4-6 = Moyen; 7-10 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 70 000 \$ ou plus (revenu de 2007). | stable |
-| qes_crop_2007_2010 | `revenu` (chaque sondage) | 1, 2 = Faible (tiers inférieur); 3, 4 = Moyen; 5 = Élevé (tiers supérieur); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches (OD-R11). Faible est sous 40 000 \$, élevé 80 000 \$ ou plus ; les tiers regroupent les 24 sondages. | stable |
+| qes2022 | `cps_income` (cps) | montant moins de 52200 = Faible (tiers inférieur); 52200 à moins de 95600 = Moyen; 95600 ou plus = Élevé (tiers supérieur); -99, 0 passent à cps_income2: 1-3 = Faible (tiers inférieur); 4 = Moyen; 5-8 = Élevé (tiers supérieur); -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Le montant (revenu de 2021) en tiers des 1 444 montants donnés, non pondérés : faible sous 52 200 \$, élevé 95 600 \$ ou plus. Un montant de 0 ou de -99 (aucun montant) passe à la question par tranches cps_income2, dont les tranches sont classées selon leur point milieu, avec les mêmes seuils. | approuvée |
+| qes2018 | `q61` (post) | 1-4 = Faible (tiers inférieur); 5, 6 = Moyen; 7-9 = Élevé (tiers supérieur); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 72 000 \$ ou plus (revenu de 2017). | approuvée |
+| qes2014 | `Q57` (post) | 1-4 = Faible (tiers inférieur); 5, 6 = Moyen; 7-9 = Élevé (tiers supérieur); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 72 000 \$ ou plus (revenu de 2013). | approuvée |
+| qes2012 | `reven` (post) | 1-4 = Faible (tiers inférieur); 5-7 = Moyen; 8, 9 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 88 000 \$ ou plus (revenu de 2011). | approuvée |
+| qes2018_panel | `d5` (pre) | 1, 2 = Faible (tiers inférieur); 3, 4 = Moyen; 5-7 = Élevé (tiers supérieur); 8 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 80 000 \$ ou plus. | approuvée |
+| qes2007_panel | `revenu` (toute vague) | 1, 2 = Faible (tiers inférieur); 3 = Moyen; 4, 5 = Élevé (tiers supérieur); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 60 000 \$ ou plus. | approuvée |
+| qes2007 | `q78` (post) | 1-3 = Faible (tiers inférieur); 4-6 = Moyen; 7-10 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 70 000 \$ ou plus (revenu de 2006). | approuvée |
+| qes2008 | `q78` (post) | 1-3 = Faible (tiers inférieur); 4-6 = Moyen; 7-10 = Élevé (tiers supérieur); 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 70 000 \$ ou plus (revenu de 2007). | approuvée |
+| qes_crop_2007_2010 | `revenu` (chaque sondage) | 1, 2 = Faible (tiers inférieur); 3, 4 = Moyen; 5 = Élevé (tiers supérieur); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Tiers selon la règle du point milieu sur les effectifs non pondérés des tranches. Faible est sous 40 000 \$, élevé 80 000 \$ ou plus ; les tiers regroupent les 24 sondages. | approuvée |
 
 ### `language` : Langue maternelle
 
 La langue maternelle de la personne : français, anglais ou une autre
 langue.
 
-Base : `target:lang_mother` · `identity` · une valeur par personne
+Base : `target:lang_mother` · une valeur par personne
 
 **Comment elle est assouplie** : La langue apprise en premier dans
 l’enfance, en trois groupes ; une personne qui déclare le français et
@@ -1939,14 +1940,14 @@ sont francophones par la conception de leur échantillon.
 | 2    | `english` | Anglais   |
 | 3    | `other`   | Autre     |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_2` (cps) | la première option cochée, dans cet ordre : cps_lang_2 (Français), cps_lang_1 (Anglais), cps_lang_3 (Autre) | remplace la base | OD-R5 : une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | stable |
-| qes2014 | `QLANG` (post) | 1, 4, 5 = Français; 2, 6 = Anglais; 3 = Autre; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | OD-R5 : une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | stable |
-| qes2007 | `langu` (post) | 1, 4, 7 = Français; 2, 5 = Anglais; 3, 6 = Autre; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | OD-R5 : une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | stable |
-| qes1998 | `firme_post` (pre) | 1 = Français; 2 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | OD-R3 : l’échantillon de CREATEC (firme_post = 1) ne compte que des personnes dont la langue maternelle est le français (livre de codes du fichier CREATEC) ; les répondants de CROP ont été choisis selon un autre critère et n’ont pas de langue maternelle. | stable |
+| qes2022 | `cps_lang_2` (cps) | la première option cochée, dans cet ordre : cps_lang_2 (Français), cps_lang_1 (Anglais), cps_lang_3 (Autre) | remplace la base | Une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | approuvée |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = Français; 2, 6 = Anglais; 3 = Autre; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | Une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | approuvée |
+| qes2007 | `langu` (post) | 1, 4, 7 = Français; 2, 5 = Anglais; 3, 6 = Autre; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Une personne qui a déclaré deux langues maternelles est classée au français si l’une est le français, sinon à l’anglais si l’une est l’anglais. | approuvée |
+| qes1998 | `firme_post` (pre) | 1 = Français; 2 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | L’échantillon de CREATEC (firme_post = 1) ne compte que des personnes dont la langue maternelle est le français (livre de codes du fichier CREATEC) ; les répondants de CROP ont été choisis selon un autre critère et n’ont pas de langue maternelle. | approuvée |
 
 ### `language_fr` : Français, langue maternelle
 
@@ -1967,13 +1968,13 @@ language_eng.
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_2` (cps) | la première option cochée, dans cet ordre : cps_lang_2 (Oui), cps_lang_1 (Non), cps_lang_3 (Non) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
-| qes2014 | `QLANG` (post) | 1, 4, 5 = Oui; 2, 3, 6 = Non; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
-| qes2007 | `langu` (post) | 1, 4, 7 = Oui; 2, 3, 5, 6 = Non; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
+| qes2022 | `cps_lang_2` (cps) | la première option cochée, dans cet ordre : cps_lang_2 (Oui), cps_lang_1 (Non), cps_lang_3 (Non) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
+| qes2014 | `QLANG` (post) | 1, 4, 5 = Oui; 2, 3, 6 = Non; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
+| qes2007 | `langu` (post) | 1, 4, 7 = Oui; 2, 3, 5, 6 = Non; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
 
 ### `language_eng` : Anglais, langue maternelle
 
@@ -1994,21 +1995,20 @@ language_fr.
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_lang_1` (cps) | la première option cochée, dans cet ordre : cps_lang_1 (Oui), cps_lang_2 (Non), cps_lang_3 (Non) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
-| qes2014 | `QLANG` (post) | 1, 3, 5 = Non; 2, 4, 6 = Oui; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
-| qes2007 | `langu` (post) | 1, 3, 4, 6 = Non; 2, 5, 7 = Oui; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | stable |
+| qes2022 | `cps_lang_1` (cps) | la première option cochée, dans cet ordre : cps_lang_1 (Oui), cps_lang_2 (Non), cps_lang_3 (Non) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
+| qes2014 | `QLANG` (post) | 1, 3, 5 = Non; 2, 4, 6 = Oui; 8 = Ne sait pas (NA); 9 = Refus (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
+| qes2007 | `langu` (post) | 1, 3, 4, 6 = Non; 2, 5, 7 = Oui; 9 = Ne sait pas ou refus (un seul code) (NA) | remplace la base | Oui quand cette langue est parmi les langues maternelles déclarées. | approuvée |
 
 ### `religion` : Religion
 
 La religion de la personne : catholique, protestante, autre chrétienne,
 autre religion ou aucune.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : La religion d’appartenance, en cinq
 groupes ; la question de 2022 offre une longue liste, où l’agnosticisme
@@ -2025,21 +2025,20 @@ la personne appartient à une religion.
 | 4    | `other`           | Autre religion   |
 | 5    | `none`            | Aucune religion  |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_religion` (cps) | 1, 2 = Aucune religion; 3-7, 22 = Autre religion; 8, 9, 13, 15-21 = Protestante; 10 = Catholique; 11, 12, 14 = Autre chrétienne; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. L’agnosticisme compte comme aucune ; les Églises orthodoxes, les Témoins de Jéhovah et les mormons sont autre chrétienne ; les autres dénominations chrétiennes de la liste sont protestantes. | stable |
-| qes2018 | `q67` (post) | si q66: 2 = Aucune religion; 9 = Refus (NA); sinon q67: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4, 5, 96 = Autre religion; 99 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | stable |
-| qes2014 | `Q63` (post) | si Q62: 2 = Aucune religion; 9 = Refus (NA); sinon Q63: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion; 9 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | stable |
-| qes2012 | `q103` (post) | si q102: 2 = Aucune religion; 3 = Refus (NA); sinon q103: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion; 9 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | stable |
+| qes2022 | `cps_religion` (cps) | 1, 2 = Aucune religion; 3-7, 22 = Autre religion; 8, 9, 13, 15-21 = Protestante; 10 = Catholique; 11, 12, 14 = Autre chrétienne; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. L’agnosticisme compte comme aucune ; les Églises orthodoxes, les Témoins de Jéhovah et les mormons sont autre chrétienne ; les autres dénominations chrétiennes de la liste sont protestantes. | approuvée |
+| qes2018 | `q67` (post) | si q66: 2 = Aucune religion; 9 = Refus (NA); sinon q67: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4, 5, 96 = Autre religion; 99 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | approuvée |
+| qes2014 | `Q63` (post) | si Q62: 2 = Aucune religion; 9 = Refus (NA); sinon Q63: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion; 9 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | approuvée |
+| qes2012 | `q103` (post) | si q102: 2 = Aucune religion; 3 = Refus (NA); sinon q103: 1 = Catholique; 2 = Protestante; 3 = Autre chrétienne; 4-6 = Autre religion; 9 = Refus (NA) | complète l’étude | Les personnes sans appartenance religieuse sont aucune ; les religions juive, musulmane et les autres religions non chrétiennes sont autre. | approuvée |
 
 ### `marital` : État matrimonial
 
 L’état matrimonial de la personne, en quatre groupes.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : Marié(e) ou en couple, séparé(e) ou
 divorcé(e), veuf ou veuve, ou jamais marié(e) ; 2012 et 2014 ont demandé
@@ -2055,27 +2054,29 @@ fait y sont jamais marié(e)s.
 | 3    | `widowed`            | Veuf ou veuve                |
 | 4    | `never_married`      | Célibataire, jamais marié(e) |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `pes_married` (pes) | 1, 2 = Marié(e) ou en couple; 3, 4 = Séparé(e) ou divorcé(e); 5 = Veuf ou veuve; 6 = Célibataire, jamais marié(e); -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | stable |
-| qes2018 | `qstat` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 98 = Refus (NA) | complète l’étude | Marié(e) ou en union civile (1) et conjoint(e) de fait (6) sont marié(e). | stable |
-| qes2014 | `Q68` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA) | complète l’étude | OD-R7 : la question demande l’état civil officiel et n’offre pas l’union de fait. L’union civile (6) est marié(e). Le code 6 regroupe 309 des 1 501 réponses valides, bien plus que la part des unions civiles au Québec : la plupart des conjoints de fait l’ont probablement choisie ; ceux qui ont répondu célibataire sont jamais marié(e)s. | stable |
-| qes2012 | `q109` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA) | complète l’étude | OD-R7 : la question demande l’état civil officiel, sans union de fait ; l’union civile (6) est marié(e). Les conjoints de fait pouvaient répondre célibataire ou union civile : 360 répondants (24 %) ont choisi l’union civile, bien plus que les unions civiles légales au Québec, si bien que les conjoints de fait se répartissent entre marié(e) et jamais marié(e). | stable |
+| qes2022 | `pes_married` (pes) | 1, 2 = Marié(e) ou en couple; 3, 4 = Séparé(e) ou divorcé(e); 5 = Veuf ou veuve; 6 = Célibataire, jamais marié(e); -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | approuvée |
+| qes2018 | `qstat` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 98 = Refus (NA) | complète l’étude | Marié(e) ou en union civile (1) et conjoint(e) de fait (6) sont marié(e). | approuvée |
+| qes2014 | `Q68` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA) | complète l’étude | La question demande l’état civil officiel et n’offre pas l’union de fait. L’union civile (6) est marié(e). Le code 6 regroupe 309 des 1 501 réponses valides, bien plus que la part des unions civiles au Québec : la plupart des conjoints de fait l’ont probablement choisie ; ceux qui ont répondu célibataire sont jamais marié(e)s. | approuvée |
+| qes2012 | `q109` (post) | 1, 6 = Marié(e) ou en couple; 2, 4 = Séparé(e) ou divorcé(e); 3 = Célibataire, jamais marié(e); 5 = Veuf ou veuve; 9 = Refus (NA) | complète l’étude | La question demande l’état civil officiel, sans union de fait ; l’union civile (6) est marié(e). Les conjoints de fait pouvaient répondre célibataire ou union civile : 360 répondants (24 %) ont choisi l’union civile, bien plus que les unions civiles légales au Québec, si bien que les conjoints de fait se répartissent entre marié(e) et jamais marié(e). | approuvée |
 
 ### `employment` : Occupation
 
 La situation d’emploi de la personne : en emploi, au chômage, retraitée,
 étudiante ou autre.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : La situation d’emploi principale en
 cinq groupes ; une personne qui donne deux situations, comme retraitée
 et salariée, prend celle qui n’est pas l’emploi, et la personne au
 foyer, inapte au travail ou dans une autre situation est classée autre.
+Dans le panel de 2018, seuls les répondants web ont été interrogés sur
+leur emploi, si bien que ses répondants téléphoniques apparaissent comme
+« ne sait pas ou refus ».
 
 **Niveaux**
 
@@ -2087,28 +2088,27 @@ foyer, inapte au travail ou dans une autre situation est classée autre.
 | 4    | `student`    | Étudiant(e)                             |
 | 5    | `other`      | À la maison, inapte au travail ou autre |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `pes_employed` (pes) | 1-3 = En emploi (salarié(e) ou à son compte); 4, 11 = Retraité(e); 5 = Au chômage; 6, 9 = Étudiant(e); 7, 8, 10, 12 = À la maison, inapte au travail ou autre; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | OD-R9 : une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | stable |
-| qes2018 | `qoccup` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | OD-R9 : une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | stable |
-| qes2014 | `Q58` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | OD-R9 : une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | stable |
-| qes2012 | `occup` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | OD-R9 : une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | stable |
-| qes2018_panel | `d4` (pre) | 1-3 = En emploi (salarié(e) ou à son compte); 4 = Au chômage; 5 = Étudiant(e); 6 = Retraité(e); 7, 8 = À la maison, inapte au travail ou autre; 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Temps plein, temps partiel et autonome sont en emploi ; à l’extérieur du marché du travail (au foyer) et autre sont autre. La question n’a été posée qu’aux 850 répondants web : le fichier code 9 (ne sait pas) pour les 400 répondants téléphoniques (method 1-2), si bien que 400 des 406 valeurs manquantes sont des questions non posées et non de vrais « ne sait pas » (6 répondants web ont choisi 9). | stable |
-| qes2007_panel | `occup` (toute vague) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Au chômage; 4 = À la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e); 9 = Refus (NA) | complète l’étude | Temps plein et temps partiel sont en emploi ; à la maison à temps plein est autre. | stable |
-| qes2007 | `q79` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | OD-R9 : une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | stable |
-| qes2008 | `q79` (post) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Retraité(e); 4 = Au chômage; 5 = Étudiant(e); 6, 7, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une seule situation par personne (le questionnaire de 2008 n’a pas de codes de double situation) : à son compte et salarié sont en emploi ; au foyer, handicapé et autre (préciser) sont autre. | stable |
-| qes1998 | `occup` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | OD-R2 : le fichier regroupé a temps plein, temps partiel et ne travaille pas ; ne travaille pas réunit chômeurs, retraités, étudiants et personnes au foyer, si bien que l’étude est laissée de côté. | stable |
-| qes_crop_2007_2010 | `Occup` (chaque sondage) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Au chômage; 4 = À la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e); 9 = Refus (NA) | complète l’étude | Temps plein et temps partiel sont en emploi ; à la maison à temps plein est autre. | stable |
+| qes2022 | `pes_employed` (pes) | 1-3 = En emploi (salarié(e) ou à son compte); 4, 11 = Retraité(e); 5 = Au chômage; 6, 9 = Étudiant(e); 7, 8, 10, 12 = À la maison, inapte au travail ou autre; -99 = Sans réponse (non-réponse partielle) (NA) | complète l’étude | Une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | approuvée |
+| qes2018 | `qoccup` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | approuvée |
+| qes2014 | `Q58` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | approuvée |
+| qes2012 | `occup` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | approuvée |
+| qes2018_panel | `d4` (pre) | 1-3 = En emploi (salarié(e) ou à son compte); 4 = Au chômage; 5 = Étudiant(e); 6 = Retraité(e); 7, 8 = À la maison, inapte au travail ou autre; 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | Temps plein, temps partiel et autonome sont en emploi ; à l’extérieur du marché du travail (au foyer) et autre sont autre. La question n’a été posée qu’aux 850 répondants web : le fichier code 9 (ne sait pas) pour les 400 répondants téléphoniques (method 1-2), si bien que 400 des 406 valeurs manquantes sont des questions non posées et non de vrais « ne sait pas » (6 répondants web ont choisi 9). | approuvée |
+| qes2007_panel | `occup` (toute vague) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Au chômage; 4 = À la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e); 9 = Refus (NA) | complète l’étude | Temps plein et temps partiel sont en emploi ; à la maison à temps plein est autre. | approuvée |
+| qes2007 | `q79` (post) | 1, 2, 8 = En emploi (salarié(e) ou à son compte); 3, 11 = Retraité(e); 4 = Au chômage; 5, 9 = Étudiant(e); 6, 7, 10, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une personne qui a donné deux situations (étudiante et salariée, retraitée et salariée, au foyer et salariée) prend celle qui n’est pas l’emploi ; deux emplois est en emploi ; au foyer, handicapé et autres situations sont autre. | approuvée |
+| qes2008 | `q79` (post) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Retraité(e); 4 = Au chômage; 5 = Étudiant(e); 6, 7, 96 = À la maison, inapte au travail ou autre; 99 = Refus (NA) | complète l’étude | Une seule situation par personne (le questionnaire de 2008 n’a pas de codes de double situation) : à son compte et salarié sont en emploi ; au foyer, handicapé et autre (préciser) sont autre. | approuvée |
+| qes1998 | `occup` (pre) | 1-3 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | Le fichier regroupé a temps plein, temps partiel et ne travaille pas ; ne travaille pas réunit chômeurs, retraités, étudiants et personnes au foyer, si bien que l’étude est laissée de côté. | approuvée |
+| qes_crop_2007_2010 | `Occup` (chaque sondage) | 1, 2 = En emploi (salarié(e) ou à son compte); 3 = Au chômage; 4 = À la maison, inapte au travail ou autre; 5 = Retraité(e); 6 = Étudiant(e); 9 = Refus (NA) | complète l’étude | Temps plein et temps partiel sont en emploi ; à la maison à temps plein est autre. | approuvée |
 
 ### `union` : Appartenance à un syndicat
 
 Si la personne, ou dans certaines études quelqu’un de son ménage, est
 syndiquée.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : Si la personne est syndiquée en 2022,
 mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018
@@ -2116,8 +2116,7 @@ mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018
 interrogées sur leur famille : parents, frères ou sœurs). Seules ces
 trois études posent la question, et celle de 2022 la pose après
 l’élection, si bien que ses répondants de la seule vague de campagne
-sont manquants ; la colonne est conservée quel que soit son nombre
-d’études (essentielle), selon la décision du 2026-10-01.
+sont manquants.
 
 **Niveaux**
 
@@ -2126,19 +2125,19 @@ d’études (essentielle), selon la décision du 2026-10-01.
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `pes_union` (pes) | 1 = Oui; 2 = Non | complète l’étude | La personne elle-même est syndiquée (et non son ménage). Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | stable |
-| qes2018 | `q65a` (post) | 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA); Sans objet (écarté par un filtre) (NA), Valeur manquante système (NA) passent à q65b: 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Q65 a deux versions, selon QPARENTS : les personnes qui ne vivent pas chez leurs parents (q65a, 2 558 répondants) ont été interrogées sur leur ménage, celles qui y vivent (q65b, 514) sur leur famille (parents, frères ou sœurs). La version du ménage est lue d’abord, puis celle de la famille pour les personnes à qui la première n’a pas été posée. La personne ou quelqu’un de son ménage (ou de sa famille) est syndiqué(e). | stable |
-| qes2014 | `Q61` (post) | 1 = Oui; 2 = Non; 9 = Refus (NA) | complète l’étude | La personne ou quelqu’un de son ménage est syndiqué(e). | stable |
+| qes2022 | `pes_union` (pes) | 1 = Oui; 2 = Non | complète l’étude | La personne elle-même est syndiquée (et non son ménage). Posée après l’élection : les répondants de la seule vague de campagne sont manquants (absents de cette vague). | approuvée |
+| qes2018 | `q65a` (post) | 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA); Sans objet (écarté par un filtre) (NA), Valeur manquante système (NA) passent à q65b: 1 = Oui; 2 = Non; 98 = Ne sait pas (NA); 99 = Refus (NA) | complète l’étude | Q65 a deux versions, selon QPARENTS : les personnes qui ne vivent pas chez leurs parents (q65a, 2 558 répondants) ont été interrogées sur leur ménage, celles qui y vivent (q65b, 514) sur leur famille (parents, frères ou sœurs). La version du ménage est lue d’abord, puis celle de la famille pour les personnes à qui la première n’a pas été posée. La personne ou quelqu’un de son ménage (ou de sa famille) est syndiqué(e). | approuvée |
+| qes2014 | `Q61` (post) | 1 = Oui; 2 = Non; 9 = Refus (NA) | complète l’étude | La personne ou quelqu’un de son ménage est syndiqué(e). | approuvée |
 
 ### `region` : Région
 
 Où vit la personne : RMR de Montréal, RMR de Québec ou reste du Québec.
 
-Base : `target:region_cma3` · `identity` · une valeur par personne
+Base : `target:region_cma3` · une valeur par personne
 
 **Comment elle est assouplie** : La région métropolitaine de recensement
 de Montréal, celle de Québec ou le reste du Québec, d’après la variable
@@ -2153,18 +2152,17 @@ utilisées.
 | 2    | `quebec_cma` | RMR de Québec   |
 | 3    | `rest`       | Reste du Québec |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2007_panel | `reg2` (toute vague) | 1-3, 5-11, 17-19, 21, 22 = Reste du Québec; 4, 20 = RMR de Québec; 12-16 = RMR de Montréal | complète l’étude | Sous-régions : les cinq parties de la RMR de Montréal (dans Lanaudière, les Laurentides, Laval, la Montérégie et Montréal) sont la RMR de Montréal, et les parties de la RMR de Québec dans la Capitale-Nationale et Chaudière-Appalaches sont la RMR de Québec. | stable |
+| qes2007_panel | `reg2` (toute vague) | 1-3, 5-11, 17-19, 21, 22 = Reste du Québec; 4, 20 = RMR de Québec; 12-16 = RMR de Montréal | complète l’étude | Sous-régions : les cinq parties de la RMR de Montréal (dans Lanaudière, les Laurentides, Laval, la Montérégie et Montréal) sont la RMR de Montréal, et les parties de la RMR de Québec dans la Capitale-Nationale et Chaudière-Appalaches sont la RMR de Québec. | approuvée |
 
 ### `region_admin` : Région administrative
 
 La région administrative où vit la personne.
 
-Base : appariements souples seulement · `relaxed_only` · une valeur par
-personne
+Base : appariements souples seulement · une valeur par personne
 
 **Comment elle est assouplie** : Les 17 régions administratives du
 Québec, là où une étude les a enregistrées ou des sous-régions qui s’y
@@ -2193,21 +2191,21 @@ divisent une région sont réunies.
 | 16   | `monteregie`              | Montérégie                    |
 | 17   | `centre_du_quebec`        | Centre-du-Québec              |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2018 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | stable |
-| qes2014 | `QREGION` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | stable |
-| qes2012 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | stable |
-| qes2007_panel | `reg2` (toute vague) | 1 = Abitibi-Témiscamingue; 2 = Bas-Saint-Laurent; 3, 4 = Chaudière-Appalaches; 5 = Côte-Nord; 6 = Estrie; 7 = Gaspésie–Îles-de-la-Madeleine; 8, 12 = Lanaudière; 9, 13 = Laurentides; 10 = Mauricie; 11, 15 = Montérégie; 14 = Laval; 16 = Montréal; 17 = Nord-du-Québec; 18 = Outaouais; 19, 20 = Capitale-Nationale; 21 = Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec | complète l’étude | Les sous-régions qui divisent une région (sa partie dans une RMR et le reste) sont réunies. | stable |
-| qes2007 | `nomx` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3, 33 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 11 = Gaspésie–Îles-de-la-Madeleine; 12, 32 = Chaudière-Appalaches; 13 = Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie; 17 = Centre-du-Québec | complète l’étude | Les sous-régions qui divisent une région (sa partie dans une RMR et le reste) sont réunies ; le Nord-du-Québec n’a pas de code. | stable |
+| qes2018 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | approuvée |
+| qes2014 | `QREGION` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | approuvée |
+| qes2012 | `q0qc` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 10 = Nord-du-Québec; 11 = Gaspésie–Îles-de-la-Madeleine; 12 = Chaudière-Appalaches; 13 = Laval; 14 = Lanaudière; 15 = Laurentides; 16 = Montérégie; 17 = Centre-du-Québec | complète l’étude |  | approuvée |
+| qes2007_panel | `reg2` (toute vague) | 1 = Abitibi-Témiscamingue; 2 = Bas-Saint-Laurent; 3, 4 = Chaudière-Appalaches; 5 = Côte-Nord; 6 = Estrie; 7 = Gaspésie–Îles-de-la-Madeleine; 8, 12 = Lanaudière; 9, 13 = Laurentides; 10 = Mauricie; 11, 15 = Montérégie; 14 = Laval; 16 = Montréal; 17 = Nord-du-Québec; 18 = Outaouais; 19, 20 = Capitale-Nationale; 21 = Saguenay–Lac-Saint-Jean; 22 = Centre-du-Québec | complète l’étude | Les sous-régions qui divisent une région (sa partie dans une RMR et le reste) sont réunies. | approuvée |
+| qes2007 | `nomx` (post) | 1 = Bas-Saint-Laurent; 2 = Saguenay–Lac-Saint-Jean; 3, 33 = Capitale-Nationale; 4 = Mauricie; 5 = Estrie; 6 = Montréal; 7 = Outaouais; 8 = Abitibi-Témiscamingue; 9 = Côte-Nord; 11 = Gaspésie–Îles-de-la-Madeleine; 12, 32 = Chaudière-Appalaches; 13 = Laval; 14, 24 = Lanaudière; 15, 25 = Laurentides; 16, 26 = Montérégie; 17 = Centre-du-Québec | complète l’étude | Les sous-régions qui divisent une région (sa partie dans une RMR et le reste) sont réunies ; le Nord-du-Québec n’a pas de code. | approuvée |
 
 ### `born_canada` : Né(e) au Canada
 
 Si la personne est née au Canada.
 
-Base : `target:born_canada` · `identity` · une valeur par personne
+Base : `target:born_canada` · une valeur par personne
 
 **Comment elle est assouplie** : Né(e) au Canada ou non, tel que chaque
 étude l’a demandé : d’après le lieu de naissance (Québec, ailleurs au
@@ -2252,7 +2250,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 Le parti du vote de la personne à l’élection générale québécoise de
 l’étude.
 
-Base : `pooled:vote_choice` · `identity` · sur la vague qui l’a posée
+Base : `pooled:vote_choice` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Le vote déclaré là où une étude l’a
 demandé, sinon l’intention de vote avec les indécis relancés vers le
@@ -2283,8 +2281,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 La question de vote_choice sur la ligne.
 
-Base : `pooled:vote_choice__type` · `identity` · sur la vague qui l’a
-posée
+Base : `pooled:vote_choice__type` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : La question d’où vient vote_choice sur
 chaque ligne : le vote déclaré, l’intention relancée ou la première
@@ -2306,7 +2303,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Si la personne a voté à l’élection générale québécoise de l’étude.
 
-Base : `pooled:turnout` · `identity` · sur la vague qui l’a posée
+Base : `pooled:turnout` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Si la personne dit avoir voté à
 l’élection générale québécoise de l’étude, question posée après
@@ -2329,7 +2326,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 Le parti pour lequel la personne a voté à l’élection générale québécoise
 précédente.
 
-Base : `target:vote_prov_prev` · `identity` · sur la vague qui l’a posée
+Base : `target:vote_prov_prev` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Le parti du vote déclaré à l’élection
 générale québécoise qui précède l’étude ; les abstentionnistes sont
@@ -2350,19 +2347,19 @@ manquants, les sources nomment l’élection rappelée, et la question de
 | 8    | `ADQ`   | ADQ         |
 | 90   | `other` | Autre parti |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2007_panel | `voteprec` (pre) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = Autre parti; 6 = N’a pas voté (NA); 8 = Ne sait pas (NA); 9 = Refus (NA) | complète l’étude | L’élection d’avril 2003 (QC2003) ; posée au deuxième sondage préélectoral seulement, si bien que les autres répondants sont des valeurs manquantes système. | stable |
-| qes1998 | `vote94` (pre) | 1 = PLQ; 2 = PQ; 3 = N’a pas voté (NA); 4 = Ne sait pas ou refus (un seul code) (NA); 9 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | L’élection de 1994 (QC1994). Le fichier regroupé ne nomme que le PLQ et le PQ ; le code 9, sans étiquette, réunit les autres partis (dont l’ADQ) et des réponses inconnues, si bien que les électeurs de l’ADQ en 1994 sont manquants. | stable |
-| qes_crop_2007_2010 | `QP4` (chaque sondage) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = QS; 5 = PVQ; 6 = Autre parti; 7 = N’a pas voté (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | La dernière élection québécoise avant chaque sondage : QC2007 pour les sondages de juin 2007 à novembre 2008, QC2008 à partir de janvier 2009. La question originale (QP4) ; le code 7 réunit n’a pas voté et a annulé. | stable |
+| qes2007_panel | `voteprec` (pre) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = Autre parti; 6 = N’a pas voté (NA); 8 = Ne sait pas (NA); 9 = Refus (NA) | complète l’étude | L’élection d’avril 2003 (QC2003) ; posée au deuxième sondage préélectoral seulement, si bien que les autres répondants sont des valeurs manquantes système. | approuvée |
+| qes1998 | `vote94` (pre) | 1 = PLQ; 2 = PQ; 3 = N’a pas voté (NA); 4 = Ne sait pas ou refus (un seul code) (NA); 9 = Catégorie source à cheval sur plusieurs niveaux (NA) | complète l’étude | L’élection de 1994 (QC1994). Le fichier regroupé ne nomme que le PLQ et le PQ ; le code 9, sans étiquette, réunit les autres partis (dont l’ADQ) et des réponses inconnues, si bien que les électeurs de l’ADQ en 1994 sont manquants. | approuvée |
+| qes_crop_2007_2010 | `QP4` (chaque sondage) | 1 = ADQ; 2 = PLQ; 3 = PQ; 4 = QS; 5 = PVQ; 6 = Autre parti; 7 = N’a pas voté (NA); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | La dernière élection québécoise avant chaque sondage : QC2007 pour les sondages de juin 2007 à novembre 2008, QC2008 à partir de janvier 2009. La question originale (QP4) ; le code 7 réunit n’a pas voté et a annulé. | approuvée |
 
 ### `pid` : Identification partisane provinciale
 
 Le parti québécois auquel la personne s’identifie.
 
-Base : `target:pid_prov` · `identity` · sur la vague qui l’a posée
+Base : `target:pid_prov` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Le parti québécois auquel la personne
 s’identifie, ou aucun, tel que chaque étude l’a demandé ; les partis
@@ -2391,7 +2388,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 La position de la personne sur une échelle gauche-droite.
 
-Base : `target:lr_self` · `identity` · sur la vague qui l’a posée
+Base : `target:lr_self` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : L’autopositionnement sur une échelle
 gauche-droite de 0 (gauche) à 10 (droite) ; une échelle d’une autre
@@ -2408,14 +2405,17 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le degré d’intérêt de la personne pour la politique.
 
-Base : `pooled:pol_interest` · `bands:0.35,0.75:low,medium,high` · sur
+Base : `pooled:pol_interest` · `bands:0.55,0.85:low,medium,high` · sur
 la vague qui l’a posée
 
 **Comment elle est assouplie** : L’intérêt de 0 à 1 (interest_01) en
-trois tranches, faible sous 0,35 et élevé à partir de 0,75 ; les
-questions à quatre points et de 0 à 10 ne concordent pas, et l’étude de
-2008 et le panel de 2007 ont demandé l’intérêt pour l’élection ou la
-campagne, pas pour la politique.
+trois tranches, faible sous 0,55 et élevé à partir de 0,85 : à une
+question de 0 à 10, 0 à 5 est faible, 6 à 8 moyen et 9 ou 10 élevé ; à
+une question à quatre points, pas du tout ou peu intéressé est faible,
+assez intéressé moyen et très intéressé élevé. Les deux formats ne
+concordent toujours pas exactement, et l’étude de 2008 et le panel de
+2007 ont demandé l’intérêt pour l’élection ou la campagne, pas pour la
+politique.
 
 **Niveaux**
 
@@ -2433,7 +2433,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le degré d’intérêt de la personne pour la politique, de 0 à 1.
 
-Base : `pooled:pol_interest` · `identity` · sur la vague qui l’a posée
+Base : `pooled:pol_interest` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : L’intérêt de 0 à 1 (la variable
 regroupée pol_interest) : réponses à quatre points notées 1, 0,7, 0,3 et
@@ -2451,7 +2451,7 @@ Comment la personne voterait à un référendum sur la souveraineté du
 Québec.
 
 Base : `pooled:sov_support` ·
-`recode:yes=yes,no=no,would_not_vote=NA:not_mappable` · sur la vague qui
+`recode:yes=yes,no=no,would_not_vote=NA:not_voted` · sur la vague qui
 l’a posée
 
 **Comment elle est assouplie** : Oui ou non à un référendum sur la
@@ -2467,11 +2467,11 @@ manquant.
 | 1    | `yes` | Oui       |
 | 2    | `no`  | Non       |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes_crop_2007_2010 | `intvoterefa` (chaque sondage) | 1 = Oui; 2 = Non; 3 = Catégorie source à cheval sur plusieurs niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA); Ne sait pas (NA) passent à intvoterefb: 1 = Oui; 2 = Non; 3 = Catégorie source à cheval sur plusieurs niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA) | complète l’étude | OD-R8 : la question référendaire des sondages CROP. Le fichier tronque son étiquette et le livre de codes déposé n’en dit pas plus. Les rapports de CROP donnent le libellé pour 19 des 24 sondages : un Québec qui « devienne un pays souverain ». Il n’est pas documenté pour les cinq autres ; en avril 2009, CROP a posé une question sur le pays souverain et une autre sur la souveraineté-partenariat, et pour mai 2009 la presse ne dit pas laquelle a donné le résultat publié. Pour ceux qui ne savaient pas, la relance (intvoterefb) est utilisée. Elle a aussi été posée à ceux qui ne voteraient pas ou refusaient, dont la première réponse est gardée. Ne voterait pas est manquant. | stable |
+| qes_crop_2007_2010 | `intvoterefa` (chaque sondage) | 1 = Oui; 2 = Non; 3 = Catégorie source à cheval sur plusieurs niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA); Ne sait pas (NA) passent à intvoterefb: 1 = Oui; 2 = Non; 3 = Catégorie source à cheval sur plusieurs niveaux (NA); 8 = Ne sait pas (NA); 9 = Refus (NA) | complète l’étude | La question référendaire des sondages CROP. Le fichier tronque son étiquette et le livre de codes déposé n’en dit pas plus. Les rapports de CROP donnent le libellé pour 19 des 24 sondages : un Québec qui « devienne un pays souverain ». Il n’est pas documenté pour les cinq autres ; en avril 2009, CROP a posé une question sur le pays souverain et une autre sur la souveraineté-partenariat, et pour mai 2009 la presse ne dit pas laquelle a donné le résultat publié. Pour ceux qui ne savaient pas, la relance (intvoterefb) est utilisée. Elle a aussi été posée à ceux qui ne voteraient pas ou refusaient, dont la première réponse est gardée. Ne voterait pas est manquant. | approuvée |
 
 ### `sovereignty_type` : Question du vote sur la souveraineté
 
@@ -2496,18 +2496,18 @@ dont le libellé complet n’a pas été déposé.
 | 4    | `favour`            | Favorable à l’indépendance                      |
 | 5    | `crop_undocumented` | Question référendaire CROP (libellé non déposé) |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes_crop_2007_2010 | `intvoterefa` (chaque sondage) | chaque personne = Question référendaire CROP (libellé non déposé) | complète l’étude | OD-R8 : chaque répondant des sondages CROP ; sovereignty dit s’il a répondu. | stable |
+| qes_crop_2007_2010 | `intvoterefa` (chaque sondage) | chaque personne = Question référendaire CROP (libellé non déposé) | complète l’étude | Chaque répondant des sondages CROP ; sovereignty dit s’il a répondu. | approuvée |
 
 ### `satis_democracy` : Satisfaction envers la démocratie au Québec
 
 Le degré de satisfaction de la personne envers le fonctionnement de la
 démocratie au Québec.
 
-Base : `target:satis_demo_qc` · `identity` · sur la vague qui l’a posée
+Base : `target:satis_demo_qc` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : La satisfaction envers le
 fonctionnement de la démocratie au Québec, en quatre points, telle que
@@ -2531,8 +2531,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 Le degré de satisfaction de la personne envers le gouvernement du
 Québec.
 
-Base : `target:gov_satisfaction` · `identity` · sur la vague qui l’a
-posée
+Base : `target:gov_satisfaction` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : La satisfaction envers le gouvernement
 du Québec en place, en quatre points ; la question de 1998 porte sur le
@@ -2547,17 +2546,17 @@ gouvernement Bouchard, dans ses propres mots.
 | 3    | `not_very`   | Pas très satisfait(e)    |
 | 4    | `not_at_all` | Pas du tout satisfait(e) |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes1998 | `satisf` (pre) | 1 = Très satisfait(e); 2 = Assez satisfait(e); 3 = Pas très satisfait(e); 4 = Pas du tout satisfait(e); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | La satisfaction envers le gouvernement Bouchard (PQ), dans les mots du fichier regroupé : très satisfait, plutôt satisfait, plutôt insatisfait, très insatisfait ; le code 9, sans étiquette, est lu comme ne sait pas ou refus. | stable |
+| qes1998 | `satisf` (pre) | 1 = Très satisfait(e); 2 = Assez satisfait(e); 3 = Pas très satisfait(e); 4 = Pas du tout satisfait(e); 9 = Ne sait pas ou refus (un seul code) (NA) | complète l’étude | La satisfaction envers le gouvernement Bouchard (PQ), dans les mots du fichier regroupé : très satisfait, plutôt satisfait, plutôt insatisfait, très insatisfait ; le code 9, sans étiquette, est lu comme ne sait pas ou refus. | approuvée |
 
 ### `econ_retro` : L’économie du Québec depuis un an
 
 L’avis de la personne sur l’économie du Québec depuis un an.
 
-Base : `target:econ_retro_qc` · `identity` · sur la vague qui l’a posée
+Base : `target:econ_retro_qc` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Si l’économie du Québec s’est
 améliorée, est restée à peu près la même ou s’est détériorée depuis un
@@ -2579,8 +2578,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 L’avis de la personne sur sa propre situation financière depuis un an.
 
-Base : appariements souples seulement · `relaxed_only` · sur la vague
-qui l’a posée
+Base : appariements souples seulement · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Si la situation financière de la
 personne s’est améliorée, est restée à peu près la même ou s’est
@@ -2599,18 +2597,18 @@ autre question et n’est pas utilisée.
 | 2    | `same`   | À peu près la même |
 | 3    | `worse`  | Détériorée         |
 
-**Appariements souples**
+Appariements par étude
 
 | Étude | Source | Recodage | Usage | Notes | statut |
 |----|----|----|----|----|----|
-| qes2022 | `cps_ownfin` (cps) | 1 = Améliorée; 2 = Détériorée; 3 = À peu près la même | complète l’étude | Posée pendant la campagne à chaque personne ; le fichier n’a aucune valeur manquante. Ce n’est pas la question de 2012 et de 2014 sur sa propre situation financière si le Québec devenait indépendant (q85, Q47), qui porte sur une autre situation. | stable |
+| qes2022 | `cps_ownfin` (cps) | 1 = Améliorée; 2 = Détériorée; 3 = À peu près la même | complète l’étude | Posée pendant la campagne à chaque personne ; le fichier n’a aucune valeur manquante. Ce n’est pas la question de 2012 et de 2014 sur sa propre situation financière si le Québec devenait indépendant (q85, Q47), qui porte sur une autre situation. | approuvée |
 
 ### `identity` : Identité québécoise et canadienne
 
 Comment la personne se définit, comme Québécoise, Canadienne ou les
 deux.
 
-Base : `target:identity_qc_ca` · `identity` · sur la vague qui l’a posée
+Base : `target:identity_qc_ca` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : Uniquement québécois(e), d’abord
 québécois(e), les deux également, d’abord canadien(ne) ou uniquement
@@ -2636,7 +2634,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le degré d’attachement de la personne au Québec.
 
-Base : `target:attach_qc` · `identity` · sur la vague qui l’a posée
+Base : `target:attach_qc` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : L’attachement au Québec en quatre
 points, tel que chaque étude l’a demandé.
@@ -2658,7 +2656,7 @@ Aucun : les valeurs de chaque étude viennent de la base.
 
 Le degré d’attachement de la personne au Canada.
 
-Base : `target:attach_ca` · `identity` · sur la vague qui l’a posée
+Base : `target:attach_ca` · sur la vague qui l’a posée
 
 **Comment elle est assouplie** : L’attachement au Canada en quatre
 points, tel que chaque étude l’a demandé.

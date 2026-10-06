@@ -28,10 +28,38 @@ its grades when the difference between two questions matters."><meta property="o
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -40,12 +68,16 @@ its grades when the difference between two questions matters."><meta property="o
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -61,20 +93,115 @@ its grades when the difference between two questions matters."><meta property="o
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,14 +212,14 @@ its grades when the difference between two questions matters."><meta property="o
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
@@ -101,7 +228,7 @@ its grades when the difference between two questions matters."><meta property="o
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -191,7 +318,9 @@ row, <code>n_value</code> (respondents of a static column, rows of a wave column
 and <code>na_reasons</code> (<code>"dk=12; refused=3"</code>)), <code>weights</code> (<code>study</code>, <code>wave</code>,
 <code>weight_var</code>, <code>status</code>, <code>reason</code>: <code>NA</code>, <code>"needs_review"</code>,
 <code>"no_recommended_weight"</code> or <code>"not_in_data"</code>, <code>n_rows</code>, <code>n_weight</code>,
-<code>mean</code>), <code>qes_provenance</code> (the files read; see <code><a href="qes_provenance.html">qes_provenance()</a></code>),
+<code>mean</code>), <code>qes_no_wave</code> (<code>study</code>, <code>n_rows</code>: the respondents left out
+because they took part in no wave), <code>qes_provenance</code> (the files read;
+see <code><a href="qes_provenance.html">qes_provenance()</a></code>),
 <code>spec_version</code>, <code>qesR_version</code> and <code>lang</code>.</p>
     </div>
     <div class="section level2">
@@ -216,7 +345,11 @@ applied, and its cells are <code>NA</code> with reason <code>not_reviewed</code>
 spec 4.6.0, the 5 it adds (the education of <code>qes1998</code>, <code>union</code> and
 <code>econ_self</code>) included, are signed off (status <code>stable</code>) by an automated
 double review against the original files and documents, not a human
-review, as their <code>reviewed_by</code> and <code>review_note</code> say.</p>
+review, as their <code>reviewed_by</code> and <code>review_note</code> say. A strict row still
+in review is not applied either: the previous vote (<code>vote_prev</code>) of
+<code>qes2008</code> and <code>qes2018</code> is <code>NA</code> (reason <code>not_reviewed</code>) while a decision
+on the respondents too young to vote at the previous election is pending,
+and the summary message names such columns and studies.</p>
     </div>
     <div class="section level2">
     <h2 id="rows-waves-and-weights">Rows, waves and weights<a class="anchor" aria-label="anchor" href="#rows-waves-and-weights"></a></h2>
@@ -224,7 +357,9 @@ review, as their <code>reviewed_by</code> and <code>review_note</code> say.</p>
 
 <p>The rows are those of <code>qes_harmonize(layout = "long")</code>: one per respondent
 and wave they took part in, so a panel respondent has one row per wave,
-and no row is dropped. Socio-demographic columns (education, income,
+and <code>wave</code> is never <code>NA</code>. A respondent who took part in no wave has no
+row (in <code>qes2007_panel</code>, one interview that neither wave's rule counts);
+<code>attr(x, "qes_no_wave")</code> counts them, study by study. Socio-demographic columns (education, income,
 language, religion, region...) are the same on every row of a respondent;
 the vote, turnout and attitudes sit on the row of the wave that asked them
 (the vote intention on the campaign wave, the reported vote on the
@@ -233,9 +368,31 @@ recommended weight rescaled to mean 1 in each study and wave, and
 <code>weight_var</code> its source variable. Both are <code>NA</code> where the study has no
 recommended weight (<code>qes2008</code>: its weights are calibrated on the reported
 vote) or where the weight still needs review; <code>attr(x, "weights")</code> says
-which, study by study and wave by wave. Estimate within one study and
-wave, or with <code><a href="qes_design.html">qes_design()</a></code> on <code><a href="qes_harmonize.html">qes_harmonize()</a></code> output.</p>
+which, study by study and wave by wave (its <code>n_rows</code> add up to the rows
+of <code>x</code>). Estimate within one study and wave, or with <code><a href="qes_design.html">qes_design()</a></code> on
+<code><a href="qes_harmonize.html">qes_harmonize()</a></code> output.</p>
     </div>
+    <div class="section level2">
+    <h2 id="who-was-surveyed">Who was surveyed<a class="anchor" aria-label="anchor" href="#who-was-surveyed"></a></h2>
+
+
+<p>These differences between the studies matter for most analyses.</p><ul><li><p><code>qes1998</code> (the CROP and CREATEC polls) surveyed francophones only, each
+firm by its own definition (mother tongue for CREATEC, the language
+spoken most often at home for CROP): <code>language</code> is French or <code>NA</code>
+there, and the study says nothing about non-francophones.</p></li>
+<li><p><code>qes2018</code> also interviewed people aged 16 and 17 (251 of its 3,072
+respondents, by the deposit's note). They are <code>NA</code> in <code>age_group</code> and
+<code>vote_choice</code> but have values in the other columns (<code>yob</code>, <code>gender</code>,
+<code>sovereignty</code>...): drop them (by <code>yob</code>) to describe the electorate.</p></li>
+<li><p>In <code>qes2018_panel</code> only the web respondents were asked about
+employment: its 400 telephone respondents appear in <code>employment</code> as
+don't know or refused (<code>NA</code>, reason <code>dk_refused</code>), not as a real answer.</p></li>
+<li><p><code>religion</code> comes from two formats: 2012 to 2018 first ask whether the
+respondent belongs to a religion, then which one; 2022 offers one long
+list (agnostic counts as no religion). The share with no religion is
+higher after a filter question, so the levels are not strictly
+comparable across that change.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="correspondence-with-cesr">Correspondence with cesR<a class="anchor" aria-label="anchor" href="#correspondence-with-cesr"></a></h2>
 
@@ -259,7 +416,7 @@ cesR's columns.</p>
     <h2 id="columns">Columns<a class="anchor" aria-label="anchor" href="#columns"></a></h2>
 
 
-<p>The relaxed columns of spec 4.6.0, in order (<code>qes_spec("relaxed")</code> lists them with their French labels):</p><dl><dt><code>citizenship</code></dt>
+<p>The relaxed columns of spec 4.7.0, in order (<code>qes_spec("relaxed")</code> lists them with their French labels):</p><dl><dt><code>citizenship</code></dt>
 <dd><p>Citizenship (one value per respondent, target:citizen). Canadian citizenship where a study recorded it: asked directly in 2022, and taken in the 2018 panel from the screening question on the right to vote in the coming Quebec election, so that every respondent of that panel is a citizen. Levels: Canadian citizen; Not a Canadian citizen.</p></dd>
 
 <dt><code>yob</code></dt>
@@ -296,10 +453,10 @@ cesR's columns.</p>
 <dd><p>Marital status (one value per respondent, relaxed mappings only). Married or living with a partner, separated or divorced, widowed, or never married; 2012 and 2014 asked the official civil status, with no common-law option, so some partners who live together are never married there. Levels: Married or living with a partner; Separated or divorced; Widowed; Single, never married.</p></dd>
 
 <dt><code>employment</code></dt>
-<dd><p>Employment (one value per respondent, relaxed mappings only). The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. Levels: Working (employee or self-employed); Unemployed; Retired; Student; At home, unable to work or other.</p></dd>
+<dd><p>Employment (one value per respondent, relaxed mappings only). The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. In the 2018 panel only web respondents were asked about employment, so its telephone respondents appear as don't know or refused. Levels: Working (employee or self-employed); Unemployed; Retired; Student; At home, unable to work or other.</p></dd>
 
 <dt><code>union</code></dt>
-<dd><p>Union membership (one value per respondent, relaxed mappings only). Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing; the column is kept whatever its number of studies (essential), as decided on 2026-10-01. Levels: Yes; No.</p></dd>
+<dd><p>Union membership (one value per respondent, relaxed mappings only). Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing. Levels: Yes; No.</p></dd>
 
 <dt><code>region</code></dt>
 <dd><p>Region (one value per respondent, target:region_cma3). The Montreal census metropolitan area, the Quebec City census metropolitan area or the rest of Quebec, from each study's region or sub-region variable, with the boundaries each study used. Levels: Montreal CMA; Quebec CMA; Rest of Quebec.</p></dd>
@@ -332,7 +489,7 @@ cesR's columns.</p>
 <dd><p>Left-right self-placement (0-10) (on the wave that asked it, target:lr_self). Self-placement on a left-right scale from 0 (left) to 10 (right); a scale of another length would be rescaled to 0-10, and every study that asked one used 0 to 10. A number from 0 to 10.</p></dd>
 
 <dt><code>interest</code></dt>
-<dd><p>Interest in politics (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (interest_01) in three bands, low below 0.35 and high from 0.75; the 4-point and 0-10 questions do not line up, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. Levels: Low; Medium; High.</p></dd>
+<dd><p>Interest in politics (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (interest_01) in three bands, low below 0.55 and high from 0.85: on a 0-10 question, 0 to 5 is low, 6 to 8 medium and 9 or 10 high; on a 4-point question, not at all or hardly interested is low, quite interested medium and very interested high. The two formats still do not line up exactly, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. Levels: Low; Medium; High.</p></dd>
 
 <dt><code>interest_01</code></dt>
 <dd><p>Interest in politics (0-1) (on the wave that asked it, pooled:pol_interest). Interest on 0 to 1 (the pooled pol_interest): four-point answers scored 1, 0.7, 0.3 and 0, and 0-10 answers divided by 10. A number from 0 to 1.</p></dd>
@@ -374,7 +531,10 @@ cesR's columns.</p>
 off in spec 4.5.0). Its columns, groups and mappings may change, and a new
 relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts <code>education</code>
 in three groups instead of four, so that <code>qes1998</code> can be included, keeps
-the four groups as <code>education4</code>, and adds <code>union</code> and <code>econ_self</code>.</p>
+the four groups as <code>education4</code>, and adds <code>union</code> and <code>econ_self</code>. qesR
+0.9.2 (spec 4.7.0) cuts <code>interest</code> at 0.55 and 0.85 instead of 0.35 and
+0.75, so that a 0-10 answer of 6 to 8 is medium and 9 or 10 high, as
+"quite" and "very" interested are on the 4-point questions.</p>
     </div>
     <div class="section level2">
     <h2 id="en-fran-ais">En français<a class="anchor" aria-label="anchor" href="#en-fran-ais"></a></h2>
@@ -403,7 +563,20 @@ documents originaux, et non par une révision humaine, comme le disent
 leurs champs <code>reviewed_by</code> et <code>review_note</code>. Depuis qesR 0.9.1, <code>education</code> compte trois groupes
 (sans diplôme d'études secondaires, secondaire au collégial, université),
 ce qui permet d'inclure <code>qes1998</code>, et <code>education4</code> garde les quatre
-groupes. Les noms de
+groupes. Les lignes suivent celles de <code>qes_harmonize(layout = "long")</code> :
+<code>wave</code> ne vaut jamais NA, et une personne qui n'a participé à aucune
+vague n'a pas de ligne (<code>attr(x, "qes_no_wave")</code> les compte). Une ligne
+stricte encore en révision n'est pas appliquée : le vote précédent
+(<code>vote_prev</code>) de <code>qes2008</code> et de <code>qes2018</code> vaut NA (motif <code>not_reviewed</code>),
+et le message de synthèse le dit. <code>qes1998</code> n'a interrogé que des
+francophones ; <code>qes2018</code> a aussi interrogé des personnes de 16 et 17 ans,
+NA dans <code>age_group</code> et <code>vote_choice</code> mais présentes dans les autres
+colonnes ; dans <code>qes2018_panel</code>, seuls les répondants web ont été
+interrogés sur leur emploi, et ses répondants téléphoniques apparaissent
+dans <code>employment</code> comme « ne sait pas ou refus » ; la religion vient d'une question filtre (2012 à 2018) ou d'une
+seule longue liste (2022), si bien que ses niveaux ne sont pas strictement
+comparables entre ces deux formats. Depuis qesR 0.9.2, <code>interest</code> est
+coupé à 0,55 et 0,85 : de 0 à 10, 6 à 8 est moyen et 9 ou 10 élevé. Les noms de
 colonnes restent en anglais ; <code>lang = "fr"</code> donne les étiquettes, les
 règles et les sources en français.</p>
     </div>

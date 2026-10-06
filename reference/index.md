@@ -18,9 +18,9 @@ merged file. Data are returned, never written into your workspace unless
 you ask.
 
 - [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md)
-  : Download and Load a Quebec Election Study
+  : Load a Quebec Election Study
 - [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-  : Build the Merged QES File
+  : Build the merged file
 
 ## Studies and documents
 
@@ -67,7 +67,7 @@ turns the result into a survey design. See [How harmonization
 works](https://thomasgareau.github.io/qesR/articles/harmonization.md).
 
 - [`qes_spec()`](https://thomasgareau.github.io/qesR/reference/qes_spec.md)
-  : The harmonization spec (experimental)
+  : Harmonization rules and coverage (experimental)
 - [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
   : Harmonize variables across studies (experimental)
 - [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
@@ -98,30 +98,16 @@ Where downloaded files are kept, and how to list or delete them.
 
 ## Older function names
 
-Earlier names of qesR functions. They keep working, with the same
-arguments, and will not be removed; each prints a one-time notice naming
-its replacement. [The upgrading
-guide](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md)
-says what changed in their results.
-
-| Older name | Replacement |
-|----|----|
-| [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md), [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md) | [`qes_codebook()`](https://thomasgareau.github.io/qesR/reference/qes_codebook.md) |
-| [`format_codebook()`](https://thomasgareau.github.io/qesR/reference/format_codebook.md) | `qes_codebook(codebook, layout = )` |
-| [`get_value_labels()`](https://thomasgareau.github.io/qesR/reference/get_value_labels.md) | `qes_codebook(layout = "long")` |
-| [`get_question()`](https://thomasgareau.github.io/qesR/reference/get_question.md) | [`qes_question()`](https://thomasgareau.github.io/qesR/reference/qes_question.md) |
-| [`get_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md), [`get_qes_codebook_files()`](https://thomasgareau.github.io/qesR/reference/get_codebook_files.md) | [`qes_docs()`](https://thomasgareau.github.io/qesR/reference/qes_docs.md) |
-| [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md) | `qes_download(what = "docs")` |
-| [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md) | `head(get_qes())` |
-| [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md) | [`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md) |
-| [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md) | `qes_harmonize(srvy, targets = "decon")`, or [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md) for every study, relaxed |
+Earlier names that keep working;
+[`?qesR-deprecated`](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
+names each one’s replacement.
 
 - [`qesR-deprecated`](https://thomasgareau.github.io/qesR/reference/qesR-deprecated.md)
-  : Soft-deprecated qesR functions
+  : Older function names
 - [`get_qescodes()`](https://thomasgareau.github.io/qesR/reference/get_qescodes.md)
-  : List Quebec Election Study Survey Codes
+  : List study codes (older name)
 - [`get_preview()`](https://thomasgareau.github.io/qesR/reference/get_preview.md)
-  : Preview a Quebec Election Study
+  : Preview a Quebec Election Study (older name)
 - [`get_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
   [`get_qes_codebook()`](https://thomasgareau.github.io/qesR/reference/get_codebook.md)
   : Get a Quebec Election Study codebook (older name)
@@ -137,4 +123,4 @@ says what changed in their results.
 - [`download_codebook()`](https://thomasgareau.github.io/qesR/reference/download_codebook.md)
   : Download codebook files (older name)
 - [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
-  : Create a Prepared Non-Exhaustive qesR Dataset
+  : Prepared non-exhaustive data frame (older name)

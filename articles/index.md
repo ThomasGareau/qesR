@@ -2,7 +2,7 @@
 
 ### Get started
 
-- [Getting Started with
+- [Getting started with
   qesR](https://thomasgareau.github.io/qesR/articles/get-started.md):
 
 ### Examples

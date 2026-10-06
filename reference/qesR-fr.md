@@ -178,7 +178,7 @@ qes_question("qes2014", "Q19", lang = "fr")
 #> 1            fr     FALSE questionnaire 352010:Q19;352009:Q19     <NA>
 demo <- get_qes("qes_demo", quiet = TRUE)
 qes_cite("qes2014", lang = "fr")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.9.1, https://github.com/ThomasGareau/qesR"               
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", package R, version 0.9.2, https://github.com/ThomasGareau/qesR"               
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 options(old)
 ```

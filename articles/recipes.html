@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -160,6 +287,11 @@
     
     
 <p><em><a href="fr-recettes.html">Version française</a></em></p>
+<div class="qesr-download">
+<p><strong>This page downloads 11 studies</strong> (about 16 MB) the
+first time it runs. <code>options(qesR.cache = "disk")</code> keeps them
+on disk for later sessions.</p>
+</div>
 <p>Since the first provincial election studies, the Quebec vote has been
 read through language and the national question (Hamilton and Pinard
 1976; Pinard and Hamilton 1978; Bélanger et al. 2018). The Parti libéral
@@ -307,21 +439,23 @@ interval.</p>
 <span><span class="co">#&gt; French       French               0.1223020 0.1070069 0.1394418</span></span>
 <span><span class="co">#&gt; English     English               0.7418131 0.6814276 0.7942093</span></span>
 <span><span class="co">#&gt; Other         Other               0.6416905 0.5267904 0.7423376</span></span></code></pre></div>
-<p>In 2018, 74% of anglophones and 64% of allophones voted Liberal,
-against 12% of francophones. The allophone estimate rests on 84
-respondents, hence its wider interval. The next recipes group
-anglophones and allophones as non-francophones, since the allophone
-samples are too small to follow on their own from one election to the
-next.</p>
+<p>The output gives the Liberal vote of each mother-tongue group in
+2018, with its interval; the <a href="realignment.html">realignment
+page</a> follows these shares over every election. The allophone
+estimate rests on 84 respondents, hence its wider interval. The next
+recipes group anglophones and allophones as non-francophones, since the
+allophone samples are too small to follow on their own from one election
+to the next.</p>
 </div>
 <div class="section level2">
 <h2 id="every-study-one-at-a-time">6. Every study, one at a time<a class="anchor" aria-label="anchor" href="#every-study-one-at-a-time"></a>
 </h2>
 <p>Studies differ in population, mode, wording and weighting, so each
-estimate is made within one study before any comparison. The 1998 study
-does not measure mother tongue, so the series starts in 2007. The weight
-of the 2008 study is still under review: its estimates are unweighted,
-and the charts draw them as hollow points.</p>
+estimate is made within one study before any comparison. The 1998 polls
+surveyed francophones only, so they have no non-francophones to compare,
+and the series starts in 2007. The 2008 study has no recommended weight
+(its weights are calibrated on the reported vote; see the <a href="studies.html#weights">weights table</a>): its estimates are
+unweighted, and the charts draw them as hollow points.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2007"</span>, <span class="st">"qes2008"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span></span>
 <span><span class="va">r</span><span class="op">$</span><span class="va">francophone</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="va">lang_mother</span> <span class="op">==</span> <span class="st">"French"</span>, <span class="st">"francophone"</span>, <span class="st">"other"</span><span class="op">)</span><span class="op">)</span></span>
@@ -356,7 +490,7 @@ and the charts draw them as hollow points.</p>
 <span><span class="co">#&gt;  qes2018 2018     TRUE       other 71.83 66.55 76.58</span></span>
 <span><span class="co">#&gt;  qes2022 2022     TRUE francophone  6.13  4.42  8.44</span></span>
 <span><span class="co">#&gt;  qes2022 2022     TRUE       other 54.01 40.32 67.11</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-plq-language"><figcaption><span class="qesr-title">At every election since 2007, non-francophones were 38 to 62 points more likely than francophones to vote Liberal</span><span class="qesr-sub">Share of the reported vote for the PLQ among francophones and non-francophones (mother tongue), one Quebec Election Study per election, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/plq-language-light.png" alt="Line chart of the share of the reported vote for the PLQ at each Quebec election from 2007 to 2022, among francophones and among non-francophones. Among francophones it goes from 20% to 6%; among non-francophones it stays between 54% and 86%. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/plq-language-dark.png" alt="Line chart of the share of the reported vote for the PLQ at each Quebec election from 2007 to 2022, among francophones and among non-francophones. Among francophones it goes from 20% to 6%; among non-francophones it stays between 54% and 86%. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and lang_mother; non-francophones are respondents whose mother tongue is English or another language. Weighted with each study's post-election weight; hollow point (2008): unweighted.</p>
+<figure class="qesr-fig" id="fig-plq-language"><figcaption><span class="qesr-title">At every election since 2007, non-francophones were 38 to 62 points more likely than francophones to vote Liberal</span><span class="qesr-sub">Share of the reported vote for the PLQ among francophones and non-francophones (mother tongue), one Quebec Election Study per election, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/plq-language-light.png" alt="Line chart of the share of the reported vote for the PLQ at each Quebec election from 2007 to 2022, among francophones and among non-francophones. Among francophones it goes from 20% to 6%; among non-francophones it stays between 54% and 86%. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/plq-language-dark.png" alt="Line chart of the share of the reported vote for the PLQ at each Quebec election from 2007 to 2022, among francophones and among non-francophones. Among francophones it goes from 20% to 6%; among non-francophones it stays between 54% and 86%. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and lang_mother; non-francophones are respondents whose mother tongue is English or another language. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -387,7 +521,7 @@ and the charts draw them as hollow points.</p>
    <td style="text-align:left;"> +46.1 pts [38.2, 53.9] </td>
    <td style="text-align:right;"> 771 </td>
    <td style="text-align:right;"> 127 </td>
-   <td style="text-align:left;"> unweighted </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -435,16 +569,16 @@ from 38 points in 2007 to 62 points in 2014, and it did not clearly
 narrow after 2012. Relative to 2012 (about 50 points), the gap widened
 in 2014 and 2018 and was back to about 48 points in 2022, an estimate
 whose interval (34 to 62) includes the 2012 gap. Second, the two groups
-did not move in step. Among francophones, the Liberal vote fell from 20%
-in 2007 to 6% in 2022. Among non-francophones it moved between 54% and
-86% with no clear trend, and in 2022 it was about 4 points below its
-2007 level. The narrower gap of 2022 comes from the non-francophone
-side: from 2018 to 2022, the Liberal vote fell 18 points among
-non-francophones and 6 among francophones. The non-francophone estimate
-of 2022, however, rests on only 121 respondents, the smallest sample of
-the series (the largest has 359), and its interval is wide. This is also
-why the page does not split non-francophones into anglophones and
-allophones.</p>
+did not move in step: the francophone Liberal vote fell from one
+election to the next (the <a href="realignment.html">realignment
+page</a> follows it), while the non-francophone vote moved with no clear
+trend, and in 2022 it was about 4 points below its 2007 level. The
+narrower gap of 2022 comes from the non-francophone side: from 2018 to
+2022, the Liberal vote fell 18 points among non-francophones and 6 among
+francophones. The non-francophone estimate of 2022, however, rests on
+only 121 respondents, the smallest sample of the series (the largest has
+359), and its interval is wide. This is also why the page does not split
+non-francophones into anglophones and allophones.</p>
 </div>
 <div class="section level2">
 <h2 id="who-votes-liberal">7. Who votes Liberal<a class="anchor" aria-label="anchor" href="#who-votes-liberal"></a>
@@ -467,7 +601,7 @@ each group. Read this way, the change is plain.</p>
 <span><span class="co">#&gt;  qes2014 2014     TRUE 34.8 29.5 40.4</span></span>
 <span><span class="co">#&gt;  qes2018 2018     TRUE 57.2 52.5 61.8</span></span>
 <span><span class="co">#&gt;  qes2022 2022     TRUE 71.2 60.0 80.3</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-plq-composition"><figcaption><span class="qesr-title">Non-francophones went from 31% of Liberal voters in 2007 to 71% in 2022</span><span class="qesr-sub">Share of respondents whose mother tongue is not French among those who reported a vote for the PLQ, one Quebec Election Study per election, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/plq-composition-light.png" alt="Line chart of the share of non-francophones among respondents who reported a PLQ vote, at each Quebec election from 2007 to 2022, with a dashed line at 50%. It goes from 31% in 2007 to 71% in 2022. Values in the table view." width="672" height="326" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/plq-composition-dark.png" alt="Line chart of the share of non-francophones among respondents who reported a PLQ vote, at each Quebec election from 2007 to 2022, with a dashed line at 50%. It goes from 31% in 2007 to 71% in 2022. Values in the table view." width="672" height="326" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and lang_mother. Weighted with each study's post-election weight; hollow point (2008): unweighted.</p>
+<figure class="qesr-fig" id="fig-plq-composition"><figcaption><span class="qesr-title">Non-francophones went from 31% of Liberal voters in 2007 to 71% in 2022</span><span class="qesr-sub">Share of respondents whose mother tongue is not French among those who reported a vote for the PLQ, one Quebec Election Study per election, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/plq-composition-light.png" alt="Line chart of the share of non-francophones among respondents who reported a PLQ vote, at each Quebec election from 2007 to 2022, with a dashed line at 50%. It goes from 31% in 2007 to 71% in 2022. Values in the table view." width="672" height="326" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/plq-composition-dark.png" alt="Line chart of the share of non-francophones among respondents who reported a PLQ vote, at each Quebec election from 2007 to 2022, with a dashed line at 50%. It goes from 31% in 2007 to 71% in 2022. Values in the table view." width="672" height="326" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) and lang_mother. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -495,7 +629,7 @@ each group. Read this way, the change is plain.</p>
    <td style="text-align:right;"> 352 </td>
    <td style="text-align:left;"> 14.1 </td>
    <td style="text-align:left;"> 27.1 </td>
-   <td style="text-align:left;"> unweighted </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -665,22 +799,28 @@ plain ggplot2 chart to adapt (print it with <code>p</code>).</p>
 <span><span class="co"># (2012 on), from Élections Québec</span></span>
 <span><span class="va">official</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2007</span>, <span class="fl">2008</span>, <span class="fl">2012</span>, <span class="fl">2014</span>, <span class="fl">2018</span>, <span class="fl">2022</span><span class="op">)</span>,</span>
 <span>                       pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30.8</span>, <span class="fl">16.4</span>, <span class="fl">27.1</span>, <span class="fl">23.1</span>, <span class="fl">37.4</span>, <span class="fl">41.0</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">fr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">lang</span>, <span class="st">"fr"</span><span class="op">)</span></span>
-<span><span class="va">lab_series</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fr</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"ADQ (2007, 2008), puis CAQ : vote déclaré"</span>, official <span class="op">=</span> <span class="st">"Résultat officiel"</span><span class="op">)</span> <span class="kw">else</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"ADQ (2007, 2008), then CAQ: reported vote"</span>, official <span class="op">=</span> <span class="st">"Official result"</span><span class="op">)</span></span>
-<span><span class="va">lab_weight</span> <span class="op">&lt;-</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fr</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"pondéré"</span>, `FALSE` <span class="op">=</span> <span class="st">"non pondéré"</span><span class="op">)</span> <span class="kw">else</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"weighted"</span>, `FALSE` <span class="op">=</span> <span class="st">"unweighted"</span><span class="op">)</span></span>
+<span><span class="co"># the chart's labels, in English or French</span></span>
+<span><span class="va">labels_of</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">lang</span> <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">lang</span> <span class="op">==</span> <span class="st">"fr"</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>series <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"ADQ (2007, 2008), puis CAQ : vote déclaré"</span>, official <span class="op">=</span> <span class="st">"Résultat officiel"</span><span class="op">)</span>,</span>
+<span>         weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"pondéré"</span>, `FALSE` <span class="op">=</span> <span class="st">"non pondéré"</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">"% du vote déclaré"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>series <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"ADQ (2007, 2008), then CAQ: reported vote"</span>, official <span class="op">=</span> <span class="st">"Official result"</span><span class="op">)</span>,</span>
+<span>         weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"weighted"</span>, `FALSE` <span class="op">=</span> <span class="st">"unweighted"</span><span class="op">)</span>, y <span class="op">=</span> <span class="st">"% of the reported vote"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu">labels_of</span><span class="op">(</span>lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">lineage</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">year</span>, <span class="va">pct</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">official</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"official"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">official</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"official"</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">45</span>, size <span class="op">=</span> <span class="fl">9</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_linerange</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">lo</span>, ymax <span class="op">=</span> <span class="va">hi</span>, colour <span class="op">=</span> <span class="st">"lineage"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"lineage"</span>, fill <span class="op">=</span> <span class="va">weighted</span><span class="op">)</span>, shape <span class="op">=</span> <span class="fl">21</span>, size <span class="op">=</span> <span class="fl">3</span>, stroke <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"#1d97b0"</span>, official <span class="op">=</span> <span class="st">"grey20"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">lab_series</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"#1d97b0"</span>, `FALSE` <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">lab_weight</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>lineage <span class="op">=</span> <span class="st">"#1d97b0"</span>, official <span class="op">=</span> <span class="st">"grey20"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">lab</span><span class="op">$</span><span class="va">series</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>`TRUE` <span class="op">=</span> <span class="st">"#1d97b0"</span>, `FALSE` <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="va">lab</span><span class="op">$</span><span class="va">weight</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2007</span>, <span class="fl">2012</span>, <span class="fl">2014</span>, <span class="fl">2018</span>, <span class="fl">2022</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="kw">if</span> <span class="op">(</span><span class="va">fr</span><span class="op">)</span> <span class="st">"% du vote déclaré"</span> <span class="kw">else</span> <span class="st">"% of the reported vote"</span>, colour <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, y <span class="op">=</span> <span class="va">lab</span><span class="op">$</span><span class="va">y</span>, colour <span class="op">=</span> <span class="cn">NULL</span>, fill <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lineage</span>, digits <span class="op">=</span> <span class="fl">3</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    study year weighted  pct   lo   hi</span></span>
 <span><span class="co">#&gt;  qes2007 2007     TRUE 31.6 29.0 34.3</span></span>
@@ -689,7 +829,7 @@ plain ggplot2 chart to adapt (print it with <code>p</code>).</p>
 <span><span class="co">#&gt;  qes2014 2014     TRUE 23.1 20.5 26.0</span></span>
 <span><span class="co">#&gt;  qes2018 2018     TRUE 35.8 33.6 38.1</span></span>
 <span><span class="co">#&gt;  qes2022 2022     TRUE 33.0 29.3 36.9</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-lineage"><figcaption><span class="qesr-title">With the ADQ and the CAQ joined, the reported vote is within 2 points of the official result until 2018, and 8 points short in 2022</span><span class="qesr-sub">Share of the reported vote for the ADQ (2007, 2008) and the CAQ (2012 on), one Quebec Election Study per election, with 95% confidence intervals and the official result</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/lineage-light.png" alt="Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has 33% against 41% officially. Values in the table view." width="672" height="346" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/lineage-dark.png" alt="Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has 33% against 41% officially. Values in the table view." width="672" height="346" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012, and the lineage column joins them for a time series. Weighted with each study's post-election weight; hollow point (2008): unweighted.</p>
+<figure class="qesr-fig" id="fig-lineage"><figcaption><span class="qesr-title">With the ADQ and the CAQ joined, the reported vote is within 2 points of the official result until 2018, and 8 points short in 2022</span><span class="qesr-sub">Share of the reported vote for the ADQ (2007, 2008) and the CAQ (2012 on), one Quebec Election Study per election, with 95% confidence intervals and the official result</span></figcaption><img class="qesr-img qesr-light" src="recipes_files/figure-html/lineage-light.png" alt="Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has 33% against 41% officially. Values in the table view." width="672" height="346" loading="lazy"><img class="qesr-img qesr-dark" src="recipes_files/figure-html/lineage-dark.png" alt="Dot chart with confidence intervals of the share of the reported vote for the ADQ in 2007 and 2008 and for the CAQ from 2012 to 2022, in the Quebec Election Studies, with the official result as a line with ticks. In 2022 the study has 33% against 41% officially. Values in the table view." width="672" height="346" loading="lazy"><p class="qesr-note">Source: qesR, pooled vote_choice (reported vote) with qes_party_lineage(); official results of Élections Québec. The ADQ merged into the CAQ in 2012, and the lineage column joins them for a time series. Weighted with each study's post-election weight; hollow point (2008): unweighted, no validated weight.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -717,7 +857,7 @@ plain ggplot2 chart to adapt (print it with <code>p</code>).</p>
    <td style="text-align:left;"> 16.0 [13.8, 18.6] </td>
    <td style="text-align:left;"> 16.4 </td>
    <td style="text-align:left;"> −0.4 pts </td>
-   <td style="text-align:left;"> unweighted </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>

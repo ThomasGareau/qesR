@@ -1,5 +1,115 @@
 # Changelog
 
+## qesR 0.9.2
+
+*Upgrading from qesR 0.4.4? See [Upgrading from qesR
+0.4.4](https://thomasgareau.github.io/qesR/articles/migrating-0.7.md).*
+
+**In short:** corrections to
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+and to the long layout of
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md),
+clearer messages, and a shorter test run on CRAN.
+[`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+and
+[`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+return the same values as in 0.9.1.
+
+### `qes_decon()`
+
+- `interest` is cut at 0.55 and 0.85 of the 0-1 scale instead of 0.35
+  and 0.75. On a 0-10 question, 0 to 5 is now low, 6 to 8 medium and 9
+  or 10 high; on a 4-point question nothing changes (not at all or
+  hardly interested is low, quite medium, very high). With the old cuts,
+  the share with high interest nearly doubled between the 4-point
+  studies and the 0-10 studies through the change of scale alone; it now
+  differs by a few points. `interest_01` does not change.
+- In `sovereignty`, “would not vote” is still missing, now with the
+  reason `not_voted` instead of a reason meant for answers that straddle
+  two categories.
+- The summary message now names every column and study left empty
+  because a source is still in review, the previous vote of 2008 and
+  2018 included (`vote_prev`, held until a decision on respondents too
+  young to vote at the previous election). It used to count only the
+  relaxed mappings in review, so these two columns were empty without
+  notice.
+- [`?qes_decon`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  has a new section, *Who was surveyed*: the 1998 polls interviewed
+  francophones only; the 2018 study also interviewed people aged 16 and
+  17, who are missing in `age_group` and `vote_choice` but present in
+  the other columns; and religion comes from a filter question in
+  2012-2018 but from one long list in 2022, so its levels are not
+  strictly comparable across that change.
+- The description of `employment` and
+  [`?qes_decon`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  say that in the 2018 panel only the web respondents were asked about
+  employment, so its telephone respondents appear as don’t know or
+  refused; the description of `union` no longer mentions an internal
+  decision date.
+- A custom specification with two relaxed mappings that both replace the
+  values of one per-respondent column, in two waves of a study, no
+  longer lets the second erase the first: each gives the respondents of
+  its own wave, and the first wave wins. The shipped specification has
+  no such case, so no value changes.
+
+### Long layout
+
+- `qes_harmonize(layout = "long")` and
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  have one row per respondent and wave, so `wave` is never `NA`. A
+  respondent who took part in no wave (one interview in the 2007 panel
+  that neither wave counts) used to appear as an empty row with `wave`
+  `NA`; it is now left out. A message says how many (class
+  `qesR_message_no_wave`, silenced by `quiet = TRUE`), and
+  `attr(x, "qes_no_wave")` counts them study by study. The respondent
+  layout keeps every respondent, and `attr(qes_decon(), "weights")` now
+  covers every row.
+
+### Messages and help
+
+- [`get_qes()`](https://thomasgareau.github.io/qesR/reference/get_qes.md),
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  and
+  [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
+  word their one-time note neutrally (“returns the data and does not
+  create objects in your workspace: assign the result”), show it also
+  for scripts run with [`source()`](https://rdrr.io/r/base/source.html),
+  and never show it inside a function, while knitr renders a page, with
+  `quiet = TRUE` or when `assign_global` is passed.
+- [`qes_party_lineage()`](https://thomasgareau.github.io/qesR/reference/qes_party_lineage.md)
+  labels its new columns “(filiation)” in French data, and says that `x`
+  must come from
+  [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+  or
+  [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+  when it does not.
+- The harmonization reference and the coverage page no longer show
+  internal tags and status codes: notes lose their pointers to the
+  owner’s decisions, a relaxed mapping is marked “approved” or “awaiting
+  sign-off”, and the sentence on rows awaiting sign-off says in plain
+  words what happens to them.
+- A rendering step of
+  [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
+  no longer warns under the development version of R; its values do not
+  change.
+
+### Tests and checks
+
+- The exhaustive tests (every study, every rule, every view) are skipped
+  on CRAN, so the CRAN test run takes about a quarter of the time; they
+  still run in continuous integration and with `NOT_CRAN=true`.
+- `inst/WORDLIST` lists the proper nouns and terms of the documentation
+  for spell checks.
+
+### Harmonization rules (specification 4.7.0)
+
+- Relaxed layer: the `interest` cuts and the `sovereignty` reason above,
+  and text only for `union`, `employment` and the grade reason of the
+  2014 gender question. The recorded relaxed results are rebuilt (the
+  keys of `interest` and `sovereignty`, and the 2007 panel without its
+  respondent in no wave). No strict row, map, marginal or column hash
+  changes. Engine-Min is 0.9.2.
+
 ## qesR 0.9.1
 
 *Upgrading from qesR 0.4.4? See [Upgrading from qesR

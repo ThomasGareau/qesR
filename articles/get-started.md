@@ -1,4 +1,4 @@
-# Getting Started with qesR
+# Getting started with qesR
 
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-demarrage.md)*
@@ -10,18 +10,23 @@ studies, their documents, their citations and the description of every
 variable of every study ship with the package.
 
 This page goes from a study code to a weighted estimate. Every chunk on
-it runs without a network connection: it uses the catalog, the shipped
-metadata and `qes_demo`, a small synthetic study that ships with qesR.
-The chunks that would download a real study are shown but not run.
+it runs without a network connection, except the last section: it uses
+the catalog, the shipped metadata and `qes_demo`, a small synthetic
+study that ships with qesR. The chunks that would download a real study
+are shown but not run, and the last section, [On the real
+data](#on-the-real-data), runs the same steps on one real study, which
+it downloads.
 
 ## Install
 
-Install qesR from GitHub:
+Install qesR from GitHub, and the `survey` package for the estimates
+with confidence intervals:
 
 ``` r
 
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+install.packages("survey")
 ```
 
 ``` r
@@ -85,7 +90,6 @@ real study is downloaded once per session (or kept between sessions with
 ``` r
 
 demo <- get_qes("qes_demo", quiet = TRUE)
-#> get_qes() returns its result and no longer assigns it into your workspace by default. Write `qes_demo <- get_qes(...)`, or pass `assign_global = TRUE`. This note is shown once per session.
 dim(demo)
 #> [1] 60 11
 head(demo[, c("QSEXE", "Q2", "Q3", "Q19")])
@@ -134,17 +138,15 @@ text in English and French from the deposited questionnaires (for the
 ``` r
 
 cb <- qes_codebook("qes2014")
-head(cb[, c("variable", "label", "n_value_labels")])
+cb[cb$variable %in% c("Q2", "Q3", "Q19", "POND"), c("variable", "label", "n_value_labels")]
 #> <qes_codebook>
-#> Variables: 6 
+#> Variables: 4 
 #> Codebook/support files: 0 
 #>   variable                                    label n_value_labels
-#> 1    QUEST                                     <NA>              0
-#> 2     SDAT                          Date d'entrevue              0
-#> 3     LANG Préfèreriez-vous répondre à ce questi...              2
-#> 4    GREET Ce sondage en ligne est mené au nom d...              1
-#> 5     QAGE En quelle année êtes-vous né(e)? / En...              1
-#> 6    SMAGE                                      Age              0
+#> 1       Q2 Avez-vous voté à cette élection provi...              3
+#> 2       Q3          Pour quel parti avez-vous voté?              8
+#> 3      Q19 Si un référendum sur l'indépendance a...              4
+#> 4     POND                              Pondération              0
 qes_codebook("qes2014", layout = "long", variables = "Q19")
 #> <qes_codebook> survey: qes2014
 #> DOI: 10.5683/SP3/64F7WR 
@@ -186,14 +188,14 @@ searches every study at once, ignoring case and accents:
 ``` r
 
 hits <- qes_search("souverain|sovereign")
-head(hits[, c("study", "variable", "label")])
+head(hits[!is.na(hits$label), c("study", "variable", "label")])
 #>     study            variable                                    label
 #> 1 qes2022 cps_impissue_matrix What is the most important issue to y...
 #> 2 qes2022             pes_q23 Did you vote in the 1995 referendum o...
-#> 3 qes2018                  q2                                     <NA>
-#> 4 qes2018         q2_96_other                                     <NA>
-#> 5 qes2018                 q23                                     <NA>
-#> 6 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
+#> 3 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
+#> 4 qes2014                 Q16 Avez-vous voté lors du référendum de ...
+#> 5 qes2014                 Q50 Certaines personnes croient qu'il est...
+#> 6 qes2012               q34bb Of the following issues, which was, f...
 ```
 
 The codebook of the 2022 study is CC BY-NC 4.0 (attribution, no
@@ -256,8 +258,8 @@ c(
 
 The demonstration data are synthetic, so these numbers describe no
 population; they show the computation. On the real file the same lines
-give 34.8% YES among the 1,353 respondents who answered YES or NO (34.1%
-unweighted), weighted to the Quebec adult population of 2014.
+give the share of YES weighted to the Quebec adult population of 2014;
+the last section of this page computes it, with its confidence interval.
 
 ``` r
 
@@ -286,7 +288,7 @@ is to the target’s anchor question:
 
 ``` r
 
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "en")
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #>     study wave        source_var      grade         weight_var
 #> 1 qes2012 post               q52  identical               pond
@@ -295,8 +297,10 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #> 4 qes2022  cps cps_qc_referendum comparable cps_weight_general
 ```
 
-Some studies have no usable weight yet; their weight columns are `NA`,
-and
+Not every study has a validated weight: the [weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+of the website says which do. Where a study has none, its weight columns
+are `NA`, and
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 tells you when it leaves rows out. On the demonstration study, which
 stands in for `qes2014`:
@@ -304,7 +308,7 @@ stands in for `qes2014`:
 ``` r
 
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "en")
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 #>      study eligible_voter sov_indep sov_indep__na weight_post
 #> 1 qes_demo           TRUE        No          <NA>   1.2593217
@@ -322,18 +326,21 @@ says whether the respondent could vote in the election, and each wave’s
 recommended weight has mean 1: these questions were asked after the
 election, so `weight_post` is their weight, as the weight guide says.
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-hands the data to the `survey` package:
+hands the data to the `survey` package.
+[`droplevels()`](https://rdrr.io/r/base/droplevels.html) first removes
+the answers no respondent of the demonstration study gave, so that they
+do not show as rows of zeros:
 
 ``` r
 
 if (requireNamespace("survey", quietly = TRUE)) {
+  h$sov_indep <- droplevels(h$sov_indep)
   d <- qes_design(h, weight = "weight_post")
   survey::svymean(~sov_indep, d, na.rm = TRUE)
 }
-#>                                          mean     SE
-#> sov_indepYes                          0.41584 0.0718
-#> sov_indepNo                           0.58416 0.0718
-#> sov_indepWould not vote / would spoil 0.00000 0.0000
+#>                 mean     SE
+#> sov_indepYes 0.41584 0.0718
+#> sov_indepNo  0.58416 0.0718
 ```
 
 The standard error treats the weighted sample as a probability sample;
@@ -346,6 +353,14 @@ a study’s two waves can have different weights:
 asks you to choose when the targets need different ones. The reference
 of every target, generated from the specification, is
 [`vignette("harmonization-reference", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.md).
+
+For a quicker start across every study,
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+returns one flat data frame with plain column names (`vote_choice`,
+`sovereignty`, `education`, …), relaxed so that each column holds one
+concept even where the questions differ; see [One file for every
+study](https://thomasgareau.github.io/qesR/articles/decon.md) on the
+website.
 
 ## Provenance and citations
 
@@ -363,12 +378,12 @@ cites qesR and the datasets you used (see
 qes_provenance(demo)
 #> qes_demo: file 0 (qes_demo.sav), synthetic data shipped with qesR. md5
 #> e956e315800690cb0894c86ed85c8bea, verified. 60 rows, 11 columns. Retrieved on
-#> 2026-10-01 17:17:02 UTC (local_demo). Read with haven::read_sav(user_na =
+#> 2026-10-06 05:13:31 UTC (local_demo). Read with haven::read_sav(user_na =
 #> TRUE), haven 2.5.5. Licence: CC0 1.0. qesR catalog 2.4.1.
 #> 
 #> as.data.frame() gives every column.
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.2, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 
@@ -398,6 +413,30 @@ tryCatch(
 )
 #> [1] "qes2014"
 ```
+
+## On the real data
+
+The same estimate on the real `qes2014`, from harmonization to a share
+with its 95% confidence interval. This section downloads one study
+(about 0.4 MB) the first time it runs; `options(qesR.cache = "disk")`
+keeps it on disk for later sessions. The interval treats the weighted
+panel as a probability sample, so for an opt-in panel such as `qes2014`
+read it as a rough guide.
+
+``` r
+
+library(survey)
+h14 <- qes_harmonize("qes2014", targets = "sov_indep", quiet = TRUE)
+d14 <- qes_design(h14, weight = "weight_post")
+d14 <- subset(d14, sov_indep %in% c("Yes", "No"))
+svyciprop(~I(sov_indep == "Yes"), d14, method = "logit")
+#>                              2.5% 97.5%
+#> I(sov_indep == "Yes") 0.348 0.318 0.379
+```
+
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+labels the answers in English by default; `lang = "fr"` gives them in
+French.
 
 ## Code written for an earlier version
 

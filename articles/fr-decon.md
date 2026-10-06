@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/decon.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Depuis quelques années, l’Étude électorale canadienne dispose d’une
 porte d’entrée simple. La fonction
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
@@ -20,7 +24,7 @@ tableau descriptif, une variable de contrôle, un premier regard sur 25
 ans de données.
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 répond à ce besoin. La fonction renvoie un seul tableau pour les 11
-études harmonisées, avec 47 039 lignes (une par personne et par vague)
+études harmonisées, avec 47 038 lignes (une par personne et par vague)
 et 35 colonnes de données, une par concept, même lorsque le libellé ou
 les choix de réponse changent d’une étude à l’autre. Le prix à payer est
 l’exactitude. Les catégories sont larges, et aucune colonne ne prétend
@@ -30,12 +34,11 @@ que deux études ont posé la même question.
 
 ``` r
 
-d <- qes_decon(lang = params$lang)
+d <- qes_decon(lang = "fr")
 ```
 
-`lang = "fr"` donne les étiquettes en français (`params$lang` est la
-langue de cette page) ; les noms de colonnes ne changent pas. Les
-premières lignes :
+`lang = "fr"` donne les étiquettes en français ; les noms de colonnes ne
+changent pas. Les premières lignes :
 
 ``` r
 
@@ -54,7 +57,7 @@ d[1:4, c("study", "wave", "weight", "gender", "education", "vote_choice", "vote_
 
 Les premières colonnes identifient la ligne : `study`, `year`, `wave` et
 `qes_id`, l’identifiant de la personne dans l’étude. Le fichier compte
-40 987 répondants, et une personne interrogée par un panel a une ligne
+40 986 répondants, et une personne interrogée par un panel a une ligne
 par vague. Les colonnes sociodémographiques (scolarité, revenu, langue,
 religion, région…) se répètent sur chaque ligne d’une personne, alors
 que le vote, la participation et les attitudes se trouvent sur la ligne
@@ -66,9 +69,11 @@ de 1 dans chacune, et `weight_var` en donne la variable source. Sur les
 2012, EEQ 2014, EEQ 2018, Panel 2018 et EEQ 2022. Les autres ont `NA`.
 L’EEQ 2008 n’a pas de pondération recommandée, puisque ses pondérations
 sont calées sur le vote déclaré, et les pondérations des études
-suivantes sont encore en révision : Sondages de 1998, Panel 2007,
-Sondages CROP et Panel 2012. `attr(d, "weights")` donne le détail, vague
-par vague.
+suivantes ne sont pas validées : Sondages de 1998, Panel 2007, Sondages
+CROP et Panel 2012. `attr(d, "weights")` donne le détail, vague par
+vague, et le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+décrit la pondération de chaque étude.
 
 ## Les colonnes
 
@@ -93,8 +98,8 @@ qui donne la variable source et la règle de recodage de chaque étude.
 | [`language_eng`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-language_eng) | Anglais, langue maternelle | Oui · Non | les 11 | Oui quand l’anglais est parmi les langues maternelles déclarées, si bien qu’une personne qui a deux langues maternelles peut avoir oui à la fois dans language_eng et dans language_fr. |
 | [`religion`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-religion) | Religion | Catholique · Protestante · Autre chrétienne · Autre religion · Aucune religion | 4 (2012, 2014, 2018, 2022) | La religion d’appartenance, en cinq groupes ; la question de 2022 offre une longue liste, où l’agnosticisme compte comme aucune religion, et les autres études demandent d’abord si la personne appartient à une religion. |
 | [`marital`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-marital) | État matrimonial | Marié(e) ou en couple · Séparé(e) ou divorcé(e) · Veuf ou veuve · Célibataire, jamais marié(e) | 4 (2012, 2014, 2018, 2022) | Marié(e) ou en couple, séparé(e) ou divorcé(e), veuf ou veuve, ou jamais marié(e) ; 2012 et 2014 ont demandé l’état civil officiel, sans union de fait, si bien que des conjoints de fait y sont jamais marié(e)s. |
-| [`employment`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-employment) | Occupation | En emploi (salarié(e) ou à son compte) · Au chômage · Retraité(e) · Étudiant(e) · À la maison, inapte au travail ou autre | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | La situation d’emploi principale en cinq groupes ; une personne qui donne deux situations, comme retraitée et salariée, prend celle qui n’est pas l’emploi, et la personne au foyer, inapte au travail ou dans une autre situation est classée autre. |
-| [`union`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-union) | Appartenance à un syndicat | Oui · Non | 3 (2014, 2018, 2022) | Si la personne est syndiquée en 2022, mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018 (en 2018, les personnes qui vivent chez leurs parents ont été interrogées sur leur famille : parents, frères ou sœurs). Seules ces trois études posent la question, et celle de 2022 la pose après l’élection, si bien que ses répondants de la seule vague de campagne sont manquants ; la colonne est conservée quel que soit son nombre d’études (essentielle), selon la décision du 2026-10-01. |
+| [`employment`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-employment) | Occupation | En emploi (salarié(e) ou à son compte) · Au chômage · Retraité(e) · Étudiant(e) · À la maison, inapte au travail ou autre | 9 (2007, panel 2007, 2008, CROP, 2012, 2014, 2018, panel 2018, 2022) | La situation d’emploi principale en cinq groupes ; une personne qui donne deux situations, comme retraitée et salariée, prend celle qui n’est pas l’emploi, et la personne au foyer, inapte au travail ou dans une autre situation est classée autre. Dans le panel de 2018, seuls les répondants web ont été interrogés sur leur emploi, si bien que ses répondants téléphoniques apparaissent comme « ne sait pas ou refus ». |
+| [`union`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-union) | Appartenance à un syndicat | Oui · Non | 3 (2014, 2018, 2022) | Si la personne est syndiquée en 2022, mais si elle-même ou quelqu’un de son ménage l’est en 2014 et en 2018 (en 2018, les personnes qui vivent chez leurs parents ont été interrogées sur leur famille : parents, frères ou sœurs). Seules ces trois études posent la question, et celle de 2022 la pose après l’élection, si bien que ses répondants de la seule vague de campagne sont manquants. |
 | [`region`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-region) | Région | RMR de Montréal · RMR de Québec · Reste du Québec | 9 (2007, panel 2007, 2008, CROP, 2012, panel 2012, 2014, 2018, panel 2018) | La région métropolitaine de recensement de Montréal, celle de Québec ou le reste du Québec, d’après la variable de région ou de sous-région de chaque étude, avec les limites qu’elle a utilisées. |
 | [`region_admin`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-region_admin) | Région administrative | 17 catégories (Bas-Saint-Laurent, Saguenay–Lac-Saint-Jean…) | 5 (2007, panel 2007, 2012, 2014, 2018) | Les 17 régions administratives du Québec, là où une étude les a enregistrées ou des sous-régions qui s’y emboîtent ; les sous-régions de l’étude de 2007 et du panel de 2007 qui divisent une région sont réunies. |
 | [`born_canada`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-born_canada) | Né(e) au Canada | Oui · Non | 4 (2012, 2014, 2018, 2022) | Né(e) au Canada ou non, tel que chaque étude l’a demandé : d’après le lieu de naissance (Québec, ailleurs au Canada ou à l’étranger), ou demandé directement en 2022. |
@@ -105,7 +110,7 @@ qui donne la variable source et la règle de recodage de chaque étude.
 | [`vote_prev`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-vote_prev) | Vote à l’élection provinciale précédente | 9 catégories (PLQ, PQ…) | 5 (1998, panel 2007, CROP, 2014, 2022) | Le parti du vote déclaré à l’élection générale québécoise qui précède l’étude ; les abstentionnistes sont manquants, les sources nomment l’élection rappelée, et la question de 1998 ne nomme que le PLQ et le PQ. |
 | [`pid`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-pid) | Identification partisane provinciale | 10 catégories (PLQ, PQ…) | 6 (2007, 2008, 2012, 2014, 2018, 2022) | Le parti québécois auquel la personne s’identifie, ou aucun, tel que chaque étude l’a demandé ; les partis offerts diffèrent d’une étude à l’autre. |
 | [`lr`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-lr) | Autopositionnement gauche-droite (0-10) | nombre, 0-10 | 5 (2012, 2014, 2018, panel 2018, 2022) | L’autopositionnement sur une échelle gauche-droite de 0 (gauche) à 10 (droite) ; une échelle d’une autre longueur serait ramenée à 0-10, et toutes les études qui en ont posé une allaient de 0 à 10. |
-| [`interest`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-interest) | Intérêt pour la politique | Faible · Moyen · Élevé | 7 (2007, panel 2007, 2008, 2012, 2014, 2018, 2022) | L’intérêt de 0 à 1 (interest_01) en trois tranches, faible sous 0,35 et élevé à partir de 0,75 ; les questions à quatre points et de 0 à 10 ne concordent pas, et l’étude de 2008 et le panel de 2007 ont demandé l’intérêt pour l’élection ou la campagne, pas pour la politique. |
+| [`interest`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-interest) | Intérêt pour la politique | Faible · Moyen · Élevé | 7 (2007, panel 2007, 2008, 2012, 2014, 2018, 2022) | L’intérêt de 0 à 1 (interest_01) en trois tranches, faible sous 0,55 et élevé à partir de 0,85 : à une question de 0 à 10, 0 à 5 est faible, 6 à 8 moyen et 9 ou 10 élevé ; à une question à quatre points, pas du tout ou peu intéressé est faible, assez intéressé moyen et très intéressé élevé. Les deux formats ne concordent toujours pas exactement, et l’étude de 2008 et le panel de 2007 ont demandé l’intérêt pour l’élection ou la campagne, pas pour la politique. |
 | [`interest_01`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-interest_01) | Intérêt pour la politique (0-1) | nombre, 0-1 | 7 (2007, panel 2007, 2008, 2012, 2014, 2018, 2022) | L’intérêt de 0 à 1 (la variable regroupée pol_interest) : réponses à quatre points notées 1, 0,7, 0,3 et 0, et réponses de 0 à 10 divisées par 10. |
 | [`sovereignty`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-sovereignty) | Vote référendaire sur la souveraineté | Oui · Non | les 11 | Oui ou non à un référendum sur la souveraineté du Québec, quelle que soit la question (un pays indépendant, un pays souverain, la question de 1995 ou être favorable à l’indépendance) ; sovereignty_type dit laquelle, et ne voterait pas est manquant. |
 | [`sovereignty_type`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.html#relaxed-sovereignty_type) | Question du vote sur la souveraineté | Pays indépendant · Pays souverain · Question de 1995 (souveraineté-partenariat) · Favorable à l’indépendance · Question référendaire CROP (libellé non déposé) | les 11 | La question d’où vient sovereignty sur chaque ligne : un pays indépendant, un pays souverain, la question de 1995, être favorable à l’indépendance, ou la question des sondages CROP, dont le libellé complet n’a pas été déposé. |
@@ -259,8 +264,8 @@ secondaire réunis) et language (langue maternelle française). Une Étude
 électorale québécoise par élection. L'ADQ et la CAQ sont des partis
 distincts et le restent dans les données ; le trait pointillé marque le
 changement de parti. Pondéré avec la pondération postélectorale de
-chaque étude ; points creux (2008) : non pondéré, l'étude de 2008
-n'ayant pas de pondération recommandée.
+chaque étude ; points creux (2008) : non pondéré, aucune pondération
+validée (l'étude de 2008 n'a pas de pondération recommandée).
 
 Vue en tableau
 
@@ -269,9 +274,9 @@ Vue en tableau
 | 2007 | ADQ | Secondaire ou moins | 39,8 \[34,4 ; 45,4\] | 403 | pondéré |
 | 2007 | ADQ | Collégial ou cégep | 39,6 \[34,3 ; 45,1\] | 452 | pondéré |
 | 2007 | ADQ | Universitaire | 27,4 \[23,4 ; 31,8\] | 693 | pondéré |
-| 2008 | ADQ | Secondaire ou moins | 15,3 \[10,5 ; 21,8\] | 157 | non pondéré (aucune pondération recommandée) |
-| 2008 | ADQ | Collégial ou cégep | 22,8 \[18,0 ; 28,5\] | 241 | non pondéré (aucune pondération recommandée) |
-| 2008 | ADQ | Universitaire | 15,5 \[12,1 ; 19,6\] | 368 | non pondéré (aucune pondération recommandée) |
+| 2008 | ADQ | Secondaire ou moins | 15,3 \[10,5 ; 21,8\] | 157 | non pondéré : aucune pondération validée |
+| 2008 | ADQ | Collégial ou cégep | 22,8 \[18,0 ; 28,5\] | 241 | non pondéré : aucune pondération validée |
+| 2008 | ADQ | Universitaire | 15,5 \[12,1 ; 19,6\] | 368 | non pondéré : aucune pondération validée |
 | 2012 | CAQ | Secondaire ou moins | 29,1 \[23,0 ; 36,1\] | 225 | pondéré |
 | 2012 | CAQ | Collégial ou cégep | 30,0 \[25,2 ; 35,3\] | 383 | pondéré |
 | 2012 | CAQ | Universitaire | 24,3 \[20,4 ; 28,8\] | 483 | pondéré |

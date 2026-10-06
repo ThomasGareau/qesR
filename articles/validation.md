@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-validation.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 How close do the harmonized studies come to what is known about the
 electorate? This page compares, for every study the harmonization
 specification covers:
@@ -29,25 +32,11 @@ library(ggplot2)
 
 ``` r
 
-tr <- function(en, fr) if (identical(params$lang, "fr")) fr else en
-num <- function(x, digits = 1, sign = FALSE) {
-  formatC(x, format = "f", digits = digits, flag = if (sign) "+" else "",
-          decimal.mark = tr(".", ","))
-}
 # every study the specification covers, harmonized from the original files,
-# against the benchmarks that ship with qesR
+# against the benchmarks that ship with qesR (internal functions, not part
+# of qesR's interface)
 report <- qesR:::.qes_validation_run("all")
 report <- qesR:::.qes_validation_gate(report, qesR:::.qes_validation_recorded())
-studies <- qes_studies()
-report$year <- studies$year[match(report$study, studies$study)]
-report$weighting <- ifelse(report$weight == "none", tr("unweighted", "non pondéré"),
-                           tr("weighted", "pondéré"))
-# one row per study and check: the weighted value where the study has a
-# usable weight, the unweighted one otherwise
-best <- function(x) {
-  x <- x[order(x$study, x$variable, x$weight == "none"), ]
-  x[!duplicated(paste(x$study, x$variable)), ]
-}
 ```
 
 ## 1. Reported vote and official results
@@ -59,25 +48,6 @@ distributions, in points. It is the share of respondents who would have
 to change party for the two to agree; 0 is a perfect match. Parties that
 the study’s question did not list are counted as “other party” on the
 official side, since that is the only answer their voters could give.
-
-``` r
-
-idx <- report[report$check == "recall" & is.na(report$level), ]
-wide <- reshape(idx[, c("study", "year", "reference", "weighting", "n", "value")],
-                idvar = c("study", "year", "reference"), timevar = "weighting",
-                direction = "wide", drop = "n")
-wide <- merge(wide, aggregate(n ~ study, idx, max), by = "study")
-wide <- wide[order(wide$year, wide$study), ]
-un <- wide[[paste0("value.", tr("unweighted", "non pondéré"))]]
-we <- wide[[paste0("value.", tr("weighted", "pondéré"))]]
-knitr::kable(
-  data.frame(wide$study, wide$reference, wide$n, num(un),
-             ifelse(is.na(we), "", num(we))),
-  col.names = tr(c("Study", "Election", "N (reported a party)", "Index, unweighted", "Index, weighted"),
-                 c("Étude", "Élection", "N (ont nommé un parti)", "Indice, non pondéré", "Indice, pondéré")),
-  align = c("l", "l", "r", "r", "r")
-)
-```
 
 | Study | Election | N (reported a party) | Index, unweighted | Index, weighted |
 |:---|:---|---:|---:|---:|
@@ -96,10 +66,13 @@ The weighted index uses the weight the specification recommends for the
 wave that asked the question; `qes2007`, `qes2012`, `qes2014`,
 `qes2018`, `qes2022` and the 2018 panel have one. The weights of
 `qes2007_panel`, `qes2012_panel`, the CROP polls and `qes1998` are not
-documented well enough to be used, and both weights of `qes2008` are
-calibrated on the vote or on turnout, so their index is unweighted.
-`qes1998` interviewed francophones only, a population the official
-results do not describe: it is shown for reference but not checked.
+validated, and `qes2008` has no recommended weight (both of its weights
+are calibrated on the vote or on turnout), so their index is unweighted;
+the [weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+describes each study’s weight. `qes1998` interviewed francophones only,
+a population the official results do not describe: it is shown for
+reference but not checked.
 
 ![Heatmap of the difference in points between each party's share of the
 reported vote and its official share of valid votes, one row per party
@@ -187,21 +160,6 @@ share, in points, by party (rows) and study (columns)
 
 ## 2. Reported turnout
 
-``` r
-
-to <- best(report[report$check == "turnout", ])
-to <- to[order(to$year, to$study), ]
-# qes1998 (francophones only) is shown but not checked
-checked <- to[!(to$status %in% "skipped"), ]
-knitr::kable(
-  data.frame(to$study, to$reference, to$weighting, to$n, num(to$estimate), num(to$benchmark),
-             num(to$value, sign = TRUE)),
-  col.names = tr(c("Study", "Election", "Weighting", "N", "Reported turnout (%)", "Official turnout (%)", "Difference (points)"),
-                 c("Étude", "Élection", "Pondération", "N", "Participation déclarée (%)", "Participation officielle (%)", "Écart (points)")),
-  align = c("l", "l", "l", "r", "r", "r", "r")
-)
-```
-
 | Study | Election | Weighting | N | Reported turnout (%) | Official turnout (%) | Difference (points) |
 |:---|:---|:---|---:|---:|---:|---:|
 | qes1998 | QC1998 | unweighted | 1483 | 87.4 | 78.3 | +9.1 |
@@ -247,28 +205,6 @@ surveys’ answers naming two languages are left out. Education is
 compared as university (any university certificate, diploma or degree)
 or below.
 
-``` r
-
-cz <- report[report$check == "census" & is.na(report$level), ]
-vars <- c(gender = tr("Gender", "Genre"), age_group6 = tr("Age", "Âge"),
-          lang_mother = tr("Mother tongue", "Langue maternelle"),
-          education = tr("Education", "Scolarité"))
-cz$cell <- num(cz$value)
-cw <- reshape(cz[, c("study", "year", "reference", "variable", "weighting", "cell")],
-              idvar = c("study", "year", "reference", "weighting"), timevar = "variable",
-              direction = "wide")
-names(cw) <- sub("^cell\\.", "", names(cw))
-for (v in names(vars)) if (is.null(cw[[v]])) cw[[v]] <- NA
-cw <- cw[order(cw$year, cw$study, cw$weighting), ]
-out <- cw[, c("study", "reference", "weighting", names(vars))]
-out[is.na(out)] <- ""
-knitr::kable(
-  out, row.names = FALSE,
-  col.names = c(tr(c("Study", "Census", "Weighting"), c("Étude", "Recensement", "Pondération")), unname(vars)),
-  align = c("l", "l", "l", "r", "r", "r", "r")
-)
-```
-
 | Study              | Census      | Weighting  | Gender |  Age | Mother tongue | Education |
 |:-------------------|:------------|:-----------|-------:|-----:|--------------:|----------:|
 | qes_crop_2007_2010 | Census 2006 | unweighted |    6.9 |  5.9 |               |      13.5 |
@@ -298,13 +234,14 @@ share, one column per study with a usable weight; blue cells are
 over-represented, red cells under-represented, and grey cells marked
 cal. are margins the weight is raked on. University graduates are
 over-represented in every study. Values in the table
-view.](validation_files/figure-html/census-light.png)![Heatmap of the
-difference in points between the weighted share of each category of
-education, mother tongue, age and gender and its census share, one
-column per study with a usable weight; blue cells are over-represented,
-red cells under-represented, and grey cells marked cal. are margins the
-weight is raked on. University graduates are over-represented in every
-study. Values in the table
+view.](validation_files/figure-html/census-light.png)
+
+![Heatmap of the difference in points between the weighted share of each
+category of education, mother tongue, age and gender and its census
+share, one column per study with a usable weight; blue cells are
+over-represented, red cells under-represented, and grey cells marked
+cal. are margins the weight is raked on. University graduates are
+over-represented in every study. Values in the table
 view.](validation_files/figure-html/census-dark.png)
 
 Studies with a usable weight, weighted; the census of the year before
@@ -386,28 +323,6 @@ These checks do not compare with an outside source. They ask whether the
 harmonized answers relate to one another the way decades of research say
 they should; a mapping error (a party code swapped, a scale reversed)
 would break them.
-
-``` r
-
-k <- report[report$check == "construct", ]
-k <- k[order(k$year, k$study, k$variable), ]
-what <- c(interest_4pt = tr("Voters are more interested than nonvoters (mean, 1-4)",
-                            "Les votants sont plus intéressés que les abstentionnistes (moyenne, 1-4)"),
-          lr_self = tr("QS voters are to the left of CAQ voters (mean, 0-10)",
-                       "Les électeurs de QS sont à gauche de ceux de la CAQ (moyenne, 0-10)"),
-          sov_indep = tr("Yes to independence: PQ voters more than 40 points above PLQ voters (%)",
-                         "Oui à l'indépendance : électeurs du PQ plus de 40 points au-dessus de ceux du PLQ (%)"),
-          pid_prov = tr("Partisans who voted for their party: at least 55% (%)",
-                        "Partisans qui ont voté pour leur parti : au moins 55 % (%)"))
-knitr::kable(
-  data.frame(k$study, what[k$variable], num(k$estimate),
-             ifelse(is.na(k$benchmark), "", num(k$benchmark)),
-             ifelse(k$status == "pass", tr("yes", "oui"), tr("no", "non"))),
-  col.names = tr(c("Study", "Expected", "Value", "Compared with", "Holds"),
-                 c("Étude", "Attendu", "Valeur", "Comparé à", "Vérifié")),
-  align = c("l", "l", "r", "r", "l")
-)
-```
 
 | Study | Expected | Value | Compared with | Holds |
 |:---|:---|---:|---:|:---|

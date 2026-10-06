@@ -30,8 +30,8 @@ entre parenthèses.
 les niveaux non offerts sont des zéros structurels, listés dans la
 référence.
 
-† En attente d’approbation : appliquée seulement si vous la demandez
-(`qes_harmonize(include_draft = TRUE)`).
+† En attente d’approbation ; non utilisée par défaut (voir la
+référence).
 
 ## Variables regroupées par étude
 
@@ -78,8 +78,9 @@ questions diffèrent ([Un seul fichier pour toutes les
 grille indique d’où viennent les valeurs de chaque étude : *stricte*
 lorsque la colonne est construite à partir d’une cible ou d’une variable
 regroupée de la grille ci-dessus, *souple* lorsqu’un appariement souple
-de la question propre à l’étude les fournit, et *souple (en révision)*
-lorsque cet appariement n’est pas encore approuvé, si bien que
+de la question propre à l’étude les fournit, et *souple (en attente
+d’approbation)* lorsque cet appariement n’est pas encore approuvé, si
+bien que
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 laisse pour l’instant la colonne manquante dans cette étude. Les
 colonnes souples n’ont pas de niveau de comparabilité, et un appariement
@@ -98,7 +99,7 @@ la question de cette étude :
 ``` r
 
 library(qesR)
-qes_spec(lang = params$lang)
+qes_spec(lang = "fr")
 ```
 
 Un niveau compare la question d’une étude à la question d’ancrage de la

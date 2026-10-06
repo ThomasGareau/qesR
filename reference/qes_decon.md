@@ -60,7 +60,9 @@ row, `n_value` (respondents of a static column, rows of a wave column)
 and `na_reasons` (`"dk=12; refused=3"`)), `weights` (`study`, `wave`,
 `weight_var`, `status`, `reason`: `NA`, `"needs_review"`,
 `"no_recommended_weight"` or `"not_in_data"`, `n_rows`, `n_weight`,
-`mean`), `qes_provenance` (the files read; see
+`mean`), `qes_no_wave` (`study`, `n_rows`: the respondents left out
+because they took part in no wave), `qes_provenance` (the files read;
+see
 [`qes_provenance()`](https://thomasgareau.github.io/qesR/reference/qes_provenance.md)),
 `spec_version`, `qesR_version` and `lang`.
 
@@ -88,27 +90,59 @@ many. The 65 mappings of spec 4.6.0, the 5 it adds (the education of
 `qes1998`, `union` and `econ_self`) included, are signed off (status
 `stable`) by an automated double review against the original files and
 documents, not a human review, as their `reviewed_by` and `review_note`
-say.
+say. A strict row still in review is not applied either: the previous
+vote (`vote_prev`) of `qes2008` and `qes2018` is `NA` (reason
+`not_reviewed`) while a decision on the respondents too young to vote at
+the previous election is pending, and the summary message names such
+columns and studies.
 
 ## Rows, waves and weights
 
 The rows are those of `qes_harmonize(layout = "long")`: one per
 respondent and wave they took part in, so a panel respondent has one row
-per wave, and no row is dropped. Socio-demographic columns (education,
-income, language, religion, region...) are the same on every row of a
-respondent; the vote, turnout and attitudes sit on the row of the wave
-that asked them (the vote intention on the campaign wave, the reported
-vote on the post-election wave). With `weights = TRUE`, `weight` is the
-wave's recommended weight rescaled to mean 1 in each study and wave, and
-`weight_var` its source variable. Both are `NA` where the study has no
-recommended weight (`qes2008`: its weights are calibrated on the
-reported vote) or where the weight still needs review;
-`attr(x, "weights")` says which, study by study and wave by wave.
+per wave, and `wave` is never `NA`. A respondent who took part in no
+wave has no row (in `qes2007_panel`, one interview that neither wave's
+rule counts); `attr(x, "qes_no_wave")` counts them, study by study.
+Socio-demographic columns (education, income, language, religion,
+region...) are the same on every row of a respondent; the vote, turnout
+and attitudes sit on the row of the wave that asked them (the vote
+intention on the campaign wave, the reported vote on the post-election
+wave). With `weights = TRUE`, `weight` is the wave's recommended weight
+rescaled to mean 1 in each study and wave, and `weight_var` its source
+variable. Both are `NA` where the study has no recommended weight
+(`qes2008`: its weights are calibrated on the reported vote) or where
+the weight still needs review; `attr(x, "weights")` says which, study by
+study and wave by wave (its `n_rows` add up to the rows of `x`).
 Estimate within one study and wave, or with
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 on
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 output.
+
+## Who was surveyed
+
+These differences between the studies matter for most analyses.
+
+- `qes1998` (the CROP and CREATEC polls) surveyed francophones only,
+  each firm by its own definition (mother tongue for CREATEC, the
+  language spoken most often at home for CROP): `language` is French or
+  `NA` there, and the study says nothing about non-francophones.
+
+- `qes2018` also interviewed people aged 16 and 17 (251 of its 3,072
+  respondents, by the deposit's note). They are `NA` in `age_group` and
+  `vote_choice` but have values in the other columns (`yob`, `gender`,
+  `sovereignty`...): drop them (by `yob`) to describe the electorate.
+
+- In `qes2018_panel` only the web respondents were asked about
+  employment: its 400 telephone respondents appear in `employment` as
+  don't know or refused (`NA`, reason `dk_refused`), not as a real
+  answer.
+
+- `religion` comes from two formats: 2012 to 2018 first ask whether the
+  respondent belongs to a religion, then which one; 2022 offers one long
+  list (agnostic counts as no religion). The share with no religion is
+  higher after a filter question, so the levels are not strictly
+  comparable across that change.
 
 ## Correspondence with cesR
 
@@ -130,7 +164,7 @@ same decision) and `education4` (the four groups of education that
 
 ## Columns
 
-The relaxed columns of spec 4.6.0, in order (`qes_spec("relaxed")` lists
+The relaxed columns of spec 4.7.0, in order (`qes_spec("relaxed")` lists
 them with their French labels):
 
 - `citizenship`:
@@ -247,9 +281,11 @@ them with their French labels):
   Employment (one value per respondent, relaxed mappings only). The main
   employment status in five groups; a respondent who gave two statuses,
   such as retired and working, takes the one that is not work, and at
-  home, unable to work and other statuses are other. Levels: Working
-  (employee or self-employed); Unemployed; Retired; Student; At home,
-  unable to work or other.
+  home, unable to work and other statuses are other. In the 2018 panel
+  only web respondents were asked about employment, so its telephone
+  respondents appear as don't know or refused. Levels: Working (employee
+  or self-employed); Unemployed; Retired; Student; At home, unable to
+  work or other.
 
 - `union`:
 
@@ -259,8 +295,7 @@ them with their French labels):
   respondents who live with their parents were asked about their family:
   parents, brothers or sisters). Only these three studies ask it, and
   2022 asks it after the election, so its campaign-only respondents are
-  missing; the column is kept whatever its number of studies
-  (essential), as decided on 2026-10-01. Levels: Yes; No.
+  missing. Levels: Yes; No.
 
 - `region`:
 
@@ -348,10 +383,13 @@ them with their French labels):
 - `interest`:
 
   Interest in politics (on the wave that asked it, pooled:pol_interest).
-  Interest on 0 to 1 (interest_01) in three bands, low below 0.35 and
-  high from 0.75; the 4-point and 0-10 questions do not line up, and the
-  2008 study and the 2007 panel asked interest in the election or the
-  campaign, not in politics. Levels: Low; Medium; High.
+  Interest on 0 to 1 (interest_01) in three bands, low below 0.55 and
+  high from 0.85: on a 0-10 question, 0 to 5 is low, 6 to 8 medium and 9
+  or 10 high; on a 4-point question, not at all or hardly interested is
+  low, quite interested medium and very interested high. The two formats
+  still do not line up exactly, and the 2008 study and the 2007 panel
+  asked interest in the election or the campaign, not in politics.
+  Levels: Low; Medium; High.
 
 - `interest_01`:
 
@@ -443,7 +481,10 @@ off in spec 4.5.0). Its columns, groups and mappings may change, and a
 new relaxed mapping starts in review: qesR 0.9.1 (spec 4.6.0) puts
 `education` in three groups instead of four, so that `qes1998` can be
 included, keeps the four groups as `education4`, and adds `union` and
-`econ_self`.
+`econ_self`. qesR 0.9.2 (spec 4.7.0) cuts `interest` at 0.55 and 0.85
+instead of 0.35 and 0.75, so that a 0-10 answer of 6 to 8 is medium and
+9 or 10 high, as "quite" and "very" interested are on the 4-point
+questions.
 
 ## En français
 
@@ -472,7 +513,22 @@ originaux, et non par une révision humaine, comme le disent leurs champs
 `reviewed_by` et `review_note`. Depuis qesR 0.9.1, `education` compte
 trois groupes (sans diplôme d'études secondaires, secondaire au
 collégial, université), ce qui permet d'inclure `qes1998`, et
-`education4` garde les quatre groupes. Les noms de colonnes restent en
+`education4` garde les quatre groupes. Les lignes suivent celles de
+`qes_harmonize(layout = "long")` : `wave` ne vaut jamais NA, et une
+personne qui n'a participé à aucune vague n'a pas de ligne
+(`attr(x, "qes_no_wave")` les compte). Une ligne stricte encore en
+révision n'est pas appliquée : le vote précédent (`vote_prev`) de
+`qes2008` et de `qes2018` vaut NA (motif `not_reviewed`), et le message
+de synthèse le dit. `qes1998` n'a interrogé que des francophones ;
+`qes2018` a aussi interrogé des personnes de 16 et 17 ans, NA dans
+`age_group` et `vote_choice` mais présentes dans les autres colonnes ;
+dans `qes2018_panel`, seuls les répondants web ont été interrogés sur
+leur emploi, et ses répondants téléphoniques apparaissent dans
+`employment` comme « ne sait pas ou refus » ; la religion vient d'une
+question filtre (2012 à 2018) ou d'une seule longue liste (2022), si
+bien que ses niveaux ne sont pas strictement comparables entre ces deux
+formats. Depuis qesR 0.9.2, `interest` est coupé à 0,55 et 0,85 : de 0 à
+10, 6 à 8 est moyen et 9 ou 10 élevé. Les noms de colonnes restent en
 anglais ; `lang = "fr"` donne les étiquettes, les règles et les sources
 en français.
 

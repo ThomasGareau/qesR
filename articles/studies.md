@@ -34,6 +34,52 @@ check both before comparing studies. The licences, and the attribution
 the 2022 study requires, are on [Citing qesR and the
 studies](https://thomasgareau.github.io/qesR/articles/citations.md).
 
+## Study codes
+
+[`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
+lists 13 study codes. `qes1998` is the panel file that combines the two
+1998 polls, which also load on their own (`qes1998_crop` and
+`qes1998_createc`). The harmonized data of
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+and
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+cover 11 of the codes: every study but the two 1998 polls taken
+separately.
+
+The 1998 polls surveyed francophones only, CREATEC by mother tongue and
+CROP by language of use. The files have no mother-tongue question that
+qesR harmonizes for 1998, so the examples count every 1998 respondent as
+francophone.
+
+## Weights
+
+Each wave of a harmonized study has one recommended weight, or none.
+Only a weight checked against the study’s documentation and its file is
+used: 6 of the 11 studies have one. In the others, the weight columns of
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+are `NA`, and the examples draw their estimates as hollow dots, marked
+“unweighted: no validated weight”. `qes_spec("spec")$tables$weights`
+gives every weight of every study, with its source.
+
+| Study | Wave | Recommended weight | Status | Calibrated on (as documented) |
+|:---|:---|:---|:---|:---|
+| [`qes2022`](#qes2022) | cps | `cps_weight_general` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | age; gender; education; language |
+| [`qes2022`](#qes2022) | pes | `pes_weight_general` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | age; gender; education; language |
+| [`qes2018`](#qes2018) | post | `pond` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex x age; sex x region; sex x language; age x education |
+| [`qes2014`](#qes2014) | post | `POND` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; language |
+| [`qes2012`](#qes2012) | post | `pond` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; language |
+| [`qes2018_panel`](#qes2018_panel) | pre | `weight` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex (sexfix); age (3 bands); region (fsa_tabl, 5 regions); mother tongue (s1, French vs other); education (scolU, university or not) |
+| [`qes2018_panel`](#qes2018_panel) | post | `weight_rts` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex (sexfix); age (3 bands); region (fsa_tabl, 5 regions); mother tongue (s1, French vs other); education (scolU, university or not) |
+| [`qes2012_panel`](#qes2012_panel) | pre | `pondam1` | unweighted: weight not validated (weight columns `NA`) | sex; age (6 bands); region (reg, 4); mother tongue (lmat, 3) |
+| [`qes2012_panel`](#qes2012_panel) | post | `pond_post` | unweighted: weight not validated (weight columns `NA`) | sex; age (6 bands); region (reg, 4); mother tongue (lmat, 3) |
+| [`qes2007_panel`](#qes2007_panel) | pre | `pondam1` | unweighted: weight not validated (weight columns `NA`) | poll (nompn); sex; age (6 bands); region (reg, 3); home language (lusage2, 2); education (scol, 4) |
+| [`qes2007_panel`](#qes2007_panel) | post | `pond_tot_am1` | unweighted: weight not validated (weight columns `NA`) | poll (nompn); sex; age (6 bands); region (reg, 3); home language (lusage2, 2); education (scol, 4) |
+| [`qes2007`](#qes2007) | post | `pond` | weighted: validated, in the weight columns of [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; mother tongue |
+| [`qes2008`](#qes2008) | post | none recommended | unweighted: the file’s weights (`pond`, `pondx`) are calibrated on the reported vote | sex; age; region (reg, 5); mother tongue; education; reported vote |
+| [`qes1998`](#qes1998) | pre | `ponder3` | unweighted: weight not validated (weight columns `NA`) | pre-election intention stratum (vpl, through poids) x each firm’s weight ponderc (CROP: 1996 Census; CREATEC: undocumented) |
+| [`qes1998`](#qes1998) | post | `ponder3` | unweighted: weight not validated (weight columns `NA`) | pre-election intention stratum (vpl, through poids) x each firm’s weight ponderc (CROP: 1996 Census; CREATEC: undocumented) |
+| [`qes_crop_2007_2010`](#qes_crop_2007_2010) | every poll | `XPOND` | unweighted: weight not validated (weight columns `NA`) | sex; age (18-34, 35-54, 55+); region (Montréal CMA, Québec CMA, elsewhere); home language (French, English or other) |
+
 ## By study
 
 The Deposit line links to the deposit’s DOI. The document links download

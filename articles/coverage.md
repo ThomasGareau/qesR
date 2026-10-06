@@ -28,8 +28,7 @@ in parentheses.
 \* The study’s question did not offer every level of the target: the
 levels it did not offer are structural zeros, listed in the reference.
 
-† Awaiting sign-off: applied only if you ask for it
-(`qes_harmonize(include_draft = TRUE)`).
+† Awaiting sign-off; not used by default (see the reference).
 
 ## Pooled variables by study
 
@@ -75,7 +74,8 @@ study](https://thomasgareau.github.io/qesR/articles/decon.md)). The grid
 says where each study’s values come from: *strict* where the column is
 built from a target or a pooled variable of the grid above, *relaxed*
 where a relaxed mapping of the study’s own question gives them, and
-*relaxed (in review)* where that mapping is not yet signed off, so that
+*relaxed (awaiting sign-off)* where that mapping is not yet signed off,
+so that
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 leaves the column missing there for now. Relaxed columns carry no grade,
 and a mapping leaves a study’s column missing where its categories
@@ -92,7 +92,7 @@ study, each cell the grade of that study’s question:
 ``` r
 
 library(qesR)
-qes_spec(lang = params$lang)
+qes_spec(lang = "en")
 ```
 
 A grade compares a study’s question with the target’s anchor question.

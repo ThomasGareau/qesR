@@ -29,10 +29,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -41,12 +69,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -62,20 +94,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +215,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -108,7 +235,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -154,6 +281,12 @@
     
     
 <p><em><a href="harmonization.html">English version</a></em></p>
+<div class="qesr-download">
+<p><strong>Cette page télécharge 6 études</strong> (environ 13 Mo) la
+première fois qu’elle s’exécute.
+<code>options(qesR.cache = "disk")</code> les garde sur le disque pour
+les sessions suivantes.</p>
+</div>
 <p>Cette page va de <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> jusqu’à une estimation
 pondérée, étude par étude, et montre ce que qesR consigne en chemin : le
 niveau de comparabilité de la question de chaque étude, le motif de
@@ -165,16 +298,13 @@ niveaux de comparabilité et les appariements peuvent encore changer
 d’une version de qesR à l’autre. Pour chaque étude et chaque variable
 harmonisée (« cible »), les règles livrées avec qesR indiquent quelle
 question alimente la cible et comment chacun de ses codes correspond aux
-niveaux de la cible ; rien n’est apparié par le nom.
-<code>qes1998</code>, les panels Durand et les sondages CROP n’ont pas
-encore de pondération utilisable : leurs colonnes de pondération valent
+niveaux de la cible ; rien n’est apparié par le nom. Certaines études
+n’ont pas de pondération validée : leurs colonnes de pondération valent
 donc <code>NA</code>, et leurs réponses sont harmonisées comme les
-autres.</p>
+autres (le <a href="fr-etudes.html#ponderations">tableau des
+pondérations</a> donne la pondération de chaque étude).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
-<span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">en</span>, <span class="va">fr</span><span class="op">)</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">lang</span>, <span class="st">"fr"</span><span class="op">)</span><span class="op">)</span> <span class="va">fr</span> <span class="kw">else</span> <span class="va">en</span></span>
-<span><span class="co"># percentages with one decimal, in the page's style</span></span>
-<span><span class="va">pct</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="fl">1</span>, decimal.mark <span class="op">=</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"."</span>, <span class="st">","</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="quelles-études-posent-la-question">Quelles études posent la question<a class="anchor" aria-label="anchor" href="#quelles-%C3%A9tudes-posent-la-question"></a>
 </h2>
@@ -185,7 +315,7 @@ grille complète est sur la <a href="fr-couverture.html">page de
 couverture</a>). Deux cibles ici : la question référendaire sur un
 Québec pays indépendant, et le vote déclaré après l’élection.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_indep"</span>, <span class="st">"vote_prov_recall"</span><span class="op">)</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">grid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_indep"</span>, <span class="st">"vote_prov_recall"</span><span class="op">)</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">grid</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"target"</span>, <span class="st">"label"</span>, <span class="st">"qes2022"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2012"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>
@@ -226,7 +356,7 @@ Québec pays indépendant, et le vote déclaré après l’élection.</p>
 <p>La vue de correspondance (<code>"crosswalk"</code>) dit sur quelle
 question porte chaque niveau, et pourquoi :</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sov_indep"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">xw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sov_indep"</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">xw</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"source_var"</span>, <span class="st">"grade"</span>, <span class="st">"grade_reason"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
@@ -303,7 +433,7 @@ ajoute une colonne <code>&lt;cible&gt;__na</code> avec le motif de
 chaque valeur manquante.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sov_indep"</span>, <span class="st">"vote_prov_recall"</span><span class="op">)</span>, layout <span class="op">=</span> <span class="st">"long"</span>,</span>
-<span>                   missing <span class="op">=</span> <span class="st">"reasons"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<span>                   missing <span class="op">=</span> <span class="st">"reasons"</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Utilisation de la copie en cache de « 2022 Quebec Election Study v1.dta ».</span></span>
 <span><span class="co">#&gt; Utilisation de la copie en cache de « Quebec Election Study 2018.dta ».</span></span>
 <span><span class="co">#&gt; Utilisation de la copie en cache de « Quebec Election Study 2014.sav ».</span></span>
@@ -338,7 +468,7 @@ des pondérations différentes.</p>
 :</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">h</span><span class="op">$</span><span class="va">sov_indep__na</span><span class="op">)</span></span>
-<span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="va">reasons</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">reasons</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="va">reasons</span> <span class="op">&lt;-</span> <span class="va">reasons</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums-methods.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">reasons</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span>valid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">h</span><span class="op">$</span><span class="va">sov_indep</span><span class="op">)</span>, <span class="va">h</span><span class="op">$</span><span class="va">study</span>, <span class="va">sum</span><span class="op">)</span>, <span class="va">reasons</span><span class="op">[</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
@@ -417,7 +547,7 @@ ne reste que les études qui ont posé la question d’ancrage elle-même
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">strict</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"sov_indep"</span>, layout <span class="op">=</span> <span class="st">"long"</span>, missing <span class="op">=</span> <span class="st">"reasons"</span>,</span>
 <span>                        min_grade <span class="op">=</span> <span class="st">"identical"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                        lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<span>                        lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">strict</span><span class="op">$</span><span class="va">study</span>, <span class="va">strict</span><span class="op">$</span><span class="va">sov_indep__na</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dk"</span>, <span class="st">"refused"</span>, <span class="st">"below_grade"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;          </span></span>
 <span><span class="co">#&gt;             dk refused below_grade</span></span>
@@ -549,8 +679,8 @@ de sondage sert donc aux deux cibles.</p>
 <p><code><a href="../reference/qes_design.html">qes_design()</a></code> transmet les données au package
 <code>survey</code> : chaque étude est une strate et, en disposition
 longue, le répondant est l’unité d’échantillonnage. Les estimations sont
-calculées dans chaque étude avec <code>svyby()</code> ; le tableau
-signale les niveaux qu’une étude n’offrait pas au lieu d’afficher 0.</p>
+calculées dans chaque étude avec <code><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby()</a></code> ; un tiret signale
+les niveaux qu’une étude n’offrait pas, au lieu d’un 0.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 1151 ligne(s) sans valeur de « weight » sont laissées hors du plan (hors d'une vague ayant cette pondération, ou pondération à réviser) : qes2008 1151.</span></span></code></pre></div>
@@ -559,7 +689,8 @@ signale les niveaux qu’une étude n’offrait pas au lieu d’afficher 0.</p>
 <span><span class="va">spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"spec"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Weighted percentage of each level of `target` by study, with its</span></span>
-<span><span class="co"># standard error; levels the study's question did not offer are marked.</span></span>
+<span><span class="co"># standard error; a dash marks the levels the study's question did not offer.</span></span>
+<span><span class="va">pct</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="va">x</span>, format <span class="op">=</span> <span class="st">"f"</span>, digits <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">share_table</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">design</span>, <span class="va">target</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">est</span> <span class="op">&lt;-</span> <span class="fu">survey</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/formula.html" class="external-link">as.formula</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"~"</span>, <span class="va">target</span><span class="op">)</span><span class="op">)</span>, <span class="op">~</span><span class="va">study</span>, <span class="va">design</span>,</span>
 <span>                       <span class="fu">survey</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/survey/man/surveysummary.html" class="external-link">svymean</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -574,7 +705,7 @@ signale les niveaux qu’une étude n’offrait pas au lieu d’afficher 0.</p>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">s</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">off</span> <span class="op">&lt;-</span> <span class="va">cells</span><span class="op">$</span><span class="va">levels_not_offered</span><span class="op">[</span><span class="va">cells</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="va">s</span> <span class="op">&amp;</span> <span class="va">cells</span><span class="op">$</span><span class="va">target</span> <span class="op">==</span> <span class="va">target</span><span class="op">]</span></span>
 <span>    <span class="va">gone</span> <span class="op">&lt;-</span> <span class="va">lv</span><span class="op">[</span><span class="va">names_lv</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/strsplit.html" class="external-link">strsplit</a></span><span class="op">(</span><span class="va">off</span>, <span class="st">";"</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span></span>
-<span>    <span class="va">out</span><span class="op">[</span><span class="va">s</span>, <span class="va">gone</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">tr</span><span class="op">(</span><span class="st">"not offered"</span>, <span class="st">"non offert"</span><span class="op">)</span></span>
+<span>    <span class="va">out</span><span class="op">[</span><span class="va">s</span>, <span class="va">gone</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"\u2014"</span></span>
 <span>  <span class="op">}</span></span>
 <span>  <span class="va">out</span></span>
 <span><span class="op">}</span></span>
@@ -597,25 +728,25 @@ signale les niveaux qu’une étude n’offrait pas au lieu d’afficher 0.</p>
 <td align="left">qes2012</td>
 <td align="left">40,4 (1,5)</td>
 <td align="left">59,6 (1,5)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 </tr>
 <tr class="odd">
 <td align="left">qes2014</td>
 <td align="left">34,8 (1,5)</td>
 <td align="left">65,2 (1,5)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 </tr>
 <tr class="even">
 <td align="left">qes2018</td>
 <td align="left">34,6 (1,0)</td>
 <td align="left">65,4 (1,0)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 </tr>
 <tr class="odd">
 <td align="left">qes2022</td>
 <td align="left">34,3 (1,8)</td>
 <td align="left">65,7 (1,8)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 </tr>
 </tbody>
 </table>
@@ -623,10 +754,9 @@ signale les niveaux qu’une étude n’offrait pas au lieu d’afficher 0.</p>
 parenthèses. Aucune étude n’offrait « n’irait pas voter » comme réponse
 à cette question : ce niveau est un zéro structurel partout. Les erreurs
 types traitent chaque échantillon pondéré comme un échantillon
-probabiliste. Les quatre études sont des enquêtes Web dont les
-pondérations s’ajustent aux marges du recensement : lisez les erreurs
-types comme un ordre de grandeur seulement (voir
-<code><a href="../reference/qes_design.html">?qes_design</a></code>).</p>
+probabiliste. Ces études sont des enquêtes Web dont les pondérations
+s’ajustent aux marges du recensement : lisez les erreurs types comme un
+ordre de grandeur seulement (voir <code><a href="../reference/qes_design.html">?qes_design</a></code>).</p>
 <p>Le vote déclaré décrit l’électorat : gardez les répondants qui
 pouvaient voter. <code>eligible_voter</code> vaut <code>TRUE</code> pour
 les personnes de 18 ans ou plus le jour de l’élection et, là où la
@@ -645,16 +775,16 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <span><span class="co">#&gt;   qes2022     0 1220    0</span></span>
 <span><span class="va">voters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eligible_voter</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu">share_table</span><span class="op">(</span><span class="va">voters</span>, <span class="st">"vote_prov_recall"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<table class="table">
+<table style="width:100%;" class="table">
 <colgroup>
 <col width="7%">
 <col width="10%">
 <col width="10%">
 <col width="10%">
 <col width="10%">
+<col width="9%">
 <col width="10%">
-<col width="10%">
-<col width="10%">
+<col width="9%">
 <col width="10%">
 <col width="11%">
 </colgroup>
@@ -675,11 +805,11 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <td align="left">qes2007</td>
 <td align="left">25,3 (1,3)</td>
 <td align="left">31,1 (1,4)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">4,8 (0,7)</td>
 <td align="left">6,5 (0,8)</td>
-<td align="left">non offert</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
+<td align="left">—</td>
 <td align="left">31,6 (1,4)</td>
 <td align="left">0,6 (0,2)</td>
 </tr>
@@ -690,9 +820,9 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <td align="left">25,5 (1,4)</td>
 <td align="left">6,5 (0,8)</td>
 <td align="left">1,0 (0,3)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">2,3 (0,4)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">1,1 (0,3)</td>
 </tr>
 <tr class="odd">
@@ -702,9 +832,9 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <td align="left">23,1 (1,4)</td>
 <td align="left">8,2 (0,8)</td>
 <td align="left">1,0 (0,3)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">0,7 (0,3)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">1,3 (0,3)</td>
 </tr>
 <tr class="even">
@@ -713,10 +843,10 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <td align="left">19,6 (0,9)</td>
 <td align="left">35,8 (1,2)</td>
 <td align="left">16,3 (0,9)</td>
-<td align="left">non offert</td>
-<td align="left">non offert</td>
-<td align="left">non offert</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">—</td>
+<td align="left">—</td>
 <td align="left">5,1 (0,6)</td>
 </tr>
 <tr class="odd">
@@ -725,17 +855,17 @@ question est posée, de citoyenneté canadienne. <code>qes2018</code> a
 <td align="left">15,6 (1,2)</td>
 <td align="left">33,0 (1,9)</td>
 <td align="left">17,2 (1,4)</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
 <td align="left">13,5 (1,2)</td>
-<td align="left">non offert</td>
-<td align="left">non offert</td>
+<td align="left">—</td>
+<td align="left">—</td>
 <td align="left">3,5 (1,0)</td>
 </tr>
 </tbody>
 </table>
 <p>Garder les électeurs admissibles ne recalibre pas les pondérations,
 qui visent la population que chaque étude a échantillonnée. Un parti
-marqué « non offert » ne figurait pas dans la liste de réponses de cette
+marqué d’un tiret ne figurait pas dans la liste de réponses de cette
 étude : sa part n’y est donc pas comparable à celle des autres
 études.</p>
 <p>Regrouper les études en une seule estimation est possible
@@ -931,9 +1061,9 @@ jeu de données :</p>
 <code class="sourceCode R"><span><span class="va">spec_record</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_provenance.html">qes_provenance</a></span><span class="op">(</span><span class="va">h</span>, level <span class="op">=</span> <span class="st">"spec"</span><span class="op">)</span></span>
 <span><span class="va">spec_record</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"spec_version"</span>, <span class="st">"qesR_version"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   spec_version qesR_version</span></span>
-<span><span class="co">#&gt; 1        4.6.0        0.9.1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="va">h</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n\n"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.9.1, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.6.0 (empreinte du contenu 910e81120d19001bb1d7c0f9b0b32b3f)</span></span>
+<span><span class="co">#&gt; 1        4.7.0        0.9.2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/qes_cite.html">qes_cite</a></span><span class="op">(</span><span class="va">h</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\n\n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Gareau-Paquette, Thomas, 2026, "qesR: Access Quebec Election Study Datasets", package R, version 0.9.2, https://github.com/ThomasGareau/qesR; spécification d'harmonisation 4.7.0 (empreinte du contenu 30697daa0042aab3078507b665867748)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Mahéo, Valérie-Anne; Bélanger, Éric; Stephenson, Laura B; Harell, Allison, 2023, "2022 Quebec Election Study", https://doi.org/10.7910/DVN/PAQBDR, Harvard Dataverse, V1.1, UNF:6:I/DFDdqJv7wNEoyyRdxaIw== [licence : CC BY-NC 4.0, https://creativecommons.org/licenses/by-nc/4.0/]</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -955,7 +1085,7 @@ ont posé des questions sur la souveraineté avec d’autres libellés :
 elles alimentent d’autres cibles, jamais fusionnées avec
 <code>sov_indep</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sovereignty"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"crosswalk"</span>, targets <span class="op">=</span> <span class="st">"sovereignty"</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="va">sov</span> <span class="op">&lt;-</span> <span class="va">sov</span><span class="op">[</span><span class="va">sov</span><span class="op">$</span><span class="va">rule</span> <span class="op">!=</span> <span class="st">"none"</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">sov</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">sov</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"target"</span>, <span class="st">"study"</span>, <span class="st">"source_var"</span>, <span class="st">"grade"</span>, <span class="st">"weight_var"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
@@ -1085,10 +1215,10 @@ Canada (<code>qes2007</code>, <code>qes2008</code>,
 <code>qes1998</code>). Parmi ces études, seuls <code>qes2007</code> et
 le panel de 2018 ont une pondération utilisable pour ces questions : les
 deux pondérations de <code>qes2008</code> sont calées sur le vote ou sur
-la participation, et celles des autres ne sont pas assez documentées
-pour être utilisées. Les lignes des autres études sont écartées des
-estimations pondérées, avec un message. Placez les cibles côte à côte et
-lisez chacune à la lumière de sa propre question.</p>
+la participation, et celles des autres ne sont pas validées (voir le <a href="fr-etudes.html#ponderations">tableau des pondérations</a>). Les
+lignes des autres études sont écartées des estimations pondérées, avec
+un message. Placez les cibles côte à côte et lisez chacune à la lumière
+de sa propre question.</p>
 <p>Pour suivre l’appui dans toutes les études malgré tout, la variable
 regroupée <code>sov_support</code> prend la question référendaire de
 chaque étude, quel que soit son libellé, et indique de laquelle vient
@@ -1099,7 +1229,7 @@ regroupée en oui ou non, au niveau approximate. <code>vote_choice</code>
 fait de même pour le vote (le vote déclaré, sinon l’intention de vote)
 et <code>pol_interest</code> pour l’intérêt pour la politique :</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pooled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"pooled"</span>, targets <span class="op">=</span> <span class="st">"sov_support"</span>, lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">pooled</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_spec.html">qes_spec</a></span><span class="op">(</span><span class="st">"pooled"</span>, targets <span class="op">=</span> <span class="st">"sov_support"</span>, lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">pooled</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"type_name"</span>, <span class="st">"member"</span>, <span class="st">"precedence"</span>, <span class="st">"default"</span>, <span class="st">"grade_cap"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <table style="width:100%;" class="table">
 <colgroup>

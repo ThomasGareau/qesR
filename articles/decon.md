@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-decon.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 For some years now, the Canadian Election Study has had a simple point
 of entry. The [cesR](https://hodgettsp.github.io/cesR/) package’s
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)
@@ -18,7 +21,7 @@ many uses do not call for that much: a descriptive table, a control
 variable, a first look at 25 years of data.
 [`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
 answers this need. It returns one data frame for the 11 harmonized
-studies, with 47,039 rows (one per respondent and wave) and 35 columns
+studies, with 47,038 rows (one per respondent and wave) and 35 columns
 of data, one per concept, even where the wording or the answer options
 differ from one study to the next. The price is exactness. The
 categories are coarse, and no column claims that two studies asked the
@@ -28,11 +31,11 @@ same question.
 
 ``` r
 
-d <- qes_decon(lang = params$lang)
+d <- qes_decon(lang = "en")
 ```
 
-`lang = "fr"` gives the labels in French (`params$lang` is the language
-of this page); the column names stay the same. The first rows:
+`lang = "fr"` gives the labels in French; the column names stay the
+same. The first rows:
 
 ``` r
 
@@ -51,7 +54,7 @@ d[1:4, c("study", "wave", "weight", "gender", "education", "vote_choice", "vote_
 
 The first columns identify the row: `study`, `year`, `wave` and
 `qes_id`, the respondent’s identifier within the study. The file has
-40,987 respondents, and a respondent of a panel has one row per wave.
+40,986 respondents, and a respondent of a panel has one row per wave.
 The socio-demographic columns (education, income, language, religion,
 region…) repeat on every row of a respondent, while the vote, turnout
 and attitudes sit on the row of the wave that asked them: the vote
@@ -61,9 +64,11 @@ to a mean of 1 within each, and `weight_var` names its source. Of the 11
 studies, 6 have such a weight on every row: QES 2007, QES 2012, QES
 2014, QES 2018, 2018 panel and QES 2022. The others have `NA`. The QES
 2008 has no recommended weight, since its weights are calibrated on the
-reported vote, and the weights of the following studies are still under
-review: 1998 polls, 2007 panel, CROP polls and 2012 panel.
-`attr(d, "weights")` gives the detail, wave by wave.
+reported vote, and the weights of the following studies are not
+validated: 1998 polls, 2007 panel, CROP polls and 2012 panel.
+`attr(d, "weights")` gives the detail, wave by wave, and the [weights
+table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)
+describes each study’s weight.
 
 ## The columns
 
@@ -88,8 +93,8 @@ which gives each study’s source variable and recoding rule.
 | [`language_eng`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-language_eng) | English as a mother tongue | Yes · No | all 11 | Yes when English is among the mother tongues reported, so a respondent with two mother tongues can be yes in both language_eng and language_fr. |
 | [`religion`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-religion) | Religion | Catholic · Protestant · Other Christian · Other religion · No religion | 4 (2012, 2014, 2018, 2022) | The religion the respondent belongs to, in five groups; the 2022 question offers a long list, where agnostic counts as no religion, and the other studies first ask whether the respondent belongs to a religion at all. |
 | [`marital`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-marital) | Marital status | Married or living with a partner · Separated or divorced · Widowed · Single, never married | 4 (2012, 2014, 2018, 2022) | Married or living with a partner, separated or divorced, widowed, or never married; 2012 and 2014 asked the official civil status, with no common-law option, so some partners who live together are never married there. |
-| [`employment`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-employment) | Employment | Working (employee or self-employed) · Unemployed · Retired · Student · At home, unable to work or other | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. |
-| [`union`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-union) | Union membership | Yes · No | 3 (2014, 2018, 2022) | Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing; the column is kept whatever its number of studies (essential), as decided on 2026-10-01. |
+| [`employment`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-employment) | Employment | Working (employee or self-employed) · Unemployed · Retired · Student · At home, unable to work or other | 9 (2007, 2007 panel, 2008, CROP, 2012, 2014, 2018, 2018 panel, 2022) | The main employment status in five groups; a respondent who gave two statuses, such as retired and working, takes the one that is not work, and at home, unable to work and other statuses are other. In the 2018 panel only web respondents were asked about employment, so its telephone respondents appear as don’t know or refused. |
+| [`union`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-union) | Union membership | Yes · No | 3 (2014, 2018, 2022) | Whether the respondent belongs to a union in 2022, but whether the respondent or anyone in the household does in 2014 and 2018 (in 2018, respondents who live with their parents were asked about their family: parents, brothers or sisters). Only these three studies ask it, and 2022 asks it after the election, so its campaign-only respondents are missing. |
 | [`region`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-region) | Region | Montreal CMA · Quebec CMA · Rest of Quebec | 9 (2007, 2007 panel, 2008, CROP, 2012, 2012 panel, 2014, 2018, 2018 panel) | The Montreal census metropolitan area, the Quebec City census metropolitan area or the rest of Quebec, from each study’s region or sub-region variable, with the boundaries each study used. |
 | [`region_admin`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-region_admin) | Administrative region | 17 categories (Bas-Saint-Laurent, Saguenay–Lac-Saint-Jean…) | 5 (2007, 2007 panel, 2012, 2014, 2018) | The 17 administrative regions of Quebec, where a study recorded them or sub-regions that fit within them; the sub-regions of the 2007 study and the 2007 panel that split a region are joined. |
 | [`born_canada`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-born_canada) | Born in Canada | Yes · No | 4 (2012, 2014, 2018, 2022) | Born in Canada or not, as each study asked it: from the birthplace (Quebec, elsewhere in Canada or abroad), or asked directly in 2022. |
@@ -100,7 +105,7 @@ which gives each study’s source variable and recoding rule.
 | [`vote_prev`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-vote_prev) | Vote at the previous provincial election | 9 categories (PLQ, PQ…) | 5 (1998, 2007 panel, CROP, 2014, 2022) | The party of the reported vote at the Quebec general election before the study; those who did not vote are missing, the sources name the election recalled, and the 1998 question names only the PLQ and the PQ. |
 | [`pid`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-pid) | Provincial party identification | 10 categories (PLQ, PQ…) | 6 (2007, 2008, 2012, 2014, 2018, 2022) | The Quebec party the respondent identifies with, or none, as each study asked it; the parties offered differ from study to study. |
 | [`lr`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-lr) | Left-right self-placement (0-10) | number, 0-10 | 5 (2012, 2014, 2018, 2018 panel, 2022) | Self-placement on a left-right scale from 0 (left) to 10 (right); a scale of another length would be rescaled to 0-10, and every study that asked one used 0 to 10. |
-| [`interest`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-interest) | Interest in politics | Low · Medium · High | 7 (2007, 2007 panel, 2008, 2012, 2014, 2018, 2022) | Interest on 0 to 1 (interest_01) in three bands, low below 0.35 and high from 0.75; the 4-point and 0-10 questions do not line up, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. |
+| [`interest`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-interest) | Interest in politics | Low · Medium · High | 7 (2007, 2007 panel, 2008, 2012, 2014, 2018, 2022) | Interest on 0 to 1 (interest_01) in three bands, low below 0.55 and high from 0.85: on a 0-10 question, 0 to 5 is low, 6 to 8 medium and 9 or 10 high; on a 4-point question, not at all or hardly interested is low, quite interested medium and very interested high. The two formats still do not line up exactly, and the 2008 study and the 2007 panel asked interest in the election or the campaign, not in politics. |
 | [`interest_01`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-interest_01) | Interest in politics (0-1) | number, 0-1 | 7 (2007, 2007 panel, 2008, 2012, 2014, 2018, 2022) | Interest on 0 to 1 (the pooled pol_interest): four-point answers scored 1, 0.7, 0.3 and 0, and 0-10 answers divided by 10. |
 | [`sovereignty`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-sovereignty) | Sovereignty referendum vote | Yes · No | all 11 | Yes or no in a referendum on Quebec sovereignty, whatever the question (an independent country, a sovereign country, the 1995 question or being favourable to independence); sovereignty_type says which, and would not vote is missing. |
 | [`sovereignty_type`](https://thomasgareau.github.io/qesR/articles/harmonization-reference.html#relaxed-sovereignty_type) | Question of the sovereignty vote | Independent country · Sovereign country · 1995 question (sovereignty-partnership) · Favourable to independence · CROP referendum question (wording not deposited) | all 11 | Which question sovereignty comes from on each row: an independent country, a sovereign country, the 1995 question, being favourable to independence, or the CROP polls’ question, whose full wording was not deposited. |
@@ -246,7 +251,8 @@ school joined) and language (mother tongue French). One Quebec Election
 Study per election. The ADQ and the CAQ are separate parties and stay
 separate in the data; the dashed line marks the change of party.
 Weighted with each study's post-election weight; hollow dots (2008):
-unweighted, as the 2008 study has no recommended weight.
+unweighted, no validated weight (the 2008 study has no recommended
+weight).
 
 Table view
 
@@ -255,9 +261,9 @@ Table view
 | 2007 | ADQ | High school or less | 39.8 \[34.4, 45.4\] | 403 | weighted |
 | 2007 | ADQ | College or CEGEP | 39.6 \[34.3, 45.1\] | 452 | weighted |
 | 2007 | ADQ | University | 27.4 \[23.4, 31.8\] | 693 | weighted |
-| 2008 | ADQ | High school or less | 15.3 \[10.5, 21.8\] | 157 | unweighted (no recommended weight) |
-| 2008 | ADQ | College or CEGEP | 22.8 \[18.0, 28.5\] | 241 | unweighted (no recommended weight) |
-| 2008 | ADQ | University | 15.5 \[12.1, 19.6\] | 368 | unweighted (no recommended weight) |
+| 2008 | ADQ | High school or less | 15.3 \[10.5, 21.8\] | 157 | unweighted: no validated weight |
+| 2008 | ADQ | College or CEGEP | 22.8 \[18.0, 28.5\] | 241 | unweighted: no validated weight |
+| 2008 | ADQ | University | 15.5 \[12.1, 19.6\] | 368 | unweighted: no validated weight |
 | 2012 | CAQ | High school or less | 29.1 \[23.0, 36.1\] | 225 | weighted |
 | 2012 | CAQ | College or CEGEP | 30.0 \[25.2, 35.3\] | 383 | weighted |
 | 2012 | CAQ | University | 24.3 \[20.4, 28.8\] | 483 | weighted |

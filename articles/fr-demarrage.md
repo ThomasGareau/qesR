@@ -11,19 +11,23 @@ leurs citations et la description de chaque variable de chaque étude
 sont livrés avec le package.
 
 Cette page va d’un code d’étude à une estimation pondérée. Tous ses
-blocs de code s’exécutent sans connexion réseau : ils utilisent le
-catalogue, les métadonnées livrées et `qes_demo`, une petite étude
-synthétique fournie avec qesR. Les blocs qui téléchargeraient une vraie
-étude sont montrés, mais pas exécutés.
+blocs de code s’exécutent sans connexion réseau, sauf ceux de la
+dernière section : ils utilisent le catalogue, les métadonnées livrées
+et `qes_demo`, une petite étude synthétique fournie avec qesR. Les blocs
+qui téléchargeraient une vraie étude sont montrés, mais pas exécutés, et
+la dernière section, [Sur les données réelles](#donnees-reelles), refait
+les mêmes étapes sur une vraie étude, qu’elle télécharge.
 
 ## Installation
 
-Installez qesR depuis GitHub :
+Installez qesR depuis GitHub, et le package `survey` pour les
+estimations avec intervalles de confiance :
 
 ``` r
 
 # install.packages("remotes")
 remotes::install_github("ThomasGareau/qesR")
+install.packages("survey")
 ```
 
 ``` r
@@ -88,7 +92,6 @@ gardée d’une session à l’autre avec `options(qesR.cache = "disk")`).
 ``` r
 
 demo <- get_qes("qes_demo", quiet = TRUE)
-#> get_qes() renvoie son résultat et ne l'assigne plus par défaut dans votre espace de travail. Écrivez `qes_demo <- get_qes(...)`, ou passez `assign_global = TRUE`. Cette note s'affiche une fois par session.
 dim(demo)
 #> [1] 60 11
 head(demo[, c("QSEXE", "Q2", "Q3", "Q19")])
@@ -138,17 +141,15 @@ bilingue), étiquettes de valeurs et codes manquants.
 ``` r
 
 cb <- qes_codebook("qes2014")
-head(cb[, c("variable", "label", "n_value_labels")])
+cb[cb$variable %in% c("Q2", "Q3", "Q19", "POND"), c("variable", "label", "n_value_labels")]
 #> <qes_codebook>
-#> Variables: 6 
+#> Variables: 4 
 #> Codebook/support files: 0 
 #>   variable                                    label n_value_labels
-#> 1    QUEST                                     <NA>              0
-#> 2     SDAT                          Date d'entrevue              0
-#> 3     LANG Préfèreriez-vous répondre à ce questi...              2
-#> 4    GREET Ce sondage en ligne est mené au nom d...              1
-#> 5     QAGE En quelle année êtes-vous né(e)? / En...              1
-#> 6    SMAGE                                      Age              0
+#> 1       Q2 Avez-vous voté à cette élection provi...              3
+#> 2       Q3          Pour quel parti avez-vous voté?              8
+#> 3      Q19 Si un référendum sur l'indépendance a...              4
+#> 4     POND                              Pondération              0
 qes_codebook("qes2014", layout = "long", variables = "Q19")
 #> <qes_codebook> survey: qes2014
 #> DOI: 10.5683/SP3/64F7WR 
@@ -191,14 +192,14 @@ ni des accents :
 ``` r
 
 hits <- qes_search("souverain|sovereign")
-head(hits[, c("study", "variable", "label")])
+head(hits[!is.na(hits$label), c("study", "variable", "label")])
 #>     study            variable                                    label
 #> 1 qes2022 cps_impissue_matrix What is the most important issue to y...
 #> 2 qes2022             pes_q23 Did you vote in the 1995 referendum o...
-#> 3 qes2018                  q2                                     <NA>
-#> 4 qes2018         q2_96_other                                     <NA>
-#> 5 qes2018                 q23                                     <NA>
-#> 6 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
+#> 3 qes2014                  Q1 Parmi les enjeux suivants, lequel éta...
+#> 4 qes2014                 Q16 Avez-vous voté lors du référendum de ...
+#> 5 qes2014                 Q50 Certaines personnes croient qu'il est...
+#> 6 qes2012               q34bb Of the following issues, which was, f...
 ```
 
 Le codebook de l’étude de 2022 est sous licence CC BY-NC 4.0
@@ -264,9 +265,9 @@ c(
 
 Les données de démonstration sont synthétiques : ces nombres ne
 décrivent aucune population, ils montrent le calcul. Sur le vrai
-fichier, les mêmes lignes donnent 34,8 % de OUI parmi les 1 353
-répondants qui ont répondu OUI ou NON (34,1 % sans pondération),
-pondérés selon la population adulte du Québec de 2014.
+fichier, les mêmes lignes donnent la part de OUI pondérée selon la
+population adulte du Québec de 2014 ; la dernière section de cette page
+la calcule, avec son intervalle de confiance.
 
 ``` r
 
@@ -296,7 +297,7 @@ point elle est comparable à la question d’ancrage de la cible :
 
 ``` r
 
-xw <- qes_spec("crosswalk", targets = "sov_indep", lang = params$lang)
+xw <- qes_spec("crosswalk", targets = "sov_indep", lang = "fr")
 xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #>     study wave        source_var      grade         weight_var
 #> 1 qes2012 post               q52  identical               pond
@@ -305,8 +306,10 @@ xw[, c("study", "wave", "source_var", "grade", "weight_var")]
 #> 4 qes2022  cps cps_qc_referendum comparable cps_weight_general
 ```
 
-Certaines études n’ont pas encore de pondération utilisable ; leurs
-colonnes de pondération valent `NA`, et
+Toutes les études n’ont pas une pondération validée : le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+du site web dit lesquelles. Pour une étude qui n’en a pas, les colonnes
+de pondération valent `NA`, et
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 vous prévient quand il écarte des lignes. Sur l’étude de démonstration,
 qui tient lieu de `qes2014` :
@@ -314,7 +317,7 @@ qui tient lieu de `qes2014` :
 ``` r
 
 h <- qes_harmonize("qes_demo", targets = c("sov_indep", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "fr")
 h[1:4, c("study", "eligible_voter", "sov_indep", "sov_indep__na", "weight_post")]
 #>      study eligible_voter sov_indep sov_indep__na weight_post
 #> 1 qes_demo           TRUE       Non          <NA>   1.2593217
@@ -333,18 +336,21 @@ recommandée de chaque vague a une moyenne de 1 : ces questions ont été
 posées après l’élection, donc `weight_post` est leur pondération, comme
 l’indique le guide des pondérations.
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
-transmet les données au package `survey` :
+transmet les données au package `survey`.
+[`droplevels()`](https://rdrr.io/r/base/droplevels.html) retire d’abord
+les réponses qu’aucun répondant de l’étude de démonstration n’a données,
+pour qu’elles n’apparaissent pas comme des lignes de zéros :
 
 ``` r
 
 if (requireNamespace("survey", quietly = TRUE)) {
+  h$sov_indep <- droplevels(h$sov_indep)
   d <- qes_design(h, weight = "weight_post")
   survey::svymean(~sov_indep, d, na.rm = TRUE)
 }
-#>                                            mean     SE
-#> sov_indepOui                            0.41584 0.0718
-#> sov_indepNon                            0.58416 0.0718
-#> sov_indepN'irait pas voter / annulerait 0.00000 0.0000
+#>                 mean     SE
+#> sov_indepOui 0.41584 0.0718
+#> sov_indepNon 0.58416 0.0718
 ```
 
 L’erreur type traite l’échantillon pondéré comme un échantillon
@@ -359,6 +365,15 @@ pondérations différentes :
 demande de choisir quand les cibles en demandent de différentes. La
 référence de chaque cible, générée à partir de la spécification, est
 [`vignette("fr-reference-harmonisation", package = "qesR")`](https://thomasgareau.github.io/qesR/articles/fr-reference-harmonisation.md).
+
+Pour démarrer plus vite avec toutes les études,
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+renvoie un seul tableau aux noms de colonnes simples (`vote_choice`,
+`sovereignty`, `education`, …), assoupli pour que chaque colonne porte
+un seul concept même là où les questions diffèrent ; voir [Un seul
+fichier pour toutes les
+études](https://thomasgareau.github.io/qesR/articles/fr-decon.md) sur le
+site web.
 
 ## Provenance et citations
 
@@ -376,13 +391,13 @@ cite qesR et les jeux de données utilisés (voir
 qes_provenance(demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-10-01 17:13:16 UTC (local_demo). Lu avec
+#> Obtenu le 2026-10-06 05:11:16 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
 #> qesR 2.4.1.
 #> 
 #> as.data.frame() donne toutes les colonnes.
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.2, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 
@@ -412,6 +427,31 @@ tryCatch(
 )
 #> [1] "qes2014"
 ```
+
+## Sur les données réelles
+
+La même estimation sur le vrai `qes2014`, de l’harmonisation à une part
+avec son intervalle de confiance à 95 %. Cette section télécharge une
+étude (environ 0,4 Mo) la première fois qu’elle s’exécute ;
+`options(qesR.cache = "disk")` la garde sur le disque pour les sessions
+suivantes. L’intervalle traite le panel pondéré comme un échantillon
+probabiliste ; pour un panel à participation volontaire comme `qes2014`,
+lisez-le comme un ordre de grandeur.
+
+``` r
+
+library(survey)
+h14 <- qes_harmonize("qes2014", targets = "sov_indep", quiet = TRUE)
+d14 <- qes_design(h14, weight = "weight_post")
+d14 <- subset(d14, sov_indep %in% c("Yes", "No"))
+svyciprop(~I(sov_indep == "Yes"), d14, method = "logit")
+#>                              2.5% 97.5%
+#> I(sov_indep == "Yes") 0.348 0.318 0.379
+```
+
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+étiquette les réponses en anglais par défaut, d’où `"Yes"` et `"No"`
+ci-dessus ; `lang = "fr"` les donne en français.
 
 ## Du code écrit pour une version antérieure
 

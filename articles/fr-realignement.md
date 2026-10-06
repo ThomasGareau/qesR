@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/realignment.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Pendant une trentaine d’années, le système partisan québécois a reposé
 sur la question de la souveraineté. À partir des années 1970, le Parti
 québécois (PQ) et le Parti libéral du Québec (PLQ) se sont succédé au
@@ -27,23 +31,23 @@ encore le vote.
 
 Les Études électorales québécoises apportent une réponse assez nette à
 ces deux questions. Premier constat : la fragmentation touche d’abord le
-vote francophone. Chez les francophones, le nombre effectif de partis
-passe de 2,8 en 1998 à 3,9 en 2022. L’estimation de 1998 provient
-toutefois des sondages CROP et CREATEC, qui n’ont interrogé que des
-francophones et ne sont pas pondérés ; depuis la première Étude
-électorale québécoise, en 2007, la hausse est plus modeste, de 3,5 à
-3,9. Les non-francophones, eux, ont continué de voter libéral jusqu’en
-2018 : cette année-là, 72 % d’entre eux ont appuyé le PLQ, contre 12 %
-des francophones. Deuxième constat : la question de la souveraineté
-divise toujours le vote francophone, mais elle ne le canalise plus vers
-deux partis. Depuis 2012, les souverainistes ne votent presque jamais
-pour le PLQ et les fédéralistes votent rarement pour le PQ ; pourtant,
-la part des francophones qui ont voté pour le parti de leur propre camp
-est passée de 55 % en 2012 à 22 % en 2022. Autrement dit, savoir où un
-électeur francophone se situe sur l’indépendance nous renseigne
-désormais davantage sur le parti qu’il écartera que sur celui qu’il
-choisira. L’idée selon laquelle la question de la souveraineté se serait
-effacée des élections québécoises ne trouve donc qu’un appui mitigé.
+vote francophone. De la première Étude électorale québécoise, en 2007, à
+2022, le nombre effectif de partis chez les francophones passe de 3,5 à
+3,9. Les sondages de 1998 le situent plus bas, à 2,8, mais ils n’ont
+interrogé que des francophones et n’ont aucune pondération validée : ce
+point n’est qu’indicatif. Les non-francophones, eux, ont continué de
+voter libéral jusqu’en 2018 : cette année-là, 72 % d’entre eux ont
+appuyé le PLQ, contre 12 % des francophones. Deuxième constat : la
+question de la souveraineté divise toujours le vote francophone, mais
+elle ne le canalise plus vers deux partis. Depuis 2012, les
+souverainistes ne votent presque jamais pour le PLQ et les fédéralistes
+votent rarement pour le PQ ; pourtant, la part des francophones qui ont
+voté pour le parti de leur propre camp est passée de 55 % en 2012 à 22 %
+en 2022. Autrement dit, savoir où un électeur francophone se situe sur
+l’indépendance nous renseigne désormais davantage sur le parti qu’il
+écartera que sur celui qu’il choisira. L’idée selon laquelle la question
+de la souveraineté se serait effacée des élections québécoises ne trouve
+donc qu’un appui mitigé.
 
 ## Le vote francophone s’est fragmenté le premier
 
@@ -70,25 +74,24 @@ résultats officiels d'Élections Québec. Le nombre effectif de partis
 (Laakso et Taagepera, 1979) est 1 divisé par la somme des carrés des
 parts de vote ; les petits partis sont regroupés en une seule catégorie,
 « autres ». Bandes : intervalles de confiance à 95 %. Points creux
-(1998, 2008) : données non pondérées. L'axe horizontal est en années,
-avec une coupure entre 1998 et 2007.
+(1998, 2008) : non pondéré, aucune pondération validée. L'axe horizontal
+est en années, avec une coupure entre 1998 et 2007.
 
 Vue en tableau
 
 | Élection | Étude | Groupe | Nombre effectif \[IC à 95 %\] | n | Officiel, tous les électeurs | Pondération |
 |---:|:---|:---|:---|---:|:---|:---|
-| 1998 | Sondages de 1998 | Francophones | 2,78 \[2,67 ; 2,88\] | 1126 | 2,58 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | Non-francophones | n \< 30 | 0 | 2,58 | non pondéré (pondération en révision) |
+| 1998 | Sondages de 1998 | Francophones | 2,78 \[2,67 ; 2,88\] | 1126 | 2,58 | non pondéré : aucune pondération validée |
 | 2007 | EEQ 2007 | Francophones | 3,54 \[3,39 ; 3,70\] | 1525 | 3,47 | pondéré |
 | 2007 | EEQ 2007 | Non-francophones | 2,53 \[1,94 ; 3,12\] | 163 | 3,47 | pondéré |
-| 2007 | Panel 2007 | Francophones | 3,45 \[3,34 ; 3,56\] | 1337 | 3,47 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | Non-francophones | 1,78 \[1,49 ; 2,06\] | 155 | 3,47 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Francophones | 3,12 \[2,96 ; 3,29\] | 771 | 3,03 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non-francophones | 1,58 \[1,32 ; 1,84\] | 127 | 3,03 | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | Francophones | 3,45 \[3,34 ; 3,56\] | 1337 | 3,47 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | Non-francophones | 1,78 \[1,49 ; 2,06\] | 155 | 3,47 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Francophones | 3,12 \[2,96 ; 3,29\] | 771 | 3,03 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non-francophones | 1,58 \[1,32 ; 1,84\] | 127 | 3,03 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | Francophones | 3,12 \[2,93 ; 3,31\] | 1094 | 3,60 | pondéré |
 | 2012 | EEQ 2012 | Non-francophones | 2,14 \[1,75 ; 2,53\] | 180 | 3,60 | pondéré |
-| 2012 | Panel 2012 | Francophones | 3,42 \[3,20 ; 3,64\] | 576 | 3,60 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Non-francophones | 2,31 \[1,59 ; 3,03\] | 57 | 3,60 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | Francophones | 3,42 \[3,20 ; 3,64\] | 576 | 3,60 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Non-francophones | 2,31 \[1,59 ; 3,03\] | 57 | 3,60 | non pondéré : aucune pondération validée |
 | 2014 | EEQ 2014 | Francophones | 3,68 \[3,51 ; 3,84\] | 981 | 3,38 | pondéré |
 | 2014 | EEQ 2014 | Non-francophones | 1,34 \[1,15 ; 1,54\] | 201 | 3,38 | pondéré |
 | 2018 | EEQ 2018 | Francophones | 3,62 \[3,45 ; 3,78\] | 1656 | 3,88 | pondéré |
@@ -98,7 +101,7 @@ Vue en tableau
 | 2022 | EEQ 2022 | Francophones | 3,92 \[3,64 ; 4,20\] | 883 | 3,99 | pondéré |
 | 2022 | EEQ 2022 | Non-francophones | 2,93 \[1,94 ; 3,92\] | 121 | 3,99 | pondéré |
 
-Le vote francophone s'est fragmenté, de 2,8 à 3,9 partis effectifs ; le
+Le vote francophone s'est fragmenté, de 3,5 à 3,9 partis effectifs ; le
 vote non francophone est resté beaucoup plus concentréNombre effectif de
 partis à chaque élection : résultat officiel et vote déclaré selon la
 langue maternelle, avec intervalles de confiance à 95 %
@@ -136,38 +139,40 @@ non-francophones à chaque élection de 1998 à 2022, avec le résultat
 officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018
 contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones
 et 12 % des autres. Valeurs dans la vue en
-tableau.](fr-realignement_files/figure-html/lang-light.png)![Cinq petits
-graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ, CAQ), de la part
-du vote déclaré chez les francophones et chez les non-francophones à
-chaque élection de 1998 à 2022, avec le résultat officiel en trait. Le
-PLQ obtient 72 % du vote non francophone en 2018 contre 12 % du vote
-francophone ; la CAQ obtient 41 % des francophones et 12 % des autres.
-Valeurs dans la vue en
+tableau.](fr-realignement_files/figure-html/lang-light.png)
+
+![Cinq petits graphiques linéaires, un par parti (PLQ, PQ, QS, ADQ,
+CAQ), de la part du vote déclaré chez les francophones et chez les
+non-francophones à chaque élection de 1998 à 2022, avec le résultat
+officiel en trait. Le PLQ obtient 72 % du vote non francophone en 2018
+contre 12 % du vote francophone ; la CAQ obtient 41 % des francophones
+et 12 % des autres. Valeurs dans la vue en
 tableau.](fr-realignement_files/figure-html/lang-dark.png)
 
 Source : Études électorales québécoises (une par élection) et, pour
 1998, les sondages CROP et CREATEC (francophones seulement). Trait :
 part officielle des votes valides, tous les électeurs. Barres :
-intervalles de confiance à 95 %. Points creux (1998, 2008) : données non
-pondérées. Les groupes de moins de 30 répondants ne sont pas tracés.
-L'ADQ a fusionné avec la CAQ en 2012 ; les deux restent distincts ici.
-Le PCQ et les petits partis sont dans la vue en tableau.
+intervalles de confiance à 95 %. Points creux (1998, 2008) : non
+pondéré, aucune pondération validée. Les groupes de moins de 30
+répondants ne sont pas tracés. L'ADQ a fusionné avec la CAQ en 2012 ;
+les deux restent distincts ici. Le PCQ et les petits partis sont dans la
+vue en tableau.
 
 Vue en tableau
 
 | Parti | Élection | Étude | Groupe | Part du vote déclaré \[IC à 95 %\] | n | Officiel, tous les électeurs | Pondération |
 |:---|---:|:---|:---|:---|---:|:---|:---|
-| PLQ | 1998 | Sondages de 1998 | Francophones | 34,1 \[31,4 ; 36,9\] | 1126 | 43,6 | non pondéré (pondération en révision) |
+| PLQ | 1998 | Sondages de 1998 | Francophones | 34,1 \[31,4 ; 36,9\] | 1126 | 43,6 | non pondéré : aucune pondération validée |
 | PLQ | 2007 | EEQ 2007 | Francophones | 20,1 \[17,9 ; 22,6\] | 1525 | 33,1 | pondéré |
 | PLQ | 2007 | EEQ 2007 | Non-francophones | 58,4 \[48,1 ; 68,1\] | 163 | 33,1 | pondéré |
-| PLQ | 2007 | Panel 2007 | Francophones | 23,5 \[21,3 ; 25,8\] | 1337 | 33,1 | non pondéré (pondération en révision) |
-| PLQ | 2007 | Panel 2007 | Non-francophones | 73,5 \[66,1 ; 79,9\] | 155 | 33,1 | non pondéré (pondération en révision) |
-| PLQ | 2008 | EEQ 2008 | Francophones | 32,7 \[29,5 ; 36,1\] | 771 | 42,1 | non pondéré (pondération en révision) |
-| PLQ | 2008 | EEQ 2008 | Non-francophones | 78,7 \[70,8 ; 85,0\] | 127 | 42,1 | non pondéré (pondération en révision) |
+| PLQ | 2007 | Panel 2007 | Francophones | 23,5 \[21,3 ; 25,8\] | 1337 | 33,1 | non pondéré : aucune pondération validée |
+| PLQ | 2007 | Panel 2007 | Non-francophones | 73,5 \[66,1 ; 79,9\] | 155 | 33,1 | non pondéré : aucune pondération validée |
+| PLQ | 2008 | EEQ 2008 | Francophones | 32,7 \[29,5 ; 36,1\] | 771 | 42,1 | non pondéré : aucune pondération validée |
+| PLQ | 2008 | EEQ 2008 | Non-francophones | 78,7 \[70,8 ; 85,0\] | 127 | 42,1 | non pondéré : aucune pondération validée |
 | PLQ | 2012 | EEQ 2012 | Francophones | 15,5 \[13,2 ; 18,0\] | 1094 | 31,2 | pondéré |
 | PLQ | 2012 | EEQ 2012 | Non-francophones | 65,5 \[57,3 ; 72,8\] | 180 | 31,2 | pondéré |
-| PLQ | 2012 | Panel 2012 | Francophones | 22,7 \[19,5 ; 26,3\] | 576 | 31,2 | non pondéré (pondération en révision) |
-| PLQ | 2012 | Panel 2012 | Non-francophones | 63,2 \[50,0 ; 74,6\] | 57 | 31,2 | non pondéré (pondération en révision) |
+| PLQ | 2012 | Panel 2012 | Francophones | 22,7 \[19,5 ; 26,3\] | 576 | 31,2 | non pondéré : aucune pondération validée |
+| PLQ | 2012 | Panel 2012 | Non-francophones | 63,2 \[50,0 ; 74,6\] | 57 | 31,2 | non pondéré : aucune pondération validée |
 | PLQ | 2014 | EEQ 2014 | Francophones | 24,2 \[21,3 ; 27,4\] | 981 | 41,5 | pondéré |
 | PLQ | 2014 | EEQ 2014 | Non-francophones | 86,0 \[78,0 ; 91,4\] | 201 | 41,5 | pondéré |
 | PLQ | 2018 | EEQ 2018 | Francophones | 12,2 \[10,7 ; 13,9\] | 1656 | 24,8 | pondéré |
@@ -176,17 +181,17 @@ Vue en tableau
 | PLQ | 2018 | Panel 2018 | Non-francophones | 67,8 \[59,0 ; 75,5\] | 143 | 24,8 | pondéré |
 | PLQ | 2022 | EEQ 2022 | Francophones | 6,1 \[4,4 ; 8,4\] | 883 | 14,4 | pondéré |
 | PLQ | 2022 | EEQ 2022 | Non-francophones | 54,0 \[40,5 ; 67,0\] | 121 | 14,4 | pondéré |
-| PQ | 1998 | Sondages de 1998 | Francophones | 45,9 \[43,0 ; 48,8\] | 1126 | 42,9 | non pondéré (pondération en révision) |
+| PQ | 1998 | Sondages de 1998 | Francophones | 45,9 \[43,0 ; 48,8\] | 1126 | 42,9 | non pondéré : aucune pondération validée |
 | PQ | 2007 | EEQ 2007 | Francophones | 34,1 \[31,3 ; 37,1\] | 1525 | 28,3 | pondéré |
 | PQ | 2007 | EEQ 2007 | Non-francophones | 15,0 \[8,3 ; 25,4\] | 163 | 28,3 | pondéré |
-| PQ | 2007 | Panel 2007 | Francophones | 33,4 \[31,0 ; 36,0\] | 1337 | 28,3 | non pondéré (pondération en révision) |
-| PQ | 2007 | Panel 2007 | Non-francophones | 7,7 \[4,4 ; 13,1\] | 155 | 28,3 | non pondéré (pondération en révision) |
-| PQ | 2008 | EEQ 2008 | Francophones | 42,3 \[38,8 ; 45,8\] | 771 | 35,2 | non pondéré (pondération en révision) |
-| PQ | 2008 | EEQ 2008 | Non-francophones | 7,9 \[4,3 ; 14,0\] | 127 | 35,2 | non pondéré (pondération en révision) |
+| PQ | 2007 | Panel 2007 | Francophones | 33,4 \[31,0 ; 36,0\] | 1337 | 28,3 | non pondéré : aucune pondération validée |
+| PQ | 2007 | Panel 2007 | Non-francophones | 7,7 \[4,4 ; 13,1\] | 155 | 28,3 | non pondéré : aucune pondération validée |
+| PQ | 2008 | EEQ 2008 | Francophones | 42,3 \[38,8 ; 45,8\] | 771 | 35,2 | non pondéré : aucune pondération validée |
+| PQ | 2008 | EEQ 2008 | Non-francophones | 7,9 \[4,3 ; 14,0\] | 127 | 35,2 | non pondéré : aucune pondération validée |
 | PQ | 2012 | EEQ 2012 | Francophones | 46,4 \[43,1 ; 49,8\] | 1094 | 31,9 | pondéré |
 | PQ | 2012 | EEQ 2012 | Non-francophones | 6,0 \[3,4 ; 10,2\] | 180 | 31,9 | pondéré |
-| PQ | 2012 | Panel 2012 | Francophones | 41,3 \[37,4 ; 45,4\] | 576 | 31,9 | non pondéré (pondération en révision) |
-| PQ | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 31,9 | non pondéré (pondération en révision) |
+| PQ | 2012 | Panel 2012 | Francophones | 41,3 \[37,4 ; 45,4\] | 576 | 31,9 | non pondéré : aucune pondération validée |
+| PQ | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 31,9 | non pondéré : aucune pondération validée |
 | PQ | 2014 | EEQ 2014 | Francophones | 35,7 \[32,3 ; 39,3\] | 981 | 25,4 | pondéré |
 | PQ | 2014 | EEQ 2014 | Non-francophones | 4,1 \[1,4 ; 11,6\] | 201 | 25,4 | pondéré |
 | PQ | 2018 | EEQ 2018 | Francophones | 23,4 \[21,3 ; 25,7\] | 1656 | 17,1 | pondéré |
@@ -195,23 +200,23 @@ Vue en tableau
 | PQ | 2018 | Panel 2018 | Non-francophones | 2,9 \[1,1 ; 7,5\] | 143 | 17,1 | pondéré |
 | PQ | 2022 | EEQ 2022 | Francophones | 19,6 \[17,0 ; 22,6\] | 883 | 14,6 | pondéré |
 | PQ | 2022 | EEQ 2022 | Non-francophones | 1,7 \[0,5 ; 6,1\] | 121 | 14,6 | pondéré |
-| ADQ | 1998 | Sondages de 1998 | Francophones | 18,1 \[16,0 ; 20,5\] | 1126 | 11,8 | non pondéré (pondération en révision) |
+| ADQ | 1998 | Sondages de 1998 | Francophones | 18,1 \[16,0 ; 20,5\] | 1126 | 11,8 | non pondéré : aucune pondération validée |
 | ADQ | 2007 | EEQ 2007 | Francophones | 34,4 \[31,7 ; 37,4\] | 1525 | 30,8 | pondéré |
 | ADQ | 2007 | EEQ 2007 | Non-francophones | 12,1 \[7,0 ; 20,1\] | 163 | 30,8 | pondéré |
-| ADQ | 2007 | Panel 2007 | Francophones | 34,6 \[32,1 ; 37,1\] | 1337 | 30,8 | non pondéré (pondération en révision) |
-| ADQ | 2007 | Panel 2007 | Non-francophones | 11,6 \[7,4 ; 17,7\] | 155 | 30,8 | non pondéré (pondération en révision) |
-| ADQ | 2008 | EEQ 2008 | Francophones | 17,8 \[15,2 ; 20,6\] | 771 | 16,4 | non pondéré (pondération en révision) |
-| ADQ | 2008 | EEQ 2008 | Non-francophones | 5,5 \[2,6 ; 11,1\] | 127 | 16,4 | non pondéré (pondération en révision) |
+| ADQ | 2007 | Panel 2007 | Francophones | 34,6 \[32,1 ; 37,1\] | 1337 | 30,8 | non pondéré : aucune pondération validée |
+| ADQ | 2007 | Panel 2007 | Non-francophones | 11,6 \[7,4 ; 17,7\] | 155 | 30,8 | non pondéré : aucune pondération validée |
+| ADQ | 2008 | EEQ 2008 | Francophones | 17,8 \[15,2 ; 20,6\] | 771 | 16,4 | non pondéré : aucune pondération validée |
+| ADQ | 2008 | EEQ 2008 | Non-francophones | 5,5 \[2,6 ; 11,1\] | 127 | 16,4 | non pondéré : aucune pondération validée |
 | QS | 2007 | EEQ 2007 | Francophones | 5,3 \[4,0 ; 7,0\] | 1525 | 3,6 | pondéré |
 | QS | 2007 | EEQ 2007 | Non-francophones | 1,7 \[0,4 ; 7,1\] | 163 | 3,6 | pondéré |
-| QS | 2007 | Panel 2007 | Francophones | 4,0 \[3,0 ; 5,2\] | 1337 | 3,6 | non pondéré (pondération en révision) |
-| QS | 2007 | Panel 2007 | Non-francophones | 2,6 \[1,0 ; 6,7\] | 155 | 3,6 | non pondéré (pondération en révision) |
-| QS | 2008 | EEQ 2008 | Francophones | 4,7 \[3,4 ; 6,4\] | 771 | 3,8 | non pondéré (pondération en révision) |
-| QS | 2008 | EEQ 2008 | Non-francophones | 1,6 \[0,4 ; 6,1\] | 127 | 3,8 | non pondéré (pondération en révision) |
+| QS | 2007 | Panel 2007 | Francophones | 4,0 \[3,0 ; 5,2\] | 1337 | 3,6 | non pondéré : aucune pondération validée |
+| QS | 2007 | Panel 2007 | Non-francophones | 2,6 \[1,0 ; 6,7\] | 155 | 3,6 | non pondéré : aucune pondération validée |
+| QS | 2008 | EEQ 2008 | Francophones | 4,7 \[3,4 ; 6,4\] | 771 | 3,8 | non pondéré : aucune pondération validée |
+| QS | 2008 | EEQ 2008 | Non-francophones | 1,6 \[0,4 ; 6,1\] | 127 | 3,8 | non pondéré : aucune pondération validée |
 | QS | 2012 | EEQ 2012 | Francophones | 6,4 \[5,0 ; 8,1\] | 1094 | 6,0 | pondéré |
 | QS | 2012 | EEQ 2012 | Non-francophones | 6,9 \[3,6 ; 12,8\] | 180 | 6,0 | pondéré |
-| QS | 2012 | Panel 2012 | Francophones | 6,9 \[5,1 ; 9,3\] | 576 | 6,0 | non pondéré (pondération en révision) |
-| QS | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 6,0 | non pondéré (pondération en révision) |
+| QS | 2012 | Panel 2012 | Francophones | 6,9 \[5,1 ; 9,3\] | 576 | 6,0 | non pondéré : aucune pondération validée |
+| QS | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 6,0 | non pondéré : aucune pondération validée |
 | QS | 2014 | EEQ 2014 | Francophones | 9,2 \[7,5 ; 11,2\] | 981 | 7,6 | pondéré |
 | QS | 2014 | EEQ 2014 | Non-francophones | 4,7 \[2,1 ; 10,4\] | 201 | 7,6 | pondéré |
 | QS | 2018 | EEQ 2018 | Francophones | 18,9 \[16,9 ; 20,9\] | 1656 | 16,1 | pondéré |
@@ -222,8 +227,8 @@ Vue en tableau
 | QS | 2022 | EEQ 2022 | Non-francophones | 11,5 \[5,9 ; 21,3\] | 121 | 15,4 | pondéré |
 | CAQ | 2012 | EEQ 2012 | Francophones | 27,4 \[24,5 ; 30,4\] | 1094 | 27,1 | pondéré |
 | CAQ | 2012 | EEQ 2012 | Non-francophones | 16,8 \[11,3 ; 24,2\] | 180 | 27,1 | pondéré |
-| CAQ | 2012 | Panel 2012 | Francophones | 25,2 \[21,8 ; 28,9\] | 576 | 27,1 | non pondéré (pondération en révision) |
-| CAQ | 2012 | Panel 2012 | Non-francophones | 10,5 \[4,8 ; 21,5\] | 57 | 27,1 | non pondéré (pondération en révision) |
+| CAQ | 2012 | Panel 2012 | Francophones | 25,2 \[21,8 ; 28,9\] | 576 | 27,1 | non pondéré : aucune pondération validée |
+| CAQ | 2012 | Panel 2012 | Non-francophones | 10,5 \[4,8 ; 21,5\] | 57 | 27,1 | non pondéré : aucune pondération validée |
 | CAQ | 2014 | EEQ 2014 | Francophones | 27,7 \[24,5 ; 31,1\] | 981 | 23,1 | pondéré |
 | CAQ | 2014 | EEQ 2014 | Non-francophones | 4,2 \[1,7 ; 10,2\] | 201 | 23,1 | pondéré |
 | CAQ | 2018 | EEQ 2018 | Francophones | 41,1 \[38,6 ; 43,7\] | 1656 | 37,4 | pondéré |
@@ -234,17 +239,17 @@ Vue en tableau
 | CAQ | 2022 | EEQ 2022 | Non-francophones | 12,2 \[4,3 ; 30,2\] | 121 | 41,0 | pondéré |
 | PCQ | 2022 | EEQ 2022 | Francophones | 14,7 \[12,2 ; 17,6\] | 883 | 12,9 | pondéré |
 | PCQ | 2022 | EEQ 2022 | Non-francophones | 9,4 \[5,1 ; 16,7\] | 121 | 12,9 | pondéré |
-| Autres | 1998 | Sondages de 1998 | Francophones | 1,9 \[1,2 ; 2,8\] | 1126 | 1,8 | non pondéré (pondération en révision) |
+| Autres | 1998 | Sondages de 1998 | Francophones | 1,9 \[1,2 ; 2,8\] | 1126 | 1,8 | non pondéré : aucune pondération validée |
 | Autres | 2007 | EEQ 2007 | Francophones | 5,9 \[4,6 ; 7,6\] | 1525 | 4,1 | pondéré |
 | Autres | 2007 | EEQ 2007 | Non-francophones | 12,8 \[7,3 ; 21,4\] | 163 | 4,1 | pondéré |
-| Autres | 2007 | Panel 2007 | Francophones | 4,6 \[3,6 ; 5,8\] | 1337 | 4,1 | non pondéré (pondération en révision) |
-| Autres | 2007 | Panel 2007 | Non-francophones | 4,5 \[2,2 ; 9,2\] | 155 | 4,1 | non pondéré (pondération en révision) |
-| Autres | 2008 | EEQ 2008 | Francophones | 2,6 \[1,7 ; 4,0\] | 771 | 2,6 | non pondéré (pondération en révision) |
-| Autres | 2008 | EEQ 2008 | Non-francophones | 6,3 \[3,2 ; 12,1\] | 127 | 2,6 | non pondéré (pondération en révision) |
+| Autres | 2007 | Panel 2007 | Francophones | 4,6 \[3,6 ; 5,8\] | 1337 | 4,1 | non pondéré : aucune pondération validée |
+| Autres | 2007 | Panel 2007 | Non-francophones | 4,5 \[2,2 ; 9,2\] | 155 | 4,1 | non pondéré : aucune pondération validée |
+| Autres | 2008 | EEQ 2008 | Francophones | 2,6 \[1,7 ; 4,0\] | 771 | 2,6 | non pondéré : aucune pondération validée |
+| Autres | 2008 | EEQ 2008 | Non-francophones | 6,3 \[3,2 ; 12,1\] | 127 | 2,6 | non pondéré : aucune pondération validée |
 | Autres | 2012 | EEQ 2012 | Francophones | 4,3 \[3,3 ; 5,7\] | 1094 | 3,6 | pondéré |
 | Autres | 2012 | EEQ 2012 | Non-francophones | 4,9 \[2,5 ; 9,4\] | 180 | 3,6 | pondéré |
-| Autres | 2012 | Panel 2012 | Francophones | 3,8 \[2,5 ; 5,7\] | 576 | 3,6 | non pondéré (pondération en révision) |
-| Autres | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 3,6 | non pondéré (pondération en révision) |
+| Autres | 2012 | Panel 2012 | Francophones | 3,8 \[2,5 ; 5,7\] | 576 | 3,6 | non pondéré : aucune pondération validée |
+| Autres | 2012 | Panel 2012 | Non-francophones | 8,8 \[3,7 ; 19,4\] | 57 | 3,6 | non pondéré : aucune pondération validée |
 | Autres | 2014 | EEQ 2014 | Francophones | 3,2 \[2,2 ; 4,7\] | 981 | 2,0 | pondéré |
 | Autres | 2014 | EEQ 2014 | Non-francophones | 0,9 \[0,3 ; 2,4\] | 201 | 2,0 | pondéré |
 | Autres | 2018 | EEQ 2018 | Francophones | 4,3 \[3,3 ; 5,6\] | 1656 | 3,1 | pondéré |
@@ -293,9 +298,10 @@ voteraient Non à un référendum répartissent leur vote déclaré entre les
 partis. Chez ceux qui voteraient Oui, le PQ obtient 75 % en 2012 et 38 %
 en 2022 ; chez ceux qui voteraient Non, le PLQ obtient 34 % en 2012 et
 10 % en 2022, et la CAQ 43 % en 2022. Valeurs dans la vue en
-tableau.](fr-realignement_files/figure-html/sov-light.png)![Deux
-panneaux de barres horizontales empilées, une barre par élection de 1998
-à 2022 : comment les francophones qui voteraient Oui et ceux qui
+tableau.](fr-realignement_files/figure-html/sov-light.png)
+
+![Deux panneaux de barres horizontales empilées, une barre par élection
+de 1998 à 2022 : comment les francophones qui voteraient Oui et ceux qui
 voteraient Non à un référendum répartissent leur vote déclaré entre les
 partis. Chez ceux qui voteraient Oui, le PQ obtient 75 % en 2012 et 38 %
 en 2022 ; chez ceux qui voteraient Non, le PLQ obtient 34 % en 2012 et
@@ -312,20 +318,21 @@ camp du Oui est à peu près aussi grand chez ces francophones en 2008
 forcément les mêmes électeurs : il faut comparer les rangées à
 l'intérieur de chaque période. Les étiquettes indiquent les parts de
 10 % ou plus ; les intervalles de confiance à 95 % et les panels Durand
-sont dans la vue en tableau. 1998 et 2008 : données non pondérées.
+sont dans la vue en tableau. 1998 et 2008 : non pondéré, aucune
+pondération validée.
 
 Vue en tableau
 
 | Élection | Étude | Question | Camp | Parti | Part du vote déclaré \[IC à 95 %\] | n | Pondération |
 |---:|:---|:---|:---|:---|:---|---:|:---|
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 1,4 \[0,4 ; 5,5\] | 141 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 83,7 \[76,6 ; 88,9\] | 141 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 14,2 \[9,3 ; 21,0\] | 141 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 0,7 \[0,1 ; 4,9\] | 141 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 52,1 \[44,5 ; 59,5\] | 169 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 24,9 \[18,9 ; 31,9\] | 169 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 20,7 \[15,3 ; 27,5\] | 169 | non pondéré (pondération en révision) |
-| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 2,4 \[0,9 ; 6,1\] | 169 | non pondéré (pondération en révision) |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 1,4 \[0,4 ; 5,5\] | 141 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 83,7 \[76,6 ; 88,9\] | 141 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 14,2 \[9,3 ; 21,0\] | 141 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 0,7 \[0,1 ; 4,9\] | 141 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 52,1 \[44,5 ; 59,5\] | 169 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 24,9 \[18,9 ; 31,9\] | 169 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 20,7 \[15,3 ; 27,5\] | 169 | non pondéré : aucune pondération validée |
+| 1998 | Sondages de 1998 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 2,4 \[0,9 ; 6,1\] | 169 | non pondéré : aucune pondération validée |
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 2,8 \[1,7 ; 4,7\] | 715 | pondéré |
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 58,7 \[54,3 ; 63,0\] | 715 | pondéré |
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 25,7 \[22,0 ; 29,7\] | 715 | pondéré |
@@ -336,26 +343,26 @@ Vue en tableau
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 42,4 \[38,2 ; 46,7\] | 741 | pondéré |
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | QS | 2,5 \[1,3 ; 4,5\] | 741 | pondéré |
 | 2007 | EEQ 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 6,4 \[4,5 ; 9,1\] | 741 | pondéré |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 5,0 \[3,4 ; 7,2\] | 541 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 56,0 \[51,8 ; 60,1\] | 541 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 28,1 \[24,5 ; 32,0\] | 541 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | QS | 6,3 \[4,5 ; 8,7\] | 541 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 4,6 \[3,1 ; 6,7\] | 541 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 44,9 \[40,6 ; 49,2\] | 517 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 9,9 \[7,6 ; 12,8\] | 517 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 39,1 \[35,0 ; 43,3\] | 517 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | QS | 1,4 \[0,6 ; 2,8\] | 517 | non pondéré (pondération en révision) |
-| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 4,8 \[3,3 ; 7,1\] | 517 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 9,6 \[7,0 ; 13,0\] | 376 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 73,7 \[69,0 ; 77,9\] | 376 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 6,9 \[4,7 ; 10,0\] | 376 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | QS | 7,2 \[5,0 ; 10,3\] | 376 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 2,7 \[1,4 ; 4,9\] | 376 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 60,5 \[55,2 ; 65,6\] | 342 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 9,4 \[6,7 ; 12,9\] | 342 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 27,2 \[22,7 ; 32,2\] | 342 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | QS | 1,5 \[0,6 ; 3,5\] | 342 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 1,5 \[0,6 ; 3,5\] | 342 | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 5,0 \[3,4 ; 7,2\] | 541 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 56,0 \[51,8 ; 60,1\] | 541 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 28,1 \[24,5 ; 32,0\] | 541 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | QS | 6,3 \[4,5 ; 8,7\] | 541 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 4,6 \[3,1 ; 6,7\] | 541 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 44,9 \[40,6 ; 49,2\] | 517 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 9,9 \[7,6 ; 12,8\] | 517 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 39,1 \[35,0 ; 43,3\] | 517 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | QS | 1,4 \[0,6 ; 2,8\] | 517 | non pondéré : aucune pondération validée |
+| 2007 | Panel 2007 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 4,8 \[3,3 ; 7,1\] | 517 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PLQ | 9,6 \[7,0 ; 13,0\] | 376 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | PQ | 73,7 \[69,0 ; 77,9\] | 376 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | ADQ | 6,9 \[4,7 ; 10,0\] | 376 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | QS | 7,2 \[5,0 ; 10,3\] | 376 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Oui (souverainistes) | Autres | 2,7 \[1,4 ; 4,9\] | 376 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PLQ | 60,5 \[55,2 ; 65,6\] | 342 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | PQ | 9,4 \[6,7 ; 12,9\] | 342 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | ADQ | 27,2 \[22,7 ; 32,2\] | 342 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | QS | 1,5 \[0,6 ; 3,5\] | 342 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | La question de 1995 (partenariat) | Voteraient Non (fédéralistes) | Autres | 1,5 \[0,6 ; 3,5\] | 342 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Oui (souverainistes) | PLQ | 0,5 \[0,1 ; 1,9\] | 514 | pondéré |
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Oui (souverainistes) | PQ | 74,8 \[70,5 ; 78,7\] | 514 | pondéré |
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Oui (souverainistes) | QS | 8,9 \[6,5 ; 12,0\] | 514 | pondéré |
@@ -366,16 +373,16 @@ Vue en tableau
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Non (fédéralistes) | QS | 4,1 \[2,6 ; 6,4\] | 475 | pondéré |
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Non (fédéralistes) | CAQ | 45,7 \[40,8 ; 50,7\] | 475 | pondéré |
 | 2012 | EEQ 2012 | Un pays indépendant | Voteraient Non (fédéralistes) | Autres | 3,5 \[2,2 ; 5,6\] | 475 | pondéré |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | PLQ | 1,4 \[0,5 ; 4,3\] | 214 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | PQ | 72,4 \[66,1 ; 78,0\] | 214 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | QS | 12,1 \[8,4 ; 17,3\] | 214 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | CAQ | 9,3 \[6,1 ; 14,0\] | 214 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | Autres | 4,7 \[2,5 ; 8,5\] | 214 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | PLQ | 39,7 \[34,4 ; 45,2\] | 315 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | PQ | 19,4 \[15,4 ; 24,1\] | 315 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | QS | 2,9 \[1,5 ; 5,4\] | 315 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | CAQ | 34,6 \[29,6 ; 40,0\] | 315 | non pondéré (pondération en révision) |
-| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | Autres | 3,5 \[1,9 ; 6,2\] | 315 | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | PLQ | 1,4 \[0,5 ; 4,3\] | 214 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | PQ | 72,4 \[66,1 ; 78,0\] | 214 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | QS | 12,1 \[8,4 ; 17,3\] | 214 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | CAQ | 9,3 \[6,1 ; 14,0\] | 214 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Oui (souverainistes) | Autres | 4,7 \[2,5 ; 8,5\] | 214 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | PLQ | 39,7 \[34,4 ; 45,2\] | 315 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | PQ | 19,4 \[15,4 ; 24,1\] | 315 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | QS | 2,9 \[1,5 ; 5,4\] | 315 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | CAQ | 34,6 \[29,6 ; 40,0\] | 315 | non pondéré : aucune pondération validée |
+| 2012 | Panel 2012 | Un pays souverain | Voteraient Non (fédéralistes) | Autres | 3,5 \[1,9 ; 6,2\] | 315 | non pondéré : aucune pondération validée |
 | 2014 | EEQ 2014 | Un pays indépendant | Voteraient Oui (souverainistes) | PLQ | 1,9 \[0,9 ; 4,2\] | 397 | pondéré |
 | 2014 | EEQ 2014 | Un pays indépendant | Voteraient Oui (souverainistes) | PQ | 68,7 \[63,4 ; 73,6\] | 397 | pondéré |
 | 2014 | EEQ 2014 | Un pays indépendant | Voteraient Oui (souverainistes) | QS | 13,0 \[10,1 ; 16,6\] | 397 | pondéré |
@@ -454,115 +461,15 @@ du vote, son poids étant stable depuis 2006 après avoir diminué par
 rapport aux élections de 2000 et de 2004. Ici, en revanche, c’est la
 façon dont ce clivage se traduit en partis qui a changé.
 
-## L’âge recoupe la langue et la souveraineté
-
-![Six petits graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la
-part du parti chez les 18 à 34 ans moins sa part chez les 55 ans et
-plus, en points de pourcentage, à chaque élection de 1998 à 2022, avec
-intervalles de confiance. Le PLQ est sous zéro à chaque élection. En
-2022, Québec solidaire est à +31 points et la CAQ à −34 points. Valeurs
-dans la vue en
-tableau.](fr-realignement_files/figure-html/age-light.png)![Six petits
-graphiques, un par parti (PLQ, PQ, ADQ, QS, CAQ, PCQ) : la part du parti
-chez les 18 à 34 ans moins sa part chez les 55 ans et plus, en points de
-pourcentage, à chaque élection de 1998 à 2022, avec intervalles de
-confiance. Le PLQ est sous zéro à chaque élection. En 2022, Québec
-solidaire est à +31 points et la CAQ à −34 points. Valeurs dans la vue
-en tableau.](fr-realignement_files/figure-html/age-dark.png)
-
-Source : Études électorales québécoises (une par élection) et, pour
-1998, les sondages CROP et CREATEC (francophones seulement). Au-dessus
-de zéro : le parti fait mieux chez les jeunes. Barres : intervalles de
-confiance à 95 % de la différence. Points creux (1998, 2008) : données
-non pondérées. L'axe horizontal est en années, avec une coupure entre
-1998 et 2007. Les parts de chaque groupe d'âge sont dans la vue en
-tableau.
-
-Vue en tableau
-
-| Parti | Élection | Étude | 18 à 34 ans, % | 55 ans et plus, % | Écart, 18-34 moins 55+ \[IC à 95 %\] | Pondération |
-|:---|---:|:---|:---|:---|:---|:---|
-| PLQ | 1998 | Sondages de 1998 | 25,0 | 55,1 | −30,1 pts \[-37,7 ; -22,6\] | non pondéré (pondération en révision) |
-| PLQ | 2007 | EEQ 2007 | 25,0 | 55,1 | −20,3 pts \[-26,8 ; -13,9\] | pondéré |
-| PLQ | 2007 | Panel 2007 | 25,0 | 55,1 | −25,7 pts \[-31,6 ; -19,8\] | non pondéré (pondération en révision) |
-| PLQ | 2008 | EEQ 2008 | 25,0 | 55,1 | −20,0 pts \[-28,3 ; -11,7\] | non pondéré (pondération en révision) |
-| PLQ | 2012 | EEQ 2012 | 25,0 | 55,1 | −14,9 pts \[-21,7 ; -8,0\] | pondéré |
-| PLQ | 2012 | Panel 2012 | 25,0 | 55,1 | −25,1 pts \[-33,0 ; -17,2\] | non pondéré (pondération en révision) |
-| PLQ | 2014 | EEQ 2014 | 25,0 | 55,1 | −5,0 pts \[-13,0 ; 3,0\] | pondéré |
-| PLQ | 2018 | EEQ 2018 | 25,0 | 55,1 | −12,0 pts \[-16,6 ; -7,5\] | pondéré |
-| PLQ | 2018 | Panel 2018 | 25,0 | 55,1 | −17,5 pts \[-27,1 ; -7,9\] | pondéré |
-| PLQ | 2022 | EEQ 2022 | 25,0 | 55,1 | −4,8 pts \[-14,8 ; 5,1\] | pondéré |
-| PQ | 1998 | Sondages de 1998 | 25,0 | 55,1 | +9,8 pts \[1,9 ; 17,7\] | non pondéré (pondération en révision) |
-| PQ | 2007 | EEQ 2007 | 25,0 | 55,1 | +6,8 pts \[-0,1 ; 13,8\] | pondéré |
-| PQ | 2007 | Panel 2007 | 25,0 | 55,1 | +3,4 pts \[-3,2 ; 10,0\] | non pondéré (pondération en révision) |
-| PQ | 2008 | EEQ 2008 | 25,0 | 55,1 | −0,2 pts \[-8,7 ; 8,2\] | non pondéré (pondération en révision) |
-| PQ | 2012 | EEQ 2012 | 25,0 | 55,1 | +2,8 pts \[-4,9 ; 10,4\] | pondéré |
-| PQ | 2012 | Panel 2012 | 25,0 | 55,1 | −7,3 pts \[-18,2 ; 3,5\] | non pondéré (pondération en révision) |
-| PQ | 2014 | EEQ 2014 | 25,0 | 55,1 | −13,9 pts \[-21,5 ; -6,3\] | pondéré |
-| PQ | 2018 | EEQ 2018 | 25,0 | 55,1 | −8,2 pts \[-12,4 ; -3,9\] | pondéré |
-| PQ | 2018 | Panel 2018 | 25,0 | 55,1 | −6,4 pts \[-13,7 ; 0,8\] | pondéré |
-| PQ | 2022 | EEQ 2022 | 25,0 | 55,1 | −4,4 pts \[-10,6 ; 1,9\] | pondéré |
-| ADQ | 1998 | Sondages de 1998 | 25,0 | 55,1 | +19,6 pts \[13,4 ; 25,8\] | non pondéré (pondération en révision) |
-| ADQ | 2007 | EEQ 2007 | 25,0 | 55,1 | +3,5 pts \[-2,9 ; 9,8\] | pondéré |
-| ADQ | 2007 | Panel 2007 | 25,0 | 55,1 | +13,0 pts \[6,4 ; 19,5\] | non pondéré (pondération en révision) |
-| ADQ | 2008 | EEQ 2008 | 25,0 | 55,1 | +11,0 pts \[4,4 ; 17,6\] | non pondéré (pondération en révision) |
-| QS | 2007 | EEQ 2007 | 25,0 | 55,1 | +3,2 pts \[0,2 ; 6,2\] | pondéré |
-| QS | 2007 | Panel 2007 | 25,0 | 55,1 | +3,9 pts \[1,0 ; 6,7\] | non pondéré (pondération en révision) |
-| QS | 2008 | EEQ 2008 | 25,0 | 55,1 | +5,3 pts \[1,3 ; 9,4\] | non pondéré (pondération en révision) |
-| QS | 2012 | EEQ 2012 | 25,0 | 55,1 | +7,4 pts \[3,2 ; 11,5\] | pondéré |
-| QS | 2012 | Panel 2012 | 25,0 | 55,1 | +11,0 pts \[3,7 ; 18,2\] | non pondéré (pondération en révision) |
-| QS | 2014 | EEQ 2014 | 25,0 | 55,1 | +12,0 pts \[7,3 ; 16,8\] | pondéré |
-| QS | 2018 | EEQ 2018 | 25,0 | 55,1 | +22,7 pts \[17,6 ; 27,7\] | pondéré |
-| QS | 2018 | Panel 2018 | 25,0 | 55,1 | +19,8 pts \[9,6 ; 30,0\] | pondéré |
-| QS | 2022 | EEQ 2022 | 25,0 | 55,1 | +30,6 pts \[22,7 ; 38,6\] | pondéré |
-| CAQ | 2012 | EEQ 2012 | 25,0 | 55,1 | −1,2 pts \[-7,7 ; 5,4\] | pondéré |
-| CAQ | 2012 | Panel 2012 | 25,0 | 55,1 | +11,1 pts \[1,1 ; 21,1\] | non pondéré (pondération en révision) |
-| CAQ | 2014 | EEQ 2014 | 25,0 | 55,1 | +3,2 pts \[-4,3 ; 10,8\] | pondéré |
-| CAQ | 2018 | EEQ 2018 | 25,0 | 55,1 | −9,4 pts \[-14,9 ; -3,9\] | pondéré |
-| CAQ | 2018 | Panel 2018 | 25,0 | 55,1 | −2,1 pts \[-14,8 ; 10,6\] | pondéré |
-| CAQ | 2022 | EEQ 2022 | 25,0 | 55,1 | −33,8 pts \[-42,1 ; -25,5\] | pondéré |
-| PCQ | 2022 | EEQ 2022 | 25,0 | 55,1 | +9,6 pts \[3,9 ; 15,3\] | pondéré |
-
-En 2022, Québec solidaire menait chez les jeunes et la CAQ chez les
-aînés (écarts d'âge de +31 points et de −34 points)Part du vote déclaré
-de chaque parti chez les 18 à 34 ans moins sa part chez les 55 ans et
-plus, en points de pourcentage, avec intervalles de confiance à 95 %
-
-Chaque écart de la figure correspond à la part d’un parti chez les 18 à
-34 ans moins sa part chez les 55 ans et plus, en points de pourcentage.
-En 2007, les jeunes votaient PQ (36 % des 18 à 34 ans) et ADQ (30 %). En
-2018 et en 2022, leur premier choix était Québec solidaire (37 % en
-2022), un parti qui attire peu les électeurs de 55 ans et plus (6 %). La
-CAQ, pour sa part, est devenue le parti des électeurs plus âgés. En
-2012, elle puisait à peu près également dans les deux groupes d’âge (un
-écart de −1 point) ; en 2022, 48 % des 55 ans et plus ont voté pour
-elle, contre 15 % des 18 à 34 ans. Le PLQ fait mieux chez les aînés à
-chaque élection, bien qu’en 2014 et en 2022 l’écart se situe à
-l’intérieur de la marge d’erreur.
-
-Le profil du PQ, lui, s’est inversé. Il faisait aussi bien ou mieux chez
-les jeunes jusqu’en 2012 (de +10 points en 1998 à +3 en 2012), puis
-mieux chez les aînés à partir de 2014 (de −14 points en 2014 à −4 en
-2022, un écart alors à l’intérieur de la marge d’erreur). Le
-renversement survient en 2014, l’élection lors de laquelle Mahéo et
-Bélanger (2018) constatent que les pertes du PQ se sont concentrées chez
-les millénariaux, moins enclins à voir la souveraineté comme une
-priorité. Il s’agit toutefois d’enquêtes transversales distinctes, et un
-écart d’âge observé à une seule élection ne permet pas, à lui seul, de
-distinguer un changement générationnel d’un effet de cycle de vie.
-
 ## Ce qu’il faut en retenir
 
 En somme, le système partisan québécois ne s’est pas fragmenté de
 manière uniforme. Les nouveaux partis ont divisé le vote francophone, et
 ils l’ont fait à l’intérieur de chaque camp sur la souveraineté : le mur
 entre les camps a tenu, alors que le PQ et le PLQ perdaient leur emprise
-sur leur propre camp. L’âge pèse aussi davantage qu’aux élections de
-2007 à 2014. En 2022, l’écart d’âge de la CAQ atteignait 34 points,
-alors que le plus grand écart, tous partis confondus, était de 20 points
-de 2007 à 2014. Notre portrait n’est toutefois pas sans limites. D’une
-part, il s’agit de votes déclarés dans des enquêtes distinctes : ils
-montrent comment des groupes d’électeurs se répartissent à chaque
+sur leur propre camp. Notre portrait n’est toutefois pas sans limites.
+D’une part, il s’agit de votes déclarés dans des enquêtes distinctes :
+ils montrent comment des groupes d’électeurs se répartissent à chaque
 élection, et non si les mêmes personnes ont changé de parti (la page sur
 les [transitions des
 panels](https://thomasgareau.github.io/qesR/articles/fr-transitions.md)
@@ -571,20 +478,23 @@ suit les mêmes répondants au fil d’une campagne). D’autre part, les
 par élection, de sorte que leurs estimations varient beaucoup d’une
 élection à l’autre et que la rupture de 2022 reste à confirmer. Reste à
 savoir si le vote francophone se recomposera autour de nouveaux pôles,
-ou si le remplacement générationnel le maintiendra divisé.
+ou si le remplacement générationnel le maintiendra divisé (la [page sur
+la
+souveraineté](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)
+suit les cohortes de naissance).
 
 ## Comment les figures sont produites
 
 Toutes les figures de cette page reposent sur une seule variable
 harmonisée, `vote_choice`, limitée au vote déclaré après l’élection, à
-laquelle s’ajoutent la langue maternelle, le groupe d’âge et la question
-référendaire :
+laquelle s’ajoutent la langue maternelle et la question référendaire :
 
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
-  targets = c("vote_choice", "lang_mother", "age_group3", "sov_support"),
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010",
+              "qes2012", "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "sov_support"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
 )
@@ -597,6 +507,7 @@ et un appel à l’extension survey :
 
 ``` r
 
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018", ], weight = "weight_post")
 d18 <- subset(d18, !is.na(vote_choice) & !is.na(lang_mother))
 svyby(~I(vote_choice == "CAQ"), ~lang_mother, d18, svyciprop,
@@ -642,11 +553,14 @@ regroupée d’une étude à l’autre.
 
 - **Études.** Une Étude électorale québécoise par élection (2007, 2008,
   2012, 2014, 2018, 2022) et, pour 1998, les sondages CROP et CREATEC,
-  qui n’ont interrogé que des francophones. Les vues en tableau
-  comprennent aussi les panels Durand de 2007, 2012 et 2018, qui ont
-  interrogé les mêmes répondants pendant la campagne et après
-  l’élection ; ils ne sont pas tracés. Les sondages CROP de 2007 à 2010
-  ne demandaient pas le vote passé et ne sont pas utilisés.
+  qui n’ont interrogé que des francophones (CREATEC selon la langue
+  maternelle, CROP selon la langue d’usage) ; qesR n’a pas de colonne de
+  langue maternelle pour 1998, et cette page compte tous les répondants
+  de 1998 comme francophones. Les vues en tableau comprennent aussi les
+  panels Durand de 2007, 2012 et 2018, qui ont interrogé les mêmes
+  répondants pendant la campagne et après l’élection ; ils ne sont pas
+  tracés. Les sondages CROP de 2007 à 2010 ne demandaient pas le vote
+  passé et ne sont pas utilisés.
 - **Vote.** Le parti pour lequel les répondants disent avoir voté,
   demandé après l’élection. Les personnes qui n’ont pas voté, qui ont
   annulé leur bulletin, qui ne savent pas ou qui refusent de répondre
@@ -665,10 +579,12 @@ regroupée d’une étude à l’autre.
   question porte sur un pays indépendant. En 1998, seul le sondage CROP
   l’a posée. Les panels Durand des vues en tableau emploient leur propre
   formulation (voir la colonne Question).
-- **Pondération.** La pondération postélectorale de chaque étude. Les
-  sondages de 1998 et l’étude de 2008 sont utilisés sans pondération et
-  sont représentés par des points creux ; les panels Durand de 2007 et
-  de 2012 ne sont pas pondérés non plus. Les répondants de 1998 avaient
-  d’abord participé à des sondages préélectoraux et ont été interrogés
-  de nouveau après l’élection ; ce second passage a surreprésenté les
-  indécis et les personnes qui refusaient de dévoiler leur vote.
+- **Pondération.** La pondération postélectorale de chaque étude, si
+  elle en a une qui est validée (le [tableau des
+  pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+  donne celle de chaque étude) ; les autres, dont 1998 et 2008 parmi les
+  études tracées, ne sont pas pondérées et sont représentées par des
+  points creux. Les répondants de 1998 avaient d’abord participé à des
+  sondages préélectoraux et ont été interrogés de nouveau après
+  l’élection ; ce second passage a surreprésenté les indécis et les
+  personnes qui refusaient de dévoiler leur vote.

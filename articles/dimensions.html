@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -160,6 +287,11 @@
     
     
 <p><em><a href="fr-dimensions.html">Version française</a></em></p>
+<div class="qesr-download">
+<p><strong>This page downloads 6 studies</strong> (about 13 MB) the
+first time it runs. <code>options(qesR.cache = "disk")</code> keeps them
+on disk for later sessions.</p>
+</div>
 <p>For four decades, the national question organized party competition
 in Quebec. The Parti Québécois (PQ) stood for sovereignty, the Parti
 libéral du Québec (PLQ) for federalism, and a voter’s position on
@@ -197,7 +329,7 @@ the figures.</p>
 <div class="section level2">
 <h2 id="the-poles-held-the-newcomers-converged">The poles held; the newcomers converged<a class="anchor" aria-label="anchor" href="#the-poles-held-the-newcomers-converged"></a>
 </h2>
-<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">CAQ and QS voters converged on sovereignty (38% and 44% Yes in 2022), while PLQ voters moved left</span><span class="qesr-sub">Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/paths-light.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/paths-dark.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Reported vote after the election; referendum vote among respondents who chose Yes or No. The parties are set side by side at each election, and the two panels have their own scales. The PCQ was offered as an answer in 2022 only.</p>
+<figure class="qesr-fig" id="fig-paths"><figcaption><span class="qesr-title">CAQ and QS voters converged on sovereignty (38% and 44% Yes in 2022), while PLQ voters moved left</span><span class="qesr-sub">Where each party's voters stand on sovereignty and on the left-right scale, 2012 to 2022, with 95% confidence intervals</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/paths-light-narrow.png" width="442" height="464"><img class="qesr-img qesr-light" src="dimensions_files/figure-html/paths-light.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/paths-dark-narrow.png" width="442" height="464"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/paths-dark.png" alt="Two line charts, 2012 to 2022, one line per party (PLQ, PQ, CAQ, QS; the PCQ in 2022 only): on the left the share of the party's voters who would vote Yes to independence, on the right their mean left-right self-placement, with confidence intervals. PQ voters go from 84% to 82% Yes; CAQ voters from 19% to 38%; QS voters from 63% to 44%. PLQ voters move from 6.5 to 4.8 on the left-right scale; QS voters stay the furthest left, at 3.7 in 2022. Values in the table view." width="672" height="403" loading="lazy"></source></picture><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Reported vote after the election; referendum vote among respondents who chose Yes or No. The parties are set side by side at each election, and the two panels have their own scales. The PCQ was offered as an answer in 2022 only.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Party </th>
@@ -408,7 +540,7 @@ scale.</p>
 <div class="section level2">
 <h2 id="yes-voters-now-split-among-three-parties">Yes voters now split among three parties<a class="anchor" aria-label="anchor" href="#yes-voters-now-split-among-three-parties"></a>
 </h2>
-<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">The PQ's share of the Yes vote fell from 73% to 35% as QS and the CAQ took it; No voters spread across more parties</span><span class="qesr-sub">How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/where-light.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/where-dark.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.</p>
+<figure class="qesr-fig" id="fig-where"><figcaption><span class="qesr-title">The PQ's share of the Yes vote fell from 73% to 35% as QS and the CAQ took it; No voters spread across more parties</span><span class="qesr-sub">How the respondents who would vote Yes and No in a referendum voted: each party's share of the side's reported vote, with 95% confidence intervals</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/where-light-narrow.png" width="442" height="464"><img class="qesr-img qesr-light" src="dimensions_files/figure-html/where-light.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/where-dark-narrow.png" width="442" height="464"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/where-dark.png" alt="Line charts in two panels, the respondents who would vote Yes (left) and No (right) in a referendum, from 2007 to 2022: the share of each side's reported vote that went to each party. The PQ's share of the Yes vote goes from 73% in 2012 to 35% in 2022, as QS rises to 20% and the CAQ to 34%; the PLQ's share of the No vote goes from 46% in 2012 to 29% in 2022. Values in the table view." width="672" height="403" loading="lazy"></source></picture><p class="qesr-note">Source: Quebec Election Studies 2007 to 2022, weighted, except 2008 (hollow: unweighted, no validated weight). 2007 and 2008 asked the 1995 referendum question, 2012 to 2022 a question on an independent country, so the lines break at the change. The other parties (Green Party, Option nationale and others) are in the table view.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -553,7 +685,7 @@ scale.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 10.0 [7.4, 13.4] </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -562,7 +694,7 @@ scale.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 73.3 [68.6, 77.4] </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -571,7 +703,7 @@ scale.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 6.9 [4.8, 9.9] </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -580,7 +712,7 @@ scale.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 6.9 [4.8, 9.9] </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -589,7 +721,7 @@ scale.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -598,7 +730,7 @@ scale.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -607,7 +739,7 @@ scale.</p>
    <td style="text-align:left;"> Other </td>
    <td style="text-align:left;"> 2.8 [1.6, 5.0] </td>
    <td style="text-align:right;"> 389 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -616,7 +748,7 @@ scale.</p>
    <td style="text-align:left;"> PLQ </td>
    <td style="text-align:left;"> 66.7 [62.3, 70.9] </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -625,7 +757,7 @@ scale.</p>
    <td style="text-align:left;"> PQ </td>
    <td style="text-align:left;"> 7.3 [5.2, 10.1] </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -634,7 +766,7 @@ scale.</p>
    <td style="text-align:left;"> ADQ </td>
    <td style="text-align:left;"> 21.7 [18.2, 25.8] </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -643,7 +775,7 @@ scale.</p>
    <td style="text-align:left;"> QS </td>
    <td style="text-align:left;"> 1.6 [0.7, 3.2] </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -652,7 +784,7 @@ scale.</p>
    <td style="text-align:left;"> CAQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -661,7 +793,7 @@ scale.</p>
    <td style="text-align:left;"> PCQ </td>
    <td style="text-align:left;"> — </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -670,7 +802,7 @@ scale.</p>
    <td style="text-align:left;"> Other </td>
    <td style="text-align:left;"> 2.7 [1.5, 4.6] </td>
    <td style="text-align:right;"> 451 </td>
-   <td style="text-align:left;"> unweighted (weight under review) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>
@@ -1211,7 +1343,7 @@ by party choice (an eta squared). At 100%, knowing someone’s vote would
 tell us their answer exactly; at 0%, it would tell us nothing. Both
 shares are computed on the same respondents, those who answered both
 questions and voted for one of the parties shown above.</p>
-<figure class="qesr-fig" id="fig-sorting"><figcaption><span class="qesr-title">Party choice accounts for 25% of the variance in the referendum vote in 2022, down from 57% in 2012; left-right did not gain</span><span class="qesr-sub">How much of the variation in each question lies between the parties' electorates, 2012 to 2022, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="dimensions_files/figure-html/sorting-light.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/sorting-dark.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Respondents who answered both questions and reported a vote for the PLQ, the PQ, the CAQ, QS or (2022) the PCQ; francophones are respondents whose mother tongue is French. Diamond: the 2022 left-right share without the PCQ's voters. Intervals from 500 bootstrap replicates of each study.</p>
+<figure class="qesr-fig" id="fig-sorting"><figcaption><span class="qesr-title">Party choice accounts for 25% of the variance in the referendum vote in 2022, down from 57% in 2012; left-right did not gain</span><span class="qesr-sub">How much of the variation in each question lies between the parties' electorates, 2012 to 2022, with 95% confidence intervals</span></figcaption><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/sorting-light-narrow.png" width="442" height="464"><img class="qesr-img qesr-light" src="dimensions_files/figure-html/sorting-light.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="dimensions_files/figure-html/sorting-dark-narrow.png" width="442" height="464"><img class="qesr-img qesr-dark" src="dimensions_files/figure-html/sorting-dark.png" alt="Line charts in two panels, all voters (left) and francophone voters (right), 2012 to 2022: the share of the variance in the referendum vote and in left-right placement accounted for by party choice, with confidence intervals. For the referendum vote it goes from 57% in 2012 to 25% in 2022 among all voters, and from 55% to 18% among francophones; for left-right placement from 26% to 23% among all voters, and 14% in 2022 without the PCQ. Values in the table view." width="672" height="403" loading="lazy"></source></picture><p class="qesr-note">Source: Quebec Election Studies 2012, 2014, 2018 and 2022, weighted. Respondents who answered both questions and reported a vote for the PLQ, the PQ, the CAQ, QS or (2022) the PCQ; francophones are respondents whose mother tongue is French. Diamond: the 2022 left-right share without the PCQ's voters. Intervals from 500 bootstrap replicates of each study.</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:left;"> Voters </th>
@@ -1603,8 +1735,9 @@ generations</a> takes up that question.</p>
 referendum vote. The panels run by Claire Durand and colleagues at the
 same elections are left out, so that the series has one study per
 election; in 2012 and 2018 they also asked other wordings of the
-referendum question. The 1998 polls are left out as well: they are
-unweighted, and only one of the two asked the referendum question.</li>
+referendum question. The 1998 polls are left out as well: they have no
+validated weight, and only one of the two asked the referendum
+question.</li>
 <li>
 <strong>Questions.</strong> The vote reported after the election;
 the referendum vote as the share of Yes among respondents who chose Yes
@@ -1625,8 +1758,9 @@ election; the estimates use the respondents who took part in both waves,
 with the post-election weight.</li>
 <li>
 <strong>Weights.</strong> Each study’s post-election weight. The
-2008 study is shown unweighted: its weights were adjusted to the
-election result, which makes them unsuited to a study of the vote.</li>
+2008 study is shown unweighted: its only weights were calibrated on the
+reported vote, which makes them unsuited to a study of the vote (see the
+<a href="studies.html#weights">weights table</a>).</li>
 <li>
 <strong>Share of variance.</strong> Computed within each study on
 the respondents who answered both questions and voted for one of the
@@ -1643,15 +1777,16 @@ pools the reported vote (<code>vote_choice</code>), the referendum vote
 and mother tongue (<code>lang_mother</code>) across the studies:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span></span>
-<span>  studies <span class="op">=</span> <span class="va">qz_studies</span>,</span>
+<span>  studies <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"qes2007"</span>, <span class="st">"qes2008"</span>, <span class="st">"qes2012"</span>, <span class="st">"qes2014"</span>, <span class="st">"qes2018"</span>, <span class="st">"qes2022"</span><span class="op">)</span>,</span>
 <span>  targets <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"vote_choice"</span>, <span class="st">"sov_support"</span>, <span class="st">"lr_self"</span>, <span class="st">"lang_mother"</span><span class="op">)</span>,</span>
 <span>  types <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>vote_choice <span class="op">=</span> <span class="st">"recall"</span><span class="op">)</span>,</span>
 <span>  missing <span class="op">=</span> <span class="st">"reasons"</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>A weighted mean by party, within one study:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
-<span><span class="fu">svyby</span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://r-survey.r-forge.r-project.org/survey/" class="external-link">survey</a></span><span class="op">)</span></span>
+<span><span class="va">d22</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_design.html">qes_design</a></span><span class="op">(</span><span class="va">h</span><span class="op">[</span><span class="va">h</span><span class="op">$</span><span class="va">study</span> <span class="op">==</span> <span class="st">"qes2022"</span>, <span class="op">]</span>, weight <span class="op">=</span> <span class="st">"weight_post"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/survey/man/svyby.html" class="external-link">svyby</a></span><span class="op">(</span><span class="op">~</span><span class="va">lr_self</span>, <span class="op">~</span><span class="va">vote_choice</span>, <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">d22</span>, <span class="va">vote_choice</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CAQ"</span>, <span class="st">"QS"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>      <span class="va">svymean</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     vote_choice  lr_self         se</span></span>
 <span><span class="co">#&gt; CAQ         CAQ 5.549020 0.09808683</span></span>

@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)*
 
+**This page downloads 11 studies** (about 16 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 In Quebec, it is almost a reflex to say that surveys underestimate the
 Parti libéral du Québec (PLQ). The polls of the 1998 election, which
 overestimated the Parti Québécois (PQ) and underestimated the Liberals,
@@ -35,21 +38,23 @@ interval (circles: Quebec Election Studies; squares: Durand panels). The
 PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it.
 In 2022 the Quebec Election Study has the CAQ at 33% against 41%
 officially. Values in the table
-view.](survey-vs-official_files/figure-html/parties-light.png)![Five
-small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official share
-of valid votes at each election from 2007 to 2022 as a line with a tick,
-and each study's reported vote as a dot with its confidence interval
-(circles: Quebec Election Studies; squares: Durand panels). The PLQ dots
-sit below the line from 2007 to 2014 and the PQ dots above it. In 2022
-the Quebec Election Study has the CAQ at 33% against 41% officially.
-Values in the table
+view.](survey-vs-official_files/figure-html/parties-light.png)
+
+![Five small charts, one per party (PLQ, PQ, QS, ADQ, CAQ): the official
+share of valid votes at each election from 2007 to 2022 as a line with a
+tick, and each study's reported vote as a dot with its confidence
+interval (circles: Quebec Election Studies; squares: Durand panels). The
+PLQ dots sit below the line from 2007 to 2014 and the PQ dots above it.
+In 2022 the Quebec Election Study has the CAQ at 33% against 41%
+officially. Values in the table
 view.](survey-vs-official_files/figure-html/parties-dark.png)
 
 Source: Quebec Election Studies (circles, just left of each election)
 and Durand panels (squares, just right), reported vote among respondents
 who named a party; official results of Élections Québec. Dots are
-weighted, with 95% confidence intervals. Hollow dots: unweighted. The
-table view gives every party, with the unweighted estimates.
+weighted, with 95% confidence intervals. Hollow dots: unweighted, no
+validated weight. The table view gives every party, with the unweighted
+estimates.
 
 Table view
 
@@ -57,11 +62,11 @@ Table view
 |:---|---:|:---|:---|---:|:---|:---|:---|
 | PLQ | 2007 | QES 2007 | 25.4 \[23.4, 27.5\] | 1727 | 33.1 | −7.7 pts | unweighted |
 | PLQ | 2007 | QES 2007 | 25.8 \[23.3, 28.4\] | 1727 | 33.1 | −7.3 pts | weighted |
-| PLQ | 2007 | 2007 panel | 28.6 \[26.4, 31.0\] | 1494 | 33.1 | −4.4 pts | unweighted |
-| PLQ | 2008 | QES 2008 | 39.2 \[36.1, 42.4\] | 898 | 42.1 | −2.9 pts | unweighted |
+| PLQ | 2007 | 2007 panel | 28.6 \[26.4, 31.0\] | 1494 | 33.1 | −4.4 pts | unweighted: no validated weight |
+| PLQ | 2008 | QES 2008 | 39.2 \[36.1, 42.4\] | 898 | 42.1 | −2.9 pts | unweighted: no validated weight |
 | PLQ | 2012 | QES 2012 | 21.8 \[19.6, 24.2\] | 1274 | 31.2 | −9.4 pts | unweighted |
 | PLQ | 2012 | QES 2012 | 24.9 \[22.2, 27.8\] | 1274 | 31.2 | −6.3 pts | weighted |
-| PLQ | 2012 | 2012 panel | 26.4 \[23.1, 30.0\] | 633 | 31.2 | −4.8 pts | unweighted |
+| PLQ | 2012 | 2012 panel | 26.4 \[23.1, 30.0\] | 633 | 31.2 | −4.8 pts | unweighted: no validated weight |
 | PLQ | 2014 | QES 2014 | 38.1 \[35.5, 40.8\] | 1283 | 41.5 | −3.4 pts | unweighted |
 | PLQ | 2014 | QES 2014 | 35.9 \[32.8, 39.1\] | 1283 | 41.5 | −5.6 pts | weighted |
 | PLQ | 2018 | QES 2018 | 24.3 \[22.5, 26.2\] | 2016 | 24.8 | −0.5 pts | unweighted |
@@ -72,11 +77,11 @@ Table view
 | PLQ | 2022 | QES 2022 | 17.1 \[13.6, 21.4\] | 1101 | 14.4 | +2.8 pts | weighted |
 | PQ | 2007 | QES 2007 | 30.2 \[28.0, 32.4\] | 1727 | 28.3 | +1.8 pts | unweighted |
 | PQ | 2007 | QES 2007 | 30.9 \[28.2, 33.6\] | 1727 | 28.3 | +2.5 pts | weighted |
-| PQ | 2007 | 2007 panel | 30.8 \[28.5, 33.2\] | 1494 | 28.3 | +2.4 pts | unweighted |
-| PQ | 2008 | QES 2008 | 37.4 \[34.3, 40.6\] | 898 | 35.2 | +2.2 pts | unweighted |
+| PQ | 2007 | 2007 panel | 30.8 \[28.5, 33.2\] | 1494 | 28.3 | +2.4 pts | unweighted: no validated weight |
+| PQ | 2008 | QES 2008 | 37.4 \[34.3, 40.6\] | 898 | 35.2 | +2.2 pts | unweighted: no validated weight |
 | PQ | 2012 | QES 2012 | 40.0 \[37.3, 42.7\] | 1274 | 31.9 | +8.0 pts | unweighted |
 | PQ | 2012 | QES 2012 | 38.8 \[35.8, 41.9\] | 1274 | 31.9 | +6.9 pts | weighted |
-| PQ | 2012 | 2012 panel | 38.4 \[34.7, 42.2\] | 633 | 31.9 | +6.4 pts | unweighted |
+| PQ | 2012 | 2012 panel | 38.4 \[34.7, 42.2\] | 633 | 31.9 | +6.4 pts | unweighted: no validated weight |
 | PQ | 2014 | QES 2014 | 26.8 \[24.5, 29.3\] | 1283 | 25.4 | +1.4 pts | unweighted |
 | PQ | 2014 | QES 2014 | 29.8 \[26.9, 33.0\] | 1283 | 25.4 | +4.4 pts | weighted |
 | PQ | 2018 | QES 2018 | 19.4 \[17.8, 21.2\] | 2016 | 17.1 | +2.4 pts | unweighted |
@@ -87,15 +92,15 @@ Table view
 | PQ | 2022 | QES 2022 | 15.6 \[13.4, 18.1\] | 1101 | 14.6 | +1.0 pts | weighted |
 | ADQ | 2007 | QES 2007 | 33.8 \[31.6, 36.0\] | 1727 | 30.8 | +2.9 pts | unweighted |
 | ADQ | 2007 | QES 2007 | 31.6 \[29.0, 34.3\] | 1727 | 30.8 | +0.8 pts | weighted |
-| ADQ | 2007 | 2007 panel | 32.1 \[29.8, 34.5\] | 1494 | 30.8 | +1.3 pts | unweighted |
-| ADQ | 2008 | QES 2008 | 16.0 \[13.8, 18.6\] | 898 | 16.4 | −0.3 pts | unweighted |
+| ADQ | 2007 | 2007 panel | 32.1 \[29.8, 34.5\] | 1494 | 30.8 | +1.3 pts | unweighted: no validated weight |
+| ADQ | 2008 | QES 2008 | 16.0 \[13.8, 18.6\] | 898 | 16.4 | −0.3 pts | unweighted: no validated weight |
 | QS | 2007 | QES 2007 | 4.3 \[3.5, 5.4\] | 1727 | 3.6 | +0.7 pts | unweighted |
 | QS | 2007 | QES 2007 | 4.8 \[3.6, 6.2\] | 1727 | 3.6 | +1.1 pts | weighted |
-| QS | 2007 | 2007 panel | 3.8 \[3.0, 4.9\] | 1494 | 3.6 | +0.2 pts | unweighted |
-| QS | 2008 | QES 2008 | 4.2 \[3.1, 5.8\] | 898 | 3.8 | +0.5 pts | unweighted |
+| QS | 2007 | 2007 panel | 3.8 \[3.0, 4.9\] | 1494 | 3.6 | +0.2 pts | unweighted: no validated weight |
+| QS | 2008 | QES 2008 | 4.2 \[3.1, 5.8\] | 898 | 3.8 | +0.5 pts | unweighted: no validated weight |
 | QS | 2012 | QES 2012 | 7.5 \[6.2, 9.1\] | 1274 | 6.0 | +1.5 pts | unweighted |
 | QS | 2012 | QES 2012 | 6.5 \[5.1, 8.2\] | 1274 | 6.0 | +0.5 pts | weighted |
-| QS | 2012 | 2012 panel | 7.1 \[5.3, 9.4\] | 633 | 6.0 | +1.1 pts | unweighted |
+| QS | 2012 | 2012 panel | 7.1 \[5.3, 9.4\] | 633 | 6.0 | +1.1 pts | unweighted: no validated weight |
 | QS | 2014 | QES 2014 | 10.2 \[8.7, 12.0\] | 1283 | 7.6 | +2.6 pts | unweighted |
 | QS | 2014 | QES 2014 | 8.2 \[6.8, 9.9\] | 1283 | 7.6 | +0.6 pts | weighted |
 | QS | 2018 | QES 2018 | 17.0 \[15.4, 18.7\] | 2016 | 16.1 | +0.9 pts | unweighted |
@@ -106,7 +111,7 @@ Table view
 | QS | 2022 | QES 2022 | 17.2 \[14.7, 20.1\] | 1101 | 15.4 | +1.8 pts | weighted |
 | CAQ | 2012 | QES 2012 | 25.4 \[23.1, 27.9\] | 1274 | 27.1 | −1.6 pts | unweighted |
 | CAQ | 2012 | QES 2012 | 25.4 \[22.8, 28.1\] | 1274 | 27.1 | −1.7 pts | weighted |
-| CAQ | 2012 | 2012 panel | 23.9 \[20.7, 27.3\] | 633 | 27.1 | −3.2 pts | unweighted |
+| CAQ | 2012 | 2012 panel | 23.9 \[20.7, 27.3\] | 633 | 27.1 | −3.2 pts | unweighted: no validated weight |
 | CAQ | 2014 | QES 2014 | 21.6 \[19.4, 23.9\] | 1283 | 23.1 | −1.5 pts | unweighted |
 | CAQ | 2014 | QES 2014 | 23.1 \[20.5, 26.0\] | 1283 | 23.1 | +0.1 pts | weighted |
 | CAQ | 2018 | QES 2018 | 34.7 \[32.7, 36.8\] | 2016 | 37.4 | −2.7 pts | unweighted |
@@ -117,7 +122,7 @@ Table view
 | CAQ | 2022 | QES 2022 | 33.0 \[29.3, 36.9\] | 1101 | 41.0 | −8.0 pts | weighted |
 | PCQ | 2012 | QES 2012 | n.l. | 1274 |  |  | unweighted |
 | PCQ | 2012 | QES 2012 | n.l. | 1274 |  |  | weighted |
-| PCQ | 2012 | 2012 panel | n.l. | 633 |  |  | unweighted |
+| PCQ | 2012 | 2012 panel | n.l. | 633 |  |  | unweighted: no validated weight |
 | PCQ | 2014 | QES 2014 | n.l. | 1283 |  |  | unweighted |
 | PCQ | 2014 | QES 2014 | n.l. | 1283 |  |  | weighted |
 | PCQ | 2018 | QES 2018 | n.l. | 2016 |  |  | unweighted |
@@ -128,11 +133,11 @@ Table view
 | PCQ | 2022 | QES 2022 | 13.5 \[11.3, 16.2\] | 1101 | 12.9 | +0.6 pts | weighted |
 | Other | 2007 | QES 2007 | 6.3 \[5.3, 7.6\] | 1727 | 4.1 | +2.2 pts | unweighted |
 | Other | 2007 | QES 2007 | 7.0 \[5.6, 8.8\] | 1727 | 4.1 | +2.9 pts | weighted |
-| Other | 2007 | 2007 panel | 4.6 \[3.7, 5.8\] | 1494 | 4.1 | +0.5 pts | unweighted |
-| Other | 2008 | QES 2008 | 3.1 \[2.2, 4.5\] | 898 | 2.6 | +0.5 pts | unweighted |
+| Other | 2007 | 2007 panel | 4.6 \[3.7, 5.8\] | 1494 | 4.1 | +0.5 pts | unweighted: no validated weight |
+| Other | 2008 | QES 2008 | 3.1 \[2.2, 4.5\] | 898 | 2.6 | +0.5 pts | unweighted: no validated weight |
 | Other | 2012 | QES 2012 | 5.3 \[4.2, 6.6\] | 1274 | 3.8 | +1.5 pts | unweighted |
 | Other | 2012 | QES 2012 | 4.4 \[3.4, 5.7\] | 1274 | 3.8 | +0.6 pts | weighted |
-| Other | 2012 | 2012 panel | 4.3 \[2.9, 6.1\] | 633 | 3.8 | +0.5 pts | unweighted |
+| Other | 2012 | 2012 panel | 4.3 \[2.9, 6.1\] | 633 | 3.8 | +0.5 pts | unweighted: no validated weight |
 | Other | 2014 | QES 2014 | 3.3 \[2.4, 4.4\] | 1283 | 2.4 | +0.9 pts | unweighted |
 | Other | 2014 | QES 2014 | 3.0 \[2.1, 4.2\] | 1283 | 2.4 | +0.5 pts | weighted |
 | Other | 2018 | QES 2018 | 4.6 \[3.7, 5.6\] | 2016 | 4.6 | 0.0 pts | unweighted |
@@ -189,13 +194,14 @@ result, as reported (coloured dot) and once non-francophones among
 voters are given their share of all respondents (grey diamond). For the
 PLQ in 2014 the gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the
 rebalancing also closes little of the gap. Values in the table
-view.](survey-vs-official_files/figure-html/language-light.png)![Two dot
-charts side by side, one row per Quebec Election Study from 2007 to
-2022: the PLQ's and the PQ's reported vote minus the official result, as
-reported (coloured dot) and once non-francophones among voters are given
-their share of all respondents (grey diamond). For the PLQ in 2014 the
-gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the rebalancing
-also closes little of the gap. Values in the table
+view.](survey-vs-official_files/figure-html/language-light.png)
+
+![Two dot charts side by side, one row per Quebec Election Study from
+2007 to 2022: the PLQ's and the PQ's reported vote minus the official
+result, as reported (coloured dot) and once non-francophones among
+voters are given their share of all respondents (grey diamond). For the
+PLQ in 2014 the gap goes from −5.7 pts to −4.3 pts; in 2007 and 2012 the
+rebalancing also closes little of the gap. Values in the table
 view.](survey-vs-official_files/figure-html/language-dark.png)
 
 Source: Quebec Election Studies, weighted, respondents whose mother
@@ -262,8 +268,9 @@ official results of Élections Québec. Index of dissimilarity: half the
 sum, over parties, of the absolute difference between the reported and
 the official share, in points. It is the share of respondents who would
 have to change party for the survey to match the result (0: identical).
-A party a study did not list counts in its Other. The unweighted studies
-(2008, and the 2007 and 2012 panels) are in the table view.
+A party a study did not list counts in its Other. The studies without a
+validated weight (2008, and the 2007 and 2012 panels) are in the table
+view.
 
 Table view
 
@@ -320,12 +327,12 @@ view.](survey-vs-official_files/figure-html/crop-dark.png)
 Source: CROP polls, vote intention (with the undecided asked which party
 they lean towards, where the poll asked it), about 850 respondents a
 month, among those who named a party; official results of Élections
-Québec (diamonds). Unweighted. By design, the polls over-sampled the
-Québec City area (20% of respondents, about twice its share of the
-population), so these shares give it too much weight. Bold lines: the
-mean of the polls within a month and a half of each poll; faint lines:
-each month. The 95% confidence intervals of every poll are in the table
-view.
+Québec (diamonds). Unweighted: no validated weight. By design, the polls
+over-sampled the Québec City area (20% of respondents, about twice its
+share of the population), so these shares give it too much weight. Bold
+lines: the mean of the polls within a month and a half of each poll;
+faint lines: each month. The 95% confidence intervals of every poll are
+in the table view.
 
 Table view
 
@@ -588,12 +595,12 @@ runs these comparisons for every study.
   a party a study did not list.
 - **Official results.** Each party’s share of valid votes, from
   Élections Québec.
-- **Weights.** Each study’s post-election weight, which adjusts the
-  sample to the census on age, sex and language, and, depending on the
-  study, on region or education. The 2008 study, the 2007 and 2012
-  panels and the CROP polls are shown unweighted (hollow dots in the
-  charts). The 2008 study’s weights are calibrated on the vote itself,
-  so they cannot be used to test the reported vote.
+- **Weights.** Each study’s post-election weight, where it has a
+  validated one (see the [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights));
+  the others are shown unweighted, as hollow dots in the charts. The
+  2008 study’s only weights are calibrated on the vote itself, so they
+  could not test the reported vote in any case.
 - **Language.** Francophones are respondents whose mother tongue is
   French. Where the mother tongue is missing or mixed, the language
   spoken at home is used instead.
@@ -602,6 +609,10 @@ The data on this page come from one call:
 
 ``` r
 
-h <- qes_harmonize(studies = qz_studies, targets = c("vote_choice", "lang_mother", "lang_home"),
-                   missing = "reasons", quiet = TRUE)
+h <- qes_harmonize(
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010", "qes2012",
+              "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "lang_home"),
+  missing = "reasons", quiet = TRUE
+)
 ```

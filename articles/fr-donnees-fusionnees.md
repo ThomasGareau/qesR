@@ -3,16 +3,20 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/merged-dataset.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
-empile 11 Études électorales québécoises, de 1998 à 2022, dans un seul
-data.frame : une ligne par répondant de chaque étude, et les mêmes 30
-colonnes pour toutes les études (choix de vote, participation,
-souveraineté, identification partisane, idéologie, intérêt pour la
-politique et les variables sociodémographiques habituelles, avec le
-code, l’année et les identifiants de l’étude). Son format est fixe : les
-noms, l’ordre et les types des 30 colonnes ne changent pas, et les
-colonnes ajoutées par la suite viennent après elles. Le code écrit pour
-lui continue de fonctionner.
+empile 11 études, de 1998 à 2022, dans un seul data.frame : une ligne
+par répondant de chaque étude, et les mêmes 30 colonnes pour toutes les
+études (choix de vote, participation, souveraineté, identification
+partisane, idéologie, intérêt pour la politique et les variables
+sociodémographiques habituelles, avec le code, l’année et les
+identifiants de l’étude). Son format est fixe : les noms, l’ordre et les
+types des 30 colonnes ne changent pas, et les colonnes ajoutées par la
+suite viennent après elles. Le code écrit pour lui continue de
+fonctionner.
 
 ## Quand l’utiliser, et quand préférer `qes_harmonize()`
 
@@ -156,8 +160,10 @@ et signale celles qui mêlent des instruments (`political_interest`,
 échelle, et n’est pas révisée : ne combinez pas d’estimations pondérées
 entre études avec elle. `weight_pre` et `weight_post` sont les
 pondérations recommandées des règles d’harmonisation ; elles valent `NA`
-là où la pondération d’une étude doit encore être révisée. Calculez
-chaque estimation à l’intérieur d’une seule étude.
+là où une étude n’a pas de pondération validée (le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+décrit la pondération de chaque étude). Calculez chaque estimation à
+l’intérieur d’une seule étude.
 
 ## Exporter le fichier fusionné
 

@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/recipes.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Depuis les premières études électorales provinciales, le vote québécois
 se lit à travers deux clivages, la langue et la question nationale
 (Hamilton et Pinard, 1976 ; Pinard et Hamilton, 1978 ; Bélanger et al.,
@@ -174,9 +178,11 @@ plq18
 #> Other         Other               0.6416905 0.5267904 0.7423376
 ```
 
-En 2018, 74 % des anglophones et 64 % des allophones ont voté libéral,
-contre 12 % des francophones. L’estimation chez les allophones repose
-sur 84 répondants, d’où son intervalle plus large. Les recettes
+La sortie donne le vote libéral de chaque groupe de langue maternelle en
+2018, avec son intervalle ; la [page sur le
+réalignement](https://thomasgareau.github.io/qesR/articles/fr-realignement.md)
+suit ces parts à chaque élection. L’estimation chez les allophones
+repose sur 84 répondants, d’où son intervalle plus large. Les recettes
 suivantes réunissent donc anglophones et allophones sous l’étiquette de
 non-francophones : pris seuls, les échantillons d’allophones sont trop
 petits pour être suivis d’une élection à l’autre.
@@ -185,11 +191,14 @@ petits pour être suivis d’une élection à l’autre.
 
 Les études diffèrent par leur population, leur mode d’enquête, leurs
 libellés et leur pondération ; chaque estimation est donc faite à
-l’intérieur d’une étude, avant toute comparaison. L’étude de 1998 ne
-mesure pas la langue maternelle : la série commence donc en 2007. La
-pondération de l’étude de 2008 est encore en révision : ses estimations
-ne sont pas pondérées, et les figures les représentent par un point
-vide.
+l’intérieur d’une étude, avant toute comparaison. Les sondages de 1998
+n’ont interrogé que des francophones : ils n’ont pas de non-francophones
+à comparer, et la série commence donc en 2007. L’étude de 2008 n’a pas
+de pondération recommandée (ses pondérations sont calées sur le vote
+déclaré ; voir le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)) :
+ses estimations ne sont pas pondérées, et les figures les représentent
+par un point vide.
 
 ``` r
 
@@ -243,14 +252,15 @@ en tableau.](fr-recettes_files/figure-html/plq-language-dark.png)
 Source : qesR, variables regroupées vote_choice (vote déclaré) et
 lang_mother ; les non-francophones sont les répondants de langue
 maternelle anglaise ou autre. Pondéré avec la pondération postélectorale
-de chaque étude ; point vide (2008) : non pondéré.
+de chaque étude ; point vide (2008) : non pondéré, aucune pondération
+validée.
 
 Vue en tableau
 
 | Élection | Étude | Francophones, % PLQ \[IC à 95 %\] | Non-francophones, % PLQ \[IC à 95 %\] | Écart \[IC à 95 %\] | n, francophones | n, non-francophones | Pondération |
 |---:|:---|:---|:---|:---|---:|---:|:---|
 | 2007 | EEQ 2007 | 20,1 \[17,9 ; 22,6\] | 58,4 \[48,0 ; 68,2\] | +38,3 pts \[27,9 ; 48,7\] | 1525 | 163 | pondéré |
-| 2008 | EEQ 2008 | 32,7 \[29,5 ; 36,1\] | 78,7 \[70,7 ; 85,1\] | +46,1 pts \[38,2 ; 53,9\] | 771 | 127 | non pondéré |
+| 2008 | EEQ 2008 | 32,7 \[29,5 ; 36,1\] | 78,7 \[70,7 ; 85,1\] | +46,1 pts \[38,2 ; 53,9\] | 771 | 127 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | 15,5 \[13,2 ; 18,1\] | 65,5 \[57,2 ; 72,9\] | +50,0 pts \[41,8 ; 58,2\] | 1094 | 180 | pondéré |
 | 2014 | EEQ 2014 | 24,2 \[21,3 ; 27,4\] | 86,0 \[77,9 ; 91,5\] | +61,8 pts \[54,5 ; 69,1\] | 981 | 201 | pondéré |
 | 2018 | EEQ 2018 | 12,2 \[10,7 ; 13,9\] | 71,8 \[66,5 ; 76,6\] | +59,6 pts \[54,3 ; 64,9\] | 1656 | 359 | pondéré |
@@ -268,16 +278,18 @@ s’est pas nettement resserré après 2012. Par rapport à 2012 (environ 50
 points), l’écart s’est creusé en 2014 et en 2018, puis est revenu à
 environ 48 points en 2022, une estimation dont l’intervalle (de 34 à 62)
 inclut l’écart de 2012. Deuxièmement, les deux groupes n’ont pas évolué
-au même rythme. Chez les francophones, le vote libéral recule de 20 % en
-2007 à 6 % en 2022. Chez les non-francophones, il oscille entre 54 % et
-86 % sans tendance claire, et il se situe en 2022 environ 4 points sous
-son niveau de 2007. L’écart plus étroit de 2022 vient du côté des
-non-francophones : de 2018 à 2022, le vote libéral a reculé de 18 points
-chez eux, contre 6 chez les francophones. L’estimation de 2022 chez les
-non-francophones ne repose toutefois que sur 121 répondants, le plus
-petit échantillon de la série (le plus grand en compte 359), et son
-intervalle est large. C’est aussi pourquoi la page ne divise pas les
-non-francophones entre anglophones et allophones.
+au même rythme : le vote libéral des francophones a reculé d’une
+élection à l’autre (la [page sur le
+réalignement](https://thomasgareau.github.io/qesR/articles/fr-realignement.md)
+le suit), alors que celui des non-francophones a oscillé sans tendance
+claire, et il se situe en 2022 environ 4 points sous son niveau de 2007.
+L’écart plus étroit de 2022 vient du côté des non-francophones : de 2018
+à 2022, le vote libéral a reculé de 18 points chez eux, contre 6 chez
+les francophones. L’estimation de 2022 chez les non-francophones ne
+repose toutefois que sur 121 répondants, le plus petit échantillon de la
+série (le plus grand en compte 359), et son intervalle est large. C’est
+aussi pourquoi la page ne divise pas les non-francophones entre
+anglophones et allophones.
 
 ## 7. Qui vote libéral
 
@@ -317,14 +329,14 @@ tableau.](fr-recettes_files/figure-html/plq-composition-dark.png)
 
 Source : qesR, variables regroupées vote_choice (vote déclaré) et
 lang_mother. Pondéré avec la pondération postélectorale de chaque
-étude ; point vide (2008) : non pondéré.
+étude ; point vide (2008) : non pondéré, aucune pondération validée.
 
 Vue en tableau
 
 | Élection | Étude | Non-francophones parmi les électeurs du PLQ, % \[IC à 95 %\] | n, électeurs du PLQ | Non-francophones parmi tous les électeurs, % | Non-francophones parmi les électeurs du PLQ, à leur part de 2007 parmi tous les électeurs, % | Pondération |
 |---:|:---|:---|---:|:---|:---|:---|
 | 2007 | EEQ 2007 | 30,9 \[25,3 ; 37,2\] | 424 | 13,4 | 30,9 | pondéré |
-| 2008 | EEQ 2008 | 28,4 \[23,9 ; 33,4\] | 352 | 14,1 | 27,1 | non pondéré |
+| 2008 | EEQ 2008 | 28,4 \[23,9 ; 33,4\] | 352 | 14,1 | 27,1 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | 49,5 \[42,9 ; 56,2\] | 278 | 18,8 | 39,5 | pondéré |
 | 2014 | EEQ 2014 | 34,8 \[29,5 ; 40,4\] | 417 | 13,0 | 35,4 | pondéré |
 | 2018 | EEQ 2018 | 57,2 \[52,5 ; 61,8\] | 490 | 18,5 | 47,5 | pondéré |
@@ -485,22 +497,28 @@ lineage <- do.call(rbind, lapply(qes, function(s) {
 # (2012 on), from Élections Québec
 official <- data.frame(year = c(2007, 2008, 2012, 2014, 2018, 2022),
                        pct = c(30.8, 16.4, 27.1, 23.1, 37.4, 41.0))
-fr <- identical(params$lang, "fr")
-lab_series <- if (fr) c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel") else
-  c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result")
-lab_weight <- if (fr) c(`TRUE` = "pondéré", `FALSE` = "non pondéré") else
-  c(`TRUE` = "weighted", `FALSE` = "unweighted")
+# the chart's labels, in English or French
+labels_of <- function(lang = "en") {
+  if (lang == "fr") {
+    list(series = c(lineage = "ADQ (2007, 2008), puis CAQ : vote déclaré", official = "Résultat officiel"),
+         weight = c(`TRUE` = "pondéré", `FALSE` = "non pondéré"), y = "% du vote déclaré")
+  } else {
+    list(series = c(lineage = "ADQ (2007, 2008), then CAQ: reported vote", official = "Official result"),
+         weight = c(`TRUE` = "weighted", `FALSE` = "unweighted"), y = "% of the reported vote")
+  }
+}
+lab <- labels_of(lang = "fr")
 
 p <- ggplot(lineage, aes(year, pct)) +
   geom_line(data = official, aes(colour = "official")) +
   geom_point(data = official, aes(colour = "official"), shape = 45, size = 9) +
   geom_linerange(aes(ymin = lo, ymax = hi, colour = "lineage")) +
   geom_point(aes(colour = "lineage", fill = weighted), shape = 21, size = 3, stroke = 1) +
-  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab_series) +
-  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab_weight) +
+  scale_colour_manual(values = c(lineage = "#1d97b0", official = "grey20"), labels = lab$series) +
+  scale_fill_manual(values = c(`TRUE` = "#1d97b0", `FALSE` = "white"), labels = lab$weight) +
   scale_x_continuous(breaks = c(2007, 2012, 2014, 2018, 2022)) +
   scale_y_continuous(limits = c(0, 50)) +
-  labs(x = NULL, y = if (fr) "% du vote déclaré" else "% of the reported vote", colour = NULL, fill = NULL)
+  labs(x = NULL, y = lab$y, colour = NULL, fill = NULL)
 print(lineage, digits = 3, row.names = FALSE)
 #>    study year weighted  pct   lo   hi
 #>  qes2007 2007     TRUE 31.6 29.0 34.3
@@ -527,14 +545,15 @@ Source : qesR, variable regroupée vote_choice (vote déclaré) avec
 qes_party_lineage() ; résultats officiels d'Élections Québec. L'ADQ a
 fusionné avec la CAQ en 2012, et la colonne de lignée les réunit pour
 une série chronologique. Pondéré avec la pondération postélectorale de
-chaque étude ; point vide (2008) : non pondéré.
+chaque étude ; point vide (2008) : non pondéré, aucune pondération
+validée.
 
 Vue en tableau
 
 | Élection | Étude | Parti | Vote déclaré, % \[IC à 95 %\] | Officiel, % des votes valides | Écart | Pondération |
 |---:|:---|:---|:---|:---|:---|:---|
 | 2007 | EEQ 2007 | ADQ | 31,6 \[29,0 ; 34,3\] | 30,8 | +0,8 pts | pondéré |
-| 2008 | EEQ 2008 | ADQ | 16,0 \[13,8 ; 18,6\] | 16,4 | −0,4 pts | non pondéré |
+| 2008 | EEQ 2008 | ADQ | 16,0 \[13,8 ; 18,6\] | 16,4 | −0,4 pts | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | CAQ | 25,4 \[22,8 ; 28,2\] | 27,1 | −1,7 pts | pondéré |
 | 2014 | EEQ 2014 | CAQ | 23,1 \[20,5 ; 26,0\] | 23,1 | 0,0 pts | pondéré |
 | 2018 | EEQ 2018 | CAQ | 35,8 \[33,6 ; 38,1\] | 37,4 | −1,6 pts | pondéré |

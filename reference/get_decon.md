@@ -1,4 +1,4 @@
-# Create a Prepared Non-Exhaustive qesR Dataset
+# Prepared non-exhaustive data frame (older name)
 
 Builds a small teaching dataset with 19 standardized columns from one
 Quebec Election Study of qesR 0.4.4.
@@ -68,8 +68,9 @@ It is a different dataset: `get_decon()` keeps the 19 columns of qesR
 
 `get_decon()` returns the data and assigns nothing unless
 `assign_global = TRUE`: write `decon <- get_decon("qes2022")`. The first
-call in a session that leaves `assign_global` unset prints a one-time
-note about this change from qesR 0.4.4.
+top-level call in a session (console, `Rscript` or
+[`source()`](https://rdrr.io/r/base/source.html)) prints a one-time note
+about this; passing `assign_global` or `quiet = TRUE` avoids it.
 
 ## Columns
 
@@ -156,7 +157,6 @@ decon <- get_decon("qes_demo", quiet = TRUE)
 #> `get_decon()` is soft-deprecated; use `qes_harmonize(srvy, targets = "decon")`. It keeps working and will not be removed.
 #> Values changed in qesR 0.7.0: get_decon() is now rendered from the harmonization engine (qes_harmonize(srvy, targets = "decon")), with the crosswalk rows signed off by a reviewer, so turnout and votechoice are the reported turnout and vote in every study that asked them (for qes2022, still the campaign-period likelihood of voting and vote intention), and codes the spec does not map are NA (the -99 of qes2022); attr(, "source_map") gives the question and target behind each column, attr(, "timing") what turnout and votechoice hold ("post" or "pre"), and NEWS lists the changes. Results of an earlier version are reproducible by installing it (for 0.4.4: remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")). This note is shown once per session.
 #> In get_decon(), categorical columns are factors with the English levels of the harmonized targets, party_best and partylean are NA in every study, and turnout and votechoice are the reported turnout and vote where the study asked them (NA for the CROP polls), except for qes2022 (the campaign-period likelihood of voting and vote intention; attr(, "timing")). This note is shown once per session.
-#> get_decon() returns its result and no longer assigns it into your workspace by default. Write `decon <- get_decon(...)`, or pass `assign_global = TRUE`. This note is shown once per session.
 head(decon)
 #>   qes_code citizenship  yob age gender province_territory education
 #> 1 qes_demo        <NA> 1958  56  Woman             Quebec      <NA>

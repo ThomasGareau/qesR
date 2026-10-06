@@ -29,10 +29,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -41,12 +69,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -62,20 +94,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,14 +215,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -108,7 +235,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -154,38 +281,25 @@
     
     
 <p><em><a href="../index.html">English version</a></em></p>
-<p>Les Études électorales québécoises, avec les panels et les sondages
-qui les ont accompagnées, couvrent sept élections provinciales, de 1998
-à 2022, et leurs données sont publiques. Les utiliser ensemble est
-toutefois une autre affaire. Elles se trouvent dans des dépôts
-distincts, dans des fichiers SPSS ou Stata, chacune avec son propre
-codebook, et le libellé d’une même question a souvent changé d’une étude
-à l’autre. qesR les réunit dans R. Chaque étude se charge par son code,
-à partir de son fichier original, vérifié avant usage ; son codebook, le
-libellé de ses questions et une recherche dans toutes les études
+<p>qesR charge dans R les Études électorales québécoises, avec les
+panels et les sondages qui les ont accompagnées : sept élections
+provinciales, de 1998 à 2022, chaque étude par son code, à partir de son
+fichier original. Leurs codebooks, le libellé de leurs questions et une
+recherche dans toutes les études sont livrés avec le package et
 fonctionnent sans réseau, en français et en anglais. qesR harmonise
-aussi les 11 études de 1998 à 2022 en un seul tableau, question par
-question, avec un niveau de comparabilité pour la question de chaque
-étude et un motif pour chaque valeur manquante. Autrement dit, une
-question sur 25 ans d’élections québécoises peut être examinée dans
-chaque étude, puis comparée d’une étude à l’autre, sans recoder chaque
-fichier à la main.</p>
-<p><a href="fr-demarrage.html">Démarrage</a> mène d’un code d’étude à
-une estimation pondérée. La page s’exécute sans réseau, sur une petite
-étude synthétique livrée avec qesR.</p>
-<div class="section level2">
-<h2 id="ce-que-montrent-les-études">Ce que montrent les études<a class="anchor" aria-label="anchor" href="#ce-que-montrent-les-%C3%A9tudes"></a>
-</h2>
-<p>Deux résultats tirés des exemples. Chaque estimation est faite dans
-une seule étude, avec la pondération de cette étude lorsqu’elle en a une
-et un intervalle de confiance à 95 % ; rien n’est regroupé d’une étude à
-l’autre.</p>
+aussi 11 de ces études en un seul tableau, de sorte qu’une question sur
+25 ans d’élections québécoises peut être examinée dans chaque étude,
+puis comparée d’une étude à l’autre.</p>
 <div class="qesr-hero">
-<figure><figcaption>Le vote francophone s'est fragmenté, de 2,8 à 3,9 partis effectifs ; le vote non francophone est resté beaucoup plus concentré</figcaption><a href="fr-realignement.html"><img class="qesr-img qesr-light" src="fr-realignement_files/figure-html/enp-light.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Détails sur la page du réalignement." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-realignement_files/figure-html/enp-dark.png" alt="Graphique linéaire du nombre effectif de partis à chaque élection québécoise de 1998 à 2022 : le résultat officiel, les répondants francophones et les répondants non francophones. Chez les francophones, il passe de 2,8 en 1998 à 3,9 en 2022 ; chez les non-francophones, il reste entre 1,3 et 2,5 jusqu'en 2018 et atteint 2,9 en 2022, avec un intervalle large. Détails sur la page du réalignement." width="672" height="384" loading="lazy"></a>
-</figure><figure><figcaption>Les francophones nés en 1990 ou après sont passés de 53 % à 30 % de Oui ; ceux nés de 1945 à 1959 sont restés entre 50 et 54 %</figcaption><a href="fr-souverainete-generations.html"><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/cohorts-light.png" alt="Graphique linéaire de la part des francophones qui voteraient Oui à ce que le Québec devienne un pays indépendant, pour cinq cohortes de naissance, aux élections de 2012, 2014, 2018 et 2022. Les personnes nées en 1990 ou après passent de 53 % à 30 %, le niveau le plus bas ; celles nées en 1945-1959 restent entre 50 % et 54 %. Détails sur la page de la souveraineté." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/cohorts-dark.png" alt="Graphique linéaire de la part des francophones qui voteraient Oui à ce que le Québec devienne un pays indépendant, pour cinq cohortes de naissance, aux élections de 2012, 2014, 2018 et 2022. Les personnes nées en 1990 ou après passent de 53 % à 30 %, le niveau le plus bas ; celles nées en 1945-1959 restent entre 50 % et 54 %. Détails sur la page de la souveraineté." width="672" height="403" loading="lazy"></a>
+<figure><figcaption>En 2007, les plus jeunes francophones formaient la cohorte la plus souverainiste ; en 2022, la moins souverainiste</figcaption><a href="fr-souverainete-generations.html"><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="fr-souverainete-generations_files/figure-html/gradient-light-narrow.png"><img class="qesr-img qesr-light" src="fr-souverainete-generations_files/figure-html/gradient-light.png" alt="Graphiques à points en six panneaux, un par Étude électorale québécoise de 2007 à 2022, de la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune est la plus encline à voter Oui ; en 2022, la moins encline. Détails sur la page de la souveraineté." width="672" height="461" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="fr-souverainete-generations_files/figure-html/gradient-dark-narrow.png"><img class="qesr-img qesr-dark" src="fr-souverainete-generations_files/figure-html/gradient-dark.png" alt="Graphiques à points en six panneaux, un par Étude électorale québécoise de 2007 à 2022, de la part des francophones qui voteraient Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune est la plus encline à voter Oui ; en 2022, la moins encline. Détails sur la page de la souveraineté." width="672" height="461" loading="lazy"></source></picture></a>
+</figure><figure><figcaption>Le choix partisan est beaucoup moins lié au vote référendaire qu’en 2012, et l’axe gauche-droite n’a pas pris sa place</figcaption><a href="fr-dimensions.html"><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="fr-dimensions_files/figure-html/sorting-light-narrow.png"><img class="qesr-img qesr-light" src="fr-dimensions_files/figure-html/sorting-light.png" alt="Graphiques linéaires en deux panneaux, tous les électeurs et les électeurs francophones, de 2012 à 2022, de la part de la variation du vote référendaire et du positionnement gauche-droite qui se trouve entre les électorats des partis : le vote référendaire est beaucoup moins lié au choix partisan en 2022 qu’en 2012, et le positionnement gauche-droite n’a pas progressé. Détails sur la page des deux dimensions." width="672" height="403" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="fr-dimensions_files/figure-html/sorting-dark-narrow.png"><img class="qesr-img qesr-dark" src="fr-dimensions_files/figure-html/sorting-dark.png" alt="Graphiques linéaires en deux panneaux, tous les électeurs et les électeurs francophones, de 2012 à 2022, de la part de la variation du vote référendaire et du positionnement gauche-droite qui se trouve entre les électorats des partis : le vote référendaire est beaucoup moins lié au choix partisan en 2022 qu’en 2012, et le positionnement gauche-droite n’a pas progressé. Détails sur la page des deux dimensions." width="672" height="403" loading="lazy"></source></picture></a>
 </figure>
 </div>
-</div>
+<p>Chaque estimation est faite dans une seule étude, avec la pondération
+de cette étude lorsqu’elle en a une qui est validée et un intervalle de
+confiance à 95 % ; rien n’est regroupé d’une étude à l’autre. <a href="fr-demarrage.html">Démarrer</a> mène d’un code d’étude à une
+estimation pondérée, sans réseau, sur une petite étude synthétique
+livrée avec qesR.</p>
 <div class="section level2">
 <h2 id="exemples">Exemples<a class="anchor" aria-label="anchor" href="#exemples"></a>
 </h2>
@@ -221,7 +335,7 @@ additionnés, peu de votes.</li>
 <a href="fr-enquetes-resultats.html">Les enquêtes
 sous-estiment-elles les libéraux ?</a> : le vote libéral a été
 sous-déclaré de 2007 à 2014, mais l’écart s’est estompé en 2018 et en
-2022, et le gagnant est plus souvent sous-estimé que surestimé.</li>
+2022.</li>
 <li>
 <a href="fr-recettes.html">Recettes</a> : le code, pas à pas, pour
 savoir si le clivage linguistique du vote libéral s’est resserré à
@@ -269,14 +383,21 @@ BY-NC 4.0 (attribution, pas d’usage commercial). <a href="fr-citations.html#li
 requise</a>.</p>
 </div>
 <div class="section level2">
-<h2 id="aussi-sur-ce-site">Aussi sur ce site<a class="anchor" aria-label="anchor" href="#aussi-sur-ce-site"></a>
+<h2 id="toutes-les-pages-en-français">Toutes les pages en français<a class="anchor" aria-label="anchor" href="#toutes-les-pages-en-fran%C3%A7ais"></a>
 </h2>
-<p>Le <a href="fr-etudes.html">catalogue des études</a>, <a href="fr-harmonisation.html">comment fonctionne l’harmonisation</a>, <a href="fr-decon.html">un seul fichier pour toutes les études avec
-<code>qes_decon()</code></a>, la <a href="fr-couverture.html">couverture
-de chaque étude</a>, la <a href="fr-reference-harmonisation.html">référence des variables</a>, la
-<a href="fr-validation.html">validation par les résultats officiels</a>,
-<a href="fr-donnees-fusionnees.html">le fichier fusionné</a> et l’<a href="../reference/qesR-fr.html">aperçu des fonctions en français</a>.
-Pour du code écrit avec une version antérieure de qesR : <a href="fr-migrer-0.7.html">passer à la version actuelle</a>.</p>
+<ul>
+<li>Études : le <a href="fr-etudes.html">catalogue des études</a>, avec
+le tableau des pondérations, et <a href="fr-citations.html">citer qesR
+et les études</a>.</li>
+<li>Harmonisation : <a href="fr-harmonisation.html">comment fonctionne
+l’harmonisation</a>, <a href="fr-decon.html">un seul fichier pour toutes
+les études avec <code>qes_decon()</code></a>, la <a href="fr-couverture.html">couverture par étude</a>, la <a href="fr-reference-harmonisation.html">référence des variables</a>, la
+<a href="fr-validation.html">validation par les résultats officiels</a>
+et <a href="fr-donnees-fusionnees.html">le fichier fusionné</a>.</li>
+<li>Les fonctions : l’<a href="../reference/qesR-fr.html">aperçu des
+fonctions en français</a>.</li>
+<li>Pour du code écrit avec une version antérieure de qesR : <a href="fr-migrer-0.7.html">passer à la version actuelle</a>.</li>
+</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

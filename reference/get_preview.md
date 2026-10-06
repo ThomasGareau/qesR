@@ -1,4 +1,4 @@
-# Preview a Quebec Election Study
+# Preview a Quebec Election Study (older name)
 
 Loads a study and returns the first observations.
 
@@ -71,7 +71,6 @@ get_preview("qes_demo", obs = 3)
 
 # the same rows, with the current function
 head(get_qes("qes_demo", quiet = TRUE), 3)
-#> get_qes() returns its result and no longer assigns it into your workspace by default. Write `qes_demo <- get_qes(...)`, or pass `assign_global = TRUE`. This note is shown once per session.
 #>   QUEST LANG QAGE QSEXE QREGION Q2 Q3 Q19 Q28 Q32      POND
 #> 1     0   EN 1958     2      16  1  3   2   3   0 1.2593217
 #> 2     0   FR 1951     2       6  1  4   2   3   3 0.6685168

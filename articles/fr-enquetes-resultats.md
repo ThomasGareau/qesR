@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Au Québec, c’est presque un réflexe : les sondages sous-estimeraient le
 Parti libéral du Québec (PLQ). L’élection de 1998, où les sondages ont
 surestimé le Parti Québécois (PQ) et sous-estimé les libéraux, en
@@ -37,8 +41,9 @@ intervalle de confiance (cercles : Études électorales québécoises ;
 carrés : panels Durand). Les points du PLQ sont sous la ligne de 2007 à
 2014 et ceux du PQ au-dessus. L'Étude électorale québécoise de 2022
 donne la CAQ à 33 % contre 41 % officiellement. Valeurs dans la vue en
-tableau.](fr-enquetes-resultats_files/figure-html/parties-light.png)![Cinq
-petits graphiques, un par parti (PLQ, PQ, QS, ADQ, CAQ) : la part
+tableau.](fr-enquetes-resultats_files/figure-html/parties-light.png)
+
+![Cinq petits graphiques, un par parti (PLQ, PQ, QS, ADQ, CAQ) : la part
 officielle des votes valides à chaque élection de 2007 à 2022 en ligne
 avec un trait, et le vote déclaré de chaque étude en point avec son
 intervalle de confiance (cercles : Études électorales québécoises ;
@@ -51,8 +56,9 @@ Source : Études électorales québécoises (cercles, juste à gauche de
 chaque élection) et panels Durand (carrés, juste à droite), vote déclaré
 parmi les répondants qui nomment un parti ; résultats officiels
 d'Élections Québec. Les points sont pondérés, avec des intervalles de
-confiance à 95 %. Points creux : non pondéré. La vue en tableau donne
-tous les partis, avec les estimations non pondérées.
+confiance à 95 %. Points creux : non pondéré, aucune pondération
+validée. La vue en tableau donne tous les partis, avec les estimations
+non pondérées.
 
 Vue en tableau
 
@@ -60,11 +66,11 @@ Vue en tableau
 |:---|---:|:---|:---|---:|:---|:---|:---|
 | PLQ | 2007 | EEQ 2007 | 25,4 \[23,4 ; 27,5\] | 1727 | 33,1 | −7,7 pts | non pondéré |
 | PLQ | 2007 | EEQ 2007 | 25,8 \[23,3 ; 28,4\] | 1727 | 33,1 | −7,3 pts | pondéré |
-| PLQ | 2007 | Panel 2007 | 28,6 \[26,4 ; 31,0\] | 1494 | 33,1 | −4,4 pts | non pondéré |
-| PLQ | 2008 | EEQ 2008 | 39,2 \[36,1 ; 42,4\] | 898 | 42,1 | −2,9 pts | non pondéré |
+| PLQ | 2007 | Panel 2007 | 28,6 \[26,4 ; 31,0\] | 1494 | 33,1 | −4,4 pts | non pondéré : aucune pondération validée |
+| PLQ | 2008 | EEQ 2008 | 39,2 \[36,1 ; 42,4\] | 898 | 42,1 | −2,9 pts | non pondéré : aucune pondération validée |
 | PLQ | 2012 | EEQ 2012 | 21,8 \[19,6 ; 24,2\] | 1274 | 31,2 | −9,4 pts | non pondéré |
 | PLQ | 2012 | EEQ 2012 | 24,9 \[22,2 ; 27,8\] | 1274 | 31,2 | −6,3 pts | pondéré |
-| PLQ | 2012 | Panel 2012 | 26,4 \[23,1 ; 30,0\] | 633 | 31,2 | −4,8 pts | non pondéré |
+| PLQ | 2012 | Panel 2012 | 26,4 \[23,1 ; 30,0\] | 633 | 31,2 | −4,8 pts | non pondéré : aucune pondération validée |
 | PLQ | 2014 | EEQ 2014 | 38,1 \[35,5 ; 40,8\] | 1283 | 41,5 | −3,4 pts | non pondéré |
 | PLQ | 2014 | EEQ 2014 | 35,9 \[32,8 ; 39,1\] | 1283 | 41,5 | −5,6 pts | pondéré |
 | PLQ | 2018 | EEQ 2018 | 24,3 \[22,5 ; 26,2\] | 2016 | 24,8 | −0,5 pts | non pondéré |
@@ -75,11 +81,11 @@ Vue en tableau
 | PLQ | 2022 | EEQ 2022 | 17,1 \[13,6 ; 21,4\] | 1101 | 14,4 | +2,8 pts | pondéré |
 | PQ | 2007 | EEQ 2007 | 30,2 \[28,0 ; 32,4\] | 1727 | 28,3 | +1,8 pts | non pondéré |
 | PQ | 2007 | EEQ 2007 | 30,9 \[28,2 ; 33,6\] | 1727 | 28,3 | +2,5 pts | pondéré |
-| PQ | 2007 | Panel 2007 | 30,8 \[28,5 ; 33,2\] | 1494 | 28,3 | +2,4 pts | non pondéré |
-| PQ | 2008 | EEQ 2008 | 37,4 \[34,3 ; 40,6\] | 898 | 35,2 | +2,2 pts | non pondéré |
+| PQ | 2007 | Panel 2007 | 30,8 \[28,5 ; 33,2\] | 1494 | 28,3 | +2,4 pts | non pondéré : aucune pondération validée |
+| PQ | 2008 | EEQ 2008 | 37,4 \[34,3 ; 40,6\] | 898 | 35,2 | +2,2 pts | non pondéré : aucune pondération validée |
 | PQ | 2012 | EEQ 2012 | 40,0 \[37,3 ; 42,7\] | 1274 | 31,9 | +8,0 pts | non pondéré |
 | PQ | 2012 | EEQ 2012 | 38,8 \[35,8 ; 41,9\] | 1274 | 31,9 | +6,9 pts | pondéré |
-| PQ | 2012 | Panel 2012 | 38,4 \[34,7 ; 42,2\] | 633 | 31,9 | +6,4 pts | non pondéré |
+| PQ | 2012 | Panel 2012 | 38,4 \[34,7 ; 42,2\] | 633 | 31,9 | +6,4 pts | non pondéré : aucune pondération validée |
 | PQ | 2014 | EEQ 2014 | 26,8 \[24,5 ; 29,3\] | 1283 | 25,4 | +1,4 pts | non pondéré |
 | PQ | 2014 | EEQ 2014 | 29,8 \[26,9 ; 33,0\] | 1283 | 25,4 | +4,4 pts | pondéré |
 | PQ | 2018 | EEQ 2018 | 19,4 \[17,8 ; 21,2\] | 2016 | 17,1 | +2,4 pts | non pondéré |
@@ -90,15 +96,15 @@ Vue en tableau
 | PQ | 2022 | EEQ 2022 | 15,6 \[13,4 ; 18,1\] | 1101 | 14,6 | +1,0 pts | pondéré |
 | ADQ | 2007 | EEQ 2007 | 33,8 \[31,6 ; 36,0\] | 1727 | 30,8 | +2,9 pts | non pondéré |
 | ADQ | 2007 | EEQ 2007 | 31,6 \[29,0 ; 34,3\] | 1727 | 30,8 | +0,8 pts | pondéré |
-| ADQ | 2007 | Panel 2007 | 32,1 \[29,8 ; 34,5\] | 1494 | 30,8 | +1,3 pts | non pondéré |
-| ADQ | 2008 | EEQ 2008 | 16,0 \[13,8 ; 18,6\] | 898 | 16,4 | −0,3 pts | non pondéré |
+| ADQ | 2007 | Panel 2007 | 32,1 \[29,8 ; 34,5\] | 1494 | 30,8 | +1,3 pts | non pondéré : aucune pondération validée |
+| ADQ | 2008 | EEQ 2008 | 16,0 \[13,8 ; 18,6\] | 898 | 16,4 | −0,3 pts | non pondéré : aucune pondération validée |
 | QS | 2007 | EEQ 2007 | 4,3 \[3,5 ; 5,4\] | 1727 | 3,6 | +0,7 pts | non pondéré |
 | QS | 2007 | EEQ 2007 | 4,8 \[3,6 ; 6,2\] | 1727 | 3,6 | +1,1 pts | pondéré |
-| QS | 2007 | Panel 2007 | 3,8 \[3,0 ; 4,9\] | 1494 | 3,6 | +0,2 pts | non pondéré |
-| QS | 2008 | EEQ 2008 | 4,2 \[3,1 ; 5,8\] | 898 | 3,8 | +0,5 pts | non pondéré |
+| QS | 2007 | Panel 2007 | 3,8 \[3,0 ; 4,9\] | 1494 | 3,6 | +0,2 pts | non pondéré : aucune pondération validée |
+| QS | 2008 | EEQ 2008 | 4,2 \[3,1 ; 5,8\] | 898 | 3,8 | +0,5 pts | non pondéré : aucune pondération validée |
 | QS | 2012 | EEQ 2012 | 7,5 \[6,2 ; 9,1\] | 1274 | 6,0 | +1,5 pts | non pondéré |
 | QS | 2012 | EEQ 2012 | 6,5 \[5,1 ; 8,2\] | 1274 | 6,0 | +0,5 pts | pondéré |
-| QS | 2012 | Panel 2012 | 7,1 \[5,3 ; 9,4\] | 633 | 6,0 | +1,1 pts | non pondéré |
+| QS | 2012 | Panel 2012 | 7,1 \[5,3 ; 9,4\] | 633 | 6,0 | +1,1 pts | non pondéré : aucune pondération validée |
 | QS | 2014 | EEQ 2014 | 10,2 \[8,7 ; 12,0\] | 1283 | 7,6 | +2,6 pts | non pondéré |
 | QS | 2014 | EEQ 2014 | 8,2 \[6,8 ; 9,9\] | 1283 | 7,6 | +0,6 pts | pondéré |
 | QS | 2018 | EEQ 2018 | 17,0 \[15,4 ; 18,7\] | 2016 | 16,1 | +0,9 pts | non pondéré |
@@ -109,7 +115,7 @@ Vue en tableau
 | QS | 2022 | EEQ 2022 | 17,2 \[14,7 ; 20,1\] | 1101 | 15,4 | +1,8 pts | pondéré |
 | CAQ | 2012 | EEQ 2012 | 25,4 \[23,1 ; 27,9\] | 1274 | 27,1 | −1,6 pts | non pondéré |
 | CAQ | 2012 | EEQ 2012 | 25,4 \[22,8 ; 28,1\] | 1274 | 27,1 | −1,7 pts | pondéré |
-| CAQ | 2012 | Panel 2012 | 23,9 \[20,7 ; 27,3\] | 633 | 27,1 | −3,2 pts | non pondéré |
+| CAQ | 2012 | Panel 2012 | 23,9 \[20,7 ; 27,3\] | 633 | 27,1 | −3,2 pts | non pondéré : aucune pondération validée |
 | CAQ | 2014 | EEQ 2014 | 21,6 \[19,4 ; 23,9\] | 1283 | 23,1 | −1,5 pts | non pondéré |
 | CAQ | 2014 | EEQ 2014 | 23,1 \[20,5 ; 26,0\] | 1283 | 23,1 | +0,1 pts | pondéré |
 | CAQ | 2018 | EEQ 2018 | 34,7 \[32,7 ; 36,8\] | 2016 | 37,4 | −2,7 pts | non pondéré |
@@ -120,7 +126,7 @@ Vue en tableau
 | CAQ | 2022 | EEQ 2022 | 33,0 \[29,3 ; 36,9\] | 1101 | 41,0 | −8,0 pts | pondéré |
 | PCQ | 2012 | EEQ 2012 | n.p. | 1274 |  |  | non pondéré |
 | PCQ | 2012 | EEQ 2012 | n.p. | 1274 |  |  | pondéré |
-| PCQ | 2012 | Panel 2012 | n.p. | 633 |  |  | non pondéré |
+| PCQ | 2012 | Panel 2012 | n.p. | 633 |  |  | non pondéré : aucune pondération validée |
 | PCQ | 2014 | EEQ 2014 | n.p. | 1283 |  |  | non pondéré |
 | PCQ | 2014 | EEQ 2014 | n.p. | 1283 |  |  | pondéré |
 | PCQ | 2018 | EEQ 2018 | n.p. | 2016 |  |  | non pondéré |
@@ -131,11 +137,11 @@ Vue en tableau
 | PCQ | 2022 | EEQ 2022 | 13,5 \[11,3 ; 16,2\] | 1101 | 12,9 | +0,6 pts | pondéré |
 | Autres | 2007 | EEQ 2007 | 6,3 \[5,3 ; 7,6\] | 1727 | 4,1 | +2,2 pts | non pondéré |
 | Autres | 2007 | EEQ 2007 | 7,0 \[5,6 ; 8,8\] | 1727 | 4,1 | +2,9 pts | pondéré |
-| Autres | 2007 | Panel 2007 | 4,6 \[3,7 ; 5,8\] | 1494 | 4,1 | +0,5 pts | non pondéré |
-| Autres | 2008 | EEQ 2008 | 3,1 \[2,2 ; 4,5\] | 898 | 2,6 | +0,5 pts | non pondéré |
+| Autres | 2007 | Panel 2007 | 4,6 \[3,7 ; 5,8\] | 1494 | 4,1 | +0,5 pts | non pondéré : aucune pondération validée |
+| Autres | 2008 | EEQ 2008 | 3,1 \[2,2 ; 4,5\] | 898 | 2,6 | +0,5 pts | non pondéré : aucune pondération validée |
 | Autres | 2012 | EEQ 2012 | 5,3 \[4,2 ; 6,6\] | 1274 | 3,8 | +1,5 pts | non pondéré |
 | Autres | 2012 | EEQ 2012 | 4,4 \[3,4 ; 5,7\] | 1274 | 3,8 | +0,6 pts | pondéré |
-| Autres | 2012 | Panel 2012 | 4,3 \[2,9 ; 6,1\] | 633 | 3,8 | +0,5 pts | non pondéré |
+| Autres | 2012 | Panel 2012 | 4,3 \[2,9 ; 6,1\] | 633 | 3,8 | +0,5 pts | non pondéré : aucune pondération validée |
 | Autres | 2014 | EEQ 2014 | 3,3 \[2,4 ; 4,4\] | 1283 | 2,4 | +0,9 pts | non pondéré |
 | Autres | 2014 | EEQ 2014 | 3,0 \[2,1 ; 4,2\] | 1283 | 2,4 | +0,5 pts | pondéré |
 | Autres | 2018 | EEQ 2018 | 4,6 \[3,7 ; 5,6\] | 2016 | 4,6 | 0,0 pts | non pondéré |
@@ -198,8 +204,9 @@ non-francophones parmi les votants ramenés à leur part de l'ensemble des
 répondants (losange gris). Pour le PLQ en 2014, l'écart passe de
 −5,7 pts à −4,3 pts ; en 2007 et en 2012, le rééquilibrage comble aussi
 peu de l'écart. Valeurs dans la vue en
-tableau.](fr-enquetes-resultats_files/figure-html/language-light.png)![Deux
-graphiques à points côte à côte, une rangée par Étude électorale
+tableau.](fr-enquetes-resultats_files/figure-html/language-light.png)
+
+![Deux graphiques à points côte à côte, une rangée par Étude électorale
 québécoise de 2007 à 2022 : le vote déclaré du PLQ et du PQ moins le
 résultat officiel, tel que déclaré (point de couleur) et une fois les
 non-francophones parmi les votants ramenés à leur part de l'ensemble des
@@ -279,8 +286,8 @@ moitié de la somme, sur les partis, de l'écart absolu entre la part
 déclarée et la part officielle, en points. C'est la part des répondants
 qui devraient changer de parti pour que l'enquête donne le résultat (0 :
 identiques). Un parti qu'une étude ne proposait pas compte dans ses
-Autres. Les études non pondérées (2008, et les panels de 2007 et 2012)
-sont dans la vue en tableau.
+Autres. Les études sans pondération validée (2008, et les panels de 2007
+et 2012) sont dans la vue en tableau.
 
 Vue en tableau
 
@@ -340,13 +347,13 @@ tableau.](fr-enquetes-resultats_files/figure-html/crop-dark.png)
 Source : sondages CROP, intention de vote (avec relance des indécis sur
 le parti vers lequel ils penchent, là où le sondage l'a demandé),
 environ 850 répondants par mois, parmi ceux qui nomment un parti ;
-résultats officiels d'Élections Québec (losanges). Non pondéré. Par
-construction, les sondages surreprésentent la région de Québec (20 % des
-répondants, environ le double de son poids dans la population) ; ces
-parts lui accordent donc trop de poids. Lignes foncées : la moyenne des
-sondages à un mois et demi ou moins de chaque sondage ; lignes pâles :
-chaque mois. Les intervalles de confiance à 95 % de chaque sondage sont
-dans la vue en tableau.
+résultats officiels d'Élections Québec (losanges). Non pondéré : aucune
+pondération validée. Par construction, les sondages surreprésentent la
+région de Québec (20 % des répondants, environ le double de son poids
+dans la population) ; ces parts lui accordent donc trop de poids. Lignes
+foncées : la moyenne des sondages à un mois et demi ou moins de chaque
+sondage ; lignes pâles : chaque mois. Les intervalles de confiance à 95
+% de chaque sondage sont dans la vue en tableau.
 
 Vue en tableau
 
@@ -616,13 +623,13 @@ reprend ces comparaisons pour chaque étude.
   dans « Autres », tout comme un parti qu’une étude ne proposait pas.
 - **Résultats officiels.** La part des votes valides de chaque parti,
   selon Élections Québec.
-- **Pondérations.** La pondération postélectorale de chaque étude, qui
-  ajuste l’échantillon au recensement selon l’âge, le sexe et la langue,
-  et, d’une étude à l’autre, selon la région ou la scolarité. L’étude de
-  2008, les panels de 2007 et 2012 et les sondages CROP sont présentés
-  sans pondération (en points creux dans les graphiques). Les
-  pondérations de l’étude de 2008 sont calées sur le vote lui-même ;
-  elles ne peuvent donc pas servir à évaluer le vote déclaré.
+- **Pondérations.** La pondération postélectorale de chaque étude qui en
+  a une validée (voir le [tableau des
+  pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)) ;
+  les autres sont présentées sans pondération, en points creux dans les
+  graphiques. Les seules pondérations de l’étude de 2008 sont calées sur
+  le vote lui-même ; elles ne pourraient donc pas servir à évaluer le
+  vote déclaré de toute façon.
 - **Langue.** Sont considérés comme francophones les répondants dont la
   langue maternelle est le français. Lorsque la langue maternelle manque
   ou est multiple, la langue parlée à la maison la remplace.
@@ -631,6 +638,10 @@ Les données de cette page proviennent d’un seul appel :
 
 ``` r
 
-h <- qes_harmonize(studies = qz_studies, targets = c("vote_choice", "lang_mother", "lang_home"),
-                   missing = "reasons", quiet = TRUE)
+h <- qes_harmonize(
+  studies = c("qes1998", "qes2007", "qes2007_panel", "qes2008", "qes_crop_2007_2010", "qes2012",
+              "qes2012_panel", "qes2014", "qes2018", "qes2018_panel", "qes2022"),
+  targets = c("vote_choice", "lang_mother", "lang_home"),
+  missing = "reasons", quiet = TRUE
+)
 ```

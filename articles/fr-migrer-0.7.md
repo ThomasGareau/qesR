@@ -67,7 +67,6 @@ n’écrit rien : assignez-les.
 ``` r
 
 qes_demo <- get_qes("qes_demo", quiet = TRUE)
-#> get_qes() renvoie son résultat et ne l'assigne plus par défaut dans votre espace de travail. Écrivez `qes_demo <- get_qes(...)`, ou passez `assign_global = TRUE`. Cette note s'affiche une fois par session.
 dim(qes_demo)
 #> [1] 60 11
 ```
@@ -126,7 +125,7 @@ viennent :
 qes_provenance(qes_demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-10-01 17:14:46 UTC (local_demo). Lu avec
+#> Obtenu le 2026-10-06 05:12:12 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
 #> qesR 2.4.1.
 #> 
@@ -170,10 +169,14 @@ pour les 11 études : chaque colonne vient des variables harmonisées («
 cibles ») dont elle a besoin, et un code que les règles d’harmonisation
 n’apparient pas vaut `NA`.
 
-`qes1998`, les panels Durand et les sondages CROP n’ont pas encore de
-pondération utilisable : leurs réponses sont remplies, mais `weight_pre`
-et `weight_post` y valent `NA`, et `survey_weight` garde la pondération
-propre à chaque étude, comme dans 0.4.4. La page du [fichier
+`qes2008` n’a pas de pondération recommandée (ses pondérations sont
+calées sur le vote déclaré), et les pondérations de `qes1998`, des
+panels Durand de 2007 et de 2012 et des sondages CROP ne sont pas
+validées : leurs réponses sont remplies, mais `weight_pre` et
+`weight_post` y valent `NA`, et `survey_weight` garde la pondération
+propre à chaque étude, comme dans 0.4.4. Le [tableau des
+pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)
+décrit la pondération de chaque étude. La page du [fichier
 fusionné](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.html)
 décrit chaque colonne. Les colonnes qui changent les estimations :
 
@@ -217,7 +220,6 @@ vide dans une étude :
 master <- get_qes_master(surveys = "qes_demo", quiet = TRUE)
 #> Les valeurs ont changé dans qesR 0.7.0 : get_qes_master() est maintenant produit par le moteur d'harmonisation (qes_harmonize()), de sorte que vote_choice et turnout sont le vote et la participation déclarés dans toutes les études qui les ont demandés (les sondages CROP n'ont demandé que l'intention : vote_intent), et que les codes que la spécification n'apparie pas valent NA (language, la langue maternelle, vaut NA pour les personnes qui ont donné deux premières langues) ; attr(, "legacy_column_map") décrit chaque colonne et NEWS énumère les changements. Les résultats d'une version antérieure se reproduisent en l'installant (pour 0.4.4 : remotes::install_github("ThomasGareau/qesR", ref = "v0.4.4")). Cette note s'affiche une fois par session.
 #> get_qes_master() n'ajoute plus les 70 colonnes que qesR 0.4.4 construisait en empilant des variables de même nom d'une étude à l'autre ; attr(, "removed_columns") les énumère. Lisez ces questions dans chaque étude avec get_qes(). Cette note s'affiche une fois par session.
-#> get_qes_master() renvoie son résultat et ne l'assigne plus par défaut dans votre espace de travail. Écrivez `qes_master <- get_qes_master(...)`, ou passez `assign_global = TRUE`. Cette note s'affiche une fois par session.
 map <- attr(master, "legacy_column_map")
 map[map$column %in% c("vote_choice", "ideology", "sovereignty_support"),
     c("column", "target", "flag")]
@@ -264,7 +266,7 @@ fusionné. `ideology` et `vote_choice` deviennent :
 ``` r
 
 h <- qes_harmonize("qes_demo", targets = c("lr_self", "vote_prov_recall"),
-                   missing = "reasons", quiet = TRUE, lang = params$lang)
+                   missing = "reasons", quiet = TRUE, lang = "fr")
 table(h$lr_self__na, useNA = "ifany")[c("dk", "refused")]
 #> 
 #>      dk refused 
@@ -356,9 +358,9 @@ Consignez ce à partir de quoi chaque résultat a été calculé, et citez-le
 
 qes_provenance(h, level = "spec")[, c("spec_version", "spec_hash", "qesR_version")]
 #>   spec_version                        spec_hash qesR_version
-#> 1        4.6.0 910e81120d19001bb1d7c0f9b0b32b3f        0.9.1
+#> 1        4.7.0 30697daa0042aab3078507b665867748        0.9.2
 qes_cite("qes2014")
-#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.1, https://github.com/ThomasGareau/qesR"                
+#> [1] "Gareau-Paquette, Thomas, 2026, \"qesR: Access Quebec Election Study Datasets\", R package version 0.9.2, https://github.com/ThomasGareau/qesR"                
 #> [2] "Bélanger, Éric; Nadeau, Richard, 2023, \"Étude électorale québécoise 2014\", https://doi.org/10.5683/SP3/64F7WR, Borealis, V1, UNF:6:OoiAJ3ShbycsxmWCefqrjw=="
 ```
 

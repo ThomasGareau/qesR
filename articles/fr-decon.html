@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -160,6 +287,12 @@
     
     
 <p><em><a href="decon.html">English version</a></em></p>
+<div class="qesr-download">
+<p><strong>Cette page télécharge 11 études</strong> (environ 16 Mo) la
+première fois qu’elle s’exécute.
+<code>options(qesR.cache = "disk")</code> les garde sur le disque pour
+les sessions suivantes.</p>
+</div>
 <p>Depuis quelques années, l’Étude électorale canadienne dispose d’une
 porte d’entrée simple. La fonction <code><a href="../reference/get_decon.html">get_decon()</a></code> du package
 <a href="https://hodgettsp.github.io/cesR/" class="external-link">cesR</a> renvoie un seul
@@ -174,7 +307,7 @@ outil lorsque la différence entre deux questions compte. Or, bien des
 usages n’en demandent pas tant : un tableau descriptif, une variable de
 contrôle, un premier regard sur 25 ans de données.
 <code><a href="../reference/qes_decon.html">qes_decon()</a></code> répond à ce besoin. La fonction renvoie un seul
-tableau pour les 11 études harmonisées, avec 47 039 lignes (une par
+tableau pour les 11 études harmonisées, avec 47 038 lignes (une par
 personne et par vague) et 35 colonnes de données, une par concept, même
 lorsque le libellé ou les choix de réponse changent d’une étude à
 l’autre. Le prix à payer est l’exactitude. Les catégories sont larges,
@@ -184,10 +317,9 @@ question.</p>
 <h2 id="ce-que-contient-le-fichier">Ce que contient le fichier<a class="anchor" aria-label="anchor" href="#ce-que-contient-le-fichier"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_decon.html">qes_decon</a></span><span class="op">(</span>lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span></code></pre></div>
-<p><code>lang = "fr"</code> donne les étiquettes en français
-(<code>params$lang</code> est la langue de cette page) ; les noms de
-colonnes ne changent pas. Les premières lignes :</p>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_decon.html">qes_decon</a></span><span class="op">(</span>lang <span class="op">=</span> <span class="st">"fr"</span><span class="op">)</span></span></code></pre></div>
+<p><code>lang = "fr"</code> donne les étiquettes en français ; les noms
+de colonnes ne changent pas. Les premières lignes :</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"weight"</span>, <span class="st">"gender"</span>, <span class="st">"education"</span>, <span class="st">"vote_choice"</span>, <span class="st">"vote_type"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     study wave    weight gender                         education vote_choice</span></span>
@@ -202,7 +334,7 @@ colonnes ne changent pas. Les premières lignes :</p>
 <span><span class="co">#&gt; 4 Intention de vote (indécis relancés)</span></span></code></pre></div>
 <p>Les premières colonnes identifient la ligne : <code>study</code>,
 <code>year</code>, <code>wave</code> et <code>qes_id</code>,
-l’identifiant de la personne dans l’étude. Le fichier compte 40 987
+l’identifiant de la personne dans l’étude. Le fichier compte 40 986
 répondants, et une personne interrogée par un panel a une ligne par
 vague. Les colonnes sociodémographiques (scolarité, revenu, langue,
 religion, région…) se répètent sur chaque ligne d’une personne, alors
@@ -216,9 +348,10 @@ vague, ramenée à une moyenne de 1 dans chacune, et
 2014, EEQ 2018, Panel 2018 et EEQ 2022. Les autres ont <code>NA</code>.
 L’EEQ 2008 n’a pas de pondération recommandée, puisque ses pondérations
 sont calées sur le vote déclaré, et les pondérations des études
-suivantes sont encore en révision : Sondages de 1998, Panel 2007,
-Sondages CROP et Panel 2012. <code>attr(d, "weights")</code> donne le
-détail, vague par vague.</p>
+suivantes ne sont pas validées : Sondages de 1998, Panel 2007, Sondages
+CROP et Panel 2012. <code>attr(d, "weights")</code> donne le détail,
+vague par vague, et le <a href="fr-etudes.html#ponderations">tableau des
+pondérations</a> décrit la pondération de chaque étude.</p>
 </div>
 <div class="section level2">
 <h2 id="les-colonnes">Les colonnes<a class="anchor" aria-label="anchor" href="#les-colonnes"></a>
@@ -397,7 +530,10 @@ panel 2018, 2022)</td>
 <td align="left">La situation d’emploi principale en cinq groupes ; une
 personne qui donne deux situations, comme retraitée et salariée, prend
 celle qui n’est pas l’emploi, et la personne au foyer, inapte au travail
-ou dans une autre situation est classée autre.</td>
+ou dans une autre situation est classée autre. Dans le panel de 2018,
+seuls les répondants web ont été interrogés sur leur emploi, si bien que
+ses répondants téléphoniques apparaissent comme « ne sait pas ou refus
+».</td>
 </tr>
 <tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-union"><code>union</code></a></td>
@@ -409,9 +545,7 @@ ou quelqu’un de son ménage l’est en 2014 et en 2018 (en 2018, les
 personnes qui vivent chez leurs parents ont été interrogées sur leur
 famille : parents, frères ou sœurs). Seules ces trois études posent la
 question, et celle de 2022 la pose après l’élection, si bien que ses
-répondants de la seule vague de campagne sont manquants ; la colonne est
-conservée quel que soit son nombre d’études (essentielle), selon la
-décision du 2026-10-01.</td>
+répondants de la seule vague de campagne sont manquants.</td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-region"><code>region</code></a></td>
@@ -521,10 +655,12 @@ d’une étude à l’autre.</td>
 <td align="left">Faible · Moyen · Élevé</td>
 <td align="left">7 (2007, panel 2007, 2008, 2012, 2014, 2018, 2022)</td>
 <td align="left">L’intérêt de 0 à 1 (interest_01) en trois tranches,
-faible sous 0,35 et élevé à partir de 0,75 ; les questions à quatre
-points et de 0 à 10 ne concordent pas, et l’étude de 2008 et le panel de
-2007 ont demandé l’intérêt pour l’élection ou la campagne, pas pour la
-politique.</td>
+faible sous 0,55 et élevé à partir de 0,85 : à une question de 0 à 10, 0
+à 5 est faible, 6 à 8 moyen et 9 ou 10 élevé ; à une question à quatre
+points, pas du tout ou peu intéressé est faible, assez intéressé moyen
+et très intéressé élevé. Les deux formats ne concordent toujours pas
+exactement, et l’étude de 2008 et le panel de 2007 ont demandé l’intérêt
+pour l’élection ou la campagne, pas pour la politique.</td>
 </tr>
 <tr class="even">
 <td align="left"><a href="fr-reference-harmonisation.html#relaxed-interest_01"><code>interest_01</code></a></td>
@@ -743,7 +879,7 @@ groupes.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>study <span class="op">=</span> <span class="va">s</span>, edu3 <span class="op">=</span> <span class="va">e</span><span class="op">$</span><span class="va">edu3</span>, pct <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">adq_caq</span>, se <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">se</span>,</span>
 <span>             n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span>, weighted <span class="op">=</span> <span class="va">weighted</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Chez les francophones, l'écart de scolarité dans le vote caquiste passe de 5 points en 2014 à 21 en 2022</span><span class="qesr-sub">Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-decon_files/figure-html/divide-light.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-decon_files/figure-html/divide-dark.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, l'étude de 2008 n'ayant pas de pondération recommandée.</p>
+<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Chez les francophones, l'écart de scolarité dans le vote caquiste passe de 5 points en 2014 à 21 en 2022</span><span class="qesr-sub">Part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), selon la scolarité, avec intervalles de confiance à 95 %</span></figcaption><img class="qesr-img qesr-light" src="fr-decon_files/figure-html/divide-light.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="fr-decon_files/figure-html/divide-dark.png" alt="Graphique linéaire de la part des répondants francophones qui déclarent avoir voté pour l'ADQ (2007, 2008) ou la CAQ (2012 à 2022), pour trois groupes de scolarité, avec intervalles de confiance à 95 %. L'écart entre les personnes qui ont au plus un diplôme d'études secondaires et les diplômés universitaires est de 12 points en 2007, de 5 en 2012, de 18 en 2018 et de 21 en 2022. Valeurs dans la vue en tableau." width="672" height="384" loading="lazy"><p class="qesr-note">Source : qes_decon(), colonnes souples vote_choice (vote déclaré, vague postélectorale), education4 (en trois groupes : sans diplôme et secondaire réunis) et language (langue maternelle française). Une Étude électorale québécoise par élection. L'ADQ et la CAQ sont des partis distincts et le restent dans les données ; le trait pointillé marque le changement de parti. Pondéré avec la pondération postélectorale de chaque étude ; points creux (2008) : non pondéré, aucune pondération validée (l'étude de 2008 n'a pas de pondération recommandée).</p>
 <details class="qesr-table"><summary>Vue en tableau</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Élection </th>
@@ -784,7 +920,7 @@ groupes.</p>
    <td style="text-align:left;"> Secondaire ou moins </td>
    <td style="text-align:left;"> 15,3 [10,5 ; 21,8] </td>
    <td style="text-align:right;"> 157 </td>
-   <td style="text-align:left;"> non pondéré (aucune pondération recommandée) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -792,7 +928,7 @@ groupes.</p>
    <td style="text-align:left;"> Collégial ou cégep </td>
    <td style="text-align:left;"> 22,8 [18,0 ; 28,5] </td>
    <td style="text-align:right;"> 241 </td>
-   <td style="text-align:left;"> non pondéré (aucune pondération recommandée) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -800,7 +936,7 @@ groupes.</p>
    <td style="text-align:left;"> Universitaire </td>
    <td style="text-align:left;"> 15,5 [12,1 ; 19,6] </td>
    <td style="text-align:right;"> 368 </td>
-   <td style="text-align:left;"> non pondéré (aucune pondération recommandée) </td>
+   <td style="text-align:left;"> non pondéré : aucune pondération validée </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>

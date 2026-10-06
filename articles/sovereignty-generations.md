@@ -3,6 +3,9 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)*
 
+**This page downloads 6 studies** (about 13 MB) the first time it runs.
+`options(qesR.cache = "disk")` keeps them on disk for later sessions.
+
 For a long time, the sovereignty project was thought to have time on its
 side. On this older view, the young voted Yes in greater numbers than
 their elders, and each new generation would add to the Yes camp. Whether
@@ -55,14 +58,14 @@ Source: Quebec Election Studies, 2007 to 2022, all respondents. The 2007
 and 2008 studies asked the 1995 referendum question, which offered a
 partnership with Canada, and asked those who did not know which way they
 leaned; from 2012 on, the studies asked about an independent country.
-The 2008 study is unweighted (hollow dot).
+The 2008 study has no validated weight and is unweighted (hollow dot).
 
 Table view
 
 | Election | Study | Question | Yes, % \[95% CI\] | n | Weighting |
 |---:|:---|:---|:---|---:|:---|
 | 2007 | QES 2007 | The 1995 question (partnership) | 42.5 \[39.9, 45.2\] | 2011 | weighted |
-| 2008 | QES 2008 | The 1995 question (partnership) | 45.8 \[42.7, 48.8\] | 1038 | unweighted |
+| 2008 | QES 2008 | The 1995 question (partnership) | 45.8 \[42.7, 48.8\] | 1038 | unweighted: no validated weight |
 | 2012 | QES 2012 | An independent country | 40.4 \[37.5, 43.4\] | 1323 | weighted |
 | 2014 | QES 2014 | An independent country | 34.8 \[31.8, 37.9\] | 1353 | weighted |
 | 2018 | QES 2018 | An independent country | 34.6 \[32.6, 36.7\] | 2558 | weighted |
@@ -93,9 +96,10 @@ question, and we read the order of the cohorts rather than their level.
 cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the
 cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
 after) is −24 pts from the cohort born 1945-1959. Values in the table
-view.](sovereignty-generations_files/figure-html/gradient-light.png)![Dot
-charts with confidence intervals in six panels, one per study from 2007
-to 2022: the share of francophones who would vote Yes in each birth
+view.](sovereignty-generations_files/figure-html/gradient-light.png)
+
+![Dot charts with confidence intervals in six panels, one per study from
+2007 to 2022: the share of francophones who would vote Yes in each birth
 cohort. In 2007 the youngest cohort (born 1975-1989) is +20 pts from the
 cohort born in 1944 or before; in 2022 the youngest (born in 1990 or
 after) is −24 pts from the cohort born 1945-1959. Values in the table
@@ -104,9 +108,9 @@ view.](sovereignty-generations_files/figure-html/gradient-dark.png)
 Source: Quebec Election Studies, 2007 to 2022, respondents whose mother
 tongue is French. The 2007 and 2008 studies asked the 1995 question, the
 others about an independent country: compare the order of the cohorts
-within a panel, not the levels across panels. The 2008 study is
-unweighted (hollow dots). Cohorts of fewer than 30 respondents are not
-drawn.
+within a panel, not the levels across panels. The 2008 study has no
+validated weight and is unweighted (hollow dots). Cohorts of fewer than
+30 respondents are not drawn.
 
 Table view
 
@@ -116,11 +120,11 @@ Table view
 | 2007 | The 1995 question (partnership) | born 1945-59 | 51.2 \[46.4, 56.0\] | 588 | weighted |
 | 2007 | The 1995 question (partnership) | born 1960-74 | 51.7 \[46.0, 57.3\] | 406 | weighted |
 | 2007 | The 1995 question (partnership) | born 1975-89 | 57.8 \[51.8, 63.5\] | 379 | weighted |
-| 2008 | The 1995 question (partnership) | born 1944 or before | 45.4 \[38.2, 52.9\] | 174 | unweighted |
-| 2008 | The 1995 question (partnership) | born 1945-59 | 62.1 \[55.5, 68.3\] | 219 | unweighted |
-| 2008 | The 1995 question (partnership) | born 1960-74 | 50.5 \[44.7, 56.4\] | 275 | unweighted |
-| 2008 | The 1995 question (partnership) | born 1975-89 | 52.7 \[45.5, 59.9\] | 182 | unweighted |
-| 2008 | The 1995 question (partnership) | born 1990+ | n \< 30 | 4 | unweighted |
+| 2008 | The 1995 question (partnership) | born 1944 or before | 45.4 \[38.2, 52.9\] | 174 | unweighted: no validated weight |
+| 2008 | The 1995 question (partnership) | born 1945-59 | 62.1 \[55.5, 68.3\] | 219 | unweighted: no validated weight |
+| 2008 | The 1995 question (partnership) | born 1960-74 | 50.5 \[44.7, 56.4\] | 275 | unweighted: no validated weight |
+| 2008 | The 1995 question (partnership) | born 1975-89 | 52.7 \[45.5, 59.9\] | 182 | unweighted: no validated weight |
+| 2008 | The 1995 question (partnership) | born 1990+ | n \< 30 | 4 | unweighted: no validated weight |
 | 2012 | An independent country | born 1944 or before | 37.0 \[25.6, 50.0\] | 62 | weighted |
 | 2012 | An independent country | born 1945-59 | 53.6 \[46.4, 60.6\] | 214 | weighted |
 | 2012 | An independent country | born 1960-74 | 46.2 \[40.6, 51.9\] | 327 | weighted |
@@ -383,13 +387,15 @@ their political life.
   cohort.
 - **Timing and weights.** The 2022 study asked the question during the
   campaign, the others after the election. Each study is weighted,
-  except the 2008 study, which is unweighted (hollow dots).
+  except the 2008 study, which has no validated weight and is unweighted
+  (hollow dots; see the [weights
+  table](https://thomasgareau.github.io/qesR/articles/studies.html#weights)).
 - **Reproducing the page.** The data come from one call:
 
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("sov_support", "birth_year", "lang_mother"),
   missing = "reasons", quiet = TRUE
 )

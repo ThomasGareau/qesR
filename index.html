@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>qesR • qesR</title>
+<title>qesR: Quebec Election Studies in R • qesR</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><link href="extra.css" rel="stylesheet">
-<meta property="og:title" content="qesR">
+<meta property="og:title" content="qesR: Quebec Election Studies in R">
 <meta name="description" content="Load the Quebec Election Studies and related Quebec election surveys in R, and harmonize 11 of them into one data frame, with codebooks, search and citations in English and French.
 ">
 <meta property="og:description" content="Load the Quebec Election Studies and related Quebec election surveys in R, and harmonize 11 of them into one data frame, with codebooks, search and citations in English and French.
@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="articles/harmonization-reference.html">Variable reference</a></li>
@@ -151,37 +278,32 @@
 </h1>
 </div>
 <p><em><a href="articles/fr-accueil.html">Version française</a></em></p>
-<p>The Quebec Election Studies, with the panels and polls that accompanied them, cover seven provincial elections, from 1998 to 2022, and their data are public. Using them together is another matter. They sit in separate deposits, in SPSS or Stata files, each with a codebook of its own, and the wording of a question often changed from one study to the next. qesR brings them into R. Each study loads by its code, from its original file, checked before use; its codebook, its question wording and a search across all studies work offline, in English and French. qesR also harmonizes the 11 studies of 1998 to 2022 into one data frame, question by question, with a comparability grade for each study’s question and a reason for each missing value. In other words, a question about 25 years of Quebec elections can be answered within each study and then compared, without recoding every file by hand.</p>
-<p><a href="articles/get-started.html">Get started</a> goes from a study code to a weighted estimate. It runs offline, on a small synthetic study that ships with qesR.</p>
-<div class="section level2">
-<h2 id="what-the-studies-show">What the studies show<a class="anchor" aria-label="anchor" href="#what-the-studies-show"></a>
-</h2>
-<p>Two results from the examples. Each estimate is made within one study, with that study’s weight where it has one and a 95% confidence interval; nothing is pooled across studies.</p>
+<p>qesR loads the Quebec Election Studies, with the panels and polls that accompanied them, into R: seven provincial elections from 1998 to 2022, each study by its code, from its original file. Their codebooks, question wording and a search across all studies ship with the package and work offline, in English and French. qesR also harmonizes 11 of the studies into one data frame, so that a question about 25 years of Quebec elections can be answered within each study and then compared.</p>
 <div class="qesr-hero">
-<figure><figcaption>The francophone vote fragmented, from 2.8 to 3.9 effective parties; the non-francophone vote stayed far more concentrated</figcaption><a href="articles/realignment.html"><img class="qesr-img qesr-light" src="articles/realignment_files/figure-html/enp-light.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Details on the realignment page." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="articles/realignment_files/figure-html/enp-dark.png" alt="Line chart of the effective number of parties at each Quebec election from 1998 to 2022: the official result, francophone respondents and non-francophone respondents. Among francophones it rises from 2.8 in 1998 to 3.9 in 2022; among non-francophones it stays between 1.3 and 2.5 until 2018 and reaches 2.9 in 2022, with a wide interval. Details on the realignment page." width="672" height="384" loading="lazy"></a>
-</figure><figure><figcaption>Francophones born in 1990 or after went from 53% to 30% Yes; those born 1945-59 stayed between 50% and 54%</figcaption><a href="articles/sovereignty-generations.html"><img class="qesr-img qesr-light" src="articles/sovereignty-generations_files/figure-html/cohorts-light.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022. Those born in 1990 or after go from 53% to 30%, the lowest level; those born 1945-1959 stay between 50% and 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"><img class="qesr-img qesr-dark" src="articles/sovereignty-generations_files/figure-html/cohorts-dark.png" alt="Line chart of the share of francophones who would vote Yes to Quebec becoming an independent country, for five birth cohorts, at the elections of 2012, 2014, 2018 and 2022. Those born in 1990 or after go from 53% to 30%, the lowest level; those born 1945-1959 stay between 50% and 54%. Details on the sovereignty page." width="672" height="403" loading="lazy"></a>
+<figure><figcaption>In 2007 the youngest francophones were the cohort most likely to vote Yes; in 2022 they were the least likely</figcaption><a href="articles/sovereignty-generations.html"><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="articles/sovereignty-generations_files/figure-html/gradient-light-narrow.png"><img class="qesr-img qesr-light" src="articles/sovereignty-generations_files/figure-html/gradient-light.png" alt="Dot charts in six panels, one per Quebec Election Study from 2007 to 2022, of the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort is the most likely to vote Yes; in 2022 it is the least likely. Details on the sovereignty page." width="672" height="461" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="articles/sovereignty-generations_files/figure-html/gradient-dark-narrow.png"><img class="qesr-img qesr-dark" src="articles/sovereignty-generations_files/figure-html/gradient-dark.png" alt="Dot charts in six panels, one per Quebec Election Study from 2007 to 2022, of the share of francophones who would vote Yes in each birth cohort. In 2007 the youngest cohort is the most likely to vote Yes; in 2022 it is the least likely. Details on the sovereignty page." width="672" height="461" loading="lazy"></source></picture></a>
+</figure><figure><figcaption>Party choice is far less tied to the referendum vote than in 2012, and left-right has not taken its place</figcaption><a href="articles/dimensions.html"><picture class="qesr-pic qesr-light"><source media="(max-width: 576px)" srcset="articles/dimensions_files/figure-html/sorting-light-narrow.png"><img class="qesr-img qesr-light" src="articles/dimensions_files/figure-html/sorting-light.png" alt="Line charts in two panels, all voters and francophone voters, 2012 to 2022, of how much of the variation in the referendum vote and in left-right placement lies between the parties' electorates: the referendum vote is far less tied to party choice in 2022 than in 2012, and left-right placement did not rise. Details on the dimensions page." width="672" height="403" loading="lazy"></source></picture><picture class="qesr-pic qesr-dark"><source media="(max-width: 576px)" srcset="articles/dimensions_files/figure-html/sorting-dark-narrow.png"><img class="qesr-img qesr-dark" src="articles/dimensions_files/figure-html/sorting-dark.png" alt="Line charts in two panels, all voters and francophone voters, 2012 to 2022, of how much of the variation in the referendum vote and in left-right placement lies between the parties' electorates: the referendum vote is far less tied to party choice in 2022 than in 2012, and left-right placement did not rise. Details on the dimensions page." width="672" height="403" loading="lazy"></source></picture></a>
 </figure>
 </div>
-</div>
+<p>Each estimate is made within one study, with that study’s weight where it has a validated one and a 95% confidence interval; nothing is pooled across studies. <a href="articles/get-started.html">Get started</a> goes from a study code to a weighted estimate, offline, on a small synthetic study that ships with qesR.</p>
 <div class="section level2">
 <h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
 <p>Each page takes a common belief about Quebec elections and sets it against the studies.</p>
 <ul>
 <li>
-<a href="articles/realignment.html">From two parties to four</a>: the vote fragmented from 1998 to 2022, but mainly among francophones, and within each sovereignty camp rather than across them.</li>
+<a href="articles/realignment.html">From two parties to four</a>: the vote fragmented, mainly among francophones, and within each sovereignty camp rather than across them.</li>
 <li>
 <a href="articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a>: the youngest francophones were the most likely to vote Yes in 2007 and the least likely in 2022, mostly through change within cohorts.</li>
 <li>
-<a href="articles/dimensions.html">Two dimensions: sovereignty and left-right</a>: the national question structures the vote less than in 2012, and the left-right scale has not taken its place.</li>
+<a href="articles/dimensions.html">Two dimensions of competition</a>: the national question structures the vote less than in 2012, and the left-right scale has not taken its place.</li>
 <li>
 <a href="articles/turnout.html">Who votes?</a>: the young report voting less at every election since 1998, and interest in politics accounts for only a small part of the gap.</li>
 <li>
 <a href="articles/transitions.html">Are Quebec elections decided during the campaign?</a>: the same respondents before and after the vote show that a campaign moves many voters but, on net, few votes.</li>
 <li>
-<a href="articles/survey-vs-official.html">Do surveys miss the Liberals?</a>: the Liberal vote was under-reported from 2007 to 2014, but the gap faded in 2018 and 2022, and the winner falls short more often than not.</li>
+<a href="articles/survey-vs-official.html">Do surveys miss the Liberals?</a>: the Liberal vote was under-reported from 2007 to 2014, but the gap faded in 2018 and 2022.</li>
 <li>
-<a href="articles/recipes.html">Recipes</a>: the code, step by step, to ask whether the language divide in the Liberal vote narrowed as the sovereignty question receded.</li>
+<a href="articles/recipes.html">Recipes: the language divide in the Liberal vote</a>: the code, step by step, from one harmonized variable to an estimate for every study.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -190,14 +312,15 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ThomasGareau/qesR"</span><span class="op">)</span></span></code></pre></div>
-<p>Once qesR is accepted on CRAN, <code>install.packages("qesR")</code> will do the same. A first session:</p>
+<p>Once qesR is accepted on CRAN, <code>install.packages("qesR")</code> will do the same. A first session (the lines marked “downloads” fetch studies from their deposits the first time; <code>options(qesR.cache = "disk")</code> keeps them):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://thomasgareau.github.io/qesR/">qesR</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/qes_studies.html">qes_studies</a></span><span class="op">(</span><span class="op">)</span>                         <span class="co"># the studies, offline</span></span>
-<span><span class="va">qes2018</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2018"</span><span class="op">)</span>         <span class="co"># one study, from its original file</span></span>
-<span><span class="fu"><a href="reference/qes_search.html">qes_search</a></span><span class="op">(</span><span class="st">"souverain|sovereign"</span><span class="op">)</span>     <span class="co"># a question, in every study</span></span>
-<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"vote_choice"</span><span class="op">)</span>  <span class="co"># the vote, in six studies</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_decon.html">qes_decon</a></span><span class="op">(</span><span class="op">)</span>                      <span class="co"># every study in one flat file, relaxed</span></span></code></pre></div>
+<span><span class="va">qes2018</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_qes.html">get_qes</a></span><span class="op">(</span><span class="st">"qes2018"</span><span class="op">)</span>         <span class="co"># downloads: one study, from its original file</span></span>
+<span><span class="fu"><a href="reference/qes_search.html">qes_search</a></span><span class="op">(</span><span class="st">"souverain|sovereign"</span><span class="op">)</span>     <span class="co"># a question, in every study, offline</span></span>
+<span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_harmonize.html">qes_harmonize</a></span><span class="op">(</span>targets <span class="op">=</span> <span class="st">"vote_choice"</span><span class="op">)</span>  <span class="co"># downloads: the vote, in six studies</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/qes_decon.html">qes_decon</a></span><span class="op">(</span><span class="op">)</span>                      <span class="co"># downloads: every study in one flat file, relaxed</span></span></code></pre></div>
+<p>The harmonization rules are experimental and may change from one version of qesR to the next. Keep <code>qes_provenance(h, level = "spec")</code> with your results and pin the version of qesR you used.</p>
 </div>
 <div class="section level2">
 <h2 id="citing-qesr">Citing qesR<a class="anchor" aria-label="anchor" href="#citing-qesr"></a>
@@ -213,11 +336,6 @@
 </h2>
 <p>The code of qesR is under the MIT licence. The data are not part of the package: qesR downloads each study from its deposit on Borealis or the Harvard Dataverse. Most studies are released under CC0; the 2022 study, and the metadata qesR ships from it, are under CC BY-NC 4.0 (attribution, no commercial use). <a href="articles/citations.html#licences-and-attribution">Details and the required attribution</a>.</p>
 </div>
-<div class="section level2">
-<h2 id="also-on-this-site">Also on this site<a class="anchor" aria-label="anchor" href="#also-on-this-site"></a>
-</h2>
-<p>The <a href="articles/studies.html">study catalog</a>, <a href="articles/harmonization.html">how harmonization works</a>, <a href="articles/decon.html">one file for every study with <code>qes_decon()</code></a>, the <a href="articles/coverage.html">coverage of each study</a>, the <a href="articles/harmonization-reference.html">variable reference</a>, the <a href="articles/validation.html">validation against official results</a>, <a href="articles/merged-dataset.html">the merged file</a> and the <a href="reference/index.html">function reference</a>. For code written with an earlier version of qesR: <a href="articles/migrating-0.7.html">upgrading</a>.</p>
-</div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
@@ -229,11 +347,10 @@
 </ul>
 </div>
 
-<div class="license">
-<h2 data-toc-skip>License</h2>
+<div class="licence">
+<h2 data-toc-skip>Licence</h2>
 <ul class="list-unstyled">
-<li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><p><a href="LICENSE.html">MIT</a> for the code. The data are not part of the package; each study keeps its own licence (<a href="articles/citations.html#licences-and-attribution">details</a>).</p></li>
 </ul>
 </div>
 

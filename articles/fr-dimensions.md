@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/dimensions.md)*
 
+**Cette page télécharge 6 études** (environ 13 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Pendant une quarantaine d’années, la question nationale a structuré la
 concurrence partisane au Québec. Le Parti québécois (PQ) portait le
 projet souverainiste, le Parti libéral du Québec (PLQ) défendait le
@@ -54,15 +58,16 @@ Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de
 19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent
 de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à
 gauche, à 3,7 en 2022. Valeurs dans la vue en
-tableau.](fr-dimensions_files/figure-html/paths-light.png)![Deux
-graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ, PQ, CAQ,
-QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs du parti
-qui voteraient Oui à l'indépendance, à droite leur autopositionnement
-gauche-droite moyen, avec intervalles de confiance. Les électeurs du PQ
-passent de 84 % à 82 % de Oui ; ceux de la CAQ, de 19 % à 38 % ; ceux de
-QS, de 63 % à 44 %. Les électeurs du PLQ passent de 6,5 à 4,8 sur l'axe
-gauche-droite ; ceux de QS restent les plus à gauche, à 3,7 en 2022.
-Valeurs dans la vue en
+tableau.](fr-dimensions_files/figure-html/paths-light.png)
+
+![Deux graphiques linéaires, de 2012 à 2022, une ligne par parti (PLQ,
+PQ, CAQ, QS ; le PCQ en 2022 seulement) : à gauche la part des électeurs
+du parti qui voteraient Oui à l'indépendance, à droite leur
+autopositionnement gauche-droite moyen, avec intervalles de confiance.
+Les électeurs du PQ passent de 84 % à 82 % de Oui ; ceux de la CAQ, de
+19 % à 38 % ; ceux de QS, de 63 % à 44 %. Les électeurs du PLQ passent
+de 6,5 à 4,8 sur l'axe gauche-droite ; ceux de QS restent les plus à
+gauche, à 3,7 en 2022. Valeurs dans la vue en
 tableau.](fr-dimensions_files/figure-html/paths-dark.png)
 
 Source : Études électorales québécoises de 2012, 2014, 2018 et 2022,
@@ -137,20 +142,22 @@ part du vote déclaré de chaque camp allée à chaque parti. La part du PQ
 chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis
 que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs
 du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en
-tableau.](fr-dimensions_files/figure-html/where-light.png)![Graphiques
-linéaires en deux panneaux, les répondants qui voteraient Oui (à gauche)
-et Non (à droite) à un référendum, de 2007 à 2022 : la part du vote
-déclaré de chaque camp allée à chaque parti. La part du PQ chez les
-électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis que QS
-monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs du Non
-passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en
+tableau.](fr-dimensions_files/figure-html/where-light.png)
+
+![Graphiques linéaires en deux panneaux, les répondants qui voteraient
+Oui (à gauche) et Non (à droite) à un référendum, de 2007 à 2022 : la
+part du vote déclaré de chaque camp allée à chaque parti. La part du PQ
+chez les électeurs du Oui passe de 73 % en 2012 à 35 % en 2022, tandis
+que QS monte à 20 % et la CAQ à 34 % ; celle du PLQ chez les électeurs
+du Non passe de 46 % en 2012 à 29 % en 2022. Valeurs dans la vue en
 tableau.](fr-dimensions_files/figure-html/where-dark.png)
 
 Source : Études électorales québécoises de 2007 à 2022, pondérées, sauf
-2008 (creux : non pondérée). 2007 et 2008 ont posé la question
-référendaire de 1995, 2012 à 2022 une question sur un pays indépendant :
-les lignes s'interrompent au changement. Les autres partis (Parti vert,
-Option nationale et autres) sont dans la vue en tableau.
+2008 (creux : non pondérée, aucune pondération validée). 2007 et 2008
+ont posé la question référendaire de 1995, 2012 à 2022 une question sur
+un pays indépendant : les lignes s'interrompent au changement. Les
+autres partis (Parti vert, Option nationale et autres) sont dans la vue
+en tableau.
 
 Vue en tableau
 
@@ -170,20 +177,20 @@ Vue en tableau
 | 2007 | EEQ 2007 | Non | CAQ | — | 913 | pondéré |
 | 2007 | EEQ 2007 | Non | PCQ | — | 913 | pondéré |
 | 2007 | EEQ 2007 | Non | Autres | 8,5 \[6,3 ; 11,3\] | 913 | pondéré |
-| 2008 | EEQ 2008 | Oui | PLQ | 10,0 \[7,4 ; 13,4\] | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | PQ | 73,3 \[68,6 ; 77,4\] | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | ADQ | 6,9 \[4,8 ; 9,9\] | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | QS | 6,9 \[4,8 ; 9,9\] | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | CAQ | — | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | PCQ | — | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Oui | Autres | 2,8 \[1,6 ; 5,0\] | 389 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | PLQ | 66,7 \[62,3 ; 70,9\] | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | PQ | 7,3 \[5,2 ; 10,1\] | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | ADQ | 21,7 \[18,2 ; 25,8\] | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | QS | 1,6 \[0,7 ; 3,2\] | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | CAQ | — | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | PCQ | — | 451 | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | Non | Autres | 2,7 \[1,5 ; 4,6\] | 451 | non pondéré (pondération en révision) |
+| 2008 | EEQ 2008 | Oui | PLQ | 10,0 \[7,4 ; 13,4\] | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | PQ | 73,3 \[68,6 ; 77,4\] | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | ADQ | 6,9 \[4,8 ; 9,9\] | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | QS | 6,9 \[4,8 ; 9,9\] | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | CAQ | — | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | PCQ | — | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Oui | Autres | 2,8 \[1,6 ; 5,0\] | 389 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | PLQ | 66,7 \[62,3 ; 70,9\] | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | PQ | 7,3 \[5,2 ; 10,1\] | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | ADQ | 21,7 \[18,2 ; 25,8\] | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | QS | 1,6 \[0,7 ; 3,2\] | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | CAQ | — | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | PCQ | — | 451 | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | Non | Autres | 2,7 \[1,5 ; 4,6\] | 451 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | Oui | PLQ | 0,8 \[0,2 ; 2,4\] | 529 | pondéré |
 | 2012 | EEQ 2012 | Oui | PQ | 73,3 \[68,9 ; 77,2\] | 529 | pondéré |
 | 2012 | EEQ 2012 | Oui | ADQ | — | 529 | pondéré |
@@ -295,9 +302,10 @@ référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble
 des électeurs, et de 55 % à 18 % chez les francophones ; pour le
 positionnement gauche-droite, de 26 % à 23 % chez l'ensemble des
 électeurs, et 14 % en 2022 sans le PCQ. Valeurs dans la vue en
-tableau.](fr-dimensions_files/figure-html/sorting-light.png)![Graphiques
-linéaires en deux panneaux, tous les électeurs (à gauche) et les
-électeurs francophones (à droite), de 2012 à 2022 : la part de la
+tableau.](fr-dimensions_files/figure-html/sorting-light.png)
+
+![Graphiques linéaires en deux panneaux, tous les électeurs (à gauche)
+et les électeurs francophones (à droite), de 2012 à 2022 : la part de la
 variance du vote référendaire et du positionnement gauche-droite liée au
 choix partisan, avec intervalles de confiance. Pour le vote
 référendaire, elle passe de 57 % en 2012 à 25 % en 2022 chez l'ensemble
@@ -420,8 +428,8 @@ se penche sur cette question.
   des mêmes élections sont exclus, afin de garder une étude par
   élection ; en 2012 et en 2018, ils ont en outre posé d’autres libellés
   de la question référendaire. Les sondages de 1998 sont aussi exclus :
-  ils ne sont pas pondérés, et un seul des deux a posé la question
-  référendaire.
+  ils n’ont aucune pondération validée, et un seul des deux a posé la
+  question référendaire.
 - **Questions.** Le vote déclaré après l’élection ; le vote
   référendaire, en part de Oui parmi les répondants qui ont choisi Oui
   ou Non (ceux qui restent indécis sont mis de côté) ;
@@ -441,9 +449,10 @@ se penche sur cette question.
   l’élection ; les estimations portent sur les répondants qui ont
   participé aux deux vagues, avec la pondération postélectorale.
 - **Pondérations.** La pondération postélectorale de chaque étude.
-  L’étude de 2008 est présentée sans pondération : ses pondérations ont
-  été calées sur le résultat de l’élection, ce qui les rend peu adaptées
-  à l’étude du vote.
+  L’étude de 2008 est présentée sans pondération : ses seules
+  pondérations ont été calées sur le vote déclaré, ce qui les rend peu
+  adaptées à l’étude du vote (voir le [tableau des
+  pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)).
 - **Part de la variance.** Calculée dans chaque étude sur les répondants
   qui ont répondu aux deux questions et voté pour l’un des partis
   présentés, avec des intervalles à 95 % tirés de 500 répliques
@@ -460,7 +469,7 @@ langue maternelle (`lang_mother`) des différentes études :
 ``` r
 
 h <- qes_harmonize(
-  studies = qz_studies,
+  studies = c("qes2007", "qes2008", "qes2012", "qes2014", "qes2018", "qes2022"),
   targets = c("vote_choice", "sov_support", "lr_self", "lang_mother"),
   types = list(vote_choice = "recall"),
   missing = "reasons", quiet = TRUE
@@ -471,6 +480,7 @@ Une moyenne pondérée par parti, dans une étude :
 
 ``` r
 
+library(survey)
 d22 <- qes_design(h[h$study == "qes2022", ], weight = "weight_post")
 svyby(~lr_self, ~vote_choice, subset(d22, vote_choice %in% c("CAQ", "QS")),
       svymean, na.rm = TRUE)

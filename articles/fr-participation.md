@@ -3,6 +3,10 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/turnout.md)*
 
+**Cette page télécharge 11 études** (environ 16 Mo) la première fois
+qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
+disque pour les sessions suivantes.
+
 Au Québec, la participation électorale a reculé. Selon Élections Québec,
 elle est passée de 78 % en 1998 à 66 % en 2022, avec un creux de 57 % en
 2008. La croyance populaire attribue ce recul aux jeunes électrices et
@@ -71,12 +75,12 @@ Vue en tableau
 
 | Élection | Étude | Participation déclarée, % \[IC à 95 %\] | n | Participation officielle, % | Écart | Pondération |
 |---:|:---|:---|---:|:---|:---|:---|
-| 1998 | Sondages de 1998 | 87,4 \[85,6 ; 89,0\] | 1483 | 78,3 | +9 pts | non pondéré (pondération en révision) |
+| 1998 | Sondages de 1998 | 87,4 \[85,6 ; 89,0\] | 1483 | 78,3 | +9 pts | non pondéré : aucune pondération validée |
 | 2007 | EEQ 2007 | 90,7 \[89,0 ; 92,2\] | 2162 | 71,2 | +20 pts | pondéré |
-| 2007 | Panel 2007 | 85,3 \[83,7 ; 86,8\] | 2054 | 71,2 | +14 pts | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | 87,2 \[85,1 ; 89,0\] | 1131 | 57,4 | +30 pts | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | 85,3 \[83,7 ; 86,8\] | 2054 | 71,2 | +14 pts | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | 87,2 \[85,1 ; 89,0\] | 1131 | 57,4 | +30 pts | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | 93,2 \[91,8 ; 94,4\] | 1486 | 74,6 | +19 pts | pondéré |
-| 2012 | Panel 2012 | 92,2 \[90,2 ; 93,8\] | 844 | 74,6 | +18 pts | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | 92,2 \[90,2 ; 93,8\] | 844 | 74,6 | +18 pts | non pondéré : aucune pondération validée |
 | 2014 | EEQ 2014 | 88,9 \[86,8 ; 90,8\] | 1499 | 71,4 | +17 pts | pondéré |
 | 2018 | EEQ 2018 | 83,2 \[81,5 ; 84,7\] | 2635 | 66,4 | +17 pts | pondéré |
 | 2018 | Panel 2018 | 83,7 \[80,1 ; 86,7\] | 842 | 66,4 | +17 pts | pondéré |
@@ -122,22 +126,22 @@ tableau.](fr-participation_files/figure-html/age-dark.png)
 
 Source : une Étude électorale québécoise par élection, et les sondages
 de 1998 (francophones seulement). Bande : intervalle de confiance à 95 %
-de la différence. Pondéré ; points creux (1998 et 2008) : non pondéré.
-L'axe horizontal est en années, avec une coupure entre 1998 et 2007. La
-vue en tableau donne aussi la participation de chaque groupe d'âge,
-ainsi que les panels menés par Claire Durand aux élections de 2007, 2012
-et 2018.
+de la différence. Pondéré ; points creux (1998 et 2008) : non pondéré,
+aucune pondération validée. L'axe horizontal est en années, avec une
+coupure entre 1998 et 2007. La vue en tableau donne aussi la
+participation de chaque groupe d'âge, ainsi que les panels menés par
+Claire Durand aux élections de 2007, 2012 et 2018.
 
 Vue en tableau
 
 | Élection | Étude | 18 à 34 ans, % | 35 à 54 ans, % | 55 ans et plus, % | Écart, 55+ moins 18-34 \[IC à 95 %\] | Pondération |
 |---:|:---|:---|:---|:---|:---|:---|
-| 1998 | Sondages de 1998 | 81,6 | 88,8 | 90,3 | +8,7 pts \[3,9 ; 13,6\] | non pondéré (pondération en révision) |
+| 1998 | Sondages de 1998 | 81,6 | 88,8 | 90,3 | +8,7 pts \[3,9 ; 13,6\] | non pondéré : aucune pondération validée |
 | 2007 | EEQ 2007 | 84,8 | 91,4 | 95,7 | +11,0 pts \[6,9 ; 15,1\] | pondéré |
-| 2007 | Panel 2007 | 73,5 | 86,4 | 91,0 | +17,5 pts \[12,9 ; 22,2\] | non pondéré (pondération en révision) |
-| 2008 | EEQ 2008 | 78,9 | 86,5 | 93,5 | +14,5 pts \[9,0 ; 20,0\] | non pondéré (pondération en révision) |
+| 2007 | Panel 2007 | 73,5 | 86,4 | 91,0 | +17,5 pts \[12,9 ; 22,2\] | non pondéré : aucune pondération validée |
+| 2008 | EEQ 2008 | 78,9 | 86,5 | 93,5 | +14,5 pts \[9,0 ; 20,0\] | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | 89,5 | 92,7 | 96,4 | +7,0 pts \[3,5 ; 10,4\] | pondéré |
-| 2012 | Panel 2012 | 89,0 | 91,7 | 93,7 | +4,7 pts \[-1,3 ; 10,7\] | non pondéré (pondération en révision) |
+| 2012 | Panel 2012 | 89,0 | 91,7 | 93,7 | +4,7 pts \[-1,3 ; 10,7\] | non pondéré : aucune pondération validée |
 | 2014 | EEQ 2014 | 80,9 | 89,8 | 93,9 | +13,1 pts \[7,6 ; 18,5\] | pondéré |
 | 2018 | EEQ 2018 | 70,3 | 81,8 | 91,4 | +21,2 pts \[17,1 ; 25,2\] | pondéré |
 | 2018 | Panel 2018 | 73,8 | 81,9 | 91,4 | +17,5 pts \[8,3 ; 26,8\] | pondéré |
@@ -302,7 +306,7 @@ Vue en tableau
 | Élection | Étude | Écart d'âge, tous les répondants \[IC à 95 %\] | Écart d'âge, même intérêt \[IC à 95 %\] | Différence | Intérêt faible, 18 à 34 ans, % | Intérêt faible, 55 ans et plus, % | n | Intérêt pour | Pondération |
 |---:|:---|:---|:---|:---|:---|:---|---:|:---|:---|
 | 2007 | EEQ 2007 | +11,0 pts \[6,9 ; 15,1\] | +10,5 pts \[6,5 ; 14,5\] | −0,5 pts | 19,9 | 13,4 | 2117 | la politique, 0 à 10 | pondéré |
-| 2008 | EEQ 2008 | +14,5 pts \[9,0 ; 20,0\] | +12,3 pts \[7,1 ; 17,5\] | −2,2 pts | 50,2 | 34,8 | 1129 | l'élection, 0 à 10 | non pondéré (pondération en révision) |
+| 2008 | EEQ 2008 | +14,5 pts \[9,0 ; 20,0\] | +12,3 pts \[7,1 ; 17,5\] | −2,2 pts | 50,2 | 34,8 | 1129 | l'élection, 0 à 10 | non pondéré : aucune pondération validée |
 | 2012 | EEQ 2012 | +6,7 pts \[3,3 ; 10,1\] | +4,9 pts \[1,7 ; 8,1\] | −1,8 pts | 31,9 | 20,5 | 1472 | la politique, quatre points | pondéré |
 | 2014 | EEQ 2014 | +12,9 pts \[7,4 ; 18,4\] | +10,0 pts \[4,7 ; 15,3\] | −2,9 pts | 36,3 | 20,1 | 1489 | la politique, quatre points | pondéré |
 | 2018 | EEQ 2018 | +20,6 pts \[16,5 ; 24,7\] | +17,6 pts \[13,6 ; 21,6\] | −3,0 pts | 36,7 | 18,9 | 2599 | la politique, quatre points | pondéré |
@@ -400,10 +404,11 @@ h <- qes_harmonize(
 ```
 
 La participation de chaque groupe d’âge en 2018, et l’écart d’âge à
-intérêt égal :
+intérêt égal, avec le package survey (le `h` de l’appel ci-dessus) :
 
 ``` r
 
+library(survey)
 d18 <- qes_design(h[h$study == "qes2018" & !h$eligible_voter %in% FALSE, ], weight = "weight_post")
 d18 <- subset(d18, !is.na(turnout) & !is.na(age_group3))
 svyby(~I(turnout == "Yes"), ~age_group3, d18, svyciprop, vartype = "ci", method = "logit")
@@ -439,13 +444,10 @@ coef(summary(svyglm(voted ~ age + answer, d18)))[2:3, ]
   (de 0 à 10), et le panel de 2007 portait sur l’intérêt pour la
   campagne ; les panels de 2012 et de 2018 n’ont pas de question
   comparable.
-- **Pondération.** La pondération postélectorale de chaque étude. Les
-  sondages de 1998 et les panels de 2007 et de 2012 ne sont pas
-  pondérés, leur pondération n’étant pas assez documentée pour être
-  utilisée, et sont représentés par des points creux. Les seules
-  pondérations de l’étude de 2008 sont calées sur le vote déclaré ou sur
-  la participation ; aucune ne peut servir ici, et l’étude est elle
-  aussi représentée en creux.
+- **Pondération.** La pondération postélectorale de chaque étude qui en
+  a une validée ; les autres ne sont pas pondérées et sont représentées
+  en points creux (voir le [tableau des
+  pondérations](https://thomasgareau.github.io/qesR/articles/fr-etudes.html#ponderations)).
 - **Qui a été interrogé.** Les sondages de 1998 n’ont interrogé que des
   francophones, et les répondants qu’ils ont interrogés de nouveau après
   le vote ne sont pas représentatifs de l’ensemble des francophones.

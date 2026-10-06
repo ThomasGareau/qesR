@@ -10,10 +10,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -22,12 +50,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -43,20 +75,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,14 +194,14 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/get-started.html">Get started</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples"><li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-studies" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Studies</button>
@@ -83,7 +210,7 @@
   </ul></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization"><li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -112,6 +239,46 @@
       <small>Source: <a href="https://github.com/ThomasGareau/qesR/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.2" id="qesr-092">qesR 0.9.2<a class="anchor" aria-label="anchor" href="#qesr-092"></a></h2>
+<p><em>Upgrading from qesR 0.4.4? See <a href="../articles/migrating-0.7.html">Upgrading from qesR 0.4.4</a>.</em></p>
+<p><strong>In short:</strong> corrections to <code><a href="../reference/qes_decon.html">qes_decon()</a></code> and to the long layout of <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code>, clearer messages, and a shorter test run on CRAN. <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> and <code><a href="../reference/get_decon.html">get_decon()</a></code> return the same values as in 0.9.1.</p>
+<div class="section level3">
+<h3 id="qes_decon-0-9-2"><code>qes_decon()</code><a class="anchor" aria-label="anchor" href="#qes_decon-0-9-2"></a></h3>
+<ul><li>
+<code>interest</code> is cut at 0.55 and 0.85 of the 0-1 scale instead of 0.35 and 0.75. On a 0-10 question, 0 to 5 is now low, 6 to 8 medium and 9 or 10 high; on a 4-point question nothing changes (not at all or hardly interested is low, quite medium, very high). With the old cuts, the share with high interest nearly doubled between the 4-point studies and the 0-10 studies through the change of scale alone; it now differs by a few points. <code>interest_01</code> does not change.</li>
+<li>In <code>sovereignty</code>, “would not vote” is still missing, now with the reason <code>not_voted</code> instead of a reason meant for answers that straddle two categories.</li>
+<li>The summary message now names every column and study left empty because a source is still in review, the previous vote of 2008 and 2018 included (<code>vote_prev</code>, held until a decision on respondents too young to vote at the previous election). It used to count only the relaxed mappings in review, so these two columns were empty without notice.</li>
+<li>
+<code><a href="../reference/qes_decon.html">?qes_decon</a></code> has a new section, <em>Who was surveyed</em>: the 1998 polls interviewed francophones only; the 2018 study also interviewed people aged 16 and 17, who are missing in <code>age_group</code> and <code>vote_choice</code> but present in the other columns; and religion comes from a filter question in 2012-2018 but from one long list in 2022, so its levels are not strictly comparable across that change.</li>
+<li>The description of <code>employment</code> and <code><a href="../reference/qes_decon.html">?qes_decon</a></code> say that in the 2018 panel only the web respondents were asked about employment, so its telephone respondents appear as don’t know or refused; the description of <code>union</code> no longer mentions an internal decision date.</li>
+<li>A custom specification with two relaxed mappings that both replace the values of one per-respondent column, in two waves of a study, no longer lets the second erase the first: each gives the respondents of its own wave, and the first wave wins. The shipped specification has no such case, so no value changes.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="long-layout-0-9-2">Long layout<a class="anchor" aria-label="anchor" href="#long-layout-0-9-2"></a></h3>
+<ul><li>
+<code>qes_harmonize(layout = "long")</code> and <code><a href="../reference/qes_decon.html">qes_decon()</a></code> have one row per respondent and wave, so <code>wave</code> is never <code>NA</code>. A respondent who took part in no wave (one interview in the 2007 panel that neither wave counts) used to appear as an empty row with <code>wave</code> <code>NA</code>; it is now left out. A message says how many (class <code>qesR_message_no_wave</code>, silenced by <code>quiet = TRUE</code>), and <code>attr(x, "qes_no_wave")</code> counts them study by study. The respondent layout keeps every respondent, and <code>attr(qes_decon(), "weights")</code> now covers every row.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="messages-and-help-0-9-2">Messages and help<a class="anchor" aria-label="anchor" href="#messages-and-help-0-9-2"></a></h3>
+<ul><li>
+<code><a href="../reference/get_qes.html">get_qes()</a></code>, <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> and <code><a href="../reference/get_decon.html">get_decon()</a></code> word their one-time note neutrally (“returns the data and does not create objects in your workspace: assign the result”), show it also for scripts run with <code><a href="https://rdrr.io/r/base/source.html" class="external-link">source()</a></code>, and never show it inside a function, while knitr renders a page, with <code>quiet = TRUE</code> or when <code>assign_global</code> is passed.</li>
+<li>
+<code><a href="../reference/qes_party_lineage.html">qes_party_lineage()</a></code> labels its new columns “(filiation)” in French data, and says that <code>x</code> must come from <code><a href="../reference/qes_harmonize.html">qes_harmonize()</a></code> or <code><a href="../reference/qes_decon.html">qes_decon()</a></code> when it does not.</li>
+<li>The harmonization reference and the coverage page no longer show internal tags and status codes: notes lose their pointers to the owner’s decisions, a relaxed mapping is marked “approved” or “awaiting sign-off”, and the sentence on rows awaiting sign-off says in plain words what happens to them.</li>
+<li>A rendering step of <code><a href="../reference/get_qes_master.html">get_qes_master()</a></code> no longer warns under the development version of R; its values do not change.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="tests-and-checks-0-9-2">Tests and checks<a class="anchor" aria-label="anchor" href="#tests-and-checks-0-9-2"></a></h3>
+<ul><li>The exhaustive tests (every study, every rule, every view) are skipped on CRAN, so the CRAN test run takes about a quarter of the time; they still run in continuous integration and with <code>NOT_CRAN=true</code>.</li>
+<li>
+<code>inst/WORDLIST</code> lists the proper nouns and terms of the documentation for spell checks.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="harmonization-rules-specification-0-9-2">Harmonization rules (specification 4.7.0)<a class="anchor" aria-label="anchor" href="#harmonization-rules-specification-0-9-2"></a></h3>
+<ul><li>Relaxed layer: the <code>interest</code> cuts and the <code>sovereignty</code> reason above, and text only for <code>union</code>, <code>employment</code> and the grade reason of the 2014 gender question. The recorded relaxed results are rebuilt (the keys of <code>interest</code> and <code>sovereignty</code>, and the 2007 panel without its respondent in no wave). No strict row, map, marginal or column hash changes. Engine-Min is 0.9.2.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.1" id="qesr-091">qesR 0.9.1<a class="anchor" aria-label="anchor" href="#qesr-091"></a></h2>
 <p><em>Upgrading from qesR 0.4.4? See <a href="../articles/migrating-0.7.html">Upgrading from qesR 0.4.4</a>.</em></p>

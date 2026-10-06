@@ -35,6 +35,55 @@ comparer des études. Les licences, et l’attribution que demande l’étude
 de 2022, sont dans [Citer qesR et les
 études](https://thomasgareau.github.io/qesR/articles/fr-citations.md).
 
+## Codes d’étude
+
+[`qes_studies()`](https://thomasgareau.github.io/qesR/reference/qes_studies.md)
+donne 13 codes d’étude. `qes1998` est le fichier de panel qui réunit les
+deux sondages de 1998, qui se chargent aussi séparément (`qes1998_crop`
+et `qes1998_createc`). Les données harmonisées de
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+et de
+[`qes_decon()`](https://thomasgareau.github.io/qesR/reference/qes_decon.md)
+couvrent 11 de ces codes : toutes les études sauf les deux sondages de
+1998 pris séparément.
+
+Les sondages de 1998 n’ont interrogé que des francophones, CREATEC selon
+la langue maternelle et CROP selon la langue d’usage. Les fichiers n’ont
+pas de question sur la langue maternelle que qesR harmonise pour 1998 ;
+les exemples comptent donc tous les répondants de 1998 comme
+francophones.
+
+## Pondérations
+
+Chaque vague d’une étude harmonisée a une pondération recommandée, ou
+aucune. Seule une pondération vérifiée à partir de la documentation de
+l’étude et de son fichier est utilisée : 6 des 11 études en ont une.
+Pour les autres, les colonnes de pondération de
+[`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
+valent `NA`, et les exemples tracent leurs estimations en points creux,
+marqués « non pondéré : aucune pondération validée ».
+`qes_spec("spec")$tables$weights` donne toutes les pondérations de
+chaque étude, avec leur source.
+
+| Étude | Vague | Pondération recommandée | Statut | Calée sur (selon la documentation, en anglais) |
+|:---|:---|:---|:---|:---|
+| [`qes2022`](#qes2022) | cps | `cps_weight_general` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | age; gender; education; language |
+| [`qes2022`](#qes2022) | pes | `pes_weight_general` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | age; gender; education; language |
+| [`qes2018`](#qes2018) | post | `pond` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex x age; sex x region; sex x language; age x education |
+| [`qes2014`](#qes2014) | post | `POND` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; language |
+| [`qes2012`](#qes2012) | post | `pond` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; language |
+| [`qes2018_panel`](#qes2018_panel) | pre | `weight` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex (sexfix); age (3 bands); region (fsa_tabl, 5 regions); mother tongue (s1, French vs other); education (scolU, university or not) |
+| [`qes2018_panel`](#qes2018_panel) | post | `weight_rts` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex (sexfix); age (3 bands); region (fsa_tabl, 5 regions); mother tongue (s1, French vs other); education (scolU, university or not) |
+| [`qes2012_panel`](#qes2012_panel) | pre | `pondam1` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | sex; age (6 bands); region (reg, 4); mother tongue (lmat, 3) |
+| [`qes2012_panel`](#qes2012_panel) | post | `pond_post` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | sex; age (6 bands); region (reg, 4); mother tongue (lmat, 3) |
+| [`qes2007_panel`](#qes2007_panel) | pre | `pondam1` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | poll (nompn); sex; age (6 bands); region (reg, 3); home language (lusage2, 2); education (scol, 4) |
+| [`qes2007_panel`](#qes2007_panel) | post | `pond_tot_am1` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | poll (nompn); sex; age (6 bands); region (reg, 3); home language (lusage2, 2); education (scol, 4) |
+| [`qes2007`](#qes2007) | post | `pond` | pondéré : validée, dans les colonnes de pondération de [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md) | sex; age; region; mother tongue |
+| [`qes2008`](#qes2008) | post | aucune recommandée | non pondéré : les pondérations du fichier (`pond`, `pondx`) sont calées sur le vote déclaré | sex; age; region (reg, 5); mother tongue; education; reported vote |
+| [`qes1998`](#qes1998) | pre | `ponder3` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | pre-election intention stratum (vpl, through poids) x each firm’s weight ponderc (CROP: 1996 Census; CREATEC: undocumented) |
+| [`qes1998`](#qes1998) | post | `ponder3` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | pre-election intention stratum (vpl, through poids) x each firm’s weight ponderc (CROP: 1996 Census; CREATEC: undocumented) |
+| [`qes_crop_2007_2010`](#qes_crop_2007_2010) | chaque sondage | `XPOND` | non pondéré : pondération non validée (colonnes de pondération à `NA`) | sex; age (18-34, 35-54, 55+); region (Montréal CMA, Québec CMA, elsewhere); home language (French, English or other) |
+
 ## Par étude
 
 La ligne Dépôt renvoie au DOI du dépôt. Les liens des documents

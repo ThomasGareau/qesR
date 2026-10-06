@@ -35,10 +35,38 @@
     "reference/qesR-fr.html": "reference/qesR-package.html"
   };
   var french = ["reference/qesR-fr.html"];
+  var navFr = {
+    "articles/get-started.html": ["Démarrer", "articles/fr-demarrage.html"],
+    "Examples": ["Exemples"],
+    "articles/realignment.html": ["De deux partis à quatre", "articles/fr-realignement.html"],
+    "articles/sovereignty-generations.html": ["Les jeunes sont-ils encore les plus souverainistes ?", "articles/fr-souverainete-generations.html"],
+    "articles/dimensions.html": ["Deux dimensions de la concurrence", "articles/fr-dimensions.html"],
+    "articles/turnout.html": ["Qui vote ?", "articles/fr-participation.html"],
+    "articles/transitions.html": ["Les élections québécoises se jouent-elles pendant la campagne ?", "articles/fr-transitions.html"],
+    "articles/survey-vs-official.html": ["Les enquêtes sous-estiment-elles les libéraux ?", "articles/fr-enquetes-resultats.html"],
+    "articles/recipes.html": ["Recettes : le clivage linguistique du vote libéral", "articles/fr-recettes.html"],
+    "Studies": ["Études"],
+    "articles/studies.html": ["Catalogue des études", "articles/fr-etudes.html"],
+    "articles/citations.html": ["Citer qesR et les études", "articles/fr-citations.html"],
+    "Harmonization": ["Harmonisation"],
+    "articles/harmonization.html": ["Comment fonctionne l’harmonisation", "articles/fr-harmonisation.html"],
+    "articles/decon.html": ["Un seul fichier pour toutes les études : qes_decon()", "articles/fr-decon.html"],
+    "articles/coverage.html": ["Couverture par étude", "articles/fr-couverture.html"],
+    "articles/harmonization-reference.html": ["Référence des variables", "articles/fr-reference-harmonisation.html"],
+    "articles/validation.html": ["Validation par les résultats officiels", "articles/fr-validation.html"],
+    "articles/merged-dataset.html": ["Le fichier fusionné (get_qes_master)", "articles/fr-donnees-fusionnees.html"],
+    "reference/index.html": ["Référence", "reference/qesR-fr.html"],
+    "news/index.html": ["Nouveautés"]
+  };
+  var path = window.location.pathname;
+  var isFrenchPath = /\/articles\/fr-[^\/]*\.html/.test(path) || /\/reference\/qesR-fr\.html/.test(path);
+  // set at once, before the page is drawn, for screen readers and hyphenation
+  if (isFrenchPath) document.documentElement.lang = "fr";
   document.addEventListener("DOMContentLoaded", function () {
     var container = document.querySelector(".navbar .container") ||
       document.querySelector(".navbar .container-fluid");
     var brand = document.querySelector(".navbar .navbar-brand");
+    wrapTables(isFrenchPath);
     if (!container || !brand) return;
     // the site root, from the brand link (pkgdown writes it relative)
     var root = new URL(brand.getAttribute("href") || "index.html", window.location.href);
@@ -47,12 +75,16 @@
     var rel = here.indexOf(root) === 0 ? decodeURIComponent(here.slice(root.length)) : "";
     if (rel === "" || rel.charAt(rel.length - 1) === "/") rel += "index.html";
     var isFrench = /^articles\/fr-/.test(rel) || french.indexOf(rel) >= 0;
+    if (isFrench) {
+      document.documentElement.lang = "fr";
+      translateNavbar(root);
+    }
     // the page's own link to its translation
     var target = null;
     var links = document.querySelectorAll("main a[href]");
     for (var i = 0; i < links.length; i++) {
       var text = links[i].textContent.replace(/\s+/g, " ").trim();
-      if (text === (isFrench ? "English version" : "Version fran\u00e7aise")) {
+      if (text === (isFrench ? "English version" : "Version française")) {
         target = new URL(links[i].getAttribute("href"), window.location.href).href;
         break;
       }
@@ -68,20 +100,115 @@
     link.textContent = isFrench ? "EN" : "FR";
     link.lang = isFrench ? "en" : "fr";
     link.hreflang = isFrench ? "en" : "fr";
-    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en fran\u00e7ais");
-    link.title = isFrench ? "English" : "Fran\u00e7ais";
+    link.setAttribute("aria-label", isFrench ? "Switch to English" : "Basculer en français");
+    link.title = isFrench ? "English" : "Français";
     wrap.appendChild(link);
     // before the menu button, so that it stays visible on a phone;
     // extra.css moves it after the menus on a wide screen
     var toggler = container.querySelector(".navbar-toggler");
     if (toggler) container.insertBefore(wrap, toggler); else container.appendChild(wrap);
   });
+
+  // French text and addresses for the navbar entries of navFr
+  function translateNavbar(root) {
+    var items = document.querySelectorAll(".navbar .nav-link, .navbar .dropdown-item");
+    for (var i = 0; i < items.length; i++) {
+      var a = items[i];
+      var href = a.getAttribute("href");
+      var key = null;
+      if (href && href.charAt(0) !== "#") {
+        var abs = new URL(href, window.location.href).href.split("#")[0];
+        if (abs.indexOf(root) === 0) key = abs.slice(root.length);
+      }
+      if (!key || !navFr[key]) key = a.textContent.replace(/\s+/g, " ").trim();
+      var fr = navFr[key];
+      if (!fr) continue;
+      // keep icons and the menu caret: replace the text node only
+      var done = false;
+      for (var j = 0; j < a.childNodes.length; j++) {
+        var node = a.childNodes[j];
+        if (node.nodeType === 3 && node.nodeValue.trim() !== "") {
+          node.nodeValue = node.nodeValue.replace(node.nodeValue.trim(), fr[0]);
+          done = true;
+          break;
+        }
+      }
+      if (!done) continue;
+      if (fr[1]) {
+        a.setAttribute("href", root + fr[1]);
+        a.hreflang = "fr";
+      }
+    }
+  }
+
+  // every table of the page in a scrolling region
+  function wrapTables(fr) {
+    var tables = document.querySelectorAll("main table");
+    var regions = [];
+    for (var i = 0; i < tables.length; i++) {
+      var t = tables[i];
+      var parent = t.parentNode;
+      if (!parent || (parent.classList && (parent.classList.contains("qesr-scroll") ||
+          parent.classList.contains("table-responsive")))) continue;
+      var box = document.createElement("div");
+      box.className = "qesr-scroll";
+      parent.insertBefore(box, t);
+      box.appendChild(t);
+      box.setAttribute("aria-label", tableName(t, fr));
+      regions.push(box);
+    }
+    function update() {
+      for (var k = 0; k < regions.length; k++) {
+        var r = regions[k];
+        if (r.scrollWidth > r.clientWidth + 1) {
+          r.setAttribute("role", "region");
+          r.setAttribute("tabindex", "0");
+        } else {
+          r.removeAttribute("role");
+          r.removeAttribute("tabindex");
+        }
+      }
+    }
+    update();
+    var timer = null;
+    window.addEventListener("resize", function () {
+      clearTimeout(timer);
+      timer = setTimeout(update, 150);
+    });
+    // tables in a closed <details> have no width until it opens
+    document.addEventListener("toggle", update, true);
+  }
+
+  // a table's name: its caption, else the heading or figure title above it
+  function tableName(t, fr) {
+    var cap = t.querySelector("caption");
+    if (cap && cap.textContent.trim()) return cap.textContent.replace(/\s+/g, " ").trim();
+    var fig = t.closest ? t.closest("figure") : null;
+    var title = fig ? fig.querySelector(".qesr-title") : null;
+    if (title) return (fr ? "Tableau : " : "Table: ") + title.textContent.trim();
+    var node = t;
+    while (node && node !== document.body) {
+      var prev = node.previousElementSibling;
+      while (prev) {
+        if (/^H[1-6]/.test(prev.tagName)) {
+          return (fr ? "Tableau : " : "Table: ") + prev.textContent.replace(/\s+/g, " ").trim();
+        }
+        var h = prev.querySelectorAll ? prev.querySelectorAll("h1, h2, h3, h4, h5, h6") : [];
+        if (h.length) {
+          return (fr ? "Tableau : " : "Table: ") + h[h.length - 1].textContent.replace(/\s+/g, " ").trim();
+        }
+        prev = prev.previousElementSibling;
+      }
+      node = node.parentNode;
+    }
+    return fr ? "Tableau" : "Table";
+  }
 })();
 </script><nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">qesR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,14 +221,14 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
-<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four: realignment</a></li>
-    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">A generation gap that reversed: sovereignty</a></li>
-    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions: sovereignty and left-right</a></li>
-    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes? Turnout</a></li>
-    <li><a class="dropdown-item" href="../articles/transitions.html">Changing minds during the campaign</a></li>
-    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">How far off are surveys?</a></li>
+<li><a class="dropdown-item" href="../articles/realignment.html">From two parties to four</a></li>
+    <li><a class="dropdown-item" href="../articles/sovereignty-generations.html">Are young Quebecers still the most pro-independence?</a></li>
+    <li><a class="dropdown-item" href="../articles/dimensions.html">Two dimensions of competition</a></li>
+    <li><a class="dropdown-item" href="../articles/turnout.html">Who votes?</a></li>
+    <li><a class="dropdown-item" href="../articles/transitions.html">Are Quebec elections decided during the campaign?</a></li>
+    <li><a class="dropdown-item" href="../articles/survey-vs-official.html">Do surveys miss the Liberals?</a></li>
     <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: pooled variables in five minutes</a></li>
+    <li><a class="dropdown-item" href="../articles/recipes.html">Recipes: the language divide in the Liberal vote</a></li>
   </ul>
 </li>
 <li class="nav-item dropdown">
@@ -114,7 +241,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-harmonization" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Harmonization</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-harmonization">
-<li><a class="dropdown-item" href="../articles/harmonization.html">How it works</a></li>
+<li><a class="dropdown-item" href="../articles/harmonization.html">How harmonization works</a></li>
     <li><a class="dropdown-item" href="../articles/decon.html">One file for every study: qes_decon()</a></li>
     <li><a class="dropdown-item" href="../articles/coverage.html">Coverage by study</a></li>
     <li><a class="dropdown-item" href="../articles/harmonization-reference.html">Variable reference</a></li>
@@ -160,6 +287,11 @@
     
     
 <p><em><a href="fr-decon.html">Version française</a></em></p>
+<div class="qesr-download">
+<p><strong>This page downloads 11 studies</strong> (about 16 MB) the
+first time it runs. <code>options(qesR.cache = "disk")</code> keeps them
+on disk for later sessions.</p>
+</div>
 <p>For some years now, the Canadian Election Study has had a simple
 point of entry. The <a href="https://hodgettsp.github.io/cesR/" class="external-link">cesR</a>
 package’s <code><a href="../reference/get_decon.html">get_decon()</a></code> returns one data frame of the 2019
@@ -172,7 +304,7 @@ question and a reason for each missing value. It is the right tool when
 the difference between two questions matters. However, many uses do not
 call for that much: a descriptive table, a control variable, a first
 look at 25 years of data. <code><a href="../reference/qes_decon.html">qes_decon()</a></code> answers this need. It
-returns one data frame for the 11 harmonized studies, with 47,039 rows
+returns one data frame for the 11 harmonized studies, with 47,038 rows
 (one per respondent and wave) and 35 columns of data, one per concept,
 even where the wording or the answer options differ from one study to
 the next. The price is exactness. The categories are coarse, and no
@@ -181,10 +313,9 @@ column claims that two studies asked the same question.</p>
 <h2 id="what-the-file-holds">What the file holds<a class="anchor" aria-label="anchor" href="#what-the-file-holds"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_decon.html">qes_decon</a></span><span class="op">(</span>lang <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">lang</span><span class="op">)</span></span></code></pre></div>
-<p><code>lang = "fr"</code> gives the labels in French
-(<code>params$lang</code> is the language of this page); the column
-names stay the same. The first rows:</p>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/qes_decon.html">qes_decon</a></span><span class="op">(</span>lang <span class="op">=</span> <span class="st">"en"</span><span class="op">)</span></span></code></pre></div>
+<p><code>lang = "fr"</code> gives the labels in French; the column names
+stay the same. The first rows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"study"</span>, <span class="st">"wave"</span>, <span class="st">"weight"</span>, <span class="st">"gender"</span>, <span class="st">"education"</span>, <span class="st">"vote_choice"</span>, <span class="st">"vote_type"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     study wave    weight gender              education vote_choice</span></span>
@@ -199,7 +330,7 @@ names stay the same. The first rows:</p>
 <span><span class="co">#&gt; 4  Vote intention (undecided pushed)</span></span></code></pre></div>
 <p>The first columns identify the row: <code>study</code>,
 <code>year</code>, <code>wave</code> and <code>qes_id</code>, the
-respondent’s identifier within the study. The file has 40,987
+respondent’s identifier within the study. The file has 40,986
 respondents, and a respondent of a panel has one row per wave. The
 socio-demographic columns (education, income, language, religion,
 region…) repeat on every row of a respondent, while the vote, turnout
@@ -211,9 +342,10 @@ names its source. Of the 11 studies, 6 have such a weight on every row:
 QES 2007, QES 2012, QES 2014, QES 2018, 2018 panel and QES 2022. The
 others have <code>NA</code>. The QES 2008 has no recommended weight,
 since its weights are calibrated on the reported vote, and the weights
-of the following studies are still under review: 1998 polls, 2007 panel,
-CROP polls and 2012 panel. <code>attr(d, "weights")</code> gives the
-detail, wave by wave.</p>
+of the following studies are not validated: 1998 polls, 2007 panel, CROP
+polls and 2012 panel. <code>attr(d, "weights")</code> gives the detail,
+wave by wave, and the <a href="studies.html#weights">weights table</a>
+describes each study’s weight.</p>
 </div>
 <div class="section level2">
 <h2 id="the-columns">The columns<a class="anchor" aria-label="anchor" href="#the-columns"></a>
@@ -382,8 +514,9 @@ Retired · Student · At home, unable to work or other</td>
 panel, 2022)</td>
 <td align="left">The main employment status in five groups; a respondent
 who gave two statuses, such as retired and working, takes the one that
-is not work, and at home, unable to work and other statuses are
-other.</td>
+is not work, and at home, unable to work and other statuses are other.
+In the 2018 panel only web respondents were asked about employment, so
+its telephone respondents appear as don’t know or refused.</td>
 </tr>
 <tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-union"><code>union</code></a></td>
@@ -395,8 +528,7 @@ whether the respondent or anyone in the household does in 2014 and 2018
 (in 2018, respondents who live with their parents were asked about their
 family: parents, brothers or sisters). Only these three studies ask it,
 and 2022 asks it after the election, so its campaign-only respondents
-are missing; the column is kept whatever its number of studies
-(essential), as decided on 2026-10-01.</td>
+are missing.</td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="harmonization-reference.html#relaxed-region"><code>region</code></a></td>
@@ -500,9 +632,12 @@ every study that asked one used 0 to 10.</td>
 <td align="left">Low · Medium · High</td>
 <td align="left">7 (2007, 2007 panel, 2008, 2012, 2014, 2018, 2022)</td>
 <td align="left">Interest on 0 to 1 (interest_01) in three bands, low
-below 0.35 and high from 0.75; the 4-point and 0-10 questions do not
-line up, and the 2008 study and the 2007 panel asked interest in the
-election or the campaign, not in politics.</td>
+below 0.55 and high from 0.85: on a 0-10 question, 0 to 5 is low, 6 to 8
+medium and 9 or 10 high; on a 4-point question, not at all or hardly
+interested is low, quite interested medium and very interested high. The
+two formats still do not line up exactly, and the 2008 study and the
+2007 panel asked interest in the election or the campaign, not in
+politics.</td>
 </tr>
 <tr class="even">
 <td align="left"><a href="harmonization-reference.html#relaxed-interest_01"><code>interest_01</code></a></td>
@@ -710,7 +845,7 @@ groups.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>study <span class="op">=</span> <span class="va">s</span>, edu3 <span class="op">=</span> <span class="va">e</span><span class="op">$</span><span class="va">edu3</span>, pct <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">adq_caq</span>, se <span class="op">=</span> <span class="fl">100</span> <span class="op">*</span> <span class="va">e</span><span class="op">$</span><span class="va">se</span>,</span>
 <span>             n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">x</span><span class="op">$</span><span class="va">edu3</span><span class="op">)</span><span class="op">)</span>, weighted <span class="op">=</span> <span class="va">weighted</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Among francophones, the education gap in the CAQ vote went from 5 points in 2014 to 21 in 2022</span><span class="qesr-sub">Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="decon_files/figure-html/divide-light.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="decon_files/figure-html/divide-dark.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, as the 2008 study has no recommended weight.</p>
+<figure class="qesr-fig" id="fig-divide"><figcaption><span class="qesr-title">Among francophones, the education gap in the CAQ vote went from 5 points in 2014 to 21 in 2022</span><span class="qesr-sub">Share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), by education, with 95% confidence intervals</span></figcaption><img class="qesr-img qesr-light" src="decon_files/figure-html/divide-light.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><img class="qesr-img qesr-dark" src="decon_files/figure-html/divide-dark.png" alt="Line chart of the share of francophone respondents who report voting for the ADQ (2007, 2008) or the CAQ (2012 to 2022), for three education groups, with 95% confidence intervals. The gap between those with high school or less and university graduates is 12 points in 2007, 5 in 2012, 18 in 2018 and 21 in 2022. Values in the table view." width="672" height="384" loading="lazy"><p class="qesr-note">Source: qes_decon(), relaxed columns vote_choice (reported vote, post-election wave), education4 (in three groups: no diploma and high school joined) and language (mother tongue French). One Quebec Election Study per election. The ADQ and the CAQ are separate parties and stay separate in the data; the dashed line marks the change of party. Weighted with each study's post-election weight; hollow dots (2008): unweighted, no validated weight (the 2008 study has no recommended weight).</p>
 <details class="qesr-table"><summary>Table view</summary><table class="table table qesr-tv">
 <thead><tr>
 <th style="text-align:right;"> Election </th>
@@ -751,7 +886,7 @@ groups.</p>
    <td style="text-align:left;"> High school or less </td>
    <td style="text-align:left;"> 15.3 [10.5, 21.8] </td>
    <td style="text-align:right;"> 157 </td>
-   <td style="text-align:left;"> unweighted (no recommended weight) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -759,7 +894,7 @@ groups.</p>
    <td style="text-align:left;"> College or CEGEP </td>
    <td style="text-align:left;"> 22.8 [18.0, 28.5] </td>
    <td style="text-align:right;"> 241 </td>
-   <td style="text-align:left;"> unweighted (no recommended weight) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2008 </td>
@@ -767,7 +902,7 @@ groups.</p>
    <td style="text-align:left;"> University </td>
    <td style="text-align:left;"> 15.5 [12.1, 19.6] </td>
    <td style="text-align:right;"> 368 </td>
-   <td style="text-align:left;"> unweighted (no recommended weight) </td>
+   <td style="text-align:left;"> unweighted: no validated weight </td>
   </tr>
 <tr>
 <td style="text-align:right;"> 2012 </td>

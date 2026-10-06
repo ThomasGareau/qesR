@@ -145,20 +145,20 @@ qes_harmonize(
 
 A data frame of class `qes_harmonized`, returned visibly, one row per
 respondent of each study's file (no row is dropped), or per respondent
-and wave in the long layout. Leading columns: `study`, `year` (the
-study's year; for pooled polls, the year the respondent's poll began),
-`election_date`, `family`, `study_design`, `target_population`, `waves`
-(the waves the respondent belongs to, `;`-separated; in the long layout
-`wave`, `wave_timing` and `wave_design` instead), `qes_id`
-(`<study>:<identifier>`, unique in the respondent layout), `subsample`,
-`stratum` (the independent sample within the study, see *Waves*: the
-poll's wave name for pooled polls, `"1"` = CREATEC and `"2"` = CROP for
-`qes1998`; `NA` for a study drawn as one sample), `source_row` (the row
-in the study's file, for joining raw variables with
-[`merge()`](https://rdrr.io/r/base/merge.html) on `study` and
-`source_row`), `survey_mode`, `interview_date` (of the respondent's
-first wave in the respondent layout), `days_to_election` and
-`eligible_voter`. Then one column per target, carrying its label in
+and wave in the long layout (where a respondent in no wave has no row).
+Leading columns: `study`, `year` (the study's year; for pooled polls,
+the year the respondent's poll began), `election_date`, `family`,
+`study_design`, `target_population`, `waves` (the waves the respondent
+belongs to, `;`-separated; in the long layout `wave`, `wave_timing` and
+`wave_design` instead), `qes_id` (`<study>:<identifier>`, unique in the
+respondent layout), `subsample`, `stratum` (the independent sample
+within the study, see *Waves*: the poll's wave name for pooled polls,
+`"1"` = CREATEC and `"2"` = CROP for `qes1998`; `NA` for a study drawn
+as one sample), `source_row` (the row in the study's file, for joining
+raw variables with [`merge()`](https://rdrr.io/r/base/merge.html) on
+`study` and `source_row`), `survey_mode`, `interview_date` (of the
+respondent's first wave in the respondent layout), `days_to_election`
+and `eligible_voter`. Then one column per target, carrying its label in
 `attr(, "label")`, then one per pooled variable, then the `__type`,
 `__grade` and `__item` companions of each pooled variable, then the
 `__na` and `__src` companions (targets, then pooled variables), then the
@@ -170,7 +170,10 @@ layout). Attributes: `qes_spec` (spec `version`, `hash`, `custom`,
 with levels `"study"`, `"cell"`, `"spec"` and, with pooled variables,
 `"pooled"`), `qes_weight_guide` (`target` or pooled variable, `study`,
 `wave`, `target_timing`, `weight_column`, `weight_var`, `weight_status`)
-and `failed_studies` (`study`, `class`, `message`, `parent_message`).
+and `failed_studies` (`study`, `class`, `message`, `parent_message`)
+and, in the long layout, `qes_no_wave` (`study`, `n_rows`: the
+respondents left out because they took part in no wave; no row when
+there are none).
 
 Results for different studies built with the same spec can be combined
 with [`rbind()`](https://rdrr.io/r/base/cbind.html), which also combines
@@ -407,11 +410,14 @@ or date variable, never an answer. A question belongs to the wave that
 asked it, so a respondent outside that wave is `NA` with reason
 `not_in_wave`. The respondent layout has one row per respondent, and
 `waves` lists the waves each respondent took part in. The long layout
-(`layout = "long"`) has one row per respondent and wave (a respondent in
-no wave keeps one row, with `wave` `NA`): a value sits on the row of the
-wave that asked it and the respondent's other rows are `not_in_wave`,
-except the time-invariant targets (year and month of birth), which are
-repeated on each of the respondent's rows.
+(`layout = "long"`) has one row per respondent and wave, so `wave` is
+never `NA`: a respondent who took part in no wave (in `qes2007_panel`,
+one interview that neither wave's rule counts) has no row, a message
+(class `qesR_message_no_wave`) says so, and `attr(x, "qes_no_wave")`
+counts them study by study. A value sits on the row of the wave that
+asked it and the respondent's other rows are `not_in_wave`, except the
+time-invariant targets (year and month of birth), which are repeated on
+each of the respondent's rows.
 
 Pooled polls (the monthly CROP polls of 2007-2010) have one wave per
 poll: each respondent belongs to one poll, whose questions the spec maps
@@ -513,9 +519,11 @@ Besides those of every qesR function (see
   with `include_draft = TRUE`), `qesR_message_approximate_cells` (cells
   graded approximate are included), `qesR_message_structural_zeros`
   (levels a question did not offer), `qesR_message_weight_review`
-  (recommended weights that need review, left `NA`) and
+  (recommended weights that need review, left `NA`),
   `qesR_message_weight_timing` (targets of one study that need different
-  weights; not sent when all of the study's weights need review).
+  weights; not sent when all of the study's weights need review) and
+  `qesR_message_no_wave` (respondents the long layout leaves out because
+  they took part in no wave; field `no_wave`).
 
 [`qes_design()`](https://thomasgareau.github.io/qesR/reference/qes_design.md)
 sends `qesR_message_design_dropped` (fields `study`, `n`) when it leaves
@@ -536,19 +544,21 @@ question n'offrait pas sont des zéros structurels, pas un appui nul.
 sont les mêmes. `targets = "decon"` demande les cibles des colonnes de
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md).
 La disposition longue (`layout = "long"`) donne une ligne par personne
-et par vague ; une question invariante d'un panel (genre, scolarité) est
-lue dans la vague à laquelle la personne a participé (panel de 2007) ;
-les sondages CROP regroupés ont une vague par sondage, et `stratum`
-donne l'échantillon indépendant d'où vient la personne : pour les
-sondages regroupés, le nom de la vague du sondage (comme dans `waves`) ;
-pour le panel de 1998, le code de la firme dans le fichier, `firme_post`
-(`"1"` = CREATEC, `"2"` = CROP). Chaque sondage se rapporte à l'élection
-générale suivante, que `election_date` donne ligne par ligne, `year` est
-l'année où il a commencé, et sa pondération est normalisée à l'intérieur
-du sondage. Les pondérations recommandées de chaque vague sont dans
-`weight_pre` et `weight_post` (ou `weight` en disposition longue),
-ramenées à une moyenne de 1 par étude et par vague ; une pondération
-encore à réviser (statut `needs_review`) vaut NA.
+et par vague (`wave` n'y vaut jamais NA : une personne qui n'a participé
+à aucune vague n'a pas de ligne, un message le dit et
+`attr(x, "qes_no_wave")` les compte) ; une question invariante d'un
+panel (genre, scolarité) est lue dans la vague à laquelle la personne a
+participé (panel de 2007) ; les sondages CROP regroupés ont une vague
+par sondage, et `stratum` donne l'échantillon indépendant d'où vient la
+personne : pour les sondages regroupés, le nom de la vague du sondage
+(comme dans `waves`) ; pour le panel de 1998, le code de la firme dans
+le fichier, `firme_post` (`"1"` = CREATEC, `"2"` = CROP). Chaque sondage
+se rapporte à l'élection générale suivante, que `election_date` donne
+ligne par ligne, `year` est l'année où il a commencé, et sa pondération
+est normalisée à l'intérieur du sondage. Les pondérations recommandées
+de chaque vague sont dans `weight_pre` et `weight_post` (ou `weight` en
+disposition longue), ramenées à une moyenne de 1 par étude et par vague
+; une pondération encore à réviser (statut `needs_review`) vaut NA.
 `attr(, "qes_weight_guide")` donne, pour chaque cible et étude, la
 colonne de pondération qui convient ; pour une question qui couvre
 toutes les vagues d'un panel (vague `"*"`), elle vaut NA quand ces
@@ -631,7 +641,7 @@ h <- qes_harmonize("qes_demo")
 #> Levels a study's question did not offer are structural zeros, not an absence of support: vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other). qes_provenance(x, level = "cell") lists them.
 #> Pooled variables take each study's values from the first of their members, by precedence, that asked the respondent: vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo). The __type column gives each row's member; qes_provenance(x, level = "pooled") counts them.
 h
-#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.6.0 (content hash 910e81120d19001bb1d7c0f9b0b32b3f).
+#> qesR harmonized data (experimental): 60 rows from 'qes_demo'; spec 4.7.0 (content hash 30697daa0042aab3078507b665867748).
 #> Approximate cells: qes_demo age_group3, qes_demo age_group6.
 #> Structural zeros (levels not offered): vote_prov_recall: qes_demo (PCQ, ADQ); sov_indep: qes_demo (would_not_vote); gender: qes_demo (nonbinary, other).
 #> Pooled variables (member types used, by study): vote_choice: recall (qes_demo); sov_support: independence (qes_demo); pol_interest: general_4pt (qes_demo).
