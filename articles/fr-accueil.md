@@ -16,10 +16,8 @@ puis comparée d’une étude à l’autre.
 lors de l’élection partielle fédérale de Saint-Henri, le 17 janvier
 1938.](../history/saint-henri-ballot-count-1938.jpg)
 
-[Dépouillement des votes à Saint-Henri, Montréal, 1938. Élection
-partielle
-fédérale.](https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg)Conrad
-Poirier / BAnQ
+Dépouillement des votes à Saint-Henri, Montréal, 1938. Élection
+partielle fédérale.\[Conrad Poirier, BAnQ\]
 
 ![Graphiques à points en six panneaux, un par Étude électorale
 québécoise de 2007 à 2022, de la part des francophones qui voteraient

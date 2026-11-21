@@ -7,9 +7,8 @@ française](https://thomasgareau.github.io/qesR/articles/fr-transitions.md)*
 election posters on utility poles, photographed on 2 August
 1944.](../history/saint-laurent-campaign-1944.jpg)
 
-[Campaign posters above a bus queue, Saint-Laurent, 2 August
-1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
-Poirier / BAnQ
+Campaign posters above a bus queue, Saint-Laurent, 2 August
+1944.\[Conrad Poirier, BAnQ\]
 
 Since the 1988 federal election, Canadian election studies have shown
 that opinion can move a great deal between the start of a campaign and

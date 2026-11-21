@@ -15,9 +15,8 @@ elections can be answered within each study and then compared.
 Saint-Henri federal by-election on 17 January
 1938.](history/saint-henri-ballot-count-1938.jpg)
 
-[Counting ballots in Saint-Henri, Montréal, 1938. Federal
-by-election.](https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg)Conrad
-Poirier / BAnQ
+Counting ballots in Saint-Henri, Montréal, 1938. Federal
+by-election.\[Conrad Poirier, BAnQ\]
 
 ![Dot charts in six panels, one per Quebec Election Study from 2007 to
 2022, of the share of francophones who would vote Yes in each birth

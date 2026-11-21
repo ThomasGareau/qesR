@@ -391,7 +391,7 @@ cite qesR et les jeux de données utilisés (voir
 qes_provenance(demo)
 #> qes_demo : fichier 0 (qes_demo.sav), données synthétiques fournies avec qesR.
 #> Somme md5 e956e315800690cb0894c86ed85c8bea, vérifiée. 60 lignes, 11 colonnes.
-#> Obtenu le 2026-11-21 22:06:42 UTC (local_demo). Lu avec
+#> Obtenu le 2026-11-21 22:26:03 UTC (local_demo). Lu avec
 #> haven::read_sav(user_na = TRUE), haven 2.5.5. Licence : CC0 1.0. Catalogue
 #> qesR 2.4.1.
 #> 

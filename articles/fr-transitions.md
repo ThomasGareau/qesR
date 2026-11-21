@@ -7,10 +7,8 @@ version](https://thomasgareau.github.io/qesR/articles/transitions.md)*
 électorales du Bloc populaire fixées aux poteaux, le 2 août
 1944.](../history/saint-laurent-campaign-1944.jpg)
 
-[Affiches électorales au-dessus d’une file d’attente à l’autobus,
-Saint-Laurent, 2 août
-1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
-Poirier / BAnQ
+Affiches électorales au-dessus d’une file d’attente à l’autobus,
+Saint-Laurent, 2 août 1944.\[Conrad Poirier, BAnQ\]
 
 Depuis l’élection fédérale de 1988, on sait que l’opinion peut bouger
 considérablement entre le déclenchement d’une campagne et le jour du
