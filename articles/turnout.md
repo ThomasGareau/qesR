@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-participation.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 Turnout in Quebec provincial elections has declined. According to
 Élections Québec, it fell from 78% in 1998 to 66% in 2022, with a low of
 57% in 2008. The conventional wisdom attributes this decline to the

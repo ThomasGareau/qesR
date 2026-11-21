@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/realignment.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Pendant une trentaine d’années, le système partisan québécois a reposé
 sur la question de la souveraineté. À partir des années 1970, le Parti
 québécois (PQ) et le Parti libéral du Québec (PLQ) se sont succédé au

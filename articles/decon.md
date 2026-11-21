@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-decon.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 For some years now, the Canadian Election Study has had a simple point
 of entry. The [cesR](https://hodgettsp.github.io/cesR/) package’s
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)

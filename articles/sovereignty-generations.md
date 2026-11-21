@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-souverainete-generations.md)*
 
-**This page downloads 6 studies** (about 13 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 For a long time, the sovereignty project was thought to have time on its
 side. On this older view, the young voted Yes in greater numbers than
 their elders, and each new generation would add to the Yes camp. Whether

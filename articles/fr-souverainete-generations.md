@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/sovereignty-generations.md)*
 
-**Cette page télécharge 6 études** (environ 13 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 On a longtemps cru que le temps jouait en faveur du projet
 souverainiste. Selon cette ancienne croyance, les jeunes votaient Oui en
 plus grand nombre que leurs aînés, et chaque nouvelle génération allait

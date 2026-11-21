@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-realignement.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 For about three decades, Quebec’s party system rested on the sovereignty
 question. From the 1970s on, the Parti Québécois (PQ) and the Parti
 libéral du Québec (PLQ) alternated in power, and where Quebecers stood

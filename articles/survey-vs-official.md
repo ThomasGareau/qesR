@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-enquetes-resultats.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 In Quebec, it is almost a reflex to say that surveys underestimate the
 Parti libéral du Québec (PLQ). The polls of the 1998 election, which
 overestimated the Parti Québécois (PQ) and underestimated the Liberals,

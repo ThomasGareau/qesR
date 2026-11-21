@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/survey-vs-official.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Au Québec, c’est presque un réflexe : les sondages sous-estimeraient le
 Parti libéral du Québec (PLQ). L’élection de 1998, où les sondages ont
 surestimé le Parti Québécois (PQ) et sous-estimé les libéraux, en

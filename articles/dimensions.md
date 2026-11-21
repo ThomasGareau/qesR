@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-dimensions.md)*
 
-**This page downloads 6 studies** (about 13 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 For four decades, the national question organized party competition in
 Quebec. The Parti Québécois (PQ) stood for sovereignty, the Parti
 libéral du Québec (PLQ) for federalism, and a voter’s position on

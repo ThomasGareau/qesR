@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-recettes.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 Since the first provincial election studies, the Quebec vote has been
 read through language and the national question (Hamilton and Pinard
 1976; Pinard and Hamilton 1978; Bélanger et al. 2018). The Parti libéral

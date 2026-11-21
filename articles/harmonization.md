@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-harmonisation.md)*
 
-**This page downloads 6 studies** (about 13 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 This page goes from
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 to a weighted estimate, study by study, and shows what qesR records on

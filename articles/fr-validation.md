@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/validation.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Jusqu’où les études harmonisées rejoignent-elles ce que l’on sait de
 l’électorat ? Cette page compare, pour chaque étude que couvre la
 spécification d’harmonisation :

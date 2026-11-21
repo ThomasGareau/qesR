@@ -12,10 +12,6 @@ Saint-Laurent, 2 août
 1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
 Poirier / BAnQ
 
-**Cette page télécharge 5 études** (environ 5 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Depuis l’élection fédérale de 1988, on sait que l’opinion peut bouger
 considérablement entre le déclenchement d’une campagne et le jour du
 vote (Johnston et collaborateurs, 1992). On dit souvent que les

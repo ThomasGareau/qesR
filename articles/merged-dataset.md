@@ -3,9 +3,6 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-donnees-fusionnees.md)*
 
-**This page downloads 11 studies** (about 16 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
 stacks 11 studies, from 1998 to 2022, in one data frame: one row per
 respondent of each study, and the same 30 columns for every study (vote

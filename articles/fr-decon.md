@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/decon.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Depuis quelques années, l’Étude électorale canadienne dispose d’une
 porte d’entrée simple. La fonction
 [`get_decon()`](https://thomasgareau.github.io/qesR/reference/get_decon.md)

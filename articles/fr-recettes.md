@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/recipes.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Depuis les premières études électorales provinciales, le vote québécois
 se lit à travers deux clivages, la langue et la question nationale
 (Hamilton et Pinard, 1976 ; Pinard et Hamilton, 1978 ; Bélanger et al.,

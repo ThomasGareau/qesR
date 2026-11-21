@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/turnout.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Au Québec, la participation électorale a reculé. Selon Élections Québec,
 elle est passée de 78 % en 1998 à 66 % en 2022, avec un creux de 57 % en
 2008. La croyance populaire attribue ce recul aux jeunes électrices et

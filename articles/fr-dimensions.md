@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/dimensions.md)*
 
-**Cette page télécharge 6 études** (environ 13 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Pendant une quarantaine d’années, la question nationale a structuré la
 concurrence partisane au Québec. Le Parti québécois (PQ) portait le
 projet souverainiste, le Parti libéral du Québec (PLQ) défendait le

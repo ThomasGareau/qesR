@@ -11,9 +11,6 @@ election posters on utility poles, photographed on 2 August
 1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
 Poirier / BAnQ
 
-**This page downloads 5 studies** (about 5 MB) the first time it runs.
-`options(qesR.cache = "disk")` keeps them on disk for later sessions.
-
 Since the 1988 federal election, Canadian election studies have shown
 that opinion can move a great deal between the start of a campaign and
 the vote (Johnston et al. 1992). It is often said that Quebec elections

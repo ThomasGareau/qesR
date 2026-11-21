@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/harmonization.md)*
 
-**Cette page télécharge 6 études** (environ 13 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 Cette page va de
 [`qes_harmonize()`](https://thomasgareau.github.io/qesR/reference/qes_harmonize.md)
 jusqu’à une estimation pondérée, étude par étude, et montre ce que qesR

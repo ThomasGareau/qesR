@@ -3,10 +3,6 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/merged-dataset.md)*
 
-**Cette page télécharge 11 études** (environ 16 Mo) la première fois
-qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
-disque pour les sessions suivantes.
-
 [`get_qes_master()`](https://thomasgareau.github.io/qesR/reference/get_qes_master.md)
 empile 11 études, de 1998 à 2022, dans un seul data.frame : une ligne
 par répondant de chaque étude, et les mêmes 30 colonnes pour toutes les
