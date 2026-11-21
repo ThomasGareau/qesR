@@ -251,6 +251,44 @@ main .contents > p:first-of-type > em:only-child > a {
   margin-bottom: 0.35rem;
 }
 
+/* Archival context for the home and campaign pages, kept smaller than
+   the analytical figures. Source photographs retain their full frame. */
+.qesr-archive {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: 1.25rem;
+  max-width: 720px;
+  margin: 1.25rem 0 1.75rem;
+}
+
+main .qesr-archive img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+
+.qesr-archive figcaption {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--bs-secondary-color);
+}
+
+.qesr-archive-credit {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 576px) {
+  .qesr-archive {
+    grid-template-columns: minmax(0, 112px) minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+}
+
 /* The note at the top of a page that downloads studies the first time it
    runs: how many, how large, and how to keep them. */
 .qesr-download {

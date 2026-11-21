@@ -12,6 +12,15 @@ aussi 11 de ces études en un seul tableau, de sorte qu’une question sur
 25 ans d’élections québécoises peut être examinée dans chaque étude,
 puis comparée d’une étude à l’autre.
 
+![Des membres du personnel électoral autour des urnes et des registres
+lors de l’élection partielle fédérale de Saint-Henri, le 17 janvier
+1938.](../history/saint-henri-ballot-count-1938.jpg)
+
+[Dépouillement des votes à Saint-Henri, Montréal, 1938. Élection
+partielle
+fédérale.](https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg)Conrad
+Poirier / BAnQ
+
 ![Graphiques à points en six panneaux, un par Étude électorale
 québécoise de 2007 à 2022, de la part des francophones qui voteraient
 Oui dans chaque cohorte de naissance. En 2007, la cohorte la plus jeune

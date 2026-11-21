@@ -11,6 +11,14 @@ and work offline, in English and French. qesR also harmonizes 11 of the
 studies into one data frame, so that a question about 25 years of Quebec
 elections can be answered within each study and then compared.
 
+![Election workers gathered around ballot boxes and registers during the
+Saint-Henri federal by-election on 17 January
+1938.](history/saint-henri-ballot-count-1938.jpg)
+
+[Counting ballots in Saint-Henri, Montréal, 1938. Federal
+by-election.](https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg)Conrad
+Poirier / BAnQ
+
 ![Dot charts in six panels, one per Quebec Election Study from 2007 to
 2022, of the share of francophones who would vote Yes in each birth
 cohort. In 2007 the youngest cohort is the most likely to vote Yes; in

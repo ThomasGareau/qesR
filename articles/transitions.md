@@ -3,6 +3,14 @@
 *[Version
 française](https://thomasgareau.github.io/qesR/articles/fr-transitions.md)*
 
+![People waiting at a bus stop in Saint-Laurent, with Bloc populaire
+election posters on utility poles, photographed on 2 August
+1944.](../history/saint-laurent-campaign-1944.jpg)
+
+[Campaign posters above a bus queue, Saint-Laurent, 2 August
+1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
+Poirier / BAnQ
+
 **This page downloads 5 studies** (about 5 MB) the first time it runs.
 `options(qesR.cache = "disk")` keeps them on disk for later sessions.
 

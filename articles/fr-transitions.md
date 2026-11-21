@@ -3,6 +3,15 @@
 *[English
 version](https://thomasgareau.github.io/qesR/articles/transitions.md)*
 
+![Des personnes attendent l’autobus à Saint-Laurent, sous des affiches
+électorales du Bloc populaire fixées aux poteaux, le 2 août
+1944.](../history/saint-laurent-campaign-1944.jpg)
+
+[Affiches électorales au-dessus d’une file d’attente à l’autobus,
+Saint-Laurent, 2 août
+1944.](https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg)Conrad
+Poirier / BAnQ
+
 **Cette page télécharge 5 études** (environ 5 Mo) la première fois
 qu’elle s’exécute. `options(qesR.cache = "disk")` les garde sur le
 disque pour les sessions suivantes.
