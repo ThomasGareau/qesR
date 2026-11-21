@@ -13,7 +13,7 @@ params:
 ```{=html}
 <figure class="qesr-archive">
   <img src="../history/saint-laurent-campaign-1944.jpg" width="960" height="713" alt="People waiting at a bus stop in Saint-Laurent, with Bloc populaire election posters on utility poles, photographed on 2 August 1944." loading="lazy" decoding="async">
-  <figcaption><a href="https://commons.wikimedia.org/wiki/File:Feature._Everybody_Lines_Up_-_Ville_St._Laurent_BAnQ_P48S1P10504.jpg">Campaign posters above a bus queue, Saint-Laurent, 2 August 1944.</a><span class="qesr-archive-credit">Conrad Poirier / BAnQ</span></figcaption>
+  <figcaption>Campaign posters above a bus queue, Saint-Laurent, 2 August 1944.<span class="qesr-archive-credit">[Conrad Poirier, BAnQ]</span></figcaption>
 </figure>
 ```
 
