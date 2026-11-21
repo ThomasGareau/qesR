@@ -22,12 +22,6 @@ source("_setup.R", encoding = "UTF-8")
 dl <- qz_download(c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"))
 ```
 
-::: {.qesr-download}
-**This page downloads `r dl$n` studies** (about `r qz_num(dl$mb, 0)` MB) the
-first time it runs. `options(qesR.cache = "disk")` keeps them on disk for
-later sessions.
-:::
-
 ```{r harmonize, echo = FALSE}
 h <- qes_harmonize(
   studies = c("qes1998", "qes2007_panel", "qes2012_panel", "qes2018_panel", "qes2022"),

@@ -27,10 +27,6 @@ dl <- local({
 })
 ```
 
-::: {.qesr-download}
-**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
-:::
-
 This page goes from `qes_harmonize()` to a weighted estimate, study by
 study, and shows what qesR records on the way: the comparability grade of
 each study's question, the reason for every missing value, the weight that

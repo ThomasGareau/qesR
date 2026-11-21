@@ -22,10 +22,6 @@ source("_data.R", encoding = "UTF-8")
 dl <- qz_download(qz_studies)
 ```
 
-::: {.qesr-download}
-**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
-:::
-
 How close do the harmonized studies come to what is known about the
 electorate? This page compares, for every study the harmonization
 specification covers:

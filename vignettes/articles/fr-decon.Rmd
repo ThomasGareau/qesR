@@ -17,10 +17,6 @@ source("_setup.R", encoding = "UTF-8")
 dl <- qz_download(qz_studies)
 ```
 
-::: {.qesr-download}
-**Cette page télécharge `r dl$n` études** (environ `r qz_num(dl$mb, 0)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
-:::
-
 ```{r data, include = FALSE}
 d <- qes_decon(lang = params$lang, quiet = TRUE)
 

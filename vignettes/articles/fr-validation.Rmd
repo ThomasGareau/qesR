@@ -22,10 +22,6 @@ source("_data.R", encoding = "UTF-8")
 dl <- qz_download(qz_studies)
 ```
 
-::: {.qesr-download}
-**Cette page télécharge `r dl$n` études** (environ `r round(dl$mb)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
-:::
-
 Jusqu'où les études harmonisées rejoignent-elles ce que l'on sait de
 l'électorat ? Cette page compare, pour chaque étude que couvre la
 spécification d'harmonisation :

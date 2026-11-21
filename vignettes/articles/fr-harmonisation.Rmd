@@ -27,10 +27,6 @@ dl <- local({
 })
 ```
 
-::: {.qesr-download}
-**Cette page télécharge `r dl$n` études** (environ `r round(dl$mb)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
-:::
-
 Cette page va de `qes_harmonize()` jusqu'à une estimation pondérée, étude
 par étude, et montre ce que qesR consigne en chemin : le niveau de
 comparabilité de la question de chaque étude, le motif de chaque valeur

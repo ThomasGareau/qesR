@@ -18,10 +18,6 @@ dl <- qz_download(qz_studies)
 n_fixed <- match("survey_weight", names(get_qes_master(surveys = "qes_demo", quiet = TRUE)))
 ```
 
-::: {.qesr-download}
-**Cette page télécharge `r dl$n` études** (environ `r round(dl$mb)` Mo) la première fois qu'elle s'exécute. `options(qesR.cache = "disk")` les garde sur le disque pour les sessions suivantes.
-:::
-
 `get_qes_master()` empile `r dl$n` études, de 1998 à 2022, dans un seul data.frame : une ligne par répondant de chaque étude, et les mêmes `r n_fixed` colonnes pour toutes les études (choix de vote, participation, souveraineté, identification partisane, idéologie, intérêt pour la politique et les variables sociodémographiques habituelles, avec le code, l'année et les identifiants de l'étude). Son format est fixe : les noms, l'ordre et les types des `r n_fixed` colonnes ne changent pas, et les colonnes ajoutées par la suite viennent après elles. Le code écrit pour lui continue de fonctionner.
 
 ## Quand l'utiliser, et quand préférer `qes_harmonize()`

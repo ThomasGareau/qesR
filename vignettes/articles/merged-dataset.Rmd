@@ -18,10 +18,6 @@ dl <- qz_download(qz_studies)
 n_fixed <- match("survey_weight", names(get_qes_master(surveys = "qes_demo", quiet = TRUE)))
 ```
 
-::: {.qesr-download}
-**This page downloads `r dl$n` studies** (about `r round(dl$mb)` MB) the first time it runs. `options(qesR.cache = "disk")` keeps them on disk for later sessions.
-:::
-
 `get_qes_master()` stacks `r dl$n` studies, from 1998 to 2022, in one data frame: one row per respondent of each study, and the same `r n_fixed` columns for every study (vote choice, turnout, sovereignty, party identification, ideology, political interest and the usual demographics, with the study's code, year and identifiers). Its layout is fixed: the names, order and types of the `r n_fixed` columns do not change, and columns added later come after them. Code written against it keeps working.
 
 ## When to use it, and when to prefer `qes_harmonize()`
