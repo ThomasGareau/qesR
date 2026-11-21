@@ -15,6 +15,13 @@ one data frame, so that a question about 25 years of Quebec elections can be
 answered within each study and then compared.
 
 ```{=html}
+<figure class="qesr-archive">
+  <img src="history/saint-henri-ballot-count-1938.jpg" width="1280" height="946" alt="Election workers gathered around ballot boxes and registers during the Saint-Henri federal by-election on 17 January 1938." loading="lazy" decoding="async">
+  <figcaption><a href="https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg">Counting ballots in Saint-Henri, Montréal, 1938. Federal by-election.</a><span class="qesr-archive-credit">Conrad Poirier / BAnQ</span></figcaption>
+</figure>
+```
+
+```{=html}
 <div class="qesr-hero">
 <figure>
 <figcaption>In 2007 the youngest francophones were the cohort most likely to vote Yes; in 2022 they were the least likely</figcaption>

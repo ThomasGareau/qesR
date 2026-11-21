@@ -16,6 +16,13 @@ tableau, de sorte qu'une question sur 25 ans d'élections québécoises peut
 être examinée dans chaque étude, puis comparée d'une étude à l'autre.
 
 ```{=html}
+<figure class="qesr-archive">
+  <img src="../history/saint-henri-ballot-count-1938.jpg" width="1280" height="946" alt="Des membres du personnel électoral autour des urnes et des registres lors de l’élection partielle fédérale de Saint-Henri, le 17 janvier 1938." loading="lazy" decoding="async">
+  <figcaption><a href="https://commons.wikimedia.org/wiki/File:Le_d%C3%A9pouillement_des_votes.jpg">Dépouillement des votes à Saint-Henri, Montréal, 1938. Élection partielle fédérale.</a><span class="qesr-archive-credit">Conrad Poirier / BAnQ</span></figcaption>
+</figure>
+```
+
+```{=html}
 <div class="qesr-hero">
 <figure>
 <figcaption>En 2007, les plus jeunes francophones formaient la cohorte la plus souverainiste ; en 2022, la moins souverainiste</figcaption>
