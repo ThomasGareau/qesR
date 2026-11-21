@@ -3,7 +3,8 @@
 These photographs provide historical context for Quebec electoral life.
 They predate the surveys analyzed by qesR and are not pictures of the survey
 respondents or fieldwork. Captions identify the event and date in English
-and French, and link to the source record. Images are served locally from
+and French, with plain-text photographer and archive credits. Source links
+are retained below rather than displayed in the website captions. Images are served locally from
 `pkgdown/assets/history/`, which pkgdown copies to the site’s `history/`.
 This website-only directory is excluded from the R package build.
 
